@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
@@ -636,7 +637,7 @@
 <span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
                 <span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">quota</span><span class="p">,</span> <span class="n">metric_unit</span><span class="p">),</span>
             <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Register metric [</span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">] to SqliteMonitor with unit &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">metric_unit</span><span class="si">}</span><span class="s2">] and quota [</span><span class="si">{</span><span class="n">quota</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
             <span class="p">)</span>

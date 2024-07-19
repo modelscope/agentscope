@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
@@ -140,10 +141,11 @@
 <span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
 <span class="kn">from</span> <span class="nn">flask_socketio</span> <span class="kn">import</span> <span class="n">SocketIO</span><span class="p">,</span> <span class="n">join_room</span><span class="p">,</span> <span class="n">leave_room</span>
 
-<span class="kn">from</span> <span class="nn">agentscope._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span> <span class="n">_DEFAULT_SUBDIR_INVOKE</span>
-<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_is_process_alive</span><span class="p">,</span> <span class="n">_is_windows</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
+<span class="kn">from</span> <span class="nn">.._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span> <span class="n">_DEFAULT_SUBDIR_INVOKE</span>
+<span class="kn">from</span> <span class="nn">._studio_utils</span> <span class="kn">import</span> <span class="n">_check_and_convert_id_type</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_is_process_alive</span><span class="p">,</span> <span class="n">_is_windows</span>
+<span class="kn">from</span> <span class="nn">..rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
 
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -244,7 +246,7 @@
 <span class="k">class</span> <span class="nc">_MessageTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Message object.&quot;&quot;&quot;</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
         <span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span>
         <span class="n">_db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;run_table.run_id&quot;</span><span class="p">),</span>
@@ -485,6 +487,7 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
 
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;run_id&quot;</span><span class="p">]</span>
+    <span class="n">msg_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
     <span class="n">role</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span>
     <span class="n">content</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
@@ -492,16 +495,21 @@
     <span class="n">timestamp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
     <span class="n">url</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
 
+    <span class="c1"># First check if the message exists in the database, if exists, we update</span>
+    <span class="c1"># it, otherwise, we add it.</span>
+    <span class="n">_MessageTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">msg_id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="n">_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">new_message</span> <span class="o">=</span> <span class="n">_MessageTable</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">msg_id</span><span class="p">,</span>
             <span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">role</span><span class="o">=</span><span class="n">role</span><span class="p">,</span>
             <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
             <span class="c1"># Before storing into the database, we need to convert the url into</span>
             <span class="c1"># a string</span>
-            <span class="n">meta</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">),</span>
-            <span class="n">url</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">url</span><span class="p">),</span>
+            <span class="n">meta</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
             <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_message</span><span class="p">)</span>
@@ -510,6 +518,7 @@
         <span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;Fail to put message with error: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">msg_id</span><span class="p">,</span>
         <span class="s2">&quot;run_id&quot;</span><span class="p">:</span> <span class="n">run_id</span><span class="p">,</span>
         <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
         <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span>
@@ -906,6 +915,10 @@
         <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+
+    <span class="c1"># To be compatible with the old table schema, we need to check and convert</span>
+    <span class="c1"># the id column of the message_table from INTEGER to VARCHAR.</span>
+    <span class="n">_check_and_convert_id_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_cache_db</span><span class="p">),</span> <span class="s2">&quot;message_table&quot;</span><span class="p">)</span>
 
     <span class="n">_socketio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">_app</span><span class="p">,</span>

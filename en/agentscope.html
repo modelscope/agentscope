@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">Prompt Engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">Memory</a></li>
@@ -348,10 +349,8 @@
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse"><code class="docutils literal notranslate"><span class="pre">ModelResponse</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.__init__"><code class="docutils literal notranslate"><span class="pre">ModelResponse.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.text"><code class="docutils literal notranslate"><span class="pre">ModelResponse.text</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.embedding"><code class="docutils literal notranslate"><span class="pre">ModelResponse.embedding</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.image_urls"><code class="docutils literal notranslate"><span class="pre">ModelResponse.image_urls</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.raw"><code class="docutils literal notranslate"><span class="pre">ModelResponse.raw</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.parsed"><code class="docutils literal notranslate"><span class="pre">ModelResponse.parsed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.stream"><code class="docutils literal notranslate"><span class="pre">ModelResponse.stream</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelResponse.is_stream_exhausted"><code class="docutils literal notranslate"><span class="pre">ModelResponse.is_stream_exhausted</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.PostAPIModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a><ul>
@@ -373,6 +372,7 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.model_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.deprecated_model_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.substrings_in_vision_models_names"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.substrings_in_vision_models_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.format()</span></code></a></li>
 </ul>
 </li>
@@ -387,6 +387,7 @@
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.model_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.deprecated_model_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format()</span></code></a></li>
 </ul>
 </li>
@@ -406,6 +407,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.OllamaChatWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OllamaChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OllamaChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OllamaChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper.format()</span></code></a></li>
 </ul>
 </li>
@@ -432,6 +434,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.ZhipuAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ZhipuAIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ZhipuAIChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ZhipuAIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper.format()</span></code></a></li>
 </ul>
 </li>
@@ -441,6 +444,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.LiteLLMChatWrapper"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.LiteLLMChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.LiteLLMChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.LiteLLMChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper.format()</span></code></a></li>
 </ul>
 </li>
@@ -1082,6 +1086,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.file_manager.html">agentscope.file_manager module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.logging.html">agentscope.logging module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.log_stream_msg"><code class="docutils literal notranslate"><span class="pre">log_stream_msg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.log_msg"><code class="docutils literal notranslate"><span class="pre">log_msg()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.log_gradio"><code class="docutils literal notranslate"><span class="pre">log_gradio()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
 </ul>
@@ -1089,7 +1095,6 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase"><code class="docutils literal notranslate"><span class="pre">MessageBase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase.__init__"><code class="docutils literal notranslate"><span class="pre">MessageBase.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase.to_str"><code class="docutils literal notranslate"><span class="pre">MessageBase.to_str()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase.serialize"><code class="docutils literal notranslate"><span class="pre">MessageBase.serialize()</span></code></a></li>
 </ul>
 </li>
@@ -1102,7 +1107,7 @@
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg.url"><code class="docutils literal notranslate"><span class="pre">Msg.url</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg.timestamp"><code class="docutils literal notranslate"><span class="pre">Msg.timestamp</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg.__init__"><code class="docutils literal notranslate"><span class="pre">Msg.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg.to_str"><code class="docutils literal notranslate"><span class="pre">Msg.to_str()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg.formatted_str"><code class="docutils literal notranslate"><span class="pre">Msg.formatted_str()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg.serialize"><code class="docutils literal notranslate"><span class="pre">Msg.serialize()</span></code></a></li>
 </ul>
 </li>
@@ -1110,7 +1115,6 @@
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage.PLACEHOLDER_ATTRS"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage.PLACEHOLDER_ATTRS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage.LOCAL_ATTRS"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage.LOCAL_ATTRS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage.__init__"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage.to_str"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage.to_str()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage.update_value"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage.update_value()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage.serialize"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage.serialize()</span></code></a></li>
 </ul>

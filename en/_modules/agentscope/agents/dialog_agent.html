@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">Prompt Engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">Memory</a></li>
@@ -191,11 +192,13 @@
         <span class="p">)</span>
 
         <span class="c1"># call llm and generate response</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 
         <span class="c1"># Print/speak the message in this agent&#39;s voice</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># Support both streaming and non-streaming responses by &quot;or&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">stream</span> <span class="ow">or</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
 
         <span class="c1"># Record the message in memory</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>

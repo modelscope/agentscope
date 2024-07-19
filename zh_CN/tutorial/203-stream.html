@@ -1,0 +1,294 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>流式输出 &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="提示工程" href="206-prompt.html" />
+    <link rel="prev" title="模型" href="203-model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/203-stream.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/203-stream.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">模型</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">流式输出</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">设置流式输出</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">模型配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">模型调用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">流式打印</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">进阶用法</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">流式输出</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/203-stream.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="stream-zh">
+<span id="id1"></span><h1>流式输出<a class="headerlink" href="#stream-zh" title="Link to this heading"></a></h1>
+<p>AgentScope 支持在<strong>终端</strong>和 <strong>AgentScope Studio</strong> 中使用以下大模型 API 的流式输出模式。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>Model Wrapper</p></th>
+<th class="head"><p>对应的 <code class="docutils literal notranslate"><span class="pre">model_type</span></code> 域</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>OpenAI Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>DashScope Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Gemini Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>ZhipuAI Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;zhipuai_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ollama Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>LiteLLM Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;litellm_chat&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="id2">
+<h2>设置流式输出<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>AgentScope 允许用户在模型配置和模型调用中设置流式输出模式。</p>
+<section id="id3">
+<h3>模型配置<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>在模型配置中将 <code class="docutils literal notranslate"><span class="pre">stream</span></code> 字段设置为 <code class="docutils literal notranslate"><span class="pre">True</span></code> 以使用流式输出模式。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>模型调用<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>在智能体中，可以在调用模型时将 <code class="docutils literal notranslate"><span class="pre">stream</span></code> 参数设置为 <code class="docutils literal notranslate"><span class="pre">True</span></code>。注意，模型调用中的 <code class="docutils literal notranslate"><span class="pre">stream</span></code> 参数将覆盖模型配置中的 <code class="docutils literal notranslate"><span class="pre">stream</span></code> 字段。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+            <span class="n">prompt</span><span class="p">,</span>
+            <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>流式打印<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>在流式输出模式下，模型响应的 <code class="docutils literal notranslate"><span class="pre">stream</span></code> 字段将是一个生成器，而 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段将是 <code class="docutils literal notranslate"><span class="pre">None</span></code>。
+为了与非流式兼容，用户一旦在迭代生成器前访问 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段，<code class="docutils literal notranslate"><span class="pre">stream</span></code> 中的生成器将被迭代以生成完整的文本，并将其存储在 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段中。
+因此，即使在流式输出模式下，用户也可以像往常一样在 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段中处理响应文本而无需任何改变。</p>
+<p>但是，如果用户需要流式的输出，只需要将生成器放在 <code class="docutils literal notranslate"><span class="pre">self.speak</span></code> 函数中，以在终端和 AgentScope Studio 中流式打印文本。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+        <span class="c1"># 如果想在调用时使用流式打印，在这里调用时使用 stream=True</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># 程序运行到这里时，response.text 为 None</span>
+
+        <span class="c1"># 在 terminal 和 AgentScope Studio 中流式打印文本</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
+
+        <span class="c1"># 生成器被迭代时，产生的文本将自动被存储在 response.text 中，因此用户可以直接使用 response.text 处理响应文本</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">msg</span>
+
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>进阶用法<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p>如果用户想要自己处理流式输出，可以通过迭代生成器来实时获得流式的响应文本。</p>
+<p>An example of how to handle the streaming response is in the <code class="docutils literal notranslate"><span class="pre">speak</span></code> function of <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> as follows.
+关于如何处理流式输出，可以参考 <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">speak</span></code> 函数。
+The <code class="docutils literal notranslate"><span class="pre">log_stream_msg</span></code> function will print the streaming response in the terminal and AgentScope Studio (if registered).
+其中 <code class="docutils literal notranslate"><span class="pre">log_stream_msg</span></code> 函数将在终端和 AgentScope Studio 中实时地流式打印文本。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># ...</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+            <span class="c1"># 流式消息必须共享相同的 id 才能在 AgentScope Studio 中显示，因此这里通过同一条消息切换 content 字段来实现</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">last</span><span class="p">,</span> <span class="n">text_chunk</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">text_chunk</span>
+                <span class="n">log_stream_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="n">last</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>在处理生成器的时候，用户应该记住以下几点：</p>
+<ol class="arabic simple">
+<li><p>在迭代生成器时，<code class="docutils literal notranslate"><span class="pre">response.text</span></code> 字段将自动包含已迭代的文本。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stream</span></code> 字段中的生成器将生成一个布尔值和字符串的二元组。布尔值表示当前是否是最后一段文本，而字符串则是到目前为止的响应文本。</p></li>
+<li><p>AgentScope Studio 依据 <code class="docutils literal notranslate"><span class="pre">log_stream_msg</span></code> 函数中输入的 <code class="docutils literal notranslate"><span class="pre">Msg</span></code> 对象的 id 判断文本是否属于同一条流式响应，若 id 不同，则会被视为不同的响应。</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># 程序运行到这里时，response.text 为 None</span>
+
+        <span class="c1"># 迭代生成器，自己处理响应文本</span>
+        <span class="k">for</span> <span class="n">last_chunk</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
+            <span class="c1"># 按照自己的需求处理响应文本</span>
+            <span class="c1"># ...</span>
+
+
+</pre></div>
+</div>
+<p><a class="reference internal" href="#stream-zh">[Return to the top]</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="203-model.html" class="btn btn-neutral float-left" title="模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="206-prompt.html" class="btn btn-neutral float-right" title="提示工程" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

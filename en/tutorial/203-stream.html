@@ -1,0 +1,290 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Prompt Engineering" href="206-prompt.html" />
+    <link rel="prev" title="Model" href="203-model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../en/tutorial/203-stream.html">English</a></li> |
+    <a href="../../zh_CN/tutorial/203-stream.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="102-installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="103-example.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-model.html">Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Streaming</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setup-streaming-mode">Setup Streaming Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#printing-in-streaming-mode">Printing in Streaming Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="205-memory.html">Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="203-parser.html">Response Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-prompt_opt.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="204-service.html">Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="208-distribute.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="210-rag.html">A Quick Introduction to RAG in AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="105-logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">Monitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="104-usecase.html">Example: Werewolf Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Streaming</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/203-stream.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="streaming">
+<span id="stream-en"></span><h1>Streaming<a class="headerlink" href="#streaming" title="Link to this heading"></a></h1>
+<p>AgentScope supports streaming mode for the following LLM APIs in both <strong>terminal</strong> and <strong>AgentScope Studio</strong>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>Model Wrapper</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">model_type</span></code> field in model configuration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>OpenAI Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;openai_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>DashScope Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/dashscope_model.py"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;dashscope_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Gemini Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/gemini_model.py"><code class="docutils literal notranslate"><span class="pre">GeminiChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;gemini_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>ZhipuAI Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/zhipu_model.py"><code class="docutils literal notranslate"><span class="pre">ZhipuAIChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;zhipuai_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>ollama Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py"><code class="docutils literal notranslate"><span class="pre">OllamaChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ollama_chat&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>LiteLLM Chat API</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py"><code class="docutils literal notranslate"><span class="pre">LiteLLMChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;litellm_chat&quot;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="setup-streaming-mode">
+<h2>Setup Streaming Mode<a class="headerlink" href="#setup-streaming-mode" title="Link to this heading"></a></h2>
+<p>AgentScope allows users to set up streaming mode in both model configuration and model calling.</p>
+<section id="in-model-configuration">
+<h3>In Model Configuration<a class="headerlink" href="#in-model-configuration" title="Link to this heading"></a></h3>
+<p>To use streaming mode, set the stream field to <code class="docutils literal notranslate"><span class="pre">True</span></code> in the model configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="in-model-calling">
+<h3>In Model Calling<a class="headerlink" href="#in-model-calling" title="Link to this heading"></a></h3>
+<p>Within an agent, you can call the model with the <code class="docutils literal notranslate"><span class="pre">stream</span></code> parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.
+Note the <code class="docutils literal notranslate"><span class="pre">stream</span></code> parameter in the model calling will override the <code class="docutils literal notranslate"><span class="pre">stream</span></code> field in the model configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+            <span class="n">prompt</span><span class="p">,</span>
+            <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="printing-in-streaming-mode">
+<h2>Printing in Streaming Mode<a class="headerlink" href="#printing-in-streaming-mode" title="Link to this heading"></a></h2>
+<p>In streaming mode, the <code class="docutils literal notranslate"><span class="pre">stream</span></code> field of a model response will be a generator, and the <code class="docutils literal notranslate"><span class="pre">text</span></code> field will be <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+For compatibility with the non-streaming mode, once the <code class="docutils literal notranslate"><span class="pre">text</span></code> field is accessed, the generator in <code class="docutils literal notranslate"><span class="pre">stream</span></code> field will be iterated to generate the full text and store it in the <code class="docutils literal notranslate"><span class="pre">text</span></code> field.
+So that even in streaming mode, users can handle the response text in <code class="docutils literal notranslate"><span class="pre">text</span></code> field as usual.</p>
+<p>However, if you want to print in streaming mode, just put the generator in <code class="docutils literal notranslate"><span class="pre">self.speak</span></code> to print the streaming text in the terminal and AgentScope Studio.</p>
+<p>After printing the streaming response, the full text of the response will be available in the <code class="docutils literal notranslate"><span class="pre">response.text</span></code> field.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+        <span class="c1"># Use stream=True if you want to set up streaming mode in model calling</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># For now, the response.text is None</span>
+
+        <span class="c1"># Print the response in streaming mode in terminal and AgentScope Studio (if available)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span>
+
+        <span class="c1"># After printing, the response.text will be the full text of the response, and you can handle it as usual</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">msg</span>
+
+</pre></div>
+</div>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
+<p>For users who want to handle the streaming response by themselves, they can iterate the generator and handle the response text in their own way.</p>
+<p>An example of how to handle the streaming response is in the <code class="docutils literal notranslate"><span class="pre">speak</span></code> function of <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> as follows.
+The <code class="docutils literal notranslate"><span class="pre">log_stream_msg</span></code> function will print the streaming response in the terminal and AgentScope Studio (if registered).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># ...</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+            <span class="c1"># The streaming message must share the same id for displaying in</span>
+            <span class="c1"># the agentscope studio.</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">last</span><span class="p">,</span> <span class="n">text_chunk</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">text_chunk</span>
+                <span class="n">log_stream_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="n">last</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>However, they should remember the following points:</p>
+<ol class="arabic simple">
+<li><p>When iterating the generator, the <code class="docutils literal notranslate"><span class="pre">response.text</span></code> field will include the text that has been iterated automatically.</p></li>
+<li><p>The generator in the <code class="docutils literal notranslate"><span class="pre">stream</span></code> field will generate a tuple of boolean and text. The boolean indicates whether the text is the end of the response, and the text is the response text until now.</p></li>
+<li><p>To print streaming text in AgentScope Studio, the message id should be the same for one response in the <code class="docutils literal notranslate"><span class="pre">log_stream_msg</span></code> function.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># For now, the response.text is None</span>
+
+        <span class="c1"># Iterate the generator and handle the response text by yourself</span>
+        <span class="k">for</span> <span class="n">last_chunk</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
+            <span class="c1"># Handle the text in your way</span>
+            <span class="c1"># ...</span>
+
+
+</pre></div>
+</div>
+<p><a class="reference internal" href="#stream-en">[Return to the top]</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="203-model.html" class="btn btn-neutral float-left" title="Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="206-prompt.html" class="btn btn-neutral float-right" title="Prompt Engineering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

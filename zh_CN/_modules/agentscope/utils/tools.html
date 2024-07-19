@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
@@ -125,7 +126,7 @@
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
 <span class="kn">import</span> <span class="nn">psutil</span>
@@ -617,6 +618,34 @@
 <span class="k">def</span> <span class="nf">_is_windows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the system is Windows.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_map_string_to_color_mark</span><span class="p">(</span>
+    <span class="n">target_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map a string into an index within a given length.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_str (`str`):</span>
+<span class="sd">            The string to be mapped.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Tuple[str, str]`: A color marker tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">color_marks</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[90m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[97m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">hash_value</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">target_str</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">hash_value</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_marks</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">color_marks</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
 </pre></div>
 
            </div>

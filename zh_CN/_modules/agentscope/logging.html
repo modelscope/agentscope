@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/103-example.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/203-stream.html">流式输出</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/206-prompt.html">提示工程</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial/205-memory.html">记忆</a></li>
@@ -123,6 +124,7 @@
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">agentscope.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
 <span class="kn">from</span> <span class="nn">agentscope.web.gradio.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">generate_image_from_name</span><span class="p">,</span>
@@ -143,127 +145,102 @@
 
 <span class="n">LEVEL_SAVE_LOG</span> <span class="o">=</span> <span class="s2">&quot;SAVE_LOG&quot;</span>
 <span class="n">LEVEL_SAVE_MSG</span> <span class="o">=</span> <span class="s2">&quot;SAVE_MSG&quot;</span>
-<span class="n">LEVEL_DISPLAY_MSG</span> <span class="o">=</span> <span class="s2">&quot;DISPLAY_MSG&quot;</span>
 
-<span class="n">_SPEAKER_COLORS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[90m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[97m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
-<span class="p">]</span>
+<span class="n">_DEFAULT_LOG_FORMAT</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;&lt;green&gt;{time:YYYY-MM-DD HH:mm:ss.SSS}&lt;/green&gt; | &lt;level&gt;{&quot;</span>
+    <span class="s2">&quot;level: &lt;8}&lt;/level&gt; | &lt;cyan&gt;</span><span class="si">{name}</span><span class="s2">&lt;/cyan&gt;:&lt;cyan&gt;{&quot;</span>
+    <span class="s2">&quot;function}&lt;/cyan&gt;:&lt;cyan&gt;</span><span class="si">{line}</span><span class="s2">&lt;/cyan&gt; - &lt;level&gt;{&quot;</span>
+    <span class="s2">&quot;message}&lt;/level&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
 
-<span class="n">_SPEAKER_TO_COLORS</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_PREFIX_DICT</span> <span class="o">=</span> <span class="p">{}</span>
 
 
-<span class="k">def</span> <span class="nf">_get_speaker_color</span><span class="p">(</span><span class="n">speaker</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the color markers for a speaker. If the speaker is new, assign a</span>
-<span class="sd">    new color. Otherwise, return the color that was assigned to the speaker.</span>
+<div class="viewcode-block" id="log_stream_msg">
+<a class="viewcode-back" href="../../agentscope.logging.html#agentscope.logging.log_stream_msg">[文档]</a>
+<span class="k">def</span> <span class="nf">log_stream_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the message in different streams, including terminal, studio, and</span>
+<span class="sd">    gradio if it is active.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        speaker (`str`):</span>
-<span class="sd">            The speaker to be assigned a color.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        `tuple[str, str]`: A color marker tuple, e.g. (&quot;&lt;blue&gt;&quot;, &quot;&lt;/blue&gt;&quot;).</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message object to be printed.</span>
+<span class="sd">        last (`bool`, defaults to `True`):</span>
+<span class="sd">            True if this is the last message in the stream or a single message.</span>
+<span class="sd">            Otherwise, False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">_SPEAKER_COLORS</span><span class="p">,</span> <span class="n">_SPEAKER_TO_COLORS</span>
-    <span class="k">if</span> <span class="n">speaker</span> <span class="ow">in</span> <span class="n">_SPEAKER_TO_COLORS</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_SPEAKER_TO_COLORS</span><span class="p">[</span><span class="n">speaker</span><span class="p">]</span>
+    <span class="k">global</span> <span class="n">_PREFIX_DICT</span>
+
+    <span class="c1"># Print msg to terminal</span>
+    <span class="n">formatted_str</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">print_str</span> <span class="o">=</span> <span class="n">formatted_str</span><span class="p">[</span><span class="n">_PREFIX_DICT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">last</span><span class="p">:</span>
+        <span class="c1"># Remove the prefix from the dictionary</span>
+        <span class="k">del</span> <span class="n">_PREFIX_DICT</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">markers</span> <span class="o">=</span> <span class="n">_SPEAKER_COLORS</span><span class="p">[</span>
-            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_SPEAKER_TO_COLORS</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="o">%</span> <span class="nb">len</span><span class="p">(</span>
-                <span class="n">_SPEAKER_COLORS</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
-        <span class="c1"># Record the color for this speaker</span>
-        <span class="n">_SPEAKER_TO_COLORS</span><span class="p">[</span><span class="n">speaker</span><span class="p">]</span> <span class="o">=</span> <span class="n">markers</span>
-        <span class="k">return</span> <span class="n">markers</span>
+        <span class="c1"># Update the prefix in the dictionary</span>
+        <span class="n">_PREFIX_DICT</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">formatted_str</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">print_str</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Push msg to studio if it is active</span>
+    <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+        <span class="n">_studio_client</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Print to gradio if it is active</span>
+    <span class="k">if</span> <span class="n">last</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">):</span>
+        <span class="n">log_gradio</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">last</span><span class="p">:</span>
+        <span class="c1"># Save msg into chat file</span>
+        <span class="n">_save_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
-<span class="c1"># add chat function for logger</span>
-<span class="k">def</span> <span class="nf">_chat</span><span class="p">(</span>
-    <span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-    <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="n">disable_gradio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Log a chat message with the format of&quot;&lt;speaker&gt;: &lt;content&gt;&quot;. If the</span>
-<span class="sd">    running instance is registered in the studio, the message will be sent</span>
-<span class="sd">    and display in the studio.</span>
+
+<span class="k">def</span> <span class="nf">_save_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the message into `logging.chat` and `logging.log` files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        message (`dict`):</span>
-<span class="sd">            The message to be logged as &quot;&lt;name/role&gt;: &lt;content&gt;&quot;, which must</span>
-<span class="sd">            be an object of Msg class.</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message object to be saved.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Push message to studio if it is active</span>
-    <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
-        <span class="n">_studio_client</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-    <span class="c1"># Save message into chat file, add default to ignore not serializable</span>
-    <span class="c1"># objects</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-        <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="c1"># Print message in terminal with specific format</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">contain_name_or_role</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">or</span> <span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">message</span>
-        <span class="n">contain_content</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">message</span>
-        <span class="n">contain_url</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+        <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span>
 
-        <span class="c1"># print content if contain name or role and contain content</span>
-        <span class="k">if</span> <span class="n">contain_name_or_role</span><span class="p">:</span>
-            <span class="n">speaker</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">)</span> <span class="o">=</span> <span class="n">_get_speaker_color</span><span class="p">(</span><span class="n">speaker</span><span class="p">)</span>
 
-            <span class="n">print_str</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">print_str_without_markers</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="n">contain_content</span><span class="p">:</span>
-                <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">print_str_without_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+<div class="viewcode-block" id="log_msg">
+<a class="viewcode-back" href="../../agentscope.logging.html#agentscope.logging.log_msg">[文档]</a>
+<span class="k">def</span> <span class="nf">log_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">disable_gradio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the message and save it into files. Note the message should be a</span>
+<span class="sd">    Msg object.&quot;&quot;&quot;</span>
 
-            <span class="k">if</span> <span class="n">contain_url</span><span class="p">:</span>
-                <span class="n">print_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}</span><span class="se">\033</span><span class="s2">[1m</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="se">\033</span><span class="s2">[0m</span><span class="si">{</span><span class="n">m2</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">print_str_without_markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">, expect Msg object.&quot;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">print_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span>
-                <span class="n">print_str_without_markers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">print_str_without_markers</span><span class="p">,</span>
-                <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
-                <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">print_str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                    <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
-                    <span class="n">print_str_without_markers</span><span class="p">,</span>
-                    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-                <span class="p">)</span>
+    <span class="c1"># Push msg to studio if it is active</span>
+    <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+        <span class="n">_studio_client</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">disable_gradio</span><span class="p">:</span>
-                    <span class="n">log_gradio</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">return</span>
+    <span class="c1"># Print to gradio if it is active</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">disable_gradio</span><span class="p">:</span>
+        <span class="n">log_gradio</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># Save msg into chat file</span>
+    <span class="n">_save_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="log_gradio">
@@ -328,15 +305,10 @@
 <span class="k">def</span> <span class="nf">_level_format</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the log record.&quot;&quot;&quot;</span>
     <span class="c1"># Display the chat message</span>
-    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">LEVEL_SAVE_LOG</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_SAVE_LOG</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{message}</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;&lt;green&gt;{time:YYYY-MM-DD HH:mm:ss.SSS}&lt;/green&gt; | &lt;level&gt;{&quot;</span>
-            <span class="s2">&quot;level: &lt;8}&lt;/level&gt; | &lt;cyan&gt;</span><span class="si">{name}</span><span class="s2">&lt;/cyan&gt;:&lt;cyan&gt;{&quot;</span>
-            <span class="s2">&quot;function}&lt;/cyan&gt;:&lt;cyan&gt;</span><span class="si">{line}</span><span class="s2">&lt;/cyan&gt; - &lt;level&gt;{&quot;</span>
-            <span class="s2">&quot;message}&lt;/level&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_DEFAULT_LOG_FORMAT</span>
 
 
 <div class="viewcode-block" id="setup_logger">
@@ -359,11 +331,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
         <span class="c1"># add chat function for logger</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_DISPLAY_MSG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">52</span><span class="p">)</span>
 
         <span class="c1"># save chat message into file</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">53</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">_chat</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">log_msg</span>
 
         <span class="c1"># set logging level</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
@@ -372,7 +343,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
             <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
             <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">LEVEL_SAVE_MSG</span><span class="p">],</span>
-            <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">_DEFAULT_LOG_FORMAT</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
         <span class="p">)</span>
@@ -385,21 +356,22 @@
             <span class="s2">&quot;logging.chat&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># save all logging into file</span>
+        <span class="c1"># save all logging except LEVEL_SAVE_MSG into logging.log</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">path_log_file</span><span class="p">,</span>
-            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-            <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span> <span class="n">LEVEL_DISPLAY_MSG</span><span class="p">],</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
             <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
         <span class="p">)</span>
 
+        <span class="c1"># save chat message into logging.chat</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">path_chat_file</span><span class="p">,</span>
             <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{message}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">level</span><span class="o">=</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>  <span class="c1"># The highest level to filter out all</span>
+            <span class="c1"># other logs</span>
         <span class="p">)</span></div>
 
 </pre></div>

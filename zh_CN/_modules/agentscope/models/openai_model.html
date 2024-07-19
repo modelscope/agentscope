@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
@@ -118,10 +119,14 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Model wrapper for OpenAI models&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span> <span class="nn">._model_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_verify_text_content_in_openai_delta_response</span><span class="p">,</span>
+    <span class="n">_verify_text_content_in_openai_message_response</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
@@ -238,6 +243,59 @@
     <span class="n">substrings_in_vision_models_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gpt-4-turbo&quot;</span><span class="p">,</span> <span class="s2">&quot;vision&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The substrings in the model names of vision models.&quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="OpenAIChatWrapper.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIChatWrapper.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">client_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">generate_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">budget</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_DEFAULT_API_BUDGET</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the openai client.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config_name (`str`):</span>
+<span class="sd">                The name of the model config.</span>
+<span class="sd">            model_name (`str`, default `None`):</span>
+<span class="sd">                The name of the model to use in OpenAI API.</span>
+<span class="sd">            api_key (`str`, default `None`):</span>
+<span class="sd">                The API key for OpenAI API. If not specified, it will</span>
+<span class="sd">                be read from the environment variable `OPENAI_API_KEY`.</span>
+<span class="sd">            organization (`str`, default `None`):</span>
+<span class="sd">                The organization ID for OpenAI API. If not specified, it will</span>
+<span class="sd">                be read from the environment variable `OPENAI_ORGANIZATION`.</span>
+<span class="sd">            client_args (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments to initialize the OpenAI client.</span>
+<span class="sd">            stream (`bool`, default `False`):</span>
+<span class="sd">                Whether to enable stream mode.</span>
+<span class="sd">            generate_args (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments used in openai api generation,</span>
+<span class="sd">                e.g. `temperature`, `seed`.</span>
+<span class="sd">            budget (`float`, default `None`):</span>
+<span class="sd">                The total budget using this model. Set to `None` means no</span>
+<span class="sd">                limit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="n">organization</span><span class="o">=</span><span class="n">organization</span><span class="p">,</span>
+            <span class="n">client_args</span><span class="o">=</span><span class="n">client_args</span><span class="p">,</span>
+            <span class="n">generate_args</span><span class="o">=</span><span class="n">generate_args</span><span class="p">,</span>
+            <span class="n">budget</span><span class="o">=</span><span class="n">budget</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span></div>
+
+
     <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Set monitor accordingly</span>
         <span class="c1"># TODO: set quota to the following metrics</span>
@@ -261,6 +319,7 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the OpenAI</span>
@@ -277,6 +336,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            messages (`list`):</span>
 <span class="sd">                A list of messages to process.</span>
+<span class="sd">            stream (`Optional[bool]`, defaults to `None`)</span>
+<span class="sd">                Whether to enable stream mode, which will override the</span>
+<span class="sd">                `stream` argument in the constructor if provided.</span>
 <span class="sd">            **kwargs (`Any`):</span>
 <span class="sd">                The keyword arguments to OpenAI chat completions API,</span>
 <span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to</span>
@@ -318,30 +380,89 @@
             <span class="p">)</span>
 
         <span class="c1"># step3: forward to generate response</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
-            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
 
-        <span class="c1"># step4: record the api invocation if needed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
-            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
                 <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
                 <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="n">stream</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
         <span class="p">)</span>
 
-        <span class="c1"># step5: update monitor accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span><span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;stream_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;include_usage&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
-        <span class="c1"># step6: return response</span>
-        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
-            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">last_chunk</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+                    <span class="n">chunk</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">_verify_text_content_in_openai_delta_response</span><span class="p">(</span><span class="n">chunk</span><span class="p">):</span>
+                        <span class="n">text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;delta&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                        <span class="k">yield</span> <span class="n">text</span>
+                    <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">chunk</span>
+
+                <span class="c1"># Update the last chunk to save locally</span>
+                <span class="k">if</span> <span class="n">last_chunk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">[]]:</span>
+                    <span class="n">last_chunk</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{}]</span>
+
+                <span class="n">last_chunk</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+                <span class="p">}</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                    <span class="n">kwargs</span><span class="p">,</span>
+                    <span class="n">last_chunk</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">stream</span><span class="o">=</span><span class="n">generator</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                <span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">_verify_text_content_in_openai_message_response</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+                <span class="c1"># return response</span>
+                <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                    <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">],</span>
+                    <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid response from OpenAI API: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save model invocation and update the monitor accordingly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs (`dict`):</span>
+<span class="sd">                The keyword arguments used in model invocation</span>
+<span class="sd">            response (`dict`):</span>
+<span class="sd">                The response from model API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;usage&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span><span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;usage&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_format_msg_with_url</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

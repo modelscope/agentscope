@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">Prompt Engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">Memory</a></li>
@@ -122,6 +123,29 @@
   <section id="module-agentscope.logging">
 <span id="agentscope-logging-module"></span><h1>agentscope.logging module<a class="headerlink" href="#module-agentscope.logging" title="Link to this heading"></a></h1>
 <p>Logging utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.logging.log_stream_msg">
+<span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_stream_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_stream_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.logging.log_stream_msg" title="Link to this definition"></a></dt>
+<dd><p>Print the message in different streams, including terminal, studio, and
+gradio if it is active.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<cite>Msg</cite>) – The message object to be printed.</p></li>
+<li><p><strong>last</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – True if this is the last message in the stream or a single message.
+Otherwise, False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.logging.log_msg">
+<span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_gradio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.logging.log_msg" title="Link to this definition"></a></dt>
+<dd><p>Print the message and save it into files. Note the message should be a
+Msg object.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.logging.log_gradio">
 <span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_gradio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_gradio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.logging.log_gradio" title="Link to this definition"></a></dt>

@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">Quick Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">Prompt Engineering</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">Memory</a></li>
@@ -205,7 +206,11 @@
 </li>
         <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.__init__">(agentscope.message.PlaceholderMessage method)</a>
 </li>
+        <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.__init__">(agentscope.models.dashscope_model.DashScopeChatWrapper method)</a>
+</li>
         <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase.__init__">(agentscope.models.dashscope_model.DashScopeWrapperBase method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.__init__">(agentscope.models.DashScopeChatWrapper method)</a>
 </li>
         <li><a href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.__init__">(agentscope.models.gemini_model.GeminiChatWrapper method)</a>
 </li>
@@ -213,7 +218,11 @@
 </li>
         <li><a href="agentscope.models.html#agentscope.models.GeminiChatWrapper.__init__">(agentscope.models.GeminiChatWrapper method)</a>
 </li>
+        <li><a href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper.__init__">(agentscope.models.litellm_model.LiteLLMChatWrapper method)</a>
+</li>
         <li><a href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase.__init__">(agentscope.models.litellm_model.LiteLLMWrapperBase method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.LiteLLMChatWrapper.__init__">(agentscope.models.LiteLLMChatWrapper method)</a>
 </li>
         <li><a href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.__init__">(agentscope.models.model.ModelWrapperBase method)</a>
 </li>
@@ -221,9 +230,17 @@
 </li>
         <li><a href="agentscope.models.html#agentscope.models.ModelWrapperBase.__init__">(agentscope.models.ModelWrapperBase method)</a>
 </li>
+        <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.__init__">(agentscope.models.ollama_model.OllamaChatWrapper method)</a>
+</li>
         <li><a href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.__init__">(agentscope.models.ollama_model.OllamaWrapperBase method)</a>
 </li>
+        <li><a href="agentscope.models.html#agentscope.models.OllamaChatWrapper.__init__">(agentscope.models.OllamaChatWrapper method)</a>
+</li>
+        <li><a href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.__init__">(agentscope.models.openai_model.OpenAIChatWrapper method)</a>
+</li>
         <li><a href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase.__init__">(agentscope.models.openai_model.OpenAIWrapperBase method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.__init__">(agentscope.models.OpenAIChatWrapper method)</a>
 </li>
         <li><a href="agentscope.models.html#agentscope.models.OpenAIWrapperBase.__init__">(agentscope.models.OpenAIWrapperBase method)</a>
 </li>
@@ -233,7 +250,11 @@
 </li>
         <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.__init__">(agentscope.models.response.ModelResponse method)</a>
 </li>
+        <li><a href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper.__init__">(agentscope.models.zhipu_model.ZhipuAIChatWrapper method)</a>
+</li>
         <li><a href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase.__init__">(agentscope.models.zhipu_model.ZhipuAIWrapperBase method)</a>
+</li>
+        <li><a href="agentscope.models.html#agentscope.models.ZhipuAIChatWrapper.__init__">(agentscope.models.ZhipuAIChatWrapper method)</a>
 </li>
         <li><a href="agentscope.msghub.html#agentscope.msghub.MsgHubManager.__init__">(agentscope.msghub.MsgHubManager method)</a>
 </li>
@@ -1656,12 +1677,6 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.embedding">embedding (agentscope.models.ModelResponse attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.embedding">(agentscope.models.response.ModelResponse attribute)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.prompt.html#agentscope.prompt.EnglishSystemPromptGenerator">EnglishSystemPromptGenerator (class in agentscope.prompt)</a>
 </li>
       <li><a href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.equip">equip() (agentscope.rag.knowledge_bank.KnowledgeBank method)</a>
@@ -1828,6 +1843,8 @@
         <li><a href="agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.MultiTaggedContentParser.format_instruction">(agentscope.parsers.tagged_content_parser.MultiTaggedContentParser attribute)</a>
 </li>
       </ul></li>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.formatted_str">formatted_str() (agentscope.message.Msg method)</a>
+</li>
       <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallError">FunctionCallError</a>
 </li>
       <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallFormatError">FunctionCallFormatError</a>
@@ -2108,12 +2125,6 @@
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode">IfElsePipelineNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.image_urls">image_urls (agentscope.models.ModelResponse attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.image_urls">(agentscope.models.response.ModelResponse attribute)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.import_function_from_path">import_function_from_path() (in module agentscope.web.gradio.studio)</a>
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.ImportErrorReporter">ImportErrorReporter (class in agentscope.utils.tools)</a>
@@ -2124,12 +2135,12 @@
         <li><a href="agentscope.studio.html#agentscope.studio.init">(in module agentscope.studio)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.init_uid_list">init_uid_list() (in module agentscope.web.gradio.studio)</a>
 </li>
       <li><a href="agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.init_uid_queues">init_uid_queues() (in module agentscope.web.gradio.utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.is_alive">is_alive() (agentscope.rpc.rpc_agent_client.RpcAgentClient method)</a>
 
       <ul>
@@ -2148,6 +2159,12 @@
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_utils.html#agentscope.web.workstation.workflow_utils.is_callable_expression">is_callable_expression() (in module agentscope.web.workstation.workflow_utils)</a>
 </li>
+      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.is_stream_exhausted">is_stream_exhausted (agentscope.models.ModelResponse property)</a>
+
+      <ul>
+        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.is_stream_exhausted">(agentscope.models.response.ModelResponse property)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.is_valid_url">is_valid_url() (in module agentscope.service.web.web_digest)</a>
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.is_web_accessible">is_web_accessible() (in module agentscope.utils.tools)</a>
@@ -2299,6 +2316,10 @@
       <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.LOCAL_ATTRS">LOCAL_ATTRS (agentscope.message.PlaceholderMessage attribute)</a>
 </li>
       <li><a href="agentscope.logging.html#agentscope.logging.log_gradio">log_gradio() (in module agentscope.logging)</a>
+</li>
+      <li><a href="agentscope.logging.html#agentscope.logging.log_msg">log_msg() (in module agentscope.logging)</a>
+</li>
+      <li><a href="agentscope.logging.html#agentscope.logging.log_stream_msg">log_stream_msg() (in module agentscope.logging)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2977,12 +2998,6 @@
         <li><a href="agentscope.parsers.html#agentscope.parsers.TaggedContent.parse_json">(agentscope.parsers.TaggedContent attribute)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.parsed">parsed (agentscope.models.ModelResponse attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.parsed">(agentscope.models.response.ModelResponse attribute)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.parsers.html#agentscope.parsers.ParserBase">ParserBase (class in agentscope.parsers)</a>
 
       <ul>
@@ -3071,12 +3086,6 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.raw">raw (agentscope.models.ModelResponse attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.raw">(agentscope.models.response.ModelResponse attribute)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.exception.html#agentscope.exception.ResponseParsingError.raw_response">raw_response (agentscope.exception.ResponseParsingError attribute)</a>
 </li>
       <li><a href="agentscope.agents.html#agentscope.agents.ReActAgent">ReActAgent (class in agentscope.agents)</a>
@@ -3401,10 +3410,10 @@
         <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.ResponseStub.set_response">(agentscope.rpc.rpc_agent_client.ResponseStub method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.logging.html#agentscope.logging.setup_logger">setup_logger() (in module agentscope.logging)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy">ShrinkPolicy (class in agentscope.constants)</a>
 </li>
       <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.shutdown">shutdown() (agentscope.server.launcher.RpcAgentServerLauncher method)</a>
@@ -3459,6 +3468,12 @@
         <li><a href="agentscope.server.html#agentscope.server.AgentServerServicer.stop">(agentscope.server.AgentServerServicer method)</a>
 </li>
         <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.stop">(agentscope.server.servicer.AgentServerServicer method)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.stream">stream (agentscope.models.ModelResponse property)</a>
+
+      <ul>
+        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.stream">(agentscope.models.response.ModelResponse property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.exception.html#agentscope.exception.StudioError">StudioError</a>
@@ -3565,10 +3580,10 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.text">text (agentscope.models.ModelResponse attribute)</a>
+      <li><a href="agentscope.models.html#agentscope.models.ModelResponse.text">text (agentscope.models.ModelResponse property)</a>
 
       <ul>
-        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.text">(agentscope.models.response.ModelResponse attribute)</a>
+        <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.text">(agentscope.models.response.ModelResponse property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.agents.html#agentscope.agents.TextToImageAgent">TextToImageAgent (class in agentscope.agents)</a>
@@ -3599,14 +3614,6 @@
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.to_openai_dict">to_openai_dict() (in module agentscope.utils.tools)</a>
 </li>
-      <li><a href="agentscope.message.html#agentscope.message.MessageBase.to_str">to_str() (agentscope.message.MessageBase method)</a>
-
-      <ul>
-        <li><a href="agentscope.message.html#agentscope.message.Msg.to_str">(agentscope.message.Msg method)</a>
-</li>
-        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.to_str">(agentscope.message.PlaceholderMessage method)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_calling_format">tools_calling_format (agentscope.service.service_toolkit.ServiceToolkit property)</a>
 
       <ul>

@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
@@ -120,7 +121,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">from</span> <span class="nn">http</span> <span class="kn">import</span> <span class="n">HTTPStatus</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+
+<span class="kn">from</span> <span class="nn">dashscope.api_entities.dashscope_response</span> <span class="kn">import</span> <span class="n">GenerationResponse</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
@@ -213,6 +216,45 @@
 
     <span class="n">deprecated_model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tongyi_chat&quot;</span>
 
+<div class="viewcode-block" id="DashScopeChatWrapper.__init__">
+<a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">generate_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the DashScope wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config_name (`str`):</span>
+<span class="sd">                The name of the model config.</span>
+<span class="sd">            model_name (`str`, default `None`):</span>
+<span class="sd">                The name of the model to use in DashScope API.</span>
+<span class="sd">            api_key (`str`, default `None`):</span>
+<span class="sd">                The API key for DashScope API.</span>
+<span class="sd">            stream (`bool`, default `False`):</span>
+<span class="sd">                If True, the response will be a generator in the `stream`</span>
+<span class="sd">                field of the returned `ModelResponse` object.</span>
+<span class="sd">            generate_args (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments used in DashScope api generation,</span>
+<span class="sd">                e.g. `temperature`, `seed`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="n">generate_args</span><span class="o">=</span><span class="n">generate_args</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span></div>
+
+
     <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Set monitor accordingly</span>
         <span class="c1"># TODO: set quota to the following metrics</span>
@@ -236,6 +278,7 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the</span>
@@ -252,6 +295,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            messages (`list`):</span>
 <span class="sd">                A list of messages to process.</span>
+<span class="sd">            stream (`Optional[bool]`, default `None`):</span>
+<span class="sd">                The stream flag to control the response format, which will</span>
+<span class="sd">                overwrite the stream flag in the constructor.</span>
 <span class="sd">            **kwargs (`Any`):</span>
 <span class="sd">                The keyword arguments to DashScope chat completions API,</span>
 <span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please</span>
@@ -261,8 +307,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `ModelResponse`:</span>
-<span class="sd">                The response text in text field, and the raw response in</span>
-<span class="sd">                raw field.</span>
+<span class="sd">                A response object with the response text in text field, and</span>
+<span class="sd">                the raw response in raw field. If stream is True, the response</span>
+<span class="sd">                will be a generator in the `stream` field.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            `parse_func`, `fault_handler` and `max_retries` are reserved for</span>
@@ -297,47 +344,109 @@
             <span class="p">)</span>
 
         <span class="c1"># step3: forward to generate response</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">Generation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
-            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
-            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
-            <span class="n">result_format</span><span class="o">=</span><span class="s2">&quot;message&quot;</span><span class="p">,</span>  <span class="c1"># set the result to be &quot;message&quot; format.</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
 
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
-            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot; Request id: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">request_id</span><span class="si">}</span><span class="s2">,&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; error code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">,&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; error message: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
-
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
-
-        <span class="c1"># step4: record the api invocation if needed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
-            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
                 <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
                 <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="c1"># Set the result to be &quot;message&quot; format.</span>
+                <span class="s2">&quot;result_format&quot;</span><span class="p">:</span> <span class="s2">&quot;message&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="n">stream</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># step5: update monitor accordingly</span>
-        <span class="c1"># The metric names are unified for comparison</span>
+        <span class="c1"># Switch to the incremental_output mode</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;incremental_output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">Generation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># step3: invoke llm api, record the invocation and update the monitor</span>
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+                <span class="n">last_chunk</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
+                        <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Request id: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">request_id</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Status code: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Error code: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Error message: </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+                    <span class="n">text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                    <span class="k">yield</span> <span class="n">text</span>
+                    <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">chunk</span>
+
+                <span class="c1"># Replace the last chunk with the full text</span>
+                <span class="n">last_chunk</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+
+                <span class="c1"># Save the model invocation and update the monitor</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                    <span class="n">kwargs</span><span class="p">,</span>
+                    <span class="n">last_chunk</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">stream</span><span class="o">=</span><span class="n">generator</span><span class="p">(),</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Request id: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">request_id</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error message: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+            <span class="c1"># Record the model invocation and update the monitor</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                <span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">],</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">:</span> <span class="n">GenerationResponse</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the model invocation and update the monitor accordingly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs (`dict`):</span>
+<span class="sd">                The keyword arguments to the DashScope chat API.</span>
+<span class="sd">            response (`GenerationResponse`):</span>
+<span class="sd">                The response object returned by the DashScope chat API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">output_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Update the token record accordingly</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
             <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">input_tokens</span><span class="p">,</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">output_tokens</span><span class="p">,</span>
+            <span class="n">total_tokens</span><span class="o">=</span><span class="n">input_tokens</span> <span class="o">+</span> <span class="n">output_tokens</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># step6: return response</span>
-        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">],</span>
-            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="c1"># Save the model invocation after the stream is exhausted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="DashScopeChatWrapper.format">
