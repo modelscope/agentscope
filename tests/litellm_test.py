@@ -17,10 +17,9 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             {"role": "assistant", "content": "How can I assist you?"},
         ]
 
-    @patch("agentscope.models.litellm_model.litellm")
+    @patch("litellm.completion")
     def test_chat(self, mock_litellm: MagicMock) -> None:
-        """
-        Test chat"""
+        """Test chat"""
         mock_response = MagicMock()
         mock_response.model_dump.return_value = {
             "choices": [
@@ -36,7 +35,7 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             0
         ].message.content = "Hello, this is a mocked response!"
 
-        mock_litellm.completion.return_value = mock_response
+        mock_litellm.return_value = mock_response
 
         agentscope.init(
             model_configs={
