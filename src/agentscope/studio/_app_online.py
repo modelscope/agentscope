@@ -105,7 +105,7 @@ def add_login_safe(
     verification_token: str,
 ) -> None:
     """
-    Log user info when user login.
+    Log user status when user login to verify login status.
     """
     with open(file_name, "a+", encoding="utf-8") as file:
         fcntl.flock(file, fcntl.LOCK_EX)
@@ -168,9 +168,9 @@ def star_repository(access_token: str) -> int:
     return response.status_code == 204
 
 
-def get_user_info(access_token: str) -> Any:
+def get_user_status(access_token: str) -> Any:
     """
-    Get user information.
+    Get user status.
     """
     url = "https://api.github.com/user"
     headers = {
@@ -211,14 +211,14 @@ def oauth_callback() -> str:
     ).json()
 
     access_token = token_response.get("access_token")
-    user_info = get_user_info(access_token)
-    if not access_token or not user_info:
+    user_status = get_user_status(access_token)
+    if not access_token or not user_status:
         return (
             "Error: Access token not found or failed to fetch user "
             "information."
         )
 
-    user_login = user_info.get("login")
+    user_login = user_status.get("login")
 
     try:
         with open(USER_FILE_NAME, "r", encoding="utf-8") as file:
