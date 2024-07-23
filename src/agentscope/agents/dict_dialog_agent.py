@@ -99,11 +99,12 @@ class DictDialogAgent(AgentBase):
         )
 
         # call llm
-        res = self.model(
-            prompt,
-            parse_func=self.parser.parse,
-            max_retries=self.max_retries,
-        )
+        raw_response = self.model(prompt)
+
+        self.speak(raw_response.stream or raw_response.text)
+
+        # Parsing the raw response
+        res = self.parser.parse(raw_response)
 
         # Filter the parsed response by keys for storing in memory, returning
         # in the reply function, and feeding into the metadata field in the
@@ -119,6 +120,5 @@ class DictDialogAgent(AgentBase):
             role="assistant",
             metadata=self.parser.to_metadata(res.parsed),
         )
-        self.speak(msg)
 
         return msg

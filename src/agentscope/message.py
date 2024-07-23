@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The base class for message unit"""
 
-from typing import Any, Optional, Union, Sequence, Literal
+from typing import Any, Optional, Union, Sequence, Literal, List
 from uuid import uuid4
 import json
 
@@ -9,6 +9,7 @@ from loguru import logger
 
 from .rpc import RpcAgentClient, ResponseStub, call_in_thread
 from .utils.tools import _get_timestamp
+from .utils.tools import _map_string_to_color_mark
 from .utils.tools import is_web_accessible
 
 
@@ -22,7 +23,7 @@ class MessageBase(dict):
         name: str,
         content: Any,
         role: Literal["user", "system", "assistant"] = "assistant",
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -38,7 +39,7 @@ class MessageBase(dict):
                 The role of who send the message. It can be one of the
                 `"system"`, `"user"`, or `"assistant"`. Default to
                 `"assistant"`.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[List[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to
@@ -77,10 +78,6 @@ class MessageBase(dict):
         except KeyError as e:
             raise AttributeError(f"no attribute '{key}'") from e
 
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        raise NotImplementedError
-
     def serialize(self) -> str:
         """Return the serialized message."""
         raise NotImplementedError
@@ -105,7 +102,7 @@ class Msg(MessageBase):
     """Save the information for application's control flow, or other
     purposes."""
 
-    url: Optional[Union[Sequence[str], str]]
+    url: Optional[Union[List[str], str]]
     """A url to file, image, video, audio or website."""
 
     timestamp: str
@@ -116,7 +113,7 @@ class Msg(MessageBase):
         name: str,
         content: Any,
         role: Literal["system", "user", "assistant"] = None,
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
         metadata: Optional[Union[dict, str]] = None,
@@ -133,7 +130,7 @@ class Msg(MessageBase):
                 Used to identify the source of the message, e.g. the system
                 information, the user input, or the model response. This
                 argument is used to accommodate most Chat API formats.
-            url (`Optional[Union[list[str], str]]`, defaults to `None`):
+            url (`Optional[Union[List[str], str]]`, defaults to `None`):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to `None`):
                 The timestamp of the message, if None, it will be set to
@@ -163,12 +160,34 @@ class Msg(MessageBase):
             metadata=metadata,
             **kwargs,
         )
+
+        m1, m2 = _map_string_to_color_mark(self.name)
+        self._colored_name = f"{m1}{self.name}{m2}"
+
         if echo:
             logger.chat(self)
 
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        return f"{self.name}: {self.content}"
+    def formatted_str(self, colored: bool = False) -> str:
+        """Return the formatted string of the message. If the message has an
+        url, the url will be appended to the content.
+
+        Args:
+            colored (`bool`, defaults to `False`):
+                Whether to color the name of the message
+        """
+        if colored:
+            name = self._colored_name
+        else:
+            name = self.name
+
+        colored_strs = [f"{name}: {self.content}"]
+        if self.url is not None:
+            if isinstance(self.url, list):
+                for url in self.url:
+                    colored_strs.append(f"{name}: {url}")
+            else:
+                colored_strs.append(f"{name}: {self.url}")
+        return "\n".join(colored_strs)
 
     def serialize(self) -> str:
         return json.dumps({"__type": "Msg", **self})
@@ -196,7 +215,7 @@ class PlaceholderMessage(Msg):
         self,
         name: str,
         content: Any,
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         host: str = None,
         port: int = None,
@@ -219,7 +238,7 @@ class PlaceholderMessage(Msg):
             role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
                 The role of the message, which can be one of the `"system"`,
                 `"user"`, or `"assistant"`.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[List[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to
@@ -289,9 +308,6 @@ class PlaceholderMessage(Msg):
         if not self.__is_local(__key):
             self.update_value()
         return MessageBase.__getitem__(self, __key)
-
-    def to_str(self) -> str:
-        return f"{self.name}: {self.content}"
 
     def update_value(self) -> MessageBase:
         """Get attribute values from rpc agent server immediately"""
