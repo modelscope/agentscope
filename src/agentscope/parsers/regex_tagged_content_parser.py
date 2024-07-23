@@ -60,7 +60,8 @@ class RegexTaggedContentParser(ParserBase, DictFilterMixin):
         """Initialize the regex tagged content parser.
 
         Args:
-            tagged_content_pattern (`Optional[str]`, defaults to `None`):
+            tagged_content_pattern (`Optional[str]`, defaults to
+            `"<(?P<name>[^>]+)>(?P<content>.*?)</\1?>"`):
                 The regex pattern to extract tagged content. The pattern should
                 contain two named groups: `name` and `content`. The `name`
                 group is used as the key of the tagged content, and the

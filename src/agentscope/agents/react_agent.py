@@ -97,21 +97,18 @@ class ReActAgent(AgentBase):
         self.parser = RegexTaggedContentParser(
             format_instruction="""Respond with specific tags as outlined below:
 
-- When not calling any tool functions:
-<thought>what you thought</thought>
-<speak>what you speak</speak>
-
 - When calling tool functions, note the "arg_name" should be replaced with the actual argument name:
 <thought>what you thought</thought>
-<speak>what you speak</speak>
 <function>the function name you want to call</function>
 <arg_name>the value of the argument</arg_name>
 <arg_name>the value of the argument</arg_name>
+
+- When you want to generate a response: 
+<thought>what you thought</thought>
+<response>what you respond</response>
 ...""",  # noqa
             try_parse_json=True,
-            required_keys=["thought", "speak"],
-            # Only print the speak field when verbose is False
-            keys_to_content=True if self.verbose else "speak",
+            required_keys=["thought"],
         )
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
