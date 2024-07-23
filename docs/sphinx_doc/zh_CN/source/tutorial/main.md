@@ -14,6 +14,7 @@ AgentScope是一款全新的Multi-Agent框架，专为应用开发者打造，�
 - [安装](102-installation.md)
 - [快速开始](103-example.md)
 - [模型](203-model.md)
+- [流式输出](203-model.md)
 - [提示工程](206-prompt.md)
 - [Agent](201-agent.md)
 - [记忆](205-memory.md)

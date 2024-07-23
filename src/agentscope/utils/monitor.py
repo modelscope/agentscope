@@ -414,7 +414,7 @@ class SqliteMonitor(MonitorBase):
                 """,
                 (metric_name, 0.0, quota, metric_unit),
             )
-            logger.info(
+            logger.debug(
                 f"Register metric [{metric_name}] to SqliteMonitor with unit "
                 f"[{metric_unit}] and quota [{quota}]",
             )

@@ -1,11 +1,79 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 // Servicer for rpc agent server
 service RpcAgent {
-    rpc call_func (RpcMsg) returns (RpcMsg) {}
+    // check server is alive
+    rpc is_alive (google.protobuf.Empty) returns (GeneralResponse) {}
+
+    // stop the server
+    rpc stop (google.protobuf.Empty) returns (GeneralResponse) {}
+
+    // create a new agent on the server
+    rpc create_agent (CreateAgentRequest) returns (GeneralResponse) {}
+
+    // delete agent from the server
+    rpc delete_agent (StringMsg) returns (GeneralResponse) {}
+
+    // clear all agent on the server
+    rpc delete_all_agents (google.protobuf.Empty) returns (GeneralResponse) {}
+
+    // clone an agent with specific agent_id
+    rpc clone_agent (StringMsg) returns (GeneralResponse) {}
+
+    // get id of all agents on the server as a list
+    rpc get_agent_list (google.protobuf.Empty) returns (GeneralResponse) {}
+
+    // get the resource utilization information of the server
+    rpc get_server_info(google.protobuf.Empty) returns (GeneralResponse) {}
+
+    // update the model configs in the server
+    rpc set_model_configs(StringMsg) returns (GeneralResponse) {}
+
+    // get memory of a specific agent
+    rpc get_agent_memory (StringMsg) returns (GeneralResponse) {}
+
+    // call funcs of agent running on the server
+    rpc call_agent_func(RpcMsg) returns (GeneralResponse) {}
+
+    // update value of PlaceholderMessage
+    rpc update_placeholder(UpdatePlaceholderRequest) returns (GeneralResponse) {}
+
+    // file transfer
+    rpc download_file(StringMsg) returns (stream ByteMsg) {}
 }
 
-// Message class for rpc communication
+// Message classes for agent server management
+message GeneralResponse {
+    bool ok = 1;
+    string message = 2;
+}
+
+message CreateAgentRequest {
+    string agent_id = 1;
+    bytes agent_init_args = 2;
+    bytes agent_source_code = 3;
+}
+
+message AgentStatus {
+    string agent_id = 1;
+    string status = 2;
+}
+
+message UpdatePlaceholderRequest {
+    int64 task_id = 1;
+}
+
+message StringMsg {
+    string value = 1;
+}
+
+message ByteMsg {
+    bytes data = 1;
+}
+
+// Message class for agent function call
 message RpcMsg {
     string value = 1;
     string target_func = 2;
