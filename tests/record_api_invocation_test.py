@@ -30,7 +30,15 @@ class RecordApiInvocation(unittest.TestCase):
     def setUp(self) -> None:
         """Init for RecordApiInvocation."""
 
-        self.dummy_response = {"content": "dummy_response"}
+        self.dummy_response = {
+            "choices": [
+                {
+                    "message": {
+                        "content": "dummy_response",
+                    },
+                },
+            ],
+        }
 
         flush()
 
@@ -94,10 +102,17 @@ class RecordApiInvocation(unittest.TestCase):
                     "timestamp": timestamp,
                     "arguments": {
                         "model": "gpt-4",
+                        "stream": False,
                         "messages": [],
                     },
                     "response": {
-                        "content": "dummy_response",
+                        "choices": [
+                            {
+                                "message": {
+                                    "content": "dummy_response",
+                                },
+                            },
+                        ],
                     },
                 },
             )
