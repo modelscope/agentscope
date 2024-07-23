@@ -1,0 +1,278 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.parsers.regex_tagged_content_parser module &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.parsers.tagged_content_parser module" href="agentscope.parsers.tagged_content_parser.html" />
+    <link rel="prev" title="agentscope.parsers.parser_base module" href="agentscope.parsers.parser_base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.parsers.regex_tagged_content_parser.html">English</a></li> |
+    <a href="../zh_CN/agentscope.parsers.regex_tagged_content_parser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.parsers.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.code_block_parser.html">agentscope.parsers.code_block_parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.json_object_parser.html">agentscope.parsers.json_object_parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.parser_base.html">agentscope.parsers.parser_base module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.parsers.regex_tagged_content_parser module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser"><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.tagged_content_parser.html">agentscope.parsers.tagged_content_parser module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.parsers.html#module-agentscope.parsers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.parsers.html">agentscope.parsers package</a></li>
+      <li class="breadcrumb-item active">agentscope.parsers.regex_tagged_content_parser module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.parsers.regex_tagged_content_parser.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.parsers.regex_tagged_content_parser">
+<span id="agentscope-parsers-regex-tagged-content-parser-module"></span><h1>agentscope.parsers.regex_tagged_content_parser module<a class="headerlink" href="#module-agentscope.parsers.regex_tagged_content_parser" title="Link to this heading"></a></h1>
+<p>The parser for dynamic tagged content</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.parsers.regex_tagged_content_parser.</span></span><span class="sig-name descname"><span class="pre">RegexTaggedContentParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tagged_content_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&lt;(?P&lt;name&gt;[^&gt;]+)&gt;(?P&lt;content&gt;.*?)&lt;/\\1?&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_instruction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_parse_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/parsers/regex_tagged_content_parser.html#RegexTaggedContentParser"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.ParserBase" title="agentscope.parsers.parser_base.ParserBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParserBase</span></code></a>, <a class="reference internal" href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin" title="agentscope.parsers.parser_base.DictFilterMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DictFilterMixin</span></code></a></p>
+<p>A regex tagged content parser, which extracts tagged content according
+to the provided regex pattern. Different from other parsers, this parser
+allows to extract multiple tagged content without knowing the keys in
+advance. The parsed result will be a dictionary within the parsed field of
+the model response.</p>
+<p>Compared with other parsers, this parser is more flexible and can be used
+in dynamic scenarios where
+- the keys are not known in advance
+- the number of the tagged content is not fixed</p>
+<p>Note: Without knowing the keys in advance, it’s hard to prepare a format
+instruction template for different scenarios. Therefore, we ask the user
+to provide the format instruction in the constructor. Of course, the user
+can construct and manage the prompt by themselves optionally.</p>
+<p class="rubric">示例</p>
+<p>By default, the parser use a regex pattern to extract tagged content
+with the following format:
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">&lt;{name1}&gt;{content1}&lt;/{name1}&gt;</span>
+<span class="pre">&lt;{name2}&gt;{content2}&lt;/{name2}&gt;</span>
+<span class="pre">`</span></code>
+The parser will extract the content as the following dictionary:
+<a href="#id1"><span class="problematic" id="id2">``</span></a>`
+{</p>
+<blockquote>
+<div><p>“name1”: content1,
+“name2”: content2,</p>
+</div></blockquote>
+<section id="id3">
+<h2>}<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tagged_content_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'&lt;(?P&lt;name&gt;[^&gt;]+)&gt;(?P&lt;content&gt;.*?)&lt;/\\1?&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_instruction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_parse_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys_to_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/parsers/regex_tagged_content_parser.html#RegexTaggedContentParser.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the regex tagged content parser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>Optional</strong><strong>[</strong><strong>str</strong><strong>]</strong> (<em>tagged_content_pattern</em>)</p></li>
+<li><p><strong>to</strong> (<em>defaults</em>)</p></li>
+<li><p><strong>`&quot;&lt;</strong> – <p>The regex pattern to extract tagged content. The pattern should
+contain two named groups: <cite>name</cite> and <cite>content</cite>. The <cite>name</cite>
+group is used as the key of the tagged content, and the
+<cite>content</cite> group is used as the value.</p>
+</p></li>
+<li><p><strong>format_instruction</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The instruction for the format of the tagged content, which
+will be attached to the end of the prompt messages to remind
+the LLM to follow the format.</p></li>
+<li><p><strong>try_parse_json</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether to try to parse the tagged content as JSON. Note
+the parsing function won’t raise exceptions.</p></li>
+<li><p><strong>required_keys</strong> (<cite>Optional[List[str]]</cite>, defaults to <cite>None</cite>) – The keys that are required in the tagged content.</p></li>
+<li><p><strong>(</strong><strong>`Union</strong><strong>[</strong><strong>str</strong> (<em>keys_to_memory</em>) – </p></li>
+<li><p><strong>bool</strong></p></li>
+<li><p><strong>Sequence</strong><strong>[</strong><strong>str</strong><strong>]</strong><strong>]</strong><strong>`</strong></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param defaults to <cite>True</cite>): The keys to save to memory.
+:param keys_to_content (<cite>Union[str:
+:param bool:
+:param Sequence[str]]</cite>:
+:param :
+:param defaults to <cite>True</cite>): The keys to save to content.
+:param keys_to_metadata (<cite>Union[str:
+:param bool:
+:param Sequence[str]]</cite>:
+:param :
+:param defaults to <cite>False</cite>): The key or keys to be filtered in <cite>to_metadata</cite> method. If</p>
+<blockquote>
+<div><p>it’s
+- <cite>False</cite>, <cite>None</cite> will be returned in the <cite>to_metadata</cite> method
+- <cite>str</cite>, the corresponding value will be returned
+- <cite>List[str]</cite>, a filtered dictionary will be returned
+- <cite>True</cite>, the whole dictionary will be returned</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.format_instruction">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_instruction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.format_instruction" title="Link to this definition"></a></dt>
+<dd><p>The format instruction for the tagged content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.response.html#agentscope.models.response.ModelResponse" title="agentscope.models.response.ModelResponse"><span class="pre">ModelResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/parsers/regex_tagged_content_parser.html#RegexTaggedContentParser.parse"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.parse" title="Link to this definition"></a></dt>
+<dd><p>Parse the response text by the regex pattern, and return a dict of
+the content in the parsed field of the response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>response</strong> (<cite>ModelResponse</cite>) – The response to be parsed.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The response with the parsed field as the parsed
+result.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ModelResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.parsers.parser_base.html" class="btn btn-neutral float-left" title="agentscope.parsers.parser_base module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.parsers.tagged_content_parser.html" class="btn btn-neutral float-right" title="agentscope.parsers.tagged_content_parser module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

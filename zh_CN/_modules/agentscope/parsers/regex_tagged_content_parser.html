@@ -1,0 +1,326 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.parsers.regex_tagged_content_parser &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/parsers/regex_tagged_content_parser.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/parsers/regex_tagged_content_parser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.parsers.regex_tagged_content_parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.parsers.regex_tagged_content_parser 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;The parser for dynamic tagged content&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">TagNotFoundError</span>
+<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span> <span class="nn">..parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span> <span class="nn">..parsers.parser_base</span> <span class="kn">import</span> <span class="n">DictFilterMixin</span>
+
+
+<div class="viewcode-block" id="RegexTaggedContentParser">
+<a class="viewcode-back" href="../../../agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.RegexTaggedContentParser">[文档]</a>
+<span class="k">class</span> <span class="nc">RegexTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A regex tagged content parser, which extracts tagged content according</span>
+<span class="sd">    to the provided regex pattern. Different from other parsers, this parser</span>
+<span class="sd">    allows to extract multiple tagged content without knowing the keys in</span>
+<span class="sd">    advance. The parsed result will be a dictionary within the parsed field of</span>
+<span class="sd">    the model response.</span>
+
+<span class="sd">    Compared with other parsers, this parser is more flexible and can be used</span>
+<span class="sd">    in dynamic scenarios where</span>
+<span class="sd">    - the keys are not known in advance</span>
+<span class="sd">    - the number of the tagged content is not fixed</span>
+
+<span class="sd">    Note: Without knowing the keys in advance, it&#39;s hard to prepare a format</span>
+<span class="sd">    instruction template for different scenarios. Therefore, we ask the user</span>
+<span class="sd">    to provide the format instruction in the constructor. Of course, the user</span>
+<span class="sd">    can construct and manage the prompt by themselves optionally.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        By default, the parser use a regex pattern to extract tagged content</span>
+<span class="sd">        with the following format:</span>
+<span class="sd">        ```</span>
+<span class="sd">        &lt;{name1}&gt;{content1}&lt;/{name1}&gt;</span>
+<span class="sd">        &lt;{name2}&gt;{content2}&lt;/{name2}&gt;</span>
+<span class="sd">        ```</span>
+<span class="sd">        The parser will extract the content as the following dictionary:</span>
+<span class="sd">        ```</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;name1&quot;: content1,</span>
+<span class="sd">            &quot;name2&quot;: content2,</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RegexTaggedContentParser.__init__">
+<a class="viewcode-back" href="../../../agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.RegexTaggedContentParser.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tagged_content_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;(?P&lt;name&gt;[^&gt;]+)&gt;&quot;</span>
+        <span class="sa">r</span><span class="s2">&quot;(?P&lt;content&gt;.*?)&quot;</span>
+        <span class="sa">r</span><span class="s2">&quot;&lt;/\1?&gt;&quot;</span><span class="p">,</span>
+        <span class="n">format_instruction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">try_parse_json</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">required_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keys_to_memory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys_to_content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">keys_to_metadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the regex tagged content parser.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tagged_content_pattern (`Optional[str]`, defaults to</span>
+<span class="sd">            `&quot;&lt;(?P&lt;name&gt;[^&gt;]+)&gt;(?P&lt;content&gt;.*?)&lt;/\1?&gt;&quot;`):</span>
+<span class="sd">                The regex pattern to extract tagged content. The pattern should</span>
+<span class="sd">                contain two named groups: `name` and `content`. The `name`</span>
+<span class="sd">                group is used as the key of the tagged content, and the</span>
+<span class="sd">                `content` group is used as the value.</span>
+<span class="sd">            format_instruction (`Optional[str]`, defaults to `None`):</span>
+<span class="sd">                The instruction for the format of the tagged content, which</span>
+<span class="sd">                will be attached to the end of the prompt messages to remind</span>
+<span class="sd">                the LLM to follow the format.</span>
+<span class="sd">            try_parse_json (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether to try to parse the tagged content as JSON. Note</span>
+<span class="sd">                the parsing function won&#39;t raise exceptions.</span>
+<span class="sd">            required_keys (`Optional[List[str]]`, defaults to `None`):</span>
+<span class="sd">                The keys that are required in the tagged content.</span>
+<span class="sd">            keys_to_memory (`Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            defaults to `True`):</span>
+<span class="sd">                The keys to save to memory.</span>
+<span class="sd">            keys_to_content (`Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            defaults to `True`):</span>
+<span class="sd">                The keys to save to content.</span>
+<span class="sd">            keys_to_metadata (`Union[str, bool, Sequence[str]]`,</span>
+<span class="sd">            defaults to `False`):</span>
+<span class="sd">                The key or keys to be filtered in `to_metadata` method. If</span>
+<span class="sd">                it&#39;s</span>
+<span class="sd">                - `False`, `None` will be returned in the `to_metadata` method</span>
+<span class="sd">                - `str`, the corresponding value will be returned</span>
+<span class="sd">                - `List[str]`, a filtered dictionary will be returned</span>
+<span class="sd">                - `True`, the whole dictionary will be returned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">DictFilterMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">keys_to_memory</span><span class="o">=</span><span class="n">keys_to_memory</span><span class="p">,</span>
+            <span class="n">keys_to_content</span><span class="o">=</span><span class="n">keys_to_content</span><span class="p">,</span>
+            <span class="n">keys_to_metadata</span><span class="o">=</span><span class="n">keys_to_metadata</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;name&gt;&quot;</span> <span class="ow">in</span> <span class="n">tagged_content_pattern</span>
+        <span class="p">),</span> <span class="s2">&quot;The tagged content pattern should contain a named group &#39;name&#39;.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;content&gt;&quot;</span> <span class="ow">in</span> <span class="n">tagged_content_pattern</span>
+        <span class="p">),</span> <span class="s2">&quot;The tagged content pattern should contain a named group &#39;content&#39;.&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tagged_content_pattern</span> <span class="o">=</span> <span class="n">tagged_content_pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_format_instruction</span> <span class="o">=</span> <span class="n">format_instruction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">try_parse_json</span> <span class="o">=</span> <span class="n">try_parse_json</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">required_keys</span> <span class="o">=</span> <span class="n">required_keys</span> <span class="ow">or</span> <span class="p">[]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The format instruction for the tagged content.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_instruction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The format instruction is not provided. Please provide it in &quot;</span>
+                <span class="s2">&quot;the constructor of the parser.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_instruction</span>
+
+<div class="viewcode-block" id="RegexTaggedContentParser.parse">
+<a class="viewcode-back" href="../../../agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.RegexTaggedContentParser.parse">[文档]</a>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text by the regex pattern, and return a dict of</span>
+<span class="sd">        the content in the parsed field of the response.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response (`ModelResponse`):</span>
+<span class="sd">                The response to be parsed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`: The response with the parsed field as the parsed</span>
+<span class="sd">            result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;The response text is None.&quot;</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tagged_content_pattern</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">)</span>
+
+        <span class="n">keys_missing</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_keys</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys_missing</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TagNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to find tags: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys_missing</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">try_parse_json</span><span class="p">:</span>
+            <span class="n">keys_failed</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                    <span class="n">keys_failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Failed to parse JSON for keys: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys_failed</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

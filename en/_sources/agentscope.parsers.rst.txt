@@ -10,6 +10,7 @@ Submodules
    agentscope.parsers.code_block_parser
    agentscope.parsers.json_object_parser
    agentscope.parsers.parser_base
+   agentscope.parsers.regex_tagged_content_parser
    agentscope.parsers.tagged_content_parser
 
 Module contents

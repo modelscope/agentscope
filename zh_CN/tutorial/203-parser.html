@@ -70,9 +70,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#markdowncodeblockparser">MarkdownCodeBlockParser</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#dict">字典（<code class="docutils literal notranslate"><span class="pre">dict</span></code>）类型</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#markdownjsondictparser">MarkdownJsonDictParser</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#multitaggedcontentparser">MultiTaggedContentParser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">字典类型</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dictfiltermixin">关于 DictFilterMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">解析器</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#json-python">JSON / Python 对象类型</a><ul>
@@ -81,12 +81,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id15">典型使用样例</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id16">狼人杀游戏</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">典型使用样例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id19">狼人杀游戏</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#react">ReAct 智能体和工具使用</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id17">自定义解析器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id20">自定义解析器</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="209-prompt_opt.html">系统提示优化</a></li>
@@ -162,8 +162,16 @@
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#%E5%AD%97%E5%85%B8dict%E7%B1%BB%E5%9E%8B"><span class="xref myst">字典类型</span></a></p>
+<li><p><a class="reference internal" href="#%E5%AD%97%E5%85%B8%E7%B1%BB%E5%9E%8B"><span class="xref myst">字典类型</span></a></p>
 <ul>
+<li><p><a class="reference internal" href="#%E5%85%B3%E4%BA%8E-dictfiltermixin"><span class="xref myst">关于 DictFilterMixin</span></a></p></li>
+<li><p><a class="reference internal" href="#%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="xref myst">解析器</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#regextaggedcontentparser"><span class="xref myst">RegexTaggedContentParser</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="xref myst">初始化</span></a></p></li>
+</ul>
+</li>
 <li><p><a class="reference internal" href="#markdownjsondictparser"><span class="xref myst">MarkdownJsonDictParser</span></a></p>
 <ul>
 <li><p><a class="reference internal" href="#%E5%88%9D%E5%A7%8B%E5%8C%96--%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F%E6%A8%A1%E7%89%88"><span class="xref myst">初始化 &amp; 响应格式模版</span></a></p></li>
@@ -174,6 +182,8 @@
 <ul>
 <li><p><a class="reference internal" href="#%E5%88%9D%E5%A7%8B%E5%8C%96--%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F%E6%A8%A1%E7%89%88-1"><span class="xref myst">初始化 &amp; 响应格式模版</span></a></p></li>
 <li><p><a class="reference internal" href="#%E8%A7%A3%E6%9E%90%E5%87%BD%E6%95%B0-1"><span class="xref myst">解析函数</span></a></p></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -255,7 +265,11 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code></p></td>
 <td><p>要求 LLM 在多个标签中产生指定内容，这些不同标签中的内容将一同被解析成一个 Python 字典，并填入不同的键值对中。</p></td>
 </tr>
-<tr class="row-odd"><td><p>JSON / Python对象类型</p></td>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code></p></td>
+<td><p>适用于不确定标签名，不确定标签数量的场景。允许用户修改正则表达式，返回结果为字典。</p></td>
+</tr>
+<tr class="row-even"><td><p>JSON / Python对象类型</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></p></td>
 <td><p>要求 LLM 在 ```json 和 ``` 标识的代码块中产生指定的内容，解析结果将通过 <code class="docutils literal notranslate"><span class="pre">json.loads</span></code> 转换成 Python 对象。</p></td>
 </tr>
@@ -334,9 +348,12 @@ your python code
 </section>
 </section>
 </section>
-<section id="dict">
-<h3>字典（<code class="docutils literal notranslate"><span class="pre">dict</span></code>）类型<a class="headerlink" href="#dict" title="Link to this heading"></a></h3>
-<p>与字符串和一般的 JSON / Python 对象不同，作为LLM应用中常用的数据格式，AgentScope为字典类型提供了额外的后处理功能。初始化解析器时，可以通过额外设置<code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code>，<code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code>三个参数，从而实现在调用<code class="docutils literal notranslate"><span class="pre">parser</span></code>的<code class="docutils literal notranslate"><span class="pre">to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">to_memory</span></code>和<code class="docutils literal notranslate"><span class="pre">to_metadata</span></code>方法时，对字典键值对的过滤。
+<section id="id9">
+<h3>字典类型<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<section id="dictfiltermixin">
+<h4>关于 DictFilterMixin<a class="headerlink" href="#dictfiltermixin" title="Link to this heading"></a></h4>
+<p>与字符串和一般的 JSON / Python 对象不同，作为 LLM 应用中常用的数据格式，AgentScope 通过 <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/parsers/parser_base.py#L77"><code class="docutils literal notranslate"><span class="pre">DictFilterMixin</span></code></a> 类为字典类型的解析提供后处理功能。</p>
+<p>初始化解析器时，可以通过额外设置<code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code>，<code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code>三个参数，从而实现在调用<code class="docutils literal notranslate"><span class="pre">parser</span></code>的<code class="docutils literal notranslate"><span class="pre">to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">to_memory</span></code>和<code class="docutils literal notranslate"><span class="pre">to_metadata</span></code>方法时，对字典键值对的过滤。
 其中</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code> 指定的键值对将被放置在返回<code class="docutils literal notranslate"><span class="pre">Msg</span></code>对象中的<code class="docutils literal notranslate"><span class="pre">content</span></code>字段，这个字段内容将会被返回给其它智能体，参与到其他智能体的提示构建中，同时也会被<code class="docutils literal notranslate"><span class="pre">self.speak</span></code>函数调用，用于显式输出</p></li>
@@ -459,11 +476,34 @@ your python code
 </li>
 </ul>
 </div></blockquote>
-<p>下面我们具体介绍两种字典类型的解析器。</p>
+</section>
+<section id="id10">
+<h4>解析器<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<p>针对字典类型的返回值，AgentScope 提供了多种不同的解析器，开发者可以根据自己的需求进行选择。</p>
+<section id="regextaggedcontentparser">
+<h5>RegexTaggedContentParser<a class="headerlink" href="#regextaggedcontentparser" title="Link to this heading"></a></h5>
+<section id="id11">
+<h6>初始化<a class="headerlink" href="#id11" title="Link to this heading"></a></h6>
+<p><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code> 主要用于1）不确定的标签名，以及2）不确定标签数量的场景。在这种情况下，该解析器无法提供一个泛用性广的响应格式说明，因此需要开发者在初始化时提供对应的相应格式说明（<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>）。
+除此之外，用户可以通过设置<code class="docutils literal notranslate"><span class="pre">try_parse_json</span></code>，<code class="docutils literal notranslate"><span class="pre">required_keys</span></code>等参数，设置解析器的行为。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">RegexTaggedContentParser</span><span class="p">(</span>
+    <span class="n">format_instruction</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Respond with specific tags as outlined below</span>
+<span class="s2">&lt;thought&gt;what you thought&lt;/thought&gt;</span>
+<span class="s2">&lt;speak&gt;what you speak&lt;/speak&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="n">try_parse_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                    <span class="c1"># 尝试将标签内容解析成 JSON 对象</span>
+    <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">]</span>      <span class="c1"># 必须包含的键</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="markdownjsondictparser">
-<h4>MarkdownJsonDictParser<a class="headerlink" href="#markdownjsondictparser" title="Link to this heading"></a></h4>
-<section id="id9">
-<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id9" title="Link to this heading"></a></h5>
+<h5>MarkdownJsonDictParser<a class="headerlink" href="#markdownjsondictparser" title="Link to this heading"></a></h5>
+<section id="id12">
+<h6>初始化 &amp; 响应格式模版<a class="headerlink" href="#id12" title="Link to this heading"></a></h6>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>要求 LLM 在 ```json 和 ``` 标识的代码块中产生指定内容的字典。</p></li>
 <li><p>除了<code class="docutils literal notranslate"><span class="pre">to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">to_memory</span></code>和<code class="docutils literal notranslate"><span class="pre">to_metadata</span></code>参数外，可以通过提供 <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> 参数提供响应结果样例和说明，即提示LLM应该产生什么样子的字典，该参数可以是字符串，也可以是字典，在构建响应格式提示的时候将会被自动转换成字符串进行拼接。</p>
@@ -497,8 +537,8 @@ your python code
 </li>
 </ul>
 </section>
-<section id="id10">
-<h5>类型校验<a class="headerlink" href="#id10" title="Link to this heading"></a></h5>
+<section id="id13">
+<h6>类型校验<a class="headerlink" href="#id13" title="Link to this heading"></a></h6>
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>中的<code class="docutils literal notranslate"><span class="pre">content_hint</span></code>参数还支持基于Pydantic的类型校验。初始化时，可以将<code class="docutils literal notranslate"><span class="pre">content_hint</span></code>设置为一个Pydantic的模型类，AgentScope将根据这个类来修改<code class="docutils literal notranslate"><span class="pre">instruction_format</span></code>属性，并且利用Pydantic在解析时对LLM返回的字典进行类型校验。
 该功能需要LLM能够理解JSON schema格式的提示，因此适用于能力较强的大模型。</p>
 <p>一个简单的例子如下，<code class="docutils literal notranslate"><span class="pre">&quot;...&quot;</span></code>处可以填写具体的类型校验规则，可以参考<a class="reference external" href="https://docs.pydantic.dev/latest/">Pydantic</a>文档。</p>
@@ -541,10 +581,10 @@ The generated JSON dictionary MUST follow this schema:
 </section>
 </section>
 <section id="multitaggedcontentparser">
-<h4>MultiTaggedContentParser<a class="headerlink" href="#multitaggedcontentparser" title="Link to this heading"></a></h4>
+<h5>MultiTaggedContentParser<a class="headerlink" href="#multitaggedcontentparser" title="Link to this heading"></a></h5>
 <p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>要求 LLM 在多个指定的标签对中产生指定的内容，这些不同标签的内容将一同被解析为一个 Python 字典。使用方法与<code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>类似，只是初始化方法不同，更适合能力较弱的LLM，或是比较复杂的返回内容。</p>
-<section id="id11">
-<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id11" title="Link to this heading"></a></h5>
+<section id="id14">
+<h6>初始化 &amp; 响应格式模版<a class="headerlink" href="#id14" title="Link to this heading"></a></h6>
 <p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>中，每一组标签将会以<code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code>对象的形式传入，其中<code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code>对象包含了</p>
 <ul class="simple">
 <li><p>标签名（<code class="docutils literal notranslate"><span class="pre">name</span></code>），即返回字典中的key值</p></li>
@@ -586,8 +626,8 @@ The generated JSON dictionary MUST follow this schema:
 </pre></div>
 </div>
 </section>
-<section id="id12">
-<h5>解析函数<a class="headerlink" href="#id12" title="Link to this heading"></a></h5>
+<section id="id15">
+<h6>解析函数<a class="headerlink" href="#id15" title="Link to this heading"></a></h6>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>的解析结果为字典，其中key为<code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code>对象的<code class="docutils literal notranslate"><span class="pre">name</span></code>的值，以下是狼人杀中解析 LLM 返回的样例：</p></li>
 </ul>
@@ -613,13 +653,14 @@ The generated JSON dictionary MUST follow this schema:
 </section>
 </section>
 </section>
+</section>
 <section id="json-python">
 <h3>JSON / Python 对象类型<a class="headerlink" href="#json-python" title="Link to this heading"></a></h3>
 <section id="markdownjsonobjectparser">
 <h4>MarkdownJsonObjectParser<a class="headerlink" href="#markdownjsonobjectparser" title="Link to this heading"></a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code>同样采用 Markdown 的```json和```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过<code class="docutils literal notranslate"><span class="pre">json.loads</span></code>进行解析字符串。</p>
-<section id="id13">
-<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id13" title="Link to this heading"></a></h5>
+<section id="id16">
+<h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id16" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonObjectParser</span><span class="p">(</span>
@@ -636,8 +677,8 @@ The generated JSON dictionary MUST follow this schema:
 </pre></div>
 </div>
 </section>
-<section id="id14">
-<h5>解析函数<a class="headerlink" href="#id14" title="Link to this heading"></a></h5>
+<section id="id17">
+<h5>解析函数<a class="headerlink" href="#id17" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
     <span class="n">ModelResponse</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Yes, here is the generated list</span>
 <span class="s2">```json</span>
@@ -659,10 +700,10 @@ The generated JSON dictionary MUST follow this schema:
 </section>
 </section>
 </section>
-<section id="id15">
-<h2>典型使用样例<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
-<section id="id16">
-<h3>狼人杀游戏<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<section id="id18">
+<h2>典型使用样例<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<section id="id19">
+<h3>狼人杀游戏<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
 <p>狼人杀（Werewolf）是字典解析器的一个经典使用场景，在游戏的不同阶段内，需要同一个智能体在不同阶段产生除了<code class="docutils literal notranslate"><span class="pre">&quot;thought&quot;</span></code>和<code class="docutils literal notranslate"><span class="pre">&quot;speak&quot;</span></code>外其它的标识字段，例如是否结束讨论，预言家是否使用能力，女巫是否使用解药和毒药，投票等。</p>
 <p>AgentScope中已经内置了<a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf">狼人杀</a>的样例，该样例采用<code class="docutils literal notranslate"><span class="pre">DictDialogAgent</span></code>类，配合不同的解析器，实现了灵活的目标格式切换。同时利用解析器的后处理功能，实现了“想”与“说”的分离，同时控制游戏流程的推进。
 详细实现请参考狼人杀<a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/game_werewolf">源码</a>。</p>
@@ -672,8 +713,8 @@ The generated JSON dictionary MUST follow this schema:
 <p><code class="docutils literal notranslate"><span class="pre">ReActAgent</span></code>是AgentScope中为了工具使用构建的智能体类，基于 ReAct 算法进行搭建，可以配合不同的工具函数进行使用。其中工具的调用，格式解析，采用了和解析器同样的实现思路。详细实现请参考<a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/react_agent.py">代码</a>。</p>
 </section>
 </section>
-<section id="id17">
-<h2>自定义解析器<a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<section id="id20">
+<h2>自定义解析器<a class="headerlink" href="#id20" title="Link to this heading"></a></h2>
 <p>AgentScope中提供了解析器的基类<code class="docutils literal notranslate"><span class="pre">ParserBase</span></code>，开发者可以通过继承该基类，并实现其中的<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>属性和<code class="docutils literal notranslate"><span class="pre">parse</span></code>方法来实现自己的解析器。</p>
 <p>针对目标格式是字典类型的解析，可以额外继承<code class="docutils literal notranslate"><span class="pre">agentscope.parser.DictFilterMixin</span></code>类实现对字典类型的后处理。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>

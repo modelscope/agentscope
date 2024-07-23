@@ -234,7 +234,11 @@ However, due to the following reasons, this process is also a very complex proce
 <td><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code></p></td>
 <td><p>Requires LLM to generate specified content within multiple tags. Contents from different tags will be parsed into a single Python dictionary with different key-value pairs.</p></td>
 </tr>
-<tr class="row-odd"><td><p>JSON / Python Object Type</p></td>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code></p></td>
+<td><p>For uncertain tag names and quantities, allows users to modify regular expressions, and the return result is a dictionary.</p></td>
+</tr>
+<tr class="row-even"><td><p>JSON / Python Object Type</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code></p></td>
 <td><p>Requires LLM to produce specified content within the code block marked by ```json and ```. The result will be converted into a Python object via json.loads.</p></td>
 </tr>
@@ -440,11 +444,34 @@ When initializing the parser, you can set the <code class="docutils literal notr
 </li>
 </ul>
 </div></blockquote>
-<p>Next we will introduce two parsers for dictionary type.</p>
+<section id="parsers">
+<h4>Parsers<a class="headerlink" href="#parsers" title="Link to this heading"></a></h4>
+<p>For dictionary type return values, AgentScope provides multiple parsers for developers to choose from according to their needs.</p>
+<section id="regextaggedcontentparser">
+<h5>RegexTaggedContentParser<a class="headerlink" href="#regextaggedcontentparser" title="Link to this heading"></a></h5>
+<section id="id1">
+<h6>Initialization<a class="headerlink" href="#id1" title="Link to this heading"></a></h6>
+<p><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code> is designed for scenarios where 1) the tag name is uncertain, and 2) the number of tags is uncertain.
+In this case, the parser cannot provide a general response format instruction, so developers need to provide the corresponding response format instruction (<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>) when initializing.
+Of course, the developers can handle the prompt engineering by themselves optionally.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">RegexTaggedContentParser</span><span class="p">(</span>
+    <span class="n">format_instruction</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Respond with specific tags as outlined below</span>
+<span class="s2">&lt;thought&gt;what you thought&lt;/thought&gt;</span>
+<span class="s2">&lt;speak&gt;what you speak&lt;/speak&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="n">try_parse_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                    <span class="c1"># Try to parse the content of the tag as JSON object</span>
+    <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">]</span>      <span class="c1"># Required keys in the returned dictionary</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="markdownjsondictparser">
-<h4>MarkdownJsonDictParser<a class="headerlink" href="#markdownjsondictparser" title="Link to this heading"></a></h4>
+<h5>MarkdownJsonDictParser<a class="headerlink" href="#markdownjsondictparser" title="Link to this heading"></a></h5>
 <section id="initialization-format-instruction-template">
-<h5>Initialization &amp; Format Instruction Template<a class="headerlink" href="#initialization-format-instruction-template" title="Link to this heading"></a></h5>
+<h6>Initialization &amp; Format Instruction Template<a class="headerlink" href="#initialization-format-instruction-template" title="Link to this heading"></a></h6>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code> requires LLM to generate dictionary within a code block fenced by ```json and ``` tags.</p></li>
 <li><p>Except <code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code> and <code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code>, the <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> parameter can be provided to give an example and explanation of the response result, that is, to remind LLM where and what kind of dictionary should be generated.
@@ -480,7 +507,7 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
 </ul>
 </section>
 <section id="validation">
-<h5>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h5>
+<h6>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h6>
 <p>The <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code> also supports type validation based on Pydantic. When initializing, you can set <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> to a Pydantic model class, and AgentScope will modify the <code class="docutils literal notranslate"><span class="pre">instruction_format</span></code> attribute based on this class. Besides, Pydantic will be used to validate the dictionary returned by LLM during parsing.</p>
 <p>A simple example is as follows, where <code class="docutils literal notranslate"><span class="pre">&quot;...&quot;</span></code> can be filled with specific type validation rules, which can be referred to the <a class="reference external" href="https://docs.pydantic.dev/latest/">Pydantic</a> documentation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
@@ -522,10 +549,10 @@ The generated JSON dictionary MUST follow this schema:
 </section>
 </section>
 <section id="multitaggedcontentparser">
-<h4>MultiTaggedContentParser<a class="headerlink" href="#multitaggedcontentparser" title="Link to this heading"></a></h4>
+<h5>MultiTaggedContentParser<a class="headerlink" href="#multitaggedcontentparser" title="Link to this heading"></a></h5>
 <p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code> asks LLM to generate specific content within multiple tag pairs. The content from different tag pairs will be parsed into a single Python dictionary. Its usage is similar to <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>, but the initialization method is different, and it is more suitable for weak LLMs or complex return content.</p>
-<section id="id1">
-<h5>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id1" title="Link to this heading"></a></h5>
+<section id="id2">
+<h6>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id2" title="Link to this heading"></a></h6>
 <p>Within <code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>, each tag pair will be specified by as <code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code> object, which contains</p>
 <ul class="simple">
 <li><p>Tag name (<code class="docutils literal notranslate"><span class="pre">name</span></code>), the key value in the returned dictionary</p></li>
@@ -567,8 +594,8 @@ The generated JSON dictionary MUST follow this schema:
 </pre></div>
 </div>
 </section>
-<section id="id2">
-<h5>Parse Function<a class="headerlink" href="#id2" title="Link to this heading"></a></h5>
+<section id="id3">
+<h6>Parse Function<a class="headerlink" href="#id3" title="Link to this heading"></a></h6>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">MultiTaggedContentParser</span></code>’s parsing result is a dictionary, whose keys are the value of <code class="docutils literal notranslate"><span class="pre">name</span></code> in the <code class="docutils literal notranslate"><span class="pre">TaggedContent</span></code> objects.
 The following is an example of parsing the LLM response in the werewolf game:</p></li>
@@ -595,13 +622,14 @@ The following is an example of parsing the LLM response in the werewolf game:</p
 </section>
 </section>
 </section>
+</section>
 <section id="json-python-object-type">
 <h3>JSON / Python Object Type<a class="headerlink" href="#json-python-object-type" title="Link to this heading"></a></h3>
 <section id="markdownjsonobjectparser">
 <h4>MarkdownJsonObjectParser<a class="headerlink" href="#markdownjsonobjectparser" title="Link to this heading"></a></h4>
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code> also uses the ```json and ``` tags in Markdown, but does not limit the content type. It can be a list, dictionary, number, string, etc., which can be parsed into a Python object via <code class="docutils literal notranslate"><span class="pre">json.loads</span></code>.</p>
-<section id="id3">
-<h5>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id3" title="Link to this heading"></a></h5>
+<section id="id4">
+<h5>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id4" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonObjectParser</span><span class="p">(</span>
@@ -618,8 +646,8 @@ The following is an example of parsing the LLM response in the werewolf game:</p
 </pre></div>
 </div>
 </section>
-<section id="id4">
-<h5>Parse Function<a class="headerlink" href="#id4" title="Link to this heading"></a></h5>
+<section id="id5">
+<h5>Parse Function<a class="headerlink" href="#id5" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
     <span class="n">ModelResponse</span><span class="p">(</span>
         <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Yes, here is the generated list</span>
