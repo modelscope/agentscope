@@ -224,7 +224,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the agent server is alive.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            bool: Indecate whether the server is alive.</span>
+<span class="sd">            bool: Indicate whether the server is alive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -284,7 +284,7 @@
 <span class="sd">            agent_id (`str`): agent_id of the created agent.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            bool: Indecate whether the creation is successful</span>
+<span class="sd">            bool: Indicate whether the creation is successful</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
@@ -326,7 +326,7 @@
 <span class="sd">            agent_id (`str`): id of the agent to be deleted.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            bool: Indecate whether the deletion is successful</span>
+<span class="sd">            bool: Indicate whether the deletion is successful</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
             <span class="n">stub</span> <span class="o">=</span> <span class="n">RpcAgentStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
@@ -546,7 +546,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        client (`RpcAgentClient`): The rpc client.</span>
-<span class="sd">        x (`str`): The value of the reqeust.</span>
+<span class="sd">        value (`str`): The value of the request.</span>
 <span class="sd">        func_name (`str`): The name of the function being called.</span>
 
 <span class="sd">    Returns:</span>

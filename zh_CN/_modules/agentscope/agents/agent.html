@@ -138,7 +138,7 @@
 
 
 <span class="k">class</span> <span class="nc">_AgentMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The meta-class for agent.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The metaclass for agent.</span>
 
 <span class="sd">    1. record the init args into `_init_settings` field.</span>
 <span class="sd">    2. register class name into `registry` field.</span>
@@ -365,7 +365,7 @@
 <span class="sd">            ValueError: Agent class name not exits.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Type[AgentBase]: the AgentBase sub-class.</span>
+<span class="sd">            Type[AgentBase]: the AgentBase subclass.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">agent_class_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent class &lt;</span><span class="si">{</span><span class="n">agent_class_name</span><span class="si">}</span><span class="s2">&gt; not found.&quot;</span><span class="p">)</span>
