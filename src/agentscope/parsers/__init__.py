@@ -6,6 +6,7 @@ from .json_object_parser import (
     MarkdownJsonDictParser,
 )
 from .code_block_parser import MarkdownCodeBlockParser
+from .regex_tagged_content_parser import RegexTaggedContentParser
 from .tagged_content_parser import (
     TaggedContent,
     MultiTaggedContentParser,
@@ -19,4 +20,5 @@ __all__ = [
     "MarkdownCodeBlockParser",
     "TaggedContent",
     "MultiTaggedContentParser",
+    "RegexTaggedContentParser",
 ]
