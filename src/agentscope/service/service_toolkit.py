@@ -373,16 +373,8 @@ class ServiceToolkit:
 
         execute_results = []
         for i, cmd in enumerate(cmds):
-            func_name = cmd["name"]
             service_func = self.service_funcs[cmd["name"]]
             kwargs = cmd.get("arguments", {})
-
-            print(f">>> Executing function {func_name} with arguments:")
-            for key, value in kwargs.items():
-                value = (
-                    value if len(str(value)) < 50 else str(value)[:50] + "..."
-                )
-                print(f">>> \t{key}: {value}")
 
             # Execute the function
             try:
@@ -392,8 +384,6 @@ class ServiceToolkit:
                     status=ServiceExecStatus.ERROR,
                     content=str(e),
                 )
-
-            print(">>> END ")
 
             status = (
                 "SUCCESS"
