@@ -21,7 +21,7 @@ from agentscope.memory import TemporaryMemory
 
 
 class _AgentMeta(ABCMeta):
-    """The meta-class for agent.
+    """The metaclass for agent.
 
     1. record the init args into `_init_settings` field.
     2. register class name into `registry` field.
@@ -232,7 +232,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             ValueError: Agent class name not exits.
 
         Returns:
-            Type[AgentBase]: the AgentBase sub-class.
+            Type[AgentBase]: the AgentBase subclass.
         """
         if agent_class_name not in cls._registry:
             raise ValueError(f"Agent class <{agent_class_name}> not found.")
