@@ -160,11 +160,12 @@ class Msg(MessageBase):
             metadata=metadata,
             **kwargs,
         )
-        if echo:
-            logger.chat(self)
 
         m1, m2 = _map_string_to_color_mark(self.name)
         self._colored_name = f"{m1}{self.name}{m2}"
+
+        if echo:
+            logger.chat(self)
 
     def formatted_str(self, colored: bool = False) -> str:
         """Return the formatted string of the message. If the message has an
