@@ -16,7 +16,7 @@ capability can be used to build easily.
     ```
 * **Model APIs:** This example uses Dashscope APIs. Thus, we also need an API key for DashScope.
   ```bash
-  export DASH_SCOPE_API='YOUR_API_KEY'
+  export DASHSCOPE_API_KEY='YOUR_API_KEY'
   ```
 
 **Note:** This example has been tested with `dashscope_chat` and `dashscope_text_embedding` model wrapper, with `qwen-max` and `text-embedding-v2` models.
