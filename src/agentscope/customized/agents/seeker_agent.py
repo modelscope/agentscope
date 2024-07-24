@@ -2,8 +2,8 @@
 """A general dialog agent."""
 from typing import Optional, Union, Sequence
 
-from ...message import Msg
-from ..dialog_agent import DialogAgent
+from agentscope.message import Msg
+from agentscope.agents.dialog_agent import DialogAgent
 
 
 class SeekerAgent(DialogAgent):
@@ -12,6 +12,9 @@ class SeekerAgent(DialogAgent):
     def __init__(
         self,
         name: str = "seeker",
+        age: int = 20,
+        money: float = 1000,
+        is_married: bool = False,
         cv: str = "cv",
         sys_prompt: str = "I am a seeker.",
         model_config_name: str = "gpt-3.5-turbo",
@@ -36,6 +39,9 @@ class SeekerAgent(DialogAgent):
             model_config_name=model_config_name,
         )
         self.cv = cv
+        self.age = age
+        self.money = money
+        self.is_married = is_married
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Reply function of the agent. Processes the input data,

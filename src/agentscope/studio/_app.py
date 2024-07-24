@@ -25,7 +25,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 from jinja2 import Environment, FileSystemLoader
 
-from ..agents.customized_agents import customized_agents
 from .._runtime import _runtime
 from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from ._studio_utils import _check_and_convert_id_type
@@ -212,13 +211,20 @@ def _convert_to_py(  # type: ignore[no-untyped-def]
 @_app.route("/data/customized_agents")
 def _customized_agents_info() -> str:
     """Get the information about customized agents."""
+    from ..customized.agents import customized_agents
+
     all_customized_agent_cls_names = (
         customized_agents.get_all_agent_cls_names()
     )
     customized_agents_info = [
         {
             "_cls_name": customized_agent_cls_name,
-            **customized_agents.get_agent_params(customized_agent_cls_name),
+            **{
+                k: v.default
+                for k, v in customized_agents.get_agent_params(
+                    customized_agent_cls_name,
+                ).items()
+            },
         }
         for customized_agent_cls_name in all_customized_agent_cls_names
     ]
@@ -228,6 +234,8 @@ def _customized_agents_info() -> str:
 @_app.route("/data/customized_agents/<agent_name>")
 def _customized_agent(agent_name: str) -> str:
     """Render the customized agent page."""
+    from ..customized.agents import customized_agents
+
     try:
         customized_agent_info = customized_agents.get_agent_params(agent_name)
         customized_agent_info["_cls_name"] = agent_name
@@ -247,6 +255,8 @@ def _customized_agent(agent_name: str) -> str:
 @_app.route("/workstation")
 def _workstation() -> str:
     """Render the workstation page."""
+    from ..customized.agents import customized_agents
+
     all_customized_agent_cls_names = (
         customized_agents.get_all_agent_cls_names()
     )
@@ -808,6 +818,7 @@ def _on_leave(data: dict) -> None:
 def _initialize_customized_agents() -> None:
     """Initialize customized agents."""
     from agentscope.agents import AgentBase, _BUILTIN_AGENTS
+    from ..customized.agents import customized_agents
 
     # pylint: disable=protected-access
     for cls_name, cls in AgentBase._registry.items():

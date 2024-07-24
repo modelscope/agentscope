@@ -19,9 +19,15 @@
 
         {% for key, value in agent.items() %}
         {% if key != '_cls_name' %}
+        {% if value.type_hint == 'str' %}
         <label>{{key}}</label>
-        <input type="text" df-args-{{key}} placeholder="{{value}}" data-required="true">
+        <input type="text" df-args-{{key}} placeholder="{{value.default}}" data-required="true">
         <br>
+        {% elif value.type_hint == 'int' or value.type_hint == 'float' %}
+        <label>{{key}}</label>
+        <input type="number" df-args-{{key}} placeholder="{{value.default}}" data-required="true">
+        <br>
+        {% endif %}
         {% endif %}
         {% endfor %}
     </div>

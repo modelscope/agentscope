@@ -11,7 +11,7 @@ from typing import Any
 from loguru import logger
 
 import agentscope
-from agentscope.agents.customized_agents import customized_agents
+from agentscope.customized.agents import customized_agents
 from agentscope.web.workstation.workflow_node import (
     NODE_NAME_MAPPING,
     WorkflowNodeType,

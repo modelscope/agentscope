@@ -12,7 +12,7 @@ from agentscope.agents import (
     DictDialogAgent,
     ReActAgent,
 )
-from agentscope.agents.customized_agents import customized_agents
+from agentscope.customized.agents import customized_agents
 from agentscope.message import Msg
 from agentscope.models import read_model_configs
 from agentscope.pipelines import (
@@ -342,7 +342,7 @@ class CustomizedAgentNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.agents.customized_agents "
+            "imports": "from agentscope.customized.agents "
             f"import {self.agent_cls_name}",
             "inits": f"{self.var_name} = {self.agent_cls_name}("
             f"{kwarg_converter(self.opt_kwargs)})",
