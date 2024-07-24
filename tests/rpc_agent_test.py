@@ -85,18 +85,12 @@ class DemoRpcAgentWithMonitor(AgentBase):
         except QuotaExceededError:
             x.content["quota_exceeded"] = True
             logger.chat(
-                {
-                    "name": self.name,
-                    "content": "quota_exceeded",
-                },
+                Msg(self.name, "quota_exceeded", "assistant"),
             )
             return x
         x.content["msg_num"] = monitor.get_value("msg_num")
         logger.chat(
-            {
-                "name": self.name,
-                "content": f"msg_num {x.content['msg_num']}",
-            },
+            Msg(self.name, f"msg_num {x.content['msg_num']}", "assistant"),
         )
         time.sleep(0.2)
         return x
@@ -291,7 +285,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         result = agent_a(msg)
-        self.assertEqual(result.to_str(), "a: {'text': 'test'}")
+        self.assertEqual(result.formatted_str(), "a: {'text': 'test'}")
         launcher.shutdown()
 
     def test_multi_rpc_agent(self) -> None:

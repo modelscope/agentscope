@@ -29,6 +29,7 @@ def main() -> None:
             },
         ],
         project="Multi-Agent Conversation",
+        save_api_invoke=True,
     )
 
     # Init two agents

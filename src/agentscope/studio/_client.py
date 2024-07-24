@@ -153,7 +153,7 @@ class StudioClient:
             send_url,
             json={
                 "run_id": self.runtime_id,
-                "msg_id": message.id,
+                "id": message.id,
                 "name": message.name,
                 "role": message.role,
                 "content": str(message.content),
