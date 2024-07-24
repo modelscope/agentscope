@@ -82,7 +82,7 @@ server.launch()
 server.wait_until_terminate()
 ```
 
-For similarity, you can run the following command in your terminal rather than the above code:
+For simplicity, you can run the following command in your terminal rather than the above code:
 
 ```shell
 as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b
