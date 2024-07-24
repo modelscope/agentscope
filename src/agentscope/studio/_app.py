@@ -550,6 +550,61 @@ def _read_examples() -> Response:
     return jsonify(json=data)
 
 
+@_app.route("/save-workflow", methods=["POST"])
+def _save_workflow() -> Response:
+    """
+    Save the workflow JSON data to the local user folder.
+    """
+    data = request.json
+    overwrite = data.get("overwrite", False)
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"})
+
+    # TODO: support online version
+    filepath = os.path.join(_cache_dir, f"{filename}.json")
+    if overwrite:
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+    else:
+        if os.path.exists(filepath):
+            return jsonify({"message": "Workflow file exists!"})
+        else:
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+
+    return jsonify({"message": "Workflow file saved successfully"})
+
+
+@_app.route("/list-workflow-files", methods=["GET"])
+def _list_workflow_files() -> Response:
+    """
+    Get all workflow JSON files in the user folder.
+    """
+    files = [file for file in os.listdir(_cache_dir) if file.endswith(".json")]
+    return jsonify(files=files)
+
+
+@_app.route("/read-workflow", methods=["POST"])
+def _read_workflow() -> Response:
+    """
+    Reads and returns workflow data from the specified JSON file.
+    """
+    data = request.json
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"}), 400
+
+    filepath = os.path.join(_cache_dir, f"{filename}.json")
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+
+    return jsonify(json_data)
+
+
 @_app.route("/")
 def _home() -> str:
     """Render the home page."""
