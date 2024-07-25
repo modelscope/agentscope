@@ -6,10 +6,6 @@ More details can be found at the paper of codeact agent
 https://arxiv.org/abs/2402.01030
 and the original repo of codeact https://github.com/xingyaoww/code-act
 """
-import re
-from typing import Union
-
-
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
 from agentscope.service import (
@@ -17,13 +13,14 @@ from agentscope.service import (
     ServiceExecStatus,
     NoteBookExecutor,
 )
+from agentscope.parsers import RegexTaggedContentParser
 
 SYSTEM_MESSAGE = """system
 You are a helpful assistant that gives helpful, detailed, and polite answers to the user's questions.
-You should interact with the interactive Python (Jupyter Notebook) environment and receive the corresponding output when needed. The code written by assistant should be enclosed using [execute] tag, for example: [execute] print('Hello World!') [/execute].
-You should attempt fewer things at a time instead of putting too much code in one [execute] block. You can install packages through PIP by [execute] !pip install [package needed] [/execute] and should always import packages and define variables before starting to use them.
-You should stop [execute] and provide an answer when they have already obtained the answer from the execution result. Whenever possible, execute the code for the user using [execute] instead of providing it.
-Your response should be concise, but do express their thoughts. Always write the code in [execute] block to execute them.
+You should interact with the interactive Python (Jupyter Notebook) environment and receive the corresponding output when needed. The code written by assistant should be enclosed using <execute> tag, for example: <execute> print('Hello World!') </execute>.
+You should attempt fewer things at a time instead of putting too much code in one <execute> block. You can install packages through PIP by <execute> !pip install [package needed] </execute> and should always import packages and define variables before starting to use them.
+You should stop <execute> and provide an answer when they have already obtained the answer from the execution result. Whenever possible, execute the code for the user using <execute> instead of providing it.
+Your response should be concise, but do express their thoughts. Always write the code in <execute> block to execute them.
 You should not ask for the user's input unless necessary. Solve the task on your own and leave no unanswered questions behind.
 You should do every thing by your self.
 """  # noqa
@@ -80,22 +77,7 @@ class CodeActAgent(AgentBase):
             self.memory.add(code_exec_msg)
             self.speak(code_exec_msg)
 
-    def handle_code_execution(
-        self,
-        response_text: str,
-    ) -> Union[ServiceResponse, None]:
-        """check if there are code execution block in the response,
-        and execute them if exists"""
-        code = re.search(
-            r"\[execute\](.*)\[/execute\]",
-            response_text,
-            re.DOTALL,
-        )
-        if code is not None:
-            code = code.group(1).strip()
-            result = self.code_executor.run_code_on_notebook(code)
-            return result
-        return None
+        self.parser = RegexTaggedContentParser(try_parse_json=False)
 
     def handle_code_result(
         self,
@@ -132,9 +114,13 @@ class CodeActAgent(AgentBase):
             )
             self.memory.add(msg_res)
             self.speak(msg_res)
-
-            code_execution_result = self.handle_code_execution(model_res.text)
-            if code_execution_result is not None:
+            res = self.parser.parse(model_res)
+            code = res.parsed.get("execute")
+            if code is not None:
+                code = code.strip()
+                code_execution_result = (
+                    self.code_executor.run_code_on_notebook(code)
+                )
                 excution_count += 1
                 code_exec_msg = self.handle_code_result(code_execution_result)
                 self.memory.add(code_exec_msg)
