@@ -203,7 +203,7 @@ class LlamaIndexKnowledge(Knowledge):
             )
 
         if persist_root is None:
-            persist_root = FileManager.get_instance().save_dir
+            persist_root = FileManager.get_instance().run_dir
         self.persist_dir = os.path.join(persist_root, knowledge_id)
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index
