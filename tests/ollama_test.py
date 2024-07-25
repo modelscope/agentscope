@@ -3,10 +3,10 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import agentscope
-from agentscope.manager import FileManager
-from agentscope.models import load_model_by_config_name
+from agentscope.manager import ModelManager
 from agentscope._runtime import _Runtime
 from agentscope.utils.monitor import MonitorFactory
+from tests.utils import clean_singleton_instances
 
 
 def flush() -> None:
@@ -15,8 +15,9 @@ def flush() -> None:
     Clear the runtime dir and destroy all singletons.
     """
     _Runtime._flush()  # pylint: disable=W0212
-    FileManager.flush()  # pylint: disable=W0212
     MonitorFactory.flush()
+
+    clean_singleton_instances()
 
 
 class OllamaModelWrapperTest(unittest.TestCase):
@@ -114,7 +115,9 @@ class OllamaModelWrapperTest(unittest.TestCase):
             disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_chat")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_chat",
+        )
         response = model(messages=[{"role": "user", "content": "Hi!"}])
 
         self.assertEqual(response.raw, self.dummy_response)
@@ -139,7 +142,9 @@ class OllamaModelWrapperTest(unittest.TestCase):
             disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_embedding")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_embedding",
+        )
         response = model(prompt="Hi!")
 
         self.assertEqual(response.raw, self.dummy_embedding)
@@ -162,7 +167,9 @@ class OllamaModelWrapperTest(unittest.TestCase):
             disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_generate")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_generate",
+        )
         response = model(prompt="1+1=")
 
         self.assertEqual(response.raw, self.dummy_generate)

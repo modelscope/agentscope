@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import FileManager
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
 from agentscope.models import (
     ModelResponse,
@@ -16,10 +16,8 @@ from agentscope.models import (
     OpenAIChatWrapper,
     PostAPIModelWrapperBase,
     _get_model_wrapper,
-    read_model_configs,
-    load_model_by_config_name,
-    clear_model_configs,
 )
+from tests.utils import clean_singleton_instances
 
 
 class TestModelWrapperSimple(ModelWrapperBase):
@@ -81,46 +79,64 @@ class BasicModelTest(unittest.TestCase):
             },
         ]
         # load a list of configs
-        read_model_configs(configs=configs, clear_existing=True)
-        model = load_model_by_config_name("gpt-4")
+        model_manager = ModelManager.get_instance()
+        model_manager.load_model_configs(
+            model_configs=configs,
+            clear_existing=True,
+        )
+
+        model = model_manager.get_model_by_config_name("gpt-4")
         self.assertEqual(model.config_name, "gpt-4")
-        model = load_model_by_config_name("my_post_api")
+        model = model_manager.get_model_by_config_name("my_post_api")
         self.assertEqual(model.config_name, "my_post_api")
         self.assertRaises(
             ValueError,
-            load_model_by_config_name,
+            model_manager.get_model_by_config_name,
             "non_existent_id",
         )
 
         # load a single config
-        read_model_configs(configs=configs[0], clear_existing=True)
-        model = load_model_by_config_name("gpt-4")
+        model_manager.load_model_configs(
+            model_configs=configs[0],
+            clear_existing=True,
+        )
+        model = model_manager.get_model_by_config_name("gpt-4")
         self.assertEqual(model.config_name, "gpt-4")
-        self.assertRaises(ValueError, load_model_by_config_name, "my_post_api")
+        self.assertRaises(
+            ValueError,
+            model_manager.get_model_by_config_name,
+            "my_post_api",
+        )
 
         # load model with the same id
-        read_model_configs(configs=configs[0], clear_existing=False)
+        model_manager.load_model_configs(
+            model_configs=configs[0],
+            clear_existing=False,
+        )
         mock_logging.assert_called_once_with(
             "config_name [gpt-4] already exists.",
         )
 
-        read_model_configs(
-            configs={
+        model_manager.load_model_configs(
+            model_configs={
                 "model_type": "TestModelWrapperSimple",
                 "config_name": "test_model_wrapper",
                 "args": {},
             },
         )
-        test_model = load_model_by_config_name("test_model_wrapper")
+        test_model = model_manager.get_model_by_config_name(
+            "test_model_wrapper",
+        )
         response = test_model()
         self.assertEqual(response.text, "test_model_wrapper")
-        clear_model_configs()
+        model_manager.clear_model_configs()
         self.assertRaises(
             ValueError,
-            load_model_by_config_name,
+            model_manager.get_model_by_config_name,
             "test_model_wrapper",
         )
 
     def tearDown(self) -> None:
         """Clean up the test environment"""
-        FileManager.flush()
+
+        clean_singleton_instances()

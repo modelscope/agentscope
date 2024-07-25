@@ -4,10 +4,10 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import agentscope
-from agentscope.manager import FileManager
-from agentscope.models import load_model_by_config_name
+from agentscope.manager import ModelManager
 from agentscope._runtime import _Runtime
 from agentscope.utils.monitor import MonitorFactory
+from tests.utils import clean_singleton_instances
 
 
 def flush() -> None:
@@ -16,8 +16,9 @@ def flush() -> None:
     Clear the runtime dir and destroy all singletons.
     """
     _Runtime._flush()  # pylint: disable=W0212
-    FileManager.flush()
     MonitorFactory.flush()
+
+    clean_singleton_instances()
 
 
 class DummyPart:
@@ -56,6 +57,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
     def setUp(self) -> None:
         """Set up for GeminiModelWrapperTest."""
         flush()
+        self.model_manager = ModelManager.get_instance()
 
     @patch("google.generativeai.GenerativeModel")
     def test_gemini_chat(self, mock_model: MagicMock) -> None:
@@ -79,7 +81,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
             disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_gemini_chat")
+        model = self.model_manager.get_model_by_config_name("my_gemini_chat")
         response = model(contents="Hi!")
 
         self.assertEqual(str(response.raw), str(DummyResponse()))
@@ -101,7 +103,9 @@ class GeminiModelWrapperTest(unittest.TestCase):
             disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_gemini_embedding")
+        model = self.model_manager.get_model_by_config_name(
+            "my_gemini_embedding",
+        )
         response = model(content="Hi!")
 
         self.assertDictEqual(

@@ -4,8 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import FileManager
-from agentscope.models import load_model_by_config_name
+from agentscope.manager import FileManager, ModelManager
 
 
 class TestZhipuAIChatWrapper(unittest.TestCase):
@@ -52,8 +51,9 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
             },
             disable_saving=True,
         )
-
-        model = load_model_by_config_name("test_config")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "test_config",
+        )
 
         response = model(messages=self.messages)
 
@@ -105,7 +105,9 @@ class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
             disable_saving=True,
         )
 
-        model = load_model_by_config_name("test_embedding")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "test_embedding",
+        )
 
         response = model(self.text_to_embed)
 

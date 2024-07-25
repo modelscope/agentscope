@@ -4,9 +4,8 @@ import unittest
 from typing import Any
 
 import agentscope
-from agentscope.manager import FileManager
-from agentscope.models import read_model_configs, ModelResponse
-from agentscope.models import load_model_by_config_name
+from agentscope.manager import FileManager, ModelManager
+from agentscope.models import ModelResponse
 from agentscope.models import OpenAIWrapperBase
 from agentscope.prompt import PromptEngine
 
@@ -16,7 +15,6 @@ class PromptEngineTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Init for PromptEngineTest."""
-        agentscope.init(disable_saving=True)
         self.name = "white"
         self.sys_prompt = (
             "You're a player in a chess game, and you are playing {name}."
@@ -29,8 +27,8 @@ class PromptEngineTest(unittest.TestCase):
         self.hint = "Now decide your next move."
         self.prefix = "{name} player: "
 
-        read_model_configs(
-            [
+        agentscope.init(
+            model_configs=[
                 {
                     "model_type": "post_api",
                     "config_name": "open-source",
@@ -48,7 +46,7 @@ class PromptEngineTest(unittest.TestCase):
                     "organization": "xxx",
                 },
             ],
-            clear_existing=True,
+            disable_saving=True,
         )
 
     def test_list_prompt(self) -> None:
@@ -112,7 +110,8 @@ class PromptEngineTest(unittest.TestCase):
 
     def test_str_prompt(self) -> None:
         """Test for string prompt."""
-        model = load_model_by_config_name("open-source")
+        model_manager = ModelManager.get_instance()
+        model = model_manager.get_model_by_config_name("open-source")
         engine = PromptEngine(model)
 
         prompt = engine.join(

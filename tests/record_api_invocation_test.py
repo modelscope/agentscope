@@ -10,6 +10,7 @@ from agentscope.manager import FileManager
 from agentscope.models import OpenAIChatWrapper
 from agentscope._runtime import _Runtime
 from agentscope.utils.monitor import MonitorFactory
+from tests.utils import clean_singleton_instances
 
 
 def flush() -> None:
@@ -18,8 +19,9 @@ def flush() -> None:
     Clear the runtime dir and destroy all singletons.
     """
     _Runtime._flush()  # pylint: disable=W0212
-    FileManager.flush()  # pylint: disable=W0212
     MonitorFactory.flush()
+
+    clean_singleton_instances()
 
 
 class RecordApiInvocation(unittest.TestCase):

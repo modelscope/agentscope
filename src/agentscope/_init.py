@@ -8,8 +8,8 @@ from .agents import AgentBase
 from ._runtime import _runtime
 from .logging import LOG_LEVEL, setup_logger
 from .manager import FileManager
+from .manager._model import ModelManager
 from .utils.monitor import MonitorFactory
-from .models import read_model_configs
 from .constants import _DEFAULT_SAVE_DIR
 from .constants import _DEFAULT_LOG_LEVEL
 from .constants import _DEFAULT_CACHE_DIR
@@ -17,6 +17,9 @@ from .studio._client import _studio_client
 
 # init setting
 _INIT_SETTINGS = {}
+
+# init the singleton class by default settings
+ModelManager()
 
 
 def init(
@@ -206,7 +209,7 @@ def init_process(
 
     # Load model configs if needed
     if model_configs is not None:
-        read_model_configs(model_configs)
+        ModelManager.get_instance().load_model_configs(model_configs)
 
     # Init monitor
     _ = MonitorFactory.get_monitor(

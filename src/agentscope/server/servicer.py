@@ -32,7 +32,7 @@ except ImportError as import_error:
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.agents.agent import AgentBase
-from agentscope.models import read_model_configs
+from agentscope.manager import ModelManager
 from agentscope.studio._client import _studio_client
 from agentscope._runtime import _runtime
 from agentscope.exception import StudioRegisterError
@@ -382,7 +382,7 @@ class AgentServerServicer(RpcAgentServicer):
         """Set the model configs of the agent server."""
         model_configs = json.loads(request.value)
         try:
-            read_model_configs(model_configs)
+            ModelManager.get_instance().load_model_configs(model_configs)
         except Exception as e:
             return agent_pb2.GeneralResponse(
                 ok=False,
