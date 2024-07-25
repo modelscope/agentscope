@@ -56,6 +56,7 @@ Note:
 from __future__ import annotations
 import inspect
 import time
+import math
 from abc import ABCMeta
 from functools import wraps
 from typing import Sequence, Any, Callable, Union, List, Type
@@ -71,6 +72,7 @@ from ..message import Msg
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
 from ..utils.tools import _get_timestamp
+from ..utils.resource_limiter import resources_limit
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -148,7 +150,11 @@ class _ModelWrapperMeta(ABCMeta):
 
     def __new__(mcs, name: Any, bases: Any, attrs: Any) -> Any:
         if "__call__" in attrs:
-            attrs["__call__"] = _response_parse_decorator(attrs["__call__"])
+            attrs["__call__"] = _response_parse_decorator(
+                resources_limit(
+                    attrs["__call__"],
+                ),
+            )
         return super().__new__(mcs, name, bases, attrs)
 
     def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
@@ -198,6 +204,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         self.monitor = MonitorFactory.get_monitor()
 
         self.config_name = config_name
+        self.resource_count = kwargs.pop("resource_count", math.inf)
         logger.info(f"Initialize model by configuration [{config_name}]")
 
     @classmethod
