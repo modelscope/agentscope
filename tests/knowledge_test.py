@@ -8,6 +8,8 @@ import unittest
 from typing import Any
 import shutil
 
+import agentscope
+from agentscope.manager import FileManager
 from agentscope.rag import LlamaIndexKnowledge
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
 
@@ -32,6 +34,8 @@ class KnowledgeTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """set up test data"""
+        agentscope.init(disable_saving=True)
+
         self.data_dir = "tmp_data_dir"
         if not os.path.exists(self.data_dir):
             os.mkdir(self.data_dir)
@@ -42,6 +46,7 @@ class KnowledgeTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up before & after tests."""
+        FileManager.flush()
         try:
             if os.path.exists(self.data_dir):
                 shutil.rmtree(self.data_dir)
