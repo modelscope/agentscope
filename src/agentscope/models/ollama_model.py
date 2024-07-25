@@ -68,7 +68,7 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
         self.model_name = model_name
         self.options = options
         self.keep_alive = keep_alive
-        self.client = ollama.Client(host=host)
+        self.client = ollama.Client(host=host, **kwargs)
 
         self._register_default_metrics()
 
@@ -85,6 +85,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         stream: bool = False,
         options: dict = None,
         keep_alive: str = "5m",
+        host: Optional[Union[str, None]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the model wrapper for Ollama API.
@@ -100,6 +101,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
             keep_alive (`str`, default `5m`):
                 Controls how long the model will stay loaded into memory
                 following the request.
+            host (`str`, default `None`):
+                The host port of the ollama server.
+                Defaults to `None`, which is 127.0.0.1:11434.
         """
 
         super().__init__(
@@ -107,6 +111,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             model_name=model_name,
             options=options,
             keep_alive=keep_alive,
+            host=host,
             **kwargs,
         )
 
