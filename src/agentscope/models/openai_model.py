@@ -14,11 +14,6 @@ from ..file_manager import file_manager
 from ..message import Msg
 from ..utils.tools import _convert_to_str, _to_openai_image_url
 
-try:
-    import openai
-except ImportError:
-    openai = None
-
 from ..utils.token_utils import get_openai_max_length
 from ..constants import _DEFAULT_API_BUDGET
 
@@ -66,13 +61,16 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
 
         super().__init__(config_name=config_name)
 
-        if openai is None:
-            raise ImportError(
-                "Cannot find openai package in current python environment.",
-            )
-
         self.model_name = model_name
         self.generate_args = generate_args or {}
+
+        try:
+            import openai
+        except ImportError as e:
+            raise ImportError(
+                "Cannot find openai package, please install it by "
+                "`pip install openai`",
+            ) from e
 
         self.client = openai.OpenAI(
             api_key=api_key,

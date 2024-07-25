@@ -97,7 +97,7 @@ class RpcAgentClient:
         """Check if the agent server is alive.
 
         Returns:
-            bool: Indecate whether the server is alive.
+            bool: Indicate whether the server is alive.
         """
 
         try:
@@ -151,7 +151,7 @@ class RpcAgentClient:
             agent_id (`str`): agent_id of the created agent.
 
         Returns:
-            bool: Indecate whether the creation is successful
+            bool: Indicate whether the creation is successful
         """
         try:
             with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
@@ -190,7 +190,7 @@ class RpcAgentClient:
             agent_id (`str`): id of the agent to be deleted.
 
         Returns:
-            bool: Indecate whether the deletion is successful
+            bool: Indicate whether the deletion is successful
         """
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
@@ -370,7 +370,7 @@ def call_in_thread(
 
     Args:
         client (`RpcAgentClient`): The rpc client.
-        x (`str`): The value of the reqeust.
+        value (`str`): The value of the request.
         func_name (`str`): The name of the function being called.
 
     Returns:
