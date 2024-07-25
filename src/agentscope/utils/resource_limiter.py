@@ -42,9 +42,9 @@ def get_redis_client(
             time.sleep(delay)
     # No redis found
     logger.warning(
-        "[ResourceLimiter] No resource limits set. Please configure "
+        "[ResourceLimiter] No resource limits set. You could configure "
         "the environment variables `REDIS_HOST`, `REDIS_PORT`, and "
-        "`REDIS_DB` for Redis.",
+        "`REDIS_DB` for Redis to enable resource limiter.",
     )
     return None
 
