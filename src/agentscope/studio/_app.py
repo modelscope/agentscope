@@ -24,9 +24,11 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-from agentscope._runtime import _runtime
-from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
-from agentscope.utils.tools import _is_process_alive, _is_windows
+from .._runtime import _runtime
+from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
+from ._studio_utils import _check_and_convert_id_type
+from ..utils.tools import _is_process_alive, _is_windows
+from ..rpc.rpc_agent_client import RpcAgentClient
 
 _app = Flask(__name__)
 
@@ -127,7 +129,7 @@ class _ServerTable(_db.Model):  # type: ignore[name-defined]
 class _MessageTable(_db.Model):  # type: ignore[name-defined]
     """Message object."""
 
-    id = _db.Column(_db.Integer, primary_key=True)
+    id = _db.Column(_db.String, primary_key=True)
     run_id = _db.Column(
         _db.String,
         _db.ForeignKey("run_table.run_id"),
@@ -267,6 +269,99 @@ def _register_server() -> Response:
     return jsonify(status="ok")
 
 
+@_app.route("/api/servers/all", methods=["GET"])
+def _get_all_servers() -> Response:
+    """Get all servers."""
+    servers = _ServerTable.query.all()
+
+    return jsonify(
+        [
+            {
+                "id": server.id,
+                "host": server.host,
+                "port": server.port,
+                "create_time": server.create_time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                ),
+            }
+            for server in servers
+        ],
+    )
+
+
+@_app.route("/api/servers/status/<server_id>", methods=["GET"])
+def _get_server_status(server_id: str) -> Response:
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    status = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_server_info()
+    if not status or status["id"] != server_id:
+        return jsonify({"status": "dead"})
+    else:
+        return jsonify(
+            {
+                "status": "running",
+                "cpu": status["cpu"],
+                "mem": status["mem"],
+            },
+        )
+
+
+@_app.route("/api/servers/delete", methods=["POST"])
+def _delete_server() -> Response:
+    server_id = request.json.get("server_id")
+    stop_server = request.json.get("stop", False)
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    if stop_server:
+        RpcAgentClient(host=server.host, port=server.port).stop()
+    _ServerTable.query.filter_by(id=server_id).delete()
+    _db.session.commit()
+    return jsonify({"status": "ok"})
+
+
+@_app.route("/api/servers/agent_info/<server_id>", methods=["GET"])
+def _get_server_agent_info(server_id: str) -> Response:
+    _app.logger.info(f"Get info of server [{server_id}]")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    agents = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_agent_list()
+    return jsonify(agents)
+
+
+@_app.route("/api/servers/agents/delete", methods=["POST"])
+def _delete_agent() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id", None)
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    # delete all agents if agent_id is None
+    if agent_id is not None:
+        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+            agent_id,
+        )
+    else:
+        ok = RpcAgentClient(
+            host=server.host,
+            port=server.port,
+        ).delete_all_agent()
+    return jsonify(status="ok" if ok else "fail")
+
+
+@_app.route("/api/servers/agents/memory", methods=["POST"])
+def _agent_memory() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+        agent_id,
+    )
+    if isinstance(mem, dict):
+        mem = [mem]
+    return jsonify(mem)
+
+
 @_app.route("/api/messages/push", methods=["POST"])
 def _push_message() -> Response:
     """Receive a message from the agentscope application, and display it on
@@ -275,6 +370,7 @@ def _push_message() -> Response:
     data = request.json
 
     run_id = data["run_id"]
+    msg_id = data["id"]
     name = data["name"]
     role = data["role"]
     content = data["content"]
@@ -282,16 +378,21 @@ def _push_message() -> Response:
     timestamp = data["timestamp"]
     url = data["url"]
 
+    # First check if the message exists in the database, if exists, we update
+    # it, otherwise, we add it.
+    _MessageTable.query.filter_by(id=msg_id).delete()
+    _db.session.commit()
     try:
         new_message = _MessageTable(
+            id=msg_id,
             run_id=run_id,
             name=name,
             role=role,
             content=content,
             # Before storing into the database, we need to convert the url into
             # a string
-            meta=json.dumps(metadata),
-            url=json.dumps(url),
+            meta=json.dumps(metadata, ensure_ascii=False),
+            url=json.dumps(url, ensure_ascii=False),
             timestamp=timestamp,
         )
         _db.session.add(new_message)
@@ -300,6 +401,7 @@ def _push_message() -> Response:
         abort(400, "Fail to put message with error: " + str(e))
 
     data = {
+        "id": msg_id,
         "run_id": run_id,
         "name": name,
         "role": role,
@@ -694,6 +796,10 @@ def init(
         _app.logger.setLevel("DEBUG")
     else:
         _app.logger.setLevel("INFO")
+
+    # To be compatible with the old table schema, we need to check and convert
+    # the id column of the message_table from INTEGER to VARCHAR.
+    _check_and_convert_id_type(str(_cache_db), "message_table")
 
     _socketio.run(
         _app,

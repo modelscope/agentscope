@@ -23,6 +23,7 @@ rpc_requires = [
     "protobuf==4.25.0",
     "expiringdict",
     "dill",
+    "psutil",
 ]
 
 service_requires = [
