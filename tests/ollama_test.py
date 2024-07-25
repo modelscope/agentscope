@@ -3,9 +3,9 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import agentscope
+from agentscope.manager import FileManager
 from agentscope.models import load_model_by_config_name
 from agentscope._runtime import _Runtime
-from agentscope.file_manager import _FileManager
 from agentscope.utils.monitor import MonitorFactory
 
 
@@ -15,7 +15,7 @@ def flush() -> None:
     Clear the runtime dir and destroy all singletons.
     """
     _Runtime._flush()  # pylint: disable=W0212
-    _FileManager._flush()  # pylint: disable=W0212
+    FileManager.flush()  # pylint: disable=W0212
     MonitorFactory.flush()
 
 
@@ -111,6 +111,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 },
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
         model = load_model_by_config_name("my_ollama_chat")
@@ -135,6 +136,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 },
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
         model = load_model_by_config_name("my_ollama_embedding")
@@ -157,6 +159,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 "options": None,
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
         model = load_model_by_config_name("my_ollama_generate")

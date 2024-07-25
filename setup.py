@@ -84,6 +84,7 @@ minimal_requires = [
     "litellm",
     "psutil",
     "scipy",
+    "pillow",
 ]
 
 distribute_requires = minimal_requires + rpc_requires

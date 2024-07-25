@@ -3,6 +3,8 @@
 import unittest
 from typing import Any
 
+import agentscope
+from agentscope.manager import FileManager
 from agentscope.models import read_model_configs, ModelResponse
 from agentscope.models import load_model_by_config_name
 from agentscope.models import OpenAIWrapperBase
@@ -14,6 +16,7 @@ class PromptEngineTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Init for PromptEngineTest."""
+        agentscope.init(disable_saving=True)
         self.name = "white"
         self.sys_prompt = (
             "You're a player in a chess game, and you are playing {name}."
@@ -129,6 +132,10 @@ Now decide your next move.
 white player: """,
             prompt,
         )
+
+    def tearDown(self) -> None:
+        """Clean up the test environment"""
+        FileManager.flush()
 
 
 if __name__ == "__main__":

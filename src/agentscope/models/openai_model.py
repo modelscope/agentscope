@@ -10,7 +10,7 @@ from ._model_utils import (
     _verify_text_content_in_openai_message_response,
 )
 from .model import ModelWrapperBase, ModelResponse
-from ..file_manager import file_manager
+from ..manager import FileManager
 from ..message import Msg
 from ..utils.tools import _convert_to_str, _to_openai_image_url
 
@@ -551,6 +551,7 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
         # Get image urls as a list
         urls = [_["url"] for _ in images]
 
+        file_manager = FileManager.get_instance()
         if save_local:
             # Return local url if save_local is True
             urls = [file_manager.save_image(_) for _ in urls]

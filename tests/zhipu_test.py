@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
+from agentscope.manager import FileManager
 from agentscope.models import load_model_by_config_name
 
 
@@ -49,6 +50,7 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
                 "model_name": "glm-4",
                 "api_key": self.api_key,
             },
+            disable_saving=True,
         )
 
         model = load_model_by_config_name("test_config")
@@ -58,6 +60,10 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
         self.assertEqual(response.text, "Hello, this is a mocked response!")
 
         mock_zhipuai_client.chat.completions.create.assert_called_once()
+
+    def tearDown(self) -> None:
+        """Clean up the test environment"""
+        FileManager.flush()
 
 
 class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
@@ -96,6 +102,7 @@ class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
                 "model_name": self.model_name,
                 "api_key": self.api_key,
             },
+            disable_saving=True,
         )
 
         model = load_model_by_config_name("test_embedding")
@@ -110,6 +117,10 @@ class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
             model=self.model_name,
             **{},
         )
+
+    def tearDown(self) -> None:
+        """Clean up the test environment"""
+        FileManager.flush()
 
 
 if __name__ == "__main__":

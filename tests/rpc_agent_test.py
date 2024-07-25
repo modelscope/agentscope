@@ -170,7 +170,7 @@ class FileAgent(AgentBase):
 
 
 class BasicRpcAgentTest(unittest.TestCase):
-    "Test cases for Rpc Agent"
+    """Test cases for Rpc Agent"""
 
     def setUp(self) -> None:
         """Init for Rpc Agent Test"""

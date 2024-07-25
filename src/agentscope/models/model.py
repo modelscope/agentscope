@@ -66,7 +66,7 @@ from agentscope.utils import QuotaExceededError
 from .response import ModelResponse
 from ..exception import ResponseParsingError
 
-from ..file_manager import file_manager
+from ..manager import FileManager
 from ..message import Msg
 from ..utils import MonitorFactory
 from ..utils.monitor import get_full_name
@@ -195,7 +195,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 The id of the model, which is used to extract configuration
                 from the config file.
         """
-        self.monitor = MonitorFactory.get_monitor()
+        file_manager = FileManager.get_instance()
+        self.monitor = MonitorFactory.get_monitor(
+            db_path=file_manager.run_dir or "./",
+        )
 
         self.config_name = config_name
         logger.info(f"Initialize model by configuration [{config_name}]")
@@ -252,7 +255,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             "response": response,
         }
 
-        file_manager.save_api_invocation(
+        FileManager.get_instance().save_api_invocation(
             f"model_{model_class}_{timestamp}",
             invocation_record,
         )

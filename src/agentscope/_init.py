@@ -2,17 +2,17 @@
 """The init function for the package."""
 import json
 import os
-import shutil
 from typing import Optional, Union, Sequence
 from agentscope import agents
 from .agents import AgentBase
 from ._runtime import _runtime
-from .file_manager import file_manager
 from .logging import LOG_LEVEL, setup_logger
+from .manager import FileManager
 from .utils.monitor import MonitorFactory
 from .models import read_model_configs
-from .constants import _DEFAULT_DIR
+from .constants import _DEFAULT_SAVE_DIR
 from .constants import _DEFAULT_LOG_LEVEL
+from .constants import _DEFAULT_CACHE_DIR
 from .studio._client import _studio_client
 
 # init setting
@@ -23,10 +23,12 @@ def init(
     model_configs: Optional[Union[dict, str, list]] = None,
     project: Optional[str] = None,
     name: Optional[str] = None,
-    save_dir: str = _DEFAULT_DIR,
+    disable_saving: bool = False,
+    save_dir: str = _DEFAULT_SAVE_DIR,
     save_log: bool = True,
     save_code: bool = True,
     save_api_invoke: bool = False,
+    cache_dir: str = _DEFAULT_CACHE_DIR,
     use_monitor: bool = True,
     logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
     runtime_id: Optional[str] = None,
@@ -44,6 +46,9 @@ def init(
             The project name, which is used to identify the project.
         name (`Optional[str]`, defaults to `None`):
             The name for runtime, which is used to identify this runtime.
+        disable_saving (`bool`, defaults to `False`):
+            Whether to disable saving files. If `True`, this will override
+            the `save_log`, `save_code`, and `save_api_invoke` parameters.
         runtime_id (`Optional[str]`, defaults to `None`):
             The id for runtime, which is used to identify this runtime. Use
             `None` will generate a random id.
@@ -58,6 +63,10 @@ def init(
         save_api_invoke (`bool`, defaults to `False`):
             Whether to save api invocations locally, including model and web
             search invocation.
+        cache_dir (`str`):
+            The directory to cache files. In Linux/Mac, the dir defaults to
+        `~/.cache/agentscope`. In Windows, the dir defaults to
+        `C:\\users\\<username>\\.cache\\agentscope`.
         use_monitor (`bool`, defaults to `True`):
             Whether to activate the monitor.
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
@@ -75,9 +84,12 @@ def init(
         project=project,
         name=name,
         runtime_id=runtime_id,
+        disable_saving=disable_saving,
         save_dir=save_dir,
-        save_api_invoke=save_api_invoke,
         save_log=save_log,
+        save_code=save_code,
+        save_api_invoke=save_api_invoke,
+        cache_dir=cache_dir,
         use_monitor=use_monitor,
         logger_level=logger_level,
         studio_url=studio_url,
@@ -93,15 +105,6 @@ def init(
     _INIT_SETTINGS["save_log"] = save_log
     _INIT_SETTINGS["logger_level"] = logger_level
     _INIT_SETTINGS["use_monitor"] = use_monitor
-
-    # Save code if needed
-    if save_code:
-        # Copy python file in os.path.curdir into runtime directory
-        cur_dir = os.path.abspath(os.path.curdir)
-        for filename in os.listdir(cur_dir):
-            if filename.endswith(".py"):
-                file_abs = os.path.join(cur_dir, filename)
-                shutil.copy(file_abs, str(file_manager.dir_code))
 
     # Load config and init agent by configs
     if agent_configs is not None:
@@ -125,16 +128,19 @@ def init(
 
 
 def init_process(
-    model_configs: Optional[Union[dict, str, list]] = None,
-    project: Optional[str] = None,
-    name: Optional[str] = None,
-    runtime_id: Optional[str] = None,
-    save_dir: str = _DEFAULT_DIR,
-    save_api_invoke: bool = False,
-    save_log: bool = False,
-    use_monitor: bool = True,
-    logger_level: LOG_LEVEL = _DEFAULT_LOG_LEVEL,
-    studio_url: Optional[str] = None,
+    model_configs: Optional[Union[dict, str, list]],
+    project: Optional[str],
+    name: Optional[str],
+    runtime_id: Optional[str],
+    disable_saving: bool,
+    save_dir: str,
+    save_api_invoke: bool,
+    save_log: bool,
+    save_code: bool,
+    cache_dir: str,
+    use_monitor: bool,
+    logger_level: LOG_LEVEL,
+    studio_url: Optional[str],
 ) -> None:
     """An entry to initialize the package in a process.
 
@@ -145,6 +151,9 @@ def init_process(
             The name for runtime, which is used to identify this runtime.
         runtime_id (`Optional[str]`, defaults to `None`):
             The id for runtime, which is used to identify this runtime.
+        disable_saving (`bool`):
+            Whether to disable saving files. If `True`, this will override
+            the `save_log`, `save_code`, and `save_api_invoke` parameters.
         save_dir (`str`, defaults to `./runs`):
             The directory to save logs, files, codes, and api invocations.
             If `dir` is `None`, when saving logs, files, codes, and api
@@ -156,6 +165,12 @@ def init_process(
             A sequence of pre-init model configs.
         save_log (`bool`, defaults to `False`):
             Whether to save logs locally.
+        save_code (`bool`):
+            Whether to save codes locally.
+        cache_dir (`str`):
+            The directory to cache files. In Linux/Mac, the dir defaults to
+            `~/.cache/agentscope`. In Windows, the dir defaults to
+            `C:\\users\\<username>\\.cache\\agentscope`.
         use_monitor (`bool`, defaults to `True`):
             Whether to activate the monitor.
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
@@ -173,12 +188,18 @@ def init_process(
     if runtime_id is not None:
         _runtime.runtime_id = runtime_id
 
-    # Init file manager and save configs by default
-    file_manager.init(save_dir, save_api_invoke)
+    # Init file manager
+    file_manager = FileManager(
+        disable_saving,
+        save_dir,
+        save_log,
+        save_code,
+        save_api_invoke,
+        cache_dir,
+    )
 
     # Init logger
-    dir_log = str(file_manager.dir_log) if save_log else None
-    setup_logger(dir_log, logger_level)
+    setup_logger(file_manager.run_dir, logger_level)
 
     # Load model configs if needed
     if model_configs is not None:
@@ -199,6 +220,6 @@ def init_process(
             project=_runtime.project,
             name=_runtime.name,
             timestamp=_runtime.timestamp,
-            run_dir=file_manager.dir_root,
+            run_dir=file_manager.run_dir,
             pid=os.getpid(),
         )

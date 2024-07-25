@@ -109,7 +109,7 @@ class StudioClient:
         project: str,
         name: str,
         timestamp: str,
-        run_dir: str,
+        run_dir: Optional[str],
         pid: int,
     ) -> None:
         """Register a running instance to the AgentScope Studio."""

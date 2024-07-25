@@ -6,9 +6,9 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
+from agentscope.manager import FileManager
 from agentscope.models import OpenAIChatWrapper
 from agentscope._runtime import _Runtime
-from agentscope.file_manager import _FileManager, file_manager
 from agentscope.utils.monitor import MonitorFactory
 
 
@@ -18,7 +18,7 @@ def flush() -> None:
     Clear the runtime dir and destroy all singletons.
     """
     _Runtime._flush()  # pylint: disable=W0212
-    _FileManager._flush()  # pylint: disable=W0212
+    FileManager.flush()  # pylint: disable=W0212
     MonitorFactory.flush()
 
 
@@ -75,7 +75,8 @@ class RecordApiInvocation(unittest.TestCase):
 
     def assert_invocation_record(self) -> None:
         """Assert invocation record."""
-        run_dir = file_manager.dir_root
+        file_manager = FileManager.get_instance()
+        run_dir = file_manager.run_dir
         records = [
             _
             for _ in os.listdir(

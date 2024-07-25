@@ -15,7 +15,7 @@ from agentscope.utils.monitor import SqliteMonitor, DummyMonitor
 
 
 class MonitorFactoryTest(unittest.TestCase):
-    "Test class for MonitorFactory"
+    """Test class for MonitorFactory"""
 
     def setUp(self) -> None:
         MonitorFactory._instance = None  # pylint: disable=W0212

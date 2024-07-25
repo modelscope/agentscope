@@ -3,6 +3,8 @@
 from numbers import Number
 from enum import IntEnum
 
+from pathlib import Path
+
 PACKAGE_NAME = "agentscope"
 MSG_TOKEN = f"[{PACKAGE_NAME}_msg]"
 
@@ -10,14 +12,15 @@ MSG_TOKEN = f"[{PACKAGE_NAME}_msg]"
 # default values
 
 # for file manager
-_DEFAULT_DIR = "./runs"
+_DEFAULT_SAVE_DIR = "./runs"
 _DEFAULT_LOG_LEVEL = "INFO"
 _DEFAULT_SUBDIR_CODE = "code"
 _DEFAULT_SUBDIR_FILE = "file"
 _DEFAULT_SUBDIR_INVOKE = "invoke"
+_DEFAULT_CACHE_DIR = str(Path.home() / ".cache" / "agentscope")
 _DEFAULT_CFG_NAME = ".config"
 _DEFAULT_IMAGE_NAME = "image_{}_{}.png"
-_DEFAULT_SQLITE_DB_PATH = "agentscope.db"
+_DEFAULT_SQLITE_DB_PATH = "./agentscope.db"
 
 
 # for model wrapper

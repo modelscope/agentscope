@@ -4,6 +4,8 @@ import json
 import unittest
 from typing import Literal
 
+import agentscope
+from agentscope.manager import FileManager
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.parsers import MultiTaggedContentParser, TaggedContent
 from agentscope.service import (
@@ -23,6 +25,8 @@ class ServiceToolkitTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Init for ExampleTest."""
+        agentscope.init(disable_saving=True)
+
         self.json_schema_bing_search1 = {
             "type": "function",
             "function": {
@@ -374,6 +378,10 @@ The following tool functions are available in the format of
                 },
             },
         )
+
+    def tearDown(self) -> None:
+        """Clean up the test environment"""
+        FileManager.flush()
 
 
 if __name__ == "__main__":

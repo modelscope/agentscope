@@ -8,6 +8,7 @@ from typing import Any, Union, List, Sequence, Optional, Generator
 from dashscope.api_entities.dashscope_response import GenerationResponse
 from loguru import logger
 
+from ..manager import FileManager
 from ..message import Msg
 from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
@@ -17,8 +18,6 @@ except ImportError:
     dashscope = None
 
 from .model import ModelWrapperBase, ModelResponse
-
-from ..file_manager import file_manager
 
 
 class DashScopeWrapperBase(ModelWrapperBase, ABC):
@@ -517,6 +516,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         urls = [_["url"] for _ in images]
 
         if save_local:
+            file_manager = FileManager.get_instance()
             # Return local url if save_local is True
             urls = [file_manager.save_image(_) for _ in urls]
         return ModelResponse(image_urls=urls, raw=response)

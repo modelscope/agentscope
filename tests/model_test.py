@@ -7,6 +7,8 @@ from typing import Any, Union, List, Sequence
 import unittest
 from unittest.mock import patch, MagicMock
 
+import agentscope
+from agentscope.manager import FileManager
 from agentscope.message import Msg
 from agentscope.models import (
     ModelResponse,
@@ -35,6 +37,10 @@ class TestModelWrapperSimple(ModelWrapperBase):
 
 class BasicModelTest(unittest.TestCase):
     """Test cases for basic model wrappers"""
+
+    def setUp(self) -> None:
+        """Init for BasicModelTest"""
+        agentscope.init(disable_saving=True)
 
     def test_model_registry(self) -> None:
         """Test the automatic registration mechanism of model wrapper."""
@@ -114,3 +120,7 @@ class BasicModelTest(unittest.TestCase):
             load_model_by_config_name,
             "test_model_wrapper",
         )
+
+    def tearDown(self) -> None:
+        """Clean up the test environment"""
+        FileManager.flush()

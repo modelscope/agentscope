@@ -9,7 +9,7 @@ from typing import Any, List, Literal, Optional, Union
 from loguru import logger
 from tqdm import tqdm
 
-from agentscope.file_manager import file_manager
+from agentscope.manager import FileManager
 from agentscope.message import Msg
 from agentscope.models import (
     load_model_by_config_name,
@@ -218,6 +218,7 @@ class SystemPromptGeneratorBase(ABC):
             user_prompt = example["user_prompt"]
 
             # Load cached embedding instead of generating them again
+            file_manager = FileManager.get_instance()
             cached_embedding = file_manager.fetch_cached_text_embedding(
                 text=user_prompt,
                 embedding_model=self.embed_model_name,

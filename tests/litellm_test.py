@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
+from agentscope.manager import FileManager
 from agentscope.models import load_model_by_config_name
 
 
@@ -44,6 +45,7 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
                 "model_name": "ollama/llama3:8b",
                 "api_key": self.api_key,
             },
+            disable_saving=True,
         )
 
         model = load_model_by_config_name("test_config")
@@ -54,6 +56,10 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
         )
 
         self.assertEqual(response.text, "Hello, this is a mocked response!")
+
+    def tearDown(self) -> None:
+        """Clean up the test environment"""
+        FileManager.flush()
 
 
 if __name__ == "__main__":
