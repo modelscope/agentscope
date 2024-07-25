@@ -103,6 +103,7 @@ class WebBrowser:
         self.page.goto(url)
         self.client = self.page.context.new_cdp_session(self.page)
         self.page_elements = []
+        time.sleep(3)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content=self.page.url,
@@ -172,7 +173,7 @@ class WebBrowser:
         if ele_info["tag_name"] == "button" and ele_info["type"] == "submit":
             time.sleep(5)
         element_handle.click()
-        time.sleep(3)
+        time.sleep(5)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content=f"Click on element {click_id} done",
@@ -271,6 +272,7 @@ class WebBrowser:
     def go_back(self) -> ServiceResponse:
         """Go back to the previous page"""
         self.page.go_back()
+        time.sleep(2)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Go back done",
