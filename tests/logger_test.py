@@ -7,7 +7,8 @@ import unittest
 
 from loguru import logger
 
-from agentscope.utils import setup_logger
+from agentscope.logging import setup_logger
+from agentscope.message import Msg
 
 
 class LoggerTest(unittest.TestCase):
@@ -24,26 +25,41 @@ class LoggerTest(unittest.TestCase):
 
         setup_logger(self.run_dir, level="INFO")
 
-        # str with "\n"
-        logger.chat("Test\nChat\n\nMessage\n\n")
+        msg1 = Msg("abc", "def", "assistant")
+        msg1.id = 1
+        msg1.timestamp = 1
+        msg1._colored_name = "1"  # pylint: disable=protected-access
 
-        # dict with "\n"
-        logger.chat(
-            {
-                "name": "Alice",
-                "content": "Hi!\n",
-                "url": "https://xxx.png",
-            },
+        # url
+        msg2 = Msg("abc", "def", "assistant", url="https://xxx.png")
+        msg2.id = 2
+        msg2.timestamp = 2
+        msg2._colored_name = "2"  # pylint: disable=protected-access
+
+        # urls
+        msg3 = Msg(
+            "abc",
+            "def",
+            "assistant",
+            url=["https://yyy.png", "https://xxx.png"],
         )
+        msg3.id = 3
+        msg3.timestamp = 3
+        msg3._colored_name = "3"  # pylint: disable=protected-access
 
-        # dict without content
-        logger.chat({"name": "Alice", "url": "https://xxx.png"})
+        # html labels
+        msg4 = Msg("Bob", "<red>abc</div", "system")
+        msg4.id = 4
+        msg4.timestamp = 4
+        msg4._colored_name = "4"  # pylint: disable=protected-access
 
-        # dict
-        logger.chat({"abc": 1})
+        logger.chat(msg1)
+        logger.chat(msg2)
+        logger.chat(msg3)
+        logger.chat(msg4)
 
         # To avoid that logging is not finished before the file is read
-        time.sleep(3)
+        time.sleep(2)
 
         with open(
             os.path.join(self.run_dir, "logging.chat"),
@@ -53,18 +69,26 @@ class LoggerTest(unittest.TestCase):
             lines = file.readlines()
 
         ground_truth = [
-            '"Test\\nChat\\n\\nMessage\\n\\n"\n',
-            '{"name": "Alice", "content": "Hi!\\n", "url": "https://xxx.png'
-            '"}\n',
-            '{"name": "Alice", "url": "https://xxx.png"}\n',
-            '{"abc": 1}\n',
+            '{"id": 1, "timestamp": 1, "name": "abc", "content": "def", '
+            '"role": "assistant", "url": null, "metadata": null, '
+            '"_colored_name": "1"}\n',
+            '{"id": 2, "timestamp": 2, "name": "abc", "content": "def", '
+            '"role": "assistant", "url": "https://xxx.png", "metadata": null, '
+            '"_colored_name": "2"}\n',
+            '{"id": 3, "timestamp": 3, "name": "abc", "content": "def", '
+            '"role": "assistant", "url": '
+            '["https://yyy.png", "https://xxx.png"], "metadata": null, '
+            '"_colored_name": "3"}\n',
+            '{"id": 4, "timestamp": 4, "name": "Bob", "content": '
+            '"<red>abc</div", "role": "system", "url": null, "metadata": '
+            'null, "_colored_name": "4"}\n',
         ]
 
         self.assertListEqual(lines, ground_truth)
 
     def tearDown(self) -> None:
         """Tear down for LoggerTest."""
-        logger.stop()
+        logger.remove()
         if os.path.exists(self.run_dir):
             shutil.rmtree(self.run_dir)
 

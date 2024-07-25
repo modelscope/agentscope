@@ -363,7 +363,7 @@ class SqliteMonitor(MonitorBase):
         self.db_path = db_path
         self.table_name = table_name
         self._create_monitor_table(drop_exists)
-        logger.info(
+        logger.debug(
             f"SqliteMonitor initialization completed at [{self.db_path}]",
         )
 
@@ -393,8 +393,8 @@ class SqliteMonitor(MonitorBase):
                 END;
                 """,
             )
-        logger.info(f"Init [{self.table_name}] as the monitor table")
-        logger.info(
+        logger.debug(f"Init [{self.table_name}] as the monitor table")
+        logger.debug(
             f"Init [{self.table_name}_quota_exceeded] as the monitor trigger",
         )
 
@@ -414,7 +414,7 @@ class SqliteMonitor(MonitorBase):
                 """,
                 (metric_name, 0.0, quota, metric_unit),
             )
-            logger.info(
+            logger.debug(
                 f"Register metric [{metric_name}] to SqliteMonitor with unit "
                 f"[{metric_unit}] and quota [{quota}]",
             )

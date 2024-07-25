@@ -3,10 +3,12 @@
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence
+from typing import Any, Union, List, Sequence, Optional, Generator
+
+from dashscope.api_entities.dashscope_response import GenerationResponse
 from loguru import logger
 
-from ..message import MessageBase
+from ..message import Msg
 from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
 try:
@@ -58,7 +60,8 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
-        dashscope.api_key = self.api_key
+        if self.api_key:
+            dashscope.api_key = self.api_key
         self.max_length = None
 
         # Set monitor accordingly
@@ -66,7 +69,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -83,6 +86,42 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     model_type: str = "dashscope_chat"
 
     deprecated_model_type: str = "tongyi_chat"
+
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the DashScope wrapper.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in DashScope API.
+            api_key (`str`, default `None`):
+                The API key for DashScope API.
+            stream (`bool`, default `False`):
+                If True, the response will be a generator in the `stream`
+                field of the returned `ModelResponse` object.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in DashScope api generation,
+                e.g. `temperature`, `seed`.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            generate_args=generate_args,
+            **kwargs,
+        )
+
+        self.stream = stream
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -107,6 +146,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the
@@ -123,6 +163,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                The stream flag to control the response format, which will
+                overwrite the stream flag in the constructor.
             **kwargs (`Any`):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -132,8 +175,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         Returns:
             `ModelResponse`:
-                The response text in text field, and the raw response in
-                raw field.
+                A response object with the response text in text field, and
+                the raw response in raw field. If stream is True, the response
+                will be a generator in the `stream` field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -168,52 +212,114 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
 
         # step3: forward to generate response
-        response = dashscope.Generation.call(
-            model=self.model_name,
-            messages=messages,
-            result_format="message",  # set the result to be "message" format.
-            **kwargs,
-        )
+        if stream is None:
+            stream = self.stream
 
-        if response.status_code != HTTPStatus.OK:
-            error_msg = (
-                f" Request id: {response.request_id},"
-                f" Status code: {response.status_code},"
-                f" error code: {response.code},"
-                f" error message: {response.message}."
-            )
-
-            raise RuntimeError(error_msg)
-
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
-                **kwargs,
+                # Set the result to be "message" format.
+                "result_format": "message",
+                "stream": stream,
             },
-            response=response,
         )
 
-        # step5: update monitor accordingly
-        # The metric names are unified for comparison
+        # Switch to the incremental_output mode
+        if stream:
+            kwargs["incremental_output"] = True
+
+        response = dashscope.Generation.call(**kwargs)
+
+        # step3: invoke llm api, record the invocation and update the monitor
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                last_chunk = None
+                text = ""
+                for chunk in response:
+                    if chunk.status_code != HTTPStatus.OK:
+                        error_msg = (
+                            f"Request id: {chunk.request_id}\n"
+                            f"Status code: {chunk.status_code}\n"
+                            f"Error code: {chunk.code}\n"
+                            f"Error message: {chunk.message}"
+                        )
+                        raise RuntimeError(error_msg)
+
+                    text += chunk.output["choices"][0]["message"]["content"]
+                    yield text
+                    last_chunk = chunk
+
+                # Replace the last chunk with the full text
+                last_chunk.output["choices"][0]["message"]["content"] = text
+
+                # Save the model invocation and update the monitor
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+                raw=response,
+            )
+
+        else:
+            if response.status_code != HTTPStatus.OK:
+                error_msg = (
+                    f"Request id: {response.request_id},\n"
+                    f"Status code: {response.status_code},\n"
+                    f"Error code: {response.code},\n"
+                    f"Error message: {response.message}."
+                )
+
+                raise RuntimeError(error_msg)
+
+            # Record the model invocation and update the monitor
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            return ModelResponse(
+                text=response.output["choices"][0]["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: GenerationResponse,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments to the DashScope chat API.
+            response (`GenerationResponse`):
+                The response object returned by the DashScope chat API.
+        """
+        input_tokens = response.usage.get("input_tokens", 0)
+        output_tokens = response.usage.get("output_tokens", 0)
+
+        # Update the token record accordingly
         self.update_monitor(
             call_counter=1,
-            prompt_tokens=response.usage.get("input_tokens", 0),
-            completion_tokens=response.usage.get("output_tokens", 0),
-            total_tokens=response.usage.get("input_tokens", 0)
-            + response.usage.get("output_tokens", 0),
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+            total_tokens=input_tokens + output_tokens,
         )
 
-        # step6: return response
-        return ModelResponse(
-            text=response.output["choices"][0]["message"]["content"],
-            raw=response,
+        # Save the model invocation after the stream is exhausted
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=response,
         )
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List:
         """Format the messages for DashScope Chat API.
 
@@ -254,7 +360,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -269,11 +375,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
@@ -606,7 +710,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             messages=messages,
             **kwargs,
         )
-
+        # Unhandle code path here
+        # response could be a generator , if stream is yes
+        # suggest add a check here
         if response.status_code != HTTPStatus.OK:
             error_msg = (
                 f" Request id: {response.request_id},"
@@ -653,7 +759,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List:
         """Format the messages for DashScope Multimodal API.
 
@@ -735,7 +841,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             "file://", which will be attached in this format function.
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -750,11 +856,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         for _ in args:
             if _ is None:
                 continue
-            if isinstance(_, MessageBase):
+            if isinstance(_, Msg):
                 input_msgs.append(_)
-            elif isinstance(_, list) and all(
-                isinstance(__, MessageBase) for __ in _
-            ):
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
                 input_msgs.extend(_)
             else:
                 raise TypeError(
@@ -770,7 +874,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
-                content = self._convert_url(unit.url)
+                content = self.convert_url(unit.url)
                 content.append({"text": _convert_to_str(unit.content)})
 
                 messages.append(
@@ -785,7 +889,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
                 # image and audio
-                image_or_audio_dicts.extend(self._convert_url(unit.url))
+                image_or_audio_dicts.extend(self.convert_url(unit.url))
 
         dialogue_history = "\n".join(dialogue)
 
@@ -808,7 +912,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         return messages
 
-    def _convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
+    def convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
         """Convert the url to the format of DashScope API. Note for local
         files, a prefix "file://" will be added.
 
@@ -841,7 +945,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         elif isinstance(url, list):
             dicts = []
             for _ in url:
-                dicts.extend(self._convert_url(_))
+                dicts.extend(self.convert_url(_))
             return dicts
         else:
             raise TypeError(

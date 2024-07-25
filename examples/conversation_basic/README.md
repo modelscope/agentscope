@@ -18,4 +18,4 @@ These models are tested in this example. For other models, some modifications ma
 
 ## Prerequisites
 To set up model serving with open-source LLMs, follow the guidance in
-[scripts/REAMDE.md](../../scripts/README.md).
+[scripts/README.md](https://github.com/modelscope/agentscope/blob/main/scripts/README.md).

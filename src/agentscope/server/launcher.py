@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """ Server of distributed agent"""
 import os
-from multiprocessing import Process, Event, Pipe
-from multiprocessing.synchronize import Event as EventClass
 import asyncio
 import signal
 import argparse
+import time
+from multiprocessing import Process, Event, Pipe
+from multiprocessing.synchronize import Event as EventClass
 from typing import Type
 from concurrent import futures
 from loguru import logger
@@ -23,14 +24,11 @@ except ImportError as import_error:
         import_error,
         "distribute",
     )
-
 import agentscope
 from agentscope.server.servicer import AgentServerServicer
 from agentscope.agents.agent import AgentBase
-from agentscope.utils.tools import (
-    _get_timestamp,
-    check_port,
-)
+from agentscope.utils.tools import check_port, generate_id_from_seed
+from agentscope.constants import _DEFAULT_RPC_OPTIONS
 
 
 def _setup_agent_server(
@@ -43,8 +41,9 @@ def _setup_agent_server(
     pipe: int = None,
     local_mode: bool = True,
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 1800,
-    custom_agents: list = None,
+    max_timeout_seconds: int = 7200,
+    studio_url: str = None,
+    custom_agent_classes: list = None,
 ) -> None:
     """Setup agent server.
 
@@ -56,7 +55,7 @@ def _setup_agent_server(
         server_id (`str`):
             The id of the server.
         init_settings (`dict`, defaults to `None`):
-            Init settings for agentscope.init.
+            Init settings for _init_server.
         start_event (`EventClass`, defaults to `None`):
             An Event instance used to determine whether the child process
             has been started.
@@ -65,14 +64,17 @@ def _setup_agent_server(
             process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `None`):
+        local_mode (`bool`, defaults to `True`):
             Only listen to local requests.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
-        max_timeout_seconds (`int`, defaults to `1800`):
+        max_timeout_seconds (`int`, defaults to `7200`):
             Timeout for agent replies.
-        custom_agents (`list`, defaults to `None`):
-            A list of custom agent classes that are not in `agentscope.agents`.
+        studio_url (`str`, defaults to `None`):
+            URL of the AgentScope Studio.
+        custom_agent_classes (`list`, defaults to `None`):
+            A list of customized agent classes that are not in
+            `agentscope.agents`.
     """
     asyncio.run(
         _setup_agent_server_async(
@@ -86,7 +88,8 @@ def _setup_agent_server(
             local_mode=local_mode,
             max_pool_size=max_pool_size,
             max_timeout_seconds=max_timeout_seconds,
-            custom_agents=custom_agents,
+            studio_url=studio_url,
+            custom_agent_classes=custom_agent_classes,
         ),
     )
 
@@ -101,8 +104,9 @@ async def _setup_agent_server_async(
     pipe: int = None,
     local_mode: bool = True,
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 1800,
-    custom_agents: list = None,
+    max_timeout_seconds: int = 7200,
+    studio_url: str = None,
+    custom_agent_classes: list = None,
 ) -> None:
     """Setup agent server in an async way.
 
@@ -114,41 +118,44 @@ async def _setup_agent_server_async(
         server_id (`str`):
             The id of the server.
         init_settings (`dict`, defaults to `None`):
-            Init settings for agentscope.init.
+            Init settings for _init_server.
         start_event (`EventClass`, defaults to `None`):
             An Event instance used to determine whether the child process
             has been started.
-        stop_event (`EventClass`, defaults to `None`):
-            The stop Event instance used to determine whether the child
-            process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `None`):
+        local_mode (`bool`, defaults to `True`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
         max_pool_size (`int`, defaults to `8192`):
             The max number of agent reply messages that the server can
             accommodate. Note that the oldest message will be deleted
             after exceeding the pool size.
-        max_timeout_seconds (`int`, defaults to `1800`):
+        max_timeout_seconds (`int`, defaults to `7200`):
             Maximum time for reply messages to be cached in the server.
             Note that expired messages will be deleted.
-        custom_agents (`list`, defaults to `None`):
-            A list of custom agent classes that are not in `agentscope.agents`.
+        studio_url (`str`, defaults to `None`):
+            URL of the AgentScope Studio.
+        custom_agent_classes (`list`, defaults to `None`):
+            A list of customized agent classes that are not in
+            `agentscope.agents`.
     """
     from agentscope._init import init_process
 
     if init_settings is not None:
         init_process(**init_settings)
     servicer = AgentServerServicer(
+        stop_event=stop_event,
         host=host,
         port=port,
+        server_id=server_id,
+        studio_url=studio_url,
         max_pool_size=max_pool_size,
         max_timeout_seconds=max_timeout_seconds,
     )
     # update agent registry
-    if custom_agents is not None:
-        for agent_class in custom_agents:
+    if custom_agent_classes is not None:
+        for agent_class in custom_agent_classes:
             AgentBase.register_agent_class(agent_class=agent_class)
 
     async def shutdown_signal_handler() -> None:
@@ -156,6 +163,8 @@ async def _setup_agent_server_async(
             f"Received shutdown signal. Gracefully stopping the server at "
             f"[{host}:{port}].",
         )
+        if stop_event is not None:
+            stop_event.set()
         await server.stop(grace=5)
 
     loop = asyncio.get_running_loop()
@@ -172,6 +181,8 @@ async def _setup_agent_server_async(
             servicer.port = port
             server = grpc.aio.server(
                 futures.ThreadPoolExecutor(max_workers=None),
+                # set max message size to 32 MB
+                options=_DEFAULT_RPC_OPTIONS,
             )
             add_RpcAgentServicer_to_server(servicer, server)
             if local_mode:
@@ -191,14 +202,12 @@ async def _setup_agent_server_async(
     if start_event is not None:
         pipe.send(port)
         start_event.set()
-        while not stop_event.is_set():
-            await asyncio.sleep(1)
-        logger.info(
-            f"Stopping agent server at [{host}:{port}]",
-        )
-        await server.stop(grace=10.0)
-    else:
-        await server.wait_for_termination()
+    while not stop_event.is_set():
+        await asyncio.sleep(1)
+    logger.info(
+        f"Stopping agent server at [{host}:{port}]",
+    )
+    await server.stop(grace=10.0)
     logger.info(
         f"agent server [{server_id}] at {host}:{port} stopped successfully",
     )
@@ -212,10 +221,11 @@ class RpcAgentServerLauncher:
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
         local_mode: bool = False,
-        custom_agents: list = None,
+        custom_agent_classes: list = None,
         server_id: str = None,
+        studio_url: str = None,
         agent_class: Type[AgentBase] = None,
         agent_args: tuple = (),
         agent_kwargs: dict = None,
@@ -231,18 +241,20 @@ class RpcAgentServerLauncher:
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Maximum time for reply messages to be cached in the server.
                 Note that expired messages will be deleted.
             local_mode (`bool`, defaults to `False`):
                 If `True`, only listen to requests from "localhost", otherwise,
                 listen to requests from all hosts.
-            custom_agents (`list`, defaults to `None`):
-                A list of custom agent classes that are not in
+            custom_agent_classes (`list`, defaults to `None`):
+                A list of customized agent classes that are not in
                 `agentscope.agents`.
             server_id (`str`, defaults to `None`):
                 The id of the agent server. If not specified, a random id
                 will be generated.
+            studio_url (`Optional[str]`, defaults to `None`):
+                The url of the agentscope studio.
             agent_class (`Type[AgentBase]`, deprecated):
                 The AgentBase subclass encapsulated by this wrapper.
             agent_args (`tuple`, deprecated): The args tuple used to
@@ -256,12 +268,15 @@ class RpcAgentServerLauncher:
         self.max_timeout_seconds = max_timeout_seconds
         self.local_mode = local_mode
         self.server = None
-        self.stop_event = None
         self.parent_con = None
-        self.custom_agents = custom_agents
+        self.custom_agent_classes = custom_agent_classes
+        self.stop_event = Event()
         self.server_id = (
-            self.generate_server_id() if server_id is None else server_id
+            RpcAgentServerLauncher.generate_server_id(self.host, self.port)
+            if server_id is None
+            else server_id
         )
+        self.studio_url = studio_url
         if (
             agent_class is not None
             or len(agent_args) > 0
@@ -272,9 +287,10 @@ class RpcAgentServerLauncher:
                 " in `RpcAgentServerLauncher`",
             )
 
-    def generate_server_id(self) -> str:
+    @classmethod
+    def generate_server_id(cls, host: str, port: int) -> str:
         """Generate server id"""
-        return f"{self.host}:{self.port}-{_get_timestamp('%y%m%d-%H:%M:%S')}"
+        return generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
 
     def _launch_in_main(self) -> None:
         """Launch agent server in main-process"""
@@ -285,11 +301,13 @@ class RpcAgentServerLauncher:
             _setup_agent_server_async(
                 host=self.host,
                 port=self.port,
+                stop_event=self.stop_event,
                 server_id=self.server_id,
                 max_pool_size=self.max_pool_size,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
-                custom_agents=self.custom_agents,
+                custom_agent_classes=self.custom_agent_classes,
+                studio_url=self.studio_url,
             ),
         )
 
@@ -297,7 +315,6 @@ class RpcAgentServerLauncher:
         """Launch an agent server in sub-process."""
         from agentscope._init import _INIT_SETTINGS
 
-        self.stop_event = Event()
         self.parent_con, child_con = Pipe()
         start_event = Event()
         server_process = Process(
@@ -313,7 +330,8 @@ class RpcAgentServerLauncher:
                 "max_pool_size": self.max_pool_size,
                 "max_timeout_seconds": self.max_timeout_seconds,
                 "local_mode": self.local_mode,
-                "custom_agents": self.custom_agents,
+                "studio_url": self.studio_url,
+                "custom_agent_classes": self.custom_agent_classes,
             },
         )
         server_process.start()
@@ -409,7 +427,7 @@ def as_server() -> None:
     parser.add_argument(
         "--max-timeout-seconds",
         type=int,
-        default=1800,
+        default=7200,
         help=(
             "max time for agent reply messages to be cached"
             "in the server. Note that expired messages will be deleted."
@@ -420,7 +438,7 @@ def as_server() -> None:
         type=bool,
         default=False,
         help=(
-            "If `True`, only listen to requests from 'localhost', otherwise, "
+            "if `True`, only listen to requests from 'localhost', otherwise, "
             "listen to requests from all hosts."
         ),
     )
@@ -429,21 +447,51 @@ def as_server() -> None:
         type=str,
         help="path to the model config json file",
     )
+    parser.add_argument(
+        "--server-id",
+        type=str,
+        default=None,
+        help="id of the server, used to register to the studio, generated"
+        " randomly if not specified.",
+    )
+    parser.add_argument(
+        "--studio-url",
+        type=str,
+        default=None,
+        help="the url of agentscope studio",
+    )
+    parser.add_argument(
+        "--no-log",
+        action="store_true",
+        help="whether to disable log",
+    )
+    parser.add_argument(
+        "--save-api-invoke",
+        action="store_true",
+        help="whether to save api invoke",
+    )
+    parser.add_argument(
+        "--use-monitor",
+        action="store_true",
+        help="whether to use monitor",
+    )
     args = parser.parse_args()
     agentscope.init(
         project="agent_server",
         name=f"server_{args.host}:{args.port}",
-        runtime_id=_get_timestamp(
-            "server_{}_{}_%y%m%d-%H%M%S",
-        ).format(args.host, args.port),
+        save_log=not args.no_log,
+        save_api_invoke=args.save_api_invoke,
         model_configs=args.model_config_path,
+        use_monitor=args.use_monitor,
     )
     launcher = RpcAgentServerLauncher(
         host=args.host,
         port=args.port,
+        server_id=args.server_id,
         max_pool_size=args.max_pool_size,
         max_timeout_seconds=args.max_timeout_seconds,
         local_mode=args.local_mode,
+        studio_url=args.studio_url,
     )
     launcher.launch(in_subprocess=False)
     launcher.wait_until_terminate()

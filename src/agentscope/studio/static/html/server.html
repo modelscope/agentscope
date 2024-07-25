@@ -1,0 +1,57 @@
+<div id="server-panel">
+    <div id="server-titlebar" class="page-titlebar">
+        <span
+            class="server-titlebar-span unselectable-text"
+            id="server-main-title"
+            >Server Manager</span
+        >
+    </div>
+    <div id="server-content">
+        <div id="server-overview" class="server-section">
+            <div class="server-section-title-bar">
+                <span>Servers</span>
+                <img
+                    src="/static/svg/flush.svg"
+                    id="flush-server-btn"
+                    class="icon"
+                />
+                <img
+                    src="/static/svg/trash-bin.svg"
+                    class="icon align-right-btn"
+                    id="delete-dead-server-btn"
+                />
+            </div>
+            <div id="server-table"></div>
+        </div>
+        <div id="server-detail" class="server-section collapsed">
+            <div class="server-section-title-bar">
+                <span class="server-section-title"></span>
+                <img
+                    src="/static/svg/flush.svg"
+                    class="icon"
+                    id="flush-agent-btn"
+                />
+                <img
+                    src="/static/svg/trash-bin.svg"
+                    class="icon align-right-btn"
+                    id="delete-all-agent-btn"
+                />
+            </div>
+            <div id="agent-table"></div>
+        </div>
+        <div id="agent-memory" class="server-section collapsed">
+            <div class="server-section-title-bar">
+                <span class="server-section-title"></span>
+                <img
+                    src="/static/svg/flush.svg"
+                    class="icon"
+                    id="flush-agent-btn"
+                />
+            </div>
+            <div id="agent-memory-content">
+                <div id="agent-memory-table"></div>
+                <div id="agent-memory-raw"></div>
+            </div>
+        </div>
+    </div>
+</div>

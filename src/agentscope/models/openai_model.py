@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence, Dict
+from typing import Union, Any, List, Sequence, Dict, Optional, Generator
 
 from loguru import logger
 
+from ._model_utils import (
+    _verify_text_content_in_openai_delta_response,
+    _verify_text_content_in_openai_message_response,
+)
 from .model import ModelWrapperBase, ModelResponse
 from ..file_manager import file_manager
-from ..message import MessageBase
+from ..message import Msg
 from ..utils.tools import _convert_to_str, _to_openai_image_url
-
-try:
-    import openai
-except ImportError:
-    openai = None
 
 from ..utils.token_utils import get_openai_max_length
 from ..constants import _DEFAULT_API_BUDGET
@@ -62,13 +61,16 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
 
         super().__init__(config_name=config_name)
 
-        if openai is None:
-            raise ImportError(
-                "Cannot find openai package in current python environment.",
-            )
-
         self.model_name = model_name
         self.generate_args = generate_args or {}
+
+        try:
+            import openai
+        except ImportError as e:
+            raise ImportError(
+                "Cannot find openai package, please install it by "
+                "`pip install openai`",
+            ) from e
 
         self.client = openai.OpenAI(
             api_key=api_key,
@@ -91,7 +93,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -109,6 +111,56 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     substrings_in_vision_models_names = ["gpt-4-turbo", "vision", "gpt-4o"]
     """The substrings in the model names of vision models."""
+
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        organization: str = None,
+        client_args: dict = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        budget: float = _DEFAULT_API_BUDGET,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the openai client.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in OpenAI API.
+            api_key (`str`, default `None`):
+                The API key for OpenAI API. If not specified, it will
+                be read from the environment variable `OPENAI_API_KEY`.
+            organization (`str`, default `None`):
+                The organization ID for OpenAI API. If not specified, it will
+                be read from the environment variable `OPENAI_ORGANIZATION`.
+            client_args (`dict`, default `None`):
+                The extra keyword arguments to initialize the OpenAI client.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in openai api generation,
+                e.g. `temperature`, `seed`.
+            budget (`float`, default `None`):
+                The total budget using this model. Set to `None` means no
+                limit.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            organization=organization,
+            client_args=client_args,
+            generate_args=generate_args,
+            budget=budget,
+            **kwargs,
+        )
+
+        self.stream = stream
 
     def _register_default_metrics(self) -> None:
         # Set monitor accordingly
@@ -133,6 +185,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
@@ -149,6 +202,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, defaults to `None`)
+                Whether to enable stream mode, which will override the
+                `stream` argument in the constructor if provided.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -190,34 +246,93 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             )
 
         # step3: forward to generate response
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            **kwargs,
-        )
+        if stream is None:
+            stream = self.stream
 
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
-                **kwargs,
+                "stream": stream,
             },
-            response=response.model_dump(),
         )
 
-        # step5: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        if stream:
+            kwargs["stream_options"] = {"include_usage": True}
 
-        # step6: return response
-        return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
+        response = self.client.chat.completions.create(**kwargs)
+
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                text = ""
+                last_chunk = {}
+                for chunk in response:
+                    chunk = chunk.model_dump()
+                    if _verify_text_content_in_openai_delta_response(chunk):
+                        text += chunk["choices"][0]["delta"]["content"]
+                        yield text
+                    last_chunk = chunk
+
+                # Update the last chunk to save locally
+                if last_chunk.get("choices", []) in [None, []]:
+                    last_chunk["choices"] = [{}]
+
+                last_chunk["choices"][0]["message"] = {
+                    "role": "assistant",
+                    "content": text,
+                }
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+            )
+        else:
+            response = response.model_dump()
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            if _verify_text_content_in_openai_message_response(response):
+                # return response
+                return ModelResponse(
+                    text=response["choices"][0]["message"]["content"],
+                    raw=response,
+                )
+            else:
+                raise RuntimeError(
+                    f"Invalid response from OpenAI API: {response}",
+                )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: dict,
+    ) -> None:
+        """Save model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments used in model invocation
+            response (`dict`):
+                The response from model API
+        """
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=response,
         )
+
+        if response.get("usage", None) is not None:
+            self.update_monitor(call_counter=1, **response["usage"])
 
     def _format_msg_with_url(
         self,
-        msg: MessageBase,
+        msg: Msg,
     ) -> Dict:
         """Format a message with image urls into openai chat format.
         This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and
@@ -288,13 +403,13 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def format(
         self,
-        *args: Union[MessageBase, Sequence[MessageBase]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
         OpenAI Chat API required.
 
         Args:
-            args (`Union[MessageBase, Sequence[MessageBase]]`):
+            args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -308,7 +423,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         for arg in args:
             if arg is None:
                 continue
-            if isinstance(arg, MessageBase):
+            if isinstance(arg, Msg):
                 if arg.url is not None:
                     messages.append(self._format_msg_with_url(arg))
                 else:

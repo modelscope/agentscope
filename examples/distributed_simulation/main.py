@@ -3,6 +3,7 @@
 
 import argparse
 import time
+import math
 from concurrent import futures
 from concurrent.futures import as_completed
 from loguru import logger
@@ -62,7 +63,7 @@ def setup_participant_agent_server(host: str, port: int) -> None:
         host=host,
         port=port,
         max_pool_size=16384,
-        custom_agents=[Moderator, RandomParticipant, LLMParticipant],
+        custom_agent_classes=[Moderator, RandomParticipant, LLMParticipant],
     )
     assistant_server_launcher.launch(in_subprocess=False)
     assistant_server_launcher.wait_until_terminate()
@@ -113,7 +114,9 @@ def run_main_process(
     )
     host_num = len(hosts)
     total_agent_server_num = server_per_host * host_num
-    participant_per_agent_server = participant_num // total_agent_server_num
+    participant_per_agent_server = math.ceil(
+        participant_num / total_agent_server_num,
+    )
     ist = time.time()
     configs = []
     logger.info(f"init {participant_num} {agent_type} participant agents...")

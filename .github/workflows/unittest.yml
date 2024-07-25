@@ -9,18 +9,22 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13]
-        python-version: ['3.9']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
     env:
       OS: ${{ matrix.os }}
-      PYTHON: '3.9'
-    timeout-minutes: 20
     steps:
     - uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
+    - name: Install Minimal Dependencies
+      run: |
+        pip install -q -e .
+    - name: Run import tests
+      run: |
+        python -c "import agentscope; print(agentscope.__version__)"
+    - name: Install Full Dependencies
       run: |
         pip install -q -e .[full]
         pip install coverage

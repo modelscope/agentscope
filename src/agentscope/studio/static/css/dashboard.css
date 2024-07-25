@@ -1,0 +1,37 @@
+#dashboard-panel {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+}
+
+.dashboard-titlebar-span {
+    display: flex;
+    height: 50px;
+    width: fit-content;
+    align-items: center;
+    cursor: pointer;
+}
+
+.dashboard-subtitlebar-span {
+    display: flex;
+    height: 50px;
+    width: fit-content;
+    align-items: center;
+}
+
+.dashboard-titlebar-svg {
+    display: flex;
+    width: 15px;
+    height: 15px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+}
+
+#dashboard-content {
+    display: flex;
+    height: var(--page-content-height);
+    width: 100%;
+    flex-direction: row;
+}

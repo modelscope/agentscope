@@ -62,6 +62,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             model=self.model_name,
             messages=messages,
             result_format="message",
+            stream=False,
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
@@ -96,6 +97,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             model=self.model_name,
             messages=messages,
             result_format="message",
+            stream=False,
         )
 
 

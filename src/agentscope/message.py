@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The base class for message unit"""
 
-from typing import Any, Optional, Union, Sequence, Literal
+from typing import Any, Optional, Union, Sequence, Literal, List
 from uuid import uuid4
 import json
 
@@ -9,6 +9,8 @@ from loguru import logger
 
 from .rpc import RpcAgentClient, ResponseStub, call_in_thread
 from .utils.tools import _get_timestamp
+from .utils.tools import _map_string_to_color_mark
+from .utils.tools import is_web_accessible
 
 
 class MessageBase(dict):
@@ -21,7 +23,7 @@ class MessageBase(dict):
         name: str,
         content: Any,
         role: Literal["user", "system", "assistant"] = "assistant",
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -37,7 +39,7 @@ class MessageBase(dict):
                 The role of who send the message. It can be one of the
                 `"system"`, `"user"`, or `"assistant"`. Default to
                 `"assistant"`.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[List[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to
@@ -57,10 +59,7 @@ class MessageBase(dict):
         self.content = content
         self.role = role
 
-        if url:
-            self.url = url
-        else:
-            self.url = None
+        self.url = url
 
         self.update(kwargs)
 
@@ -78,10 +77,6 @@ class MessageBase(dict):
             del self[key]
         except KeyError as e:
             raise AttributeError(f"no attribute '{key}'") from e
-
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        raise NotImplementedError
 
     def serialize(self) -> str:
         """Return the serialized message."""
@@ -107,7 +102,7 @@ class Msg(MessageBase):
     """Save the information for application's control flow, or other
     purposes."""
 
-    url: Optional[Union[Sequence[str], str]]
+    url: Optional[Union[List[str], str]]
     """A url to file, image, video, audio or website."""
 
     timestamp: str
@@ -118,7 +113,7 @@ class Msg(MessageBase):
         name: str,
         content: Any,
         role: Literal["system", "user", "assistant"] = None,
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         echo: bool = False,
         metadata: Optional[Union[dict, str]] = None,
@@ -135,7 +130,7 @@ class Msg(MessageBase):
                 Used to identify the source of the message, e.g. the system
                 information, the user input, or the model response. This
                 argument is used to accommodate most Chat API formats.
-            url (`Optional[Union[list[str], str]]`, defaults to `None`):
+            url (`Optional[Union[List[str], str]]`, defaults to `None`):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to `None`):
                 The timestamp of the message, if None, it will be set to
@@ -165,85 +160,40 @@ class Msg(MessageBase):
             metadata=metadata,
             **kwargs,
         )
+
+        m1, m2 = _map_string_to_color_mark(self.name)
+        self._colored_name = f"{m1}{self.name}{m2}"
+
         if echo:
             logger.chat(self)
 
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        return f"{self.name}: {self.content}"
+    def formatted_str(self, colored: bool = False) -> str:
+        """Return the formatted string of the message. If the message has an
+        url, the url will be appended to the content.
+
+        Args:
+            colored (`bool`, defaults to `False`):
+                Whether to color the name of the message
+        """
+        if colored:
+            name = self._colored_name
+        else:
+            name = self.name
+
+        colored_strs = [f"{name}: {self.content}"]
+        if self.url is not None:
+            if isinstance(self.url, list):
+                for url in self.url:
+                    colored_strs.append(f"{name}: {url}")
+            else:
+                colored_strs.append(f"{name}: {self.url}")
+        return "\n".join(colored_strs)
 
     def serialize(self) -> str:
         return json.dumps({"__type": "Msg", **self})
 
 
-class Tht(MessageBase):
-    """The Thought message is used to record the thought of the agent to
-    help them make decisions and responses. Generally, it shouldn't be
-    passed to or seen by the other agents.
-
-    In our framework, we formulate the thought in prompt as follows:
-    - For OpenAI API calling:
-
-    .. code-block:: python
-
-        [
-            ...
-            {
-                "role": "assistant",
-                "name": "thought",
-                "content": "I should ..."
-            },
-            ...
-        ]
-
-    - For open-source models that accepts string as input:
-
-    .. code-block:: python
-
-        ...
-        {self.name} thought: I should ...
-        ...
-
-    We admit that there maybe better ways to formulate the thought. Users
-    are encouraged to create their own thought formulation methods by
-    inheriting `MessageBase` class and rewrite the `__init__` and `to_str`
-    function.
-
-    .. code-block:: python
-
-        class MyThought(MessageBase):
-            def to_str(self) -> str:
-                # implement your own thought formulation method
-                pass
-    """
-
-    def __init__(
-        self,
-        content: Any,
-        timestamp: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        if "name" in kwargs:
-            kwargs.pop("name")
-        if "role" in kwargs:
-            kwargs.pop("role")
-        super().__init__(
-            name="thought",
-            content=content,
-            role="assistant",
-            timestamp=timestamp,
-            **kwargs,
-        )
-
-    def to_str(self) -> str:
-        """Return the string representation of the message"""
-        return f"{self.name} thought: {self.content}"
-
-    def serialize(self) -> str:
-        return json.dumps({"__type": "Tht", **self})
-
-
-class PlaceholderMessage(MessageBase):
+class PlaceholderMessage(Msg):
     """A placeholder for the return message of RpcAgent."""
 
     PLACEHOLDER_ATTRS = {
@@ -265,7 +215,7 @@ class PlaceholderMessage(MessageBase):
         self,
         name: str,
         content: Any,
-        url: Optional[Union[Sequence[str], str]] = None,
+        url: Optional[Union[List[str], str]] = None,
         timestamp: Optional[str] = None,
         host: str = None,
         port: int = None,
@@ -288,7 +238,7 @@ class PlaceholderMessage(MessageBase):
             role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
                 The role of the message, which can be one of the `"system"`,
                 `"user"`, or `"assistant"`.
-            url (`Optional[Union[list[str], str]]`, defaults to None):
+            url (`Optional[Union[List[str], str]]`, defaults to None):
                 A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to
@@ -359,27 +309,37 @@ class PlaceholderMessage(MessageBase):
             self.update_value()
         return MessageBase.__getitem__(self, __key)
 
-    def to_str(self) -> str:
-        return f"{self.name}: {self.content}"
-
     def update_value(self) -> MessageBase:
         """Get attribute values from rpc agent server immediately"""
         if self._is_placeholder:
             # retrieve real message from rpc agent server
             self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
-            result = client.call_func(
-                func_name="_get",
-                value=json.dumps({"task_id": self._task_id}),
-            )
+            result = client.update_placeholder(task_id=self._task_id)
             msg = deserialize(result)
-            status = msg.pop("__status", "OK")
-            if status == "ERROR":
-                raise RuntimeError(msg.content)
+            self.__update_url(msg)  # type: ignore[arg-type]
             self.update(msg)
-            # the actual value has been updated, not a placeholder any more
+            # the actual value has been updated, not a placeholder anymore
             self._is_placeholder = False
         return self
+
+    def __update_url(self, msg: MessageBase) -> None:
+        """Update the url field of the message."""
+        if hasattr(msg, "url") and msg.url is None:
+            return
+        url = msg.url
+        if isinstance(url, str):
+            urls = [url]
+        else:
+            urls = url
+        checked_urls = []
+        for url in urls:
+            if not is_web_accessible(url):
+                client = RpcAgentClient(self._host, self._port)
+                checked_urls.append(client.download_file(path=url))
+            else:
+                checked_urls.append(url)
+        msg.url = checked_urls[0] if isinstance(url, str) else checked_urls
 
     def __update_task_id(self) -> None:
         if self._stub is not None:
@@ -421,12 +381,11 @@ class PlaceholderMessage(MessageBase):
 
 _MSGS = {
     "Msg": Msg,
-    "Tht": Tht,
     "PlaceholderMessage": PlaceholderMessage,
 }
 
 
-def deserialize(s: Union[str, bytes]) -> Union[MessageBase, Sequence]:
+def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
     """Deserialize json string into MessageBase"""
     js_msg = json.loads(s)
     msg_type = js_msg.pop("__type")
