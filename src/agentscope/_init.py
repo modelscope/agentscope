@@ -100,11 +100,14 @@ def init(
     _INIT_SETTINGS["project"] = _runtime.project
     _INIT_SETTINGS["name"] = _runtime.name
     _INIT_SETTINGS["runtime_id"] = _runtime.runtime_id
+    _INIT_SETTINGS["disable_saving"] = disable_saving
     _INIT_SETTINGS["save_dir"] = save_dir
+    _INIT_SETTINGS["save_code"] = False
     _INIT_SETTINGS["save_api_invoke"] = save_api_invoke
     _INIT_SETTINGS["save_log"] = save_log
     _INIT_SETTINGS["logger_level"] = logger_level
     _INIT_SETTINGS["use_monitor"] = use_monitor
+    _INIT_SETTINGS["cache_dir"] = cache_dir
 
     # Load config and init agent by configs
     if agent_configs is not None:
@@ -140,7 +143,7 @@ def init_process(
     cache_dir: str,
     use_monitor: bool,
     logger_level: LOG_LEVEL,
-    studio_url: Optional[str],
+    studio_url: Optional[str] = None,
 ) -> None:
     """An entry to initialize the package in a process.
 
