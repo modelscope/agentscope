@@ -48,12 +48,14 @@ class FileManager:
     _instance = None
 
     __serialized_attrs = {
+        # Flags
         "disable_saving",
-        "base_dir",
-        "run_dir",
         "save_log",
         "save_code",
         "save_api_invoke",
+        # Basic directory
+        "base_dir",
+        "run_dir",
         "cache_dir",
     }
 
@@ -69,7 +71,19 @@ class FileManager:
 
         return cls._instance
 
-    def __init__(
+    def __init__(self) -> None:
+        """Initialize the file manager with default values."""
+        self.disable_saving = True
+        self.save_log = False
+        self.save_code = False
+        self.save_api_invoke = False
+
+        self.cache_dir = "./"
+        self.base_dir = "./"
+        self.run_dir = "./"
+        self.path_db = "./agentscope.db"
+
+    def initialize(
         self,
         disable_saving: bool,
         base_dir: str,
@@ -321,3 +335,8 @@ class FileManager:
             serialized_data[attr_name] = getattr(self, attr_name)
 
         return serialized_data
+
+    @classmethod
+    def is_initialized(cls) -> bool:
+        """Check if the file manager has been initialized."""
+        return cls._instance is not None

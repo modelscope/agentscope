@@ -18,8 +18,11 @@ from .studio._client import _studio_client
 # init setting
 _INIT_SETTINGS = {}
 
-# init the singleton class by default settings
+# init the singleton class by default settings to avoid reinit in subprocess
+# especially in spawn mode, which will copy the object from the parent process
+# to the child process rather than re-import the module (fork mode)
 ModelManager()
+FileManager()
 
 
 def init(
@@ -195,7 +198,8 @@ def init_process(
         _runtime.runtime_id = runtime_id
 
     # Init file manager
-    file_manager = FileManager(
+    file_manager = FileManager.get_instance()
+    file_manager.initialize(
         disable_saving,
         save_dir,
         save_log,
