@@ -94,11 +94,13 @@ class OllamaModelWrapperTest(unittest.TestCase):
         }
         flush()
 
-    @patch("ollama.chat")
-    def test_ollama_chat(self, mock_chat: MagicMock) -> None:
+    @patch("agentscope.models.ollama_model.ollama")
+    def test_ollama_chat(self, mock_ollama: MagicMock) -> None:
         """Unit test for ollama chat API."""
         # prepare the mock
-        mock_chat.return_value = self.dummy_response
+        mock_ollama_client = MagicMock()
+        mock_ollama.Client.return_value = mock_ollama_client
+        mock_ollama_client.chat.return_value = self.dummy_response
 
         # run test
         agentscope.init(
@@ -118,11 +120,13 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
         self.assertEqual(response.raw, self.dummy_response)
 
-    @patch("ollama.embeddings")
-    def test_ollama_embedding(self, mock_embeddings: MagicMock) -> None:
+    @patch("agentscope.models.ollama_model.ollama")
+    def test_ollama_embedding(self, mock_ollama: MagicMock) -> None:
         """Unit test for ollama embeddings API."""
         # prepare the mock
-        mock_embeddings.return_value = self.dummy_embedding
+        mock_ollama_client = MagicMock()
+        mock_ollama.Client.return_value = mock_ollama_client
+        mock_ollama_client.embeddings.return_value = self.dummy_embedding
 
         # run test
         agentscope.init(
@@ -142,11 +146,13 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
         self.assertEqual(response.raw, self.dummy_embedding)
 
-    @patch("ollama.generate")
-    def test_ollama_generate(self, mock_generate: MagicMock) -> None:
+    @patch("agentscope.models.ollama_model.ollama")
+    def test_ollama_generate(self, mock_ollama: MagicMock) -> None:
         """Unit test for ollama generate API."""
         # prepare the mock
-        mock_generate.return_value = self.dummy_generate
+        mock_ollama_client = MagicMock()
+        mock_ollama.Client.return_value = mock_ollama_client
+        mock_ollama_client.generate.return_value = self.dummy_generate
 
         # run test
         agentscope.init(
