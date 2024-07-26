@@ -54,18 +54,33 @@ redis_client = get_redis_client(REDIS_HOST, REDIS_PORT, REDIS_DB)
 
 def resources_limit(function: Callable) -> Callable:
     """
-    Decorator that limits the number of concurrent executions of a function
-    based on available resources.
+    The decorated class must contain `self.resource_limit_number`
+    and `self.resource_limit_type` (choose from `rate` and `capacity`).
+
+    - `self.resource_limit_number`: An integer representing the resource limit.
+      If `self.resource_limit_type` is `capacity`, it represents the maximum
+      number of concurrent executions allowed.
+      If `self.resource_limit_type` is `rate`, it represents the maximum number
+      of executions allowed per minute.
+
+    - `self.resource_limit_type`: A string that specifies the type of limit,
+      either `rate` or `capacity`.
+
+      When `self.resource_limit_type` is `rate`, the unit is counts per minute.
     """
 
     @wraps(function)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
         # No redis or no limit
-        if redis_client is None or self.resource_count == math.inf:
+        if (
+            redis_client is None
+            or self.resource_limit_type not in ["capacity", "rate"]
+            or self.resource_limit_number == math.inf
+        ):
             return function(self, *args, **kwargs)
 
         class_name = type(self).__name__
-        resources_limit_key = f"resources_limit_count_for_{class_name}"
+        resources_limit_key = f"resource_limit_number_for_{class_name}"
         queue_key = f"resources_queue_for_{class_name}"
 
         request_id = str(uuid.uuid4())  # Use UUID for unique request IDs
@@ -73,8 +88,9 @@ def resources_limit(function: Callable) -> Callable:
 
         while True:
             available_resources = get_or_initialize_resource_cnt(
+                self.resource_limit_type,
                 resources_limit_key,
-                self.resource_count,
+                self.resource_limit_number,
             )
             queue_size = redis_client.llen(queue_key)
 
@@ -91,6 +107,11 @@ def resources_limit(function: Callable) -> Callable:
                 logger.debug(f"[{class_name}] {request_id}: {queue_requests}")
 
                 if request_id in process_requests:
+                    if self.resource_limit_type == "rate":
+                        redis_client.zadd(
+                            resources_limit_key,
+                            {request_id: int(time.time())},
+                        )
                     result = _process_request(
                         self,
                         function,
@@ -101,27 +122,52 @@ def resources_limit(function: Callable) -> Callable:
                     redis_client.lrem(queue_key, 1, request_id)
                     return result
             else:
-                logger.debug(
-                    f"No resources available for {class_name}. Waiting...\n"
-                    f"Note: Max resource number is {self.resource_count}, "
-                    f"please consider increasing it!",
-                )
+                if self.resource_limit_type == "capacity":
+                    logger.debug(
+                        f"No resources available for {class_name}. "
+                        f"Waiting...\nNote: Max resource number is"
+                        f" {self.resource_limit_number}, please consider "
+                        f"increasing it!",
+                    )
+                else:
+                    logger.debug(
+                        f"Rate limit exceeded for {class_name}. "
+                        f"Waiting...\nNote: Max resource number is"
+                        f" {self.resource_limit_number} per minute.",
+                    )
             time.sleep(1)
 
     return wrapper
 
 
-def get_or_initialize_resource_cnt(key: str, initial_value: int) -> int:
+def get_or_initialize_resource_cnt(
+    limit_type: str,
+    key: str,
+    initial_value: int,
+) -> int:
     """
     Get or initialize resource count in Redis.
     """
-    value = redis_client.get(key)
-    if value is None:
-        if redis_client.setnx(key, initial_value):
-            value = initial_value
-        else:
-            value = redis_client.get(key)
-    return int(value)
+    if limit_type == "capacity":
+        value = redis_client.get(key)
+        if value is None:
+            if redis_client.setnx(key, initial_value):
+                value = initial_value
+            else:
+                value = redis_client.get(key)
+        return int(value)
+    else:
+        time_now = int(time.time())
+        one_minute_ago = time_now - 60
+        # Ensure the sorted set exists
+        if not redis_client.exists(key):
+            redis_client.zadd(key, {time_now: 0})
+
+        # Remove expired timestamps
+        redis_client.zremrangebyscore(key, 0, one_minute_ago)
+        # Check the number of requests in the last minute
+        request_count = redis_client.zcount(key, one_minute_ago, time_now)
+        return int(initial_value - request_count)
 
 
 def _process_request(
@@ -134,19 +180,22 @@ def _process_request(
     """
     Process the actual function call.
     """
-    redis_client.decr(resources_limit_key)
+    if self.resource_limit_type == "capacity":
+        redis_client.decr(resources_limit_key)
     try:
         result = function(self, *args, **kwargs)
     except Exception as e:
-        redis_client.incr(resources_limit_key)
+        if self.resource_limit_type == "capacity":
+            redis_client.incr(resources_limit_key)
         logger.error(f"Exception occurred: {e}")
         raise
 
-    redis_client.incr(resources_limit_key)
-    logger.debug(
-        f"Current resources number:"
-        f" {int(redis_client.get(resources_limit_key))}",
-    )
+    if self.resource_limit_type == "capacity":
+        redis_client.incr(resources_limit_key)
+        logger.debug(
+            f"Current resources number:"
+            f" {int(redis_client.get(resources_limit_key))}",
+        )
     return result
 
 
@@ -159,9 +208,15 @@ if __name__ == "__main__":
         Test Class
         """
 
-        def __init__(self, exec_time: int, resource_count: int) -> None:
+        def __init__(
+            self,
+            exec_time: int,
+            resource_limit_number: int,
+            resource_limit_type: str,
+        ) -> None:
             self.exec_time = exec_time
-            self.resource_count = resource_count
+            self.resource_limit_number = resource_limit_number
+            self.resource_limit_type = resource_limit_type
 
         @resources_limit
         def test_method(self, x: int, y: int) -> int:
@@ -173,31 +228,59 @@ if __name__ == "__main__":
             time.sleep(self.exec_time)
             return result
 
-    exc_time = int(input("Input function execute time:"))
-    num_task = int(input("Input number of total task:"))
-    resource_num = int(input("Input number of resource:"))
-    sim_mode = input("Choose testing mode `threading` or `multiprocessing`")
+    resource_limit_mode = input(
+        "Input resource limit type: `rate` or `capacity`: ",
+    )
+    exc_time = int(input("Input function execute time: "))
+    num_task = int(input("Input number of total task: "))
+    resource_num = int(input("Input number of resource: "))
+    sim_mode = input("Choose testing mode `threading` or `multiprocessing`: ")
 
     # Init for debug
     c_name = TestClass.__name__
-    r_limit_key = f"resources_limit_count_for_{c_name}"
+    r_limit_key = f"resource_limit_number_for_{c_name}"
     q_key = f"resources_queue_for_{c_name}"
 
     if redis_client:
-        redis_client.set(r_limit_key, resource_num)
+        redis_client.delete(r_limit_key)
+        if resource_limit_mode == "capacity":
+            redis_client.set(r_limit_key, resource_num)
+        else:
+            redis_client.zadd(r_limit_key, {time.time(): 0})
         redis_client.delete(q_key)
-        logger.debug(
-            f"{r_limit_key}:" f" {int(redis_client.get(r_limit_key))}",
-        )
 
-    simulation_time = math.ceil(num_task / resource_num) * exc_time
+        key_type = redis_client.type(r_limit_key).decode("utf-8")
+        logger.debug(f"Type of {r_limit_key}: {key_type}")
+
+        # Log the value based on the type of key
+        if key_type == "string":
+            logger.debug(f"{r_limit_key}: {redis_client.get(r_limit_key)}")
+        elif key_type == "zset":
+            logger.debug(
+                f"{r_limit_key}:"
+                f" {redis_client.zrange(r_limit_key, 0, -1, withscores=True)}",
+            )
+        else:
+            logger.warning(f"{r_limit_key} has an unexpected type: {key_type}")
+
+    if resource_limit_mode == "capacity":
+        simulation_time = math.ceil(num_task / resource_num) * exc_time
+    else:
+        simulation_time = (math.floor(num_task / resource_num) - 1) * max(
+            60,
+            exc_time,
+        ) + exc_time
 
     input(
         f"The simulation time takes for about: "
         f"{simulation_time}\nType enter to start...",
     )
     start_time = time.time()
-    test_instance = TestClass(exec_time=exc_time, resource_count=resource_num)
+    test_instance = TestClass(
+        exec_time=exc_time,
+        resource_limit_number=resource_num,
+        resource_limit_type=resource_limit_mode,
+    )
 
     def make_request(instance: TestClass, x: int, y: int) -> None:
         """

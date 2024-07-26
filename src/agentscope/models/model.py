@@ -204,7 +204,11 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         self.monitor = MonitorFactory.get_monitor()
 
         self.config_name = config_name
-        self.resource_count = kwargs.pop("resource_count", math.inf)
+        self.resource_limit_type = kwargs.pop("resource_limit_type", None)
+        self.resource_limit_number = kwargs.pop(
+            "resource_limit_number",
+            math.inf,
+        )
         logger.info(f"Initialize model by configuration [{config_name}]")
 
     @classmethod
