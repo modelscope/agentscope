@@ -13,6 +13,7 @@ from agentscope.constants import (
     _DEFAULT_MONITOR_TABLE_NAME,
     _DEFAULT_SQLITE_DB_PATH,
 )
+from agentscope.exception import QuotaExceededError
 
 
 class MonitorBase(ABC):
@@ -224,23 +225,6 @@ def get_full_name(name: str, prefix: Optional[str] = None) -> str:
         return name
     else:
         return f"{prefix}.{name}"
-
-
-class QuotaExceededError(Exception):
-    """An Exception used to indicate that a certain metric exceeds quota"""
-
-    def __init__(
-        self,
-        name: str,
-    ) -> None:
-        """Init a QuotaExceedError instance.
-
-        Args:
-            name (`str`): name of the metric which exceeds quota.
-        """
-        self.message = f"Metric [{name}] exceeds quota."
-        self.name = name
-        super().__init__(self.message)
 
 
 @contextmanager

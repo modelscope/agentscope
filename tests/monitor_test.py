@@ -10,7 +10,8 @@ import shutil
 from loguru import logger
 
 import agentscope
-from agentscope.utils import MonitorBase, QuotaExceededError, MonitorFactory
+from agentscope.exception import QuotaExceededError
+from agentscope.utils import MonitorBase, MonitorFactory
 from agentscope.utils.monitor import SqliteMonitor, DummyMonitor
 
 

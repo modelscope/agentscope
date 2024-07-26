@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import FileManager
 from agentscope.models import (
     ModelResponse,
     DashScopeChatWrapper,
@@ -104,10 +103,6 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             stream=False,
         )
 
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
-
 
 class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
     """Test DashScope Image Synthesis Wrapper"""
@@ -195,10 +190,6 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
             n=1,  # Assuming this is a default value used to call the API
         )
 
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
-
 
 class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
     """Test DashScope Text Embedding Wrapper"""
@@ -268,10 +259,6 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
             model=self.wrapper.model_name,
             **self.wrapper.generate_args,
         )
-
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
 
 
 class TestDashScopeMultiModalWrapper(unittest.TestCase):
@@ -366,10 +353,6 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
             model=self.wrapper.model_name,
             messages=messages,
         )
-
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
 
 
 if __name__ == "__main__":

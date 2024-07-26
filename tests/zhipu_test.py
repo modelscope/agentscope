@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import FileManager, ModelManager
+from agentscope.manager import ModelManager
 
 
 class TestZhipuAIChatWrapper(unittest.TestCase):
@@ -61,10 +61,6 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
 
         mock_zhipuai_client.chat.completions.create.assert_called_once()
 
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
-
 
 class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
     """Test ZhipuAI Embedding Wrapper"""
@@ -119,10 +115,6 @@ class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
             model=self.model_name,
             **{},
         )
-
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
 
 
 if __name__ == "__main__":

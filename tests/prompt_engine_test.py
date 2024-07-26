@@ -4,7 +4,7 @@ import unittest
 from typing import Any
 
 import agentscope
-from agentscope.manager import FileManager, ModelManager
+from agentscope.manager import ModelManager
 from agentscope.models import ModelResponse
 from agentscope.models import OpenAIWrapperBase
 from agentscope.prompt import PromptEngine
@@ -131,10 +131,6 @@ Now decide your next move.
 white player: """,
             prompt,
         )
-
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
 
 
 if __name__ == "__main__":

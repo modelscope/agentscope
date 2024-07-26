@@ -62,9 +62,8 @@ from typing import Sequence, Any, Callable, Union, List, Type
 
 from loguru import logger
 
-from agentscope.utils import QuotaExceededError
 from .response import ModelResponse
-from ..exception import ResponseParsingError
+from ..exception import ResponseParsingError, QuotaExceededError
 
 from ..manager import FileManager
 from ..message import Msg

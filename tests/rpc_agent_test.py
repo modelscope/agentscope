@@ -12,16 +12,15 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
-from agentscope.manager import FileManager
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
-from agentscope.utils import MonitorFactory, QuotaExceededError
+from agentscope.utils import MonitorFactory
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
-from agentscope.exception import AgentCallError
+from agentscope.exception import AgentCallError, QuotaExceededError
 
 
 class DemoRpcAgent(AgentBase):
@@ -184,7 +183,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(os.path.exists("./.unittest_runs"))
 
     def tearDown(self) -> None:
-        FileManager.flush()
         MonitorFactory._instance = None  # pylint: disable=W0212
         logger.remove()
         shutil.rmtree("./.unittest_runs")

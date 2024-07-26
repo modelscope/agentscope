@@ -5,7 +5,6 @@ from unittest import mock
 from unittest.mock import MagicMock, patch
 
 import agentscope
-from agentscope.manager import FileManager
 from agentscope.message import Msg
 from agentscope.models import (
     OpenAIChatWrapper,
@@ -500,10 +499,6 @@ class ExampleTest(unittest.TestCase):
         # wrong format
         with self.assertRaises(TypeError):
             model.format(*self.wrong_inputs)
-
-    def tearDown(self) -> None:
-        """Clean up the test environment"""
-        FileManager.flush()
 
 
 if __name__ == "__main__":
