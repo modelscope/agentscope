@@ -21,7 +21,9 @@ def get_tripadvisor_location_photos(
         api_key (`str`):
             Your TripAdvisor API key.
         location_id (`str`):
-            The location ID for the desired location.
+            The location ID for the desired location. 
+            User should use `search_tripadvisor` function to 
+            get the location_id of the location before using this function.
         language (`str`, optional):
             The language for the response. Defaults to 'en'.
 
@@ -194,6 +196,8 @@ def get_tripadvisor_location_details(
             Your TripAdvisor API key.
         location_id (`str`):
             The location ID for the desired location.
+            User should use `search_tripadvisor` function to 
+            get the location_id of the location before using this function.
         language (`str`, optional):
             The language for the response. Defaults to 'en'.
         currency (`str`, optional):
