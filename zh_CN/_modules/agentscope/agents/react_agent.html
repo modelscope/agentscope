@@ -218,7 +218,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">RegexTaggedContentParser</span><span class="p">(</span>
             <span class="n">format_instruction</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Respond with specific tags as outlined below:</span>
 
-<span class="s2">- When calling tool functions, note the &quot;arg_name&quot; should be replaced with the actual argument name:</span>
+<span class="s2">- When calling tool functions (note the &quot;arg_name&quot; should be replaced with the actual argument name):</span>
 <span class="s2">&lt;thought&gt;what you thought&lt;/thought&gt;</span>
 <span class="s2">&lt;function&gt;the function name you want to call&lt;/function&gt;</span>
 <span class="s2">&lt;arg_name&gt;the value of the argument&lt;/arg_name&gt;</span>
@@ -302,7 +302,8 @@
             <span class="k">except</span> <span class="n">ResponseParsingError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="c1"># Print out raw response from models for developers to debug</span>
                 <span class="n">response_msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">raw_response</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response_msg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response_msg</span><span class="p">)</span>
 
                 <span class="c1"># Re-correct by model itself</span>
                 <span class="n">error_msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s2">&quot;system&quot;</span><span class="p">)</span>
