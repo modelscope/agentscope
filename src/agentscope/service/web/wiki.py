@@ -6,7 +6,7 @@ including texts, categories, infotable, table,...
 
 import re
 
-# import requests
+
 from bs4 import BeautifulSoup
 
 from agentscope.service.service_response import (
@@ -16,13 +16,24 @@ from agentscope.service.service_response import (
 from agentscope.utils.common import requests_get
 
 
-def wiki_api(params: dict) -> dict:
+def _wiki_api(params: dict) -> dict:
     """Scratch information via Wiki API"""
     url = "https://en.wikipedia.org/w/api.php"
     return requests_get(url, params=params)
 
 
 def _check_entity_existence(entity: str) -> ServiceResponse:
+    """
+    Function to check if the eneity exists in Wikipedia
+    If yes, continue searching;
+    if not, return top 5 similar entities
+    
+    Args:
+        entity (str): searching keywords
+        
+    Returns:
+
+    """
     search_params = {
         "action": "query",
         "list": "search",
@@ -30,7 +41,7 @@ def _check_entity_existence(entity: str) -> ServiceResponse:
         "format": "json",
     }
 
-    search_data = wiki_api(search_params)
+    search_data = _wiki_api(search_params)
 
     if "query" in search_data and "search" in search_data["query"]:
         if search_data["query"]["search"]:
@@ -68,7 +79,7 @@ def wiki_get_category_members(
     Args:
         entity (str): searching keywords
         max_members (int): maximum number of members to output
-        limit_per_request (int): number of members retrieved per quest
+        limit_per_request (int): number of members retrieved per request
 
     Returns:
         `ServiceResponse`: A dictionary containing `status` and `content`.
@@ -122,7 +133,7 @@ def wiki_get_category_members(
     total_fetched = 0
 
     while total_fetched < max_members:
-        data = wiki_api(params)
+        data = _wiki_api(params)
         batch_members = data["query"]["categorymembers"]
         members.extend(batch_members)
         total_fetched += len(batch_members)
@@ -277,7 +288,7 @@ def wiki_get_page_content_by_paragraph(
         "format": "json",
     }
 
-    data = wiki_api(params)
+    data = _wiki_api(params)
     page = next(iter(data["query"]["pages"].values()))
     content = page.get("extract", "No content found.")
     if content == "No content found.":
@@ -350,7 +361,7 @@ def wiki_get_all_wikipedia_tables(
         "format": "json",
     }
 
-    data = wiki_api(params)
+    data = _wiki_api(params)
     raw_html = data["parse"]["text"]["*"]
 
     soup = BeautifulSoup(raw_html, "html.parser")
@@ -435,7 +446,7 @@ def wiki_get_page_images_with_captions(
         "titles": entity,
         "format": "json",
     }
-    data = wiki_api(params)
+    data = _wiki_api(params)
     page = next(iter(data["query"]["pages"].values()))
     images = page.get("images", [])
     if len(images) == 0:
@@ -451,7 +462,7 @@ def wiki_get_page_images_with_captions(
             "iiprop": "url|extmetadata",
             "format": "json",
         }
-        data = wiki_api(params)
+        data = _wiki_api(params)
         image_page = next(iter(data["query"]["pages"].values()))
         if "imageinfo" in image_page:
             image_info = image_page["imageinfo"][0]
