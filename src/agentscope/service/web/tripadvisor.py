@@ -6,7 +6,7 @@ import requests
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
-
+# pylint: disable=line-too-long
 def get_tripadvisor_location_photos(
     api_key: str,
     location_id: str,
