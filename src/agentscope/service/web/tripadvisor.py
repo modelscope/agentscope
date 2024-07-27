@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """TripAdvisor APIs for searching and retrieving location information."""
 
-from typing import List, Any, Dict
 from loguru import logger
 import requests
 from agentscope.service.service_response import ServiceResponse
