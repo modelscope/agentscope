@@ -6,6 +6,7 @@ import requests
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
+
 # pylint: disable=line-too-long
 def get_tripadvisor_location_photos(
     api_key: str,
@@ -29,7 +30,8 @@ def get_tripadvisor_location_photos(
         and `content` is the JSON response from TripAdvisor API or error
         information, which depends on the `status` variable.
 
-        If successful, the `content` will be a dictionary with the following structure:
+        If successful, the `content` will be a dictionary
+        with the following structure:
         {
             'photo_data': {
                 'data': [
@@ -39,11 +41,14 @@ def get_tripadvisor_location_photos(
                         'caption': str,
                         'published_date': str,
                         'images': {
-                            'thumbnail': {'height': int, 'width': int, 'url': str},
+                            'thumbnail': {'height': int,
+                            'width': int, 'url': str},
                             'small': {'height': int, 'width': int, 'url': str},
-                            'medium': {'height': int, 'width': int, 'url': str},
+                            'medium': {'height': int,
+                            'width': int, 'url': str},
                             'large': {'height': int, 'width': int, 'url': str},
-                            'original': {'height': int, 'width': int, 'url': str}
+                            'original': {'height': int,
+                            'width': int, 'url': str}
                         },
                         'album': str,
                         'source': {'name': str, 'localized_name': str},
@@ -53,12 +58,13 @@ def get_tripadvisor_location_photos(
                 ]
             }
         }
-        Each item in the 'data' list represents a photo associated with the location.
+        Each item in the 'data' list represents
+        a photo associated with the location.
 
     Example:
         .. code-block:: python
 
-            result = get_tripadvisor_location_photos("your_api_key", "123456", "en")
+            result = get_tripadvisor_location_photos("your_api_key", "123456", "en")  # noqa: E501
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
@@ -72,14 +78,20 @@ def get_tripadvisor_location_photos(
                         'caption': '',
                         'published_date': '2016-09-04T20:40:14.284Z',
                         'images': {
-                            'thumbnail': {'height': 50, 'width': 50, 'url': 'https://media-cdn.tripadvisor.com/media/photo-t/0c/d5/8c/26/photo0jpg.jpg'},
-                            'small': {'height': 150, 'width': 150, 'url': 'https://media-cdn.tripadvisor.com/media/photo-l/0c/d5/8c/26/photo0jpg.jpg'},
-                            'medium': {'height': 188, 'width': 250, 'url': 'https://media-cdn.tripadvisor.com/media/photo-f/0c/d5/8c/26/photo0jpg.jpg'},
-                            'large': {'height': 413, 'width': 550, 'url': 'https://media-cdn.tripadvisor.com/media/photo-s/0c/d5/8c/26/photo0jpg.jpg'},
-                            'original': {'height': 1920, 'width': 2560, 'url': 'https://media-cdn.tripadvisor.com/media/photo-c/2560x500/0c/d5/8c/26/photo0jpg.jpg'}
+                            'thumbnail': {'height': 50, 'width': 50,
+                            'url': 'https://media-cdn.tripadvisor.com/media/photo-t/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'small': {'height': 150, 'width': 150,
+                            'url': 'https://media-cdn.tripadvisor.com/media/photo-l/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'medium': {'height': 188, 'width': 250,
+                            'url': 'https://media-cdn.tripadvisor.com/media/photo-f/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'large': {'height': 413, 'width': 550,
+                            'url': 'https://media-cdn.tripadvisor.com/media/photo-s/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'original': {'height': 1920, 'width': 2560,
+                            'url': 'https://media-cdn.tripadvisor.com/media/photo-c/2560x500/0c/d5/8c/26/photo0jpg.jpg'} # noqa: E501
                         },
                         'album': 'Other',
-                        'source': {'name': 'Traveler', 'localized_name': 'Traveler'},
+                        'source': {'name': 'Traveler',
+                        'localized_name': 'Traveler'},
                         'user': {'username': 'EvaFalleth'}
                     },
                     # ... more photo entries ...
@@ -150,7 +162,8 @@ def search_tripadvisor(
         and `content` is the JSON response from TripAdvisor API or error
         information, which depends on the `status` variable.
 
-        If successful, the `content` will be a dictionary with the following structure:
+        If successful, the `content` will be a
+        dictionary with the following structure:
         {
             'data': [
                 {
@@ -169,7 +182,8 @@ def search_tripadvisor(
                 ...
             ]
         }
-        Each item in the 'data' list represents a location matching the search query.
+        Each item in the 'data' list represents
+        a location matching the search query.
 
     Example:
         .. code-block:: python
@@ -201,7 +215,8 @@ def search_tripadvisor(
                         'state': 'Socotra Island',
                         'country': 'Yemen',
                         'postalcode': '111',
-                        'address_string': '20th Street, Socotra Island 111 Yemen'
+                        'address_string':
+                        '20th Street, Socotra Island 111 Yemen'
                     }
                 },
                 # ... more results ...
@@ -315,7 +330,7 @@ def get_tripadvisor_location_details(
             'num_reviews': '62',
             'review_rating_count': {'1': '1', '2': '0', '3': '1', '4': '1', '5': '59'},
             'photo_count': '342',
-            'see_all_photos': 'https://www.tripadvisor.com/Attraction_Review-g298087-d574818-m66827-Reviews-Socotra_Island-Aden.html#photos',
+            'see_all_photos': 'https://www.tripadvisor.com/Attraction_Review-g298087-d574818-m66827-Reviews-Socotra_Island-Aden.html#photos',  # noqa: E501
             'category': {'name': 'attraction', 'localized_name': 'Attraction'},
             'subcategory': [
                 {'name': 'nature_parks', 'localized_name': 'Nature & Parks'},
@@ -325,16 +340,22 @@ def get_tripadvisor_location_details(
                 {
                     'name': 'Nature & Parks',
                     'localized_name': 'Nature & Parks',
-                    'categories': [{'name': 'Islands', 'localized_name': 'Islands'}]
+                    'categories': [{'name': 'Islands',
+                    'localized_name': 'Islands'}]
                 }
             ],
             'neighborhood_info': [],
             'trip_types': [
-                {'name': 'business', 'localized_name': 'Business', 'value': '2'},
-                {'name': 'couples', 'localized_name': 'Couples', 'value': '10'},
-                {'name': 'solo', 'localized_name': 'Solo travel', 'value': '11'},
-                {'name': 'family', 'localized_name': 'Family', 'value': '2'},
-                {'name': 'friends', 'localized_name': 'Friends getaway', 'value': '22'}
+                {'name': 'business', 'localized_name':
+                'Business', 'value': '2'},
+                {'name': 'couples', 'localized_name':
+                'Couples', 'value': '10'},
+                {'name': 'solo', 'localized_name':
+                'Solo travel', 'value': '11'},
+                {'name': 'family', 'localized_name':
+                'Family', 'value': '2'},
+                {'name': 'friends', 'localized_name':
+                'Friends getaway', 'value': '22'}
             ],
             'awards': []
         }
