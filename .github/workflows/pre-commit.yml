@@ -15,12 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@master
       with:
         python-version: 3.9
     - name: Install AgentScope
       run: |
-        pip install -q -e .[full]
+        pip install ffmpy
+        pip install -e .[full]
     - name: Install pre-commit
       run: |
         pre-commit install

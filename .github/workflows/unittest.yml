@@ -15,12 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Minimal Dependencies
       run: |
-        pip install -q -e .
+        pip install -e .
     - name: Run import tests
       run: |
         python -c "import agentscope; print(agentscope.__version__)"
