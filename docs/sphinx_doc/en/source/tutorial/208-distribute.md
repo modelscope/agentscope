@@ -143,6 +143,9 @@ And developers just need to write the application flow in a centralized way in t
 
 ### Step 2: Orchestrate Distributed Application Flow
 
+> Note:
+> Currently, distributed version of Agent only supports `__call__` method call (i.e. `agent(x)`), not support calling other methods or reading/writing properties.
+
 In AgentScope, the orchestration of distributed application flow is exactly the same as non-distributed programs, and developers can write the entire application flow in a centralized way.
 At the same time, AgentScope allows the use of a mixture of locally and distributed deployed agents, and developers do not need to distinguish which agents are local and which are distributed.
 
