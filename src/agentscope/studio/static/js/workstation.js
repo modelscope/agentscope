@@ -1851,6 +1851,107 @@ function showImportHTMLPopup() {
 }
 
 
+function showSaveWorkflowPopup() {
+    Swal.fire({
+        title: 'Save Workflow',
+        input: 'text',
+        inputPlaceholder: 'Enter filename',
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+        cancelButtonText: 'Cancel'
+    }).then(result => {
+        if (result.isConfirmed) {
+            const filename = result.value;
+            saveWorkflow(filename);
+        }
+    });
+}
+
+function saveWorkflow(filename) {
+    const rawData = editor.export();
+    fetch('/save-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: filename,
+            workflow: rawData,
+            overwrite: false
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.message === "Workflow file saved successfully") {
+                Swal.fire('Success', data.message, 'success');
+            } else {
+                Swal.fire('Error', data.message || 'An error occurred while saving the workflow.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while saving the workflow.', 'error');
+        });
+}
+
+function showLoadWorkflowPopup() {
+    fetch('/list-workflows')
+        .then(response => response.json())
+        .then(data => {
+            if (!Array.isArray(data.files)) {
+                throw new TypeError('返回数据不是数组');
+            }
+
+            const inputOptions = data.files.reduce((options, file) => {
+                options[file] = file;
+                return options;
+            }, {});
+
+            Swal.fire({
+                title: '加载工作流',
+                input: 'select',
+                inputOptions: inputOptions,
+                inputPlaceholder: '选择一个工作流',
+                showCancelButton: true,
+                confirmButtonText: '加载',
+                cancelButtonText: '取消'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const filename = result.value;
+                    loadWorkflow(filename);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('错误:', error);
+            Swal.fire('错误', '加载工作流时发生错误。', 'error');
+        });
+}
+
+function loadWorkflow(filename) {
+    fetch('/load-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: filename
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                editor.import(data);
+                Swal.fire('Success', 'Workflow loaded successfully', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
+
+
 function removeHtmlFromUsers(data) {
     Object.keys(data.drawflow.Home.data).forEach((nodeId) => {
         const node = data.drawflow.Home.data[nodeId];

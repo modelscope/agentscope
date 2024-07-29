@@ -660,6 +660,7 @@ def _save_workflow() -> Response:
     data = request.json
     overwrite = data.get("overwrite", False)
     filename = data.get("filename")
+    workflow = data.get("workflow")
     if not filename:
         return jsonify({"error": "Filename is required"})
 
@@ -667,19 +668,40 @@ def _save_workflow() -> Response:
     filepath = os.path.join(_cache_dir, f"{filename}.json")
     if overwrite:
         with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            json.dump(workflow, f, ensure_ascii=False, indent=4)
     else:
         if os.path.exists(filepath):
             return jsonify({"message": "Workflow file exists!"})
         else:
             with open(filepath, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
+                json.dump(workflow, f, ensure_ascii=False, indent=4)
 
     return jsonify({"message": "Workflow file saved successfully"})
 
 
-@_app.route("/list-workflow-files", methods=["GET"])
-def _list_workflow_files() -> Response:
+@_app.route("/delete-workflow", methods=["POST"])
+def _delete_workflow() -> Response:
+    """
+    Deletes a workflow JSON file from the user folder.
+    """
+    data = request.json
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"})
+
+    filepath = os.path.join(_cache_dir, f"{filename}.json")
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"})
+
+    try:
+        os.remove(filepath)
+        return jsonify({"message": "Workflow file deleted successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@_app.route("/list-workflows", methods=["GET"])
+def _list_workflows() -> Response:
     """
     Get all workflow JSON files in the user folder.
     """
@@ -687,8 +709,8 @@ def _list_workflow_files() -> Response:
     return jsonify(files=files)
 
 
-@_app.route("/read-workflow", methods=["POST"])
-def _read_workflow() -> Response:
+@_app.route("/load-workflow", methods=["POST"])
+def _load_workflow() -> Response:
     """
     Reads and returns workflow data from the specified JSON file.
     """
@@ -697,7 +719,8 @@ def _read_workflow() -> Response:
     if not filename:
         return jsonify({"error": "Filename is required"}), 400
 
-    filepath = os.path.join(_cache_dir, f"{filename}.json")
+    filepath = os.path.join(_cache_dir, filename)
+    print(filepath)
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"}), 404
 
