@@ -50,6 +50,8 @@ class KnowledgeTest(unittest.TestCase):
                 shutil.rmtree(self.data_dir)
             if os.path.exists("./runs"):
                 shutil.rmtree("./runs")
+            if os.path.exists("./test_knowledge"):
+                shutil.rmtree("./test_knowledge")
         except Exception:
             pass
 

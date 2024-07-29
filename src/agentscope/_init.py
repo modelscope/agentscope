@@ -216,7 +216,9 @@ def init_process(
         ModelManager.get_instance().load_model_configs(model_configs)
 
     # Init monitor
-    MonitorManager.get_instance().initialize(use_monitor)
+    MonitorManager.get_instance().initialize(
+        not disable_saving and use_monitor,
+    )
 
     # Init studio client, which will push messages to web ui and fetch user
     # inputs from web ui

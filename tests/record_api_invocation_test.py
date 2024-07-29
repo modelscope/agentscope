@@ -2,6 +2,7 @@
 """ Test for record api invocation."""
 import json
 import os
+import shutil
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -61,7 +62,7 @@ class RecordApiInvocation(unittest.TestCase):
         )
 
         # test
-        agentscope.init(save_api_invoke=True)
+        agentscope.init(save_api_invoke=True, save_dir="./test-runs")
         model = OpenAIChatWrapper(
             config_name="gpt-4",
             api_key="xxx",
@@ -120,4 +121,5 @@ class RecordApiInvocation(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down for RecordApiInvocation."""
+        shutil.rmtree("./test-runs")
         flush()

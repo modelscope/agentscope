@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
+import os
 import unittest
 import platform
 
@@ -23,6 +24,11 @@ class ExecuteShellCommandTest(unittest.TestCase):
         self.arg2 = "cat tmp_a.txt"
 
         self.arg3 = "rm tmp_a.txt"
+
+    def tearDown(self) -> None:
+        """Tear down for ExecuteShellCommandTest."""
+        if os.path.exists("tmp_a.txt"):
+            os.remove("tmp_a.txt")
 
     def test(self) -> None:
         """test command, skip on windows"""

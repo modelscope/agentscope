@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Unit tests for model wrapper classes and functions
-"""
-
+"""Unit tests for model wrapper classes and functions"""
 from typing import Any, Union, List, Sequence
 import unittest
 from unittest.mock import patch, MagicMock

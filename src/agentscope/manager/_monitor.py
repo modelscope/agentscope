@@ -119,10 +119,8 @@ class MonitorManager:
 
         if _is_windows():
             self.engine = create_engine(f"sqlite:///{str(path)}")
-            print(f"sqlite:///{str(path)}")
         else:
             self.engine = create_engine(f"sqlite:////{str(path)}")
-            print(f"sqlite:////{str(path)}")
 
         # Create tables
         _Base.metadata.create_all(self.engine)

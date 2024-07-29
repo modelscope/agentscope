@@ -6,26 +6,27 @@ Unit tests for Monitor classes
 import unittest
 import os
 import shutil
+from pathlib import Path
 from loguru import logger
 
 import agentscope
 from agentscope.manager import MonitorManager
 
 
-class MonitorFactoryTest(unittest.TestCase):
-    """Test class for MonitorFactory"""
+class MonitorManagerTest(unittest.TestCase):
+    """Test class for MonitorManager"""
 
     def setUp(self) -> None:
         """Set up the test environment."""
         agentscope.init(
-            disable_saving=True,
             use_monitor=True,
+            save_dir="./test_runs",
         )
 
         self.monitor = MonitorManager.get_instance()
 
     def test_monitor(self) -> None:
-        """Test get monitor method of MonitorFactory."""
+        """Test get monitor method of MonitorManager."""
         usage = self.monitor.print_llm_usage()
 
         self.assertDictEqual(
@@ -92,7 +93,7 @@ class MonitorFactoryTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down the test environment."""
-        self.monitor.rm_database()
+        shutil.rmtree("./test_runs")
 
 
 class DisableMonitorTest(unittest.TestCase):
@@ -137,7 +138,11 @@ class DisableMonitorTest(unittest.TestCase):
         )
 
         # Check if the path is correct
-        self.assertTrue(self.monitor.path_db.startswith("./test_runs"))
+        self.assertTrue(
+            self.monitor.path_db.startswith(
+                str(Path("./test_runs").resolve()),
+            ),
+        )
         # Check if the database doesn't exist
         self.assertTrue(not os.path.exists(self.monitor.path_db))
 

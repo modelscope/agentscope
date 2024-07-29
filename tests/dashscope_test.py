@@ -136,6 +136,7 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
         mock_response.output = {
             "results": [{"url": "http://example.com/image.jpg"}],
         }
+        mock_response.usage.image_count = 1
         mock_call.return_value = mock_response
         # Call the wrapper with prompt
         prompt = "Generate an image of a sunset"
