@@ -686,10 +686,12 @@ def _delete_workflow() -> Response:
     """
     data = request.json
     filename = data.get("filename")
+    print(data)
     if not filename:
         return jsonify({"error": "Filename is required"})
 
-    filepath = os.path.join(_cache_dir, f"{filename}.json")
+    # TODO: support online version
+    filepath = os.path.join(_cache_dir, filename)
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"})
 

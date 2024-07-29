@@ -1898,34 +1898,55 @@ function showLoadWorkflowPopup() {
         .then(response => response.json())
         .then(data => {
             if (!Array.isArray(data.files)) {
-                throw new TypeError('返回数据不是数组');
+                throw new TypeError('The return data is not an array');
             }
-
             const inputOptions = data.files.reduce((options, file) => {
                 options[file] = file;
                 return options;
             }, {});
-
             Swal.fire({
-                title: '加载工作流',
+                title: 'Loading Workflow from Disks',
                 input: 'select',
                 inputOptions: inputOptions,
-                inputPlaceholder: '选择一个工作流',
+                inputPlaceholder: 'Select',
                 showCancelButton: true,
-                confirmButtonText: '加载',
-                cancelButtonText: '取消'
+                showDenyButton: true,
+                confirmButtonText: 'Load',
+                cancelButtonText: 'Cancel',
+                denyButtonText: 'Delete',
+                didOpen: () => {
+                    const selectElement = Swal.getInput();
+                    selectElement.addEventListener('change', (event) => {
+                        selectedFilename = event.target.value;
+                    });
+                }
             }).then(result => {
                 if (result.isConfirmed) {
-                    const filename = result.value;
-                    loadWorkflow(filename);
+                    loadWorkflow(selectedFilename);
+                } else if (result.isDenied) {
+                    Swal.fire({
+                        title: `Are you sure to delete ${selectedFilename}?`,
+                        text: "This operation cannot be undone!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    }).then((deleteResult) => {
+                        if (deleteResult.isConfirmed) {
+                            deleteWorkflow(selectedFilename);
+                        }
+                    });
                 }
             });
         })
         .catch(error => {
-            console.error('错误:', error);
-            Swal.fire('错误', '加载工作流时发生错误。', 'error');
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
         });
 }
+
 
 function loadWorkflow(filename) {
     fetch('/load-workflow', {
@@ -1948,6 +1969,29 @@ function loadWorkflow(filename) {
         .catch(error => {
             console.error('Error:', error);
             Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
+
+function deleteWorkflow(filename) {
+    fetch('/delete-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: filename
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                Swal.fire('Deleted!', 'Workflow has been deleted.', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while deleting the workflow.', 'error');
         });
 }
 
