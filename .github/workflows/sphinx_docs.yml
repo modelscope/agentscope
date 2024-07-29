@@ -28,6 +28,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
       run: |
+        pip install --upgrade setuptools wheel
         pip install -q -e .[full]
     - id: build
       name: Build Documentation

@@ -20,6 +20,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Minimal Dependencies
       run: |
+        pip install --upgrade setuptools wheel
         pip install -q -e .
     - name: Run import tests
       run: |
