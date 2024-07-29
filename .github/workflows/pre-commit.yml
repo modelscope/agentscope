@@ -15,14 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Setup Python
-      uses: actions/setup-python@master
+      uses: actions/setup-python@v4
       with:
         python-version: 3.9
     - name: Install AgentScope
       run: |
-        which python
-        which pip
-        python -m pip install -e .[full]
+        pip install -e .[full]
     - name: Install pre-commit
       run: |
         pre-commit install
