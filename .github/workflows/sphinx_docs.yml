@@ -26,7 +26,7 @@ jobs:
       uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Upgrade setuptools
+    - name: Update setuptools
       run: |
         pip install setuptools==68.2.2 wheel==0.41.2
     - name: Install Dependencies
@@ -47,3 +47,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: 'docs/sphinx_doc/build/html'
+        cname: doc.agentscope.io
