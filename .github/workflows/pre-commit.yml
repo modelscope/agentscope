@@ -18,9 +18,11 @@ jobs:
       uses: actions/setup-python@master
       with:
         python-version: 3.9
+    - name: Upgrade setuptools
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
     - name: Install AgentScope
       run: |
-        pip install ffmpy
         pip install -e .[full]
     - name: Install pre-commit
       run: |
