@@ -20,7 +20,7 @@ jobs:
         python-version: 3.9
     - name: Install AgentScope
       run: |
-        pip install --upgrade setuptools wheel
+        pip install setuptools==58.1.0
         pip install -q -e .[full]
     - name: Install pre-commit
       run: |
