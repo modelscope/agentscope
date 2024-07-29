@@ -161,7 +161,7 @@ class _FileManager:
             filename = f"{prefix}_{_generate_random_code()}.json"
             path_save = os.path.join(str(self.dir_invoke), filename)
             with open(path_save, "w", encoding="utf-8") as file:
-                json.dump(record, file, indent=4)
+                json.dump(record, file, indent=4, ensure_ascii=False)
 
             return filename
         else:

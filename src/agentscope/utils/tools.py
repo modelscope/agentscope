@@ -9,7 +9,7 @@ import string
 import socket
 import hashlib
 import random
-from typing import Any, Literal, List, Optional
+from typing import Any, Literal, List, Optional, Tuple
 
 from urllib.parse import urlparse
 import psutil
@@ -252,6 +252,21 @@ def generate_id_from_seed(seed: str, length: int = 8) -> str:
     return "".join(id_chars)
 
 
+def is_web_accessible(url: str) -> bool:
+    """Whether the url is accessible from the Web.
+
+    Args:
+        url (`str`):
+            The url to check.
+
+    Note:
+        This function is not perfect, it only checks if the URL starts with
+        common web protocols, e.g., http, https, ftp, oss.
+    """
+    parsed_url = urlparse(url)
+    return parsed_url.scheme in ["http", "https", "ftp", "oss"]
+
+
 def _is_json_serializable(obj: Any) -> bool:
     """Check if the given object is json serializable."""
     try:
@@ -459,3 +474,31 @@ def _is_process_alive(
 def _is_windows() -> bool:
     """Check if the system is Windows."""
     return os.name == "nt"
+
+
+def _map_string_to_color_mark(
+    target_str: str,
+) -> Tuple[str, str]:
+    """Map a string into an index within a given length.
+
+    Args:
+        target_str (`str`):
+            The string to be mapped.
+
+    Returns:
+        `Tuple[str, str]`: A color marker tuple
+    """
+    color_marks = [
+        ("\033[90m", "\033[0m"),
+        ("\033[91m", "\033[0m"),
+        ("\033[92m", "\033[0m"),
+        ("\033[93m", "\033[0m"),
+        ("\033[94m", "\033[0m"),
+        ("\033[95m", "\033[0m"),
+        ("\033[96m", "\033[0m"),
+        ("\033[97m", "\033[0m"),
+    ]
+
+    hash_value = hash(target_str)
+    index = hash_value % len(color_marks)
+    return color_marks[index]

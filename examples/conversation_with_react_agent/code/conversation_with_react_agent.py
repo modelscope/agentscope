@@ -70,6 +70,7 @@ service_toolkit.add(write_text_file)
 agentscope.init(
     model_configs=YOUR_MODEL_CONFIGURATION,
     project="Conversation with ReActAgent",
+    save_api_invoke=True,
 )
 
 # Create agents

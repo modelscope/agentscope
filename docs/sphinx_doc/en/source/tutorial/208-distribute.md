@@ -61,7 +61,7 @@ b = AgentB(
 In the Independent Process Mode, we need to start the agent server process on the target machine first.
 When starting the agent server process, you need to specify a model config file, which contains the models which can be used in the agent server, the IP address and port of the agent server process
 For example, start two agent server processes on the two different machines with IP `ip_a` and `ip_b`(called `Machine1` and `Machine2` accrodingly).
-You can run the following code on `Machine1`.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in `model_config_path_a` and set environment variables such as your model API key correctly in `Machine1`. The example model config file instances are located under `examples/model_configs_template`.
+You can run the following code on `Machine1`.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in `model_config_path_a` and set environment variables such as your model API key correctly in `Machine1`. The example model config file instances are located under `examples/model_configs_template`. In addition, your customized agent classes that need to run in the server must be registered in `custom_agent_classes` so that the server can correctly identify these agents. If you only use AgentScope's built-in agents, you can ignore `custom_agent_classes` field.
 
 ```python
 # import some packages
@@ -74,6 +74,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
+    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
 # Start the service
@@ -100,6 +101,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_b",
     port=12002, # choose an available port
+    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
 # Start the service
@@ -134,50 +136,6 @@ b = AgentB(
 
 The above code will deploy `AgentA` on the agent server process of `Machine1` and `AgentB` on the agent server process of `Machine2`.
 And developers just need to write the application flow in a centralized way in the main process.
-
-#### Advanced Usage of `to_dist`
-
-All examples described above convert initialized agents into their distributed version through the {func}`to_dist<agentscope.agents.AgentBase.to_dist>` method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
-For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist` parameter to the Agent's initialization function.
-
-In Child Process Mode, just pass `to_dist=True` to the Agent's initialization function.
-
-```python
-# Child Process mode
-a = AgentA(
-    name="A",
-    # ...
-    to_dist=True
-)
-b = AgentB(
-    name="B",
-    # ...
-    to_dist=True
-)
-```
-
-In Independent Process Mode, you need to encapsulate the parameters of the `to_dist()` method in  {class}`DistConf<agentscope.agents.DistConf>` instance and pass it into the `to_dist` field, for example:
-
-```python
-a = AgentA(
-    name="A",
-    # ...
-    to_dist=DistConf(
-        host="ip_a",
-        port=12001,
-    ),
-)
-b = AgentB(
-    name="B",
-    # ...
-    to_dist=DistConf(
-        host="ip_b",
-        port=12002,
-    ),
-)
-```
-
-Compared with the original `to_dist()` function call, this method just initializes the agent once in the agent server process.
 
 ### Step 2: Orchestrate Distributed Application Flow
 
@@ -233,9 +191,133 @@ while x is None or x.content == "exit":
     x = b(x)
 ```
 
-### About Implementation
+### Advanced Usage
 
-#### Actor Model
+#### `to_dist` with lower cost
+
+All examples described above convert initialized agents into their distributed version through the {func}`to_dist<agentscope.agents.AgentBase.to_dist>` method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
+For agents whose initialization process is time-consuming, the `to_dist` method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in `to_dist` parameter to the Agent's initialization function.
+
+In Child Process Mode, just pass `to_dist=True` to the Agent's initialization function.
+
+```python
+# Child Process mode
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=True
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=True
+)
+```
+
+In Independent Process Mode, you need to encapsulate the parameters of the `to_dist()` method in  {class}`DistConf<agentscope.agents.DistConf>` instance and pass it into the `to_dist` field, for example:
+
+```python
+a = AgentA(
+    name="A",
+    # ...
+    to_dist=DistConf(
+        host="ip_a",
+        port=12001,
+    ),
+)
+b = AgentB(
+    name="B",
+    # ...
+    to_dist=DistConf(
+        host="ip_b",
+        port=12002,
+    ),
+)
+```
+
+Compared with the original `to_dist()` function call, this method just initializes the agent once in the agent server process, which reduces the cost of initialization.
+
+#### Manage your agent server processes
+
+When running large-scale multi-agent applications, it's common to have multiple Agent Server processes running. To facilitate management of these processes, AgentScope offers management interfaces in the {class}`RpcAgentClient<agentscope.rpc.RpcAgentClient>` class. Here's a brief overview of these methods:
+
+- `is_alive`: This method checks whether the Agent Server process is still running.
+
+    ```python
+        client = RpcAgentClient(host=server_host, port=server_port)
+        if client.is_alive():
+            do_something()
+    ```
+
+- `stop`: This method stops the Agent Server process.
+
+    ```python
+        client.stop()
+        assert(client.is_alive() == False)
+    ```
+
+- `get_agent_list`: This method retrieves a list of JSON format thumbnails of all agents currently running within the Agent Server process. The thumbnail is generated by the `__str__` method of the Agent instance.
+
+    ```python
+        agent_list = client.get_agent_list()
+        print(agent_list)  # [agent1_info, agent2_info, ...]
+    ```
+
+- `get_agent_memory`: With this method, you can fetch the memory content of an agent specified by its `agent_id`.
+
+    ```python
+        agent_id = my_agent.agent_id
+        agent_memory = client.get_agent_memory(agent_id)
+        print(agent_memory) # [msg1, msg2, ...]
+    ```
+
+- `get_server_info`：This method provides information about the resource utilization of the Agent Server process, including CPU usage, memory consumption.
+
+    ```python
+        server_info = client.get_server_info()
+        print(server_info)  # { "cpu": xxx, "mem": xxx }
+    ```
+
+- `set_model_configs`: This method set the specific model configs into the agent server, the agent created later can directly use these model configs.
+
+    ```python
+        agent = MyAgent(  # failed because the model config [my_openai] is not found
+            # ...
+            model_config_name="my_openai",
+            to_dist={
+                # ...
+            }
+        )
+        client.set_model_configs([{  # set the model config [my_openai]
+            "config_name": "my_openai",
+            "model_type": "openai_chat",
+            # ...
+        }])
+        agent = MyAgent(  # success
+            # ...
+            model_config_name="my_openai",
+            to_dist={
+                # ...
+            }
+        )
+    ```
+
+- `delete_agent`: This method deletes an agent specified by its `agent_id`.
+
+    ```python
+        agent_id = agent.agent_id
+        ok = client.delete_agent(agent_id)
+    ```
+
+- `delete_all_agent`: This method deletes all agents currently running within the Agent Server process.
+
+    ```python
+        ok = client.delete_all_agent()
+    ```
+
+## Implementation
+
+### Actor Model
 
 [The Actor model](https://en.wikipedia.org/wiki/Actor_model) is a widely used programming paradigm in large-scale distributed systems, and it is also applied in the distributed design of the AgentScope platform.
 
@@ -251,10 +333,10 @@ E-->F
 D-->F
 ```
 
-Specifically, `B` and `C` can start execution simultaneously after receiving the message from `A`, and `E` can run immediately without waiting for `A`, `B`, `C,` and `D`.
+Specifically, `B` and `C` can start execution simultaneously after receiving the message from `A`, and `E` can run immediately without waiting for `A`, `B`, `C`, and `D`.
 By implementing each Agent as an Actor, an Agent will automatically wait for its input `Msg` before starting to execute the `reply` method, and multiple Agents can also automatically execute `reply` at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.
 
-#### PlaceHolder
+### PlaceHolder
 
 Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of {class}`Placeholder<agentscope.message.PlaceholderMessage>`.
 A Placeholder is a special message that contains the address and port number of the agent that generated the placeholder, which is used to indicate that the output message of the Agent is not ready yet.
@@ -265,7 +347,7 @@ A placeholder itself is also a message, and it can be sent to other agents, and 
 
 About more detailed technical implementation solutions, please refer to our [paper](https://arxiv.org/abs/2402.14034).
 
-#### Agent Server
+### Agent Server
 
 In agentscope, the agent server provides a running platform for various types of agents.
 Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.
