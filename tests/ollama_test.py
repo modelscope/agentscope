@@ -5,7 +5,6 @@ from unittest.mock import patch, MagicMock
 import agentscope
 from agentscope.manager import ModelManager
 from agentscope._runtime import _Runtime
-from agentscope.utils.monitor import MonitorFactory
 from tests.utils import clean_singleton_instances
 
 
@@ -15,7 +14,6 @@ def flush() -> None:
     Clear the runtime dir and destroy all singletons.
     """
     _Runtime._flush()  # pylint: disable=W0212
-    MonitorFactory.flush()
 
     clean_singleton_instances()
 

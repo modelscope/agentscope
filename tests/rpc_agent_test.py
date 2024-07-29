@@ -12,13 +12,13 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
+from agentscope.manager import MonitorManager
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
-from agentscope.utils import MonitorFactory
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
 from agentscope.exception import AgentCallError, QuotaExceededError
 
@@ -77,7 +77,7 @@ class DemoRpcAgentWithMonitor(AgentBase):
     """A demo Rpc agent that use monitor"""
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
-        monitor = MonitorFactory.get_monitor()
+        monitor = MonitorManager.get_instance()
         try:
             monitor.update({"msg_num": 1})
         except QuotaExceededError:
@@ -183,7 +183,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(os.path.exists("./.unittest_runs"))
 
     def tearDown(self) -> None:
-        MonitorFactory._instance = None  # pylint: disable=W0212
         logger.remove()
         shutil.rmtree("./.unittest_runs")
 
@@ -410,7 +409,7 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_standalone_multiprocess_init(self) -> None:
         """test compatibility with agentscope.init"""
-        monitor = MonitorFactory.get_monitor()
+        monitor = MonitorManager.get_instance()
         monitor.register("msg_num", quota=10)
         # rpc agent a
         agent_a = DemoRpcAgentWithMonitor(

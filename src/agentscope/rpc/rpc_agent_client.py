@@ -23,11 +23,11 @@ except ImportError as import_error:
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     RpcError = ImportError
 
-from agentscope.manager import FileManager
-from agentscope.utils.tools import generate_id_from_seed
-from agentscope.exception import AgentServerNotAliveError
-from agentscope.constants import _DEFAULT_RPC_OPTIONS
-from agentscope.exception import AgentCallError
+from ..utils.tools import generate_id_from_seed
+from ..exception import AgentServerNotAliveError
+from ..constants import _DEFAULT_RPC_OPTIONS
+from ..exception import AgentCallError
+from ..manager import FileManager
 
 
 class RpcAgentClient:

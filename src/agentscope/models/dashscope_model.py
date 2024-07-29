@@ -63,9 +63,6 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
             dashscope.api_key = self.api_key
         self.max_length = None
 
-        # Set monitor accordingly
-        self._register_default_metrics()
-
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
@@ -80,6 +77,37 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/api-details
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw
+
+        ```json
+        {
+            "status_code": 200,
+            "request_id": "a75a1b22-e512-957d-891b-37db858ae738",
+            "code": "",
+            "message": "",
+            "output": {
+                "text": null,
+                "finish_reason": null,
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "role": "assistant",
+                            "content": "xxx"
+                        }
+                    }
+                ]
+            },
+            "usage": {
+                "input_tokens": 25,
+                "output_tokens": 77,
+                "total_tokens": 102
+            }
+        }
+        ```
     """
 
     model_type: str = "dashscope_chat"
@@ -121,26 +149,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         )
 
         self.stream = stream
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -303,11 +311,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         output_tokens = response.usage.get("output_tokens", 0)
 
         # Update the token record accordingly
-        self.update_monitor(
-            call_counter=1,
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
             prompt_tokens=input_tokens,
             completion_tokens=output_tokens,
-            total_tokens=input_tokens + output_tokens,
         )
 
         # Save the model invocation after the stream is exhausted
@@ -422,21 +429,42 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Image Synthesis API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF
+
+        ```json
+        {
+            "status_code": 200,
+            "request_id": "b54ffeb8-6212-9dac-808c-b3771cba3788",
+            "code": null,
+            "message": "",
+            "output": {
+                "task_id": "996523eb-034d-459b-ac88-b340b95007a4",
+                "task_status": "SUCCEEDED",
+                "results": [
+                    {
+                        "url": "RESULT_URL1"
+                    },
+                    {
+                        "url": "RESULT_URL2"
+                    },
+                ],
+                "task_metrics": {
+                    "TOTAL": 2,
+                    "SUCCEEDED": 2,
+                    "FAILED": 0
+                }
+            },
+            "usage": {
+                "image_count": 2
+            }
+        }
+        ```
     """
 
     model_type: str = "dashscope_image_synthesis"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("image_count"),
-            metric_unit="image",
-        )
 
     def __call__(
         self,
@@ -505,9 +533,10 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(
-            call_counter=1,
-            **response.usage,
+        self.monitor.update_image_tokens(
+            model_name=self.model_name,
+            image_count=response.usage.image_count,
+            resolution=kwargs.get("size", "1024*1024"),
         )
 
         # step5: return response
@@ -523,21 +552,36 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
 
 
 class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope Text Embedding API."""
+    """The model wrapper for DashScope Text Embedding API.
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3
+
+        ```json
+        {
+            "status_code": 200, // 200 indicate success otherwise failed.
+            "request_id": "fd564688-43f7-9595-b986", // The request id.
+            "code": "", // If failed, the error code.
+            "message": "", // If failed, the error message.
+            "output": {
+                "embeddings": [ // embeddings
+                    {
+                        "embedding": [ // one embedding output
+                            -3.8450357913970947, ...,
+                        ],
+                        "text_index": 0 // the input index.
+                    }
+                ]
+            },
+            "usage": {
+                "total_tokens": 3 // the request tokens.
+            }
+        }
+        ```
+    """
 
     model_type: str = "dashscope_text_embedding"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -603,9 +647,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(
-            call_counter=1,
-            **response.usage,
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=response.usage.get("total_tokens"),
+            total_tokens=response.usage.get("total_tokens"),
         )
 
         # step5: return response
@@ -618,29 +663,44 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Multimodal API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN
+
+        ```json
+        {
+            "status_code": 200,
+            "request_id": "a0dc436c-2ee7-93e0-9667-c462009dec4d",
+            "code": "",
+            "message": "",
+            "output": {
+                "text": null,
+                "finish_reason": null,
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "role": "assistant",
+                            "content": [
+                                {
+                                    "text": "这张图片显..."
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "usage": {
+                "input_tokens": 1277,
+                "output_tokens": 81,
+                "image_tokens": 1247
+            }
+        }
+        ```
     """
 
     model_type: str = "dashscope_multimodal"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -688,18 +748,6 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             Therefore, you should input a list matching the content value
             above.
             If only involving words, just input them.
-
-            `parse_func`, `fault_handler` and `max_retries` are reserved
-            for `_response_parse_decorator` to parse and check the response
-            generated by model wrapper. Their usages are listed as follows:
-                - `parse_func` is a callable function used to parse and
-                check the response generated by the model, which takes the
-                response as input.
-                - `max_retries` is the maximum number of retries when the
-                `parse_func` raise an exception.
-                - `fault_handler` is a callable function which is called
-                when the response generated by the model is invalid after
-                `max_retries` retries.
         """
         # step1: prepare keyword arguments
         kwargs = {**self.generate_args, **kwargs}
@@ -735,16 +783,12 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         # step4: update monitor accordingly
         input_tokens = response.usage.get("input_tokens", 0)
         image_tokens = response.usage.get("image_tokens", 0)
-        audio_tokens = response.usage.get("audio_tokens", 0)
         output_tokens = response.usage.get("output_tokens", 0)
-        self.update_monitor(
-            call_counter=1,
+        # TODO: update the tokens
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
             prompt_tokens=input_tokens,
-            completion_tokens=output_tokens,
-            total_tokens=input_tokens
-            + output_tokens
-            + image_tokens
-            + audio_tokens,
+            completion_tokens=output_tokens + image_tokens,
         )
 
         # step5: return response

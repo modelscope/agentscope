@@ -317,14 +317,6 @@ class FileManager:
         except FileNotFoundError:
             return None
 
-    @classmethod
-    def flush(cls) -> None:
-        """
-        Only for unittest usage. Don't use this function in your code.
-        Flush the FileManager singleton.
-        """
-        cls._instance = None
-
     def serialize(self) -> dict:
         """Serialize the configuration into a dict."""
         serialized_data = {

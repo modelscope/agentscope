@@ -32,7 +32,7 @@ _DEFAULT_API_BUDGET = None
 _DEFAULT_PYPI_MIRROR = "http://mirrors.aliyun.com/pypi/simple/"
 _DEFAULT_TRUSTED_HOST = "mirrors.aliyun.com"
 # for monitor
-_DEFAULT_MONITOR_TABLE_NAME = "monitor_metrics"
+_DEFAULT_TABLE_NAME_MODEL = "model"
 # for summarization
 _DEFAULT_SUMMARIZATION_PROMPT = """
 TEXT: {}

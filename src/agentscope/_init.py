@@ -7,9 +7,8 @@ from agentscope import agents
 from .agents import AgentBase
 from ._runtime import _runtime
 from .logging import LOG_LEVEL, setup_logger
-from .manager import FileManager
-from .manager._model import ModelManager
-from .utils.monitor import MonitorFactory
+from .manager import FileManager, MonitorManager
+from .manager import ModelManager
 from .constants import _DEFAULT_SAVE_DIR
 from .constants import _DEFAULT_LOG_LEVEL
 from .constants import _DEFAULT_CACHE_DIR
@@ -21,8 +20,9 @@ _INIT_SETTINGS = {}
 # init the singleton class by default settings to avoid reinit in subprocess
 # especially in spawn mode, which will copy the object from the parent process
 # to the child process rather than re-import the module (fork mode)
-ModelManager()
 FileManager()
+ModelManager()
+MonitorManager()
 
 
 def init(
@@ -211,15 +211,12 @@ def init_process(
     # Init logger
     setup_logger(file_manager.run_dir, logger_level)
 
-    # Load model configs if needed
+    # Init model manager
     if model_configs is not None:
         ModelManager.get_instance().load_model_configs(model_configs)
 
     # Init monitor
-    _ = MonitorFactory.get_monitor(
-        db_path=file_manager.path_db,
-        impl_type="sqlite" if use_monitor else "dummy",
-    )
+    MonitorManager.get_instance().initialize(use_monitor)
 
     # Init studio client, which will push messages to web ui and fetch user
     # inputs from web ui

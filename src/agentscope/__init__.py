@@ -2,6 +2,7 @@
 """ Import all modules in the package. """
 
 # modules
+from . import manager
 from . import agents
 from . import memory
 from . import models
