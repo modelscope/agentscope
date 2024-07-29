@@ -20,7 +20,7 @@ jobs:
         python-version: 3.9
     - name: Install AgentScope
       run: |
-        which pyhon
+        which python
         which pip
         python -m pip install -e .[full]
     - name: Install pre-commit
