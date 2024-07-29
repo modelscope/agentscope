@@ -22,6 +22,7 @@ jobs:
       run: |
         which pip
         which python
+        pip install setuptools==69.2.0
         pip show setuptools
     - name: Install AgentScope
       run: |
