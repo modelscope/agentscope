@@ -13,11 +13,16 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v4
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.9
+    - name: Show version
+      run: |
+        which pip
+        which python
+        pip show setuptools
     - name: Install AgentScope
       run: |
         pip install -e .[full]

@@ -21,7 +21,7 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v4
     - name: Setup Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
