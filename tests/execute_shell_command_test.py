@@ -17,7 +17,7 @@ class ExecuteShellCommandTest(unittest.TestCase):
         """Init for ExecuteShellCommandTest."""
 
         # Basic expression
-        self.arg0 = "touch tmp_a.text"
+        self.arg0 = "touch tmp_a.txt"
 
         self.arg1 = "echo 'Helloworld' >> tmp_a.txt"
 
