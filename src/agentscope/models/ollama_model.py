@@ -44,6 +44,7 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
         model_name: str,
         options: dict = None,
         keep_alive: str = "5m",
+        host: Optional[Union[str, None]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the model wrapper for Ollama API.
@@ -57,6 +58,9 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
             keep_alive (`str`, default `5m`):
                 Controls how long the model will stay loaded into memory
                 following the request.
+            host (`str`, default `None`):
+                The host port of the ollama server.
+                Defaults to `None`, which is 127.0.0.1:11434.
         """
 
         super().__init__(config_name=config_name)
@@ -64,6 +68,7 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
         self.model_name = model_name
         self.options = options
         self.keep_alive = keep_alive
+        self.client = ollama.Client(host=host, **kwargs)
 
 
 class OllamaChatWrapper(OllamaWrapperBase):
@@ -101,6 +106,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         stream: bool = False,
         options: dict = None,
         keep_alive: str = "5m",
+        host: Optional[Union[str, None]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the model wrapper for Ollama API.
@@ -116,6 +122,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
             keep_alive (`str`, default `5m`):
                 Controls how long the model will stay loaded into memory
                 following the request.
+            host (`str`, default `None`):
+                The host port of the ollama server.
+                Defaults to `None`, which is 127.0.0.1:11434.
         """
 
         super().__init__(
@@ -123,6 +132,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             model_name=model_name,
             options=options,
             keep_alive=keep_alive,
+            host=host,
             **kwargs,
         )
 
@@ -182,7 +192,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             },
         )
 
-        response = ollama.chat(**kwargs)
+        response = self.client.chat(**kwargs)
 
         if stream:
 
@@ -412,7 +422,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
-        response = ollama.embeddings(
+        response = self.client.embeddings(
             model=self.model_name,
             prompt=prompt,
             options=options,
@@ -517,7 +527,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
-        response = ollama.generate(
+        response = self.client.generate(
             model=self.model_name,
             prompt=prompt,
             options=options,
