@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: True
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-22.04]
     env:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
