@@ -46,7 +46,7 @@ doc_requires = [
 test_requires = ["pytest", "pytest-cov", "pre-commit"]
 
 gradio_requires = [
-    "gradio==4.19.1",
+    "gradio==4.38.1",
     "modelscope_studio==0.0.5",
 ]
 
