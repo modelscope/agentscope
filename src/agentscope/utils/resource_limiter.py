@@ -80,7 +80,15 @@ def resources_limit(function: Callable) -> Callable:
             return function(self, *args, **kwargs)
 
         class_name = type(self).__name__
-        resources_limit_key = f"resource_limit_number_for_{class_name}"
+
+        # If some classes share the same resource limit
+        if hasattr(self, "resources_limit_key") and isinstance(
+            self.resources_limit_key,
+            str,
+        ):
+            resources_limit_key = self.resources_limit_key
+        else:
+            resources_limit_key = f"resource_limit_number_for_{class_name}"
         queue_key = f"resources_queue_for_{class_name}"
 
         request_id = str(uuid.uuid4())  # Use UUID for unique request IDs
@@ -116,10 +124,12 @@ def resources_limit(function: Callable) -> Callable:
                         self,
                         function,
                         resources_limit_key,
+                        queue_key,
+                        request_id,
                         *args,
                         **kwargs,
                     )
-                    redis_client.lrem(queue_key, 1, request_id)
+                    # redis_client.lrem(queue_key, 1, request_id)
                     return result
             else:
                 if self.resource_limit_type == "capacity":
@@ -174,6 +184,8 @@ def _process_request(
     self: Any,
     function: Callable,
     resources_limit_key: str,
+    queue_key: str,
+    request_id: str,
     *args: Any,
     **kwargs: Any,
 ) -> Any:
@@ -182,6 +194,7 @@ def _process_request(
     """
     if self.resource_limit_type == "capacity":
         redis_client.decr(resources_limit_key)
+    redis_client.lrem(queue_key, 1, request_id)
     try:
         result = function(self, *args, **kwargs)
     except Exception as e:
@@ -221,7 +234,7 @@ if __name__ == "__main__":
         @resources_limit
         def test_method(self, x: int, y: int) -> int:
             """
-            Test methdo for @resources_limit
+            Test method for @resources_limit
             """
             result = x + y
             logger.debug(f"Processing request: {x} + {y} = {result}")
@@ -266,10 +279,9 @@ if __name__ == "__main__":
     if resource_limit_mode == "capacity":
         simulation_time = math.ceil(num_task / resource_num) * exc_time
     else:
-        simulation_time = (math.floor(num_task / resource_num) - 1) * max(
-            60,
-            exc_time,
-        ) + exc_time
+        simulation_time = (
+            math.ceil(num_task / resource_num) - 1
+        ) * 60 + exc_time
 
     input(
         f"The simulation time takes for about: "
@@ -289,7 +301,7 @@ if __name__ == "__main__":
         result = instance.test_method(x, y)
         print(f"Result of {x} + {y} = {result}")
 
-    if sim_mode == "multiprocessing":
+    if sim_mode in ["multiprocessing", "p"]:
         processes = []
         for i in range(num_task):
             p = Process(target=make_request, args=(test_instance, i, i + 1))
