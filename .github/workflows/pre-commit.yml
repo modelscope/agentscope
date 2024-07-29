@@ -18,6 +18,9 @@ jobs:
       uses: actions/setup-python@master
       with:
         python-version: 3.9
+    - name: Update setuptools
+      run: |
+        pip install setuptools==68.2.2 wheel==0.41.2
     - name: Install AgentScope
       run: |
         pip install -q -e .[full]
