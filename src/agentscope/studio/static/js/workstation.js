@@ -1461,7 +1461,7 @@ function disableButtons() {
 }
 
 
-function showExportPyPopup() {
+function showExportPyPopup(userLogin, tokenQuery) {
     if (checkConditions()) {
         const rawData = editor.export();
 
@@ -1488,6 +1488,8 @@ function showExportPyPopup() {
             },
             body: JSON.stringify({
                 data: JSON.stringify(filteredData, null, 4),
+                user_login: userLogin,
+                token_query: tokenQuery,
             })
         }).then(response => {
             if (!response.ok) {
@@ -1551,19 +1553,17 @@ function showExportPyPopup() {
 }
 
 
-function showExportRunPopup() {
-    var userLogin = '{{ user_login }}';
-    var ip = '{{ ip }}';
+function showExportRunPopup(IP, userLogin, tokenQuery) {
 
-    if ((!userLogin || userLogin.trim() === '') && ip === '') {
-        showExportRunLocalPopup();
+    if ((!userLogin || userLogin.trim() === '') && IP === '') {
+        showExportRunLocalPopup(userLogin, tokenQuery);
     } else {
-        showExportRunMSPopup();
+        showExportRunMSPopup(userLogin, tokenQuery);
     }
 }
 
 
-function showExportRunLocalPopup() {
+function showExportRunLocalPopup(userLogin, tokenQuery) {
     if (checkConditions()) {
         const rawData = editor.export();
         const hasError = sortElementsByPosition(rawData);
@@ -1588,6 +1588,8 @@ function showExportRunLocalPopup() {
             },
             body: JSON.stringify({
                 data: JSON.stringify(filteredData, null, 4),
+                user_login: userLogin,
+                token_query: tokenQuery,
             })
         }).then(response => {
             if (!response.ok) {
@@ -1664,7 +1666,7 @@ function filterOutApiKey(obj) {
 }
 
 
-function showExportRunMSPopup() {
+function showExportRunMSPopup(userLogin, tokenQuery) {
     if (checkConditions()) {
         Swal.fire({
             title: 'Are you sure to run the workflow in ModelScope Studio?',
@@ -1704,8 +1706,8 @@ function showExportRunMSPopup() {
                     },
                     body: JSON.stringify({
                         data: JSON.stringify(filteredData, null, 4),
-                        user_login: '{{ user_login }}',
-                        token_query: '{{ token_query }}',
+                        user_login: userLogin,
+                        token_query: tokenQuery,
                     })
                 })
                     .then(response => response.json())
@@ -1851,7 +1853,7 @@ function showImportHTMLPopup() {
 }
 
 
-function showSaveWorkflowPopup() {
+function showSaveWorkflowPopup(userLogin, tokenQuery) {
     Swal.fire({
         title: 'Save Workflow',
         input: 'text',
@@ -1862,12 +1864,12 @@ function showSaveWorkflowPopup() {
     }).then(result => {
         if (result.isConfirmed) {
             const filename = result.value;
-            saveWorkflow(filename);
+            saveWorkflow(filename, userLogin, tokenQuery);
         }
     });
 }
 
-function saveWorkflow(filename) {
+function saveWorkflow(fileName, userLogin, tokenQuery) {
     const rawData = editor.export();
     fetch('/save-workflow', {
         method: 'POST',
@@ -1875,9 +1877,11 @@ function saveWorkflow(filename) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            filename: filename,
+            filename: fileName,
             workflow: rawData,
-            overwrite: false
+            overwrite: false,
+            user_login: userLogin,
+            token_query: tokenQuery,
         })
     }).then(response => response.json())
         .then(data => {
@@ -1893,8 +1897,17 @@ function saveWorkflow(filename) {
         });
 }
 
-function showLoadWorkflowPopup() {
-    fetch('/list-workflows')
+function showLoadWorkflowPopup(userLogin, tokenQuery) {
+    fetch('/list-workflows', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            user_login: userLogin,
+            token_query: tokenQuery,
+        })
+    })
         .then(response => response.json())
         .then(data => {
             if (!Array.isArray(data.files)) {
@@ -1948,14 +1961,16 @@ function showLoadWorkflowPopup() {
 }
 
 
-function loadWorkflow(filename) {
+function loadWorkflow(fileName, userLogin, tokenQuery) {
     fetch('/load-workflow', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            filename: filename
+            filename: fileName,
+            user_login: userLogin,
+            token_query: tokenQuery,
         })
     }).then(response => response.json())
         .then(data => {
@@ -1972,14 +1987,14 @@ function loadWorkflow(filename) {
         });
 }
 
-function deleteWorkflow(filename) {
+function deleteWorkflow(fileName) {
     fetch('/delete-workflow', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            filename: filename
+            filename: fileName
         })
     }).then(response => response.json())
         .then(data => {
@@ -2070,7 +2085,7 @@ function copyToClipboard(contentToCopy) {
 }
 
 
-function fetchExample(index, processData) {
+function fetchExample(index, processData, userLogin, tokenQuery) {
     fetch('/read-examples', {
         method: 'POST',
         headers: {
@@ -2078,7 +2093,9 @@ function fetchExample(index, processData) {
         },
         body: JSON.stringify({
             data: index,
-            lang: getCookie('locale') || 'en'
+            lang: getCookie('locale') || 'en',
+            user_login: userLogin,
+            token_query: tokenQuery,
         })
     }).then(response => {
         if (!response.ok) {
@@ -2090,7 +2107,7 @@ function fetchExample(index, processData) {
 }
 
 
-function importExample(index) {
+function importExample(index, userLogin, tokenQuery) {
     fetchExample(index, data => {
         const dataToImport = data.json;
 
@@ -2110,11 +2127,11 @@ function importExample(index) {
                     }
                 });
             });
-    })
+    }, userLogin, tokenQuery)
 }
 
 
-function importExample_step(index) {
+function importExample_step(index, userLogin, tokenQuery) {
     fetchExample(index, data => {
         const dataToImportStep = data.json;
         addHtmlAndReplacePlaceHolderBeforeImport(dataToImportStep).then(() => {
@@ -2123,7 +2140,7 @@ function importExample_step(index) {
                 "DialogAgent"];
             initializeImport(dataToImportStep);
         })
-    });
+    }, userLogin, tokenQuery);
 }
 
 

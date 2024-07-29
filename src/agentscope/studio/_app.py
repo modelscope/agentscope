@@ -657,6 +657,11 @@ def _save_workflow() -> Response:
     """
     Save the workflow JSON data to the local user folder.
     """
+    user_login = request.args.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
     data = request.json
     overwrite = data.get("overwrite", False)
     filename = data.get("filename")
@@ -664,8 +669,7 @@ def _save_workflow() -> Response:
     if not filename:
         return jsonify({"error": "Filename is required"})
 
-    # TODO: support online version
-    filepath = os.path.join(_cache_dir, f"{filename}.json")
+    filepath = os.path.join(user_dir, f"{filename}.json")
     if overwrite:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(workflow, f, ensure_ascii=False, indent=4)
@@ -684,14 +688,17 @@ def _delete_workflow() -> Response:
     """
     Deletes a workflow JSON file from the user folder.
     """
+    user_login = request.args.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
     data = request.json
     filename = data.get("filename")
-    print(data)
     if not filename:
         return jsonify({"error": "Filename is required"})
 
-    # TODO: support online version
-    filepath = os.path.join(_cache_dir, filename)
+    filepath = os.path.join(user_dir, filename)
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"})
 
@@ -702,12 +709,17 @@ def _delete_workflow() -> Response:
         return jsonify({"error": str(e)})
 
 
-@_app.route("/list-workflows", methods=["GET"])
+@_app.route("/list-workflows", methods=["POST"])
 def _list_workflows() -> Response:
     """
     Get all workflow JSON files in the user folder.
     """
-    files = [file for file in os.listdir(_cache_dir) if file.endswith(".json")]
+    user_login = request.args.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    files = [file for file in os.listdir(user_dir) if file.endswith(".json")]
     return jsonify(files=files)
 
 
@@ -716,13 +728,17 @@ def _load_workflow() -> Response:
     """
     Reads and returns workflow data from the specified JSON file.
     """
+    user_login = request.args.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
     data = request.json
     filename = data.get("filename")
     if not filename:
         return jsonify({"error": "Filename is required"}), 400
 
-    filepath = os.path.join(_cache_dir, filename)
-    print(filepath)
+    filepath = os.path.join(user_dir, filename)
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"}), 404
 

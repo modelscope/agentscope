@@ -25,7 +25,14 @@ from flask_babel import Babel, refresh
 from dotenv import load_dotenv
 
 from agentscope.studio.utils import require_auth
-from agentscope.studio._app import _convert_config_to_py, _read_examples
+from agentscope.studio._app import (
+    _convert_config_to_py,
+    _read_examples,
+    _save_workflow,
+    _delete_workflow,
+    _list_workflows,
+    _load_workflow,
+)
 
 _app = Flask(__name__)
 _app.config["BABEL_DEFAULT_LOCALE"] = "en"
@@ -253,7 +260,7 @@ def oauth_callback() -> str:
 @require_auth(ip=IP, copilot_ip=COPILOT_IP, copilot_port=COPILOT_PORT)
 def _workstation_online(**kwargs: Any) -> str:
     """Render the workstation page."""
-    user_login = request.args.get("user_login", "")
+    user_login = request.args.get("user_login", "local_user")
     kwargs["user_login"] = user_login
 
     return render_template("workstation.html", **kwargs)
@@ -318,6 +325,45 @@ def _read_examples_online(**kwargs: Any) -> Response:
     Read tutorial examples from local file.
     """
     return _read_examples()
+
+
+@_app.route("/save-workflow", methods=["POST"])
+def _save_workflow_online(**kwargs: Any) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Save the workflow JSON data to the local user folder.
+    """
+    return _save_workflow()
+
+
+@_app.route("/delete-workflow", methods=["POST"])
+@require_auth(fail_with_exception=True, ip=IP)
+def _delete_workflow_online(**kwargs: Any) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Deletes a workflow JSON file from the user folder.
+    """
+    return _delete_workflow()
+
+
+@_app.route("/list-workflows", methods=["POST"])
+@require_auth(fail_with_exception=True, ip=IP)
+def _list_workflows_online(**kwargs: Any) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Get all workflow JSON files in the user folder.
+    """
+    return _list_workflows()
+
+
+@_app.route("/load-workflow", methods=["POST"])
+@require_auth(fail_with_exception=True, ip=IP)
+def _load_workflow_online(**kwargs: Any) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Reads and returns workflow data from the specified JSON file.
+    """
+    return _load_workflow()
 
 
 @_app.route("/set_locale")
