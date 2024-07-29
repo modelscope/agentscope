@@ -47,6 +47,7 @@ from .web.wiki import (
     wiki_get_page_content_by_paragraph,
     wiki_get_all_wikipedia_tables,
     wiki_get_page_images_with_captions,
+    wiki_page_retrieval
 )
 
 

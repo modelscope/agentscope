@@ -10,6 +10,7 @@ from agentscope.service import (
     wiki_get_page_content_by_paragraph,
     wiki_get_all_wikipedia_tables,
     wiki_get_page_images_with_captions,
+    wiki_page_retrieval
 )
 from agentscope.service.service_status import ServiceExecStatus
 
@@ -495,6 +496,7 @@ class TestWiki(unittest.TestCase):
         mock_get.assert_has_calls(calls, any_order=True)
 
         self.assertEqual(results, expected_result)
+        
 
 
 if __name__ == "__main__":

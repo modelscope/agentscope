@@ -32,7 +32,49 @@ def _check_entity_existence(entity: str) -> ServiceResponse:
         entity (str): searching keywords
         
     Returns:
-
+        `ServiceResponse`: A dictionary containing `status` and `content`.
+        The `status` attribute is from the ServiceExecStatus enum,
+        indicating success or error.
+        If the entity does not exist, `status`=ERROR
+        and return top-5 similar entities in `content`.
+        If entity exists, `status`=SUCCESS, return the original entity in `content`.
+        
+    Example 1 (entity exists):
+        .. code-block:: python
+        
+            _check_entity_existence('Hello')
+        
+        It returns:
+        .. code-block:: python
+        
+            {
+                'status': <ServiceExecStatus.SUCCESS: 1>, 
+                'content': {
+                    'entity': 'Hello'
+                    }
+            }
+        
+    Example 2 (entity does not exist):   
+        .. code-block:: python
+        
+             _check_entity_existence('nihao')
+             
+        It returns:
+        .. code-block:: python
+        
+            {
+                'status': <ServiceExecStatus.ERROR: -1>,
+                'content': {
+                    'similar_entities': [
+                        'Ni Hao',
+                        'Ranma ½',
+                        'Ni Hao, Kai-Lan',
+                        'List of Ranma ½ episodes',
+                        'Studio Deen'
+                    ]
+                }
+            }
+        
     """
     search_params = {
         "action": "query",
@@ -101,6 +143,7 @@ def wiki_get_category_members(
         Example:
 
         .. code-block:: python
+        
             members = wiki_get_category_members(
                 "Machine_learning",
                 max_members=10
@@ -110,6 +153,7 @@ def wiki_get_category_members(
         It returns contents:
 
         .. code-block:: python
+        
             {
                 'status': <ServiceExecStatus.SUCCESS: 1>,
                 'content': [
@@ -175,12 +219,14 @@ def wiki_get_infobox(
     Example:
 
     .. code-block:: python
+    
         infobox_data = wiki_get_infobox(entity="Python (programming language)")
         print(infobox_data)
 
     It returns content:
 
     .. code-block:: python
+    
     {
         'status': <ServiceExecStatus.SUCCESS: 1>,
         'content':  {'Paradigm': 'Multi-paradigm : object-oriented ...',
@@ -207,7 +253,7 @@ def wiki_get_infobox(
         "format": "json",
     }
 
-    parse_data = wiki_api(parse_params)
+    parse_data = _wiki_api(parse_params)
 
     if "parse" in parse_data:
         raw_html = parse_data["parse"]["text"]["*"]
@@ -249,7 +295,7 @@ def wiki_get_page_content_by_paragraph(
         entity (str): search word.
         max_paragraphs (int, optional):
             The maximum number of paragraphs to retrieve.
-            Default is None (retrieve all paragraphs).
+            Default is 1 (retrieve the first paragraph).
 
     Returns:
         `ServiceResponse`: A dictionary containing `status` and `content`.
@@ -263,6 +309,7 @@ def wiki_get_page_content_by_paragraph(
     Example:
 
         .. code-block:: python
+        
             wiki_paragraph = wiki_get_page_content_by_paragraph(
                 entity="Python (programming language)",
                 max_paragraphs=1)
@@ -270,6 +317,7 @@ def wiki_get_page_content_by_paragraph(
 
         It will return content:
         .. code-block:: python
+        
             {
                 'status': <ServiceExecStatus.SUCCESS: 1>,
                 'content': ['Python is a high-level...']
@@ -294,11 +342,11 @@ def wiki_get_page_content_by_paragraph(
     if content == "No content found.":
         return ServiceResponse(ServiceExecStatus.ERROR, content)
 
-    # Split content into paragraphs and filter out headers
+    # Split content into paragraphs, including headers
     paragraphs = [
         para.strip()
         for para in content.split("\n\n")
-        if not re.match(r"^\s*==.*==\s*$", para) and para.strip() != ""
+        if para.strip() != ""
     ]
 
     # Return the specified number of paragraphs
@@ -331,6 +379,7 @@ def wiki_get_all_wikipedia_tables(
     Example:
 
         .. code-block:: python
+        
             wiki_table = wiki_get_all_wikipedia_tables(
                 entity="Python (programming language)"
                 )
@@ -338,6 +387,7 @@ def wiki_get_all_wikipedia_tables(
 
         It will return content:
         .. code-block:: python
+        
             {
                 'status': <ServiceExecStatus.SUCCESS: 1>,
                 'content': [
@@ -417,6 +467,7 @@ def wiki_get_page_images_with_captions(
 
     Example:
         .. code-block:: python
+        
             wiki_images = wiki_get_page_images_with_captions(
                 entity="Python (programming language)"
                 )
@@ -425,6 +476,7 @@ def wiki_get_page_images_with_captions(
         It will return:
 
         .. code-block:: python
+        
             {
                 'status': <ServiceExecStatus.SUCCESS: 1>,
                 'content': [{
@@ -481,3 +533,103 @@ def wiki_get_page_images_with_captions(
             )
 
     return ServiceResponse(ServiceExecStatus.SUCCESS, image_details)
+
+
+def wiki_page_retrieval(
+    entity: str,
+    max_paragraphs: int = 1,
+)-> ServiceResponse:
+    """
+    Function to retrive different format 
+    (infobox, paragraphs, tables, images)
+    of information on the Wikipedia page
+
+    Args:
+        entity (str): search word.
+        max_paragraphs (int, optional):
+            The maximum number of paragraphs to retrieve.
+            Default is 1 (retrieve the first paragraph).
+        
+    Returns:
+        A dictionary contains retrieved information of different format.
+        Keys are four formats: `infobox`, `paragraph`, `table`, `image`.
+        The value for each key is a `ServiceResponse` object containing
+        `status` and `content`. 
+        The `status` attribute is from the ServiceExecStatus enum,
+        indicating success or error.
+        If the entity does not exist, `status`=ERROR,
+        otherwise `status`=SUCCESS.
+        The `content` attribute is the retrieved contents 
+        if  `status`=SUCCESS. Contents are different for each format.
+        `infobox`: Information in the InfoBox.
+        `paragraph`: A list of paragraphs from the Wikipedia page. The number 
+                of paragraphs is determined by arg `max_paragraphs`.
+        `table`: A list of tables from the Wikipedia page. Each table 
+                is presented as a dict, where key is the 
+                column name and value is the values for each column.
+        `image`: A list of dict from the Wikipedia page. 
+                Each dict has:
+                'title': title of the image
+                'url': link to the image
+                'caption': caption of the image
+
+    Example:
+        .. code-block:: python
+        
+            wiki_page_retrieval(entity='Hello', max_paragraphs=1)
+
+        It will return:
+
+        .. code-block:: python
+        
+            {
+                'infobox': {
+                    'status': <ServiceExecStatus.ERROR: -1>, 
+                'content': None
+                },
+                'paragraph': {
+                    'status': <ServiceExecStatus.SUCCESS: 1>,
+                    'content': ['Hello is a salutation or greeting in the English language. It is first attested in writing from 1826.']
+                },
+                'table': {
+                    'status': <ServiceExecStatus.ERROR: -1>, 
+                    'content': None
+                },
+                'image': {
+                    'status': <ServiceExecStatus.SUCCESS: 1>,
+                    'content': [
+                        {
+                            'title': 'File:Semi-protection-shackle.svg',
+                            'url': 'https://upload.wikimedia.org/wikipedia/en/1/1b/Semi-protection-shackle.svg',
+                            'caption': '<p>English: <span lang="en"><a href="//en.wikipedia.org/wiki/Wikipedia:Semiprotection" class="mw-redirect" title="Wikipedia:Semiprotection">Semi-protection</a> lock with grey shackle</span>\n</p>'
+                        },
+                        {
+                            'title': 'File:TelephoneHelloNellie.jpg',
+                            'url': 'https://upload.wikimedia.org/wikipedia/commons/b/b3/TelephoneHelloNellie.jpg',
+                            'caption': 'No caption available'
+                        },
+                        {
+                            'title': 'File:Wiktionary-logo-en-v2.svg',
+                            'url': 'https://upload.wikimedia.org/wikipedia/commons/9/99/Wiktionary-logo-en-v2.svg',
+                            'caption': 'A logo derived from ...'
+                        }
+                    ]
+                }
+            }
+                    
+    """
+    
+    infobox_retrieval = wiki_get_infobox(entity=entity)
+    paragraph_retrieval = wiki_get_page_content_by_paragraph(
+        entity=entity, max_paragraphs=max_paragraphs)
+    table_retrieval = wiki_get_all_wikipedia_tables(entity=entity)
+    image_retrieval = wiki_get_page_images_with_captions(entity=entity)
+    
+    total_retrieval = {
+        'infobox': infobox_retrieval,
+        'paragraph': paragraph_retrieval,
+        'table': table_retrieval,
+        'image': image_retrieval
+    }
+    
+    return total_retrieval
