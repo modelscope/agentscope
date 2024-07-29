@@ -23,7 +23,7 @@ jobs:
         pip install setuptools==68.2.2 wheel==0.41.2
     - name: Install AgentScope
       run: |
-        pip install -e .[full]
+        pip install -q -e .[full]
     - name: Install pre-commit
       run: |
         pre-commit install
