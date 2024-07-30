@@ -33,8 +33,8 @@ except ImportError as import_error:
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.agents.agent import AgentBase
 from agentscope.manager import ModelManager
+from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
-from agentscope._runtime import _runtime
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from agentscope.message import (
@@ -117,7 +117,8 @@ class AgentServerServicer(RpcAgentServicer):
                 host=host,
                 port=port,
             )
-            _studio_client.initialize(_runtime.runtime_id, studio_url)
+            run_id = ASManager.get_instance().run_id
+            _studio_client.initialize(run_id, studio_url)
 
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,

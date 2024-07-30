@@ -7,7 +7,6 @@ from typing import Any, Union, Optional, List, Literal, Generator
 import numpy as np
 from PIL import Image
 
-from agentscope._runtime import _runtime
 from agentscope.utils.tools import _download_file, _get_timestamp, _hash_string
 from agentscope.utils.tools import _generate_random_code
 from agentscope.constants import (
@@ -47,9 +46,8 @@ class FileManager:
 
     _instance = None
 
-    __serialized_attrs = {
+    __serialized_attrs = [
         # Flags
-        "disable_saving",
         "save_log",
         "save_code",
         "save_api_invoke",
@@ -57,7 +55,7 @@ class FileManager:
         "base_dir",
         "run_dir",
         "cache_dir",
-    }
+    ]
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Any:
         """Create a singleton instance."""
@@ -73,20 +71,17 @@ class FileManager:
 
     def __init__(self) -> None:
         """Initialize the file manager with default values."""
-        self.disable_saving = True
         self.save_log = False
         self.save_code = False
         self.save_api_invoke = False
 
-        self.cache_dir = "./"
-        self.base_dir = "./"
-        self.run_dir = "./"
-        self.path_db = "./agentscope.db"
+        self.cache_dir = None
+        self.base_dir = None
+        self.run_dir = None
 
     def initialize(
         self,
-        disable_saving: bool,
-        base_dir: str,
+        run_dir: Union[str, None],
         save_log: bool,
         save_code: bool,
         save_api_invoke: bool,
@@ -95,12 +90,8 @@ class FileManager:
         """Set the directory for saving files.
 
         Args:
-            disable_saving (`bool`):
-                Whether to disable saving files. If `True`, this will override
-                `save_log`, `save_code`, and `save_api_invoke` parameters.
-            base_dir (`str`):
-                The base directory to save different running instances,
-                defaults to "./runs".
+            run_dir (`Union[str, None]`):
+                The running directory, used to save files, logs and code.
             save_log (`bool`):
                 Whether to save logs locally.
             save_code (`bool`):
@@ -110,27 +101,14 @@ class FileManager:
             cache_dir (`str`):
                 The directory to save cache files.
         """
-        self.disable_saving = disable_saving
-
-        self.save_log = not disable_saving and save_log
-        self.save_code = not disable_saving and save_code
-        self.save_api_invoke = not disable_saving and save_api_invoke
+        self.save_log = save_log
+        self.save_code = save_code
+        self.save_api_invoke = save_api_invoke
 
         self.cache_dir = cache_dir
 
         # Initialize the path of the sub dirs
-        if disable_saving:
-            self.base_dir = None
-            self.run_dir = None
-            self.path_db = "./agentscope.db"
-        else:
-            self.base_dir = base_dir
-            self.run_dir = os.path.join(base_dir, _runtime.runtime_id)
-            self.path_db = os.path.join(self.run_dir, "agentscope.db")
-
-        # Save the python code locally according to self.save_code within the
-        # function
-        self.save_python_code()
+        self.run_dir = run_dir
 
     def _get_and_create_subdir(self, subdir: str) -> str:
         """Get the path of the subdir and create the subdir if it does not
@@ -145,6 +123,11 @@ class FileManager:
     @property
     def _embedding_cache_dir(self) -> str:
         """Obtain the embedding cache directory."""
+        if self.cache_dir is None:
+            raise ValueError(
+                "The cache directory is not specified. Please specify the "
+                "cache directory when initializing the file manager.",
+            )
         dir_cache_embedding = os.path.join(self.cache_dir, "embedding")
         os.makedirs(dir_cache_embedding, exist_ok=True)
         return dir_cache_embedding
@@ -194,13 +177,12 @@ class FileManager:
 
     def save_python_code(self) -> None:
         """Save the code locally."""
-        if self.save_code:
-            # Copy python file in os.path.curdir into runtime directory
-            cur_dir = os.path.abspath(os.path.curdir)
-            for filename in os.listdir(cur_dir):
-                if filename.endswith(".py"):
-                    file_abs = os.path.join(cur_dir, filename)
-                    shutil.copy(file_abs, str(self._code_dir))
+        # Copy python file in os.path.curdir into runtime directory
+        cur_dir = os.path.abspath(os.path.curdir)
+        for filename in os.listdir(cur_dir):
+            if filename.endswith(".py"):
+                file_abs = os.path.join(cur_dir, filename)
+                shutil.copy(file_abs, str(self._code_dir))
 
     def save_image(
         self,
@@ -319,16 +301,30 @@ class FileManager:
 
     def serialize(self) -> dict:
         """Serialize the configuration into a dict."""
-        serialized_data = {
-            "__class__": self.__class__.__name__,
-        }
+        serialized_data = {}
 
         for attr_name in self.__serialized_attrs:
             serialized_data[attr_name] = getattr(self, attr_name)
 
         return serialized_data
 
+    def deserialize(self, data: dict) -> None:
+        """Load the configuration from a dict."""
+        for k in self.__serialized_attrs:
+            assert k in data, f"Key {k} not found in data."
+            setattr(self, k, data[k])
+
     @classmethod
     def is_initialized(cls) -> bool:
         """Check if the file manager has been initialized."""
         return cls._instance is not None
+
+    def flush(self) -> None:
+        """Flush the file manager."""
+        self.save_log = False
+        self.save_code = False
+        self.save_api_invoke = False
+
+        self.cache_dir = None
+        self.base_dir = None
+        self.run_dir = None

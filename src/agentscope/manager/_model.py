@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The model manager for AgentScope."""
 import json
-from typing import Any, Union, Optional, Sequence
+from typing import Any, Union, Sequence
 
 from loguru import logger
 
@@ -35,9 +35,15 @@ class ModelManager:
 
     def __init__(
         self,
-        model_configs: Optional[Union[dict, str, list]] = None,
     ) -> None:
         """Initialize the model manager with model configs"""
+        self.model_configs = {}
+
+    def initialize(
+        self,
+        model_configs: Union[dict, str, list, None] = None,
+    ) -> None:
+        """Initialize the model manager with model configs."""
         if model_configs is not None:
             self.load_model_configs(model_configs)
 
@@ -135,6 +141,22 @@ class ModelManager:
     def get_config_by_name(self, config_name: str) -> Union[dict, None]:
         """Load the model config by name, and return the config dict."""
         return self.model_configs.get(config_name, None)
+
+    def serialize(self) -> dict:
+        """Serialize the model manager into a dict."""
+        return {
+            "model_configs": self.model_configs,
+        }
+
+    def deserialize(self, data: dict) -> None:
+        """Load the model manager from a dict."""
+        self.clear_model_configs()
+        assert "model_configs" in data
+        self.model_configs = data["model_configs"]
+
+    def flush(self) -> None:
+        """Flush the model manager."""
+        self.clear_model_configs()
 
 
 class _ModelConfig(dict):

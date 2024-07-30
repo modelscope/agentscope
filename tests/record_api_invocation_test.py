@@ -8,19 +8,8 @@ from unittest.mock import patch, MagicMock
 
 import agentscope
 from agentscope.manager import FileManager
+from agentscope.manager import ASManager
 from agentscope.models import OpenAIChatWrapper
-from agentscope._runtime import _Runtime
-from tests.utils import clean_singleton_instances
-
-
-def flush() -> None:
-    """
-    ** Only for unittest usage. Don't use this function in your code. **
-    Clear the runtime dir and destroy all singletons.
-    """
-    _Runtime._flush()  # pylint: disable=W0212
-
-    clean_singleton_instances()
 
 
 class RecordApiInvocation(unittest.TestCase):
@@ -40,8 +29,6 @@ class RecordApiInvocation(unittest.TestCase):
                 },
             ],
         }
-
-        flush()
 
     @patch("openai.OpenAI")
     def test_record_model_invocation_with_init(
@@ -122,4 +109,4 @@ class RecordApiInvocation(unittest.TestCase):
     def tearDown(self) -> None:
         """Tear down for RecordApiInvocation."""
         shutil.rmtree("./test-runs")
-        flush()
+        ASManager.get_instance().flush()

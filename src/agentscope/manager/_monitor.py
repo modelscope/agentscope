@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The manager of monitor module."""
 import os
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Union
 from pathlib import Path
 
 from loguru import logger
@@ -52,9 +52,12 @@ class MonitorManager:
         return cls._instance
 
     @property
-    def path_db(self) -> str:
+    def path_db(self) -> Union[str, None]:
         """The path to the database"""
-        return os.path.abspath(FileManager.get_instance().path_db)
+        run_dir = FileManager.get_instance().run_dir
+        if run_dir is None:
+            return None
+        return os.path.abspath(os.path.join(run_dir, "agentscope.db"))
 
     def __init__(self) -> None:
         """Initialize the monitor manager."""
@@ -115,6 +118,11 @@ class MonitorManager:
     def _create_monitor_db(self) -> None:
         """Create the database."""
         # To avoid path error in windows
+        if self.path_db is None:
+            raise RuntimeError(
+                "The run_dir in file manager is not initialized.",
+            )
+
         path = Path(os.path.abspath(self.path_db))
 
         if _is_windows():
@@ -292,5 +300,28 @@ class MonitorManager:
 
     def rm_database(self) -> None:
         """Remove the database."""
-        if os.path.exists(self.path_db):
+        if self.path_db is not None and os.path.exists(self.path_db):
             os.remove(self.path_db)
+
+    def serialize(self) -> dict:
+        """Serialize the monitor manager into a dict."""
+        return {
+            "use_monitor": self.use_monitor,
+            "path_db": self.path_db,
+        }
+
+    def deserialize(self, data: dict) -> None:
+        """Load the monitor manager from a dict."""
+        assert "use_monitor" in data, "Key 'use_monitor' not found in data."
+
+        self.initialize(data["use_monitor"])
+
+    def flush(self) -> None:
+        """Flush the monitor manager."""
+        self.use_monitor = False
+        self.session = None
+        self.engine = None
+
+        # The name of the views
+        self.view_chat_and_embedding = "view_chat_and_embedding"
+        self.view_image = "view_image"

@@ -91,7 +91,7 @@ class StudioClient:
     active: bool = False
     """Whether the client is active."""
 
-    studio_url: str
+    studio_url: str = None
     """The URL of the AgentScope Studio."""
 
     runtime_id: str
@@ -208,6 +208,27 @@ class StudioClient:
     def get_run_detail_page_url(self) -> str:
         """Get the URL of the run detail page."""
         return f"{self.studio_url}/?run_id={self.runtime_id}"
+
+    def flush(self) -> None:
+        """Flush the client."""
+        self.studio_url = None
+        self.active = False
+        self.websocket_mapping = {}
+
+    def serialize(self) -> dict:
+        """Serialize the client."""
+        return {
+            "active": self.active,
+            "studio_url": self.studio_url,
+        }
+
+    def deserialize(self, data: dict) -> None:
+        """Deserialize the client."""
+        assert "active" in data, "Key `active` not found in data."
+        assert "studio_url" in data, "Key `studio_url` not found in data."
+
+        self.active = data["active"]
+        self.studio_url = data["studio_url"]
 
 
 _studio_client = StudioClient()

@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import ModelManager
+from agentscope.manager import ModelManager, ASManager
 
 
 class TestLiteLLMChatWrapper(unittest.TestCase):
@@ -57,6 +57,10 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
         )
 
         self.assertEqual(response.text, "Hello, this is a mocked response!")
+
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

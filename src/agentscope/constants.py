@@ -10,6 +10,8 @@ MSG_TOKEN = f"[{PACKAGE_NAME}_msg]"
 
 
 # default values
+_RUNTIME_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S"
+_RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
 
 # for file manager
 _DEFAULT_SAVE_DIR = "./runs"

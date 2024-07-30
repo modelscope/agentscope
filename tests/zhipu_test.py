@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import ModelManager
+from agentscope.manager import ModelManager, ASManager
 
 
 class TestZhipuAIChatWrapper(unittest.TestCase):
@@ -61,6 +61,10 @@ class TestZhipuAIChatWrapper(unittest.TestCase):
 
         mock_zhipuai_client.chat.completions.create.assert_called_once()
 
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
+
 
 class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
     """Test ZhipuAI Embedding Wrapper"""
@@ -115,6 +119,10 @@ class TestZhipuAIEmbeddingWrapper(unittest.TestCase):
             model=self.model_name,
             **{},
         )
+
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

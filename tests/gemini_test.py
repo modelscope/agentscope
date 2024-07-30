@@ -5,18 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import agentscope
 from agentscope.manager import ModelManager
-from agentscope._runtime import _Runtime
-from tests.utils import clean_singleton_instances
-
-
-def flush() -> None:
-    """
-    ** Only for unittest usage. Don't use this function in your code. **
-    Clear the runtime dir and destroy all singletons.
-    """
-    _Runtime._flush()  # pylint: disable=W0212
-
-    clean_singleton_instances()
+from agentscope.manager import ASManager
 
 
 class DummyPart:
@@ -54,7 +43,6 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Set up for GeminiModelWrapperTest."""
-        flush()
         self.model_manager = ModelManager.get_instance()
 
     @patch("google.generativeai.GenerativeModel")
@@ -115,7 +103,7 @@ class GeminiModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        flush()
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

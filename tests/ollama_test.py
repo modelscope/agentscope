@@ -3,19 +3,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import agentscope
-from agentscope.manager import ModelManager
-from agentscope._runtime import _Runtime
-from tests.utils import clean_singleton_instances
-
-
-def flush() -> None:
-    """
-    ** Only for unittest usage. Don't use this function in your code. **
-    Clear the runtime dir and destroy all singletons.
-    """
-    _Runtime._flush()  # pylint: disable=W0212
-
-    clean_singleton_instances()
+from agentscope.manager import ModelManager, ASManager
 
 
 class OllamaModelWrapperTest(unittest.TestCase):
@@ -91,7 +79,6 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_count": 9,
             "eval_duration": 223689000,
         }
-        flush()
 
     @patch("agentscope.models.ollama_model.ollama")
     def test_ollama_chat(self, mock_ollama: MagicMock) -> None:
@@ -180,7 +167,7 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        flush()
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

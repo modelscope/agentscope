@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.manager import ModelManager
+from agentscope.manager import ModelManager, ASManager
 from agentscope.message import Msg
 from agentscope.models import (
     ModelResponse,
@@ -14,7 +14,6 @@ from agentscope.models import (
     PostAPIModelWrapperBase,
     _get_model_wrapper,
 )
-from tests.utils import clean_singleton_instances
 
 
 class TestModelWrapperSimple(ModelWrapperBase):
@@ -135,5 +134,4 @@ class BasicModelTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up the test environment"""
-
-        clean_singleton_instances()
+        ASManager.get_instance().flush()
