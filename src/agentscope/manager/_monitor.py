@@ -175,10 +175,10 @@ class MonitorManager:
         """Close the monitor database to avoid file occupation error in
         windows."""
         if self.session is not None:
-            self.session.dispose()
+            self.session.close_all()
 
         if self.engine is not None:
-            self.engine.close_all()
+            self.engine.dispose()
 
     def update_image_tokens(
         self,
