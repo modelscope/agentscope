@@ -108,5 +108,5 @@ class RecordApiInvocation(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down for RecordApiInvocation."""
-        shutil.rmtree("./test-runs")
         ASManager.get_instance().flush()
+        shutil.rmtree("./test-runs")

@@ -12,7 +12,7 @@ from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
-from agentscope.manager import MonitorManager
+from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
@@ -183,7 +183,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(os.path.exists("./.unittest_runs"))
 
     def tearDown(self) -> None:
-        logger.remove()
+        """Tear down the test environment."""
+        ASManager.get_instance().flush()
         shutil.rmtree("./.unittest_runs")
 
     def test_single_rpc_agent_server(self) -> None:

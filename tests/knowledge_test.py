@@ -9,6 +9,7 @@ from typing import Any
 import shutil
 
 import agentscope
+from agentscope.manager import ASManager
 from agentscope.rag import LlamaIndexKnowledge
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
 
@@ -45,6 +46,7 @@ class KnowledgeTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Clean up before & after tests."""
+        ASManager.get_instance().flush()
         try:
             if os.path.exists(self.data_dir):
                 shutil.rmtree(self.data_dir)
