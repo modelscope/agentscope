@@ -2,6 +2,7 @@
 """Manage the file system for saving files, code and logs."""
 import json
 import os
+import io
 from typing import Any, Union, Optional, List, Literal
 from pathlib import Path
 import numpy as np
@@ -169,7 +170,7 @@ class _FileManager:
 
     def save_image(
         self,
-        image: Union[str, np.ndarray],
+        image: Union[str, np.ndarray, bytes],
         filename: Optional[str] = None,
     ) -> str:
         """Save image file locally, and return the local image path.
@@ -195,11 +196,21 @@ class _FileManager:
         if isinstance(image, str):
             # download the image from url
             _download_file(image, path_file)
-        else:
+        elif isinstance(image, np.ndarray):
             from PIL import Image
 
             # save image via PIL
             Image.fromarray(image).save(path_file)
+        elif isinstance(image, bytes):
+            from PIL import Image
+
+            # save image via bytes
+            Image.open(io.BytesIO(image)).save(path_file)
+        else:
+            raise ValueError(
+                f"Unsupported image type: {type(image)}"
+                "Must be str, np.ndarray, or bytes.",
+            )
 
         return path_file
 

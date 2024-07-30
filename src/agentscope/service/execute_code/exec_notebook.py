@@ -5,9 +5,7 @@ Partially referenced the implementation of https://github.com/geekan/MetaGPT/blo
 """  # noqa
 import base64
 import uuid
-import os
 import asyncio
-from typing import Union
 from loguru import logger
 
 
@@ -62,14 +60,20 @@ class NoteBookExecutor:
         self,
         notebook: nbformat.NotebookNode = nbformat.v4.new_notebook(),
         timeout: int = 300,
-        output_dir: Union[str, None] = None,
     ) -> None:
+        """
+        The construct function of the NoteBookExecutor.
+        Args:
+            notebook (Optional`nbformat.NotebookNode`):
+                The notebook to execute.
+                Will init a new notebook instanace by default.
+            timeout (Optional`int`):
+                The timeout for each cell execution.
+                Default to 300.
+        """
         self.nb = notebook
         self.nb_client = NotebookClient(nb=self.nb)
         self.timeout = timeout
-        if output_dir is None:
-            self.output_dir = file_manager.dir_file
-        self.output_dir = output_dir
 
         asyncio.run(self._start_client())
 
@@ -192,7 +196,4 @@ class NoteBookExecutor:
         The image name is generated randomly here"""
         image_data = base64.b64decode(image_base64)
         filename = f"display_image_{uuid.uuid4().hex}.png"
-        path = os.path.join(self.output_dir, filename)
-        with open(path, "wb") as f:
-            f.write(image_data)
-        return os.path.abspath(path)
+        return file_manager.save_image(image_data, filename)
