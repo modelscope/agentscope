@@ -10,6 +10,7 @@ import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
+import argparse
 
 from flask import (
     Flask,
@@ -762,6 +763,33 @@ def _on_leave(data: dict) -> None:
     leave_room(run_id)
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse args from command line."""
+    parser = argparse.ArgumentParser(
+        description="Start the AgentScope Studio web UI."
+    )
+
+    parser.add_argument(
+        "--host", default="127.0.0.1", help="The host of the web UI."
+    )
+
+    parser.add_argument(
+        "--port", type=int, default=5000, help="The port of the web UI."
+    )
+
+    parser.add_argument(
+        "--run-dirs",
+        nargs="*",
+        help="The directories to search for the history of runtime instances.",
+    )
+
+    parser.add_argument(
+        "--debug", action="store_true", help="Enable debug mode."
+    )
+
+    return parser.parse_args()
+
+
 def init(
     host: str = "127.0.0.1",
     port: int = 5000,
@@ -807,4 +835,15 @@ def init(
         port=port,
         debug=debug,
         allow_unsafe_werkzeug=True,
+    )
+
+
+def as_studio():
+    """Start the AgentScope Studio web UI in commandline"""
+    args = parse_args()
+    init(
+        host=args.host,
+        port=args.port,
+        run_dirs=args.run_dirs,
+        debug=args.debug,
     )
