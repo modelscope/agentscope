@@ -73,7 +73,7 @@ class NoteBookExecutor:
 
         asyncio.run(self._start_client())
 
-    def output_parser(self, output: dict) -> str:
+    def _output_parser(self, output: dict) -> str:
         """Parse the output of the notebook cell and return str"""
         if output["output_type"] == "stream":
             return output["text"]
@@ -124,7 +124,7 @@ class NoteBookExecutor:
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content=[
-                    self.output_parser(output)
+                    self._output_parser(output)
                     for output in self.nb.cells[cell_index].outputs
                 ],
             )
