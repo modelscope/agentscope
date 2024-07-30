@@ -27,7 +27,7 @@ class YiWrapperBase(ModelWrapperBase, ABC):
         config_name: str,
         model_name: str = None,
         api_key: str = None,
-        region: str = "domestic",  # "domestic" or "overseas"
+        region: str = "China",  # "China" or "International"
         client_args: dict = None,
         generate_args: dict = None,
         budget: float = _DEFAULT_API_BUDGET,
@@ -50,12 +50,12 @@ class YiWrapperBase(ModelWrapperBase, ABC):
 
         base_url = (
             "https://api.lingyiwanwu.com/v1"
-            if region == "domestic"
+            if region == "China"
             else "https://api.01.ai/v1"
         )
         self.base_url = base_url
 
-        if region == "overseas" and model_name not in ["yi-large"]:
+        if region == "International" and model_name not in ["yi-large"]:
             logger.warning(
                 "Model %s may not be available for overseas region. "
                 "Only yi-large is confirmed to work. More information can be "
@@ -113,6 +113,7 @@ class YiChatWrapper(YiWrapperBase):
     def __call__(
         self,
         messages: list,
+        stream: bool = False,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages and makes a request to the Yi API."""
@@ -132,11 +133,19 @@ class YiChatWrapper(YiWrapperBase):
             )
 
         # Forward to generate response
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            **kwargs,
-        )
+        if stream:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                stream=True,
+                **kwargs,
+            )
+        else:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                **kwargs,
+            )
 
         # Record the api invocation if needed
         self._save_model_invocation(
@@ -149,36 +158,73 @@ class YiChatWrapper(YiWrapperBase):
         )
 
         # Update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        if not stream:
+            self.update_monitor(call_counter=1, **response.usage.model_dump())
 
         # Return response
-        return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
-        )
+        if stream:
+            # Handle the stream of responses
+            return ModelResponse(
+                text="",  # Initialize with empty string for streaming
+                raw=response,  # Return the stream object
+            )
+        else:
+            return ModelResponse(
+                text=response.choices[0].message.content,
+                raw=response.model_dump(),
+            )
 
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input messages for the Yi Chat API."""
-        messages = []
+        input_msgs = []
         for arg in args:
             if arg is None:
                 continue
             if isinstance(arg, Msg):
-                messages.append(
-                    {
-                        "role": arg.role,
-                        "content": str(arg.content),
-                    },
-                )
-            elif isinstance(arg, list):
-                messages.extend(self.format(*arg))
+                input_msgs.append(arg)
+            elif isinstance(arg, list) and all(
+                isinstance(msg, Msg) for msg in arg
+            ):
+                input_msgs.extend(arg)
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
                     f"of Msg objects, got {type(arg)}.",
                 )
+
+        messages = []
+
+        # record dialog history as a list of strings
+        dialogue = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                messages.append(
+                    {
+                        "role": unit.role,
+                        "content": str(unit.content),
+                    },
+                )
+            else:
+                # Merge all messages into a dialogue history prompt
+                dialogue.append(
+                    f"{unit.name}: {str(unit.content)}",
+                )
+
+        dialogue_history = "\n".join(dialogue)
+
+        user_content_template = "## Dialogue History\n{dialogue_history}"
+
+        messages.append(
+            {
+                "role": "user",
+                "content": user_content_template.format(
+                    dialogue_history=dialogue_history,
+                ),
+            },
+        )
 
         return messages
