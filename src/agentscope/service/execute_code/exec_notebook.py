@@ -63,7 +63,7 @@ class NoteBookExecutor:
         notebook: nbformat.NotebookNode = nbformat.v4.new_notebook(),
         timeout: int = 300,
         output_dir: Union[str, None] = None,
-    ):
+    ) -> None:
         self.nb = notebook
         self.nb_client = NotebookClient(nb=self.nb)
         self.timeout = timeout

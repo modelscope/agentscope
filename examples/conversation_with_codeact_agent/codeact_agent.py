@@ -47,7 +47,29 @@ class CodeActAgent(AgentBase):
         model_config_name: str,
         example_code: str = "",
     ) -> None:
-        """ """
+        """
+        Initialize the CodeActAgent.
+        Args:
+            name(`str`):
+                The name of the agent.
+            model_config_name(`str`):
+                The name of the model configuration.
+            example_code(Optional`str`):
+                The example code to be executed bewfore the interaction.
+                You can import reference libs, define variables
+                and functions to be called. For example:
+
+                    ```python
+                    from agentscope.service import bing_search
+                    import os
+
+                    api_key = "{YOUR_BING_API_KEY}"
+
+                    def search(question: str):
+                        return bing_search(question, api_key=api_key, num_results=3).content
+                    ```
+
+        """  # noqa
         super().__init__(
             name=name,
             model_config_name=model_config_name,
@@ -95,7 +117,7 @@ class CodeActAgent(AgentBase):
         )
         return Msg(name="user", role="user", content=code_exec_content)
 
-    def reply(self, x: dict = None) -> None:
+    def reply(self, x: Msg = None) -> Msg:
         """The reply function that implements the codeact agent."""
 
         self.memory.add(x)
@@ -139,3 +161,6 @@ class CodeActAgent(AgentBase):
             )
             self.memory.add(code_max_exec_msg)
             self.speak(code_max_exec_msg)
+            return code_max_exec_msg
+
+        return msg_res
