@@ -11,11 +11,18 @@ let activeExpanded = false;
 
 // Check if the script is already loaded
 function isScriptLoaded(src) {
+    let curURL = new URL(src, window.location.href).pathname;
     return Array.from(document.scripts).some((script) => {
-        return (
-            new URL(script.src).pathname ===
-            new URL(src, window.location.href).pathname
-        );
+        try {
+            let existURL = new URL(script.src).pathname;
+            return existURL === curURL;
+        } catch (error) {
+            console.warn(
+                "Error occurred when checking if the script is loaded: ",
+                error
+            );
+            return false;
+        }
     });
 }
 
