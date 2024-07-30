@@ -7,10 +7,9 @@ import unittest
 import os
 import shutil
 from pathlib import Path
-from loguru import logger
 
 import agentscope
-from agentscope.manager import MonitorManager
+from agentscope.manager import MonitorManager, ASManager
 
 
 class MonitorManagerTest(unittest.TestCase):
@@ -93,6 +92,7 @@ class MonitorManagerTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down the test environment."""
+        ASManager.get_instance().flush()
         shutil.rmtree("./test_runs")
 
 
@@ -148,7 +148,7 @@ class DisableMonitorTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down the test environment."""
-        logger.remove()
+        ASManager.get_instance().flush()
         shutil.rmtree("./test_runs")
 
 

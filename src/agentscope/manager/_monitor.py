@@ -171,6 +171,15 @@ class MonitorManager:
 
         self.session = sessionmaker(bind=self.engine)
 
+    def _close_monitor_db(self) -> None:
+        """Close the monitor database to avoid file occupation error in
+        windows."""
+        if self.session is not None:
+            self.session.dispose()
+
+        if self.engine is not None:
+            self.engine.close_all()
+
     def update_image_tokens(
         self,
         model_name: str,
@@ -318,6 +327,9 @@ class MonitorManager:
 
     def flush(self) -> None:
         """Flush the monitor manager."""
+        # Close the database before flushing
+        self._close_monitor_db()
+
         self.use_monitor = False
         self.session = None
         self.engine = None
