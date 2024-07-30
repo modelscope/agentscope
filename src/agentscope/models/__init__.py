@@ -1,192 +1,230 @@
 # -*- coding: utf-8 -*-
-""" Import modules in models package."""
-import json
-from typing import Union, Type
+"""Model wrapper for Yi models"""
+from abc import ABC
+import logging
+from typing import Union, Sequence, Any, List
 
-from loguru import logger
+from openai import OpenAI
 
-from .config import _ModelConfig
-from .model import ModelWrapperBase
-from .response import ModelResponse
-from .post_model import (
-    PostAPIModelWrapperBase,
-    PostAPIChatWrapper,
-)
-from .openai_model import (
-    OpenAIWrapperBase,
-    OpenAIChatWrapper,
-    OpenAIDALLEWrapper,
-    OpenAIEmbeddingWrapper,
-)
-from .dashscope_model import (
-    DashScopeChatWrapper,
-    DashScopeImageSynthesisWrapper,
-    DashScopeTextEmbeddingWrapper,
-    DashScopeMultiModalWrapper,
-)
-from .ollama_model import (
-    OllamaChatWrapper,
-    OllamaEmbeddingWrapper,
-    OllamaGenerationWrapper,
-)
-from .gemini_model import (
-    GeminiChatWrapper,
-    GeminiEmbeddingWrapper,
-)
-from .zhipu_model import (
-    ZhipuAIChatWrapper,
-    ZhipuAIEmbeddingWrapper,
-)
-from .litellm_model import (
-    LiteLLMChatWrapper,
-)
-from .yi_model import (
-    YiChatWrapper,
-)
+from .model import ModelWrapperBase, ModelResponse
+from ..message import Msg
 
-__all__ = [
-    "ModelWrapperBase",
-    "ModelResponse",
-    "PostAPIModelWrapperBase",
-    "PostAPIChatWrapper",
-    "OpenAIWrapperBase",
-    "OpenAIChatWrapper",
-    "OpenAIDALLEWrapper",
-    "OpenAIEmbeddingWrapper",
-    "DashScopeChatWrapper",
-    "DashScopeImageSynthesisWrapper",
-    "DashScopeTextEmbeddingWrapper",
-    "DashScopeMultiModalWrapper",
-    "OllamaChatWrapper",
-    "OllamaEmbeddingWrapper",
-    "OllamaGenerationWrapper",
-    "GeminiChatWrapper",
-    "GeminiEmbeddingWrapper",
-    "ZhipuAIChatWrapper",
-    "ZhipuAIEmbeddingWrapper",
-    "LiteLLMChatWrapper",
-    "load_model_by_config_name",
-    "load_config_by_name",
-    "read_model_configs",
-    "clear_model_configs",
-    "YiChatWrapper",
-]
+logger = logging.getLogger(__name__)
 
-_MODEL_CONFIGS: dict[str, dict] = {}
+_DEFAULT_API_BUDGET = float("inf")
+
+try:
+    import openai
+except ImportError:
+    openai = None
 
 
-def _get_model_wrapper(model_type: str) -> Type[ModelWrapperBase]:
-    """Get the specific type of model wrapper
+class YiWrapperBase(ModelWrapperBase, ABC):
+    """The model wrapper for Yi API."""
 
-    Args:
-        model_type (`str`): The model type name.
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        region: str = "China",  # "China" or "International"
+        client_args: dict = None,
+        generate_args: dict = None,
+        budget: float = _DEFAULT_API_BUDGET,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the Yi client."""
+        if model_name is None:
+            model_name = config_name
+            logger.warning("model_name is not set, use config_name instead.")
 
-    Returns:
-        `Type[ModelWrapperBase]`: The corresponding model wrapper class.
-    """
-    wrapper = ModelWrapperBase.get_wrapper(model_type=model_type)
-    if wrapper is None:
-        logger.warning(
-            f"Unsupported model_type [{model_type}],"
-            "use PostApiModelWrapper instead.",
-        )
-        return PostAPIModelWrapperBase
-    return wrapper
+        super().__init__(config_name=config_name)
 
-
-def load_config_by_name(config_name: str) -> Union[dict, None]:
-    """Load the model config by name, and return the config dict."""
-    return _MODEL_CONFIGS.get(config_name, None)
-
-
-def load_model_by_config_name(config_name: str) -> ModelWrapperBase:
-    """Load the model by config name, and return the model wrapper."""
-    if len(_MODEL_CONFIGS) == 0:
-        raise ValueError(
-            "No model configs loaded, please call "
-            "`read_model_configs` first.",
-        )
-
-    # Find model config by name
-    if config_name not in _MODEL_CONFIGS:
-        raise ValueError(
-            f"Cannot find [{config_name}] in loaded configurations.",
-        )
-    config = _MODEL_CONFIGS.get(config_name, None)
-
-    if config is None:
-        raise ValueError(
-            f"Cannot find [{config_name}] in loaded configurations.",
-        )
-
-    model_type = config.model_type
-
-    kwargs = {k: v for k, v in config.items() if k != "model_type"}
-
-    return _get_model_wrapper(model_type=model_type)(**kwargs)
-
-
-def clear_model_configs() -> None:
-    """Clear the loaded model configs."""
-    _MODEL_CONFIGS.clear()
-
-
-def read_model_configs(
-    configs: Union[dict, str, list],
-    clear_existing: bool = False,
-) -> None:
-    """read model configs from a path or a list of dicts.
-
-    Args:
-        configs (`Union[str, list, dict]`):
-            The path of the model configs | a config dict | a list of model
-            configs.
-        clear_existing (`bool`, defaults to `False`):
-            Whether to clear the loaded model configs before reading.
-
-    Returns:
-        `dict`:
-            The model configs.
-    """
-    if clear_existing:
-        clear_model_configs()
-
-    cfgs = None
-
-    if isinstance(configs, str):
-        with open(configs, "r", encoding="utf-8") as f:
-            cfgs = json.load(f)
-
-    if isinstance(configs, dict):
-        cfgs = [configs]
-
-    if isinstance(configs, list):
-        if not all(isinstance(_, dict) for _ in configs):
-            raise ValueError(
-                "The model config unit should be a dict.",
+        if openai is None:
+            raise ImportError(
+                "Cannot find openai package in current python environment.",
             )
-        cfgs = configs
 
-    if cfgs is None:
-        raise TypeError(
-            f"Invalid type of model_configs, it could be a dict, a list of "
-            f"dicts, or a path to a json file (containing a dict or a list "
-            f"of dicts), but got {type(configs)}",
+        self.model_name = model_name
+        self.generate_args = generate_args or {}
+
+        base_url = (
+            "https://api.lingyiwanwu.com/v1"
+            if region == "China"
+            else "https://api.01.ai/v1"
         )
+        self.base_url = base_url
 
-    format_configs = _ModelConfig.format_configs(configs=cfgs)
-
-    # check if name is unique
-    for cfg in format_configs:
-        if cfg.config_name in _MODEL_CONFIGS:
+        if region == "International" and model_name not in ["yi-large"]:
             logger.warning(
-                f"config_name [{cfg.config_name}] already exists.",
+                "Model %s may not be available for overseas region. "
+                "Only yi-large is confirmed to work. More information can be "
+                "found here https://platform.01.ai/docs#models-and-pricing",
+                model_name,
             )
-            continue
-        _MODEL_CONFIGS[cfg.config_name] = cfg
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url=self.base_url,
+            **(client_args or {}),
+        )
 
-    # print the loaded model configs
-    logger.info(
-        "Load configs for model wrapper: {}",
-        ", ".join(_MODEL_CONFIGS.keys()),
-    )
+        # Set the max length of Yi model (this might need to be adjusted)
+        self.max_length = 4096  # Placeholder value, adjust as needed
+
+        # Set monitor accordingly
+        self._register_budget(model_name, budget)
+        self._register_default_metrics()
+
+    def _register_default_metrics(self) -> None:
+        # Set monitor accordingly
+        self.monitor.register(
+            self._metric("call_counter"),
+            metric_unit="times",
+        )
+        self.monitor.register(
+            self._metric("prompt_tokens"),
+            metric_unit="token",
+        )
+        self.monitor.register(
+            self._metric("completion_tokens"),
+            metric_unit="token",
+        )
+        self.monitor.register(
+            self._metric("total_tokens"),
+            metric_unit="token",
+        )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> Union[List[dict], str]:
+        raise NotImplementedError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"implement the format method. Please implement it "
+            f"in the subclass.",
+        )
+
+
+class YiChatWrapper(YiWrapperBase):
+    """The model wrapper for Yi's chat API."""
+
+    model_type: str = "yi_chat"
+
+    def __call__(
+        self,
+        messages: list,
+        stream: bool = False,
+        **kwargs: Any,
+    ) -> ModelResponse:
+        """Processes a list of messages and makes a request to the Yi API."""
+        # Prepare keyword arguments
+        kwargs = {**self.generate_args, **kwargs}
+
+        # Checking messages
+        if not isinstance(messages, list):
+            raise ValueError(
+                f"Yi `messages` field expected type `list`, "
+                f"got `{type(messages)}` instead.",
+            )
+        if not all("role" in msg and "content" in msg for msg in messages):
+            raise ValueError(
+                "Each message in the 'messages' list must contain a 'role' "
+                "and 'content' key for Yi API.",
+            )
+
+        # Forward to generate response
+        if stream:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                stream=True,
+                **kwargs,
+            )
+        else:
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                **kwargs,
+            )
+
+        # Record the api invocation if needed
+        self._save_model_invocation(
+            arguments={
+                "model": self.model_name,
+                "messages": messages,
+                **kwargs,
+            },
+            response=response.model_dump(),
+        )
+
+        # Update monitor accordingly
+        if not stream:
+            self.update_monitor(call_counter=1, **response.usage.model_dump())
+
+        # Return response
+        if stream:
+            # Handle the stream of responses
+            return ModelResponse(
+                text="",  # Initialize with empty string for streaming
+                raw=response,  # Return the stream object
+            )
+        else:
+            return ModelResponse(
+                text=response.choices[0].message.content,
+                raw=response.model_dump(),
+            )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List[dict]:
+        """Format the input messages for the Yi Chat API."""
+        input_msgs = []
+        for arg in args:
+            if arg is None:
+                continue
+            if isinstance(arg, Msg):
+                input_msgs.append(arg)
+            elif isinstance(arg, list) and all(
+                isinstance(msg, Msg) for msg in arg
+            ):
+                input_msgs.extend(arg)
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(arg)}.",
+                )
+
+        messages = []
+
+        # record dialog history as a list of strings
+        dialogue = []
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # system prompt
+                messages.append(
+                    {
+                        "role": unit.role,
+                        "content": str(unit.content),
+                    },
+                )
+            else:
+                # Merge all messages into a dialogue history prompt
+                dialogue.append(
+                    f"{unit.name}: {str(unit.content)}",
+                )
+
+        dialogue_history = "\n".join(dialogue)
+
+        user_content_template = "## Dialogue History\n{dialogue_history}"
+
+        messages.append(
+            {
+                "role": "user",
+                "content": user_content_template.format(
+                    dialogue_history=dialogue_history,
+                ),
+            },
+        )
+
+        return messages
