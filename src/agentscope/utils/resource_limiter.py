@@ -71,12 +71,8 @@ def resources_limit(function: Callable) -> Callable:
 
     @wraps(function)
     def wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
-        # No redis or no limit
-        if (
-            redis_client is None
-            or self.resource_limit_type not in ["capacity", "rate"]
-            or self.resource_limit_number == math.inf
-        ):
+        # No redis found
+        if redis_client is None:
             return function(self, *args, **kwargs)
 
         class_name = type(self).__name__
