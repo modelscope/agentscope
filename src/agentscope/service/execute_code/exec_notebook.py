@@ -58,20 +58,16 @@ class NoteBookExecutor:
 
     def __init__(
         self,
-        notebook: nbformat.NotebookNode = nbformat.v4.new_notebook(),
         timeout: int = 300,
     ) -> None:
         """
         The construct function of the NoteBookExecutor.
         Args:
-            notebook (Optional`nbformat.NotebookNode`):
-                The notebook to execute.
-                Will init a new notebook instanace by default.
             timeout (Optional`int`):
                 The timeout for each cell execution.
                 Default to 300.
         """
-        self.nb = notebook
+        self.nb = nbformat.v4.new_notebook()
         self.nb_client = NotebookClient(nb=self.nb)
         self.timeout = timeout
 
