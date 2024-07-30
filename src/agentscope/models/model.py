@@ -149,29 +149,31 @@ class _ModelWrapperMeta(ABCMeta):
     wrapper about error handling."""
 
     def __new__(mcs, name: Any, bases: Any, attrs: Any) -> Any:
-        original_call = attrs["__call__"]
+        if "__call__" in attrs:
+            original_call = attrs["__call__"]
 
-        def new_call(  # type: ignore[no-untyped-def]
-            self,
-            *args: Any,
-            **kwargs: Any,
-        ) -> Callable:
-            if (
-                getattr(self, "resource_limit_type", None)
-                not in ["capacity", "rate"]
-                or getattr(self, "resource_limit_number", math.inf) == math.inf
-            ):
-                # No resource limit applied
-                wrapped_call = _response_parse_decorator(original_call)
-            else:
-                # Resource limit applied
-                wrapped_call = _response_parse_decorator(
-                    resources_limit(original_call),
-                )
+            def new_call(  # type: ignore[no-untyped-def]
+                self,
+                *args: Any,
+                **kwargs: Any,
+            ) -> Callable:
+                if (
+                    getattr(self, "resource_limit_type", None)
+                    not in ["capacity", "rate"]
+                    or getattr(self, "resource_limit_number", math.inf)
+                    == math.inf
+                ):
+                    # No resource limit applied
+                    wrapped_call = _response_parse_decorator(original_call)
+                else:
+                    # Resource limit applied
+                    wrapped_call = _response_parse_decorator(
+                        resources_limit(original_call),
+                    )
 
-            return wrapped_call(self, *args, **kwargs)
+                return wrapped_call(self, *args, **kwargs)
 
-        attrs["__call__"] = new_call
+            attrs["__call__"] = new_call
 
         return super().__new__(mcs, name, bases, attrs)
 
