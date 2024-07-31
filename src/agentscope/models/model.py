@@ -225,6 +225,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
 
         self.config_name = config_name
         self.resource_limit_type = kwargs.pop("resource_limit_type", None)
+        self.resource_limit_key = kwargs.pop("resource_limit_number", None)
         self.resource_limit_number = kwargs.pop(
             "resource_limit_number",
             math.inf,

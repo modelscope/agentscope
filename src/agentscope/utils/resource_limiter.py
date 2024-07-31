@@ -75,17 +75,16 @@ def resources_limit(function: Callable) -> Callable:
         if redis_client is None:
             return function(self, *args, **kwargs)
 
-        class_name = type(self).__name__
-
         # If some classes share the same resource limit
-        if hasattr(self, "resources_limit_key") and isinstance(
+        if hasattr(self, "resource_limit_key") and isinstance(
             self.resources_limit_key,
             str,
         ):
-            resources_limit_key = self.resources_limit_key
+            limit_key = self.resource_limit_key
         else:
-            resources_limit_key = f"resource_limit_number_for_{class_name}"
-        queue_key = f"resources_queue_for_{class_name}"
+            limit_key = type(self).__name__
+        resources_limit_key = f"resource_limit_number_for_{limit_key}"
+        queue_key = f"resources_queue_for_{limit_key}"
 
         request_id = str(uuid.uuid4())  # Use UUID for unique request IDs
         redis_client.lpush(queue_key, request_id)
@@ -108,7 +107,7 @@ def resources_limit(function: Callable) -> Callable:
                 )
                 process_requests = [r.decode("utf-8") for r in queue_requests]
 
-                logger.debug(f"[{class_name}] {request_id}: {queue_requests}")
+                logger.debug(f"[{limit_key}] {request_id}: {queue_requests}")
 
                 if request_id in process_requests:
                     if self.resource_limit_type == "rate":
@@ -130,14 +129,14 @@ def resources_limit(function: Callable) -> Callable:
             else:
                 if self.resource_limit_type == "capacity":
                     logger.debug(
-                        f"No resources available for {class_name}. "
+                        f"No resources available for {limit_key}. "
                         f"Waiting...\nNote: Max resource number is"
                         f" {self.resource_limit_number}, please consider "
                         f"increasing it!",
                     )
                 else:
                     logger.debug(
-                        f"Rate limit exceeded for {class_name}. "
+                        f"Rate limit exceeded for {limit_key}. "
                         f"Waiting...\nNote: Max resource number is"
                         f" {self.resource_limit_number} per minute.",
                     )
