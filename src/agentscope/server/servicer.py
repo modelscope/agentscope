@@ -91,7 +91,7 @@ def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
                 f"Agent class [{cls_name}] not found: {str(e)}",
             )
             logger.error(err_msg)
-            return None, err_msg
+            return None, str(err_msg)
     try:
         agent_instance = cls(
             *agent_configs["args"],
@@ -104,7 +104,15 @@ def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
             f"Failed to create agent instance <{cls_name}>: {str(e)}",
         )
         logger.error(err_msg)
-        return None, err_msg
+        return None, str(err_msg)
+
+
+def clone_agent(ori_agent):
+    new_agent = ori_agent.__class__(
+        *ori_agent._init_settings["args"],  # pylint: disable=W0212
+        **ori_agent._init_settings["kwargs"],  # pylint: disable=W0212
+    )
+    return new_agent
 
 
 class AgentServerServicer(RpcAgentServicer):
@@ -255,6 +263,7 @@ class AgentServerServicer(RpcAgentServicer):
                 return agent_pb2.GeneralResponse(ok=False, message=err_msg)
             agent_instance._agent_id = agent_id  # pylint: disable=W0212
             self.agent_pool[agent_id] = agent_instance
+            print(str(agent_instance), '!!!!!!!!')
             logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
             return agent_pb2.GeneralResponse(ok=True)
 
