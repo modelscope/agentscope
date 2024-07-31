@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """ Import all environment related modules in the package. """
-from .environment import Trigger, Attribute, Environment
+from .environment import Watcher, Attribute, Environment
 
 __all__ = [
     "Attribute",
     "Environment",
-    "Trigger",
+    "Watcher",
 ]

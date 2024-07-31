@@ -1,28 +1,45 @@
 # -*- coding: utf-8 -*-
-"""An agent used as environment"""
+"""The enviromnent interface of AgentScope."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, List
+import threading
 
-from agentscope.agents import AgentBase
+
+class Modifier(ABC):
+    """A class to modify an attribute value in-place."""
+
+    @abstractmethod
+    def __call__(self, cur_value: Any) -> Any:
+        """Modify the current value.
+
+        Args:
+            cur_value (`Any`): The current value.
+
+        Returns:
+            `Any`: The value after modification.
+        """
 
 
-class Trigger(ABC):
-    """A class representing a trigger used in environment."""
+class Watcher(ABC):
+    """A class representing a watcher for monitoring the changing of an
+    attribute."""
 
     def __init__(self, name: str) -> None:
+        """Init a Watcher instance.
+
+        Args:
+            name (`str`): The name of the watcher.
+        """
         self.name = name
 
     @abstractmethod
-    def trigger(self, attr: Attribute) -> None:
-        """Call the trigger.
-
-        Arguments:
-            attr (`Attribute`): The attribute bound to the trigger.
-        """
-
     def __call__(self, attr: Attribute) -> None:
-        self.trigger(attr)
+        """Activate the watcher.
+
+        Args:
+            attr (`Attribute`): The attribute bound to the watcher.
+        """
 
 
 class Attribute:
@@ -32,36 +49,26 @@ class Attribute:
         self,
         name: str,
         default: Any,
-        env: Environment,
-        triggers: List[Trigger] = None,
+        watchers: List[Watcher] = None,
+        env: Environment = None,
     ) -> None:
         """Init an Attribute instance.
 
         Args:
             name (`str`): The name of the attribute.
             default (`Any`): The default value of the attribute.
+            watchers (`List[Watcher]`, optional): A list of watchers.
+            Defaults to None.
             env (`Environment`): An instance of the Environment class.
-            triggers (`List[Trigger]`, optional): A list of callable triggers.
-            Defaults to None
+            Defaults to None.
         """
         self.name = name
         self.value = default
         self.env = env
-        self.triggers = (
-            {trigger.name: trigger for trigger in triggers} if triggers else {}
+        self.lock = threading.Lock()
+        self.watchers = (
+            {watcher.name: watcher for watcher in watchers} if watchers else {}
         )
-
-    def set(self, value: Any, disable_trigger: bool = False) -> None:
-        """Set the value of the attribute.
-
-        Args:
-            value (`Any`): The new value of the attribute.
-            disable_trigger (`bool`, optional): Whether to disable triggers.
-            Defaults to False.
-        """
-        self.value = value
-        if not disable_trigger:
-            self._trigger_all()
 
     def get(self) -> Any:
         """Get the value of the attribute.
@@ -71,32 +78,67 @@ class Attribute:
         """
         return self.value
 
-    def remove_trigger(self, name: str) -> bool:
-        """Remove a trigger from the attribute.
+    def modify(
+        self,
+        modifier: Modifier,
+        disable_watcher: bool = False,
+    ) -> Any:
+        """Modify the value of the attribute.
 
         Args:
-            name (`str`): The name of the trigger to remove.
+            modifier (`Modifier`): The modifier instance.
+            disable_watcher (`bool`, optional): Whether to disable watchers.
+            Defaults to False.
 
         Returns:
-            `bool`: Whether the trigger was removed successfully.
+            `Any`: The value after modification.
         """
-        if name in self.triggers:
-            del self.triggers[name]
+        with self.lock:
+            modified_value = modifier(self.value)
+            self.value = modified_value
+        if not disable_watcher:
+            self._activate_all()
+        return modified_value
+
+    def set(self, value: Any, disable_watcher: bool = False) -> None:
+        """Set the value of the attribute.
+
+        Args:
+            value (`Any`): The new value of the attribute.
+            disable_watcher (`bool`, optional): Whether to disable watchers.
+            Defaults to False.
+        """
+        with self.lock:
+            self.value = value
+        if not disable_watcher:
+            self._activate_all()
+
+    def remove_watcher(self, name: str) -> bool:
+        """Remove a watcher from the attribute.
+
+        Args:
+            name (`str`): The name of the watcher to remove.
+
+        Returns:
+            `bool`: Whether the watcher was removed successfully.
+        """
+        if name in self.watchers:
+            del self.watchers[name]
             return True
         return False
 
-    def add_trigger(self, trigger: Trigger) -> bool:
-        """Add a trigger to the attribute.
+    def add_watcher(self, watcher: Watcher) -> bool:
+        """Add a watcher to the attribute.
 
         Args:
-            trigger (`Trigger`): The trigger function to add.
+            watcher (`Watcher`): The watcher function to add.
 
         Returns:
-            `bool`: Whether the trigger was added successfully.
+            `bool`: Whether the watcher was added successfully.
         """
-        if trigger.name in self.triggers:
+        if watcher.name in self.watchers:
             return False
-        self.triggers[trigger.name] = trigger
+        self.watchers[watcher.name] = watcher
         return True
 
     def environment(self) -> Environment:
@@ -107,25 +149,23 @@ class Attribute:
         """
         return self.env
 
-    def _trigger_all(self):
-        """Trigger all the registered triggers."""
-        for trigger in self.triggers.values():
-            trigger(self)
+    def _activate_all(self) -> None:
+        """Activate all the registered watchers."""
+        for watcher in self.watchers.values():
+            watcher(self)
+
+    def _set_env(self, env: Environment) -> None:
+        """Set the environment of this attribute."""
+        self.env = env
+
+    def __str__(self) -> str:
+        return f"{self.name}: {self.value}"
 
 
-class Environment(AgentBase):
-    """A class representing an environment."""
+class Environment(ABC):
+    """Interface of environment."""
 
-    def __init__(self, name: str, attrs: List[Attribute]) -> None:
-        """Init an Environment instance.
-
-        Args:
-            name (`str`): The name of the environment.
-            attrs (`List[Attribute]`): A list of attributes.
-        """
-        super().__init__(name, use_memory=False)
-        self.attrs = {attr.name: attr for attr in attrs}
-
+    @abstractmethod
     def get(self, name: str) -> Any:
         """Get the value of an attribute.
 
@@ -135,58 +175,69 @@ class Environment(AgentBase):
         Returns:
             `Any`: The value of the attribute.
         """
-        return self.attrs[name].get()
 
+    @abstractmethod
     def set(
-        self, name: str, value: Any, disable_trigger: bool = False
+        self,
+        attr_name: str,
+        value: Any,
+        disable_watcher: bool = False,
     ) -> bool:
         """Set the value of an attribute.
 
         Args:
-            name (`str`): The name of the attribute.
+            attr_name (`str`): The name of the attribute.
             value (`Any`): The new value of the attribute.
-            disable_trigger (`bool`, optional): Whether to disable triggers.
+            disable_watcher (`bool`, optional): Whether to disable watchers.
                 Defaults to False.
 
         Returns:
             `bool`: Whether the attribute was set successfully.
         """
-        if name in self.attrs:
-            self.attrs[name].set(value, disable_trigger=disable_trigger)
-            return True
-        else:
-            return False
 
-    def remove_trigger(self, attr_name: str, trigger_name: str) -> bool:
-        """Remove a trigger from an attribute.
+    @abstractmethod
+    def modifiy(
+        self,
+        attr_name: str,
+        modifier: Modifier,
+        disable_watcher: bool = False,
+    ) -> Any:
+        """Modify the value of an attribute.
 
         Args:
             attr_name (`str`): The name of the attribute.
-            trigger_name (`str`): The name of the trigger to remove.
+            modifier (`Callable`): The modifier function.
+            disable_watcher (`bool`, optional): Whether to disable watchers.
+                Defaults to False.
 
         Returns:
-            `bool`: Whether the trigger was removed successfully.
+            `Any`: The value after modification.
         """
-        if attr_name in self.attrs:
-            self.attrs[attr_name].remove_trigger(trigger_name)
-            return True
-        else:
-            return False
 
-    def add_trigger(
-        self, attr_name: str, trigger_name: str, trigger: Trigger
+    @abstractmethod
+    def remove_watcher(self, attr_name: str, watcher_name: str) -> bool:
+        """Remove a watcher from an attribute.
+
+        Args:
+            attr_name (`str`): The name of the attribute.
+            watcher_name (`str`): The name of the watcher to remove.
+
+        Returns:
+            `bool`: Whether the watcher was removed successfully.
+        """
+
+    @abstractmethod
+    def add_watcher(
+        self,
+        attr_name: str,
+        watcher: Watcher,
     ) -> bool:
-        """Add a trigger to an attribute.
+        """Add a watcher to an attribute.
 
         Args:
             attr_name (`str`): The name of the attribute.
-            trigger_name (`str`): The name of the trigger to add.
-            trigger (`Trigger`): The trigger function to add.
+            watcher (`Watcher`): The watcher function to add.
 
         Returns:
-            `bool`: Whether the trigger was added successfully.
+            `bool`: Whether the watcher was added successfully.
         """
-        if attr_name in self.attrs:
-            return self.attrs[attr_name].add_trigger(trigger_name, trigger)
-        else:
-            return False

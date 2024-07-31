@@ -766,15 +766,20 @@ def _on_leave(data: dict) -> None:
 def parse_args() -> argparse.Namespace:
     """Parse args from command line."""
     parser = argparse.ArgumentParser(
-        description="Start the AgentScope Studio web UI."
+        description="Start the AgentScope Studio web UI.",
     )
 
     parser.add_argument(
-        "--host", default="127.0.0.1", help="The host of the web UI."
+        "--host",
+        default="127.0.0.1",
+        help="The host of the web UI.",
     )
 
     parser.add_argument(
-        "--port", type=int, default=5000, help="The port of the web UI."
+        "--port",
+        type=int,
+        default=5000,
+        help="The port of the web UI.",
     )
 
     parser.add_argument(
@@ -784,7 +789,9 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--debug", action="store_true", help="Enable debug mode."
+        "--debug",
+        action="store_true",
+        help="Enable debug mode.",
     )
 
     return parser.parse_args()
@@ -838,7 +845,7 @@ def init(
     )
 
 
-def as_studio():
+def as_studio() -> None:
     """Start the AgentScope Studio web UI in commandline"""
     args = parse_args()
     init(
