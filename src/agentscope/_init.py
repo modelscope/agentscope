@@ -120,3 +120,8 @@ def init(
 def state_dict() -> dict:
     """Get the status of agentscope."""
     return ASManager.get_instance().serialize()
+
+
+def print_llm_usage() -> dict:
+    """Print the usage of LLM."""
+    return ASManager.get_instance().monitor.print_llm_usage()

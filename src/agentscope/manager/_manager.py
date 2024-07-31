@@ -120,6 +120,10 @@ class ASManager:
         if save_code:
             self.file.save_python_code()
 
+        if not disable_saving:
+            # Save the runtime information in .config file
+            self.file.save_runtime_information(self.serialize())
+
         # =============== Init the logger         ===============
         # TODO: unified with studio and gradio
         self.logger_level = logger_level

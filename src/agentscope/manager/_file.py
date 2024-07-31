@@ -7,13 +7,16 @@ from typing import Any, Union, Optional, List, Literal, Generator
 import numpy as np
 from PIL import Image
 
-from agentscope.utils.tools import _download_file, _get_timestamp, _hash_string
+from agentscope.utils.tools import _download_file
+from agentscope.utils.tools import _hash_string
+from agentscope.utils.tools import _get_timestamp
 from agentscope.utils.tools import _generate_random_code
 from agentscope.constants import (
     _DEFAULT_SUBDIR_CODE,
     _DEFAULT_SUBDIR_FILE,
     _DEFAULT_SUBDIR_INVOKE,
     _DEFAULT_IMAGE_NAME,
+    _DEFAULT_CFG_NAME,
 )
 
 
@@ -254,6 +257,25 @@ class FileManager:
                 file.write(chunk)
 
         return path_file
+
+    def save_runtime_information(self, runtime_info: dict) -> None:
+        """Save the runtime information locally."""
+        if self.run_dir is None:
+            raise ValueError(
+                "The run directory is not specified. Please set "
+                "`disable_saving` to `False` and provide a valid `save_dir` "
+                "in `agentscope.init()`.",
+            )
+
+        with open(
+            os.path.join(
+                self.run_dir,
+                _DEFAULT_CFG_NAME,
+            ),
+            "w",
+            encoding="utf-8",
+        ) as file:
+            json.dump(runtime_info, file, indent=4, ensure_ascii=False)
 
     def cache_text_embedding(
         self,
