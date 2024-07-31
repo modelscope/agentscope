@@ -667,9 +667,33 @@ def _save_workflow() -> Response:
     filename = data.get("filename")
     workflow = data.get("workflow")
     if not filename:
-        return jsonify({"error": "Filename is required"})
+        return jsonify({"message": "Filename is required"})
 
     filepath = os.path.join(user_dir, f"{filename}.json")
+
+    if not isinstance(workflow, dict):
+        return jsonify({"message": "Invalid workflow data"})
+
+    workflow_json = json.dumps(workflow, ensure_ascii=False, indent=4)
+    if len(workflow_json.encode("utf-8")) > 1024 * 1024:
+        return jsonify(
+            {"message": "The workflow file size exceeds 1MB limit"},
+        )
+
+    user_files = [
+        f
+        for f in os.listdir(user_dir)
+        if os.path.isfile(os.path.join(user_dir, f))
+    ]
+
+    if len(user_files) >= 10 and not os.path.exists(filepath):
+        return jsonify(
+            {
+                "message": "You have reached the limit of 10 workflow files, "
+                "please delete some files.",
+            },
+        )
+
     if overwrite:
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(workflow, f, ensure_ascii=False, indent=4)

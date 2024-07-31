@@ -1722,7 +1722,7 @@ function showExportRunMSPopup(userLogin, tokenQuery) {
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        Swal.fire('Failed!', '', 'error');
+                        Swal.fire('Failed', data.message || 'An error occurred while uploading to oss', 'error');
                     });
             }
         })
