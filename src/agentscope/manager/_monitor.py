@@ -92,7 +92,7 @@ class MonitorManager:
             )
         return cls._instance
 
-    def _print_table(self, usage: List) -> None:
+    def _print_table(self, title: str, usage: List) -> None:
         """Print the table data."""
         # TODO: use a better way to display the table data
         if len(usage) == 1:
@@ -104,6 +104,7 @@ class MonitorManager:
         for i in range(len(print_usage[0])):
             max_len_col.append(max(len(str(_[i])) for _ in print_usage))
 
+        logger.info(title)
         for row in print_usage:
             line = "|".join(
                 [""]
@@ -262,7 +263,7 @@ class MonitorManager:
 
         usage.insert(0, headers)
 
-        self._print_table(usage)
+        self._print_table("Image Model:", usage)
 
         return [
             {
@@ -294,7 +295,7 @@ class MonitorManager:
 
         usage.insert(0, headers)
 
-        self._print_table(usage)
+        self._print_table("Text & Embedding Model:", usage)
 
         return [
             {
