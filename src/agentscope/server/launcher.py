@@ -143,7 +143,7 @@ async def _setup_agent_server_async(
     """
 
     if init_settings is not None:
-        ASManager.get_instance().deserialize(init_settings)
+        ASManager.get_instance().load_dict(init_settings)
 
     servicer = AgentServerServicer(
         stop_event=stop_event,

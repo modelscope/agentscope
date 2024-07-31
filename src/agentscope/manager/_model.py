@@ -148,7 +148,7 @@ class ModelManager:
             "model_configs": self.model_configs,
         }
 
-    def deserialize(self, data: dict) -> None:
+    def load_dict(self, data: dict) -> None:
         """Load the model manager from a dict."""
         self.clear_model_configs()
         assert "model_configs" in data

@@ -22,7 +22,7 @@ _DEFAULT_SUBDIR_INVOKE = "invoke"
 _DEFAULT_CACHE_DIR = str(Path.home() / ".cache" / "agentscope")
 _DEFAULT_CFG_NAME = ".config"
 _DEFAULT_IMAGE_NAME = "image_{}_{}.png"
-_DEFAULT_SQLITE_DB_PATH = "./agentscope.db"
+_DEFAULT_SQLITE_DB_NAME = "agentscope.db"
 
 
 # for model wrapper
@@ -34,7 +34,8 @@ _DEFAULT_API_BUDGET = None
 _DEFAULT_PYPI_MIRROR = "http://mirrors.aliyun.com/pypi/simple/"
 _DEFAULT_TRUSTED_HOST = "mirrors.aliyun.com"
 # for monitor
-_DEFAULT_TABLE_NAME_MODEL = "model"
+_DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING = "chat_and_embedding_model_monitor"
+_DEFAULT_TABLE_NAME_FOR_IMAGE = "image_model_monitor"
 # for summarization
 _DEFAULT_SUMMARIZATION_PROMPT = """
 TEXT: {}

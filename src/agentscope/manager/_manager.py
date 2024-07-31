@@ -164,19 +164,19 @@ class ASManager:
 
         return serialized_data
 
-    def deserialize(self, data: dict) -> None:
-        """Load the runtime information."""
+    def load_dict(self, data: dict) -> None:
+        """Load the runtime information from a dictionary"""
         for k in self.__serialized_attrs:
             assert k in data, f"Key {k} not found in data."
             setattr(self, k, data[k])
 
-        self.file.deserialize(data["file"])
+        self.file.load_dict(data["file"])
         # TODO: unified the logger with studio and gradio
         self.logger_level = data["logger"]["level"]
         setup_logger(self.file.run_dir, self.logger_level)
-        self.model.deserialize(data["model"])
-        _studio_client.deserialize(data["studio"])
-        self.monitor.deserialize(data["monitor"])
+        self.model.load_dict(data["model"])
+        _studio_client.load_dict(data["studio"])
+        self.monitor.load_dict(data["monitor"])
 
     def flush(self) -> None:
         """Flush the runtime information."""

@@ -308,7 +308,7 @@ class FileManager:
 
         return serialized_data
 
-    def deserialize(self, data: dict) -> None:
+    def load_dict(self, data: dict) -> None:
         """Load the configuration from a dict."""
         for k in self.__serialized_attrs:
             assert k in data, f"Key {k} not found in data."

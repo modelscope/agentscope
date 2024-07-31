@@ -11,6 +11,11 @@ from sqlalchemy.orm import sessionmaker
 
 from ._file import FileManager
 from ..utils.tools import _is_windows
+from ..constants import (
+    _DEFAULT_SQLITE_DB_NAME,
+    _DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING,
+    _DEFAULT_TABLE_NAME_FOR_IMAGE,
+)
 
 _Base: DeclarativeMeta = declarative_base()
 
@@ -18,7 +23,7 @@ _Base: DeclarativeMeta = declarative_base()
 class _ModelTable(_Base):  # mypy: ignore
     """The table for invocation records of chat and embedding models."""
 
-    __tablename__ = "chat_and_embedding_model_monitor"
+    __tablename__ = _DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     model_name = Column(String(50))
@@ -30,7 +35,7 @@ class _ModelTable(_Base):  # mypy: ignore
 class _ImageModelTable(_Base):
     """The table for invocation records of image models."""
 
-    __tablename__ = "image_model_monitor"
+    __tablename__ = _DEFAULT_TABLE_NAME_FOR_IMAGE
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     model_name = Column(String(50))
@@ -57,7 +62,7 @@ class MonitorManager:
         run_dir = FileManager.get_instance().run_dir
         if run_dir is None:
             return None
-        return os.path.abspath(os.path.join(run_dir, "agentscope.db"))
+        return os.path.abspath(os.path.join(run_dir, _DEFAULT_SQLITE_DB_NAME))
 
     def __init__(self) -> None:
         """Initialize the monitor manager."""
@@ -320,7 +325,7 @@ class MonitorManager:
             "path_db": self.path_db,
         }
 
-    def deserialize(self, data: dict) -> None:
+    def load_dict(self, data: dict) -> None:
         """Load the monitor manager from a dict."""
         assert "use_monitor" in data, "Key 'use_monitor' not found in data."
 

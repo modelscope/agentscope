@@ -89,7 +89,7 @@ class ManagerTest(TestCase):
             },
         )
 
-        manager.deserialize(data)
+        manager.load_dict(data)
 
         self.assertDictEqual(
             manager.serialize(),

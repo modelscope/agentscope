@@ -222,8 +222,8 @@ class StudioClient:
             "studio_url": self.studio_url,
         }
 
-    def deserialize(self, data: dict) -> None:
-        """Deserialize the client."""
+    def load_dict(self, data: dict) -> None:
+        """Load the client from a dictionary."""
         assert "active" in data, "Key `active` not found in data."
         assert "studio_url" in data, "Key `studio_url` not found in data."
 
