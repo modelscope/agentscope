@@ -86,6 +86,7 @@ minimal_requires = [
     "nbformat",
     "psutil",
     "scipy",
+    "notebook"
 ]
 
 distribute_requires = minimal_requires + rpc_requires
