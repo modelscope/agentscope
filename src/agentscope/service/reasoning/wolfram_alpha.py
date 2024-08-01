@@ -14,7 +14,13 @@ def query_wolfram_alpha_short_answers(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha Short Answers API.
+    Query the Wolfram Alpha Short Answers API. The Short Answers API returns
+    a single plain text result directly from Wolfram|Alpha. In general, this
+    text is taken directly from the Result pod of Wolfram|Alpha output. This
+    API type is designed to deliver brief answers in the most basic format possible.
+    Suitable for queries such as simple knowledge/facts retrieval.
+    See https://products.wolframalpha.com/short-answers-api/documentation
+    for more details.
 
     Args:
         api_key (`str`):
@@ -38,6 +44,7 @@ def query_wolfram_alpha_short_answers(
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content['result'])
+            # Output: Paris, Île-de-France, France
     """
     url = "http://api.wolframalpha.com/v1/result"
     params = {"i": query, "appid": api_key}
@@ -67,7 +74,10 @@ def query_wolfram_alpha_simple(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha Simple API.
+    Query the Wolfram Alpha Simple API. The Simple API generates full
+    Wolfram|Alpha output in a universally viewable image format. Suitable for queries
+    such as knowledge/facts retrieval. See
+    https://products.wolframalpha.com/simple-api/documentation for more details.
 
     Args:
         api_key (`str`):
@@ -81,6 +91,7 @@ def query_wolfram_alpha_simple(
         and `content` is a dictionary containing
         the result or error information,
         which depends on the `status` variable.
+        The returned image is saved in the save directory as `wolfram_alpha_result.png`.
 
     Example:
         .. code-block:: python
@@ -125,7 +136,13 @@ def query_wolfram_alpha_show_steps(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha Show Steps API.
+    Query the Wolfram Alpha Show Steps API. An extension of the Full Results API,
+    the Show Steps API gives direct access to Wolfram|Alpha's full for
+    queries in a variety of mathematical and scientific subjects. These
+    explanations of computed answers are designed to provide clarity and
+    understanding to the end user and are especially useful in educational
+    and training applications. see
+    https://products.wolframalpha.com/show-steps-api/documentation for more details.
 
     Args:
         api_key (`str`):
@@ -149,6 +166,19 @@ def query_wolfram_alpha_show_steps(
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content['result'])
+
+        Output:
+            solve x^2 + 2 x + 1 = 0
+            x = -1
+            Solve for x:
+            x^2 + 2 x + 1 = 0
+            Write the left hand side as a square:
+            (x + 1)^2 = 0
+            Take the square root of both sides:
+            x + 1 = 0
+            Subtract 1 from both sides:
+            Answer: |
+             | x = -1
     """
     url = "http://api.wolframalpha.com/v2/query"
     params = {
@@ -207,7 +237,11 @@ def query_wolfram_alpha_llm(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha LLM API.
+    Query the Wolfram Alpha LLM API. The LLM API is built for use specifically with
+    large language models and chat products. Although the majority of data available
+    through the Wolfram|Alpha website is also available through this API, certain
+    subjects may be restricted by default. see
+    https://products.wolframalpha.com/llm-api/documentation for more details.
 
     Args:
         api_key (`str`):
@@ -227,10 +261,77 @@ def query_wolfram_alpha_llm(
 
             result = query_wolfram_alpha_llm(
                 "your_api_key",
-                "Explain quantum entanglement"
+                "3 densest elemental metals"
             )
-            if result.status == ServiceExecStatus.SUCCESS,
+            if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content['result'])
+
+        Example output:
+        .. code-block:: text
+
+            Query:
+            "3 densest elemental metals"
+
+            Input interpretation:
+            3 densest metallic elements | by mass density
+
+            Result:
+            1 | hassium | 41 g/cm^3 |
+            2 | meitnerium | 37.4 g/cm^3 |
+            3 | bohrium | 37.1 g/cm^3 |
+
+            Periodic table location:
+            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP339924348bb2bhie7aib000047ib639egd214fg7?MSPStoreType=image/png&s=14
+
+            Images:
+            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340024348bb2bhie7aib00004beh851acg9931b0?MSPStoreType=image/png&s=14
+            Wolfram Language code: Dataset[EntityValue[{Entity["Element", "Hassium"], Entity["Element", "Meitnerium"], Entity["Element", "Bohrium"]}, EntityProperty["Element", "Image"], "EntityAssociation"]]
+
+            Basic elemental properties:
+             | hassium | meitnerium | bohrium
+            atomic symbol | Hs | Mt | Bh
+            atomic number | 108 | 109 | 107
+            atomic mass | 269 u | 277 u | 270 u
+            half-life | 67 min | 30 min | 90 min
+
+            Material properties:
+             | hassium | meitnerium | bohrium
+            mass density | 41 g/cm^3 | 37.4 g/cm^3 | 37.1 g/cm^3
+            (properties at standard conditions)
+
+            Reactivity:
+             | bohrium
+            valence | 7
+
+            Atomic properties:
+             | hassium | meitnerium | bohrium
+            term symbol | ^5D_4 | ^4F_(9/2) | ^6S_(5/2)
+            (electronic ground state properties)
+
+            Abundances:
+              | (all cases)
+            crust abundance | 0 mass%
+            human abundance | 0 mass%
+
+            Nuclear properties:
+             | hassium | meitnerium | bohrium
+            half-life | 67 min | 30 min | 90 min
+            specific radioactivity | 446085 TBq/g | 833168 TBq/g | 285952 TBq/g
+            unstable isotopes | hassium-276 (67 min) | ... | meitnerium-278 (30 min) | ... | bohrium-274 (90 min) | ...
+
+              | (all cases)
+            decay mode | alpha emission
+
+            Identifiers:
+             | hassium | meitnerium | bohrium
+            CAS number | 54037-57-9 | 54038-01-6 | 54037-14-8
+            PubChem CID number | CID56951714 | CID56951716 | CID56951713
+
+            Wikipedia page hits history:
+            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340124348bb2bhie7aib00002819bbig9a52fe5c?MSPStoreType=image/png&s=14
+
+            Wolfram|Alpha website result for "3 densest elemental metals":
+            https://www6b3.wolframalpha.com/input?i=3+densest+elemental+metals
     """
     url = "https://www.wolframalpha.com/api/v1/llm-api"
     params = {"input": query, "appid": api_key}
