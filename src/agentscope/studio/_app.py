@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-lines
 """The Web Server of the AgentScope Studio."""
+import importlib
+import inspect
 import json
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import threading
 import traceback
 from datetime import datetime
-from typing import Tuple, Union, Any, Optional
+from typing import Dict, Tuple, Union, Any, Optional
 from pathlib import Path
 
 from flask import (
@@ -24,6 +28,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 from jinja2 import Environment, FileSystemLoader
+from loguru import logger
+from pydantic import BaseModel
 
 from .._runtime import _runtime
 from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
@@ -144,6 +150,68 @@ class _MessageTable(_db.Model):  # type: ignore[name-defined]
     timestamp = _db.Column(_db.String)
 
 
+class CustomAgentParam(BaseModel):
+    """The parameter of an customized agent."""
+
+    name: str
+    default: Optional[Any] = None
+    type_hint: Optional[str] = None
+
+
+class CustomizedAgents:
+    """A registry for customized agents."""
+
+    def __init__(self) -> None:
+        self.agent_classes: Dict[str, type] = {}
+        self.agent_params: Dict[str, Dict[str, CustomAgentParam]] = {}
+        self.agent_dir: str = None
+        self.project_dir: str = None
+
+    def register(self, agent_cls_name: str, agent_cls: type) -> None:
+        """Register an customized agent class."""
+        self.agent_classes[agent_cls_name] = agent_cls
+        self.agent_params[agent_cls_name] = {}
+        for param_name, param in inspect.signature(
+            agent_cls.__init__,  # type: ignore[misc]
+        ).parameters.items():
+            # Skip 'self' parameter
+            if param_name != "self":
+                self.agent_params[agent_cls_name][
+                    param_name
+                ] = CustomAgentParam(
+                    name=param_name,
+                    default=param.default
+                    if param.default is not param.empty
+                    else None,
+                    type_hint=(
+                        param.annotation.__name__
+                        if param.annotation is not param.empty
+                        else None
+                    ),
+                )
+
+    def get_all_agent_cls_names(self) -> list[str]:
+        """Get all customized agent class names."""
+        return list(self.agent_classes.keys())
+
+    def get_agent_cls(self, agent_cls_name: str) -> type:
+        """Get an customized agent class by the class name."""
+        return self.agent_classes[agent_cls_name]
+
+    def get_agent_params(
+        self,
+        agent_cls_name: str,
+    ) -> Dict[str, CustomAgentParam]:
+        """
+        Get an customized agent's parameters and their defaults
+        by the class name.
+        """
+        return self.agent_params[agent_cls_name]
+
+
+customized_agents = CustomizedAgents()
+
+
 def _get_all_runs_from_dir() -> dict:
     """Get all runs from the directory."""
     global _RUNS_DIRS
@@ -211,8 +279,6 @@ def _convert_to_py(  # type: ignore[no-untyped-def]
 @_app.route("/data/customized_agents")
 def _customized_agents_info() -> str:
     """Get the information about customized agents."""
-    from ..customized.agents import customized_agents
-
     all_customized_agent_cls_names = (
         customized_agents.get_all_agent_cls_names()
     )
@@ -234,7 +300,6 @@ def _customized_agents_info() -> str:
 @_app.route("/data/customized_agents/<agent_name>")
 def _customized_agent(agent_name: str) -> str:
     """Render the customized agent page."""
-    from ..customized.agents import customized_agents
 
     try:
         customized_agent_info = customized_agents.get_agent_params(agent_name)
@@ -255,7 +320,6 @@ def _customized_agent(agent_name: str) -> str:
 @_app.route("/workstation")
 def _workstation() -> str:
     """Render the workstation page."""
-    from ..customized.agents import customized_agents
 
     all_customized_agent_cls_names = (
         customized_agents.get_all_agent_cls_names()
@@ -815,15 +879,84 @@ def _on_leave(data: dict) -> None:
     leave_room(run_id)
 
 
-def _initialize_customized_agents() -> None:
+def load_agents_from_file(agent_file: str) -> list:
+    """Load AgentBase sub classes from a python file.
+    Args:
+        agent_file (str): the path to the python file.
+    Returns:
+        list: a list of agent classes
+    """
+    from agentscope.agents import AgentBase
+
+    module_path = agent_file.replace(os.sep, ".")
+    module_name = module_path[:-3]
+    spec = importlib.util.spec_from_file_location(
+        module_name,
+        agent_file,
+    )
+    module = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(module)
+    custom_agent_classes = []
+    for attr_name in dir(module):
+        attr = getattr(module, attr_name)
+        if (
+            isinstance(attr, type)
+            and issubclass(attr, AgentBase)
+            and attr is not AgentBase
+        ):
+            custom_agent_classes.append(attr)
+    return custom_agent_classes
+
+
+def load_agents_from_dir(agent_dir: str) -> list:
+    """Load customized agents from a directory.
+    Args:
+        agent_dir (`str`): a directory contains customized agent python files.
+    Returns:
+        list: a list of customized agent classes
+    """
+    if agent_dir is None:
+        return []
+    original_sys_path = sys.path.copy()
+    abs_agent_dir = os.path.abspath(agent_dir)
+    sys.path.insert(0, abs_agent_dir)
+    try:
+        custom_agent_classes = []
+        for root, _, files in os.walk(agent_dir):
+            for file in files:
+                if file.endswith(".py"):
+                    try:
+                        module_path = os.path.join(root, file)
+                        custom_agent_classes.extend(
+                            load_agents_from_file(module_path),
+                        )
+                    except Exception as e:
+                        logger.error(
+                            f"Failed to load agent class from [{file}]: {e}",
+                        )
+        return custom_agent_classes
+    finally:
+        sys.path = original_sys_path
+
+
+def _initialize_customized_agents(
+    agent_dir: Optional[str],
+    project_dir: Optional[str],
+) -> None:
     """Initialize customized agents."""
     from agentscope.agents import AgentBase, _BUILTIN_AGENTS
-    from ..customized.agents import customized_agents
+
+    if agent_dir is not None:
+        custom_agent_classes = load_agents_from_dir(agent_dir)
+        for cls in custom_agent_classes:
+            AgentBase.register_agent_class(agent_class=cls)
 
     # pylint: disable=protected-access
     for cls_name, cls in AgentBase._registry.items():
         if cls_name not in _BUILTIN_AGENTS:
             customized_agents.register(cls_name, cls)
+    customized_agents.agent_dir = agent_dir
+    customized_agents.project_dir = project_dir
 
 
 def init(
@@ -831,6 +964,8 @@ def init(
     port: int = 5000,
     run_dirs: Optional[Union[str, list[str]]] = None,
     debug: bool = False,
+    agent_dir: str = None,
+    project_dir: str = None,
 ) -> None:
     """Start the AgentScope Studio web UI with the given configurations.
 
@@ -843,6 +978,12 @@ def init(
             The directories to search for the history of runtime instances.
         debug (`bool`, optional):
             Whether to enable the debug mode. Defaults to False.
+        agent_dir (`str`, optional):
+            The abs path to the directory containing customized agent python
+            files.
+        project_dir (`str`, optional):
+            The abs path to the directory of your project. agent_dir should be
+            a subdirectory of project_dir.
     """
 
     # Set the history directories
@@ -862,7 +1003,7 @@ def init(
         _app.logger.setLevel("INFO")
 
     # Initialize customized agents
-    _initialize_customized_agents()
+    _initialize_customized_agents(agent_dir, project_dir)
 
     # To be compatible with the old table schema, we need to check and convert
     # the id column of the message_table from INTEGER to VARCHAR.

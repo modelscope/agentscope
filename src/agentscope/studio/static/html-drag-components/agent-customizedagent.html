@@ -21,7 +21,7 @@
         {% if key != '_cls_name' %}
         {% if value.type_hint == 'str' %}
         <label>{{key}}</label>
-        <input type="text" df-args-{{key}} placeholder="{{value.default}}" data-required="true">
+        <textarea df-args-{{key}} placeholder="{{value.default}}" data-required="true"></textarea>
         <br>
         {% elif value.type_hint == 'int' or value.type_hint == 'float' %}
         <label>{{key}}</label>

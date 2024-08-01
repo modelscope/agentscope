@@ -2,6 +2,7 @@
 """Workflow node opt."""
 from abc import ABC, abstractmethod
 from enum import IntEnum
+import os
 from typing import List, Optional
 
 from agentscope import msghub
@@ -12,7 +13,7 @@ from agentscope.agents import (
     DictDialogAgent,
     ReActAgent,
 )
-from agentscope.customized.agents import customized_agents
+from agentscope.studio._app import customized_agents
 from agentscope.message import Msg
 from agentscope.models import read_model_configs
 from agentscope.pipelines import (
@@ -340,10 +341,33 @@ class CustomizedAgentNode(WorkflowNode):
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
+    def _path_to_import(self, agent_dir: str, project_dir: str) -> str:
+        # Ensure project_dir ends with separator to avoid partial matches
+        if not project_dir.endswith(os.path.sep):
+            project_dir += os.path.sep
+
+        if not agent_dir.startswith(project_dir):
+            raise ValueError(
+                f"Customized Agent Dir Path {agent_dir} is not "
+                f"within the project path {project_dir}",
+            )
+
+        relative_path = agent_dir[len(project_dir) :]
+        module_path = os.path.splitext(relative_path)[0]
+        module_parts = module_path.split(os.path.sep)
+        import_statement = "from " + ".".join(module_parts) + " "
+        return import_statement
+
     def compile(self) -> dict:
+        import_statement = (
+            self._path_to_import(
+                customized_agents.agent_dir,
+                customized_agents.project_dir,
+            )
+            + f"import {self.agent_cls_name}"
+        )
         return {
-            "imports": "from agentscope.customized.agents "
-            f"import {self.agent_cls_name}",
+            "imports": import_statement,
             "inits": f"{self.var_name} = {self.agent_cls_name}("
             f"{kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
