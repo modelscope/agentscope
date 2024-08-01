@@ -17,9 +17,10 @@ def query_wolfram_alpha_short_answers(
     Query the Wolfram Alpha Short Answers API. The Short Answers API returns
     a single plain text result directly from Wolfram|Alpha. In general, this
     text is taken directly from the Result pod of Wolfram|Alpha output. This
-    API type is designed to deliver brief answers in the most basic format possible.
-    Suitable for queries such as simple knowledge/facts retrieval.
-    See https://products.wolframalpha.com/short-answers-api/documentation
+    API type is designed to deliver brief answers in the most basic
+    format possible. Suitable for queries such as simple knowledge/facts
+    retrieval. See
+    https://products.wolframalpha.com/short-answers-api/documentation
     for more details.
 
     Args:
@@ -75,9 +76,10 @@ def query_wolfram_alpha_simple(
 ) -> ServiceResponse:
     """
     Query the Wolfram Alpha Simple API. The Simple API generates full
-    Wolfram|Alpha output in a universally viewable image format. Suitable for queries
-    such as knowledge/facts retrieval. See
-    https://products.wolframalpha.com/simple-api/documentation for more details.
+    Wolfram|Alpha output in a universally viewable image format.
+    Suitable for queries such as knowledge/facts retrieval. See
+    https://products.wolframalpha.com/simple-api/documentation
+    for more details.
 
     Args:
         api_key (`str`):
@@ -91,7 +93,8 @@ def query_wolfram_alpha_simple(
         and `content` is a dictionary containing
         the result or error information,
         which depends on the `status` variable.
-        The returned image is saved in the save directory as `wolfram_alpha_result.png`.
+        The returned image is saved in the save directory as
+        `wolfram_alpha_result.png`.
 
     Example:
         .. code-block:: python
@@ -136,13 +139,15 @@ def query_wolfram_alpha_show_steps(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha Show Steps API. An extension of the Full Results API,
-    the Show Steps API gives direct access to Wolfram|Alpha's full for
-    queries in a variety of mathematical and scientific subjects. These
-    explanations of computed answers are designed to provide clarity and
-    understanding to the end user and are especially useful in educational
-    and training applications. see
-    https://products.wolframalpha.com/show-steps-api/documentation for more details.
+    Query the Wolfram Alpha Show Steps API. An extension of the
+    Full Results API, the Show Steps API gives direct access to
+    Wolfram|Alpha's full for queries in a variety of mathematical
+    and scientific subjects. These explanations of computed answers
+    are designed to provide clarity and understanding to the
+    end user and are especially useful in educational and
+    training applications. see
+    https://products.wolframalpha.com/show-steps-api/documentation
+    for more details.
 
     Args:
         api_key (`str`):
@@ -281,11 +286,11 @@ def query_wolfram_alpha_llm(
             3 | bohrium | 37.1 g/cm^3 |
 
             Periodic table location:
-            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP339924348bb2bhie7aib000047ib639egd214fg7?MSPStoreType=image/png&s=14
+            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP339924348bb2bhie7aib000047ib639egd214fg7?MSPStoreType=image/png&s=14  # noqa: E501 # pylint: disable=line-too-long
 
             Images:
-            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340024348bb2bhie7aib00004beh851acg9931b0?MSPStoreType=image/png&s=14
-            Wolfram Language code: Dataset[EntityValue[{Entity["Element", "Hassium"], Entity["Element", "Meitnerium"], Entity["Element", "Bohrium"]}, EntityProperty["Element", "Image"], "EntityAssociation"]]
+            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340024348bb2bhie7aib00004beh851acg9931b0?MSPStoreType=image/png&s=14  # noqa: E501 # pylint: disable=line-too-long
+            Wolfram Language code: Dataset[EntityValue[{Entity["Element", "Hassium"], Entity["Element", "Meitnerium"], Entity["Element", "Bohrium"]}, EntityProperty["Element", "Image"], "EntityAssociation"]]    # noqa: E501 # pylint: disable=line-too-long
 
             Basic elemental properties:
              | hassium | meitnerium | bohrium
@@ -317,7 +322,7 @@ def query_wolfram_alpha_llm(
              | hassium | meitnerium | bohrium
             half-life | 67 min | 30 min | 90 min
             specific radioactivity | 446085 TBq/g | 833168 TBq/g | 285952 TBq/g
-            unstable isotopes | hassium-276 (67 min) | ... | meitnerium-278 (30 min) | ... | bohrium-274 (90 min) | ...
+            unstable isotopes | hassium-276 (67 min) | ... | meitnerium-278 (30 min) | ... | bohrium-274 (90 min) | ...   # noqa: E501 # pylint: disable=line-too-long
 
               | (all cases)
             decay mode | alpha emission
@@ -328,7 +333,7 @@ def query_wolfram_alpha_llm(
             PubChem CID number | CID56951714 | CID56951716 | CID56951713
 
             Wikipedia page hits history:
-            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340124348bb2bhie7aib00002819bbig9a52fe5c?MSPStoreType=image/png&s=14
+            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340124348bb2bhie7aib00002819bbig9a52fe5c?MSPStoreType=image/png&s=14  # noqa: E501 # pylint: disable=line-too-long
 
             Wolfram|Alpha website result for "3 densest elemental metals":
             https://www6b3.wolframalpha.com/input?i=3+densest+elemental+metals
