@@ -40,7 +40,9 @@ from .zhipu_model import (
 from .litellm_model import (
     LiteLLMChatWrapper,
 )
-
+from .yi_model import (
+    YiChatWrapper,
+)
 
 __all__ = [
     "ModelWrapperBase",
@@ -67,6 +69,7 @@ __all__ = [
     "load_config_by_name",
     "read_model_configs",
     "clear_model_configs",
+    "YiChatWrapper",
 ]
 
 _MODEL_CONFIGS: dict[str, dict] = {}
