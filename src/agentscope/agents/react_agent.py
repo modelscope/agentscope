@@ -8,9 +8,7 @@ from typing import Optional, Union, Sequence
 from agentscope.exception import ResponseParsingError, FunctionCallError
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.parsers.regex_tagged_content_parser import (
-    RegexTaggedContentParser,
-)
+from agentscope.parsers import RegexTaggedContentParser
 from agentscope.service import ServiceToolkit
 
 INSTRUCTION_PROMPT = """## What You Should Do:

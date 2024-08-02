@@ -34,6 +34,7 @@ AgentScope Documentation
    tutorial/208-distribute.md
    tutorial/209-gui.md
    tutorial/210-rag.md
+   tutorial/211-web.md
    tutorial/105-logging.md
    tutorial/207-monitor.md
    tutorial/104-usecase.md

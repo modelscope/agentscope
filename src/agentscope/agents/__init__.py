@@ -9,6 +9,7 @@ from .text_to_image_agent import TextToImageAgent
 from .rpc_agent import RpcAgent
 from .react_agent import ReActAgent
 from .rag_agent import LlamaIndexAgent
+from .web_voyager_agent import WebVoyagerAgent
 
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "DistConf",
     "RpcAgent",
     "LlamaIndexAgent",
+    "WebVoyagerAgent",
 ]
