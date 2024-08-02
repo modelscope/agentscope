@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """ A basic Attribute that can be get and set."""
 from typing import List, Any
+from copy import deepcopy
 
 from ..attribute import Attribute, EventListener
-from ..event import event
-from ..event import Get, Set
+from ..event import event, Get, Set
 
 
 class BasicAttribute(Attribute, Get, Set):
@@ -15,7 +15,7 @@ class BasicAttribute(Attribute, Get, Set):
         name: str,
         default: Any,
         listeners: dict[str, List[EventListener]] = None,
-        children: dict[str, Attribute] = None,
+        children: List[Attribute] = None,
         parent: Attribute = None,
     ) -> None:
         super().__init__(
@@ -29,7 +29,7 @@ class BasicAttribute(Attribute, Get, Set):
     @event
     def get(self) -> Any:
         self._trigger_listener("get", None)  # type: ignore[arg-type]
-        return self.value
+        return deepcopy(self.value)
 
     @event
     def set(self, value: Any) -> bool:

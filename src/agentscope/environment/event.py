@@ -48,12 +48,24 @@ class Move2D(ABC):
     """A class representing an attribute can be moved in 2D."""
 
     @abstractmethod
-    def move(self, x: float, y: float) -> bool:
-        """Move the attribute in 2D with given vector.
+    def move_by(self, x: float, y: float) -> bool:
+        """Move the attribute in 2D by the given vector.
 
         Args:
             x (`float`): The movement in x direction.
             y (`float`): The movement in y direction.
+
+        Returns:
+            `bool`: Whether the movement was successful.
+        """
+
+    @abstractmethod
+    def move_to(self, x: float, y: float) -> bool:
+        """Move the attribute to the given position.
+
+        Args:
+            x (`float`): The x coordinate of the new position.
+            y (`float`): The y coordinate of the new position.
 
         Returns:
             `bool`: Whether the movement was successful.

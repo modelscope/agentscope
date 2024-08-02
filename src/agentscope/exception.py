@@ -157,3 +157,37 @@ class AgentCreationError(AgentServerError):
 
 class AgentCallError(AgentServerError):
     """The exception class for failing to call agent."""
+
+
+# - Environment Exceptions
+
+
+class EnvAttributeError(Exception):
+    """The exception class for attribute related errors."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}: {self.message}"
+
+
+class EnvAttributeNotFoundError(EnvAttributeError):
+    """The exception class for attribute not found error."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Attribute {name} not found.")
+
+
+class EnvAttributeAlreadyExistError(EnvAttributeError):
+    """The exception class for attribute already exist error."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Attribute {name} already exist.")
+
+
+class EnvAttributeUnsupportedFunctionError(EnvAttributeError):
+    """The exception class for use unsupported function of attribute error."""
+
+    def __init__(self, attr_name: str, func_name: str) -> None:
+        super().__init__(f"Attribute {attr_name} doesn't have {func_name}.")

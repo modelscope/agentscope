@@ -6,6 +6,12 @@ from typing import Any, List
 import threading
 
 
+from agentscope.exception import (
+    EnvAttributeNotFoundError,
+    EnvAttributeAlreadyExistError,
+)
+
+
 class EventListener(ABC):
     """A class representing a listener for listening the event of an
     attribute."""
@@ -42,7 +48,7 @@ class Attribute:
         name: str,
         default: Any,
         listeners: dict[str, List[EventListener]] = None,
-        children: dict[str, Attribute] = None,
+        children: List[Attribute] = None,
         parent: Attribute = None,
     ) -> None:
         """Init an Attribute instance.
@@ -54,14 +60,16 @@ class Attribute:
             listener dict. Defaults to None.
             env (`Environment`): An instance of the Environment class.
             Defaults to None.
-            children (`dict[str, Attribute]`, optional): A dict of children
+            children (`List[Attribute]`, optional): A list of children
             attributes. Defaults to None.
             parent (`Attribute`, optional): The parent attribute. Defaults to
             None.
         """
         self.name = name
         self.value = default
-        self.children = children
+        self.children = {
+            child.name: child for child in (children if children else [])
+        }
         self.parent = parent
         self.lock = threading.Lock()
         self.listeners = {}
@@ -97,13 +105,34 @@ class Attribute:
         """
         return self.children
 
-    def set_children(self, children: dict[str, Attribute]) -> None:
-        """Set the children attributes of the current attribute.
+    def add_child(self, child: Attribute) -> bool:
+        """Add a child attribute to the current attribute.
 
         Args:
-            children (`dict[str, Attribute]`): The children attributes.
+            child (`Attribute`): The children
+            attributes.
+
+        Returns:
+            `bool`: Whether the children were added successfully.
         """
-        self.children = children
+        if child.name in self.children:
+            return False
+        self.children[child.name] = child
+        return True
+
+    def remove_child(self, children_name: str) -> bool:
+        """Remove a child attribute from the current attribute.
+
+        Args:
+            children_name (`str`): The name of the children attribute.
+
+        Returns:
+            `bool`: Whether the children were removed successfully.
+        """
+        if children_name in self.children:
+            del self.children[children_name]
+            return True
+        return False
 
     def add_listener(self, target_event: str, listener: EventListener) -> bool:
         """Add a listener to the attribute.
@@ -168,3 +197,17 @@ class Attribute:
                 for child in (self.children.values() if self.children else [])
             },
         }
+
+    def __getitem__(self, attr_name: str) -> Attribute:
+        if attr_name in self.children:
+            return self.children[attr_name]
+        else:
+            raise EnvAttributeNotFoundError(attr_name)
+
+    def __setitem__(self, attr_name: str, attr: Attribute) -> None:
+        if not isinstance(attr, Attribute):
+            raise TypeError("Only Attribute can be set")
+        if attr_name not in self.children:
+            self.children[attr_name] = attr
+        else:
+            raise EnvAttributeAlreadyExistError(attr_name)
