@@ -20,6 +20,8 @@ class ExecuteNotebookCodeTest(unittest.TestCase):
         self.arg1 = {"code": "import math\nprint(math.sqrt(16))"}
         # No input code
         self.arg2 = {"code": ""}
+        # test without print
+        self.arg3 = {"code": "1+1"}
 
     def test_basic_expression(self) -> None:
         """Execute basic expression test."""
@@ -38,6 +40,12 @@ class ExecuteNotebookCodeTest(unittest.TestCase):
         response = self.executor.run_code_on_notebook(self.arg2["code"])
         self.assertEqual(response.status, ServiceExecStatus.SUCCESS)
         self.assertEqual(response.content, [])
+
+    def test_no_print(self) -> None:
+        """Execute no print test."""
+        response = self.executor.run_code_on_notebook(self.arg3["code"])
+        self.assertEqual(response.status, ServiceExecStatus.SUCCESS)
+        self.assertIn("2", response.content[0])
 
 
 if __name__ == "__main__":
