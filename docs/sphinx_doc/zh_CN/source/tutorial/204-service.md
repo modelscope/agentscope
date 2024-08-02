@@ -12,6 +12,7 @@
 | Service场景  | Service函数名称           | 描述                                      |
 |------------|-----------------------|-----------------------------------------|
 | 代码         | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。 |
+|            | `NoteBookExecutor.run_code_on_notebook`             | 在 NoteBookExecutor 的 IPython 环境中执行一段 Python 代码，遵循 IPython 交互式计算风格。                |
 | 检索         | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。                      |
 |            | `cos_sim`             | 计算2个embedding的余弦相似度。                    |
 | SQL查询      | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。             |

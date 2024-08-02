@@ -167,6 +167,8 @@ the following libraries.
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Customized Tools](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_customized_services/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Mixture of Agents Algorithm](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation in Stream Mode](https://github.com/modelscope/agentscope/blob/main/examples/conversation_in_stream_mode/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with CodeAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_codeact_agent/)
+
 
 - Game
   - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
