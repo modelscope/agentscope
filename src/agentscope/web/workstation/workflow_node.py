@@ -2,6 +2,7 @@
 """Workflow node opt."""
 from abc import ABC, abstractmethod
 from enum import IntEnum
+from functools import partial
 from typing import List, Optional
 
 from agentscope import msghub
@@ -33,7 +34,7 @@ from agentscope.service import (
     read_text_file,
     write_text_file,
     execute_python_code,
-    ServiceFactory,
+    ServiceToolkit,
 )
 
 DEFAULT_FLOW_VAR = "flow"
@@ -294,22 +295,32 @@ class ReActAgentNode(WorkflowNode):
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         # Build tools
-        self.tools = []
+        self.service_toolkit = ServiceToolkit()
         for tool in dep_opts:
             if not hasattr(tool, "service_func"):
                 raise TypeError(f"{tool} must be tool!")
-            self.tools.append(tool.service_func)
-        self.pipeline = ReActAgent(tools=self.tools, **self.opt_kwargs)
+            self.service_toolkit.add(tool.service_func)
+        self.pipeline = ReActAgent(
+            service_toolkit=self.service_toolkit,
+            **self.opt_kwargs,
+        )
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
+        tools = deps_converter(self.dep_vars)[1:-1].split(",")
+        service_toolkit_code = ";".join(
+            f"{self.var_name}_service_toolkit.add({tool.strip()})"
+            for tool in tools
+        )
         return {
             "imports": "from agentscope.agents import ReActAgent",
-            "inits": f"{self.var_name} = ReActAgent"
-            f"({kwarg_converter(self.opt_kwargs)}, tools"
-            f"={deps_converter(self.dep_vars)})",
+            "inits": f"{self.var_name}_service_toolkit = ServiceToolkit()\n"
+            f"    {service_toolkit_code}\n"
+            f"    {self.var_name} = ReActAgent"
+            f"({kwarg_converter(self.opt_kwargs)}, service_toolkit"
+            f"={self.var_name}_service_toolkit)",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
@@ -701,13 +712,14 @@ class BingSearchServiceNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.service_func = ServiceFactory.get(bing_search, **self.opt_kwargs)
+        self.service_func = partial(bing_search, **self.opt_kwargs)
 
     def compile(self) -> dict:
         return {
             "imports": "from agentscope.service import ServiceFactory\n"
+            "from functools import partial\n"
             "from agentscope.service import bing_search",
-            "inits": f"{self.var_name} = ServiceFactory.get(bing_search,"
+            "inits": f"{self.var_name} = partial(bing_search,"
             f" {kwarg_converter(self.opt_kwargs)})",
             "execs": "",
         }
@@ -728,16 +740,14 @@ class GoogleSearchServiceNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.service_func = ServiceFactory.get(
-            google_search,
-            **self.opt_kwargs,
-        )
+        self.service_func = partial(google_search, **self.opt_kwargs)
 
     def compile(self) -> dict:
         return {
             "imports": "from agentscope.service import ServiceFactory\n"
+            "from functools import partial\n"
             "from agentscope.service import google_search",
-            "inits": f"{self.var_name} = ServiceFactory.get(google_search,"
+            "inits": f"{self.var_name} = partial(google_search,"
             f" {kwarg_converter(self.opt_kwargs)})",
             "execs": "",
         }
@@ -758,14 +768,13 @@ class PythonServiceNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.service_func = ServiceFactory.get(execute_python_code)
+        self.service_func = execute_python_code
 
     def compile(self) -> dict:
         return {
             "imports": "from agentscope.service import ServiceFactory\n"
             "from agentscope.service import execute_python_code",
-            "inits": f"{self.var_name} = ServiceFactory.get("
-            f"execute_python_code)",
+            "inits": f"{self.var_name} = execute_python_code",
             "execs": "",
         }
 
@@ -785,13 +794,13 @@ class ReadTextServiceNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.service_func = ServiceFactory.get(read_text_file)
+        self.service_func = read_text_file
 
     def compile(self) -> dict:
         return {
             "imports": "from agentscope.service import ServiceFactory\n"
             "from agentscope.service import read_text_file",
-            "inits": f"{self.var_name} = ServiceFactory.get(read_text_file)",
+            "inits": f"{self.var_name} = read_text_file",
             "execs": "",
         }
 
@@ -811,13 +820,13 @@ class WriteTextServiceNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.service_func = ServiceFactory.get(write_text_file)
+        self.service_func = write_text_file
 
     def compile(self) -> dict:
         return {
             "imports": "from agentscope.service import ServiceFactory\n"
             "from agentscope.service import write_text_file",
-            "inits": f"{self.var_name} = ServiceFactory.get(write_text_file)",
+            "inits": f"{self.var_name} = write_text_file",
             "execs": "",
         }
 

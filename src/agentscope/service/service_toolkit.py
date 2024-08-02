@@ -195,6 +195,10 @@ class ServiceToolkit:
 
         """
 
+        if isinstance(service_func, partial):
+            self.add(service_func.func, **service_func.keywords)
+            return
+
         processed_func, json_schema = ServiceToolkit.get(
             service_func,
             **kwargs,
