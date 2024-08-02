@@ -9,7 +9,8 @@ from agentscope.service.service_status import ServiceExecStatus
 
 def get_tripadvisor_location_photos(
     api_key: str,
-    location_id: str,
+    location_id: str = None,
+    query: str = None,
     language: str = "en",
 ) -> ServiceResponse:
     """
@@ -18,8 +19,12 @@ def get_tripadvisor_location_photos(
     Args:
         api_key (`str`):
             Your TripAdvisor API key.
-        location_id (`str`):
+        location_id (`str`, optional):
             The ID of the location for which to retrieve photos.
+            Required if query is not provided.
+        query (`str`, optional):
+            The search query to find a location. Required if
+            location_id is not provided.
         language (`str`, optional):
             The language for the response. Defaults to 'en'.
 
@@ -40,14 +45,23 @@ def get_tripadvisor_location_photos(
                         'caption': str,
                         'published_date': str,
                         'images': {
-                            'thumbnail': {'height': int,
-                            'width': int, 'url': str},
+                            'thumbnail': {
+                                'height': int,
+                                'width': int,
+                                'url': str
+                            },
                             'small': {'height': int, 'width': int, 'url': str},
-                            'medium': {'height': int,
-                            'width': int, 'url': str},
+                            'medium': {
+                                'height': int,
+                                'width': int,
+                                'url': str
+                            },
                             'large': {'height': int, 'width': int, 'url': str},
-                            'original': {'height': int,
-                            'width': int, 'url': str}
+                            'original': {
+                                'height': int,
+                                'width': int,
+                                'url': str
+                            }
                         },
                         'album': str,
                         'source': {'name': str, 'localized_name': str},
@@ -60,11 +74,23 @@ def get_tripadvisor_location_photos(
         Each item in the 'data' list represents
         a photo associated with the location.
 
+    Note:
+        Either `location_id` or `query` must be provided. If both are provided,
+        `location_id` takes precedence.
+
     Example:
         .. code-block:: python
 
+            # Using location_id
             result = get_tripadvisor_location_photos(
-                "your_api_key", "123456", "en"
+                "your_api_key", location_id="123456", language="en"
+            )
+            if result.status == ServiceExecStatus.SUCCESS:
+                print(result.content)
+
+            # Or using a query
+            result = get_tripadvisor_location_photos(
+                "your_api_key", query="Eiffel Tower", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
@@ -84,23 +110,56 @@ def get_tripadvisor_location_photos(
                             'small': {'height': 150, 'width': 150,
                             'url': 'https://media-cdn.../photo0.jpg'},
                             'medium': {'height': 188, 'width': 250,
-                            'url': 'https://media-cdn...photo0.jpg'},
+                            'url': 'https://media-cdn.../photo0.jpg'},
                             'large': {'height': 413, 'width': 550,
                             'url': 'https://media-cdn.../photo0.jpg'},
                             'original': {'height': 1920, 'width': 2560,
-                            'url': 'https://media-cdn.../photo.jpg'}
+                            'url': 'https://media-cdn.../photo0.jpg'}
                         },
                         'album': 'Other',
-                        'source': {'name': 'Traveler',
-                        'localized_name': 'Traveler'},
+                        'source': {
+                            'name': 'Traveler',
+                            'localized_name': 'Traveler'
+                        },
                         'user': {'username': 'EvaFalleth'}
                     },
                     # ... more photo entries ...
                 ]
             }
         }
-    """
 
+    Raises:
+        ValueError: If neither location_id nor query is provided.
+    """
+    if location_id is None and query is None:
+        raise ValueError("Either location_id or query must be provided.")
+
+    if location_id is None:
+        # Use search_tripadvisor to get the location_id
+        search_result = search_tripadvisor(api_key, query, language)
+        if search_result.status != ServiceExecStatus.SUCCESS:
+            return search_result
+
+        # Get the first location_id from the search results
+        locations = search_result.content.get("data", [])
+        if not locations:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content={"error": "No locations found for the given query."},
+            )
+
+        location_id = locations[0]["location_id"]
+        logger.info(f"Using location_id {location_id} from search results.")
+
+        # Warning message if there are multiple locations
+        if len(locations) > 1:
+            logger.warning(
+                f"Multiple locations found for query '{query}'. "
+                f"Using the first result. "
+                f"Other {len(locations) - 1} results are ignored.",
+            )
+
+    # Now proceed with the original function logic using the location_id
     url = (
         f"https://api.content.tripadvisor.com/api/v1/location/{location_id}/"
         f"photos?language={language}&key={api_key}"
@@ -266,7 +325,8 @@ def search_tripadvisor(
 
 def get_tripadvisor_location_details(
     api_key: str,
-    location_id: str,
+    location_id: str = None,
+    query: str = None,
     language: str = "en",
     currency: str = "USD",
 ) -> ServiceResponse:
@@ -277,8 +337,12 @@ def get_tripadvisor_location_details(
     Args:
         api_key (`str`):
             Your TripAdvisor API key.
-        location_id (`str`):
-            The unique identifier for the location.
+        location_id (`str`, optional):
+            The unique identifier for the location. Required if
+            query is not provided.
+        query (`str`, optional):
+            The search query to find a location. Required if
+            location_id is not provided.
         language (`str`, optional):
             The language for the response. Defaults to 'en'.
         currency (`str`, optional):
@@ -291,14 +355,32 @@ def get_tripadvisor_location_details(
         information, which depends on the `status` variable.
 
         If successful, the `content` will be a dictionary with
-        detailed information about the location, including name,
-        address, ratings, reviews, and more.
+        detailed information about the location, including
+        name, address, ratings, reviews, and more.
+
+    Note:
+        Either `location_id` or `query` must be provided. If both are provided,
+        `location_id` takes precedence.
 
     Example:
         .. code-block:: python
 
+            # Using location_id
             result = get_tripadvisor_location_details(
-                "your_api_key", "574818", "en", "USD"
+                "your_api_key",
+                location_id="574818",
+                language="en",
+                currency="USD"
+            )
+            if result.status == ServiceExecStatus.SUCCESS:
+                print(result.content)
+
+            # Or using a query
+            result = get_tripadvisor_location_details(
+                "your_api_key",
+                query="Socotra Island",
+                language="en",
+                currency="USD"
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
@@ -322,7 +404,7 @@ def get_tripadvisor_location_details(
             'latitude': '12.46342',
             'longitude': '53.82374',
             'timezone': 'Asia/Aden',
-            'write_review': 'https://www.tripadvisor.com/UserReview-...',
+            'write_review': 'https://www.tripadvisor.com/UserReview...',
             'ranking_data': {
                 'geo_location_id': '298087',
                 'ranking_string': '#1 of 7 things to do in Aden',
@@ -331,10 +413,15 @@ def get_tripadvisor_location_details(
                 'ranking': '1'
             },
             'rating': '5.0',
-            'rating_image_url': 'https://www.tripadvisor.com/.../66827-5.svg',
+            'rating_image_url': 'https://www.tripadvisor.com/.../5.svg',
             'num_reviews': '62',
-            'review_rating_count': {'1': '1', '2': '0',
-                                    '3': '1', '4': '1', '5': '59'},
+            'review_rating_count': {
+                '1': '1',
+                '2': '0',
+                '3': '1',
+                '4': '1',
+                '5': '59',
+            },
             'photo_count': '342',
             'see_all_photos': 'https://www.tripadvisor.com/Attraction...',
             'category': {'name': 'attraction', 'localized_name': 'Attraction'},
@@ -365,7 +452,38 @@ def get_tripadvisor_location_details(
             ],
             'awards': []
         }
+
+    Raises:
+        ValueError: If neither location_id nor query is provided.
     """
+    if location_id is None and query is None:
+        raise ValueError("Either location_id or query must be provided.")
+
+    if location_id is None:
+        # Use search_tripadvisor to get the location_id
+        search_result = search_tripadvisor(api_key, query, language)
+        if search_result.status != ServiceExecStatus.SUCCESS:
+            return search_result
+
+        # Get the first location_id from the search results
+        locations = search_result.content.get("data", [])
+        if not locations:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content={"error": "No locations found for the given query."},
+            )
+
+        location_id = locations[0]["location_id"]
+        logger.info(f"Using location_id {location_id} from search results.")
+
+        # Warning message if there are multiple locations
+        if len(locations) > 1:
+            logger.warning(
+                f"Multiple locations found for query '{query}'. "
+                f"Using the first result. "
+                f"Other {len(locations) - 1} results are ignored.",
+            )
+
     url = (
         f"https://api.content.tripadvisor.com/api/v1/location/{location_id}/"
         f"details?language={language}&currency={currency}&key={api_key}"
