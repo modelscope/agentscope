@@ -7,7 +7,6 @@ from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
 
-# pylint: disable=line-too-long
 def get_tripadvisor_location_photos(
     api_key: str,
     location_id: str,
@@ -64,7 +63,9 @@ def get_tripadvisor_location_photos(
     Example:
         .. code-block:: python
 
-            result = get_tripadvisor_location_photos("your_api_key", "123456", "en")  # noqa: E501
+            result = get_tripadvisor_location_photos(
+                "your_api_key", "123456", "en"
+            )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
@@ -79,15 +80,15 @@ def get_tripadvisor_location_photos(
                         'published_date': '2016-09-04T20:40:14.284Z',
                         'images': {
                             'thumbnail': {'height': 50, 'width': 50,
-                            'url': 'https://media-cdn.tripadvisor.com/media/photo-t/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'url': 'https://media-cdn.../photo0.jpg'},
                             'small': {'height': 150, 'width': 150,
-                            'url': 'https://media-cdn.tripadvisor.com/media/photo-l/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'url': 'https://media-cdn.../photo0.jpg'},
                             'medium': {'height': 188, 'width': 250,
-                            'url': 'https://media-cdn.tripadvisor.com/media/photo-f/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'url': 'https://media-cdn...photo0.jpg'},
                             'large': {'height': 413, 'width': 550,
-                            'url': 'https://media-cdn.tripadvisor.com/media/photo-s/0c/d5/8c/26/photo0jpg.jpg'}, # noqa: E501
+                            'url': 'https://media-cdn.../photo0.jpg'},
                             'original': {'height': 1920, 'width': 2560,
-                            'url': 'https://media-cdn.tripadvisor.com/media/photo-c/2560x500/0c/d5/8c/26/photo0jpg.jpg'} # noqa: E501
+                            'url': 'https://media-cdn.../photo.jpg'}
                         },
                         'album': 'Other',
                         'source': {'name': 'Traveler',
@@ -270,7 +271,8 @@ def get_tripadvisor_location_details(
     currency: str = "USD",
 ) -> ServiceResponse:
     """
-    Get detailed information about a specific location using the TripAdvisor API.
+    Get detailed information about a specific location
+    using the TripAdvisor API.
 
     Args:
         api_key (`str`):
@@ -288,13 +290,16 @@ def get_tripadvisor_location_details(
         and `content` is the JSON response from TripAdvisor API or error
         information, which depends on the `status` variable.
 
-        If successful, the `content` will be a dictionary with detailed information
-        about the location, including name, address, ratings, reviews, and more.
+        If successful, the `content` will be a dictionary with
+        detailed information about the location, including name,
+        address, ratings, reviews, and more.
 
     Example:
         .. code-block:: python
 
-            result = get_tripadvisor_location_details("your_api_key", "574818", "en", "USD")
+            result = get_tripadvisor_location_details(
+                "your_api_key", "574818", "en", "USD"
+            )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
@@ -302,7 +307,7 @@ def get_tripadvisor_location_details(
         {
             'location_id': '574818',
             'name': 'Socotra Island',
-            'web_url': 'https://www.tripadvisor.com/Attraction_Review-g298087-d574818-Reviews-Socotra_Island-Aden.html?m=66827',
+            'web_url': 'https://www.tripadvisor.com/Attraction_Review...',
             'address_obj': {
                 'street2': '',
                 'city': 'Aden',
@@ -317,7 +322,7 @@ def get_tripadvisor_location_details(
             'latitude': '12.46342',
             'longitude': '53.82374',
             'timezone': 'Asia/Aden',
-            'write_review': 'https://www.tripadvisor.com/UserReview-g298087-d574818-Socotra_Island-Aden.html?m=66827',
+            'write_review': 'https://www.tripadvisor.com/UserReview-...',
             'ranking_data': {
                 'geo_location_id': '298087',
                 'ranking_string': '#1 of 7 things to do in Aden',
@@ -326,11 +331,12 @@ def get_tripadvisor_location_details(
                 'ranking': '1'
             },
             'rating': '5.0',
-            'rating_image_url': 'https://www.tripadvisor.com/img/cdsi/img2/ratings/traveler/5.0-66827-5.svg',
+            'rating_image_url': 'https://www.tripadvisor.com/.../66827-5.svg',
             'num_reviews': '62',
-            'review_rating_count': {'1': '1', '2': '0', '3': '1', '4': '1', '5': '59'},
+            'review_rating_count': {'1': '1', '2': '0',
+                                    '3': '1', '4': '1', '5': '59'},
             'photo_count': '342',
-            'see_all_photos': 'https://www.tripadvisor.com/Attraction_Review-g298087-d574818-m66827-Reviews-Socotra_Island-Aden.html#photos',  # noqa: E501
+            'see_all_photos': 'https://www.tripadvisor.com/Attraction...',
             'category': {'name': 'attraction', 'localized_name': 'Attraction'},
             'subcategory': [
                 {'name': 'nature_parks', 'localized_name': 'Nature & Parks'},
