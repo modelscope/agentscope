@@ -15,6 +15,7 @@ The following table outlines the various Service functions by type. These functi
 | Service Scene               | Service Function Name      | Description                                                                                                    |
 |-----------------------------|----------------------------|----------------------------------------------------------------------------------------------------------------|
 | Code                        | `execute_python_code`      | Execute a piece of Python code, optionally inside a Docker container.                                          |
+|                             | `NoteBookExecutor.run_code_on_notebook`                  | Compute Execute a segment of Python code in the IPython environment of the NoteBookExecutor, adhering to the IPython interactive computing style.                                       |
 | Retrieval                   | `retrieve_from_list`       | Retrieve a specific item from a list based on given criteria.                                                  |
 |                             | `cos_sim`                  | Compute the cosine similarity between two different embeddings.                                                |
 | SQL Query                   | `query_mysql`              | Execute SQL queries on a MySQL database and return results.                                                    |
