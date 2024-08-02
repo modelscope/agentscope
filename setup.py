@@ -82,6 +82,9 @@ minimal_requires = [
     "google-generativeai>=0.4.0",
     "zhipuai",
     "litellm",
+    "notebook",
+    "nbclient",
+    "nbformat",
     "psutil",
     "scipy",
 ]
