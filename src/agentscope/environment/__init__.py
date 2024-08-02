@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """ Import all environment related modules in the package. """
-from .environment import Watcher, Attribute, Environment
+from .attribute import Attribute, EventListener
+from .attributes.basic_attr import BasicAttribute
 
 __all__ = [
     "Attribute",
-    "Environment",
-    "Watcher",
+    "EventListener",
+    "BasicAttribute",
 ]
