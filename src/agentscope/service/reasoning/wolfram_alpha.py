@@ -286,11 +286,17 @@ def query_wolfram_alpha_llm(
             3 | bohrium | 37.1 g/cm^3 |
 
             Periodic table location:
-            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP339924348bb2bhie7aib000047ib639egd214fg7?MSPStoreType=image/png&s=14  # noqa: E501 # pylint: disable=line-too-long
+            image: https://www6b3.wolframalpha.com/Calculate/...
 
             Images:
-            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340024348bb2bhie7aib00004beh851acg9931b0?MSPStoreType=image/png&s=14  # noqa: E501 # pylint: disable=line-too-long
-            Wolfram Language code: Dataset[EntityValue[{Entity["Element", "Hassium"], Entity["Element", "Meitnerium"], Entity["Element", "Bohrium"]}, EntityProperty["Element", "Image"], "EntityAssociation"]]    # noqa: E501 # pylint: disable=line-too-long
+            image: https://www6b3.wolframalpha.com/Calculate/...
+            Wolfram Language code: Dataset[
+                EntityValue[
+                    {Entity["Element", "Hassium"], Entity["Element", "Meitnerium"], Entity["Element", "Bohrium"]},
+                    EntityProperty["Element", "Image"],
+                    "EntityAssociation"
+                ]
+            ]
 
             Basic elemental properties:
              | hassium | meitnerium | bohrium
@@ -322,7 +328,9 @@ def query_wolfram_alpha_llm(
              | hassium | meitnerium | bohrium
             half-life | 67 min | 30 min | 90 min
             specific radioactivity | 446085 TBq/g | 833168 TBq/g | 285952 TBq/g
-            unstable isotopes | hassium-276 (67 min) | ... | meitnerium-278 (30 min) | ... | bohrium-274 (90 min) | ...   # noqa: E501 # pylint: disable=line-too-long
+            unstable isotopes | hassium-276 (67 min) | ... 
+                              | meitnerium-278 (30 min) | ... 
+                              | bohrium-274 (90 min) | ... 
 
               | (all cases)
             decay mode | alpha emission
@@ -333,7 +341,7 @@ def query_wolfram_alpha_llm(
             PubChem CID number | CID56951714 | CID56951716 | CID56951713
 
             Wikipedia page hits history:
-            image: https://www6b3.wolframalpha.com/Calculate/MSP/MSP340124348bb2bhie7aib00002819bbig9a52fe5c?MSPStoreType=image/png&s=14  # noqa: E501 # pylint: disable=line-too-long
+            image: https://www6b3.wolframalpha.com/Calculate/...
 
             Wolfram|Alpha website result for "3 densest elemental metals":
             https://www6b3.wolframalpha.com/input?i=3+densest+elemental+metals
