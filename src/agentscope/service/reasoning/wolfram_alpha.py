@@ -242,10 +242,11 @@ def query_wolfram_alpha_llm(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha LLM API. The LLM API is built for use specifically with
-    large language models and chat products. Although the majority of data available
-    through the Wolfram|Alpha website is also available through this API, certain
-    subjects may be restricted by default. see
+    Query the Wolfram Alpha LLM API. The LLM API is built for
+    use specifically with large language models and chat products.
+    Although the majority of data available through the
+    Wolfram|Alpha website is also available through this API,
+    certain subjects may be restricted by default. see
     https://products.wolframalpha.com/llm-api/documentation for more details.
 
     Args:
@@ -290,9 +291,14 @@ def query_wolfram_alpha_llm(
 
             Images:
             image: https://www6b3.wolframalpha.com/Calculate/...
-            Wolfram Language code: Dataset[
+            Wolfram Language code:
+            Dataset[
                 EntityValue[
-                    {Entity["Element", "Hassium"], Entity["Element", "Meitnerium"], Entity["Element", "Bohrium"]},
+                    {
+                        Entity["Element", "Hassium"],
+                        Entity["Element", "Meitnerium"],
+                        Entity["Element", "Bohrium"]
+                    },
                     EntityProperty["Element", "Image"],
                     "EntityAssociation"
                 ]
@@ -328,9 +334,9 @@ def query_wolfram_alpha_llm(
              | hassium | meitnerium | bohrium
             half-life | 67 min | 30 min | 90 min
             specific radioactivity | 446085 TBq/g | 833168 TBq/g | 285952 TBq/g
-            unstable isotopes | hassium-276 (67 min) | ... 
-                              | meitnerium-278 (30 min) | ... 
-                              | bohrium-274 (90 min) | ... 
+            unstable isotopes | hassium-276 (67 min) | ...
+                              | meitnerium-278 (30 min) | ...
+                              | bohrium-274 (90 min) | ...
 
               | (all cases)
             decay mode | alpha emission
