@@ -26,6 +26,7 @@ except ImportError as import_error:
     )
 import agentscope
 from agentscope.server.servicer import AgentServerServicer
+from agentscope.server.cpp_servicer import CppAgentServerServicer
 from agentscope.agents.agent import AgentBase
 from agentscope.utils.tools import check_port, generate_id_from_seed
 from agentscope.constants import _DEFAULT_RPC_OPTIONS
