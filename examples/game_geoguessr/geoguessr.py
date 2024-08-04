@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
 import requests
 from typing import Dict, Any, List
 from agentscope.service import ServiceResponse, ServiceExecStatus
 from agentscope.agents import DialogAgent
 import agentscope
+
 agentscope.init(
     # ...
     project="xxx",
     name="xxx",
-    studio_url="http://127.0.0.1:5000"          # The URL of AgentScope Studio
+    studio_url="http://127.0.0.1:5000",  # The URL of AgentScope Studio
 )
 
 YOUR_MODEL_CONFIGURATION_NAME = "dashscope_chat-qwen-max"
@@ -22,30 +24,31 @@ YOUR_MODEL_CONFIGURATION_NAME = "dashscope_chat-qwen-max"
 #                 },
 #             }
 
-YOUR_MODEL_CONFIGURATION =  [{
-    "config_name": "dashscope_chat-qwen-max",
-    "model_type": "dashscope_chat",
-    "model_name": "qwen-max",
-    "api_key": "",
-    "generate_args": {
-        "temperature": 0.1
-    }
-},
-
-{
-    "config_name": "dashscope_multimodal-qwen-vl-max",
-    "model_type": "dashscope_multimodal",
-    "model_name": "qwen-vl-max",
-    "api_key": "",
-    "generate_args": {
-        "temperature": 0.2
-    }
-},]
+YOUR_MODEL_CONFIGURATION = [
+    {
+        "config_name": "dashscope_chat-qwen-max",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+        "api_key": "",
+        "generate_args": {
+            "temperature": 0.1,
+        },
+    },
+    {
+        "config_name": "dashscope_multimodal-qwen-vl-max",
+        "model_type": "dashscope_multimodal",
+        "model_name": "qwen-vl-max",
+        "api_key": "",
+        "generate_args": {
+            "temperature": 0.2,
+        },
+    },
+]
 
 from agentscope.service import (
     get_tripadvisor_location_photos,
     search_tripadvisor,
-    get_tripadvisor_location_details
+    get_tripadvisor_location_details,
 )
 
 # def get_tripadvisor_location_photos(api_key: str, location_id: str, language: str = 'en') -> ServiceResponse:
@@ -123,7 +126,6 @@ from agentscope.service import (
 #         )
 
 
-
 # # Define the TripAdvisor API query function
 # def search_tripadvisor(api_key: str, query: str, language: str = 'en', currency: str = 'USD') -> ServiceResponse:
 #     """
@@ -199,15 +201,25 @@ from agentscope.service import (
 #             status=ServiceExecStatus.ERROR,
 #             content={"error": str(e)}
 #         )
-    
+
 from agentscope.service import ServiceToolkit
 
 # Initialize the ServiceToolkit and register the TripAdvisor API functions
 service_toolkit = ServiceToolkit()
-service_toolkit.add(search_tripadvisor, api_key="")  # Replace with your actual TripAdvisor API key
-service_toolkit.add(get_tripadvisor_location_details, api_key="")  # Replace with your actual TripAdvisor API key
-service_toolkit.add(get_tripadvisor_location_photos, api_key="")  # Replace with your actual TripAdvisor API key
+service_toolkit.add(
+    search_tripadvisor,
+    api_key="",
+)  # Replace with your actual TripAdvisor API key
+service_toolkit.add(
+    get_tripadvisor_location_details,
+    api_key="",
+)  # Replace with your actual TripAdvisor API key
+service_toolkit.add(
+    get_tripadvisor_location_photos,
+    api_key="",
+)  # Replace with your actual TripAdvisor API key
 import json
+
 print(json.dumps(service_toolkit.json_schemas, indent=4))
 
 from agentscope.agents import ReActAgent
@@ -217,24 +229,24 @@ agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION)
 
 gamemaster_agent = ReActAgent(
     name="gamemaster",
-    sys_prompt='''You are the gamemaster of a geoguessr-like game. You interacts with the player following the procedures below:
+    sys_prompt="""You are the gamemaster of a geoguessr-like game. You interacts with the player following the procedures below:
 1. You propose a location (anywhere on earth, the mroe random and low-profile the better, diversify your proposal), then uses the tool `search_tripadvisor` to get its `location_id`; if multiple places are returned, you choose the one that matches what you proposed the most.
 2. You use the method `get_tripadvisor_location_photos` to get the url of the image about this location, display the url as part of your output under 'speeak' (use '![image]' as alt text do not use the real name of the lcoation), and asks the player to guess which country/state/region/city/municipality this location is in. If the url is not available for this particular location, repeat step 1 and 2 until a valid image url is found.
 3. You use the tool `get_tripadvisor_location_details` to get this location's details.
 4. If the player's answer matches exactly the locaiton name correspond to the most precise `level` in `ancestors` in the returned details from step 2, they have won the game and game is over. Note that it is sufficient for the player to just give the exact location name to win the game. Congratulate the player. If the player's answer corresponds to other `level` in `ancestors` instead of the most precise one, encourage the player to give a more precise guess. if the player's answer does not matches the location name, nor any of the values of `name` in `ancestors` in the returned details from step 2, give the player a hint from the details from step 2 that is not too revealing, and ask the player to guess again.
 Under no circumstances should you reveal the name of the location or of any object in the image before the player guesses it correctly.
-When the game is over, append 'exit = True' to your last output.''',
+When the game is over, append 'exit = True' to your last output.""",
     model_config_name="dashscope_chat-qwen-max",
-    service_toolkit=service_toolkit, 
-    verbose=False, # set verbose to True to show the reasoning process
+    service_toolkit=service_toolkit,
+    verbose=False,  # set verbose to True to show the reasoning process
 )
 
 player_agent = DialogAgent(
-        name="player",
-        sys_prompt='''You're a player in a geoguessr-like turn-based game. Upon getting the url of an image from the gamemaster, you are supposed to guess where is the place shown in the image. Your guess can be a country,
-        a state, a region, a city, etc., but try to be as precise as possoble. If your answer is not correct, try again based on the hint given by the gamemaster.''',
-        model_config_name="dashscope_multimodal-qwen-vl-max",  # replace by your model config name
-    )
+    name="player",
+    sys_prompt="""You're a player in a geoguessr-like turn-based game. Upon getting the url of an image from the gamemaster, you are supposed to guess where is the place shown in the image. Your guess can be a country,
+        a state, a region, a city, etc., but try to be as precise as possoble. If your answer is not correct, try again based on the hint given by the gamemaster.""",
+    model_config_name="dashscope_multimodal-qwen-vl-max",  # replace by your model config name
+)
 
 # print("#"*80)
 # print(agent.sys_prompt)
@@ -244,6 +256,7 @@ from agentscope.agents import UserAgent
 
 user = UserAgent(name="User")
 from agentscope.message import Msg
+
 x = None
 # x = Msg("Bob", "What about this picture I took?", url="https://media-cdn.tripadvisor.com/media/photo-w/1a/9e/7f/9d/eiffeltoren.jpg")
 # gamemaster_agent.speak(x)
@@ -255,5 +268,3 @@ while True:
         break
     x = player_agent(x)
     # x = user(x)
-    
-    
