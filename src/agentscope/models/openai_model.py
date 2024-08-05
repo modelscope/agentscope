@@ -489,15 +489,14 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         # Check if the OpenAI library is installed
         try:
             import openai
-        except ImportError:
-            openai = None
+        except ImportError as e:
+            raise ImportError(
+                "Cannot find openai package, please install it by "
+                "`pip install openai`",
+            ) from e
 
         # Format messages according to the model name
-        if (
-            openai is None
-            and self.model_name.startswith("gpt-")
-            or self.model_name in get_args(openai.types.ChatModel)
-        ):
+        if self.model_name in get_args(openai.types.ChatModel):
             return OpenAIChatWrapper.static_format(
                 *args,
                 model_name=self.model_name,
