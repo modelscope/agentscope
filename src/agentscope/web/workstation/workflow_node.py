@@ -12,8 +12,8 @@ from agentscope.agents import (
     DictDialogAgent,
     ReActAgent,
 )
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.models import read_model_configs
 from agentscope.pipelines import (
     SequentialPipeline,
     ForLoopPipeline,
@@ -116,7 +116,7 @@ class ModelNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        read_model_configs([self.opt_kwargs])
+        ModelManager.get_instance().load_model_configs([self.opt_kwargs])
 
     def compile(self) -> dict:
         return {

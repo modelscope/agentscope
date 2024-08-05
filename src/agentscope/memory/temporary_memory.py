@@ -13,7 +13,7 @@ from typing import Callable
 from loguru import logger
 
 from .memory import MemoryBase
-from ..models import load_model_by_config_name
+from ..manager import ModelManager
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
 from ..message import (
@@ -51,7 +51,10 @@ class TemporaryMemory(MemoryBase):
 
         # prepare embedding model if needed
         if isinstance(embedding_model, str):
-            self.embedding_model = load_model_by_config_name(embedding_model)
+            model_manager = ModelManager.get_instance()
+            self.embedding_model = model_manager.get_model_by_config_name(
+                embedding_model,
+            )
         else:
             self.embedding_model = embedding_model
 
