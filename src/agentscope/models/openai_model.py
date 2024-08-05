@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence, Dict, Optional, Generator
+from typing import (
+    Union,
+    Any,
+    List,
+    Sequence,
+    Dict,
+    Optional,
+    Generator,
+    get_args,
+)
 
 from loguru import logger
 
@@ -59,9 +68,8 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
-        self.model_name = model_name
         self.generate_args = generate_args or {}
 
         try:
@@ -330,9 +338,10 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         if response.get("usage", None) is not None:
             self.update_monitor(call_counter=1, **response["usage"])
 
+    @staticmethod
     def _format_msg_with_url(
-        self,
         msg: Msg,
+        model_name: str,
     ) -> Dict:
         """Format a message with image urls into openai chat format.
         This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and
@@ -340,11 +349,11 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         """
         # Check if the model is a vision model
         if not any(
-            _ in self.model_name
-            for _ in self.substrings_in_vision_models_names
+            _ in model_name
+            for _ in OpenAIChatWrapper.substrings_in_vision_models_names
         ):
             logger.warning(
-                f"The model {self.model_name} is not a vision model. "
+                f"The model {model_name} is not a vision model. "
                 f"Skip the url in the message.",
             )
             return {
@@ -401,6 +410,50 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
             return returned_msg
 
+    @staticmethod
+    def static_format(
+        *args: Union[Msg, Sequence[Msg]],
+        model_name: str,
+    ) -> List[dict]:
+        """A static version of the format method, which can be used without
+        initializing the OpenAIChatWrapper object."""
+        messages = []
+        for arg in args:
+            if arg is None:
+                continue
+            if isinstance(arg, Msg):
+                if arg.url is not None:
+                    # Format the message according to the model type
+                    # (vision/non-vision)
+                    formatted_msg = OpenAIChatWrapper._format_msg_with_url(
+                        arg,
+                        model_name,
+                    )
+                    messages.append(formatted_msg)
+                else:
+                    messages.append(
+                        {
+                            "role": arg.role,
+                            "name": arg.name,
+                            "content": _convert_to_str(arg.content),
+                        },
+                    )
+
+            elif isinstance(arg, list):
+                messages.extend(
+                    OpenAIChatWrapper.static_format(
+                        *arg,
+                        model_name=model_name,
+                    ),
+                )
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(arg)}.",
+                )
+
+        return messages
+
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
@@ -419,31 +472,25 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 The formatted messages in the format that OpenAI Chat API
                 required.
         """
-        messages = []
-        for arg in args:
-            if arg is None:
-                continue
-            if isinstance(arg, Msg):
-                if arg.url is not None:
-                    messages.append(self._format_msg_with_url(arg))
-                else:
-                    messages.append(
-                        {
-                            "role": arg.role,
-                            "name": arg.name,
-                            "content": _convert_to_str(arg.content),
-                        },
-                    )
+        # Check if the OpenAI library is installed
+        try:
+            import openai
+        except ImportError:
+            openai = None
 
-            elif isinstance(arg, list):
-                messages.extend(self.format(*arg))
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(arg)}.",
-                )
-
-        return messages
+        # Format messages according to the model name
+        if (
+            openai is None
+            and self.model_name.startswith("gpt-")
+            or self.model_name in get_args(openai.types.ChatModel)
+        ):
+            return OpenAIChatWrapper.static_format(
+                *args,
+                model_name=self.model_name,
+            )
+        else:
+            # The OpenAI library maybe re-used to support other models
+            return ModelWrapperBase.format_for_common_chat_models(*args)
 
 
 class OpenAIDALLEWrapper(OpenAIWrapperBase):

@@ -22,7 +22,7 @@ _DEFAULT_SQLITE_DB_PATH = "agentscope.db"
 
 # for model wrapper
 _DEFAULT_MAX_RETRIES = 3
-_DEFAULT_MESSAGES_KEY = "inputs"
+_DEFAULT_MESSAGES_KEY = "messages"
 _DEFAULT_RETRY_INTERVAL = 1
 _DEFAULT_API_BUDGET = None
 # for execute python

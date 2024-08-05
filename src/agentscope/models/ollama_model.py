@@ -63,9 +63,8 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
                 Defaults to `None`, which is 127.0.0.1:11434.
         """
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
-        self.model_name = model_name
         self.options = options
         self.keep_alive = keep_alive
         self.client = ollama.Client(host=host, **kwargs)
@@ -263,7 +262,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         """Format the messages for ollama Chat API.
 
         All messages will be formatted into a single system message with
-        system prompt and dialogue history.
+        system prompt and conversation history.
 
         Note:
         1. This strategy maybe not suitable for all scenarios,
@@ -290,7 +289,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
                     "role": "user",
                     "content": (
                         "You're a helpful assistant\\n\\n"
-                        "## Dialogue History\\n"
+                        "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
                     )
@@ -337,7 +336,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
                     system_prompt += "\n"
                 system_content_template.append(system_prompt)
             else:
-                # Merge all messages into a dialogue history prompt
+                # Merge all messages into a conversation history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
@@ -349,7 +348,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             dialogue_history = "\n".join(dialogue)
 
             system_content_template.extend(
-                ["## Dialogue History", dialogue_history],
+                ["## Conversation History", dialogue_history],
             )
 
         system_content = "\n".join(system_content_template)
@@ -582,7 +581,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
                 # system prompt
                 sys_prompt = _convert_to_str(unit.content)
             else:
-                # Merge all messages into a dialogue history prompt
+                # Merge all messages into a conversation history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
@@ -590,12 +589,12 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         dialogue_history = "\n".join(dialogue)
 
         if sys_prompt is None:
-            prompt_template = "## Dialogue History\n{dialogue_history}"
+            prompt_template = "## Conversation History\n{dialogue_history}"
         else:
             prompt_template = (
                 "{system_prompt}\n"
                 "\n"
-                "## Dialogue History\n"
+                "## Conversation History\n"
                 "{dialogue_history}"
             )
 

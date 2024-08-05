@@ -326,14 +326,14 @@ def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
                 },
             )
         else:
-            # Merge all messages into a dialogue history prompt
+            # Merge all messages into a conversation history prompt
             dialogue.append(
                 f"{unit['name']}: {_convert_to_str(unit['content'])}",
             )
 
     dialogue_history = "\n".join(dialogue)
 
-    user_content_template = "## Dialogue History\n{dialogue_history}"
+    user_content_template = "## Conversation History\n{dialogue_history}"
 
     messages.append(
         {

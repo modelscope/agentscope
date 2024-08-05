@@ -115,14 +115,14 @@ class SystemPromptOptimizer:
         system_prompt: str,
         dialog_history: List[Msg],
     ) -> List[str]:
-        """Given the system prompt and dialogue history, generate notes to
+        """Given the system prompt and conversation history, generate notes to
         optimize the system prompt.
 
         Args:
             system_prompt (`str`):
                 The system prompt provided by the user.
             dialog_history (`List[Msg]`):
-                The dialogue history of user interaction with the agent.
+                The conversation history of user interaction with the agent.
 
         Returns:
             List[str]: The notes added to the system prompt.

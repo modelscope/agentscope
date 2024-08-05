@@ -8,12 +8,13 @@ from typing import Any, Union, Sequence, List
 import requests
 from loguru import logger
 
+from .gemini_model import GeminiChatWrapper
+from .openai_model import OpenAIChatWrapper
 from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
 from ..message import Msg
-from ..utils.tools import _convert_to_str
 
 
 class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
@@ -76,7 +77,9 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                     **post_args
                 )
         """
-        super().__init__(config_name=config_name)
+        model_name = json_args.get("model", json_args.get("model_name", None))
+
+        super().__init__(config_name=config_name, model_name=model_name)
 
         self.api_url = api_url
         self.headers = headers
@@ -190,27 +193,27 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
             `Union[List[dict]]`:
                 The formatted messages.
         """
-        messages = []
-        for arg in args:
-            if arg is None:
-                continue
-            if isinstance(arg, Msg):
-                messages.append(
-                    {
-                        "role": arg.role,
-                        "name": arg.name,
-                        "content": _convert_to_str(arg.content),
-                    },
-                )
-            elif isinstance(arg, list):
-                messages.extend(self.format(*arg))
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(arg)}.",
-                )
+        # Format according to the potential model field in the json_args
+        model_name = self.json_args.get(
+            "model",
+            self.json_args.get("model_name", None),
+        )
 
-        return messages
+        # OpenAI
+        if model_name.startswith("gpt-"):
+            return OpenAIChatWrapper.static_format(
+                *args,
+                model_name=model_name,
+            )
+
+        # Gemini
+        elif model_name.startswith("gemini"):
+            return GeminiChatWrapper.format(*args)
+
+        # Include DashScope, ZhipuAI, Ollama, the other models supported by
+        # litellm and unknown models
+        else:
+            return ModelWrapperBase.format_for_common_chat_models(*args)
 
 
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
