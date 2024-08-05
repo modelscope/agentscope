@@ -9,7 +9,7 @@ from ...exception import (
     EnvAttributeAlreadyExistError,
     EnvListenerError,
 )
-from ..attribute import Attribute, EventListener
+from ..attribute import Attribute, BasicAttribute, EventListener
 from ..event import event_func, Event, Movable2D
 
 
@@ -28,7 +28,7 @@ def distance2d(
         return abs(x2 - x1) + abs(y2 - y1)
 
 
-class Map2D(Attribute):
+class Map2D(BasicAttribute):
     """A 2D Map attribute"""
 
     def __init__(
@@ -53,7 +53,7 @@ class Map2D(Attribute):
                 )
         super().__init__(
             name=name,
-            default=None,
+            value=None,
             children=children,
             parent=parent,
         )

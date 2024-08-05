@@ -412,7 +412,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test agent server with multi-agent"""
         launcher = RpcAgentServerLauncher(
             host="127.0.0.1",
-            port=12010,
+            port=-1,
             local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory],
         )

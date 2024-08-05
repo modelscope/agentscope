@@ -3,11 +3,11 @@
 from typing import List, Tuple, Any
 
 from ..attribute import Attribute, EventListener
-from .basic import BasicAttribute
+from .mutable import MutableAttribute
 from ..event import event_func, Event, Movable2D
 
 
-class Point2D(Attribute, Movable2D):
+class Point2D(MutableAttribute, Movable2D):
     """A Point in 2D space."""
 
     def __init__(
@@ -24,8 +24,8 @@ class Point2D(Attribute, Movable2D):
     @event_func
     def move_to(self, x: float, y: float) -> bool:
         """Move the point to a new position."""
-        cur_loc = {"x": self.value[0], "y": self.value[1]}
-        self.value = (x, y)
+        cur_loc = {"x": self._value[0], "y": self._value[1]}
+        self._value = (x, y)
         self._trigger_listener(
             Event("move_to", {"new": {"x": x, "y": y}, "old": cur_loc}),
         )
@@ -52,13 +52,13 @@ class Point2D(Attribute, Movable2D):
         Returns:
             `Tuple[float, float]`: The current position of the point.
         """
-        value = (self.value[0], self.value[1])
+        value = (self._value[0], self._value[1])
         self._trigger_listener(Event("get", {}))
         return value
 
 
-class AttributeWithPoint2D(BasicAttribute, Movable2D):
-    """An enhanced basicAttribute whose child `position` is a `Point2D`
+class AttributeWithPoint2D(MutableAttribute, Movable2D):
+    """An enhanced MutableAttribute whose child `position` is a `Point2D`
     instance."""
 
     def __init__(

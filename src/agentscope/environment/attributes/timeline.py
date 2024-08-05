@@ -2,11 +2,11 @@
 """An attribute representing a timeline."""
 
 from typing import List, Any, Optional
-from ..attribute import Attribute
+from ..attribute import BasicAttribute, Attribute
 from ..event import event_func, Getable
 
 
-class Timeline(Attribute, Getable):
+class Timeline(BasicAttribute, Getable):
     """A timeline attribute."""
 
     def __init__(
@@ -20,7 +20,7 @@ class Timeline(Attribute, Getable):
     ) -> None:
         super().__init__(
             name=name,
-            default=start,
+            value=start,
             children=children,
             parent=parent,
         )
@@ -34,7 +34,7 @@ class Timeline(Attribute, Getable):
     @event_func
     def step(self) -> None:
         """Step the timeline."""
-        self.value += self.unit
+        self._value += self.unit
 
     def run(self) -> None:
         """Run the timeline."""

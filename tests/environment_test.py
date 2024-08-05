@@ -5,10 +5,11 @@ from typing import Any
 
 from agentscope.environment import (
     Attribute,
+    BasicAttribute,
     Event,
     EventListener,
     Environment,
-    BasicAttribute,
+    MutableAttribute,
     Point2D,
     AttributeWithPoint2D,
     Map2D,

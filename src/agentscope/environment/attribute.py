@@ -37,33 +37,134 @@ class EventListener(ABC):
         """
 
 
-class Attribute:
+class Attribute(ABC):
     """The base class of all attribute."""
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Name of the attribute.
+
+        Returns:
+            `str`: The name of the attribute.
+        """
+
+    @property
+    @abstractmethod
+    def value(self) -> Any:
+        """Value of the attribute.
+
+        returns:
+            `Any`: The value of the attribute.
+        """
+
+    @abstractmethod
+    def get_parent(self) -> Attribute:
+        """Get the parent attribute of the current attribute.
+
+        Returns:
+            `Attribute`: The parent attribute.
+        """
+
+    @abstractmethod
+    def set_parent(self, parent: Attribute) -> None:
+        """Set the parent attribute of the current attribute.
+
+        Args:
+            parent (`Attribute`): The parent attribute.
+        """
+
+    @abstractmethod
+    def get_children(self) -> dict[str, Attribute]:
+        """Get the children attributes of the current attribute.
+
+        Returns:
+            `dict[str, Attribute]`: The children attributes.
+        """
+
+    @abstractmethod
+    def add_child(self, child: Attribute) -> bool:
+        """Add a child attribute to the current attribute.
+
+        Args:
+            child (`Attribute`): The children
+            attributes.
+
+        Returns:
+            `bool`: Whether the children were added successfully.
+        """
+
+    @abstractmethod
+    def remove_child(self, children_name: str) -> bool:
+        """Remove a child attribute from the current attribute.
+
+        Args:
+            children_name (`str`): The name of the children attribute.
+
+        Returns:
+            `bool`: Whether the children were removed successfully.
+        """
+
+    @abstractmethod
+    def add_listener(self, target_event: str, listener: EventListener) -> bool:
+        """Add a listener to the attribute.
+
+        Args:
+            target_event (`str`): The event function to listen.
+            listener (`EventListener`): The listener to add.
+
+        Returns:
+            `bool`: Whether the listener was added successfully.
+        """
+
+    @abstractmethod
+    def remove_listener(self, target_event: str, listener_name: str) -> bool:
+        """Remove a listener from the attribute.
+
+        Args:
+            target_event (`str`): The event function.
+            listener_name (`str`): The name of the listener to remove.
+
+        Returns:
+            `bool`: Whether the listener was removed successfully.
+        """
+
+    @abstractmethod
+    def __getitem__(self, attr_name: str) -> Attribute:
+        """Get a child attribute."""
+
+    @abstractmethod
+    def __setitem__(self, attr_name: str, attr: Attribute) -> None:
+        """Set a child attribute."""
+
+
+class BasicAttribute(Attribute):
+    """A basic implementation of Attribute."""
 
     def __init__(
         self,
         name: str,
-        default: Any,
+        value: Any,
         listeners: dict[str, List[EventListener]] = None,
         children: List[Attribute] = None,
         parent: Attribute = None,
     ) -> None:
-        """Init an Attribute instance.
+        """Init an BasicAttribute instance.
 
         Args:
             name (`str`): The name of the attribute.
-            default (`Any`): The default value of the attribute.
+            value (`Any`): The default value of the attribute.
             listeners (`dict[str, List[EventListener]]`, optional): The
             listener dict. Defaults to None.
             env (`Environment`): An instance of the Environment class.
             Defaults to None.
             children (`List[Attribute]`, optional): A list of children
             attributes. Defaults to None.
-            parent (`Attribute`, optional): The parent attribute. Defaults to
-            None.
+            parent (`Attribute`, optional): The parent attribute. Defaults
+            to None.
         """
-        self.name = name
-        self.value = default
+        self._name = name
+        self._value = value
         self.children = {
             child.name: child for child in (children if children else [])
         }
@@ -76,6 +177,16 @@ class Attribute:
                 else:
                     for ls in listener:
                         self.add_listener(target_func, ls)
+
+    @property
+    def name(self) -> str:
+        """Name of the attribtue"""
+        return self._name
+
+    @property
+    def value(self) -> Any:
+        """Value of the attribute."""
+        return self._value
 
     def get_parent(self) -> Attribute:
         """Get the parent attribute of the current attribute.
@@ -211,15 +322,8 @@ class RpcAttribute(Attribute):
     def __init__(
         self,
         name: str,
-        value: Any,
-        listeners: dict[str, List[EventListener]] = None,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        host: str = "localhost",
+        port: int = None,
+        attr_id: str = None,
     ) -> None:
-        super().__init__(
-            name,
-            value,
-            listeners,
-            children,
-            parent,
-        )
+        pass
