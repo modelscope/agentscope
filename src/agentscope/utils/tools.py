@@ -87,7 +87,7 @@ def check_port(port: Optional[int] = None) -> int:
         try:
             code = s.connect_ex(("localhost", port))
             if code != 0:
-                raise Exception("Port is occupied.")
+                raise RuntimeError("Port is occupied.")
         except Exception:
             new_port = find_available_port()
             return new_port
