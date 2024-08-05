@@ -4,6 +4,7 @@ import json
 import unittest
 from typing import Literal
 
+import agentscope
 from agentscope.models import ModelWrapperBase, ModelResponse
 from agentscope.parsers import MultiTaggedContentParser, TaggedContent
 from agentscope.service import (
@@ -23,6 +24,8 @@ class ServiceToolkitTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Init for ExampleTest."""
+        agentscope.init(disable_saving=True)
+
         self.json_schema_bing_search1 = {
             "type": "function",
             "function": {

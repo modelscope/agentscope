@@ -66,14 +66,6 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
 
         self.model_name = model_name
 
-        self._register_default_metrics()
-
-    def _register_default_metrics(self) -> None:
-        """Register the default metrics for the model."""
-        raise NotImplementedError(
-            "The method `_register_default_metrics` must be implemented.",
-        )
-
     def list_models(self) -> Sequence:
         """List all available models for this API calling."""
         support_models = list(genai.list_models())
@@ -242,11 +234,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 response.text,
             ).total_tokens
 
-        self.update_monitor(
-            call_counter=1,
-            completion_tokens=token_response,
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
             prompt_tokens=token_prompt,
-            total_tokens=token_prompt + token_response,
+            completion_tokens=token_response,
         )
 
     def _extract_text_content_from_response(
@@ -312,25 +303,6 @@ class GeminiChatWrapper(GeminiWrapperBase):
             )
 
         return response.text
-
-    def _register_default_metrics(self) -> None:
-        """Register the default metrics for the model."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def format(
         self,
@@ -428,7 +400,21 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):
     """The wrapper for Google Gemini embedding model,
-    e.g. models/embedding-001"""
+    e.g. models/embedding-001
+
+    Response:
+        - Refer to https://ai.google.dev/api/embeddings?hl=zh-cn#response-body
+
+        ```json
+        {
+            "embeddings": [
+                {
+                    object (ContentEmbedding)
+                }
+            ]
+        }
+        ```
+    """
 
     model_type: str = "gemini_embedding"
     """The type of the model, which is used in model configuration."""
@@ -483,19 +469,14 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
             response=response,
         )
 
-        # TODO: Up to 2023/03/11, the embedding model doesn't support to
+        # TODO: Up to 2024/07/26, the embedding model doesn't support to
         #  count tokens.
         # step3: update monitor accordingly
-        self.update_monitor(call_counter=1)
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+        )
 
         return ModelResponse(
             raw=response,
             embedding=response["embedding"],
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register the default metrics for the model."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
         )

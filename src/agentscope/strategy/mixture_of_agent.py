@@ -6,11 +6,9 @@ from typing import Union, List, Sequence, Tuple
 import concurrent.futures
 from loguru import logger
 
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.models import (
-    ModelWrapperBase,
-    load_model_by_config_name,
-)
+from agentscope.models import ModelWrapperBase
 
 
 # Referenced from the project [MoA](https://github.com/togethercomputer/MoA)
@@ -56,9 +54,13 @@ class MixtureOfAgents:
             show_internal (`bool`):
                 Whether to show the internal process of MoA.
         """
+        model_manager = ModelManager.get_instance()
+
         # init main_model
         if isinstance(main_model, str):
-            self.main_model = load_model_by_config_name(main_model)
+            self.main_model = model_manager.get_model_by_config_name(
+                main_model,
+            )
         elif isinstance(main_model, ModelWrapperBase):
             self.main_model = main_model
         else:
@@ -71,7 +73,7 @@ class MixtureOfAgents:
         for ref_model in reference_models:
             if isinstance(ref_model, str):
                 self.reference_models.append(
-                    load_model_by_config_name(ref_model),
+                    model_manager.get_model_by_config_name(ref_model),
                 )
             elif isinstance(ref_model, ModelWrapperBase):
                 self.reference_models.append(ref_model)
