@@ -4,10 +4,10 @@ from typing import List, Any
 from copy import deepcopy
 
 from ..attribute import Attribute, EventListener
-from ..event import event, Get, Set
+from ..event import event_func, Event, Getable, Setable
 
 
-class BasicAttribute(Attribute, Get, Set):
+class BasicAttribute(Attribute, Getable, Setable):
     """A basic Attribute that can be get and set."""
 
     def __init__(
@@ -26,13 +26,13 @@ class BasicAttribute(Attribute, Get, Set):
             parent=parent,
         )
 
-    @event
+    @event_func
     def get(self) -> Any:
-        self._trigger_listener("get", None)  # type: ignore[arg-type]
+        self._trigger_listener(Event("get", None))
         return deepcopy(self.value)
 
-    @event
+    @event_func
     def set(self, value: Any) -> bool:
         self.value = value
-        self._trigger_listener("set", {"value": value})
+        self._trigger_listener(Event("set", {"value": value}))
         return True

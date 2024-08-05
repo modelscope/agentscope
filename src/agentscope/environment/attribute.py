@@ -5,11 +5,11 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 import threading
 
-
-from agentscope.exception import (
+from ..exception import (
     EnvAttributeNotFoundError,
     EnvAttributeAlreadyExistError,
 )
+from .event import Event
 
 
 class EventListener(ABC):
@@ -28,15 +28,13 @@ class EventListener(ABC):
     def __call__(
         self,
         attr: Attribute,
-        target_event: str,
-        kwargs: dict,
+        event: Event,
     ) -> None:
         """Activate the listener.
 
         Args:
             attr (`Attribute`): The attribute bound to the listener.
-            target_event (`str`): The target event function.
-            kwargs (`dict`): The arguments to pass to the `target_event`.
+            event (`Event`): The event information.
         """
 
 
@@ -72,7 +70,7 @@ class Attribute:
         }
         self.parent = parent
         self.lock = threading.Lock()
-        self.listeners = {}
+        self.event_listeners = {}
         if listeners:
             for target_func, listener in listeners.items():
                 if isinstance(listener, EventListener):
@@ -149,10 +147,10 @@ class Attribute:
             and hasattr(getattr(self, target_event), "_is_event")
             and getattr(self, target_event)._is_event  # pylint: disable=W0212
         ):
-            if target_event not in self.listeners:
-                self.listeners[target_event] = {}
-            if listener.name not in self.listeners[target_event]:
-                self.listeners[target_event][listener.name] = listener
+            if target_event not in self.event_listeners:
+                self.event_listeners[target_event] = {}
+            if listener.name not in self.event_listeners[target_event]:
+                self.event_listeners[target_event][listener.name] = listener
                 return True
         return False
 
@@ -166,26 +164,22 @@ class Attribute:
         Returns:
             `bool`: Whether the listener was removed successfully.
         """
-        if target_event in self.listeners:
-            if listener_name in self.listeners[target_event]:
-                del self.listeners[target_event][listener_name]
+        if target_event in self.event_listeners:
+            if listener_name in self.event_listeners[target_event]:
+                del self.event_listeners[target_event][listener_name]
                 return True
         return False
 
-    def _trigger_listener(
-        self,
-        target_event: str,
-        kwargs: dict = None,
-    ) -> None:
+    def _trigger_listener(self, event: Event) -> None:
         """Trigger the listeners of the specific event.
 
         Args:
-            target_event (`str`): The event function.
-            kwargs (`dict`): The arguments to pass to the target_event.
+            event_name (`str`): The event function name.
+            args (`dict`): The arguments to pass to the event.
         """
-        if target_event in self.listeners:
-            for listener in self.listeners[target_event].values():
-                listener(self, target_event, kwargs)
+        if event.name in self.event_listeners:
+            for listener in self.event_listeners[event.name].values():
+                listener(self, event)
 
     def dump(self) -> dict:
         """Dump the attribute tree to a dict."""

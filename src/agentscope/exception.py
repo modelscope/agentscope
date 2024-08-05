@@ -191,3 +191,22 @@ class EnvAttributeUnsupportedFunctionError(EnvAttributeError):
 
     def __init__(self, attr_name: str, func_name: str) -> None:
         super().__init__(f"Attribute {attr_name} doesn't have {func_name}.")
+
+
+class EnvAttributeTypeError(EnvAttributeError):
+    """The exception class for use wrong type of attribute error."""
+
+    def __init__(self, attr_name: str, type_name: str) -> None:
+        super().__init__(
+            f"Attribtue {attr_name} is not an instance of [{type_name}]",
+        )
+
+
+class EnvListenerError(Exception):
+    """The exception class for listener related errors."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}: {self.message}"

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """The events which can be bound to attributes."""
 from abc import ABC, abstractmethod
-from typing import Callable, Any
+from typing import Callable, Any, Optional, Tuple
 
 
-def event(func: Callable) -> Callable:
+def event_func(func: Callable) -> Callable:
     """A decorator to register an event function.
 
     Args:
@@ -17,8 +17,26 @@ def event(func: Callable) -> Callable:
     return func
 
 
-class Get(ABC):
-    """Representing an attribute whose value can be obtained."""
+class Event:
+    """A class representing the information of an event."""
+
+    def __init__(self, name: str, args: Optional[dict] = None) -> None:
+        self._name = name
+        self._args = args
+
+    @property
+    def name(self) -> str:
+        """Return the name of the event."""
+        return self._name
+
+    @property
+    def args(self) -> Optional[dict]:
+        """Return the arguments of the event."""
+        return self._args
+
+
+class Getable(ABC):
+    """Representing an attribute whose value can be gotten."""
 
     @abstractmethod
     def get(self) -> Any:
@@ -29,7 +47,7 @@ class Get(ABC):
         """
 
 
-class Set(ABC):
+class Setable(ABC):
     """Representing an attribute whose value can be set."""
 
     @abstractmethod
@@ -44,7 +62,7 @@ class Set(ABC):
         """
 
 
-class Move2D(ABC):
+class Movable2D(ABC):
     """A class representing an attribute can be moved in 2D."""
 
     @abstractmethod
@@ -71,8 +89,16 @@ class Move2D(ABC):
             `bool`: Whether the movement was successful.
         """
 
+    @abstractmethod
+    def get_position(self) -> Tuple[float, float]:
+        """Get the position of the attribute.
 
-class Hold(ABC):
+        Returns:
+            `Tuple[float, float]`: The position of the attribute.
+        """
+
+
+class Holdable(ABC):
     """A class representing an attribute can be held,and during
     the holding period, all access behaviors except the owner
     are prohibited.

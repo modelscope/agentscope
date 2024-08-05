@@ -5,9 +5,19 @@ from typing import Any
 
 from agentscope.environment import (
     Attribute,
-    BasicAttribute,
+    Event,
     EventListener,
     Environment,
+    BasicAttribute,
+    Point2D,
+    AttributeWithPoint2D,
+    Map2D,
+)
+
+from agentscope.exception import (
+    EnvAttributeAlreadyExistError,
+    EnvAttributeTypeError,
+    EnvListenerError,
 )
 
 
@@ -32,11 +42,10 @@ class SimpleListener(EventListener):
     def __call__(
         self,
         attr: Attribute,
-        target_event: str,
-        kwargs: dict,
+        event: Event,
     ) -> None:
         self.rec.record(
-            {"attr": attr, "target_event": target_event, "kwargs": kwargs},
+            {"attr": attr, "event_name": event.name, "event_args": event.args},
         )
 
 
@@ -69,11 +78,11 @@ class AttributeTest(unittest.TestCase):
             attribute,
         )
         self.assertEqual(
-            get_rec_1.value["target_event"],  # type: ignore [index]
+            get_rec_1.value["event_name"],  # type: ignore [index]
             "get",
         )
         self.assertEqual(
-            get_rec_1.value["kwargs"],  # type: ignore [index]
+            get_rec_1.value["event_args"],  # type: ignore [index]
             None,
         )
         self.assertEqual(get_rec_2.value, None)
@@ -86,11 +95,11 @@ class AttributeTest(unittest.TestCase):
             attribute,
         )
         self.assertEqual(
-            set_rec_1.value["target_event"],  # type: ignore [index]
+            set_rec_1.value["event_name"],  # type: ignore [index]
             "set",
         )
         self.assertEqual(
-            set_rec_1.value["kwargs"],  # type: ignore [index]
+            set_rec_1.value["event_args"],  # type: ignore [index]
             {"value": 1},
         )
         self.assertEqual(set_rec_2.value, None)
@@ -125,12 +134,12 @@ class AttributeTest(unittest.TestCase):
             get_rec_2.value["attr"],  # type: ignore [index]
         )
         self.assertEqual(
-            get_rec_1.value["target_event"],  # type: ignore [index]
-            get_rec_2.value["target_event"],  # type: ignore [index]
+            get_rec_1.value["event_name"],  # type: ignore [index]
+            get_rec_2.value["event_name"],  # type: ignore [index]
         )
         self.assertEqual(
-            get_rec_1.value["kwargs"],  # type: ignore [index]
-            get_rec_2.value["kwargs"],  # type: ignore [index]
+            get_rec_1.value["event_args"],  # type: ignore [index]
+            get_rec_2.value["event_args"],  # type: ignore [index]
         )
         self.assertTrue(attribute.set(10))
         self.assertEqual(
@@ -138,11 +147,11 @@ class AttributeTest(unittest.TestCase):
             attribute,
         )
         self.assertEqual(
-            set_rec_2.value["target_event"],  # type: ignore [index]
+            set_rec_2.value["event_name"],  # type: ignore [index]
             "set",
         )
         self.assertEqual(
-            set_rec_2.value["kwargs"],  # type: ignore [index]
+            set_rec_2.value["event_args"],  # type: ignore [index]
             {"value": 10},
         )
         # test register non existing event
@@ -191,3 +200,79 @@ class AttributeTest(unittest.TestCase):
         env2 = Environment("test2", [attr2, attr3])
         self.assertFalse(env2.add_attr(attr2))
         self.assertFalse(env2.add_attr(attr3))
+
+    def test_map2d_env(self) -> None:
+        """Test cases for Map2d attribute"""
+        m = Map2D(name="map")
+        p1 = Point2D(
+            name="p1",
+            x=0,
+            y=0,
+        )
+        p2 = AttributeWithPoint2D(
+            name="p2",
+            value={},
+            x=0,
+            y=-1,
+        )
+        p3 = AttributeWithPoint2D(
+            name="p3",
+            value={},
+            x=3,
+            y=4,
+        )
+        b1 = BasicAttribute(name="b1", default="hi")
+        m.register_point(p1)
+        m.register_point(p2)
+        m.register_point(p3)
+        self.assertRaises(EnvAttributeTypeError, m.register_point, b1)
+        self.assertRaises(EnvAttributeAlreadyExistError, m.register_point, p1)
+        self.assertRaises(EnvAttributeTypeError, Map2D, "map", [b1])
+
+        class InRangeListener(EventListener):
+            """A listener that listens to in range events"""
+
+            def __init__(self, name: str, owner: Attribute) -> None:
+                super().__init__(name)
+                self.owner = owner
+
+            def __call__(self, attr: Attribute, event: Event) -> None:
+                self.owner.value[event.args["attr_name"]] = event
+
+        class OutRangeListener(EventListener):
+            """A listener that listen to out of range events"""
+
+            def __init__(self, name: str, owner: Attribute) -> None:
+                super().__init__(name)
+                self.owner = owner
+
+            def __call__(self, attr: Attribute, event: Event) -> None:
+                if event.args["attr_name"] in self.owner.value:
+                    self.owner.value.pop(event.args["attr_name"])
+
+        m.in_range_of(
+            "p2", listener=InRangeListener("in_p2_1_euc", p2), distance=1
+        )
+        m.out_of_range_of(
+            "p2", listener=OutRangeListener("out_p2_1_euc", p2), distance=1
+        )
+        m.in_range_of(
+            "p3",
+            listener=InRangeListener("in_p3_1_euc", p3),
+            distance=5,
+            distance_type="manhattan",
+        )
+        m.out_of_range_of(
+            "p3",
+            listener=OutRangeListener("out_p3_1_euc", p3),
+            distance=5,
+            distance_type="manhattan",
+        )
+        self.assertEqual(len(p2.value), 1)
+        self.assertTrue("p1" in p2.value)
+        self.assertEqual(len(p3.value), 0)
+        m.move_attr_to("p3", 2, 3)
+        self.assertEqual(len(p3.value), 1)
+        self.assertTrue("p1" in p3.value)
+        m.move_attr_to("p3", 3, 3)
+        self.assertEqual(len(p3.value), 0)
