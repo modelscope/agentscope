@@ -215,7 +215,7 @@ class StudioClient:
         self.active = False
         self.websocket_mapping = {}
 
-    def serialize(self) -> dict:
+    def state_dict(self) -> dict:
         """Serialize the client."""
         return {
             "active": self.active,

@@ -142,7 +142,7 @@ class ModelManager:
         """Load the model config by name, and return the config dict."""
         return self.model_configs.get(config_name, None)
 
-    def serialize(self) -> dict:
+    def state_dict(self) -> dict:
         """Serialize the model manager into a dict."""
         return {
             "model_configs": self.model_configs,

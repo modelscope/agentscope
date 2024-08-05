@@ -343,7 +343,7 @@ class AgentServerServicer(RpcAgentServicer):
         else:
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=result.serialize(),
+                message=result.state_dict(),
             )
 
     def get_agent_list(

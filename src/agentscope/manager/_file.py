@@ -321,7 +321,7 @@ class FileManager:
         except FileNotFoundError:
             return None
 
-    def serialize(self) -> dict:
+    def state_dict(self) -> dict:
         """Serialize the configuration into a dict."""
         serialized_data = {}
 

@@ -26,7 +26,7 @@ class ManagerTest(TestCase):
         )
 
         manager = ASManager.get_instance()
-        data = manager.serialize()
+        data = manager.state_dict()
 
         self.assertDictEqual(
             data,
@@ -66,7 +66,7 @@ class ManagerTest(TestCase):
         # Flush the manager
         manager.flush()
         self.assertDictEqual(
-            manager.serialize(),
+            manager.state_dict(),
             {
                 "project": "",
                 "name": "",
@@ -92,7 +92,7 @@ class ManagerTest(TestCase):
         manager.load_dict(data)
 
         self.assertDictEqual(
-            manager.serialize(),
+            manager.state_dict(),
             data,
         )
 

@@ -314,7 +314,7 @@ class RpcAgentServerLauncher:
 
     def _launch_in_sub(self) -> None:
         """Launch an agent server in sub-process."""
-        init_settings = ASManager.get_instance().serialize()
+        init_settings = ASManager.get_instance().state_dict()
 
         self.parent_con, child_con = Pipe()
         start_event = Event()

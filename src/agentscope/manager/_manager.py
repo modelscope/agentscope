@@ -122,7 +122,7 @@ class ASManager:
 
         if not disable_saving:
             # Save the runtime information in .config file
-            self.file.save_runtime_information(self.serialize())
+            self.file.save_runtime_information(self.state_dict())
 
         # =============== Init the logger         ===============
         # TODO: unified with studio and gradio
@@ -152,19 +152,19 @@ class ASManager:
                 pid=self.pid,
             )
 
-    def serialize(self) -> dict:
+    def state_dict(self) -> dict:
         """Serialize the runtime information."""
         serialized_data = {
             k: getattr(self, k) for k in self.__serialized_attrs
         }
 
-        serialized_data["file"] = self.file.serialize()
-        serialized_data["model"] = self.model.serialize()
+        serialized_data["file"] = self.file.state_dict()
+        serialized_data["model"] = self.model.state_dict()
         serialized_data["logger"] = {
             "level": self.logger_level,
         }
-        serialized_data["studio"] = _studio_client.serialize()
-        serialized_data["monitor"] = self.monitor.serialize()
+        serialized_data["studio"] = _studio_client.state_dict()
+        serialized_data["monitor"] = self.monitor.state_dict()
 
         return serialized_data
 

@@ -318,7 +318,7 @@ class MonitorManager:
         if self.path_db is not None and os.path.exists(self.path_db):
             os.remove(self.path_db)
 
-    def serialize(self) -> dict:
+    def state_dict(self) -> dict:
         """Serialize the monitor manager into a dict."""
         return {
             "use_monitor": self.use_monitor,
