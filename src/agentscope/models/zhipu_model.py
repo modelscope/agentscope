@@ -67,8 +67,6 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
             **(client_args or {}),
         )
 
-        self._register_default_metrics()
-
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
@@ -81,7 +79,35 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
 
 class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
-    """The model wrapper for ZhipuAI's chat API."""
+    """The model wrapper for ZhipuAI's chat API.
+
+    Response:
+        - From https://maas.aminer.cn/dev/api#glm-4
+
+        ```json
+        {
+            "created": 1703487403,
+            "id": "8239375684858666781",
+            "model": "glm-4",
+            "request_id": "8239375684858666781",
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "message": {
+                        "content": "Drawing blueprints with ...",
+                        "role": "assistant"
+                    }
+                }
+            ],
+            "usage": {
+                "completion_tokens": 217,
+                "prompt_tokens": 31,
+                "total_tokens": 248
+            }
+        }
+        ```
+    """
 
     model_type: str = "zhipuai_chat"
 
@@ -125,26 +151,6 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         )
 
         self.stream = stream
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -278,8 +284,14 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             response=response,
         )
 
-        if response.get("usage", None) is not None:
-            self.update_monitor(call_counter=1, **response["usage"])
+        usage = response.get("usage", None)
+        if usage is not None:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+            )
 
     def format(
         self,
@@ -353,7 +365,35 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
 
 class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
-    """The model wrapper for ZhipuAI embedding API."""
+    """The model wrapper for ZhipuAI embedding API.
+
+    Example Response:
+
+    ```json
+    {
+        "model": "embedding-2",
+        "data": [
+            {
+                "embedding": [ (a total of 1024 elements)
+                    -0.02675454691052437,
+                    0.019060475751757622,
+                    ......
+                    -0.005519774276763201,
+                    0.014949671924114227
+                ],
+                "index": 0,
+                "object": "embedding"
+            }
+        ],
+        "object": "list",
+        "usage": {
+            "completion_tokens": 0,
+            "prompt_tokens": 4,
+            "total_tokens": 4
+        }
+    }
+    ```
+    """
 
     model_type: str = "zhipuai_embedding"
 
@@ -411,31 +451,16 @@ class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=response.usage.prompt_tokens,
+            completion_tokens=response.usage.completion_tokens,
+            total_tokens=response.usage.total_tokens,
+        )
 
         # step5: return response
         response_json = response.model_dump()
         return ModelResponse(
             embedding=[_["embedding"] for _ in response_json["data"]],
             raw=response_json,
-        )
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
         )

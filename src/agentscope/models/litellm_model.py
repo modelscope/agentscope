@@ -54,7 +54,6 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
         super().__init__(config_name=config_name, model_name=model_name)
 
         self.generate_args = generate_args or {}
-        self._register_default_metrics()
 
     def format(
         self,
@@ -69,17 +68,43 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
 
 class LiteLLMChatWrapper(LiteLLMWrapperBase):
     """The model wrapper based on litellm chat API.
-    To use the LiteLLM wrapper, environment variables must be set.
-    Different model_name could be using different environment variables.
-    For example:
-        - for model_name: "gpt-3.5-turbo", you need to set "OPENAI_API_KEY"
+
+    Note:
+        - litellm requires the users to set api key in their environment
+        - Different LLMs requires different environment variables
+
+    Example:
+        - For OpenAI models, set "OPENAI_API_KEY"
+        - For models like "claude-2", set "ANTHROPIC_API_KEY"
+        - For Azure OpenAI models, you need to set "AZURE_API_KEY",
+        "AZURE_API_BASE" and "AZURE_API_VERSION"
+        - Refer to the docs in https://docs.litellm.ai/docs/ .
+
+
+    Response:
+        - From https://docs.litellm.ai/docs/completion/output
+
+        ```json
+        {
+            'choices': [
+                {
+                    'finish_reason': str,  # String: 'stop'
+                    'index': int,  # Integer: 0
+                    'message': {  # Dictionary [str, str]
+                        'role': str,  # String: 'assistant'
+                        'content': str  # String: "default message"
+                    }
+                }
+            ],
+            'created': str,  # String: None
+            'model': str,  # String: None
+            'usage': {  # Dictionary [str, int]
+                'prompt_tokens': int,  # Integer
+                'completion_tokens': int,  # Integer
+                'total_tokens': int  # Integer
+            }
+        }
         ```
-        os.environ["OPENAI_API_KEY"] = "your-api-key"
-        ```
-        - for model_name: "claude-2", you need to set "ANTHROPIC_API_KEY"
-        - for Azure OpenAI, you need to set "AZURE_API_KEY",
-        "AZURE_API_BASE", "AZURE_API_VERSION"
-    You should refer to the docs in https://docs.litellm.ai/docs/ .
     """
 
     model_type: str = "litellm_chat"
@@ -129,26 +154,6 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         )
 
         self.stream = stream
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -276,8 +281,14 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         )
 
         # step5: update monitor accordingly
-        if response.get("usage", None) is not None:
-            self.update_monitor(call_counter=1, **response["usage"])
+        usage = response.get("usage", None)
+        if usage is not None:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+            )
 
     def format(
         self,

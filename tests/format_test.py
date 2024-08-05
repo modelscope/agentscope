@@ -4,6 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
+import agentscope
 from agentscope.message import Msg
 from agentscope.models import (
     OpenAIChatWrapper,
@@ -23,6 +24,7 @@ class FormatTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Init for ExampleTest."""
+        agentscope.init(disable_saving=True)
         self.inputs = [
             Msg("system", "You are a helpful assistant", role="system"),
             [

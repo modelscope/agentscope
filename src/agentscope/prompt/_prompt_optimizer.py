@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """A module that optimize agent system prompt given dialog history."""
 from typing import Union, List
+
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, load_model_by_config_name
+from agentscope.models import ModelWrapperBase
 
 _DEFAULT_META_PROMPT_TEMPLATE = """
 You are an excellent Prompt Engineer. Your task is to optimize an Agent's system prompt by adding notes.
@@ -79,7 +81,10 @@ class SystemPromptOptimizer:
         if isinstance(model_or_model_config_name, ModelWrapperBase):
             self.model = model_or_model_config_name
         elif isinstance(model_or_model_config_name, str):
-            self.model = load_model_by_config_name(model_or_model_config_name)
+            model_manager = ModelManager.get_instance()
+            self.model = model_manager.get_model_by_config_name(
+                model_or_model_config_name,
+            )
         else:
             raise TypeError(
                 "model_or_model_config_name must be ModelWrapperBase or str",

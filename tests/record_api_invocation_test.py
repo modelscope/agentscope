@@ -2,24 +2,14 @@
 """ Test for record api invocation."""
 import json
 import os
+import shutil
 import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
+from agentscope.manager import FileManager
+from agentscope.manager import ASManager
 from agentscope.models import OpenAIChatWrapper
-from agentscope._runtime import _Runtime
-from agentscope.file_manager import _FileManager, file_manager
-from agentscope.utils.monitor import MonitorFactory
-
-
-def flush() -> None:
-    """
-    ** Only for unittest usage. Don't use this function in your code. **
-    Clear the runtime dir and destroy all singletons.
-    """
-    _Runtime._flush()  # pylint: disable=W0212
-    _FileManager._flush()  # pylint: disable=W0212
-    MonitorFactory.flush()
 
 
 class RecordApiInvocation(unittest.TestCase):
@@ -40,8 +30,6 @@ class RecordApiInvocation(unittest.TestCase):
             ],
         }
 
-        flush()
-
     @patch("openai.OpenAI")
     def test_record_model_invocation_with_init(
         self,
@@ -61,7 +49,7 @@ class RecordApiInvocation(unittest.TestCase):
         )
 
         # test
-        agentscope.init(save_api_invoke=True)
+        agentscope.init(save_api_invoke=True, save_dir="./test-runs")
         model = OpenAIChatWrapper(
             config_name="gpt-4",
             api_key="xxx",
@@ -75,7 +63,8 @@ class RecordApiInvocation(unittest.TestCase):
 
     def assert_invocation_record(self) -> None:
         """Assert invocation record."""
-        run_dir = file_manager.dir_root
+        file_manager = FileManager.get_instance()
+        run_dir = file_manager.run_dir
         records = [
             _
             for _ in os.listdir(
@@ -119,4 +108,5 @@ class RecordApiInvocation(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down for RecordApiInvocation."""
-        flush()
+        ASManager.get_instance().flush()
+        shutil.rmtree("./test-runs")

@@ -502,3 +502,11 @@ def _map_string_to_color_mark(
     hash_value = hash(target_str)
     index = hash_value % len(color_marks)
     return color_marks[index]
+
+
+def _generate_new_runtime_id() -> str:
+    """Generate a new random runtime id."""
+    _RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
+    return _get_timestamp(_RUNTIME_ID_FORMAT).format(
+        _generate_random_code(uppercase=False),
+    )

@@ -62,14 +62,12 @@ from typing import Sequence, Any, Callable, Union, List, Type
 
 from loguru import logger
 
-from agentscope.utils import QuotaExceededError
 from .response import ModelResponse
 from ..exception import ResponseParsingError
 
-from ..file_manager import file_manager
+from ..manager import FileManager
+from ..manager import MonitorManager
 from ..message import Msg
-from ..utils import MonitorFactory
-from ..utils.monitor import get_full_name
 from ..utils.tools import _get_timestamp, _convert_to_str
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
@@ -198,7 +196,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             model_name (`str`):
                 The name of the model.
         """
-        self.monitor = MonitorFactory.get_monitor()
+        self.monitor = MonitorManager.get_instance()
 
         self.config_name = config_name
         self.model_name = model_name
@@ -377,54 +375,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             "response": response,
         }
 
-        file_manager.save_api_invocation(
+        FileManager.get_instance().save_api_invocation(
             f"model_{model_class}_{timestamp}",
             invocation_record,
         )
-
-    def _register_budget(self, model_name: str, budget: float) -> None:
-        """Register the budget of the model by model_name."""
-        self.monitor.register_budget(
-            model_name=model_name,
-            value=budget,
-            prefix=model_name,
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-
-        if hasattr(self, "model_name"):
-            return get_full_name(name=metric_name, prefix=self.model_name)
-        else:
-            return get_full_name(name=metric_name)
-
-    def update_monitor(self, **kwargs: Any) -> None:
-        """Update the monitor with the given values.
-
-        Args:
-            kwargs (`dict`):
-                The values to be updated to the monitor.
-        """
-        if hasattr(self, "model_name"):
-            prefix = self.model_name
-        else:
-            prefix = None
-
-        try:
-            self.monitor.update(
-                kwargs,
-                prefix=prefix,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)

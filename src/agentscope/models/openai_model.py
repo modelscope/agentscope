@@ -19,16 +19,45 @@ from ._model_utils import (
     _verify_text_content_in_openai_message_response,
 )
 from .model import ModelWrapperBase, ModelResponse
-from ..file_manager import file_manager
+from ..manager import FileManager
 from ..message import Msg
 from ..utils.tools import _convert_to_str, _to_openai_image_url
 
 from ..utils.token_utils import get_openai_max_length
-from ..constants import _DEFAULT_API_BUDGET
 
 
 class OpenAIWrapperBase(ModelWrapperBase, ABC):
-    """The model wrapper for OpenAI API."""
+    """The model wrapper for OpenAI API.
+
+    Response:
+        - From https://platform.openai.com/docs/api-reference/chat/create
+
+        ```json
+        {
+            "id": "chatcmpl-123",
+            "object": "chat.completion",
+            "created": 1677652288,
+            "model": "gpt-4o-mini",
+            "system_fingerprint": "fp_44709d6fcb",
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": "Hello there, how may I assist you today?",
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop"
+                }
+            ],
+            "usage": {
+                "prompt_tokens": 9,
+                "completion_tokens": 12,
+                "total_tokens": 21
+            }
+        }
+        ```
+    """
 
     def __init__(
         self,
@@ -38,7 +67,6 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
         organization: str = None,
         client_args: dict = None,
         generate_args: dict = None,
-        budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
         """Initialize the openai client.
@@ -59,9 +87,6 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in openai api generation,
                 e.g. `temperature`, `seed`.
-            budget (`float`, default `None`):
-                The total budget using this model. Set to `None` means no
-                limit.
         """
 
         if model_name is None:
@@ -95,10 +120,6 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
             )
             self.max_length = None
 
-        # Set monitor accordingly
-        self._register_budget(model_name, budget)
-        self._register_default_metrics()
-
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
@@ -129,7 +150,6 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         client_args: dict = None,
         stream: bool = False,
         generate_args: dict = None,
-        budget: float = _DEFAULT_API_BUDGET,
         **kwargs: Any,
     ) -> None:
         """Initialize the openai client.
@@ -152,9 +172,6 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             generate_args (`dict`, default `None`):
                 The extra keyword arguments used in openai api generation,
                 e.g. `temperature`, `seed`.
-            budget (`float`, default `None`):
-                The total budget using this model. Set to `None` means no
-                limit.
         """
 
         super().__init__(
@@ -164,31 +181,10 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             organization=organization,
             client_args=client_args,
             generate_args=generate_args,
-            budget=budget,
             **kwargs,
         )
 
         self.stream = stream
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -335,8 +331,13 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             response=response,
         )
 
-        if response.get("usage", None) is not None:
-            self.update_monitor(call_counter=1, **response["usage"])
+        usage = response.get("usage")
+        if usage is not None:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+            )
 
     @staticmethod
     def _format_msg_with_url(
@@ -507,7 +508,25 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
 
 class OpenAIDALLEWrapper(OpenAIWrapperBase):
-    """The model wrapper for OpenAI's DALL·E API."""
+    """The model wrapper for OpenAI's DALL·E API.
+
+    Response:
+        - Refer to https://platform.openai.com/docs/api-reference/images/create
+
+        ```json
+        {
+            "created": 1589478378,
+            "data": [
+                {
+                    "url": "https://..."
+                },
+                {
+                    "url": "https://..."
+                }
+            ]
+        }
+        ```
+    """
 
     model_type: str = "openai_dall_e"
 
@@ -518,19 +537,6 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
         "512*512",
         "256*256",
     ]
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        for resolution in self._resolutions:
-            self.monitor.register(
-                self._metric(resolution),
-                metric_unit="image",
-            )
 
     def __call__(
         self,
@@ -596,7 +602,16 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(call_counter=1)
+        resolution = (
+            kwargs.get("quality", "standard")
+            + "-"
+            + kwargs.get("size", "1024*1024")
+        )
+        self.monitor.update_image_tokens(
+            model_name=self.model_name,
+            resolution=resolution,
+            image_count=kwargs.get("n", 1),
+        )
 
         # step5: return response
         raw_response = response.model_dump()
@@ -611,6 +626,7 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
         # Get image urls as a list
         urls = [_["url"] for _ in images]
 
+        file_manager = FileManager.get_instance()
         if save_local:
             # Return local url if save_local is True
             urls = [file_manager.save_image(_) for _ in urls]
@@ -618,25 +634,37 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
 
 
 class OpenAIEmbeddingWrapper(OpenAIWrapperBase):
-    """The model wrapper for OpenAI embedding API."""
+    """The model wrapper for OpenAI embedding API.
+
+    Response:
+        - Refer to
+        https://platform.openai.com/docs/api-reference/embeddings/create
+
+        ```json
+        {
+            "object": "list",
+            "data": [
+                {
+                    "object": "embedding",
+                    "embedding": [
+                        0.0023064255,
+                        -0.009327292,
+                        .... (1536 floats total for ada-002)
+                        -0.0028842222,
+                    ],
+                    "index": 0
+                }
+            ],
+            "model": "text-embedding-ada-002",
+            "usage": {
+                "prompt_tokens": 8,
+                "total_tokens": 8
+            }
+        }
+        ```
+    """
 
     model_type: str = "openai_embedding"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -693,7 +721,11 @@ class OpenAIEmbeddingWrapper(OpenAIWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=response.usage.prompt_tokens,
+            total_tokens=response.usage.total_tokens,
+        )
 
         # step5: return response
         response_json = response.model_dump()
