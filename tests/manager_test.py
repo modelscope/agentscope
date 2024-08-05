@@ -119,9 +119,8 @@ class ManagerTest(TestCase):
             },
         )
 
-        # Remove the dir
-        shutil.rmtree("./runs")
-
     def tearDown(self) -> None:
         """Clean up the manager."""
         ASManager.get_instance().flush()
+        # Remove the dir
+        shutil.rmtree("./runs")
