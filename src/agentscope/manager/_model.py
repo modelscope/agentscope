@@ -21,6 +21,11 @@ class ModelManager:
         """Create a singleton instance."""
         if cls._instance is None:
             cls._instance = super(ModelManager, cls).__new__(cls)
+        else:
+            raise RuntimeError(
+                "The Model manager has been initialized. Try to use "
+                "ModelManager.get_instance() to get the instance.",
+            )
         return cls._instance
 
     @classmethod

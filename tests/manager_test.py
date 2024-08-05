@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test for manager module."""
+import os
+import shutil
 from unittest import TestCase
 
 import agentscope
@@ -95,6 +97,30 @@ class ManagerTest(TestCase):
             manager.state_dict(),
             data,
         )
+
+        # If the file/directory created and copied successfully
+        agentscope.init(
+            save_api_invoke=True,
+            save_code=True,
+            save_log=True,
+            save_dir="./runs",
+            use_monitor=True,
+        )
+
+        self.assertTrue(os.path.exists(os.path.join(manager.file.run_dir)))
+        self.assertSetEqual(
+            set(os.listdir(manager.file.run_dir)),
+            {
+                ".config",
+                "agentscope.db",
+                "logging.chat",
+                "logging.log",
+                "code",
+            },
+        )
+
+        # Remove the dir
+        shutil.rmtree("./runs")
 
     def tearDown(self) -> None:
         """Clean up the manager."""

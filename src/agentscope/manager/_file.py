@@ -113,6 +113,9 @@ class FileManager:
         # Initialize the path of the sub dirs
         self.run_dir = run_dir
 
+        if self.run_dir is not None:
+            os.makedirs(self.run_dir, exist_ok=True)
+
     def _get_and_create_subdir(self, subdir: str) -> str:
         """Get the path of the subdir and create the subdir if it does not
         exist."""
