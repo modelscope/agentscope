@@ -165,7 +165,7 @@
 <span class="sd">                The api_key for the model. If it is not provided, it will be</span>
 <span class="sd">                loaded from environment variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
         <span class="c1"># Test if the required package is installed</span>
         <span class="k">if</span> <span class="n">genai</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -437,8 +437,8 @@
 
 <div class="viewcode-block" id="GeminiChatWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper.format">[文档]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function provide a basic prompting strategy for Gemini Chat</span>
@@ -477,6 +477,12 @@
 <span class="sd">            `List[dict]`:</span>
 <span class="sd">                A list with one user message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;At least one message should be provided. An empty message &quot;</span>
+                <span class="s2">&quot;list is not allowed.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -499,31 +505,27 @@
                 <span class="c1"># system prompt</span>
                 <span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Merge all messages into a dialogue history prompt</span>
+                <span class="c1"># Merge all messages into a conversation history prompt</span>
                 <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
+        <span class="n">prompt_components</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sys_prompt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+                <span class="n">sys_prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">prompt_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sys_prompt</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">user_content_template</span> <span class="o">=</span> <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">user_content_template</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">{sys_prompt}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prompt_components</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;## Conversation History&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">dialogue</span><span class="p">)</span>
+
+        <span class="n">user_prompt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prompt_components</span><span class="p">)</span>
 
         <span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">{</span>
                 <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="n">user_content_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">sys_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
-                        <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
-                    <span class="p">),</span>
+                    <span class="n">user_prompt</span><span class="p">,</span>
                 <span class="p">],</span>
             <span class="p">},</span>
         <span class="p">]</span>

@@ -335,7 +335,7 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
 <span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
@@ -422,7 +422,7 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <span class="w">  </span><span class="o">{</span>
 <span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,
 <span class="w">    </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="o">[</span>
-<span class="w">      </span><span class="o">{</span><span class="s2">&quot;text&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
+<span class="w">      </span><span class="o">{</span><span class="s2">&quot;text&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="w">      </span><span class="o">{</span><span class="s2">&quot;image&quot;</span>:<span class="w"> </span><span class="s2">&quot;url_to_png2&quot;</span><span class="o">}</span>,
 <span class="w">      </span><span class="o">{</span><span class="s2">&quot;image&quot;</span>:<span class="w"> </span><span class="s2">&quot;url_to_png3&quot;</span><span class="o">}</span>,
 <span class="w">    </span><span class="o">]</span>
@@ -466,7 +466,7 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <span class="w">        </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,
 <span class="w">        </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="o">(</span>
 <span class="w">            </span><span class="s2">&quot;You are a helpful assistant\n\n&quot;</span>
-<span class="w">            </span><span class="s2">&quot;## Dialogue History\nuser: What is the weather today?\n&quot;</span>
+<span class="w">            </span><span class="s2">&quot;## Conversation History\nuser: What is the weather today?\n&quot;</span>
 <span class="w">            </span><span class="s2">&quot;assistant: It is sunny today&quot;</span>
 <span class="w">        </span><span class="o">)</span>,
 <span class="w">    </span><span class="o">}</span>,
@@ -487,7 +487,7 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <p>给定一个消息列表，我们将按照以下规则解析每个消息：</p>
 <ul class="simple">
 <li><p>如果输入的第一条信息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，该条信息将被视为系统提示（system
-prompt），其他信息将一起组成对话历史。对话历史将添加<code class="docutils literal notranslate"><span class="pre">&quot;##</span> <span class="pre">Dialogue</span> <span class="pre">History&quot;</span></code>的前缀，并与
+prompt），其他信息将一起组成对话历史。对话历史将添加<code class="docutils literal notranslate"><span class="pre">&quot;##</span> <span class="pre">Conversation</span> <span class="pre">History&quot;</span></code>的前缀，并与
 系统提示一起组成一条<code class="docutils literal notranslate"><span class="pre">role</span></code>为<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>的信息。</p></li>
 <li><p>如果输入信息中的<code class="docutils literal notranslate"><span class="pre">url</span></code>字段不为<code class="docutils literal notranslate"><span class="pre">None</span></code>，则这些url将一起被置于<code class="docutils literal notranslate"><span class="pre">&quot;images&quot;</span></code>对应的键值中。</p></li>
 </ul>
@@ -512,7 +512,7 @@ prompt），其他信息将一起组成对话历史。对话历史将添加<code
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
 <span class="w">  </span><span class="o">{</span>
 <span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,
-<span class="w">    </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!&quot;</span>,
+<span class="w">    </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant\n\n## Conversation History\nBob: Hi.\nAlice: Nice to meet you!&quot;</span>,
 <span class="w">    </span><span class="s2">&quot;images&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="o">]</span>
 <span class="w">  </span><span class="o">}</span>,
 <span class="o">]</span>
@@ -547,7 +547,7 @@ prompt），其他信息将一起组成对话历史。对话历史将添加<code
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>You<span class="w"> </span>are<span class="w"> </span>a<span class="w"> </span>helpful<span class="w"> </span>assistant
 
-<span class="c1">## Dialogue History</span>
+<span class="c1">## Conversation History</span>
 Bob:<span class="w"> </span>Hi.
 Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </span>meet<span class="w"> </span>you!
 </pre></div>
@@ -593,7 +593,7 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 <span class="w">  </span><span class="o">{</span>
 <span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,
 <span class="w">    </span><span class="s2">&quot;parts&quot;</span>:<span class="w"> </span><span class="o">[</span>
-<span class="w">      </span><span class="s2">&quot;You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span>
+<span class="w">      </span><span class="s2">&quot;You are a helpful assistant\n## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span>
 <span class="w">    </span><span class="o">]</span>
 <span class="w">  </span><span class="o">}</span>
 <span class="o">]</span>
@@ -635,7 +635,7 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
 <span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="o">]</span>
 </pre></div>
 </div>

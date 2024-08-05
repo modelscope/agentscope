@@ -127,7 +127,7 @@ crafting prompts for large language models (LLMs) can be challenging,
 especially with different requirements from various model APIs.</p>
 <p>To ease the process of adapting prompt to different model APIs, AgentScope
 provides a structured way to organize different data types (e.g. instruction,
-hints, dialogue history) into the desired format.</p>
+hints, conversation history) into the desired format.</p>
 <p>Note there is no <strong>one-size-fits-all</strong> solution for prompt crafting.
 <strong>The goal of built-in strategies is to enable beginners to smoothly invoke
 the model API, rather than achieve the best performance</strong>.
@@ -295,7 +295,7 @@ message in the list.</p></li>
 </ul>
 <section id="id1">
 <h4>Prompt Strategy<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
-<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the dialogue history.</p>
+<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the conversation history.</p>
 <p>An example is shown below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
@@ -315,10 +315,18 @@ message in the list.</p></li>
 <span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
-<span class="o">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;You are a helpful assistant</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Bob: Hi!</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Alice: Nice to meet you!&quot;</span>
+        <span class="p">)</span>
+   <span class="p">},</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </section>
@@ -372,7 +380,7 @@ message in the list.</p></li>
 <p>Based on the above rules, the <code class="docutils literal notranslate"><span class="pre">format</span></code> function in <code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper</span></code> will parse the input messages as follows:</p>
 <ul class="simple">
 <li><p>If the first message in the input message list has a <code class="docutils literal notranslate"><span class="pre">role</span></code> field with the value <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a system message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. If the <code class="docutils literal notranslate"><span class="pre">url</span></code> field in the input <code class="docutils literal notranslate"><span class="pre">Msg</span></code> object is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, a dictionary with the key <code class="docutils literal notranslate"><span class="pre">&quot;image&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;</span></code> will be added to the <code class="docutils literal notranslate"><span class="pre">content</span></code> based on its type.</p></li>
-<li><p>The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the dialogue history. For each message, if their <code class="docutils literal notranslate"><span class="pre">url</span></code> field is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, it will add a dictionary with the key <code class="docutils literal notranslate"><span class="pre">&quot;image&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;</span></code> to the <code class="docutils literal notranslate"><span class="pre">content</span></code> based on the file type that the <code class="docutils literal notranslate"><span class="pre">url</span></code> points to.</p></li>
+<li><p>The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the conversation history. For each message, if their <code class="docutils literal notranslate"><span class="pre">url</span></code> field is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, it will add a dictionary with the key <code class="docutils literal notranslate"><span class="pre">&quot;image&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;</span></code> to the <code class="docutils literal notranslate"><span class="pre">content</span></code> based on the file type that the <code class="docutils literal notranslate"><span class="pre">url</span></code> points to.</p></li>
 </ul>
 <p>An example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeMultiModalWrapper</span>
@@ -404,7 +412,7 @@ message in the list.</p></li>
 <span class="w">  </span><span class="o">{</span>
 <span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,
 <span class="w">    </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="o">[</span>
-<span class="w">      </span><span class="o">{</span><span class="s2">&quot;text&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
+<span class="w">      </span><span class="o">{</span><span class="s2">&quot;text&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="w">      </span><span class="o">{</span><span class="s2">&quot;image&quot;</span>:<span class="w"> </span><span class="s2">&quot;url_to_png2&quot;</span><span class="o">}</span>,
 <span class="w">      </span><span class="o">{</span><span class="s2">&quot;image&quot;</span>:<span class="w"> </span><span class="s2">&quot;url_to_png3&quot;</span><span class="o">}</span>,
 <span class="w">    </span><span class="o">]</span>
@@ -429,9 +437,10 @@ own format function for your model.</p>
 <section id="id3">
 <h4>Prompt Strategy<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
 <ul class="simple">
-<li><p>Messages will consist dialogue history in the <code class="docutils literal notranslate"><span class="pre">user</span></code> message prefixed by the system message and “## Dialogue History”.</p></li>
+<li><p>Messages will consist conversation history in the <code class="docutils literal notranslate"><span class="pre">user</span></code> message prefixed by the system message and “## Conversation History”.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">LiteLLMChatWrapper</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">LiteLLMChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -453,8 +462,10 @@ own format function for your model.</p>
 <span class="w">    </span><span class="o">{</span>
 <span class="w">        </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,
 <span class="w">        </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="o">(</span>
-<span class="w">            </span><span class="s2">&quot;You are a helpful assistant\n\n&quot;</span>
-<span class="w">            </span><span class="s2">&quot;## Dialogue History\nuser: What is the weather today?\n&quot;</span>
+<span class="w">            </span><span class="s2">&quot;You are a helpful assistant\n&quot;</span>
+<span class="w">            </span><span class="s2">&quot;\n&quot;</span>
+<span class="w">            </span><span class="s2">&quot;## Conversation History\n&quot;</span>
+<span class="w">            </span><span class="s2">&quot;user: What is the weather today?\n&quot;</span>
 <span class="w">            </span><span class="s2">&quot;assistant: It is sunny today&quot;</span>
 <span class="w">        </span><span class="o">)</span>,
 <span class="w">    </span><span class="o">}</span>,
@@ -478,11 +489,12 @@ messages as input. The message must obey the following rules (updated in
 <ul class="simple">
 <li><p>If the role field of the first input message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>,
 it will be treated as system prompt and the other messages will consist
-dialogue history in the system message prefixed by “## Dialogue History”.</p></li>
+conversation history in the system message prefixed by “## Conversation History”.</p></li>
 <li><p>If the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute of messages is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, we will gather all urls in
 the <code class="docutils literal notranslate"><span class="pre">&quot;images&quot;</span></code> field in the returned dictionary.</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaChatWrapper</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OllamaChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -500,13 +512,19 @@ the <code class="docutils literal notranslate"><span class="pre">&quot;images&qu
 <span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
-<span class="w">  </span><span class="o">{</span>
-<span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,
-<span class="w">    </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!&quot;</span>,
-<span class="w">    </span><span class="s2">&quot;images&quot;</span>:<span class="w"> </span><span class="o">[</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="o">]</span>
-<span class="w">  </span><span class="o">}</span>,
-<span class="o">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;You are a helpful assistant</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Bob: Hi.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Alice: Nice to meet you!&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </section>
@@ -517,7 +535,7 @@ the <code class="docutils literal notranslate"><span class="pre">&quot;images&qu
 takes a string prompt as input without any constraints (updated to 2024/03/22).</p>
 <section id="id5">
 <h4>Prompt Strategy<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
-<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, a system prompt will be created. The rest of the messages will be combined into dialogue history in string format.</p>
+<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, a system prompt will be created. The rest of the messages will be combined into conversation history in string format.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaGenerationWrapper</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
@@ -539,7 +557,7 @@ takes a string prompt as input without any constraints (updated to 2024/03/22).<
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>You<span class="w"> </span>are<span class="w"> </span>a<span class="w"> </span>helpful<span class="w"> </span>assistant
 
-<span class="c1">## Dialogue History</span>
+<span class="c1">## Conversation History</span>
 Bob:<span class="w"> </span>Hi.
 Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </span>meet<span class="w"> </span>you!
 </pre></div>
@@ -563,7 +581,7 @@ Therefore, we decide to convert the list of messages into a user message
 in our built-in <code class="docutils literal notranslate"><span class="pre">format</span></code> function.</p>
 <section id="id6">
 <h4>Prompt Strategy<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
-<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, a system prompt will be added in the beginning. The other messages will be combined into dialogue history.</p>
+<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, a system prompt will be added in the beginning. The other messages will be combined into conversation history.</p>
 <p><strong>Note</strong> sometimes the <code class="docutils literal notranslate"><span class="pre">parts</span></code> field may contain image urls, which is not
 supported in <code class="docutils literal notranslate"><span class="pre">format</span></code> function. We recommend developers to customize the
 prompt according to their needs.</p>
@@ -586,14 +604,17 @@ prompt according to their needs.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
-<span class="w">  </span><span class="o">{</span>
-<span class="w">    </span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,
-<span class="w">    </span><span class="s2">&quot;parts&quot;</span>:<span class="w"> </span><span class="o">[</span>
-<span class="w">      </span><span class="s2">&quot;You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span>
-<span class="w">    </span><span class="o">]</span>
-<span class="w">  </span><span class="o">}</span>
-<span class="o">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;You are a helpful assistant</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Bob: Hi!</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Alice: Nice to meet you!&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </section>
@@ -608,7 +629,7 @@ prompt according to their needs.</p>
 </ul>
 <section id="id7">
 <h4>Prompt Strategy<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
-<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the dialogue history.</p>
+<p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the conversation history.</p>
 <p>An example is shown below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
@@ -631,7 +652,7 @@ prompt according to their needs.</p>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">[</span>
 <span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
-<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
+<span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="o">]</span>
 </pre></div>
 </div>
@@ -645,7 +666,7 @@ prompts for large language models (LLMs).</p>
 </section>
 <section id="about-promptengine-class">
 <h2>About <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> Class<a class="headerlink" href="#about-promptengine-class" title="Link to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> class provides a structured way to combine different components of a prompt, such as instructions, hints, dialogue history, and user inputs, into a format that is suitable for the underlying language model.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> class provides a structured way to combine different components of a prompt, such as instructions, hints, conversation history, and user inputs, into a format that is suitable for the underlying language model.</p>
 <section id="key-features-of-promptengine">
 <h3>Key Features of PromptEngine<a class="headerlink" href="#key-features-of-promptengine" title="Link to this heading"></a></h3>
 <ul class="simple">

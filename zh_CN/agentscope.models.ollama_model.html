@@ -158,6 +158,12 @@ After that, you can use the ollama API.</p>
 class in model configuration.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaWrapperBase.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.ollama_model.OllamaWrapperBase.model_name" title="Link to this definition"></a></dt>
+<dd><p>The model name used in ollama API.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaWrapperBase.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_alive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaWrapperBase.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaWrapperBase.__init__" title="Link to this definition"></a></dt>
@@ -175,12 +181,6 @@ Defaults to <cite>None</cite>, which is 127.0.0.1:11434.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaWrapperBase.model_name">
-<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.ollama_model.OllamaWrapperBase.model_name" title="Link to this definition"></a></dt>
-<dd><p>The model name used in ollama API.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -262,7 +262,7 @@ Defaults to <cite>None</cite>, which is 127.0.0.1:11434.</p></li>
 <span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for ollama Chat API.</p>
 <p>All messages will be formatted into a single system message with
-system prompt and dialogue history.</p>
+system prompt and conversation history.</p>
 <p>Note:
 1. This strategy maybe not suitable for all scenarios,
 and developers are encouraged to implement their own prompt
@@ -282,7 +282,7 @@ engineering strategies.
         <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
         <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
             <span class="s2">&quot;You&#39;re a helpful assistant</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Bob: Hi, how can I help you?</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;user: What&#39;s the date today?&quot;</span>
         <span class="p">)</span>

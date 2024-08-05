@@ -125,12 +125,13 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span> <span class="nn">.gemini_model</span> <span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
+<span class="kn">from</span> <span class="nn">.openai_model</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_MAX_RETRIES</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_MESSAGES_KEY</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RETRY_INTERVAL</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 
 <div class="viewcode-block" id="PostAPIModelWrapperBase">
@@ -197,7 +198,15 @@
 <span class="sd">                    **post_args</span>
 <span class="sd">                )</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">json_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="n">json_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+                <span class="n">json_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">api_url</span> <span class="o">=</span> <span class="n">api_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span>
@@ -317,27 +326,27 @@
 <span class="sd">            `Union[List[dict]]`:</span>
 <span class="sd">                The formatted messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-                <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">{</span>
-                        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">arg</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
-                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">arg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
-                    <span class="p">},</span>
-                <span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+        <span class="c1"># Format according to the potential model field in the json_args</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">json_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">messages</span></div>
+        <span class="c1"># OpenAI</span>
+        <span class="k">if</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gpt-&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">static_format</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Gemini</span>
+        <span class="k">elif</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gemini&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">GeminiChatWrapper</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="c1"># Include DashScope, ZhipuAI, Ollama, the other models supported by</span>
+        <span class="c1"># litellm and unknown models</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">format_for_common_chat_models</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </div>
 
 

@@ -244,14 +244,14 @@
         <span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">dialog_history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the system prompt and dialogue history, generate notes to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the system prompt and conversation history, generate notes to</span>
 <span class="sd">        optimize the system prompt.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            system_prompt (`str`):</span>
 <span class="sd">                The system prompt provided by the user.</span>
 <span class="sd">            dialog_history (`List[Msg]`):</span>
-<span class="sd">                The dialogue history of user interaction with the agent.</span>
+<span class="sd">                The conversation history of user interaction with the agent.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[str]: The notes added to the system prompt.</span>

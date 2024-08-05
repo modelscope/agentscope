@@ -184,9 +184,8 @@
 <span class="sd">                Defaults to `None`, which is 127.0.0.1:11434.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">ollama</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -394,7 +393,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for ollama Chat API.</span>
 
 <span class="sd">        All messages will be formatted into a single system message with</span>
-<span class="sd">        system prompt and dialogue history.</span>
+<span class="sd">        system prompt and conversation history.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">        1. This strategy maybe not suitable for all scenarios,</span>
@@ -421,7 +420,7 @@
 <span class="sd">                    &quot;role&quot;: &quot;user&quot;,</span>
 <span class="sd">                    &quot;content&quot;: (</span>
 <span class="sd">                        &quot;You&#39;re a helpful assistant\\n\\n&quot;</span>
-<span class="sd">                        &quot;## Dialogue History\\n&quot;</span>
+<span class="sd">                        &quot;## Conversation History\\n&quot;</span>
 <span class="sd">                        &quot;Bob: Hi, how can I help you?\\n&quot;</span>
 <span class="sd">                        &quot;user: What&#39;s the date today?&quot;</span>
 <span class="sd">                    )</span>
@@ -468,7 +467,7 @@
                     <span class="n">system_prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">system_content_template</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Merge all messages into a dialogue history prompt</span>
+                <span class="c1"># Merge all messages into a conversation history prompt</span>
                 <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -480,7 +479,7 @@
             <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
 
             <span class="n">system_content_template</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;## Dialogue History&quot;</span><span class="p">,</span> <span class="n">dialogue_history</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;## Conversation History&quot;</span><span class="p">,</span> <span class="n">dialogue_history</span><span class="p">],</span>
             <span class="p">)</span>
 
         <span class="n">system_content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_content_template</span><span class="p">)</span>
@@ -735,7 +734,7 @@
                 <span class="c1"># system prompt</span>
                 <span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Merge all messages into a dialogue history prompt</span>
+                <span class="c1"># Merge all messages into a conversation history prompt</span>
                 <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -743,12 +742,12 @@
         <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prompt_template</span> <span class="o">=</span> <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
+            <span class="n">prompt_template</span> <span class="o">=</span> <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">prompt_template</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s2">&quot;</span><span class="si">{system_prompt}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="s2">&quot;</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 

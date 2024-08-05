@@ -124,7 +124,6 @@
 <span class="kn">from</span> <span class="nn">._model_utils</span> <span class="kn">import</span> <span class="n">_verify_text_content_in_openai_delta_response</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">zhipuai</span>
@@ -173,7 +172,7 @@
             <span class="n">model_name</span> <span class="o">=</span> <span class="n">config_name</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;model_name is not set, use config_name instead.&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">zhipuai</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
@@ -430,14 +429,58 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input string and dictionary into the format that</span>
-<span class="sd">        ZhipuAI Chat API required.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A common format strategy for chat models, which will format the</span>
+<span class="sd">        input messages into a user message.</span>
 
-<span class="sd">        In this format function, the input messages are formatted into a</span>
-<span class="sd">        single system messages with format &quot;{name}: {content}&quot; for each</span>
-<span class="sd">        message. Note this strategy maybe not suitable for all scenarios,</span>
+<span class="sd">        Note this strategy maybe not suitable for all scenarios,</span>
 <span class="sd">        and developers are encouraged to implement their own prompt</span>
 <span class="sd">        engineering strategies.</span>
+
+<span class="sd">        The following is an example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            prompt1 = model.format(</span>
+<span class="sd">                Msg(&quot;system&quot;, &quot;You&#39;re a helpful assistant&quot;, role=&quot;system&quot;),</span>
+<span class="sd">                Msg(&quot;Bob&quot;, &quot;Hi, how can I help you?&quot;, role=&quot;assistant&quot;),</span>
+<span class="sd">                Msg(&quot;user&quot;, &quot;What&#39;s the date today?&quot;, role=&quot;user&quot;)</span>
+<span class="sd">            )</span>
+
+<span class="sd">            prompt2 = model.format(</span>
+<span class="sd">                Msg(&quot;Bob&quot;, &quot;Hi, how can I help you?&quot;, role=&quot;assistant&quot;),</span>
+<span class="sd">                Msg(&quot;user&quot;, &quot;What&#39;s the date today?&quot;, role=&quot;user&quot;)</span>
+<span class="sd">            )</span>
+
+<span class="sd">        The prompt will be as follows:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # prompt1</span>
+<span class="sd">            [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;role&quot;: &quot;user&quot;,</span>
+<span class="sd">                    &quot;content&quot;: (</span>
+<span class="sd">                        &quot;You&#39;re a helpful assistant\\n&quot;</span>
+<span class="sd">                        &quot;\\n&quot;</span>
+<span class="sd">                        &quot;## Conversation History\\n&quot;</span>
+<span class="sd">                        &quot;Bob: Hi, how can I help you?\\n&quot;</span>
+<span class="sd">                        &quot;user: What&#39;s the date today?&quot;</span>
+<span class="sd">                    )</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+
+<span class="sd">            # prompt2</span>
+<span class="sd">            [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;role&quot;: &quot;user&quot;,</span>
+<span class="sd">                    &quot;content&quot;: (</span>
+<span class="sd">                        &quot;## Conversation History\\n&quot;</span>
+<span class="sd">                        &quot;Bob: Hi, how can I help you?\\n&quot;</span>
+<span class="sd">                        &quot;user: What&#39;s the date today?&quot;</span>
+<span class="sd">                    )</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+
 
 <span class="sd">        Args:</span>
 <span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
@@ -447,58 +490,10 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `List[dict]`:</span>
-<span class="sd">                The formatted messages in the format that ZhipuAI Chat API</span>
-<span class="sd">                required.</span>
+<span class="sd">                The formatted messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Parse all information into a list of messages</span>
-        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="c1"># record dialog history as a list of strings</span>
-        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
-                <span class="c1"># system prompt</span>
-                <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">{</span>
-                        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
-                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
-                    <span class="p">},</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Merge all messages into a dialogue history prompt</span>
-                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
-
-        <span class="n">user_content_template</span> <span class="o">=</span> <span class="s2">&quot;## Dialogue History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
-
-        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">user_content_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
-                <span class="p">),</span>
-            <span class="p">},</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">messages</span></div>
+        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">format_for_common_chat_models</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </div>
 
 

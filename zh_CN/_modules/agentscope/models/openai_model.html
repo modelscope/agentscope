@@ -118,7 +118,16 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Model wrapper for OpenAI models&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Generator</span><span class="p">,</span>
+    <span class="n">get_args</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
@@ -205,9 +214,8 @@
             <span class="n">model_name</span> <span class="o">=</span> <span class="n">config_name</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;model_name is not set, use config_name instead.&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -462,9 +470,10 @@
                 <span class="n">completion_tokens</span><span class="o">=</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
             <span class="p">)</span>
 
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_format_msg_with_url</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
         <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a message with image urls into openai chat format.</span>
 <span class="sd">        This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and</span>
@@ -472,11 +481,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check if the model is a vision model</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
-            <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">substrings_in_vision_models_names</span>
+            <span class="n">_</span> <span class="ow">in</span> <span class="n">model_name</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">substrings_in_vision_models_names</span>
         <span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> is not a vision model. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The model </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2"> is not a vision model. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Skip the url in the message.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="p">{</span>
@@ -533,6 +542,67 @@
 
             <span class="k">return</span> <span class="n">returned_msg</span>
 
+<div class="viewcode-block" id="OpenAIChatWrapper.static_format">
+<a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIChatWrapper.static_format">[文档]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">static_format</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A static version of the format method, which can be used without</span>
+<span class="sd">        initializing the OpenAIChatWrapper object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
+<span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">            model_name (`str`):</span>
+<span class="sd">                The name of the model to use in OpenAI API.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                The formatted messages in the format that OpenAI Chat API</span>
+<span class="sd">                required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Format the message according to the model type</span>
+                    <span class="c1"># (vision/non-vision)</span>
+                    <span class="n">formatted_msg</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">_format_msg_with_url</span><span class="p">(</span>
+                        <span class="n">arg</span><span class="p">,</span>
+                        <span class="n">model_name</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatted_msg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">arg</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">arg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">static_format</span><span class="p">(</span>
+                        <span class="o">*</span><span class="n">arg</span><span class="p">,</span>
+                        <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">messages</span></div>
+
+
 <div class="viewcode-block" id="OpenAIChatWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.openai_model.html#agentscope.models.OpenAIChatWrapper.format">[文档]</a>
     <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
@@ -553,31 +623,24 @@
 <span class="sd">                The formatted messages in the format that OpenAI Chat API</span>
 <span class="sd">                required.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_format_msg_with_url</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="p">{</span>
-                            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">arg</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
-                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">arg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">content</span><span class="p">),</span>
-                        <span class="p">},</span>
-                    <span class="p">)</span>
+        <span class="c1"># Check if the OpenAI library is installed</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">openai</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot find openai package, please install it by &quot;</span>
+                <span class="s2">&quot;`pip install openai`&quot;</span><span class="p">,</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">messages</span></div>
+        <span class="c1"># Format messages according to the model name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">in</span> <span class="n">get_args</span><span class="p">(</span><span class="n">openai</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">ChatModel</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">static_format</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The OpenAI library maybe re-used to support other models</span>
+            <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">format_for_common_chat_models</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </div>
 
 
