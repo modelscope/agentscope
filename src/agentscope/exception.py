@@ -159,6 +159,26 @@ class AgentCallError(AgentServerError):
     """The exception class for failing to call agent."""
 
 
+# - Monitor related Exceptions
+
+
+class QuotaExceededError(Exception):
+    """An Exception used to indicate that a certain metric exceeds quota"""
+
+    def __init__(
+        self,
+        name: str,
+    ) -> None:
+        """Init a QuotaExceedError instance.
+
+        Args:
+            name (`str`): name of the metric which exceeds quota.
+        """
+        self.message = f"Metric [{name}] exceeds quota."
+        self.name = name
+        super().__init__(self.message)
+
+
 # - Environment Exceptions
 
 

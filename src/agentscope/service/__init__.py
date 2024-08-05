@@ -4,6 +4,7 @@ from loguru import logger
 
 from .execute_code.exec_python import execute_python_code
 from .execute_code.exec_shell import execute_shell_command
+from .execute_code.exec_notebook import NoteBookExecutor
 from .file.common import (
     create_file,
     delete_file,
@@ -92,6 +93,7 @@ __all__ = [
     "dblp_search_publications",
     "dblp_search_authors",
     "dblp_search_venues",
+    "NoteBookExecutor",
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
