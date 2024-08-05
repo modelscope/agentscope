@@ -3,7 +3,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, List
-import threading
 
 from ..exception import (
     EnvAttributeNotFoundError,
@@ -69,7 +68,6 @@ class Attribute:
             child.name: child for child in (children if children else [])
         }
         self.parent = parent
-        self.lock = threading.Lock()
         self.event_listeners = {}
         if listeners:
             for target_func, listener in listeners.items():
@@ -205,3 +203,23 @@ class Attribute:
             self.children[attr_name] = attr
         else:
             raise EnvAttributeAlreadyExistError(attr_name)
+
+
+class RpcAttribute(Attribute):
+    """A attribute that can be accessed through RPC."""
+
+    def __init__(
+        self,
+        name: str,
+        value: Any,
+        listeners: dict[str, List[EventListener]] = None,
+        children: List[Attribute] = None,
+        parent: Attribute = None,
+    ) -> None:
+        super().__init__(
+            name,
+            value,
+            listeners,
+            children,
+            parent,
+        )

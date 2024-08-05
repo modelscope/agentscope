@@ -339,6 +339,13 @@ class RpcAgentClient:
                     f.write(resp.data)
             return local_path
 
+    def create_attribute(
+        self,
+        attr_id: str = None,
+    ) -> bool:
+        """Create a new attribute."""
+        pass
+
 
 class ResponseStub:
     """A stub used to save the response of an rpc call in a sub-thread."""
