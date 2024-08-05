@@ -82,7 +82,7 @@ class AttributeTest(unittest.TestCase):
         )
         self.assertEqual(
             get_rec_1.value["event_args"],  # type: ignore [index]
-            None,
+            {},
         )
         self.assertEqual(get_rec_2.value, None)
         self.assertEqual(set_rec_1.value, None)

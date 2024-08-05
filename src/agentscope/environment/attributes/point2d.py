@@ -16,7 +16,7 @@ class Point2D(Attribute, Movable2D):
         x: float,
         y: float,
         listeners: dict[str, List[EventListener]] = None,
-        children: dict[str, Attribute] = None,
+        children: List[Attribute] = None,
         parent: Attribute = None,
     ) -> None:
         super().__init__(name, (x, y), listeners, children, parent)
@@ -27,7 +27,7 @@ class Point2D(Attribute, Movable2D):
         cur_loc = {"x": self.value[0], "y": self.value[1]}
         self.value = (x, y)
         self._trigger_listener(
-            Event("move_to", {"new": {"x": x, "y": y}, "old": cur_loc})
+            Event("move_to", {"new": {"x": x, "y": y}, "old": cur_loc}),
         )
         return True
 
@@ -53,7 +53,7 @@ class Point2D(Attribute, Movable2D):
             `Tuple[float, float]`: The current position of the point.
         """
         value = (self.value[0], self.value[1])
-        self._trigger_listener(Event("get", None))
+        self._trigger_listener(Event("get", {}))
         return value
 
 
@@ -68,7 +68,7 @@ class AttributeWithPoint2D(BasicAttribute, Movable2D):
         x: float,
         y: float,
         listeners: dict[str, List[EventListener]] = None,
-        children: dict[str, Attribute] = None,
+        children: List[Attribute] = None,
         parent: Attribute = None,
     ) -> None:
         super().__init__(name, value, listeners, children, parent)
