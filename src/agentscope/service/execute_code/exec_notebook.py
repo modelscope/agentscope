@@ -4,7 +4,6 @@
 Partially referenced the implementation of https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py
 """  # noqa
 import base64
-import uuid
 import asyncio
 from loguru import logger
 
@@ -20,9 +19,9 @@ except ImportError as import_error:
     nbformat = ImportErrorReporter(import_error)
     NotebookClient = ImportErrorReporter(import_error)
 
-from agentscope.service.service_status import ServiceExecStatus
-from agentscope.service.service_response import ServiceResponse
-from agentscope.file_manager import file_manager
+from ...manager import FileManager
+from ..service_status import ServiceExecStatus
+from ..service_response import ServiceResponse
 
 
 class NoteBookExecutor:
@@ -191,5 +190,5 @@ class NoteBookExecutor:
         """Save image data to a file.
         The image name is generated randomly here"""
         image_data = base64.b64decode(image_base64)
-        filename = f"display_image_{uuid.uuid4().hex}.png"
-        return file_manager.save_image(image_data, filename)
+        file_manager = FileManager.get_instance()
+        return file_manager.save_image(image_data)

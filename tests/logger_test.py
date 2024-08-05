@@ -8,6 +8,7 @@ import unittest
 from loguru import logger
 
 from agentscope.logging import setup_logger
+from agentscope.manager import ASManager
 from agentscope.message import Msg
 
 
@@ -88,7 +89,7 @@ class LoggerTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down for LoggerTest."""
-        logger.remove()
+        ASManager.get_instance().flush()
         if os.path.exists(self.run_dir):
             shutil.rmtree(self.run_dir)
 

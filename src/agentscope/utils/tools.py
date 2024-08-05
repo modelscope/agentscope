@@ -326,14 +326,14 @@ def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
                 },
             )
         else:
-            # Merge all messages into a dialogue history prompt
+            # Merge all messages into a conversation history prompt
             dialogue.append(
                 f"{unit['name']}: {_convert_to_str(unit['content'])}",
             )
 
     dialogue_history = "\n".join(dialogue)
 
-    user_content_template = "## Dialogue History\n{dialogue_history}"
+    user_content_template = "## Conversation History\n{dialogue_history}"
 
     messages.append(
         {
@@ -502,3 +502,11 @@ def _map_string_to_color_mark(
     hash_value = hash(target_str)
     index = hash_value % len(color_marks)
     return color_marks[index]
+
+
+def _generate_new_runtime_id() -> str:
+    """Generate a new random runtime id."""
+    _RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
+    return _get_timestamp(_RUNTIME_ID_FORMAT).format(
+        _generate_random_code(uppercase=False),
+    )

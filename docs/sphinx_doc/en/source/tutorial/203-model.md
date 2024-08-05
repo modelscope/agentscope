@@ -122,7 +122,6 @@ Here we provide example configurations for different model wrappers.
     "generate_args": {                          # Parameters passed to the model when calling
         # e.g. "temperature": 0.0
     },
-    "budget": 100                               # API budget
 }
 ```
 
