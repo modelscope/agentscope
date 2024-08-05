@@ -8,7 +8,6 @@ from loguru import logger
 from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
-from ..utils.tools import _convert_to_str
 
 
 class LiteLLMWrapperBase(ModelWrapperBase, ABC):
@@ -52,9 +51,8 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
-        self.model_name = model_name
         self.generate_args = generate_args or {}
 
     def format(
@@ -296,68 +294,68 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
-        """Format the input string and dictionary into the unified format.
-        Note that the format function might not be the optimal way to construct
-        prompt for every model, but a common way to do so.
-        Developers are encouraged to implement their own prompt
-        engineering strategies if they have strong performance concerns.
+        """A common format strategy for chat models, which will format the
+        input messages into a user message.
+
+        Note this strategy maybe not suitable for all scenarios,
+        and developers are encouraged to implement their own prompt
+        engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt1 = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+            prompt2 = model.format(
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            # prompt1
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "You're a helpful assistant\\n"
+                        "\\n"
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
+            # prompt2
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+
         Returns:
             `List[dict]`:
-                The formatted messages in the format that anthropic Chat API
-                required.
+                The formatted messages.
         """
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        # record dialog history as a list of strings
-        system_content_template = []
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                system_prompt = _convert_to_str(unit.content)
-                if not system_prompt.endswith("\n"):
-                    system_prompt += "\n"
-                system_content_template.append(system_prompt)
-            else:
-                # Merge all messages into a dialogue history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        if len(dialogue) != 0:
-            dialogue_history = "\n".join(dialogue)
-
-            system_content_template.extend(
-                ["## Dialogue History", dialogue_history],
-            )
-
-        system_content = "\n".join(system_content_template)
-
-        messages = [
-            {
-                "role": "user",
-                "content": system_content,
-            },
-        ]
-
-        return messages
+        return ModelWrapperBase.format_for_common_chat_models(*args)
