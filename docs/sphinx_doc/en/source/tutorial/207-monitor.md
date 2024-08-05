@@ -60,7 +60,7 @@ An example `state_dict` is shown as follows:
 
 - When calling `agentscope.print_llm_usage`, AgentScope will print model usages as follows:
 
-```json
+```text
 2024-08-05 15:21:54.889 | INFO     | agentscope.manager._monitor:_print_table:117 - Text & Embedding Model:
 2024-08-05 15:21:54.889 | INFO     | agentscope.manager._monitor:_print_table:127 - |  MODEL NAME | TIMES | PROMPT TOKENS | COMPLETION TOKENS | TOTAL TOKENS |
 2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - | gpt-4-turbo |   1   |       15      |         20        |      35      |

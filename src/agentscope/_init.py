@@ -10,9 +10,6 @@ from .constants import _DEFAULT_LOG_LEVEL
 from .constants import _DEFAULT_CACHE_DIR
 from .manager import ASManager
 
-# init setting
-_INIT_SETTINGS = {}
-
 # init the singleton class by default settings to avoid reinit in subprocess
 # especially in spawn mode, which will copy the object from the parent process
 # to the child process rather than re-import the module (fork mode)
