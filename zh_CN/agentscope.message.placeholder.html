@@ -1,0 +1,240 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.message.placeholder module &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.models package" href="agentscope.models.html" />
+    <link rel="prev" title="agentscope.message.msg module" href="agentscope.message.msg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.message.placeholder.html">English</a></li> |
+    <a href="../zh_CN/agentscope.message.placeholder.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.message.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.message.msg.html">agentscope.message.msg module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.message.placeholder module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.message.placeholder.PlaceholderMessage"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.message.placeholder.deserialize"><code class="docutils literal notranslate"><span class="pre">deserialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.message.placeholder.serialize"><code class="docutils literal notranslate"><span class="pre">serialize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.message.html#module-agentscope.message">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.message.html">agentscope.message package</a></li>
+      <li class="breadcrumb-item active">agentscope.message.placeholder module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.message.placeholder.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.message.placeholder">
+<span id="agentscope-message-placeholder-module"></span><h1>agentscope.message.placeholder module<a class="headerlink" href="#module-agentscope.message.placeholder" title="Link to this heading"></a></h1>
+<p>The placeholder message for RpcAgent.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.PlaceholderMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.message.placeholder.</span></span><span class="sig-name descname"><span class="pre">PlaceholderMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient" title="agentscope.rpc.rpc_agent_client.RpcAgentClient"><span class="pre">RpcAgentClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/message/placeholder.html#PlaceholderMessage"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.message.placeholder.PlaceholderMessage" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><code class="xref py py-class docutils literal notranslate"><span class="pre">Msg</span></code></a></p>
+<p>A placeholder for the return message of RpcAgent.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.PlaceholderMessage.PLACEHOLDER_ATTRS">
+<span class="sig-name descname"><span class="pre">PLACEHOLDER_ATTRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'_client',</span> <span class="pre">'_host',</span> <span class="pre">'_is_placeholder',</span> <span class="pre">'_port',</span> <span class="pre">'_stub',</span> <span class="pre">'_task_id'}</span></em><a class="headerlink" href="#agentscope.message.placeholder.PlaceholderMessage.PLACEHOLDER_ATTRS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.PlaceholderMessage.LOCAL_ATTRS">
+<span class="sig-name descname"><span class="pre">LOCAL_ATTRS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'_client',</span> <span class="pre">'_host',</span> <span class="pre">'_is_placeholder',</span> <span class="pre">'_port',</span> <span class="pre">'_stub',</span> <span class="pre">'_task_id',</span> <span class="pre">'name',</span> <span class="pre">'timestamp'}</span></em><a class="headerlink" href="#agentscope.message.placeholder.PlaceholderMessage.LOCAL_ATTRS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.PlaceholderMessage.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient" title="agentscope.rpc.rpc_agent_client.RpcAgentClient"><span class="pre">RpcAgentClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/message/placeholder.html#PlaceholderMessage.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.message.placeholder.PlaceholderMessage.__init__" title="Link to this definition"></a></dt>
+<dd><p>A placeholder message, records the address of the real message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<cite>str</cite>) – The name of who send the message. It’s often used in
+role-playing scenario to tell the name of the sender.
+However, you can also only use <cite>role</cite> when calling openai api.
+The usage of <cite>name</cite> refers to
+<a class="reference external" href="https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models">https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models</a>.</p></li>
+<li><p><strong>content</strong> (<cite>Any</cite>) – The content of the message.</p></li>
+<li><p><strong>role</strong> (<cite>Literal[“system”, “user”, “assistant”]</cite>, defaults to “assistant”) – The role of the message, which can be one of the <cite>“system”</cite>,
+<cite>“user”</cite>, or <cite>“assistant”</cite>.</p></li>
+<li><p><strong>url</strong> (<cite>Optional[Union[List[str], str]]</cite>, defaults to None) – A url to file, image, video, audio or website.</p></li>
+<li><p><strong>timestamp</strong> (<cite>Optional[str]</cite>, defaults to None) – The timestamp of the message, if None, it will be set to
+current time.</p></li>
+<li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>None</cite>) – The hostname of the rpc server where the real message is
+located.</p></li>
+<li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – The port of the rpc server where the real message is located.</p></li>
+<li><p><strong>task_id</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – The task id of the real message in the rpc server.</p></li>
+<li><p><strong>client</strong> (<cite>RpcAgentClient</cite>, defaults to <cite>None</cite>) – An RpcAgentClient instance used to connect to the generator of
+this placeholder.</p></li>
+<li><p><strong>x</strong> (<cite>dict</cite>, defaults to <cite>None</cite>) – Input parameters used to call rpc methods on the client.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.PlaceholderMessage.update_value">
+<span class="sig-name descname"><span class="pre">update_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.MessageBase" title="agentscope.message.msg.MessageBase"><span class="pre">MessageBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/message/placeholder.html#PlaceholderMessage.update_value"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.message.placeholder.PlaceholderMessage.update_value" title="Link to this definition"></a></dt>
+<dd><p>Get attribute values from rpc agent server immediately</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.PlaceholderMessage.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/message/placeholder.html#PlaceholderMessage.serialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.message.placeholder.PlaceholderMessage.serialize" title="Link to this definition"></a></dt>
+<dd><p>Return the serialized message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.deserialize">
+<span class="sig-prename descclassname"><span class="pre">agentscope.message.placeholder.</span></span><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span></span></span><a class="reference internal" href="_modules/agentscope/message/placeholder.html#deserialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.message.placeholder.deserialize" title="Link to this definition"></a></dt>
+<dd><p>Deserialize json string into MessageBase</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.message.placeholder.serialize">
+<span class="sig-prename descclassname"><span class="pre">agentscope.message.placeholder.</span></span><span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.MessageBase" title="agentscope.message.msg.MessageBase"><span class="pre">MessageBase</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.MessageBase" title="agentscope.message.msg.MessageBase"><span class="pre">MessageBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/message/placeholder.html#serialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.message.placeholder.serialize" title="Link to this definition"></a></dt>
+<dd><p>Serialize multiple MessageBase instance</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.message.msg.html" class="btn btn-neutral float-left" title="agentscope.message.msg module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.models.html" class="btn btn-neutral float-right" title="agentscope.models package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

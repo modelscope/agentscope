@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -125,13 +125,9 @@
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">FileManager</span><span class="p">,</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">load_model_by_config_name</span><span class="p">,</span>
-    <span class="n">load_config_by_name</span><span class="p">,</span>
-    <span class="n">ModelResponse</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">agentscope.prompt._prompt_utils</span> <span class="kn">import</span> <span class="n">_find_top_k_embeddings</span>
 
 
@@ -221,8 +217,8 @@
 <span class="sd">                If the example selection method is `&quot;similarity&quot;`, an embedding</span>
 <span class="sd">                model config name is required.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">model_config_name</span><span class="p">)</span>
+        <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">model_config_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meta_prompt</span> <span class="o">=</span> <span class="n">meta_prompt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">response_prompt_template</span> <span class="o">=</span> <span class="n">response_prompt_template</span>
 
@@ -260,10 +256,11 @@
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">embed_model_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_embedding_model</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">embed_model</span> <span class="o">=</span> <span class="n">load_model_by_config_name</span><span class="p">(</span>
+                <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embed_model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
                     <span class="n">embed_model_config_name</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">embed_model_name</span> <span class="o">=</span> <span class="n">load_config_by_name</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embed_model_name</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_config_by_name</span><span class="p">(</span>
                     <span class="n">embed_model_config_name</span><span class="p">,</span>
                 <span class="p">)</span>
 
@@ -339,6 +336,7 @@
             <span class="n">user_prompt</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;user_prompt&quot;</span><span class="p">]</span>
 
             <span class="c1"># Load cached embedding instead of generating them again</span>
+            <span class="n">file_manager</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
             <span class="n">cached_embedding</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">fetch_cached_text_embedding</span><span class="p">(</span>
                 <span class="n">text</span><span class="o">=</span><span class="n">user_prompt</span><span class="p">,</span>
                 <span class="n">embedding_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embed_model_name</span><span class="p">,</span>

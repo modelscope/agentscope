@@ -5,7 +5,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>监控器 &mdash; AgentScope  文档</title>
+  <title>监控 &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
@@ -69,34 +69,14 @@
 <li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="210-rag.html">简要介绍AgentScope中的RAG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">监控器</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope">理解 AgentScope 中的监控器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">使用监控器</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id3">获取监控器实例</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">基本使用</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#api">注册 API 使用度量指标</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id5">更新度量指标</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id6">处理配额</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id7">检索度量指标</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id8">重置和移除度量指标</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">进阶使用</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#prefix">使用 <code class="docutils literal notranslate"><span class="pre">prefix</span></code> 来区分度量指标</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id10">为 API 注册预算</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">监控</a></li>
 <li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory package</a></li>
@@ -125,7 +105,7 @@
           <div role="navigation" aria-label="页面导航">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">监控器</li>
+      <li class="breadcrumb-item active">监控</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/tutorial/207-monitor.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -136,159 +116,123 @@
            <div itemprop="articleBody">
              
   <section id="monitor-zh">
-<span id="id1"></span><h1>监控器<a class="headerlink" href="#monitor-zh" title="Link to this heading"></a></h1>
-<p>在多智能体应用程序中，特别是那些依赖外部模型 API 的应用程序，监控使用情况和成本以防止过度使用并确保遵守速率限制是至关重要的。<code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> 类及其实现 <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 提供了一种追踪和调节这些 API 在您的应用中使用情况的方法。在本教程中，您将学习如何使用它们来监控 API 调用。</p>
-<section id="agentscope">
-<h2>理解 AgentScope 中的监控器<a class="headerlink" href="#agentscope" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> 类作为一个接口，用于设置一个监控系统，跟踪各种度量指标，特别是关注 API 使用情况。它定义了一些方法，使得可以注册、检查、更新和管理与 API 调用相关的度量指标。</p>
-<p>以下是 <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> 的关键方法：</p>
+<span id="id1"></span><h1>监控<a class="headerlink" href="#monitor-zh" title="Link to this heading"></a></h1>
+<p>AgentScope 支持模型 API 使用情况的监控。
+用户可以通过在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中设置 <code class="docutils literal notranslate"><span class="pre">use_monitor=False</span></code> 来禁用监控功能。</p>
+<p>AgentScope 提供了 <code class="docutils literal notranslate"><span class="pre">agentscope.state_dict</span></code> 和 <code class="docutils literal notranslate"><span class="pre">agentscope.print_llm_usage</span></code> 两个函数，用于获取当前 AgentScope 状态和打印模型 API 的使用情况。</p>
+<p>示例代码如下：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">import</span> <span class="nn">agentscope</span>
+
+<span class="c1"># ...</span>
+
+<span class="c1"># 获取当前监控状态</span>
+<span class="n">state_dict</span> <span class="o">=</span> <span class="n">agentscope</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+<span class="c1"># 打印模型 API 的使用情况</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">print_llm_usage</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>以下是一个 <code class="docutils literal notranslate"><span class="pre">state_dict</span></code> 的示例：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;project&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;zSZ0pO&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7def6u&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;run_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;run_20240731-104527_7def6u&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;pid&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">24727</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-07-31 10:45:27&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;disable_saving&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;save_log&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;save_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;save_api_invoke&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;base_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;run_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/xxx/runs/run_20240731-104527_7def6u&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;cache_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/Users/xxx/.cache/agentscope&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;model_configs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;logger&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INFO&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;studio&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;active&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;studio_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;monitor&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;use_monitor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;path_db&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/.../runs/run_20240731-104527_7def6u/agentscope.db&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 <ul class="simple">
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">register</span></code></strong>：初始化用于跟踪的度量指标，例如进行的 API 调用次数，以及可选的配额用于执行限制。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">exists</span></code></strong>：检查是否已经跟踪了某个度量指标。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">add</span></code></strong>：将度量指标增加指定的值，用于每次 API 调用后计数。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">update</span></code></strong>：一次更新多个度量指标，适用于批量更新。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">clear</span></code></strong>：将度量指标重置为零，适用于配额周期重置。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">remove</span></code></strong>：从监控中移除一个度量指标。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_value</span></code></strong>：检索特定度量指标的当前值。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_unit</span></code></strong>：获取与度量指标相关联的单元（例如，“调用”）。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_quota</span></code></strong>：获取允许的 API 调用的最大值。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">set_quota</span></code></strong>：调整度量指标的配额，如果 API 使用条款变更。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_metric</span></code></strong>：返回有关特定度量指标的详细信息。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">get_metrics</span></code></strong>：检索所有跟踪度量指标的信息，可以基于度量指标名称可选地进行过滤。</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">register_budget</span></code></strong>：为某个 API 调用设置预算，将初始化一系列用于计算成本的度量指标。</p></li>
+<li><p>调用 <code class="docutils literal notranslate"><span class="pre">agentscope.print_llm_usage</span></code> 时，AgentScope 将打印模型使用情况如下：</p></li>
 </ul>
-</section>
-<section id="id2">
-<h2>使用监控器<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
-<section id="id3">
-<h3>获取监控器实例<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
-<p>从 <code class="docutils literal notranslate"><span class="pre">MonitorFactory</span></code> 获取监控器实例开始监控，注意多次调用 <code class="docutils literal notranslate"><span class="pre">get_monitor</span></code> 方法将返回同一个监控器实例。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 确保在这之前你已经调用了agentscope.init(...)</span>
-<span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>2024-08-05 15:21:54.889 | INFO     | agentscope.manager._monitor:_print_table:117 - Text &amp; Embedding Model:
+2024-08-05 15:21:54.889 | INFO     | agentscope.manager._monitor:_print_table:127 - |  MODEL NAME | TIMES | PROMPT TOKENS | COMPLETION TOKENS | TOTAL TOKENS |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - | gpt-4-turbo |   1   |       15      |         20        |      35      |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - |    gpt-4o   |   1   |       43      |         34        |      77      |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - |   qwen-max  |   2   |      129      |        172        |     301      |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:117 - Image Model:
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - | MODEL NAME |     RESOLUTION     | TIMES | IMAGE COUNT |
+2024-08-05 15:21:54.891 | INFO     | agentscope.manager._monitor:_print_table:127 - |  dall-e-3  |    hd_1024*1024    |   1   |      2      |
+2024-08-05 15:21:54.891 | INFO     | agentscope.manager._monitor:_print_table:127 - |  dall-e-3  | standard_1024*1024 |   2   |      7      |
+2024-08-05 15:21:54.891 | INFO     | agentscope.manager._monitor:_print_table:127 - |  qwen-vl   |     1024*1024      |   1   |      4      |
 </pre></div>
 </div>
-<p>目前上述代码将会返回一个 <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 实例，该实例在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中初始化。
-<code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 是一个基于 Sqlite3 的 <code class="docutils literal notranslate"><span class="pre">MonitorBase</span></code> 实现，也是当前的默认 Monitor。</p>
-<p>如果不需要使用 Monitor 的相关功能，可以通过向 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中传入 <code class="docutils literal notranslate"><span class="pre">use_monitor=False</span></code> 来关闭 monitor 组件。在这种情况下，<code class="docutils literal notranslate"><span class="pre">MonitorFactory.get_monitor</span></code> 将返回一个 <code class="docutils literal notranslate"><span class="pre">DummyMonitor</span></code> 实例，该实例对外接口与 <code class="docutils literal notranslate"><span class="pre">SqliteMonitor</span></code> 完全相同，但内部不会执行任何操作。</p>
-</section>
-<section id="id4">
-<h3>基本使用<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
-<section id="api">
-<h4>注册 API 使用度量指标<a class="headerlink" href="#api" title="Link to this heading"></a></h4>
-<p>注册一个新的度量指标以开始监控 token 数量：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">,</span> <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">quota</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<ul class="simple">
+<li><p>同时还可以获得 JSON 格式的模型 API 使用情况，如下所示：</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># print(json.dumps(agentscope.print_llm_usage(), indent=4))</span>
+<span class="p">{</span>
+    <span class="s2">&quot;text_and_embedding&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4-turbo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">35</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">43</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span>
+            <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">77</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">129</span><span class="p">,</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">172</span><span class="p">,</span>
+            <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">301</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;dall-e-3&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="s2">&quot;hd_1024*1024&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;image_count&quot;</span><span class="p">:</span> <span class="mi">2</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;dall-e-3&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="s2">&quot;standard_1024*1024&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;image_count&quot;</span><span class="p">:</span> <span class="mi">7</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-vl&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="s2">&quot;1024*1024&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;image_count&quot;</span><span class="p">:</span> <span class="mi">4</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-</section>
-<section id="id5">
-<h4>更新度量指标<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
-<p>增加 <code class="docutils literal notranslate"><span class="pre">token_num</span></code> 度量指标：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="id6">
-<h4>处理配额<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
-<p>如果 API 调用次数超出了配额，将抛出 <code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code>：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
-    <span class="n">monitor</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;api_calls&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">QuotaExceededError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="c1"># 处理超出的配额，例如，通过暂停API调用</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="id7">
-<h4>检索度量指标<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
-<p>获取当前使用的 token 数量：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">token_num_used</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="id8">
-<h4>重置和移除度量指标<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
-<p>在新的周期开始时重置 token 计数：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">clear</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>如果不再需要，则移除度量指标：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">monitor</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;token_num&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="id9">
-<h3>进阶使用<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
-<blockquote>
-<div><p>这里的功能仍在开发中，接口可能会继续变化。</p>
-</div></blockquote>
-<section id="prefix">
-<h4>使用 <code class="docutils literal notranslate"><span class="pre">prefix</span></code> 来区分度量指标<a class="headerlink" href="#prefix" title="Link to this heading"></a></h4>
-<p>假设您有多个智能体/模型使用相同的 API 调用，但您想分别计算它们的 token 使用量，您可以在原始度量指标名称前添加一个唯一的前缀 <code class="docutils literal notranslate"><span class="pre">prefix</span></code>，<code class="docutils literal notranslate"><span class="pre">get_full_name</span></code> 函数提供了这样的功能。</p>
-<p>例如，如果 model_A 和 model_B 都使用 OpenAI API，您可以通过以下代码注册这些度量指标。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.utils.monitor</span> <span class="kn">import</span> <span class="n">get_full_name</span>
-
-<span class="o">...</span>
-
-<span class="c1"># 在model_A中</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;prompt_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_A&#39;</span><span class="p">))</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;completion_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_A&#39;</span><span class="p">))</span>
-
-<span class="c1"># 在model_B中</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;prompt_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_B&#39;</span><span class="p">))</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">get_full_name</span><span class="p">(</span><span class="s1">&#39;completion_tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;model_B&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>更新这些度量指标，只需使用 <code class="docutils literal notranslate"><span class="pre">update</span></code> 方法。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在model_A中</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">openai_response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;model_A&#39;</span><span class="p">)</span>
-
-<span class="c1"># 在model_B中</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">openai_response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;model_B&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>获取特定模型的度量指标，请使用 <code class="docutils literal notranslate"><span class="pre">get_metrics</span></code> 方法。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 获取model_A的度量指标</span>
-<span class="n">model_A_metrics</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="s1">&#39;model_A&#39;</span><span class="p">)</span>
-
-<span class="c1"># 获取model_B的度量指标</span>
-<span class="n">model_B_metrics</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="s1">&#39;model_B&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="id10">
-<h4>为 API 注册预算<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
-<p>当前，监控器已经支持根据各种度量指标自动计算 API 调用的成本，您可以直接为模型设置预算以避免超出配额。</p>
-<p>假设您正在使用 <code class="docutils literal notranslate"><span class="pre">gpt-4-turbo</span></code>，您的预算是10美元，您可以使用以下代码。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;gpt-4-turbo&#39;</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>使用 <code class="docutils literal notranslate"><span class="pre">prefix</span></code> 为使用相同 API 的不同模型设置预算。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;gpt-4-turbo&#39;</span>
-<span class="c1"># 在model_A中</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;model_A.</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-<span class="c1"># 在model_B中</span>
-<span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;model_B.</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">register_budget</span></code> 将自动注册计算总成本所需的度量指标，当这些度量指标更新时计算总成本，并在超出预算时抛出 <code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code>。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;gpt-4-turbo&#39;</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">openai_response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">prefix</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
-<span class="k">except</span> <span class="n">QuotaExceededError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="c1"># 处理超出的配额</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p><strong>注意：</strong> 此功能仍在实验阶段，只支持一些特定的 API，这些 API 已在 <code class="docutils literal notranslate"><span class="pre">agentscope.utils.monitor._get_pricing</span></code> 中列出。</p>
-</div></blockquote>
 <p><a class="reference internal" href="#monitor-zh">[Return to the top]</a></p>
-</section>
-</section>
-</section>
 </section>
 
 

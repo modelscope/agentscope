@@ -1,0 +1,550 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.manager._file &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/translations.js?v=beaddf03"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../en/_modules/agentscope/manager/_file.html">English</a></li> |
+    <a href="../../../../zh_CN/_modules/agentscope/manager/_file.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-stream.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/207-monitor.html">监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.manager._file</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.manager._file 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Manage the file system for saving files, code and logs.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_download_file</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_hash_string</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_get_timestamp</span>
+<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_generate_random_code</span>
+<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span>
+    <span class="n">_DEFAULT_SUBDIR_FILE</span><span class="p">,</span>
+    <span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">,</span>
+    <span class="n">_DEFAULT_IMAGE_NAME</span><span class="p">,</span>
+    <span class="n">_DEFAULT_CFG_NAME</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_text_embedding_record_hash</span><span class="p">(</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span>
+    <span class="n">hash_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="s2">&quot;md5&quot;</span><span class="p">,</span> <span class="s2">&quot;sha1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the hash of the text embedding record.&quot;&quot;&quot;</span>
+    <span class="n">original_data_hash</span> <span class="o">=</span> <span class="n">_hash_string</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">hash_method</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># Format the dict to avoid duplicate keys</span>
+        <span class="n">embedding_model</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">embedding_model_hash</span> <span class="o">=</span> <span class="n">_hash_string</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="n">hash_method</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the embedding id by hashing the hash codes of the</span>
+    <span class="c1"># original data and the embedding model</span>
+    <span class="n">record_hash</span> <span class="o">=</span> <span class="n">_hash_string</span><span class="p">(</span>
+        <span class="n">original_data_hash</span> <span class="o">+</span> <span class="n">embedding_model_hash</span><span class="p">,</span>
+        <span class="n">hash_method</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">record_hash</span>
+
+
+<div class="viewcode-block" id="FileManager">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager">[文档]</a>
+<span class="k">class</span> <span class="nc">FileManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A singleton class for managing the file system for saving files,</span>
+<span class="sd">    code and logs.&quot;&quot;&quot;</span>
+
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">__serialized_attrs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># Flags</span>
+        <span class="s2">&quot;save_log&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;save_code&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;save_api_invoke&quot;</span><span class="p">,</span>
+        <span class="c1"># Basic directory</span>
+        <span class="s2">&quot;base_dir&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;run_dir&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cache_dir&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a singleton instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FileManager</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The file manager has been initialized. Try to use &quot;</span>
+                <span class="s2">&quot;FileManager.get_instance() to get the instance.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+<div class="viewcode-block" id="FileManager.__init__">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the file manager with default values.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_log</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_api_invoke</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FileManager.initialize">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.initialize">[文档]</a>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">save_log</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">save_code</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">save_api_invoke</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the directory for saving files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            run_dir (`Union[str, None]`):</span>
+<span class="sd">                The running directory, used to save files, logs and code.</span>
+<span class="sd">            save_log (`bool`):</span>
+<span class="sd">                Whether to save logs locally.</span>
+<span class="sd">            save_code (`bool`):</span>
+<span class="sd">                Whether to save code locally.</span>
+<span class="sd">            save_api_invoke (`bool`):</span>
+<span class="sd">                Whether to save API invocations locally.</span>
+<span class="sd">            cache_dir (`str`):</span>
+<span class="sd">                The directory to save cache files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_log</span> <span class="o">=</span> <span class="n">save_log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="n">save_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_api_invoke</span> <span class="o">=</span> <span class="n">save_api_invoke</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">=</span> <span class="n">cache_dir</span>
+
+        <span class="c1"># Initialize the path of the sub dirs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="n">run_dir</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_and_create_subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the path of the subdir and create the subdir if it does not</span>
+<span class="sd">        exist.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;./&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">subdir</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">embedding_cache_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain the embedding cache directory.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The cache directory is not specified. Please specify the &quot;</span>
+                <span class="s2">&quot;cache directory when initializing the file manager.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">dir_cache_embedding</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;embedding&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_cache_embedding</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dir_cache_embedding</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">file_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The directory for saving files, including images, audios and</span>
+<span class="sd">        videos.&quot;&quot;&quot;</span>
+        <span class="c1"># To be compatible with files saving when disable_saving is True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_and_create_subdir</span><span class="p">(</span><span class="n">_DEFAULT_SUBDIR_FILE</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">code_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The directory for saving codes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_and_create_subdir</span><span class="p">(</span><span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">invoke_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The directory for saving api invocations.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_and_create_subdir</span><span class="p">(</span><span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileManager.get_instance">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.get_instance">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileManager&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the singleton instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;AgentScope hasn&#39;t been initialized. Please call &quot;</span>
+                <span class="s2">&quot;`agentscope.init` function first.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
+
+
+<div class="viewcode-block" id="FileManager.save_api_invocation">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_api_invocation">[文档]</a>
+    <span class="k">def</span> <span class="nf">save_api_invocation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save api invocation locally.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_api_invoke</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">_generate_random_code</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span>
+            <span class="n">path_save</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invoke_dir</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_save</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FileManager.save_python_code">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_python_code">[文档]</a>
+    <span class="k">def</span> <span class="nf">save_python_code</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the code locally.&quot;&quot;&quot;</span>
+        <span class="c1"># Copy python file in os.path.curdir into runtime directory</span>
+        <span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+                <span class="n">file_abs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">file_abs</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code_dir</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="FileManager.save_image">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_image">[文档]</a>
+    <span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">],</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save image file locally, and return the local image path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image (`Union[str, np.ndarray]`):</span>
+<span class="sd">                The image url, or the image array.</span>
+<span class="sd">            filename (`Optional[str]`):</span>
+<span class="sd">                The filename of the image. If not specified, a random filename</span>
+<span class="sd">                will be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">_DEFAULT_IMAGE_NAME</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">_get_timestamp</span><span class="p">(</span>
+                    <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">_generate_random_code</span><span class="p">(),</span>
+            <span class="p">)</span>
+
+        <span class="n">path_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># download the image from url</span>
+            <span class="n">_download_file</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">path_file</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="c1"># save image via PIL</span>
+            <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path_file</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="c1"># save image via bytes</span>
+            <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image</span><span class="p">))</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path_file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported image type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Must be str, np.ndarray, or bytes.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">path_file</span></div>
+
+
+<div class="viewcode-block" id="FileManager.save_file">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_file">[文档]</a>
+    <span class="k">def</span> <span class="nf">save_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">generator</span><span class="p">:</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save file locally from a binary generator, and return the local</span>
+<span class="sd">        file path.</span>
+
+<span class="sd">        Note we don&#39;t block this function when `self.disable_saving==True`,</span>
+<span class="sd">        because in distribution mode or calling image generation model with</span>
+<span class="sd">        `save_local == True`, we still have to save files locally. However, we</span>
+<span class="sd">        save them in &quot;./&quot; instead.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            generator (`Generator[bytes, None, None]`):</span>
+<span class="sd">                The generator of the binary file content.</span>
+<span class="sd">            filename (`str`):</span>
+<span class="sd">                The filename of the file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `str`: The local file path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">generator</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">path_file</span></div>
+
+
+<div class="viewcode-block" id="FileManager.save_runtime_information">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_runtime_information">[文档]</a>
+    <span class="k">def</span> <span class="nf">save_runtime_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runtime_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the runtime information locally.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The run directory is not specified. Please set &quot;</span>
+                <span class="s2">&quot;`disable_saving` to `False` and provide a valid `save_dir` &quot;</span>
+                <span class="s2">&quot;in `agentscope.init()`.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
+                <span class="n">_DEFAULT_CFG_NAME</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">runtime_info</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileManager.cache_text_embedding">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.cache_text_embedding">[文档]</a>
+    <span class="k">def</span> <span class="nf">cache_text_embedding</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">embedding</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cache the text embedding locally.&quot;&quot;&quot;</span>
+        <span class="n">record_hash</span> <span class="o">=</span> <span class="n">_get_text_embedding_record_hash</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span>
+            <span class="n">embedding_model</span><span class="p">,</span>
+            <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Save the embedding to the cache directory</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embedding_cache_dir</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">record_hash</span><span class="si">}</span><span class="s2">.npy&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">embedding</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileManager.fetch_cached_text_embedding">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.fetch_cached_text_embedding">[文档]</a>
+    <span class="k">def</span> <span class="nf">fetch_cached_text_embedding</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch the text embedding from the cache.&quot;&quot;&quot;</span>
+        <span class="n">record_hash</span> <span class="o">=</span> <span class="n">_get_text_embedding_record_hash</span><span class="p">(</span>
+            <span class="n">text</span><span class="p">,</span>
+            <span class="n">embedding_model</span><span class="p">,</span>
+            <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">embedding_cache_dir</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">record_hash</span><span class="si">}</span><span class="s2">.npy&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FileManager.state_dict">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.state_dict">[文档]</a>
+    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize the configuration into a dict.&quot;&quot;&quot;</span>
+        <span class="n">serialized_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serialized_attrs</span><span class="p">:</span>
+            <span class="n">serialized_data</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">serialized_data</span></div>
+
+
+<div class="viewcode-block" id="FileManager.load_dict">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.load_dict">[文档]</a>
+    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the configuration from a dict.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serialized_attrs</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> not found in data.&quot;</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="FileManager.is_initialized">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.is_initialized">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">is_initialized</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the file manager has been initialized.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FileManager.flush">
+<a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.flush">[文档]</a>
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush the file manager.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_log</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_api_invoke</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="o">=</span> <span class="kc">None</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
@@ -98,6 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentServerNotAliveError"><code class="docutils literal notranslate"><span class="pre">AgentServerNotAliveError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentCreationError"><code class="docutils literal notranslate"><span class="pre">AgentCreationError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentCallError"><code class="docutils literal notranslate"><span class="pre">AgentCallError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.QuotaExceededError"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
@@ -330,6 +331,24 @@ studio.</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">AgentCallError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#AgentCallError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentCallError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.exception.AgentServerError" title="agentscope.exception.AgentServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentServerError</span></code></a></p>
 <p>The exception class for failing to call agent.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.QuotaExceededError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">QuotaExceededError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#QuotaExceededError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.exception.QuotaExceededError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>An Exception used to indicate that a certain metric exceeds quota</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.QuotaExceededError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#QuotaExceededError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.exception.QuotaExceededError.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init a QuotaExceedError instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<cite>str</cite>) – name of the metric which exceeds quota.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

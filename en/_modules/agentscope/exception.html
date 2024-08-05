@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -338,6 +338,32 @@
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentCallError">[docs]</a>
 <span class="k">class</span> <span class="nc">AgentCallError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for failing to call agent.&quot;&quot;&quot;</span></div>
+
+
+
+<span class="c1"># - Monitor related Exceptions</span>
+
+
+<div class="viewcode-block" id="QuotaExceededError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.QuotaExceededError">[docs]</a>
+<span class="k">class</span> <span class="nc">QuotaExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An Exception used to indicate that a certain metric exceeds quota&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="QuotaExceededError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.QuotaExceededError.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a QuotaExceedError instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`): name of the metric which exceeds quota.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Metric [</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">] exceeds quota.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
 

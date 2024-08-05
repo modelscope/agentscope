@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -122,10 +122,9 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">load_model_by_config_name</span>
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span> <span class="nn">.llama_index_knowledge</span> <span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
-
+<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 
 <span class="n">DEFAULT_INDEX_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;knowledge_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -243,11 +242,13 @@
                 <span class="n">loader_config</span><span class="p">[</span><span class="s2">&quot;load_data&quot;</span><span class="p">][</span><span class="s2">&quot;loader&quot;</span><span class="p">][</span><span class="s2">&quot;init_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loader_init</span>
                 <span class="n">knowledge_config</span><span class="p">[</span><span class="s2">&quot;data_processing&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loader_config</span><span class="p">)</span>
 
+        <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">[</span><span class="n">knowledge_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">LlamaIndexKnowledge</span><span class="p">(</span>
             <span class="n">knowledge_id</span><span class="o">=</span><span class="n">knowledge_id</span><span class="p">,</span>
-            <span class="n">emb_model</span><span class="o">=</span><span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">emb_model_name</span><span class="p">),</span>
+            <span class="n">emb_model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">emb_model_name</span><span class="p">),</span>
             <span class="n">knowledge_config</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">model_name</span>
             <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>

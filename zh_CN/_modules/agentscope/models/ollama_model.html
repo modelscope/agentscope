@@ -68,14 +68,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/209-gui.html">AgentScope Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/105-logging.html">日志</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/207-monitor.html">监控</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -105,7 +105,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
-          <li class="breadcrumb-item"><a href="../models.html">agentscope.models</a></li>
       <li class="breadcrumb-item active">agentscope.models.ollama_model</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -190,9 +189,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">ollama</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">ollama</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
 
 
@@ -200,7 +197,30 @@
 <div class="viewcode-block" id="OllamaChatWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">OllamaChatWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama chat API.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama chat API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;model&quot;: &quot;registry.ollama.ai/library/llama3:latest&quot;,</span>
+<span class="sd">            &quot;created_at&quot;: &quot;2023-12-12T14:13:43.416799Z&quot;,</span>
+<span class="sd">            &quot;message&quot;: {</span>
+<span class="sd">                &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                &quot;content&quot;: &quot;Hello! How are you today?&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;done&quot;: true,</span>
+<span class="sd">            &quot;total_duration&quot;: 5191566416,</span>
+<span class="sd">            &quot;load_duration&quot;: 2154458,</span>
+<span class="sd">            &quot;prompt_eval_count&quot;: 26,</span>
+<span class="sd">            &quot;prompt_eval_duration&quot;: 383809000,</span>
+<span class="sd">            &quot;eval_count&quot;: 298,</span>
+<span class="sd">            &quot;eval_duration&quot;: 4799921000</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_chat&quot;</span>
 
@@ -354,35 +374,15 @@
         <span class="n">prompt_eval_count</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">eval_count</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">prompt_eval_count</span><span class="p">,</span>
             <span class="n">completion_tokens</span><span class="o">=</span><span class="n">eval_count</span><span class="p">,</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">prompt_eval_count</span> <span class="o">+</span> <span class="n">eval_count</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
             <span class="n">arguments</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register metrics to the monitor.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;tokens&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OllamaChatWrapper.format">
@@ -501,7 +501,22 @@
 <div class="viewcode-block" id="OllamaEmbeddingWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaEmbeddingWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">OllamaEmbeddingWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama embedding API.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama embedding API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;model&quot;: &quot;all-minilm&quot;,</span>
+<span class="sd">            &quot;embeddings&quot;: [[</span>
+<span class="sd">                0.010071029, -0.0017594862, 0.05007221, 0.04692972,</span>
+<span class="sd">                0.008599704, 0.105441414, -0.025878139, 0.12958129,</span>
+<span class="sd">            ]]</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_embedding&quot;</span>
 
@@ -562,19 +577,14 @@
         <span class="p">)</span>
 
         <span class="c1"># step4: monitor the response</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span><span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
             <span class="n">embedding</span><span class="o">=</span><span class="p">[</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]],</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register metrics to the monitor.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OllamaEmbeddingWrapper.format">
@@ -595,7 +605,28 @@
 <div class="viewcode-block" id="OllamaGenerationWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaGenerationWrapper">[文档]</a>
 <span class="k">class</span> <span class="nc">OllamaGenerationWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama generation API.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama generation API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - From</span>
+<span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;model&quot;: &quot;llama3&quot;,</span>
+<span class="sd">            &quot;created_at&quot;: &quot;2023-08-04T19:22:45.499127Z&quot;,</span>
+<span class="sd">            &quot;response&quot;: &quot;The sky is blue because it is the color of the sky.&quot;,</span>
+<span class="sd">            &quot;done&quot;: true,</span>
+<span class="sd">            &quot;context&quot;: [1, 2, 3],</span>
+<span class="sd">            &quot;total_duration&quot;: 5043500667,</span>
+<span class="sd">            &quot;load_duration&quot;: 5025959,</span>
+<span class="sd">            &quot;prompt_eval_count&quot;: 26,</span>
+<span class="sd">            &quot;prompt_eval_duration&quot;: 325953000,</span>
+<span class="sd">            &quot;eval_count&quot;: 290,</span>
+<span class="sd">            &quot;eval_duration&quot;: 4709213000</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_generate&quot;</span>
 
@@ -656,37 +687,16 @@
         <span class="p">)</span>
 
         <span class="c1"># step4: monitor the response</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
             <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
             <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">],</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register metrics to the monitor.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;tokens&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="OllamaGenerationWrapper.format">

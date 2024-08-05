@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -645,6 +645,14 @@
     <span class="n">hash_value</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">target_str</span><span class="p">)</span>
     <span class="n">index</span> <span class="o">=</span> <span class="n">hash_value</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_marks</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">color_marks</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_generate_new_runtime_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a new random runtime id.&quot;&quot;&quot;</span>
+    <span class="n">_RUNTIME_ID_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;run_%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S_</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">_get_timestamp</span><span class="p">(</span><span class="n">_RUNTIME_ID_FORMAT</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">_generate_random_code</span><span class="p">(</span><span class="n">uppercase</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="p">)</span>
 </pre></div>
 
            </div>

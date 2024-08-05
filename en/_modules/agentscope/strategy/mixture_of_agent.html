@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -122,11 +122,9 @@
 <span class="kn">import</span> <span class="nn">concurrent.futures</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ModelWrapperBase</span><span class="p">,</span>
-    <span class="n">load_model_by_config_name</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 
 
 <span class="c1"># Referenced from the project [MoA](https://github.com/togethercomputer/MoA)</span>
@@ -176,9 +174,13 @@
 <span class="sd">            show_internal (`bool`):</span>
 <span class="sd">                Whether to show the internal process of MoA.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+
         <span class="c1"># init main_model</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main_model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">main_model</span> <span class="o">=</span> <span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">main_model</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
+                <span class="n">main_model</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">main_model</span><span class="p">,</span> <span class="n">ModelWrapperBase</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">main_model</span> <span class="o">=</span> <span class="n">main_model</span>
         <span class="k">else</span><span class="p">:</span>
@@ -191,7 +193,7 @@
         <span class="k">for</span> <span class="n">ref_model</span> <span class="ow">in</span> <span class="n">reference_models</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reference_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">ref_model</span><span class="p">),</span>
+                    <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">ref_model</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_model</span><span class="p">,</span> <span class="n">ModelWrapperBase</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reference_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_model</span><span class="p">)</span>

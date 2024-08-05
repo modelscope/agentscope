@@ -95,14 +95,14 @@
 <li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="210-rag.html">简要介绍AgentScope中的RAG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="105-logging.html">日志</a></li>
-<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="207-monitor.html">监控</a></li>
 <li class="toctree-l1"><a class="reference internal" href="104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory package</a></li>
@@ -452,7 +452,7 @@ D--&gt;F
 通过将每个Agent实现为一个Actor， Agent将自动等待其输入Msg准备好后开始执行<code class="docutils literal notranslate"><span class="pre">reply</span></code>方法，并且如果多个 Agent 的输入消息准备就绪，它们也可以同时自动执行<code class="docutils literal notranslate"><span class="pre">reply</span></code>，这避免了复杂的并行控制。</p>
 <section id="placeholder">
 <h4>Placeholder<a class="headerlink" href="#placeholder" title="Link to this heading"></a></h4>
-<p>同时，为了支持中心化的应用编排，AgentScope 引入了 <a class="reference internal" href="../agentscope.message.html#agentscope.message.PlaceholderMessage" title="agentscope.message.PlaceholderMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Placeholder</span></code></a> 这一概念。
+<p>同时，为了支持中心化的应用编排，AgentScope 引入了 <code class="xref py py-class docutils literal notranslate"><span class="pre">Placeholder</span></code> 这一概念。
 Placeholder 可以理解为消息的指针，指向消息真正产生的位置，其对外接口与传统模式中的消息完全一致，因此可以按照传统中心化的消息使用方式编排应用。
 Placeholder 内部包含了该消息产生方的联络方法，可以通过网络获取到被指向消息的真正值。
 每个分布式部署的 Agent 在收到其他 Agent 发来的消息时都会立即返回一个 Placeholder，从而避免阻塞请求发起方。

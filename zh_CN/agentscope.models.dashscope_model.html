@@ -25,7 +25,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="agentscope.models.gemini_model module" href="agentscope.models.gemini_model.html" />
-    <link rel="prev" title="agentscope.models.config module" href="agentscope.models.config.html" /> 
+    <link rel="prev" title="agentscope.models package" href="agentscope.models.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,17 +69,16 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="agentscope.models.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="agentscope.models.config.html">agentscope.models.config module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.models.dashscope_model module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a></li>
@@ -167,7 +166,7 @@ e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeWrapperBase.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeWrapperBase.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeWrapperBase.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string or dict into the format that the model
 API required.</p>
 </dd></dl>
@@ -180,6 +179,49 @@ API required.</p>
 <dd><p>基类：<a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope’s chat API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details">https://help.aliyun.com/zh/dashscope/developer-reference/api-details</a></p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw">https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw</a></p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200,
+“request_id”: “a75a1b22-e512-957d-891b-37db858ae738”,
+“code”: “”,
+“message”: “”,
+“output”: {</p>
+<blockquote>
+<div><p>“text”: null,
+“finish_reason”: null,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“finish_reason”: “stop”,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: “xxx”</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“input_tokens”: 25,
+“output_tokens”: 77,
+“total_tokens”: 102</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_chat'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -213,7 +255,7 @@ e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for DashScope Chat API.</p>
 <p>In this format function, the input messages are formatted into a
 single system messages with format “{name}: {content}” for each
@@ -280,6 +322,53 @@ In distribution, placeholder is also allowed.</p>
 <dd><p>基类：<a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope Image Synthesis API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1">https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</a></p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF">https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF</a></p>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200,
+“request_id”: “b54ffeb8-6212-9dac-808c-b3771cba3788”,
+“code”: null,
+“message”: “”,
+“output”: {</p>
+<blockquote>
+<div><p>“task_id”: “996523eb-034d-459b-ac88-b340b95007a4”,
+“task_status”: “SUCCEEDED”,
+“results”: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“url”: “RESULT_URL1”</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“url”: “RESULT_URL2”</p>
+</div></blockquote>
+<p>},</p>
+</div></blockquote>
+<p>],
+“task_metrics”: {</p>
+<blockquote>
+<div><p>“TOTAL”: 2,
+“SUCCEEDED”: 2,
+“FAILED”: 0</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“image_count”: 2</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_image_synthesis'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.model_type" title="Link to this definition"></a></dt>
@@ -306,6 +395,44 @@ class in model configuration.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.dashscope_model.</span></span><span class="sig-name descname"><span class="pre">DashScopeTextEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeTextEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper" title="Link to this definition"></a></dt>
 <dd><p>基类：<a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope Text Embedding API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3">https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3</a></p>
+<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200, // 200 indicate success otherwise failed.
+“request_id”: “fd564688-43f7-9595-b986”, // The request id.
+“code”: “”, // If failed, the error code.
+“message”: “”, // If failed, the error message.
+“output”: {</p>
+<blockquote>
+<div><dl>
+<dt>“embeddings”: [ // embeddings</dt><dd><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“embedding”: [ // one embedding output</dt><dd><p>-3.8450357913970947, …,</p>
+</dd>
+</dl>
+<p>],
+“text_index”: 0 // the input index.</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“total_tokens”: 3 // the request tokens.</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_text_embedding'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -333,6 +460,57 @@ class in model configuration.</p>
 <dd><p>基类：<a class="reference internal" href="#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope Multimodal API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api">https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</a></p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN">https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN</a></p>
+<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200,
+“request_id”: “a0dc436c-2ee7-93e0-9667-c462009dec4d”,
+“code”: “”,
+“message”: “”,
+“output”: {</p>
+<blockquote>
+<div><p>“text”: null,
+“finish_reason”: null,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“finish_reason”: “stop”,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“text”: “这张图片显…”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“input_tokens”: 1277,
+“output_tokens”: 81,
+“image_tokens”: 1247</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_multimodal'</span></em><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.model_type" title="Link to this definition"></a></dt>
@@ -342,7 +520,7 @@ class in model configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for DashScope Multimodal API.</p>
 <p>The multimodal API has the following requirements:</p>
 <blockquote>
@@ -494,7 +672,7 @@ and value as the url. Only “image” and “audio” are supported.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
-        <a href="agentscope.models.config.html" class="btn btn-neutral float-left" title="agentscope.models.config module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.models.html" class="btn btn-neutral float-left" title="agentscope.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="agentscope.models.gemini_model.html" class="btn btn-neutral float-right" title="agentscope.models.gemini_model module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

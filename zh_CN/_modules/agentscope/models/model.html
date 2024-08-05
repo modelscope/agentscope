@@ -68,14 +68,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/209-gui.html">AgentScope Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/105-logging.html">日志</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/207-monitor.html">监控</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorial/contribute.html">参与贡献</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -105,7 +105,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
-          <li class="breadcrumb-item"><a href="../models.html">agentscope.models</a></li>
       <li class="breadcrumb-item active">agentscope.models.model</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -180,14 +179,12 @@
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.utils</span> <span class="kn">import</span> <span class="n">QuotaExceededError</span>
 <span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">ResponseParsingError</span>
 
-<span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
+<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">MonitorManager</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">MonitorFactory</span>
-<span class="kn">from</span> <span class="nn">..utils.monitor</span> <span class="kn">import</span> <span class="n">get_full_name</span>
 <span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_get_timestamp</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_MAX_RETRIES</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RETRY_INTERVAL</span>
@@ -317,7 +314,7 @@
 <span class="sd">                The id of the model, which is used to extract configuration</span>
 <span class="sd">                from the config file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">config_name</span> <span class="o">=</span> <span class="n">config_name</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialize model by configuration [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
@@ -381,60 +378,10 @@
             <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="n">file_manager</span><span class="o">.</span><span class="n">save_api_invocation</span><span class="p">(</span>
+        <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">save_api_invocation</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="n">model_class</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">invocation_record</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_register_budget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">budget</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the budget of the model by model_name.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register_budget</span><span class="p">(</span>
-            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
-            <span class="n">value</span><span class="o">=</span><span class="n">budget</span><span class="p">,</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register metrics to the monitor.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the class name and model name as prefix to the metric name.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            metric_name (`str`):</span>
-<span class="sd">                The metric name.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `str`: Metric name of this wrapper.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">get_full_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">metric_name</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">get_full_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">metric_name</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ModelWrapperBase.update_monitor">
-<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.update_monitor">[文档]</a>
-    <span class="k">def</span> <span class="nf">update_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the monitor with the given values.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            kwargs (`dict`):</span>
-<span class="sd">                The values to be updated to the monitor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;model_name&quot;</span><span class="p">):</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="n">kwargs</span><span class="p">,</span>
-                <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="n">QuotaExceededError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
-</div>
+        <span class="p">)</span></div>
 
 </pre></div>
 

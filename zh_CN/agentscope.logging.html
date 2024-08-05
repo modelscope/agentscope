@@ -24,7 +24,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
-    <link rel="next" title="agentscope.message module" href="agentscope.message.html" />
+    <link rel="next" title="agentscope.msghub module" href="agentscope.msghub.html" />
     <link rel="prev" title="agentscope.file_manager module" href="agentscope.file_manager.html" /> 
 </head>
 
@@ -69,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
 </ul>
@@ -88,14 +88,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.logging.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.msghub.html">agentscope.msghub module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.html#module-agentscope">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
@@ -140,7 +139,7 @@
 <p>Logging utilities.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.logging.log_stream_msg">
-<span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_stream_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_stream_msg"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.logging.log_stream_msg" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_stream_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_stream_msg"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.logging.log_stream_msg" title="Link to this definition"></a></dt>
 <dd><p>Print the message in different streams, including terminal, studio, and
 gradio if it is active.</p>
 <dl class="field-list simple">
@@ -156,7 +155,7 @@ Otherwise, False.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="agentscope.logging.log_msg">
-<span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_gradio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_msg"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.logging.log_msg" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">agentscope.logging.</span></span><span class="sig-name descname"><span class="pre">log_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_gradio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/logging.html#log_msg"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.logging.log_msg" title="Link to this definition"></a></dt>
 <dd><p>Print the message and save it into files. Note the message should be a
 Msg object.</p>
 </dd></dl>
@@ -200,7 +199,7 @@ Msg object.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
         <a href="agentscope.file_manager.html" class="btn btn-neutral float-left" title="agentscope.file_manager module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
-        <a href="agentscope.message.html" class="btn btn-neutral float-right" title="agentscope.message module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.msghub.html" class="btn btn-neutral float-right" title="agentscope.msghub module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

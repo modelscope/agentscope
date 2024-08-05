@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -128,8 +128,8 @@
     <span class="n">DictDialogAgent</span><span class="p">,</span>
     <span class="n">ReActAgent</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">read_model_configs</span>
 <span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">SequentialPipeline</span><span class="p">,</span>
     <span class="n">ForLoopPipeline</span><span class="p">,</span>
@@ -248,7 +248,7 @@
         <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
-        <span class="n">read_model_configs</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">])</span></div>
+        <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">load_model_configs</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="ModelNode.compile">

@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -120,7 +120,7 @@
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -139,11 +139,11 @@
     <span class="n">RpcAgentStub</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">RpcError</span> <span class="o">=</span> <span class="ne">ImportError</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
-<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">generate_id_from_seed</span>
-<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">AgentServerNotAliveError</span>
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
-<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">AgentCallError</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">generate_id_from_seed</span>
+<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">AgentServerNotAliveError</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
+<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">AgentCallError</span>
+<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
 
 
 <div class="viewcode-block" id="RpcAgentClient">
@@ -485,18 +485,21 @@
 <span class="sd">            `str`: The path of the downloaded file. Note that it is the path</span>
 <span class="sd">            on the local machine.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">local_file_name</span> <span class="o">=</span> <span class="p">(</span>
+
+        <span class="n">file_manager</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+
+        <span class="n">local_filename</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">generate_id_from_seed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_file</span><span class="p">,</span> <span class="n">local_file_name</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
-            <span class="n">stub</span> <span class="o">=</span> <span class="n">RpcAgentStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">resp</span> <span class="ow">in</span> <span class="n">stub</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span>
+
+        <span class="k">def</span> <span class="nf">_generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">resp</span> <span class="ow">in</span> <span class="n">RpcAgentStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span>
                     <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">path</span><span class="p">),</span>
                 <span class="p">):</span>
-                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">local_path</span></div>
+                    <span class="k">yield</span> <span class="n">resp</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">return</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">save_file</span><span class="p">(</span><span class="n">_generator</span><span class="p">(),</span> <span class="n">local_filename</span><span class="p">)</span></div>
 </div>
 
 
@@ -504,7 +507,7 @@
 <div class="viewcode-block" id="ResponseStub">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.ResponseStub">[docs]</a>
 <span class="k">class</span> <span class="nc">ResponseStub</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stub used to save the response of an rpc call in a sub-thread.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A stub used to save the response of a rpc call in a sub-thread.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ResponseStub.__init__">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_client.html#agentscope.rpc.ResponseStub.__init__">[docs]</a>

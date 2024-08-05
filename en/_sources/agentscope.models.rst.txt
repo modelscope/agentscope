@@ -7,7 +7,6 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   agentscope.models.config
    agentscope.models.dashscope_model
    agentscope.models.gemini_model
    agentscope.models.litellm_model

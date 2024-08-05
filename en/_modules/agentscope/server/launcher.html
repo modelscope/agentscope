@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -141,10 +141,11 @@
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.server.servicer</span> <span class="kn">import</span> <span class="n">AgentServerServicer</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">check_port</span><span class="p">,</span> <span class="n">generate_id_from_seed</span>
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
+<span class="kn">from</span> <span class="nn">..server.servicer</span> <span class="kn">import</span> <span class="n">AgentServerServicer</span>
+<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
+<span class="kn">from</span> <span class="nn">..agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">check_port</span><span class="p">,</span> <span class="n">generate_id_from_seed</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
 
 
 <span class="k">def</span> <span class="nf">_setup_agent_server</span><span class="p">(</span>
@@ -256,10 +257,10 @@
 <span class="sd">            A list of customized agent classes that are not in</span>
 <span class="sd">            `agentscope.agents`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">init_process</span>
 
     <span class="k">if</span> <span class="n">init_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">init_process</span><span class="p">(</span><span class="o">**</span><span class="n">init_settings</span><span class="p">)</span>
+        <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">init_settings</span><span class="p">)</span>
+
     <span class="n">servicer</span> <span class="o">=</span> <span class="n">AgentServerServicer</span><span class="p">(</span>
         <span class="n">stop_event</span><span class="o">=</span><span class="n">stop_event</span><span class="p">,</span>
         <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
@@ -437,7 +438,7 @@
 
     <span class="k">def</span> <span class="nf">_launch_in_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch an agent server in sub-process.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">agentscope._init</span> <span class="kn">import</span> <span class="n">_INIT_SETTINGS</span>
+        <span class="n">init_settings</span> <span class="o">=</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span><span class="p">,</span> <span class="n">child_con</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">()</span>
         <span class="n">start_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
@@ -447,7 +448,7 @@
                 <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
                 <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
                 <span class="s2">&quot;server_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span><span class="p">,</span>
-                <span class="s2">&quot;init_settings&quot;</span><span class="p">:</span> <span class="n">_INIT_SETTINGS</span><span class="p">,</span>
+                <span class="s2">&quot;init_settings&quot;</span><span class="p">:</span> <span class="n">init_settings</span><span class="p">,</span>
                 <span class="s2">&quot;start_event&quot;</span><span class="p">:</span> <span class="n">start_event</span><span class="p">,</span>
                 <span class="s2">&quot;stop_event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="p">,</span>
                 <span class="s2">&quot;pipe&quot;</span><span class="p">:</span> <span class="n">child_con</span><span class="p">,</span>

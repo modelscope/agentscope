@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -117,22 +117,19 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The init function for the package.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">agentscope</span> <span class="kn">import</span> <span class="n">agents</span>
 <span class="kn">from</span> <span class="nn">.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
-<span class="kn">from</span> <span class="nn">.file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
-<span class="kn">from</span> <span class="nn">.logging</span> <span class="kn">import</span> <span class="n">LOG_LEVEL</span><span class="p">,</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">.utils.monitor</span> <span class="kn">import</span> <span class="n">MonitorFactory</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">read_model_configs</span>
-<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_DIR</span>
+<span class="kn">from</span> <span class="nn">.logging</span> <span class="kn">import</span> <span class="n">LOG_LEVEL</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SAVE_DIR</span>
 <span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_LOG_LEVEL</span>
-<span class="kn">from</span> <span class="nn">.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_CACHE_DIR</span>
+<span class="kn">from</span> <span class="nn">.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
 
-<span class="c1"># init setting</span>
-<span class="n">_INIT_SETTINGS</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1"># init the singleton class by default settings to avoid reinit in subprocess</span>
+<span class="c1"># especially in spawn mode, which will copy the object from the parent process</span>
+<span class="c1"># to the child process rather than re-import the module (fork mode)</span>
+<span class="n">ASManager</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="init">
@@ -141,10 +138,12 @@
     <span class="n">model_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_DIR</span><span class="p">,</span>
+    <span class="n">disable_saving</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_SAVE_DIR</span><span class="p">,</span>
     <span class="n">save_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">save_code</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">save_api_invoke</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_CACHE_DIR</span><span class="p">,</span>
     <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">logger_level</span><span class="p">:</span> <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">_DEFAULT_LOG_LEVEL</span><span class="p">,</span>
     <span class="n">runtime_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -162,6 +161,9 @@
 <span class="sd">            The project name, which is used to identify the project.</span>
 <span class="sd">        name (`Optional[str]`, defaults to `None`):</span>
 <span class="sd">            The name for runtime, which is used to identify this runtime.</span>
+<span class="sd">        disable_saving (`bool`, defaults to `False`):</span>
+<span class="sd">            Whether to disable saving files. If `True`, this will override</span>
+<span class="sd">            the `save_log`, `save_code`, and `save_api_invoke` parameters.</span>
 <span class="sd">        runtime_id (`Optional[str]`, defaults to `None`):</span>
 <span class="sd">            The id for runtime, which is used to identify this runtime. Use</span>
 <span class="sd">            `None` will generate a random id.</span>
@@ -176,6 +178,10 @@
 <span class="sd">        save_api_invoke (`bool`, defaults to `False`):</span>
 <span class="sd">            Whether to save api invocations locally, including model and web</span>
 <span class="sd">            search invocation.</span>
+<span class="sd">        cache_dir (`str`):</span>
+<span class="sd">            The directory to cache files. In Linux/Mac, the dir defaults to</span>
+<span class="sd">        `~/.cache/agentscope`. In Windows, the dir defaults to</span>
+<span class="sd">        `C:\\users\\&lt;username&gt;\\.cache\\agentscope`.</span>
 <span class="sd">        use_monitor (`bool`, defaults to `True`):</span>
 <span class="sd">            Whether to activate the monitor.</span>
 <span class="sd">        logger_level (`LOG_LEVEL`, defaults to `&quot;INFO&quot;`):</span>
@@ -188,38 +194,22 @@
 <span class="sd">        studio_url (`Optional[str]`, defaults to `None`):</span>
 <span class="sd">            The url of the agentscope studio.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">init_process</span><span class="p">(</span>
+    <span class="c1"># Init the runtime</span>
+    <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
         <span class="n">model_configs</span><span class="o">=</span><span class="n">model_configs</span><span class="p">,</span>
         <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">runtime_id</span><span class="o">=</span><span class="n">runtime_id</span><span class="p">,</span>
+        <span class="n">disable_saving</span><span class="o">=</span><span class="n">disable_saving</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span>
-        <span class="n">save_api_invoke</span><span class="o">=</span><span class="n">save_api_invoke</span><span class="p">,</span>
         <span class="n">save_log</span><span class="o">=</span><span class="n">save_log</span><span class="p">,</span>
+        <span class="n">save_code</span><span class="o">=</span><span class="n">save_code</span><span class="p">,</span>
+        <span class="n">save_api_invoke</span><span class="o">=</span><span class="n">save_api_invoke</span><span class="p">,</span>
+        <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">,</span>
         <span class="n">use_monitor</span><span class="o">=</span><span class="n">use_monitor</span><span class="p">,</span>
         <span class="n">logger_level</span><span class="o">=</span><span class="n">logger_level</span><span class="p">,</span>
+        <span class="n">run_id</span><span class="o">=</span><span class="n">runtime_id</span><span class="p">,</span>
         <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="c1"># save init settings for subprocess</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;model_configs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_configs</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_runtime</span><span class="o">.</span><span class="n">project</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_runtime</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;runtime_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;save_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_dir</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;save_api_invoke&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_api_invoke</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;save_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_log</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;logger_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logger_level</span>
-    <span class="n">_INIT_SETTINGS</span><span class="p">[</span><span class="s2">&quot;use_monitor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_monitor</span>
-
-    <span class="c1"># Save code if needed</span>
-    <span class="k">if</span> <span class="n">save_code</span><span class="p">:</span>
-        <span class="c1"># Copy python file in os.path.curdir into runtime directory</span>
-        <span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
-                <span class="n">file_abs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">file_abs</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_code</span><span class="p">))</span>
 
     <span class="c1"># Load config and init agent by configs</span>
     <span class="k">if</span> <span class="n">agent_configs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -243,84 +233,20 @@
 
 
 
-<span class="k">def</span> <span class="nf">init_process</span><span class="p">(</span>
-    <span class="n">model_configs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">runtime_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_DIR</span><span class="p">,</span>
-    <span class="n">save_api_invoke</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">save_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">logger_level</span><span class="p">:</span> <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">_DEFAULT_LOG_LEVEL</span><span class="p">,</span>
-    <span class="n">studio_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An entry to initialize the package in a process.</span>
+<div class="viewcode-block" id="state_dict">
+<a class="viewcode-back" href="../../agentscope.html#agentscope.state_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">state_dict</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of agentscope.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span></div>
 
-<span class="sd">    Args:</span>
-<span class="sd">        project (`Optional[str]`, defaults to `None`):</span>
-<span class="sd">            The project name, which is used to identify the project.</span>
-<span class="sd">        name (`Optional[str]`, defaults to `None`):</span>
-<span class="sd">            The name for runtime, which is used to identify this runtime.</span>
-<span class="sd">        runtime_id (`Optional[str]`, defaults to `None`):</span>
-<span class="sd">            The id for runtime, which is used to identify this runtime.</span>
-<span class="sd">        save_dir (`str`, defaults to `./runs`):</span>
-<span class="sd">            The directory to save logs, files, codes, and api invocations.</span>
-<span class="sd">            If `dir` is `None`, when saving logs, files, codes, and api</span>
-<span class="sd">            invocations, the default directory `./runs` will be created.</span>
-<span class="sd">        save_api_invoke (`bool`, defaults to `False`):</span>
-<span class="sd">            Whether to save api invocations locally, including model and web</span>
-<span class="sd">            search invocation.</span>
-<span class="sd">        model_configs (`Optional[Sequence]`, defaults to `None`):</span>
-<span class="sd">            A sequence of pre-init model configs.</span>
-<span class="sd">        save_log (`bool`, defaults to `False`):</span>
-<span class="sd">            Whether to save logs locally.</span>
-<span class="sd">        use_monitor (`bool`, defaults to `True`):</span>
-<span class="sd">            Whether to activate the monitor.</span>
-<span class="sd">        logger_level (`LOG_LEVEL`, defaults to `&quot;INFO&quot;`):</span>
-<span class="sd">            The logging level of logger.</span>
-<span class="sd">        studio_url (`Optional[str]`, defaults to `None`):</span>
-<span class="sd">            The url of the agentscope studio.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Init the runtime</span>
-    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_runtime</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
 
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_runtime</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
-    <span class="k">if</span> <span class="n">runtime_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span> <span class="o">=</span> <span class="n">runtime_id</span>
+<div class="viewcode-block" id="print_llm_usage">
+<a class="viewcode-back" href="../../agentscope.html#agentscope.print_llm_usage">[docs]</a>
+<span class="k">def</span> <span class="nf">print_llm_usage</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the usage of LLM.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">print_llm_usage</span><span class="p">()</span></div>
 
-    <span class="c1"># Init file manager and save configs by default</span>
-    <span class="n">file_manager</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">save_api_invoke</span><span class="p">)</span>
-
-    <span class="c1"># Init logger</span>
-    <span class="n">dir_log</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_log</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_log</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="n">setup_logger</span><span class="p">(</span><span class="n">dir_log</span><span class="p">,</span> <span class="n">logger_level</span><span class="p">)</span>
-
-    <span class="c1"># Load model configs if needed</span>
-    <span class="k">if</span> <span class="n">model_configs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">read_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
-
-    <span class="c1"># Init monitor</span>
-    <span class="n">_</span> <span class="o">=</span> <span class="n">MonitorFactory</span><span class="o">.</span><span class="n">get_monitor</span><span class="p">(</span>
-        <span class="n">db_path</span><span class="o">=</span><span class="n">file_manager</span><span class="o">.</span><span class="n">path_db</span><span class="p">,</span>
-        <span class="n">impl_type</span><span class="o">=</span><span class="s2">&quot;sqlite&quot;</span> <span class="k">if</span> <span class="n">use_monitor</span> <span class="k">else</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Init studio client, which will push messages to web ui and fetch user</span>
-    <span class="c1"># inputs from web ui</span>
-    <span class="k">if</span> <span class="n">studio_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_studio_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">)</span>
-        <span class="c1"># Register in AgentScope Studio</span>
-        <span class="n">_studio_client</span><span class="o">.</span><span class="n">register_running_instance</span><span class="p">(</span>
-            <span class="n">project</span><span class="o">=</span><span class="n">_runtime</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">_runtime</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">timestamp</span><span class="o">=</span><span class="n">_runtime</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
-            <span class="n">run_dir</span><span class="o">=</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_root</span><span class="p">,</span>
-            <span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
-        <span class="p">)</span>
 </pre></div>
 
            </div>

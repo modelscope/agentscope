@@ -2,173 +2,127 @@
 
 # Monitor
 
-In multi-agent applications, particularly those that rely on external model APIs, it's crucial to monitor the usage and cost to prevent overutilization and ensure compliance with rate limits. The `MonitorBase` class and its implementation, `SqliteMonitor`, provide a way to track and regulate the usage of such APIs in your applications. In this tutorial, you'll learn how to use them to monitor API calls.
+AgentScope supports to monitor the usage of model APIs.
+Users can disable the monitor by setting `use_monitor=False` in `agentscope.init` if they don't need this feature.
 
-## Understanding the Monitor in AgentScope
+To monitor the detailed usage, we provide two functions, `agentscope.state_dict` and `agentscope.print_llm_usage`,
+to get the current state of the monitor and print the usage of the model APIs respectively.
 
-The `MonitorBase` class serves as an interface for setting up a monitoring system that tracks various metrics, especially focusing on API usage. It defines methods that enable registration, checking, updating, and management of metrics related to API calls.
-
-Here are the key methods of `MonitorBase`:
-
-- **`register`**: Initializes a metric for tracking, such as the number of API calls made, with an optional quota to enforce limits.
-- **`exists`**: Checks whether a metric is already being tracked.
-- **`add`**: Increments the metric by a specified value, used to count each API call made.
-- **`update`**: Updates multiple metrics at once, useful for batching updates.
-- **`clear`**: Resets a metric to zero, which can be useful when the quota period resets.
-- **`remove`**: Removes a metric from monitoring.
-- **`get_value`**: Retrieves the current count for a particular metric.
-- **`get_unit`**: Fetches the unit associated with the metric (e.g., "calls").
-- **`get_quota`**: Obtains the maximum number of allowed API calls.
-- **`set_quota`**: Adjusts the quota for a metric, if the terms of API usage change.
-- **`get_metric`**: Returns detailed information about a specific metric.
-- **`get_metrics`**: Retrieves information about all tracked metrics, with optional filtering based on metric names.
-- **`register_budget`**: Sets a budget for a certain API call, which will initialize a series of metrics used to calculate the cost.
-
-## Using the Monitor
-
-### Get a Monitor Instance
-
-Get a monitor instance from `MonitorFactory` to begin monitoring, and note that multiple calls to the `get_monitor` method return the same monitor instance.
+The example code is as follows:
 
 ```python
-# make sure you have called agentscope.init(...) before
-monitor = MonitorFactory.get_monitor()
+
+import agentscope
+
+# ...
+
+# Get the current state of the monitor
+state_dict = agentscope.state_dict()
+
+# Print the usage of the model APIs
+agentscope.print_llm_usage()
 ```
 
-Currently the above code returns a `SqliteMonitor` instance, which is initialized in `agentscope.init`.
-The `SqliteMonitor` class is the default implementation of `MonitorBase` class, which is based on Sqlite3.
+An example `state_dict` is shown as follows:
 
-If you don't want to use monitor, you can set `use_monitor=False` in `agentscope.init` to disable the monitor. And in this case, the `MonitorFactory.get_monitor` method will return an instance of `DummyMonitor` which has the same interface as the `SqliteMonitor` class, but does nothing inside.
+```json
+{
+    "project": "zSZ0pO",
+    "name": "7def6u",
+    "run_id": "run_20240731-104527_7def6u",
+    "pid": 24727,
+    "timestamp": "2024-07-31 10:45:27",
+    "disable_saving": false,
+    "file": {
+        "save_log": false,
+        "save_code": false,
+        "save_api_invoke": false,
+        "base_dir": null,
+        "run_dir": "/xxx/runs/run_20240731-104527_7def6u",
+        "cache_dir": "/Users/xxx/.cache/agentscope"
+    },
+    "model": {
+        "model_configs": {}
+    },
+    "logger": {
+        "level": "INFO"
+    },
+    "studio": {
+        "active": false,
+        "studio_url": null
+    },
+    "monitor": {
+        "use_monitor": true,
+        "path_db": "/.../runs/run_20240731-104527_7def6u/agentscope.db"
+    }
+}
+```
 
-### Basic Usage
+- When calling `agentscope.print_llm_usage`, AgentScope will print model usages as follows:
 
-#### Registering API Usage Metrics
+```text
+2024-08-05 15:21:54.889 | INFO     | agentscope.manager._monitor:_print_table:117 - Text & Embedding Model:
+2024-08-05 15:21:54.889 | INFO     | agentscope.manager._monitor:_print_table:127 - |  MODEL NAME | TIMES | PROMPT TOKENS | COMPLETION TOKENS | TOTAL TOKENS |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - | gpt-4-turbo |   1   |       15      |         20        |      35      |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - |    gpt-4o   |   1   |       43      |         34        |      77      |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - |   qwen-max  |   2   |      129      |        172        |     301      |
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:117 - Image Model:
+2024-08-05 15:21:54.890 | INFO     | agentscope.manager._monitor:_print_table:127 - | MODEL NAME |     RESOLUTION     | TIMES | IMAGE COUNT |
+2024-08-05 15:21:54.891 | INFO     | agentscope.manager._monitor:_print_table:127 - |  dall-e-3  |    hd_1024*1024    |   1   |      2      |
+2024-08-05 15:21:54.891 | INFO     | agentscope.manager._monitor:_print_table:127 - |  dall-e-3  | standard_1024*1024 |   2   |      7      |
+2024-08-05 15:21:54.891 | INFO     | agentscope.manager._monitor:_print_table:127 - |  qwen-vl   |     1024*1024      |   1   |      4      |
+```
 
-Register a new metric to start monitoring the number of tokens:
+- You can also get the usage of the model APIs in JSON format as follows:
 
 ```python
-monitor.register("token_num", metric_unit="token", quota=1000)
+# print(json.dumps(agentscope.print_llm_usage(), indent=4))
+{
+    "text_and_embedding": [
+        {
+            "model_name": "gpt-4-turbo",
+            "times": 1,
+            "prompt_tokens": 15,
+            "completion_tokens": 20,
+            "total_tokens": 35
+        },
+        {
+            "model_name": "gpt-4o",
+            "times": 1,
+            "prompt_tokens": 43,
+            "completion_tokens": 34,
+            "total_tokens": 77
+        },
+        {
+            "model_name": "qwen-max",
+            "times": 2,
+            "prompt_tokens": 129,
+            "completion_tokens": 172,
+            "total_tokens": 301
+        }
+    ],
+    "image": [
+        {
+            "model_name": "dall-e-3",
+            "resolution": "hd_1024*1024",
+            "times": 1,
+            "image_count": 2
+        },
+        {
+            "model_name": "dall-e-3",
+            "resolution": "standard_1024*1024",
+            "times": 2,
+            "image_count": 7
+        },
+        {
+            "model_name": "qwen-vl",
+            "resolution": "1024*1024",
+            "times": 1,
+            "image_count": 4
+        }
+    ]
+}
 ```
 
-#### Updating Metrics
-
-Increment the `token_num` metric:
-
-```python
-monitor.add("token_num", 20)
-```
-
-#### Handling Quotas
-
-If the number of API calls exceeds the quota, a `QuotaExceededError` will be thrown:
-
-```python
-try:
-    monitor.add("api_calls", amount)
-except QuotaExceededError as e:
-    # Handle the exceeded quota, e.g., by pausing API calls
-    print(e.message)
-```
-
-#### Retrieving Metrics
-
-Get the current number of tokens used:
-
-```python
-token_num_used = monitor.get_value("token_num")
-```
-
-#### Resetting and Removing Metrics
-
-Reset the number of token count at the start of a new period:
-
-```python
-monitor.clear("token_num")
-```
-
-Remove the metric if it's no longer needed:
-
-```python
-monitor.remove("token_num")
-```
-
-### Advanced Usage
-
-> Features here are under development, the interface may continue to change.
-
-#### Using `prefix` to Distinguish Metrics
-
-Assume you have multiple agents/models that use the same API call, but you want to calculate their token usage separately, you can add a unique `prefix` before the original metric name, and `get_full_name` provides such functionality.
-
-For example, if model_A and model_B both use the OpenAI API, you can register these metrics by the following code.
-
-```python
-from agentscope.utils.monitor import get_full_name
-
-...
-
-# in model_A
-monitor.register(get_full_name('prompt_tokens', 'model_A'))
-monitor.register(get_full_name('completion_tokens', 'model_A'))
-
-# in model_B
-monitor.register(get_full_name('prompt_tokens', 'model_B'))
-monitor.register(get_full_name('completion_tokens', 'model_B'))
-```
-
-To update those metrics, just use the `update` method.
-
-```python
-# in model_A
-monitor.update(openai_response.usage.model_dump(), prefix='model_A')
-
-# in model_B
-monitor.update(openai_response.usage.model_dump(), prefix='model_B')
-```
-
-To get metrics of a specific model, please use the `get_metrics` method.
-
-```python
-# get metrics of model_A
-model_A_metrics = monitor.get_metrics('model_A')
-
-# get metrics of model_B
-model_B_metrics = monitor.get_metrics('model_B')
-```
-
-#### Register a budget for an API
-
-Currently, the Monitor already supports automatically calculating the cost of API calls based on various metrics, and you can directly set a budget of a model to avoid exceeding the quota.
-
-Suppose you are using `gpt-4-turbo` and your budget is $10, you can use the following code.
-
-```python
-model_name = 'gpt-4-turbo'
-monitor.register_budget(model_name=model_name, value=10, prefix=model_name)
-```
-
-Use `prefix` to set budgets for different models that use the same API.
-
-```python
-model_name = 'gpt-4-turbo'
-# in model_A
-monitor.register_budget(model_name=model_name, value=10, prefix=f'model_A.{model_name}')
-
-# in model_B
-monitor.register_budget(model_name=model_name, value=10, prefix=f'model_B.{model_name}')
-```
-
-`register_budget` will automatically register metrics that are required to calculate the total cost, calculate the total cost when these metrics are updated, and throw a `QuotaExceededError` when the budget is exceeded.
-
-```python
-model_name = 'gpt-4-turbo'
-try:
-    monitor.update(openai_response.usage.model_dump(), prefix=model_name)
-except QuotaExceededError as e:
-    # Handle the exceeded quota
-    print(e.message)
-```
-
-> **Note:** This feature is still in the experimental stage and only supports some specified APIs, which are listed in `agentscope.utils.monitor._get_pricing`.
 
 [[Return to the top]](#207-monitor-en)

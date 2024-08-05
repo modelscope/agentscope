@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -289,7 +289,9 @@
 <a class="viewcode-back" href="../../../../agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.generate_image_from_name">[docs]</a>
 <span class="k">def</span> <span class="nf">generate_image_from_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates an image based on the hash of the given name.&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">agentscope.file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
+    <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
+
+    <span class="n">file_manager</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
     <span class="c1"># Using hashlib to generate a hash of the name</span>
     <span class="n">hash_func</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
@@ -302,17 +304,11 @@
     <span class="n">color_hex</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">hash_value</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span>
     <span class="n">color_rgb</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color_hex</span><span class="p">)</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
-    <span class="n">image_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_manager</span><span class="o">.</span><span class="n">dir_root</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_image.png&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Check if the image already exists</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image_filepath</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">image_filepath</span>
-
     <span class="c1"># If the image does not exist, generate and save it</span>
     <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">color_rgb</span><span class="p">)</span>
 
-    <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image_filepath</span><span class="p">)</span>
+    <span class="n">image_filepath</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_image.png&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">image_filepath</span></div>
 

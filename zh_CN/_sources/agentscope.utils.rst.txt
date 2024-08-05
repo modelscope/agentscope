@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    agentscope.utils.common
-   agentscope.utils.monitor
    agentscope.utils.token_utils
    agentscope.utils.tools
 

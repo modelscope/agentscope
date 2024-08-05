@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -104,7 +104,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../models.html">agentscope.models</a></li>
       <li class="breadcrumb-item active">agentscope.models.dashscope_model</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -125,6 +124,7 @@
 <span class="kn">from</span> <span class="nn">dashscope.api_entities.dashscope_response</span> <span class="kn">import</span> <span class="n">GenerationResponse</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_convert_to_str</span><span class="p">,</span> <span class="n">_guess_type_by_extension</span>
 
@@ -134,8 +134,6 @@
     <span class="n">dashscope</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
-
-<span class="kn">from</span> <span class="nn">..file_manager</span> <span class="kn">import</span> <span class="n">file_manager</span>
 
 
 <div class="viewcode-block" id="DashScopeWrapperBase">
@@ -183,10 +181,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
             <span class="n">dashscope</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="c1"># Set monitor accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="DashScopeWrapperBase.format">
@@ -209,6 +204,37 @@
 <span class="k">class</span> <span class="nc">DashScopeChatWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope&#39;s chat API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;status_code&quot;: 200,</span>
+<span class="sd">            &quot;request_id&quot;: &quot;a75a1b22-e512-957d-891b-37db858ae738&quot;,</span>
+<span class="sd">            &quot;code&quot;: &quot;&quot;,</span>
+<span class="sd">            &quot;message&quot;: &quot;&quot;,</span>
+<span class="sd">            &quot;output&quot;: {</span>
+<span class="sd">                &quot;text&quot;: null,</span>
+<span class="sd">                &quot;finish_reason&quot;: null,</span>
+<span class="sd">                &quot;choices&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;finish_reason&quot;: &quot;stop&quot;,</span>
+<span class="sd">                        &quot;message&quot;: {</span>
+<span class="sd">                            &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                            &quot;content&quot;: &quot;xxx&quot;</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;usage&quot;: {</span>
+<span class="sd">                &quot;input_tokens&quot;: 25,</span>
+<span class="sd">                &quot;output_tokens&quot;: 77,</span>
+<span class="sd">                &quot;total_tokens&quot;: 102</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_chat&quot;</span>
@@ -253,26 +279,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span></div>
 
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Set monitor accordingly</span>
-        <span class="c1"># TODO: set quota to the following metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -435,11 +441,10 @@
         <span class="n">output_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># Update the token record accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">input_tokens</span><span class="p">,</span>
             <span class="n">completion_tokens</span><span class="o">=</span><span class="n">output_tokens</span><span class="p">,</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">input_tokens</span> <span class="o">+</span> <span class="n">output_tokens</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Save the model invocation after the stream is exhausted</span>
@@ -560,21 +565,42 @@
 <span class="k">class</span> <span class="nc">DashScopeImageSynthesisWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Image Synthesis API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;status_code&quot;: 200,</span>
+<span class="sd">            &quot;request_id&quot;: &quot;b54ffeb8-6212-9dac-808c-b3771cba3788&quot;,</span>
+<span class="sd">            &quot;code&quot;: null,</span>
+<span class="sd">            &quot;message&quot;: &quot;&quot;,</span>
+<span class="sd">            &quot;output&quot;: {</span>
+<span class="sd">                &quot;task_id&quot;: &quot;996523eb-034d-459b-ac88-b340b95007a4&quot;,</span>
+<span class="sd">                &quot;task_status&quot;: &quot;SUCCEEDED&quot;,</span>
+<span class="sd">                &quot;results&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;url&quot;: &quot;RESULT_URL1&quot;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;url&quot;: &quot;RESULT_URL2&quot;</span>
+<span class="sd">                    },</span>
+<span class="sd">                ],</span>
+<span class="sd">                &quot;task_metrics&quot;: {</span>
+<span class="sd">                    &quot;TOTAL&quot;: 2,</span>
+<span class="sd">                    &quot;SUCCEEDED&quot;: 2,</span>
+<span class="sd">                    &quot;FAILED&quot;: 0</span>
+<span class="sd">                }</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;usage&quot;: {</span>
+<span class="sd">                &quot;image_count&quot;: 2</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_image_synthesis&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Set monitor accordingly</span>
-        <span class="c1"># TODO: set quota to the following metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;image_count&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -643,9 +669,10 @@
         <span class="p">)</span>
 
         <span class="c1"># step4: update monitor accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_image_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">image_count</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">image_count</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="s2">&quot;1024*1024&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>
@@ -654,6 +681,7 @@
         <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">save_local</span><span class="p">:</span>
+            <span class="n">file_manager</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
             <span class="c1"># Return local url if save_local is True</span>
             <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">file_manager</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">image_urls</span><span class="o">=</span><span class="n">urls</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">)</span></div>
@@ -663,21 +691,36 @@
 <div class="viewcode-block" id="DashScopeTextEmbeddingWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeTextEmbeddingWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">DashScopeTextEmbeddingWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Text Embedding API.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Text Embedding API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;status_code&quot;: 200, // 200 indicate success otherwise failed.</span>
+<span class="sd">            &quot;request_id&quot;: &quot;fd564688-43f7-9595-b986&quot;, // The request id.</span>
+<span class="sd">            &quot;code&quot;: &quot;&quot;, // If failed, the error code.</span>
+<span class="sd">            &quot;message&quot;: &quot;&quot;, // If failed, the error message.</span>
+<span class="sd">            &quot;output&quot;: {</span>
+<span class="sd">                &quot;embeddings&quot;: [ // embeddings</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;embedding&quot;: [ // one embedding output</span>
+<span class="sd">                            -3.8450357913970947, ...,</span>
+<span class="sd">                        ],</span>
+<span class="sd">                        &quot;text_index&quot;: 0 // the input index.</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;usage&quot;: {</span>
+<span class="sd">                &quot;total_tokens&quot;: 3 // the request tokens.</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_text_embedding&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Set monitor accordingly</span>
-        <span class="c1"># TODO: set quota to the following metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -743,9 +786,10 @@
         <span class="p">)</span>
 
         <span class="c1"># step4: update monitor accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
+            <span class="n">total_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>
@@ -761,29 +805,44 @@
 <span class="k">class</span> <span class="nc">DashScopeMultiModalWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Multimodal API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;status_code&quot;: 200,</span>
+<span class="sd">            &quot;request_id&quot;: &quot;a0dc436c-2ee7-93e0-9667-c462009dec4d&quot;,</span>
+<span class="sd">            &quot;code&quot;: &quot;&quot;,</span>
+<span class="sd">            &quot;message&quot;: &quot;&quot;,</span>
+<span class="sd">            &quot;output&quot;: {</span>
+<span class="sd">                &quot;text&quot;: null,</span>
+<span class="sd">                &quot;finish_reason&quot;: null,</span>
+<span class="sd">                &quot;choices&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;finish_reason&quot;: &quot;stop&quot;,</span>
+<span class="sd">                        &quot;message&quot;: {</span>
+<span class="sd">                            &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                            &quot;content&quot;: [</span>
+<span class="sd">                                {</span>
+<span class="sd">                                    &quot;text&quot;: &quot;这张图片显...&quot;</span>
+<span class="sd">                                }</span>
+<span class="sd">                            ]</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;usage&quot;: {</span>
+<span class="sd">                &quot;input_tokens&quot;: 1277,</span>
+<span class="sd">                &quot;output_tokens&quot;: 81,</span>
+<span class="sd">                &quot;image_tokens&quot;: 1247</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_multimodal&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Set monitor accordingly</span>
-        <span class="c1"># TODO: set quota to the following metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -831,18 +890,6 @@
 <span class="sd">            Therefore, you should input a list matching the content value</span>
 <span class="sd">            above.</span>
 <span class="sd">            If only involving words, just input them.</span>
-
-<span class="sd">            `parse_func`, `fault_handler` and `max_retries` are reserved</span>
-<span class="sd">            for `_response_parse_decorator` to parse and check the response</span>
-<span class="sd">            generated by model wrapper. Their usages are listed as follows:</span>
-<span class="sd">                - `parse_func` is a callable function used to parse and</span>
-<span class="sd">                check the response generated by the model, which takes the</span>
-<span class="sd">                response as input.</span>
-<span class="sd">                - `max_retries` is the maximum number of retries when the</span>
-<span class="sd">                `parse_func` raise an exception.</span>
-<span class="sd">                - `fault_handler` is a callable function which is called</span>
-<span class="sd">                when the response generated by the model is invalid after</span>
-<span class="sd">                `max_retries` retries.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># step1: prepare keyword arguments</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
@@ -878,16 +925,12 @@
         <span class="c1"># step4: update monitor accordingly</span>
         <span class="n">input_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">image_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">audio_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">output_tokens</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="c1"># TODO: update the tokens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">input_tokens</span><span class="p">,</span>
-            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">output_tokens</span><span class="p">,</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">input_tokens</span>
-            <span class="o">+</span> <span class="n">output_tokens</span>
-            <span class="o">+</span> <span class="n">image_tokens</span>
-            <span class="o">+</span> <span class="n">audio_tokens</span><span class="p">,</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">output_tokens</span> <span class="o">+</span> <span class="n">image_tokens</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># step5: return response</span>

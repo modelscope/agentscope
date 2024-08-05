@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="agentscope.models.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.models.html#module-agentscope.models">Module contents</a></li>
@@ -163,7 +163,7 @@ for more details.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.litellm_model.LiteLLMWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.litellm_model.LiteLLMWrapperBase.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.litellm_model.LiteLLMWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string or dict into the format that the model
 API required.</p>
 </dd></dl>
@@ -174,22 +174,57 @@ API required.</p>
 <dt class="sig sig-object py" id="agentscope.models.litellm_model.LiteLLMChatWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.litellm_model.</span></span><span class="sig-name descname"><span class="pre">LiteLLMChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.litellm_model.LiteLLMChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.models.litellm_model.LiteLLMWrapperBase" title="agentscope.models.litellm_model.LiteLLMWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LiteLLMWrapperBase</span></code></a></p>
-<p>The model wrapper based on litellm chat API.
-To use the LiteLLM wrapper, environment variables must be set.
-Different model_name could be using different environment variables.
-For example:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>for model_name: “gpt-3.5-turbo”, you need to set “OPENAI_API_KEY”</p></li>
+<p>The model wrapper based on litellm chat API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>litellm requires the users to set api key in their environment</p></li>
+<li><p>Different LLMs requires different environment variables</p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">os.environ[&quot;OPENAI_API_KEY&quot;]</span> <span class="pre">=</span> <span class="pre">&quot;your-api-key&quot;</span>
-<span class="pre">`</span></code>
-- for model_name: “claude-2”, you need to set “ANTHROPIC_API_KEY”
-- for Azure OpenAI, you need to set “AZURE_API_KEY”,
-“AZURE_API_BASE”, “AZURE_API_VERSION”</p>
+</div>
+<p class="rubric">Example</p>
+<ul class="simple">
+<li><p>For OpenAI models, set “OPENAI_API_KEY”</p></li>
+<li><p>For models like “claude-2”, set “ANTHROPIC_API_KEY”</p></li>
+<li><p>For Azure OpenAI models, you need to set “AZURE_API_KEY”,</p></li>
+</ul>
+<p>“AZURE_API_BASE” and “AZURE_API_VERSION”
+- Refer to the docs in <a class="reference external" href="https://docs.litellm.ai/docs/">https://docs.litellm.ai/docs/</a> .</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From <a class="reference external" href="https://docs.litellm.ai/docs/completion/output">https://docs.litellm.ai/docs/completion/output</a></p></li>
+</ul>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
+{</p>
+<blockquote>
+<div><dl>
+<dt>‘choices’: [</dt><dd><dl>
+<dt>{</dt><dd><p>‘finish_reason’: str,  # String: ‘stop’
+‘index’: int,  # Integer: 0
+‘message’: {  # Dictionary [str, str]</p>
+<blockquote>
+<div><p>‘role’: str,  # String: ‘assistant’
+‘content’: str  # String: “default message”</p>
 </div></blockquote>
-<p>You should refer to the docs in <a class="reference external" href="https://docs.litellm.ai/docs/">https://docs.litellm.ai/docs/</a> .</p>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+‘created’: str,  # String: None
+‘model’: str,  # String: None
+‘usage’: {  # Dictionary [str, int]</p>
+<blockquote>
+<div><p>‘prompt_tokens’: int,  # Integer
+‘completion_tokens’: int,  # Integer
+‘total_tokens’: int  # Integer</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.litellm_model.LiteLLMChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'litellm_chat'</span></em><a class="headerlink" href="#agentscope.models.litellm_model.LiteLLMChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -233,7 +268,7 @@ for more details.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.litellm_model.LiteLLMChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.litellm_model.LiteLLMChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.litellm_model.LiteLLMChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string and dictionary into the unified format.
 Note that the format function might not be the optimal way to construct
 prompt for every model, but a common way to do so.

@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -140,10 +140,13 @@
 <span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
 <span class="kn">from</span> <span class="nn">flask_socketio</span> <span class="kn">import</span> <span class="n">SocketIO</span><span class="p">,</span> <span class="n">join_room</span><span class="p">,</span> <span class="n">leave_room</span>
 
-<span class="kn">from</span> <span class="nn">.._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span> <span class="n">_DEFAULT_SUBDIR_INVOKE</span>
 <span class="kn">from</span> <span class="nn">._studio_utils</span> <span class="kn">import</span> <span class="n">_check_and_convert_id_type</span>
-<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">_is_process_alive</span><span class="p">,</span> <span class="n">_is_windows</span>
+<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_is_process_alive</span><span class="p">,</span>
+    <span class="n">_is_windows</span><span class="p">,</span>
+    <span class="n">_generate_new_runtime_id</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
 
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -709,7 +712,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">content</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
     <span class="n">studio_url</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">url_root</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-    <span class="n">run_id</span> <span class="o">=</span> <span class="n">_runtime</span><span class="o">.</span><span class="n">generate_new_runtime_id</span><span class="p">()</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="n">_generate_new_runtime_id</span><span class="p">()</span>
     <span class="n">status</span><span class="p">,</span> <span class="n">py_code</span> <span class="o">=</span> <span class="n">_convert_to_py</span><span class="p">(</span>
         <span class="n">content</span><span class="p">,</span>
         <span class="n">runtime_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">,</span>

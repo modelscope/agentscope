@@ -1,0 +1,564 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.manager package &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.memory package" href="agentscope.memory.html" />
+    <link rel="prev" title="agentscope.agents.user_agent module" href="agentscope.agents.user_agent.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.manager.html">English</a></li> |
+    <a href="../zh_CN/agentscope.manager.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.html">agentscope package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.manager package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-agentscope.manager">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.strategy.html">agentscope.strategy package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.studio.html">agentscope.studio package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.html#module-agentscope">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+      <li class="breadcrumb-item active">agentscope.manager package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.manager.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agentscope-manager-package">
+<h1>agentscope.manager package<a class="headerlink" href="#agentscope-manager-package" title="Link to this heading"></a></h1>
+<section id="module-agentscope.manager">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.manager" title="Link to this heading"></a></h2>
+<p>Import all manager related classes and functions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.manager.</span></span><span class="sig-name descname"><span class="pre">FileManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A singleton class for managing the file system for saving files,
+code and logs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the file manager with default values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_api_invoke</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.initialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Set the directory for saving files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_dir</strong> (<cite>Union[str, None]</cite>) – The running directory, used to save files, logs and code.</p></li>
+<li><p><strong>save_log</strong> (<cite>bool</cite>) – Whether to save logs locally.</p></li>
+<li><p><strong>save_code</strong> (<cite>bool</cite>) – Whether to save code locally.</p></li>
+<li><p><strong>save_api_invoke</strong> (<cite>bool</cite>) – Whether to save API invocations locally.</p></li>
+<li><p><strong>cache_dir</strong> (<cite>str</cite>) – The directory to save cache files.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.embedding_cache_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embedding_cache_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.manager.FileManager.embedding_cache_dir" title="Link to this definition"></a></dt>
+<dd><p>Obtain the embedding cache directory.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.file_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">file_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.manager.FileManager.file_dir" title="Link to this definition"></a></dt>
+<dd><p>The directory for saving files, including images, audios and
+videos.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.code_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.manager.FileManager.code_dir" title="Link to this definition"></a></dt>
+<dd><p>The directory for saving codes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.invoke_dir">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invoke_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.manager.FileManager.invoke_dir" title="Link to this definition"></a></dt>
+<dd><p>The directory for saving api invocations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.get_instance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.manager.FileManager" title="agentscope.manager._file.FileManager"><span class="pre">FileManager</span></a></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.get_instance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.get_instance" title="Link to this definition"></a></dt>
+<dd><p>Get the singleton instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.save_api_invocation">
+<span class="sig-name descname"><span class="pre">save_api_invocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.save_api_invocation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.save_api_invocation" title="Link to this definition"></a></dt>
+<dd><p>Save api invocation locally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.save_python_code">
+<span class="sig-name descname"><span class="pre">save_python_code</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.save_python_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.save_python_code" title="Link to this definition"></a></dt>
+<dd><p>Save the code locally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.save_image">
+<span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.save_image"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.save_image" title="Link to this definition"></a></dt>
+<dd><p>Save image file locally, and return the local image path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<cite>Union[str, np.ndarray]</cite>) – The image url, or the image array.</p></li>
+<li><p><strong>filename</strong> (<cite>Optional[str]</cite>) – The filename of the image. If not specified, a random filename
+will be used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.save_file">
+<span class="sig-name descname"><span class="pre">save_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.save_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.save_file" title="Link to this definition"></a></dt>
+<dd><p>Save file locally from a binary generator, and return the local
+file path.</p>
+<p>Note we don’t block this function when <cite>self.disable_saving==True</cite>,
+because in distribution mode or calling image generation model with
+<cite>save_local == True</cite>, we still have to save files locally. However, we
+save them in “./” instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>generator</strong> (<cite>Generator[bytes, None, None]</cite>) – The generator of the binary file content.</p></li>
+<li><p><strong>filename</strong> (<cite>str</cite>) – The filename of the file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The local file path.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>str</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.save_runtime_information">
+<span class="sig-name descname"><span class="pre">save_runtime_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">runtime_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.save_runtime_information"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.save_runtime_information" title="Link to this definition"></a></dt>
+<dd><p>Save the runtime information locally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.cache_text_embedding">
+<span class="sig-name descname"><span class="pre">cache_text_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.cache_text_embedding"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.cache_text_embedding" title="Link to this definition"></a></dt>
+<dd><p>Cache the text embedding locally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.fetch_cached_text_embedding">
+<span class="sig-name descname"><span class="pre">fetch_cached_text_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.fetch_cached_text_embedding"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.fetch_cached_text_embedding" title="Link to this definition"></a></dt>
+<dd><p>Fetch the text embedding from the cache.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.state_dict">
+<span class="sig-name descname"><span class="pre">state_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.state_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.state_dict" title="Link to this definition"></a></dt>
+<dd><p>Serialize the configuration into a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.load_dict">
+<span class="sig-name descname"><span class="pre">load_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.load_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.load_dict" title="Link to this definition"></a></dt>
+<dd><p>Load the configuration from a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.is_initialized">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_initialized</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.is_initialized"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.is_initialized" title="Link to this definition"></a></dt>
+<dd><p>Check if the file manager has been initialized.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.FileManager.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_file.html#FileManager.flush"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.FileManager.flush" title="Link to this definition"></a></dt>
+<dd><p>Flush the file manager.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.manager.</span></span><span class="sig-name descname"><span class="pre">ModelManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The model manager for AgentScope, which is responsible for loading and
+managing model configurations and models.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.get_instance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.manager.ModelManager" title="agentscope.manager._model.ModelManager"><span class="pre">ModelManager</span></a></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.get_instance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.get_instance" title="Link to this definition"></a></dt>
+<dd><p>Get the instance of the singleton class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the model manager with model configs</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.model_configs">
+<span class="sig-name descname"><span class="pre">model_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.manager.ModelManager.model_configs" title="Link to this definition"></a></dt>
+<dd><p>The model configs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.initialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the model manager with model configs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.clear_model_configs">
+<span class="sig-name descname"><span class="pre">clear_model_configs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.clear_model_configs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.clear_model_configs" title="Link to this definition"></a></dt>
+<dd><p>Clear the loaded model configs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.load_model_configs">
+<span class="sig-name descname"><span class="pre">load_model_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_existing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.load_model_configs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.load_model_configs" title="Link to this definition"></a></dt>
+<dd><p>read model configs from a path or a list of dicts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_configs</strong> (<cite>Union[str, list, dict]</cite>) – The path of the model configs | a config dict | a list of model
+configs.</p></li>
+<li><p><strong>clear_existing</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to clear the loaded model configs before reading.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>The model configs.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>dict</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.get_model_by_config_name">
+<span class="sig-name descname"><span class="pre">get_model_by_config_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.get_model_by_config_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.get_model_by_config_name" title="Link to this definition"></a></dt>
+<dd><p>Load the model by config name, and return the model wrapper.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.get_config_by_name">
+<span class="sig-name descname"><span class="pre">get_config_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.get_config_by_name"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.get_config_by_name" title="Link to this definition"></a></dt>
+<dd><p>Load the model config by name, and return the config dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.state_dict">
+<span class="sig-name descname"><span class="pre">state_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.state_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.state_dict" title="Link to this definition"></a></dt>
+<dd><p>Serialize the model manager into a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.load_dict">
+<span class="sig-name descname"><span class="pre">load_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.load_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.load_dict" title="Link to this definition"></a></dt>
+<dd><p>Load the model manager from a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ModelManager.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_model.html#ModelManager.flush"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ModelManager.flush" title="Link to this definition"></a></dt>
+<dd><p>Flush the model manager.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.manager.</span></span><span class="sig-name descname"><span class="pre">MonitorManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The manager of monitor module.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.path_db">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path_db</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.manager.MonitorManager.path_db" title="Link to this definition"></a></dt>
+<dd><p>The path to the database</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the monitor manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_monitor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.initialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the monitor manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>use_monitor</strong> (<cite>bool</cite>) – Whether to use the monitor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.get_instance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.manager.MonitorManager" title="agentscope.manager._monitor.MonitorManager"><span class="pre">MonitorManager</span></a></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.get_instance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.get_instance" title="Link to this definition"></a></dt>
+<dd><p>Get the instance of the singleton class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.update_image_tokens">
+<span class="sig-name descname"><span class="pre">update_image_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.update_image_tokens"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.update_image_tokens" title="Link to this definition"></a></dt>
+<dd><p>Update the record of the image models.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.update_text_and_embedding_tokens">
+<span class="sig-name descname"><span class="pre">update_text_and_embedding_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completion_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.update_text_and_embedding_tokens"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.update_text_and_embedding_tokens" title="Link to this definition"></a></dt>
+<dd><p>Update the tokens of a given model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.print_llm_usage">
+<span class="sig-name descname"><span class="pre">print_llm_usage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.print_llm_usage"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.print_llm_usage" title="Link to this definition"></a></dt>
+<dd><p>Print the usage of all different model APIs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.show_image_tokens">
+<span class="sig-name descname"><span class="pre">show_image_tokens</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.show_image_tokens"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.show_image_tokens" title="Link to this definition"></a></dt>
+<dd><p>Show the tokens of all image models.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.show_text_and_embedding_tokens">
+<span class="sig-name descname"><span class="pre">show_text_and_embedding_tokens</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.show_text_and_embedding_tokens"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.show_text_and_embedding_tokens" title="Link to this definition"></a></dt>
+<dd><p>Show the tokens of all models.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.rm_database">
+<span class="sig-name descname"><span class="pre">rm_database</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.rm_database"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.rm_database" title="Link to this definition"></a></dt>
+<dd><p>Remove the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.state_dict">
+<span class="sig-name descname"><span class="pre">state_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.state_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.state_dict" title="Link to this definition"></a></dt>
+<dd><p>Serialize the monitor manager into a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.load_dict">
+<span class="sig-name descname"><span class="pre">load_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.load_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.load_dict" title="Link to this definition"></a></dt>
+<dd><p>Load the monitor manager from a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.MonitorManager.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_monitor.html#MonitorManager.flush"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.MonitorManager.flush" title="Link to this definition"></a></dt>
+<dd><p>Flush the monitor manager.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.manager.</span></span><span class="sig-name descname"><span class="pre">ASManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A manager for AgentScope.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager.get_instance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_instance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.manager.ASManager" title="agentscope.manager._manager.ASManager"><span class="pre">ASManager</span></a></span></span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager.get_instance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager.get_instance" title="Link to this definition"></a></dt>
+<dd><p>Get the instance of the singleton class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the manager. Note we initialize the managers by default
+arguments to avoid unnecessary errors when user doesn’t call
+<cite>agentscope.init</cite> function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_saving</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_log</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_api_invoke</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_monitor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'TRACE'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'DEBUG'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'INFO'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SUCCESS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'WARNING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ERROR'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'CRITICAL'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">studio_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager.initialize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager.initialize" title="Link to this definition"></a></dt>
+<dd><p>Initialize the package.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager.state_dict">
+<span class="sig-name descname"><span class="pre">state_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager.state_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager.state_dict" title="Link to this definition"></a></dt>
+<dd><p>Serialize the runtime information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager.load_dict">
+<span class="sig-name descname"><span class="pre">load_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager.load_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager.load_dict" title="Link to this definition"></a></dt>
+<dd><p>Load the runtime information from a dictionary</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.manager.ASManager.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/manager/_manager.html#ASManager.flush"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.manager.ASManager.flush" title="Link to this definition"></a></dt>
+<dd><p>Flush the runtime information.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.agents.user_agent.html" class="btn btn-neutral float-left" title="agentscope.agents.user_agent module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.memory.html" class="btn btn-neutral float-right" title="agentscope.memory package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

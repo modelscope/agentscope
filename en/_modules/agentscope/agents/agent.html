@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -131,8 +131,8 @@
 
 <span class="kn">from</span> <span class="nn">agentscope.agents.operator</span> <span class="kn">import</span> <span class="n">Operator</span>
 <span class="kn">from</span> <span class="nn">agentscope.logging</span> <span class="kn">import</span> <span class="n">log_stream_msg</span><span class="p">,</span> <span class="n">log_msg</span>
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">load_model_by_config_name</span>
 <span class="kn">from</span> <span class="nn">agentscope.memory</span> <span class="kn">import</span> <span class="n">TemporaryMemory</span>
 
 
@@ -320,7 +320,10 @@
 
         <span class="c1"># TODO: support to receive a ModelWrapper instance</span>
         <span class="k">if</span> <span class="n">model_config_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">model_config_name</span><span class="p">)</span>
+            <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
+                <span class="n">model_config_name</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">use_memory</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">TemporaryMemory</span><span class="p">(</span><span class="n">memory_config</span><span class="p">)</span>

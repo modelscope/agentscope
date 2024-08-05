@@ -73,7 +73,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
@@ -123,9 +123,18 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.agents.html#module-agentscope.agents">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.manager.html">agentscope.manager package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#module-agentscope.manager">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.memory.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.memory.html#module-agentscope.memory">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#module-agentscope.message">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a><ul>
@@ -213,6 +222,7 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.exception.html#agentscope.exception.AgentServerNotAliveError"><code class="docutils literal notranslate"><span class="pre">AgentServerNotAliveError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.exception.html#agentscope.exception.AgentCreationError"><code class="docutils literal notranslate"><span class="pre">AgentCreationError</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.exception.html#agentscope.exception.AgentCallError"><code class="docutils literal notranslate"><span class="pre">AgentCallError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.exception.html#agentscope.exception.QuotaExceededError"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.file_manager.html">agentscope.file_manager module</a></li>
@@ -221,14 +231,6 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.log_msg"><code class="docutils literal notranslate"><span class="pre">log_msg()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.log_gradio"><code class="docutils literal notranslate"><span class="pre">log_gradio()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.logging.html#agentscope.logging.setup_logger"><code class="docutils literal notranslate"><span class="pre">setup_logger()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#agentscope.message.MessageBase"><code class="docutils literal notranslate"><span class="pre">MessageBase</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg"><code class="docutils literal notranslate"><span class="pre">Msg</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#agentscope.message.PlaceholderMessage"><code class="docutils literal notranslate"><span class="pre">PlaceholderMessage</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#agentscope.message.deserialize"><code class="docutils literal notranslate"><span class="pre">deserialize()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.message.html#agentscope.message.serialize"><code class="docutils literal notranslate"><span class="pre">serialize()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.msghub.html">agentscope.msghub module</a><ul>
@@ -240,6 +242,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.html#module-agentscope">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.html#agentscope.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.html#agentscope.state_dict"><code class="docutils literal notranslate"><span class="pre">state_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.html#agentscope.print_llm_usage"><code class="docutils literal notranslate"><span class="pre">print_llm_usage()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.html#agentscope.msghub"><code class="docutils literal notranslate"><span class="pre">msghub()</span></code></a></li>
 </ul>
 </li>

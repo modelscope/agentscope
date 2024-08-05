@@ -81,7 +81,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../agentscope.memory.html">agentscope.memory package</a></li>
@@ -435,7 +435,7 @@ By implementing each Agent as an Actor, an Agent will automatically wait for its
 </section>
 <section id="placeholder">
 <h3>PlaceHolder<a class="headerlink" href="#placeholder" title="Link to this heading"></a></h3>
-<p>Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of <a class="reference internal" href="../agentscope.message.html#agentscope.message.PlaceholderMessage" title="agentscope.message.PlaceholderMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Placeholder</span></code></a>.
+<p>Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of <code class="xref py py-class docutils literal notranslate"><span class="pre">Placeholder</span></code>.
 A Placeholder is a special message that contains the address and port number of the agent that generated the placeholder, which is used to indicate that the output message of the Agent is not ready yet.
 When calling the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method of a distributed agent, a placeholder is returned immediately without blocking the main process.
 The interface of placeholder is exactly the same as the message, so that the orchestration flow can be written in a centralized way.

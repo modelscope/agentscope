@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -117,8 +117,10 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;A module that optimize agent system prompt given dialog history.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">load_model_by_config_name</span>
+<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 
 <span class="n">_DEFAULT_META_PROMPT_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">You are an excellent Prompt Engineer. Your task is to optimize an Agent&#39;s system prompt by adding notes.</span>
@@ -199,7 +201,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_or_model_config_name</span><span class="p">,</span> <span class="n">ModelWrapperBase</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_or_model_config_name</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_or_model_config_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">load_model_by_config_name</span><span class="p">(</span><span class="n">model_or_model_config_name</span><span class="p">)</span>
+            <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
+                <span class="n">model_or_model_config_name</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="s2">&quot;model_or_model_config_name must be ModelWrapperBase or str&quot;</span><span class="p">,</span>

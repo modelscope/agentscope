@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -148,9 +148,9 @@
 
 <span class="kn">import</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="k">as</span> <span class="nn">agent_pb2</span>
 <span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">read_model_configs</span>
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
-<span class="kn">from</span> <span class="nn">agentscope._runtime</span> <span class="kn">import</span> <span class="n">_runtime</span>
 <span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">StudioRegisterError</span>
 <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="p">(</span>
@@ -237,7 +237,8 @@
                 <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
                 <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">_studio_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">_runtime</span><span class="o">.</span><span class="n">runtime_id</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">)</span>
+            <span class="n">run_id</span> <span class="o">=</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">run_id</span>
+            <span class="n">_studio_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span> <span class="o">=</span> <span class="n">ExpiringDict</span><span class="p">(</span>
             <span class="n">max_len</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
@@ -544,7 +545,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model configs of the agent server.&quot;&quot;&quot;</span>
         <span class="n">model_configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">read_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
+            <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">load_model_configs</span><span class="p">(</span><span class="n">model_configs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
                 <span class="n">ok</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="agentscope.models.config module" href="agentscope.models.config.html" />
-    <link rel="prev" title="agentscope.memory.temporary_memory module" href="agentscope.memory.temporary_memory.html" /> 
+    <link rel="next" title="agentscope.models.dashscope_model module" href="agentscope.models.dashscope_model.html" />
+    <link rel="prev" title="agentscope.message.placeholder module" href="agentscope.message.placeholder.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.models package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-agentscope.models">Module contents</a></li>
@@ -125,7 +125,6 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.config.html">agentscope.models.config module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.dashscope_model.html">agentscope.models.dashscope_model module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">DashScopeWrapperBase.__init__()</span></code></a></li>
@@ -179,9 +178,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.model_type</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.config_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.model_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">GeminiEmbeddingWrapper.model_type</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -210,7 +209,6 @@
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.config_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.config_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.get_wrapper"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.get_wrapper()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.update_monitor"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.update_monitor()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -396,20 +394,9 @@ from the config file.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/model.html#ModelWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/model.html#ModelWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string or dict into the format that the model
 API required.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.update_monitor">
-<span class="sig-name descname"><span class="pre">update_monitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/model.html#ModelWrapperBase.update_monitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.update_monitor" title="Link to this definition"></a></dt>
-<dd><p>Update the monitor with the given values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kwargs</strong> (<cite>dict</cite>) – The values to be updated to the monitor.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -528,7 +515,7 @@ class in model configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.PostAPIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/post_model.html#PostAPIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.PostAPIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/post_model.html#PostAPIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.PostAPIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input messages into a list of dict, which is
 compatible to OpenAI Chat API.</p>
 <dl class="field-list simple">
@@ -550,12 +537,51 @@ In distribution, placeholder is also allowed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIWrapperBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIWrapperBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIWrapperBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIWrapperBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIWrapperBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>The model wrapper for OpenAI API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From <a class="reference external" href="https://platform.openai.com/docs/api-reference/chat/create">https://platform.openai.com/docs/api-reference/chat/create</a></p></li>
+</ul>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“id”: “chatcmpl-123”,
+“object”: “chat.completion”,
+“created”: 1677652288,
+“model”: “gpt-4o-mini”,
+“system_fingerprint”: “fp_44709d6fcb”,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“index”: 0,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: “Hello there, how may I assist you today?”,</p>
+</div></blockquote>
+<p>},
+“logprobs”: null,
+“finish_reason”: “stop”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“usage”: {</p>
+<blockquote>
+<div><p>“prompt_tokens”: 9,
+“completion_tokens”: 12,
+“total_tokens”: 21</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIWrapperBase.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIWrapperBase.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIWrapperBase.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the openai client.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -569,8 +595,6 @@ be read from the environment variable <cite>OPENAI_ORGANIZATION</cite>.</p></li>
 <li><p><strong>client_args</strong> (<cite>dict</cite>, default <cite>None</cite>) – The extra keyword arguments to initialize the OpenAI client.</p></li>
 <li><p><strong>generate_args</strong> (<cite>dict</cite>, default <cite>None</cite>) – The extra keyword arguments used in openai api generation,
 e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
-<li><p><strong>budget</strong> (<cite>float</cite>, default <cite>None</cite>) – The total budget using this model. Set to <cite>None</cite> means no
-limit.</p></li>
 </ul>
 </dd>
 </dl>
@@ -578,7 +602,7 @@ limit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string or dict into the format that the model
 API required.</p>
 </dd></dl>
@@ -587,7 +611,7 @@ API required.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase" title="agentscope.models.openai_model.OpenAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a></p>
 <p>The model wrapper for OpenAI’s chat API.</p>
 <dl class="py attribute">
@@ -610,7 +634,7 @@ class in model configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initialize the openai client.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -625,8 +649,6 @@ be read from the environment variable <cite>OPENAI_ORGANIZATION</cite>.</p></li>
 <li><p><strong>stream</strong> (<cite>bool</cite>, default <cite>False</cite>) – Whether to enable stream mode.</p></li>
 <li><p><strong>generate_args</strong> (<cite>dict</cite>, default <cite>None</cite>) – The extra keyword arguments used in openai api generation,
 e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
-<li><p><strong>budget</strong> (<cite>float</cite>, default <cite>None</cite>) – The total budget using this model. Set to <cite>None</cite> means no
-limit.</p></li>
 </ul>
 </dd>
 </dl>
@@ -634,7 +656,7 @@ limit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string and dictionary into the format that
 OpenAI Chat API required.</p>
 <dl class="field-list simple">
@@ -657,9 +679,34 @@ required.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIDALLEWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIDALLEWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIDALLEWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIDALLEWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIDALLEWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIDALLEWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIDALLEWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase" title="agentscope.models.openai_model.OpenAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a></p>
 <p>The model wrapper for OpenAI’s DALL·E API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to <a class="reference external" href="https://platform.openai.com/docs/api-reference/images/create">https://platform.openai.com/docs/api-reference/images/create</a></p></li>
+</ul>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“created”: 1589478378,
+“data”: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“url”: “<a class="reference external" href="https://">https://</a>…”</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“url”: “<a class="reference external" href="https://">https://</a>…”</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIDALLEWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'openai_dall_e'</span></em><a class="headerlink" href="#agentscope.models.OpenAIDALLEWrapper.model_type" title="Link to this definition"></a></dt>
@@ -671,9 +718,46 @@ class in model configuration.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIEmbeddingWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">budget</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIEmbeddingWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OpenAIEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/openai_model.html#OpenAIEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIEmbeddingWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase" title="agentscope.models.openai_model.OpenAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a></p>
 <p>The model wrapper for OpenAI embedding API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://platform.openai.com/docs/api-reference/embeddings/create">https://platform.openai.com/docs/api-reference/embeddings/create</a></p>
+<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“object”: “list”,
+“data”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“object”: “embedding”,
+“embedding”: [</p>
+<blockquote>
+<div><p>0.0023064255,
+-0.009327292,
+…. (1536 floats total for ada-002)
+-0.0028842222,</p>
+</div></blockquote>
+<p>],
+“index”: 0</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“model”: “text-embedding-ada-002”,
+“usage”: {</p>
+<blockquote>
+<div><p>“prompt_tokens”: 8,
+“total_tokens”: 8</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'openai_embedding'</span></em><a class="headerlink" href="#agentscope.models.OpenAIEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -689,6 +773,49 @@ class in model configuration.</p>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope’s chat API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details">https://help.aliyun.com/zh/dashscope/developer-reference/api-details</a></p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw">https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw</a></p>
+<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200,
+“request_id”: “a75a1b22-e512-957d-891b-37db858ae738”,
+“code”: “”,
+“message”: “”,
+“output”: {</p>
+<blockquote>
+<div><p>“text”: null,
+“finish_reason”: null,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“finish_reason”: “stop”,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: “xxx”</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“input_tokens”: 25,
+“output_tokens”: 77,
+“total_tokens”: 102</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_chat'</span></em><a class="headerlink" href="#agentscope.models.DashScopeChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -722,7 +849,7 @@ e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for DashScope Chat API.</p>
 <p>In this format function, the input messages are formatted into a
 single system messages with format “{name}: {content}” for each
@@ -777,6 +904,53 @@ In distribution, placeholder is also allowed.</p>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope Image Synthesis API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1">https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</a></p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF">https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF</a></p>
+<p><a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200,
+“request_id”: “b54ffeb8-6212-9dac-808c-b3771cba3788”,
+“code”: null,
+“message”: “”,
+“output”: {</p>
+<blockquote>
+<div><p>“task_id”: “996523eb-034d-459b-ac88-b340b95007a4”,
+“task_status”: “SUCCEEDED”,
+“results”: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“url”: “RESULT_URL1”</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“url”: “RESULT_URL2”</p>
+</div></blockquote>
+<p>},</p>
+</div></blockquote>
+<p>],
+“task_metrics”: {</p>
+<blockquote>
+<div><p>“TOTAL”: 2,
+“SUCCEEDED”: 2,
+“FAILED”: 0</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“image_count”: 2</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeImageSynthesisWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_image_synthesis'</span></em><a class="headerlink" href="#agentscope.models.DashScopeImageSynthesisWrapper.model_type" title="Link to this definition"></a></dt>
@@ -791,6 +965,44 @@ class in model configuration.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">DashScopeTextEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeTextEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeTextEmbeddingWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope Text Embedding API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3">https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3</a></p>
+<p><a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200, // 200 indicate success otherwise failed.
+“request_id”: “fd564688-43f7-9595-b986”, // The request id.
+“code”: “”, // If failed, the error code.
+“message”: “”, // If failed, the error message.
+“output”: {</p>
+<blockquote>
+<div><dl>
+<dt>“embeddings”: [ // embeddings</dt><dd><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“embedding”: [ // one embedding output</dt><dd><p>-3.8450357913970947, …,</p>
+</dd>
+</dl>
+<p>],
+“text_index”: 0 // the input index.</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“total_tokens”: 3 // the request tokens.</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeTextEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_text_embedding'</span></em><a class="headerlink" href="#agentscope.models.DashScopeTextEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -806,6 +1018,57 @@ class in model configuration.</p>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase" title="agentscope.models.dashscope_model.DashScopeWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">DashScopeWrapperBase</span></code></a></p>
 <p>The model wrapper for DashScope Multimodal API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api">https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</a></p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN">https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN</a></p>
+<p><a href="#id25"><span class="problematic" id="id26">``</span></a><a href="#id27"><span class="problematic" id="id28">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“status_code”: 200,
+“request_id”: “a0dc436c-2ee7-93e0-9667-c462009dec4d”,
+“code”: “”,
+“message”: “”,
+“output”: {</p>
+<blockquote>
+<div><p>“text”: null,
+“finish_reason”: null,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“finish_reason”: “stop”,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>“text”: “这张图片显…”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>},
+“usage”: {</p>
+<blockquote>
+<div><p>“input_tokens”: 1277,
+“output_tokens”: 81,
+“image_tokens”: 1247</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeMultiModalWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashscope_multimodal'</span></em><a class="headerlink" href="#agentscope.models.DashScopeMultiModalWrapper.model_type" title="Link to this definition"></a></dt>
@@ -815,7 +1078,7 @@ class in model configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeMultiModalWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for DashScope Multimodal API.</p>
 <p>The multimodal API has the following requirements:</p>
 <blockquote>
@@ -954,6 +1217,32 @@ and value as the url. Only “image” and “audio” are supported.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OllamaChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_alive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase" title="agentscope.models.ollama_model.OllamaWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OllamaWrapperBase</span></code></a></p>
 <p>The model wrapper for Ollama chat API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion">https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion</a></p>
+<p><a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“model”: “registry.ollama.ai/library/llama3:latest”,
+“created_at”: “2023-12-12T14:13:43.416799Z”,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: “Hello! How are you today?”</p>
+</div></blockquote>
+<p>},
+“done”: true,
+“total_duration”: 5191566416,
+“load_duration”: 2154458,
+“prompt_eval_count”: 26,
+“prompt_eval_duration”: 383809000,
+“eval_count”: 298,
+“eval_duration”: 4799921000</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OllamaChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ollama_chat'</span></em><a class="headerlink" href="#agentscope.models.OllamaChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -983,7 +1272,7 @@ Defaults to <cite>None</cite>, which is 127.0.0.1:11434.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OllamaChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for ollama Chat API.</p>
 <p>All messages will be formatted into a single system message with
 system prompt and dialogue history.</p>
@@ -1036,6 +1325,24 @@ In distribution, placeholder is also allowed.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OllamaEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_alive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaEmbeddingWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase" title="agentscope.models.ollama_model.OllamaWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OllamaWrapperBase</span></code></a></p>
 <p>The model wrapper for Ollama embedding API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to</p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings">https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings</a></p>
+<p><a href="#id33"><span class="problematic" id="id34">``</span></a><a href="#id35"><span class="problematic" id="id36">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“model”: “all-minilm”,
+“embeddings”: [[</p>
+<blockquote>
+<div><p>0.010071029, -0.0017594862, 0.05007221, 0.04692972,
+0.008599704, 0.105441414, -0.025878139, 0.12958129,</p>
+</div></blockquote>
+<p>]]</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OllamaEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ollama_embedding'</span></em><a class="headerlink" href="#agentscope.models.OllamaEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1045,7 +1352,7 @@ class in model configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OllamaEmbeddingWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaEmbeddingWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaEmbeddingWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaEmbeddingWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaEmbeddingWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string or dict into the format that the model
 API required.</p>
 </dd></dl>
@@ -1057,6 +1364,28 @@ API required.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">OllamaGenerationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_alive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaGenerationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaGenerationWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase" title="agentscope.models.ollama_model.OllamaWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OllamaWrapperBase</span></code></a></p>
 <p>The model wrapper for Ollama generation API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From</p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion">https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion</a></p>
+<p><a href="#id37"><span class="problematic" id="id38">``</span></a><a href="#id39"><span class="problematic" id="id40">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“model”: “llama3”,
+“created_at”: “2023-08-04T19:22:45.499127Z”,
+“response”: “The sky is blue because it is the color of the sky.”,
+“done”: true,
+“context”: [1, 2, 3],
+“total_duration”: 5043500667,
+“load_duration”: 5025959,
+“prompt_eval_count”: 26,
+“prompt_eval_duration”: 325953000,
+“eval_count”: 290,
+“eval_duration”: 4709213000</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OllamaGenerationWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ollama_generate'</span></em><a class="headerlink" href="#agentscope.models.OllamaGenerationWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1066,7 +1395,7 @@ class in model configuration.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OllamaGenerationWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaGenerationWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaGenerationWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/ollama_model.html#OllamaGenerationWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaGenerationWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Forward the input to the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1120,7 +1449,7 @@ loaded from environment variable.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.GeminiChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/gemini_model.html#GeminiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.GeminiChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/gemini_model.html#GeminiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.GeminiChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>This function provide a basic prompting strategy for Gemini Chat
 API in multi-party conversation, which combines all input into a
 single string, and wrap it into a user message.</p>
@@ -1164,6 +1493,25 @@ In distribution, placeholder is also allowed.</p>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiWrapperBase" title="agentscope.models.gemini_model.GeminiWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeminiWrapperBase</span></code></a></p>
 <p>The wrapper for Google Gemini embedding model,
 e.g. models/embedding-001</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to <a class="reference external" href="https://ai.google.dev/api/embeddings?hl=zh-cn#response-body">https://ai.google.dev/api/embeddings?hl=zh-cn#response-body</a></p></li>
+</ul>
+<p><a href="#id41"><span class="problematic" id="id42">``</span></a><a href="#id43"><span class="problematic" id="id44">`</span></a>json
+{</p>
+<blockquote>
+<div><dl>
+<dt>“embeddings”: [</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>object (ContentEmbedding)</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.GeminiEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gemini_embedding'</span></em><a class="headerlink" href="#agentscope.models.GeminiEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1177,6 +1525,43 @@ e.g. models/embedding-001</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">ZhipuAIChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ZhipuAIChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase" title="agentscope.models.zhipu_model.ZhipuAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase</span></code></a></p>
 <p>The model wrapper for ZhipuAI’s chat API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From <a class="reference external" href="https://maas.aminer.cn/dev/api#glm-4">https://maas.aminer.cn/dev/api#glm-4</a></p></li>
+</ul>
+<p><a href="#id45"><span class="problematic" id="id46">``</span></a><a href="#id47"><span class="problematic" id="id48">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“created”: 1703487403,
+“id”: “8239375684858666781”,
+“model”: “glm-4”,
+“request_id”: “8239375684858666781”,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“finish_reason”: “stop”,
+“index”: 0,
+“message”: {</p>
+<blockquote>
+<div><p>“content”: “Drawing blueprints with …”,
+“role”: “assistant”</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“usage”: {</p>
+<blockquote>
+<div><p>“completion_tokens”: 217,
+“prompt_tokens”: 31,
+“total_tokens”: 248</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.ZhipuAIChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zhipuai_chat'</span></em><a class="headerlink" href="#agentscope.models.ZhipuAIChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1209,7 +1594,7 @@ e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ZhipuAIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ZhipuAIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ZhipuAIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string and dictionary into the format that
 ZhipuAI Chat API required.</p>
 <p>In this format function, the input messages are formatted into a
@@ -1240,6 +1625,41 @@ required.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">ZhipuAIEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ZhipuAIEmbeddingWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase" title="agentscope.models.zhipu_model.ZhipuAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase</span></code></a></p>
 <p>The model wrapper for ZhipuAI embedding API.</p>
+<p>Example Response:</p>
+<p><a href="#id49"><span class="problematic" id="id50">``</span></a><a href="#id51"><span class="problematic" id="id52">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“model”: “embedding-2”,
+“data”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“embedding”: [ (a total of 1024 elements)</dt><dd><p>-0.02675454691052437,
+0.019060475751757622,
+……
+-0.005519774276763201,
+0.014949671924114227</p>
+</dd>
+</dl>
+<p>],
+“index”: 0,
+“object”: “embedding”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“object”: “list”,
+“usage”: {</p>
+<blockquote>
+<div><p>“completion_tokens”: 0,
+“prompt_tokens”: 4,
+“total_tokens”: 4</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<section id="id53">
+<h3>}<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.ZhipuAIEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zhipuai_embedding'</span></em><a class="headerlink" href="#agentscope.models.ZhipuAIEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1247,28 +1667,64 @@ required.</p>
 class in model configuration.</p>
 </dd></dl>
 
+</section>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.LiteLLMChatWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">LiteLLMChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.LiteLLMChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase" title="agentscope.models.litellm_model.LiteLLMWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LiteLLMWrapperBase</span></code></a></p>
-<p>The model wrapper based on litellm chat API.
-To use the LiteLLM wrapper, environment variables must be set.
-Different model_name could be using different environment variables.
-For example:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>for model_name: “gpt-3.5-turbo”, you need to set “OPENAI_API_KEY”</p></li>
+<p>The model wrapper based on litellm chat API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>litellm requires the users to set api key in their environment</p></li>
+<li><p>Different LLMs requires different environment variables</p></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">os.environ[&quot;OPENAI_API_KEY&quot;]</span> <span class="pre">=</span> <span class="pre">&quot;your-api-key&quot;</span>
-<span class="pre">`</span></code>
-- for model_name: “claude-2”, you need to set “ANTHROPIC_API_KEY”
-- for Azure OpenAI, you need to set “AZURE_API_KEY”,
-“AZURE_API_BASE”, “AZURE_API_VERSION”</p>
+</div>
+<p class="rubric">Example</p>
+<ul class="simple">
+<li><p>For OpenAI models, set “OPENAI_API_KEY”</p></li>
+<li><p>For models like “claude-2”, set “ANTHROPIC_API_KEY”</p></li>
+<li><p>For Azure OpenAI models, you need to set “AZURE_API_KEY”,</p></li>
+</ul>
+<p>“AZURE_API_BASE” and “AZURE_API_VERSION”
+- Refer to the docs in <a class="reference external" href="https://docs.litellm.ai/docs/">https://docs.litellm.ai/docs/</a> .</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From <a class="reference external" href="https://docs.litellm.ai/docs/completion/output">https://docs.litellm.ai/docs/completion/output</a></p></li>
+</ul>
+<p><a href="#id54"><span class="problematic" id="id55">``</span></a><a href="#id56"><span class="problematic" id="id57">`</span></a>json
+{</p>
+<blockquote>
+<div><dl>
+<dt>‘choices’: [</dt><dd><dl>
+<dt>{</dt><dd><p>‘finish_reason’: str,  # String: ‘stop’
+‘index’: int,  # Integer: 0
+‘message’: {  # Dictionary [str, str]</p>
+<blockquote>
+<div><p>‘role’: str,  # String: ‘assistant’
+‘content’: str  # String: “default message”</p>
 </div></blockquote>
-<p>You should refer to the docs in <a class="reference external" href="https://docs.litellm.ai/docs/">https://docs.litellm.ai/docs/</a> .</p>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>],
+‘created’: str,  # String: None
+‘model’: str,  # String: None
+‘usage’: {  # Dictionary [str, int]</p>
+<blockquote>
+<div><p>‘prompt_tokens’: int,  # Integer
+‘completion_tokens’: int,  # Integer
+‘total_tokens’: int  # Integer</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.LiteLLMChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'litellm_chat'</span></em><a class="headerlink" href="#agentscope.models.LiteLLMChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1312,7 +1768,7 @@ for more details.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.LiteLLMChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.LiteLLMChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.LiteLLMChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string and dictionary into the unified format.
 Note that the format function might not be the optimal way to construct
 prompt for every model, but a common way to do so.
@@ -1336,45 +1792,6 @@ required.</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.models.load_model_by_config_name">
-<span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">load_model_by_config_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a></span></span><a class="reference internal" href="_modules/agentscope/models.html#load_model_by_config_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.load_model_by_config_name" title="Link to this definition"></a></dt>
-<dd><p>Load the model by config name, and return the model wrapper.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.models.load_config_by_name">
-<span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">load_config_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models.html#load_config_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.load_config_by_name" title="Link to this definition"></a></dt>
-<dd><p>Load the model config by name, and return the config dict.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.models.read_model_configs">
-<span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">read_model_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_existing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models.html#read_model_configs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.read_model_configs" title="Link to this definition"></a></dt>
-<dd><p>read model configs from a path or a list of dicts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>configs</strong> (<cite>Union[str, list, dict]</cite>) – The path of the model configs | a config dict | a list of model
-configs.</p></li>
-<li><p><strong>clear_existing</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to clear the loaded model configs before reading.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The model configs.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.models.clear_model_configs">
-<span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">clear_model_configs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models.html#clear_model_configs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.clear_model_configs" title="Link to this definition"></a></dt>
-<dd><p>Clear the loaded model configs.</p>
-</dd></dl>
-
 </section>
 </section>
 
@@ -1382,8 +1799,8 @@ configs.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.memory.temporary_memory.html" class="btn btn-neutral float-left" title="agentscope.memory.temporary_memory module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.models.config.html" class="btn btn-neutral float-right" title="agentscope.models.config module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.message.placeholder.html" class="btn btn-neutral float-left" title="agentscope.message.placeholder module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.models.dashscope_model.html" class="btn btn-neutral float-right" title="agentscope.models.dashscope_model module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

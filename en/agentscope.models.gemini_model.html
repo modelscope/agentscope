@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="agentscope.models.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.models.html#module-agentscope.models">Module contents</a></li>
@@ -186,7 +186,7 @@ loaded from environment variable.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.gemini_model.GeminiChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/gemini_model.html#GeminiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.gemini_model.GeminiChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/gemini_model.html#GeminiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.gemini_model.GeminiChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>This function provide a basic prompting strategy for Gemini Chat
 API in multi-party conversation, which combines all input into a
 single string, and wrap it into a user message.</p>
@@ -242,12 +242,25 @@ In distribution, placeholder is also allowed.</p>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.models.gemini_model.GeminiWrapperBase" title="agentscope.models.gemini_model.GeminiWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeminiWrapperBase</span></code></a></p>
 <p>The wrapper for Google Gemini embedding model,
 e.g. models/embedding-001</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type">
-<span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gemini_embedding'</span></em><a class="headerlink" href="#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
-<dd><p>The type of the model, which is used in model configuration.</p>
-</dd></dl>
-
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>Refer to <a class="reference external" href="https://ai.google.dev/api/embeddings?hl=zh-cn#response-body">https://ai.google.dev/api/embeddings?hl=zh-cn#response-body</a></p></li>
+</ul>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
+{</p>
+<blockquote>
+<div><dl>
+<dt>“embeddings”: [</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>object (ContentEmbedding)</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.gemini_model.GeminiEmbeddingWrapper.config_name">
 <span class="sig-name descname"><span class="pre">config_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.gemini_model.GeminiEmbeddingWrapper.config_name" title="Link to this definition"></a></dt>
@@ -258,6 +271,12 @@ e.g. models/embedding-001</p>
 <dt class="sig sig-object py" id="agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_name">
 <span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_name" title="Link to this definition"></a></dt>
 <dd><p>The name of the model, which is used in model api calling.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type">
+<span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gemini_embedding'</span></em><a class="headerlink" href="#agentscope.models.gemini_model.GeminiEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
+<dd><p>The type of the model, which is used in model configuration.</p>
 </dd></dl>
 
 </dd></dl>

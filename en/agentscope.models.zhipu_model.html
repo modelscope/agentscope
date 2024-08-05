@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="agentscope.models.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.models.html#module-agentscope.models">Module contents</a></li>
@@ -153,7 +153,7 @@ e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.zhipu_model.ZhipuAIWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIWrapperBase.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string or dict into the format that the model
 API required.</p>
 </dd></dl>
@@ -165,6 +165,43 @@ API required.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.zhipu_model.</span></span><span class="sig-name descname"><span class="pre">ZhipuAIChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIChatWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.models.zhipu_model.ZhipuAIWrapperBase" title="agentscope.models.zhipu_model.ZhipuAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase</span></code></a></p>
 <p>The model wrapper for ZhipuAI’s chat API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From <a class="reference external" href="https://maas.aminer.cn/dev/api#glm-4">https://maas.aminer.cn/dev/api#glm-4</a></p></li>
+</ul>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“created”: 1703487403,
+“id”: “8239375684858666781”,
+“model”: “glm-4”,
+“request_id”: “8239375684858666781”,
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“finish_reason”: “stop”,
+“index”: 0,
+“message”: {</p>
+<blockquote>
+<div><p>“content”: “Drawing blueprints with …”,
+“role”: “assistant”</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“usage”: {</p>
+<blockquote>
+<div><p>“completion_tokens”: 217,
+“prompt_tokens”: 31,
+“total_tokens”: 248</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</dd>
+</dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.zhipu_model.ZhipuAIChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zhipuai_chat'</span></em><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIChatWrapper.model_type" title="Link to this definition"></a></dt>
@@ -197,7 +234,7 @@ e.g. <cite>temperature</cite>, <cite>seed</cite>.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.zhipu_model.ZhipuAIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.html#agentscope.message.Msg" title="agentscope.message.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string and dictionary into the format that
 ZhipuAI Chat API required.</p>
 <p>In this format function, the input messages are formatted into a
@@ -240,6 +277,41 @@ required.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.zhipu_model.</span></span><span class="sig-name descname"><span class="pre">ZhipuAIEmbeddingWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/zhipu_model.html#ZhipuAIEmbeddingWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.models.zhipu_model.ZhipuAIWrapperBase" title="agentscope.models.zhipu_model.ZhipuAIWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase</span></code></a></p>
 <p>The model wrapper for ZhipuAI embedding API.</p>
+<p>Example Response:</p>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“model”: “embedding-2”,
+“data”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“embedding”: [ (a total of 1024 elements)</dt><dd><p>-0.02675454691052437,
+0.019060475751757622,
+……
+-0.005519774276763201,
+0.014949671924114227</p>
+</dd>
+</dl>
+<p>],
+“index”: 0,
+“object”: “embedding”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+“object”: “list”,
+“usage”: {</p>
+<blockquote>
+<div><p>“completion_tokens”: 0,
+“prompt_tokens”: 4,
+“total_tokens”: 4</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<section id="id9">
+<h2>}<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zhipuai_embedding'</span></em><a class="headerlink" href="#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -259,6 +331,7 @@ class in model configuration.</p>
 <dd><p>The name of the model, which is used in model api calling.</p>
 </dd></dl>
 
+</section>
 </dd></dl>
 
 </section>

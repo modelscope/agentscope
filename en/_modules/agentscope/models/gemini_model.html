@@ -74,7 +74,7 @@
 <p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.message.html">agentscope.message package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.models.html">agentscope.models package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.agents.html">agentscope.agents package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.memory.html">agentscope.memory package</a></li>
@@ -104,7 +104,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../models.html">agentscope.models</a></li>
       <li class="breadcrumb-item active">agentscope.models.gemini_model</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -185,16 +184,8 @@
 
         <span class="n">genai</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_register_default_metrics</span><span class="p">()</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the default metrics for the model.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;The method `_register_default_metrics` must be implemented.&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
 <div class="viewcode-block" id="GeminiWrapperBase.list_models">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiWrapperBase.list_models">[docs]</a>
@@ -373,11 +364,10 @@
                 <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span>
-            <span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">token_response</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">token_prompt</span><span class="p">,</span>
-            <span class="n">total_tokens</span><span class="o">=</span><span class="n">token_prompt</span> <span class="o">+</span> <span class="n">token_response</span><span class="p">,</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">token_response</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_extract_text_content_from_response</span><span class="p">(</span>
@@ -443,25 +433,6 @@
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the default metrics for the model.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;total_tokens&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
 
 <div class="viewcode-block" id="GeminiChatWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper.format">[docs]</a>
@@ -565,7 +536,21 @@
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiEmbeddingWrapper">[docs]</a>
 <span class="k">class</span> <span class="nc">GeminiEmbeddingWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini embedding model,</span>
-<span class="sd">    e.g. models/embedding-001&quot;&quot;&quot;</span>
+<span class="sd">    e.g. models/embedding-001</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to https://ai.google.dev/api/embeddings?hl=zh-cn#response-body</span>
+
+<span class="sd">        ```json</span>
+<span class="sd">        {</span>
+<span class="sd">            &quot;embeddings&quot;: [</span>
+<span class="sd">                {</span>
+<span class="sd">                    object (ContentEmbedding)</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+<span class="sd">        }</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gemini_embedding&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of the model, which is used in model configuration.&quot;&quot;&quot;</span>
@@ -620,21 +605,16 @@
             <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># TODO: Up to 2023/03/11, the embedding model doesn&#39;t support to</span>
+        <span class="c1"># TODO: Up to 2024/07/26, the embedding model doesn&#39;t support to</span>
         <span class="c1">#  count tokens.</span>
         <span class="c1"># step3: update monitor accordingly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_monitor</span><span class="p">(</span><span class="n">call_counter</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
             <span class="n">embedding</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_register_default_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the default metrics for the model.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_metric</span><span class="p">(</span><span class="s2">&quot;call_counter&quot;</span><span class="p">),</span>
-            <span class="n">metric_unit</span><span class="o">=</span><span class="s2">&quot;times&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 </pre></div>
