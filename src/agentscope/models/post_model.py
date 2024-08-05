@@ -77,7 +77,13 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                     **post_args
                 )
         """
-        model_name = json_args.get("model", json_args.get("model_name", None))
+        if json_args is not None:
+            model_name = json_args.get(
+                "model",
+                json_args.get("model_name", None),
+            )
+        else:
+            model_name = None
 
         super().__init__(config_name=config_name, model_name=model_name)
 
