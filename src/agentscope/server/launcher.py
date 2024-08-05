@@ -26,10 +26,11 @@ except ImportError as import_error:
         "distribute",
     )
 import agentscope
-from agentscope.server.servicer import AgentServerServicer
-from agentscope.agents.agent import AgentBase
-from agentscope.utils.tools import check_port, generate_id_from_seed
-from agentscope.constants import _DEFAULT_RPC_OPTIONS
+from ..server.servicer import AgentServerServicer
+from ..manager import ASManager
+from ..agents.agent import AgentBase
+from ..utils.tools import check_port, generate_id_from_seed
+from ..constants import _DEFAULT_RPC_OPTIONS
 
 
 def _setup_agent_server(
@@ -150,10 +151,10 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             The abs path to the directory containing customized agent python
             files.
     """
-    from agentscope._init import init_process
 
     if init_settings is not None:
-        init_process(**init_settings)
+        ASManager.get_instance().load_dict(init_settings)
+
     servicer = AgentServerServicer(
         stop_event=stop_event,
         host=host,
@@ -377,7 +378,7 @@ class RpcAgentServerLauncher:
 
     def _launch_in_sub(self) -> None:
         """Launch an agent server in sub-process."""
-        from agentscope._init import _INIT_SETTINGS
+        init_settings = ASManager.get_instance().state_dict()
 
         self.parent_con, child_con = Pipe()
         start_event = Event()
@@ -387,7 +388,7 @@ class RpcAgentServerLauncher:
                 "host": self.host,
                 "port": self.port,
                 "server_id": self.server_id,
-                "init_settings": _INIT_SETTINGS,
+                "init_settings": init_settings,
                 "start_event": start_event,
                 "stop_event": self.stop_event,
                 "pipe": child_con,

@@ -25,10 +25,13 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-from .._runtime import _runtime
 from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from ._studio_utils import _check_and_convert_id_type
-from ..utils.tools import _is_process_alive, _is_windows
+from ..utils.tools import (
+    _is_process_alive,
+    _is_windows,
+    _generate_new_runtime_id,
+)
 from ..rpc.rpc_agent_client import RpcAgentClient
 
 
@@ -609,7 +612,7 @@ def _convert_config_to_py_and_run() -> Response:
     """
     content = request.json.get("data")
     studio_url = request.url_root.rstrip("/")
-    run_id = _runtime.generate_new_runtime_id()
+    run_id = _generate_new_runtime_id()
     status, py_code = _convert_to_py(
         content,
         runtime_id=run_id,

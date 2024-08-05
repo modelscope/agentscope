@@ -6,7 +6,7 @@ import os
 import shutil
 from openai._types import NOT_GIVEN
 
-
+from agentscope.manager import ASManager
 from agentscope.service.multi_modality.openai_services import (
     openai_audio_to_text,
     openai_text_to_audio,
@@ -30,6 +30,7 @@ class TestOpenAIServices(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down the test"""
+        ASManager.get_instance().flush()
         if os.path.exists(self.save_dir):
             shutil.rmtree(self.save_dir)
 

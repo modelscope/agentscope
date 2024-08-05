@@ -15,8 +15,8 @@ from loguru import logger
 
 from agentscope.agents.operator import Operator
 from agentscope.logging import log_stream_msg, log_msg
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.models import load_model_by_config_name
 from agentscope.memory import TemporaryMemory
 
 
@@ -194,7 +194,10 @@ class AgentBase(Operator, metaclass=_AgentMeta):
 
         # TODO: support to receive a ModelWrapper instance
         if model_config_name is not None:
-            self.model = load_model_by_config_name(model_config_name)
+            model_manager = ModelManager.get_instance()
+            self.model = model_manager.get_model_by_config_name(
+                model_config_name,
+            )
 
         if use_memory:
             self.memory = TemporaryMemory(memory_config)
