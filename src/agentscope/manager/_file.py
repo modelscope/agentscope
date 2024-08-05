@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Manage the file system for saving files, code and logs."""
+import io
 import json
 import os
 import shutil
@@ -127,7 +128,7 @@ class FileManager:
             return path
 
     @property
-    def _embedding_cache_dir(self) -> str:
+    def embedding_cache_dir(self) -> str:
         """Obtain the embedding cache directory."""
         if self.cache_dir is None:
             raise ValueError(
@@ -139,19 +140,19 @@ class FileManager:
         return dir_cache_embedding
 
     @property
-    def _file_dir(self) -> str:
+    def file_dir(self) -> str:
         """The directory for saving files, including images, audios and
         videos."""
         # To be compatible with files saving when disable_saving is True
         return self._get_and_create_subdir(_DEFAULT_SUBDIR_FILE)
 
     @property
-    def _code_dir(self) -> str:
+    def code_dir(self) -> str:
         """The directory for saving codes."""
         return self._get_and_create_subdir(_DEFAULT_SUBDIR_CODE)
 
     @property
-    def _invoke_dir(self) -> str:
+    def invoke_dir(self) -> str:
         """The directory for saving api invocations."""
         return self._get_and_create_subdir(_DEFAULT_SUBDIR_INVOKE)
 
@@ -173,7 +174,7 @@ class FileManager:
         """Save api invocation locally."""
         if self.save_api_invoke:
             filename = f"{prefix}_{_generate_random_code()}.json"
-            path_save = os.path.join(str(self._invoke_dir), filename)
+            path_save = os.path.join(str(self.invoke_dir), filename)
             with open(path_save, "w", encoding="utf-8") as file:
                 json.dump(record, file, indent=4, ensure_ascii=False)
 
@@ -188,11 +189,11 @@ class FileManager:
         for filename in os.listdir(cur_dir):
             if filename.endswith(".py"):
                 file_abs = os.path.join(cur_dir, filename)
-                shutil.copy(file_abs, str(self._code_dir))
+                shutil.copy(file_abs, str(self.code_dir))
 
     def save_image(
         self,
-        image: Union[str, np.ndarray, Image.Image],
+        image: Union[str, np.ndarray, bytes],
         filename: Optional[str] = None,
     ) -> str:
         """Save image file locally, and return the local image path.
@@ -213,19 +214,21 @@ class FileManager:
                 _generate_random_code(),
             )
 
-        path_file = os.path.join(self._file_dir, filename)
+        path_file = os.path.join(self.file_dir, filename)
 
         if isinstance(image, str):
             # download the image from url
             _download_file(image, path_file)
-        elif isinstance(image, Image.Image):
-            image.save(path_file)
         elif isinstance(image, np.ndarray):
             # save image via PIL
             Image.fromarray(image).save(path_file)
+        elif isinstance(image, bytes):
+            # save image via bytes
+            Image.open(io.BytesIO(image)).save(path_file)
         else:
-            raise RuntimeError(
-                f"Invalid image type: {type(image)}. ",
+            raise ValueError(
+                f"Unsupported image type: {type(image)}"
+                "Must be str, np.ndarray, or bytes.",
             )
 
         return path_file
@@ -253,7 +256,7 @@ class FileManager:
             `str`: The local file path.
         """
 
-        path_file = os.path.join(self._file_dir, filename)
+        path_file = os.path.join(self.file_dir, filename)
 
         with open(path_file, "wb") as file:
             for chunk in generator:
@@ -296,7 +299,7 @@ class FileManager:
         # Save the embedding to the cache directory
         np.save(
             os.path.join(
-                self._embedding_cache_dir,
+                self.embedding_cache_dir,
                 f"{record_hash}.npy",
             ),
             embedding,
@@ -317,7 +320,7 @@ class FileManager:
         try:
             return np.load(
                 os.path.join(
-                    self._embedding_cache_dir,
+                    self.embedding_cache_dir,
                     f"{record_hash}.npy",
                 ),
             )
