@@ -28,7 +28,7 @@ class BasicAttribute(Attribute, Getable, Setable):
 
     @event_func
     def get(self) -> Any:
-        self._trigger_listener(Event("get", None))
+        self._trigger_listener(Event("get", {}))
         return deepcopy(self.value)
 
     @event_func

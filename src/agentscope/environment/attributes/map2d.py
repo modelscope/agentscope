@@ -143,7 +143,7 @@ class Map2D(Attribute):
                 self.distance = distance
                 self.distance_type = distance_type
 
-            def __call__(self, attr: Map2D, event: Event) -> None:
+            def __call__(self, attr: Attribute, event: Event) -> None:
                 if event.args["attr_name"] == self.center_attr.name:
                     # center is moving, recalculate all distance
                     x1, y1 = self.center_attr.get_position()
@@ -247,7 +247,7 @@ class Map2D(Attribute):
                 self.distance = distance
                 self.distance_type = distance_type
 
-            def __call__(self, attr: Map2D, event: Event) -> None:
+            def __call__(self, attr: Attribute, event: Event) -> None:
                 if event.args["attr_name"] == self.center_attr.name:
                     # center is moving, recalculate all distance
                     x1, y1 = self.center_attr.get_position()

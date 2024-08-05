@@ -17,7 +17,6 @@ from agentscope.environment import (
 from agentscope.exception import (
     EnvAttributeAlreadyExistError,
     EnvAttributeTypeError,
-    EnvListenerError,
 )
 
 
@@ -251,10 +250,14 @@ class AttributeTest(unittest.TestCase):
                     self.owner.value.pop(event.args["attr_name"])
 
         m.in_range_of(
-            "p2", listener=InRangeListener("in_p2_1_euc", p2), distance=1
+            "p2",
+            listener=InRangeListener("in_p2_1_euc", p2),
+            distance=1,
         )
         m.out_of_range_of(
-            "p2", listener=OutRangeListener("out_p2_1_euc", p2), distance=1
+            "p2",
+            listener=OutRangeListener("out_p2_1_euc", p2),
+            distance=1,
         )
         m.in_range_of(
             "p3",

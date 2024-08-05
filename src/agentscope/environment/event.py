@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The events which can be bound to attributes."""
 from abc import ABC, abstractmethod
-from typing import Callable, Any, Optional, Tuple
+from typing import Callable, Any, Tuple
 
 
 def event_func(func: Callable) -> Callable:
@@ -20,7 +20,7 @@ def event_func(func: Callable) -> Callable:
 class Event:
     """A class representing the information of an event."""
 
-    def __init__(self, name: str, args: Optional[dict] = None) -> None:
+    def __init__(self, name: str, args: dict = None) -> None:
         self._name = name
         self._args = args
 
@@ -30,7 +30,7 @@ class Event:
         return self._name
 
     @property
-    def args(self) -> Optional[dict]:
+    def args(self) -> dict:
         """Return the arguments of the event."""
         return self._args
 
