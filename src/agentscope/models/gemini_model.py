@@ -372,7 +372,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
         """
         if len(args) == 0:
             raise ValueError(
-                "At least one message should be provided. A empty message "
+                "At least one message should be provided. An empty message "
                 "list is not allowed.",
             )
 

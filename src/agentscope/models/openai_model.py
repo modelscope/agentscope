@@ -416,7 +416,21 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         model_name: str,
     ) -> List[dict]:
         """A static version of the format method, which can be used without
-        initializing the OpenAIChatWrapper object."""
+        initializing the OpenAIChatWrapper object.
+
+        Args:
+            args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
+            model_name (`str`):
+                The name of the model to use in OpenAI API.
+
+        Returns:
+            `List[dict]`:
+                The formatted messages in the format that OpenAI Chat API
+                required.
+        """
         messages = []
         for arg in args:
             if arg is None:
