@@ -10,6 +10,7 @@ import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
+from random import choice
 
 from flask import (
     Flask,
@@ -32,6 +33,7 @@ from ..utils.tools import (
     _generate_new_runtime_id,
 )
 from ..rpc.rpc_agent_client import RpcAgentClient
+
 
 _app = Flask(__name__)
 
@@ -260,11 +262,7 @@ def _register_server() -> Response:
         abort(400, f"run_id [{server_id}] already exists")
 
     _db.session.add(
-        _ServerTable(
-            id=server_id,
-            host=host,
-            port=port,
-        ),
+        _ServerTable(id=server_id, host=host, port=port),
     )
     _db.session.commit()
 
@@ -307,6 +305,7 @@ def _get_server_status(server_id: str) -> Response:
                 "status": "running",
                 "cpu": status["cpu"],
                 "mem": status["mem"],
+                "size": status["size"],
             },
         )
 
@@ -363,6 +362,23 @@ def _agent_memory() -> Response:
     if isinstance(mem, dict):
         mem = [mem]
     return jsonify(mem)
+
+
+@_app.route("/api/servers/alloc", methods=["GET"])
+def _alloc_server() -> Response:
+    # TODO: check the server is still running
+    # TODO: support to alloc multiple servers in one call
+    # TODO: use hints to decide which server to allocate
+    # TODO: allocate based on server's cpu and memory usage
+    # currently random select a server
+    servers = _ServerTable.query.all()
+    server = choice(servers)
+    return jsonify(
+        {
+            "host": server.host,
+            "port": server.port,
+        },
+    )
 
 
 @_app.route("/api/messages/push", methods=["POST"])
