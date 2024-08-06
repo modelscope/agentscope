@@ -84,7 +84,11 @@ def check_port(port: Optional[int] = None) -> int:
         new_port = find_available_port()
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        if s.connect_ex(("localhost", port)) == 0:
+        try:
+            code = s.connect_ex(("localhost", port))
+            if code != 0:
+                raise RuntimeError("Port is occupied.")
+        except Exception:
             new_port = find_available_port()
             return new_port
     return port
@@ -326,14 +330,14 @@ def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
                 },
             )
         else:
-            # Merge all messages into a dialogue history prompt
+            # Merge all messages into a conversation history prompt
             dialogue.append(
                 f"{unit['name']}: {_convert_to_str(unit['content'])}",
             )
 
     dialogue_history = "\n".join(dialogue)
 
-    user_content_template = "## Dialogue History\n{dialogue_history}"
+    user_content_template = "## Conversation History\n{dialogue_history}"
 
     messages.append(
         {

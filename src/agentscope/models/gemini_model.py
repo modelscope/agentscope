@@ -44,7 +44,7 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
                 The api_key for the model. If it is not provided, it will be
                 loaded from environment variable.
         """
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
         # Test if the required package is installed
         if genai is None:
@@ -304,8 +304,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
         return response.text
 
+    @staticmethod
     def format(
-        self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """This function provide a basic prompting strategy for Gemini Chat
@@ -344,6 +344,12 @@ class GeminiChatWrapper(GeminiWrapperBase):
             `List[dict]`:
                 A list with one user message.
         """
+        if len(args) == 0:
+            raise ValueError(
+                "At least one message should be provided. An empty message "
+                "list is not allowed.",
+            )
+
         input_msgs = []
         for _ in args:
             if _ is None:
@@ -366,31 +372,27 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 # system prompt
                 sys_prompt = _convert_to_str(unit.content)
             else:
-                # Merge all messages into a dialogue history prompt
+                # Merge all messages into a conversation history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
 
-        dialogue_history = "\n".join(dialogue)
+        prompt_components = []
+        if sys_prompt is not None:
+            if not sys_prompt.endswith("\n"):
+                sys_prompt += "\n"
+            prompt_components.append(sys_prompt)
 
-        if sys_prompt is None:
-            user_content_template = "## Dialogue History\n{dialogue_history}"
-        else:
-            user_content_template = (
-                "{sys_prompt}\n"
-                "\n"
-                "## Dialogue History\n"
-                "{dialogue_history}"
-            )
+        if len(dialogue) > 0:
+            prompt_components.extend(["## Conversation History"] + dialogue)
+
+        user_prompt = "\n".join(prompt_components)
 
         messages = [
             {
                 "role": "user",
                 "parts": [
-                    user_content_template.format(
-                        sys_prompt=sys_prompt,
-                        dialogue_history=dialogue_history,
-                    ),
+                    user_prompt,
                 ],
             },
         ]

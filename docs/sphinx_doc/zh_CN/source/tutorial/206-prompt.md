@@ -184,7 +184,7 @@ print(prompt)
 ```bash
 [
   {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+  {"role": "user", "content": "## Conversation History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
 
@@ -263,7 +263,7 @@ print(prompt)
   {
     "role": "user",
     "content": [
-      {"text": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+      {"text": "## Conversation History\nBob: Hi!\nAlice: Nice to meet you!"},
       {"image": "url_to_png2"},
       {"image": "url_to_png3"},
     ]
@@ -304,7 +304,7 @@ print(prompt)
         "role": "user",
         "content": (
             "You are a helpful assistant\n\n"
-            "## Dialogue History\nuser: What is the weather today?\n"
+            "## Conversation History\nuser: What is the weather today?\n"
             "assistant: It is sunny today"
         ),
     },
@@ -323,7 +323,7 @@ print(prompt)
 给定一个消息列表，我们将按照以下规则解析每个消息：
 
 - 如果输入的第一条信息的`role`字段是`"system"`，该条信息将被视为系统提示（system
- prompt），其他信息将一起组成对话历史。对话历史将添加`"## Dialogue History"`的前缀，并与
+ prompt），其他信息将一起组成对话历史。对话历史将添加`"## Conversation History"`的前缀，并与
 系统提示一起组成一条`role`为`"system"`的信息。
 - 如果输入信息中的`url`字段不为`None`，则这些url将一起被置于`"images"`对应的键值中。
 
@@ -350,7 +350,7 @@ print(prompt)
 [
   {
     "role": "system",
-    "content": "You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!",
+    "content": "You are a helpful assistant\n\n## Conversation History\nBob: Hi.\nAlice: Nice to meet you!",
     "images": ["https://example.com/image.jpg"]
   },
 ]
@@ -387,7 +387,7 @@ print(prompt)
 ```bash
 You are a helpful assistant
 
-## Dialogue History
+## Conversation History
 Bob: Hi.
 Alice: Nice to meet you!
 ```
@@ -436,7 +436,7 @@ print(prompt)
   {
     "role": "user",
     "parts": [
-      "You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"
+      "You are a helpful assistant\n## Conversation History\nBob: Hi!\nAlice: Nice to meet you!"
     ]
   }
 ]
@@ -481,7 +481,7 @@ print(prompt)
 ```bash
 [
   {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+  {"role": "user", "content": "## Conversation History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
 

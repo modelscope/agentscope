@@ -116,6 +116,7 @@ class BasicModelTest(unittest.TestCase):
         model_manager.load_model_configs(
             model_configs={
                 "model_type": "TestModelWrapperSimple",
+                "model_name": "test_model_wrapper",
                 "config_name": "test_model_wrapper",
                 "args": {},
             },

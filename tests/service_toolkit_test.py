@@ -274,7 +274,7 @@ class ServiceToolkitTest(unittest.TestCase):
         """Test summarization in service toolkit."""
         _, doc_dict = ServiceToolkit.get(
             summarization,
-            model=ModelWrapperBase("abc"),
+            model=ModelWrapperBase("abc", "model_name"),
             system_prompt="",
             summarization_prompt="",
             max_return_token=-1,
