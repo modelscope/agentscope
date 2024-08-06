@@ -226,7 +226,7 @@ class InMemoryStore(MemoryStoreBase):
         response = self.embedding_model(serialize(msg))
 
         if isinstance(response, ModelResponse):
-            return response.content
+            return response.embedding
         else:
             return response
 

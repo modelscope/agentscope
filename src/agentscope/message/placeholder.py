@@ -212,6 +212,7 @@ def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
         raise NotImplementedError(
             f"Deserialization of {msg_type} is not supported.",
         )
+    # TODO: Need a more formal way to deserialize the message
     return _MSGS[msg_type](**js_msg)
 
 

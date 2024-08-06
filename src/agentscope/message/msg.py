@@ -105,6 +105,16 @@ class Msg(MessageBase):
     timestamp: str
     """The timestamp of the message."""
 
+    __serialized_attrs = {
+        "id",
+        "name",
+        "content",
+        "role",
+        "metadata",
+        "url",
+        "timestamp",
+    }
+
     def __init__(
         self,
         name: str,
@@ -187,4 +197,11 @@ class Msg(MessageBase):
         return "\n".join(colored_strs)
 
     def serialize(self) -> str:
-        return json.dumps({"__type": "Msg", **self})
+        serialized_dict = {
+            "__type": self.__class__.__name__,
+        }
+
+        for attr_name in self.__serialized_attrs:
+            serialized_dict[attr_name] = getattr(self, attr_name)
+
+        return json.dumps(serialized_dict)

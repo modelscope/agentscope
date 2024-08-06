@@ -46,10 +46,15 @@ class MemoryActions:
         if messages is None:
             return
 
-        if not isinstance(messages, Sequence):
+        if isinstance(messages, Msg):
             record_messages = [messages]
-        else:
+        elif isinstance(messages, list):
             record_messages = messages
+        else:
+            raise TypeError(
+                f"Invalid messages type {type(messages)}, Msg or list[Msg] "
+                f"is expected",
+            )
 
         if not allow_duplicate:
             # Check if the memory already exists by checking the message id
