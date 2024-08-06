@@ -171,7 +171,10 @@ class Map2D(BasicAttribute):
                     x1, y1 = self.center_attr.get_position()
                     x2 = event.args["x"]  # type: ignore[index]
                     y2 = event.args["y"]  # type: ignore[index]
-                    if distance2d(x1, y1, x2, y2) <= self.distance:
+                    if (
+                        distance2d(x1, y1, x2, y2, self.distance_type)
+                        <= self.distance
+                    ):
                         self.target_listener(
                             attr,
                             Event(name="in_range", args=event.args),
@@ -274,7 +277,10 @@ class Map2D(BasicAttribute):
                     x1, y1 = self.center_attr.get_position()
                     x2 = event.args["x"]  # type: ignore[index]
                     y2 = event.args["y"]  # type: ignore[index]
-                    if distance2d(x1, y1, x2, y2) > self.distance:
+                    if (
+                        distance2d(x1, y1, x2, y2, self.distance_type)
+                        > self.distance
+                    ):
                         self.target_listener(
                             attr,
                             Event(name="out_of_range", args=event.args),
