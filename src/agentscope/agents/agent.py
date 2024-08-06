@@ -345,11 +345,11 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 f"object, got {type(content)} instead.",
             )
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         """Observe the input, store it in memory without response to it.
 
         Args:
-            x (`Union[dict, Sequence[dict]]`):
+            x (`Union[Msg, Sequence[Msg]]`):
                 The input message to be recorded in memory.
         """
         if self.memory:
