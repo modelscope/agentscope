@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unit tests for environment"""
 import unittest
-from typing import Any, Union, Optional, Sequence
+from typing import Any
 
 from agentscope.environment import (
     Attribute,
@@ -61,7 +61,7 @@ class AgentWithChatRoom(AgentBase):
         self.event_list = []
         self.room.join(self)
 
-    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
+    def reply(self, x: Msg = None) -> Msg:
         if "event" in x:
             event = x["event"]
             self.event_list.append(event)
@@ -337,10 +337,12 @@ class AttributeTest(unittest.TestCase):
         r.add_listener("leave", Listener("leave_listener", master))
         r.add_listener("get_history", Listener("get_listener", master))
         r.add_listener(
-            "set_announcement", Listener("set_announcement_listener", master)
+            "set_announcement",
+            Listener("set_announcement_listener", master),
         )
         r.add_listener(
-            "get_announcement", Listener("get_announcement_listener", master)
+            "get_announcement",
+            Listener("get_announcement_listener", master),
         )
 
         # test join
