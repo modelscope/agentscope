@@ -40,7 +40,7 @@ class TestRetrieval(unittest.TestCase):
         m2 = Msg(name="env", content="test2", role="assistant")
         m2.embedding = [0.5, 0.5]
         m2.timestamp = "2023-12-18 21:50:59"
-        memory = TemporaryMemory(config={}, embedding_model=dummy_model)
+        memory = TemporaryMemory(embedding_model=dummy_model)
         memory.add(m1)
         memory.add(m2)
 

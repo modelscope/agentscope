@@ -88,13 +88,14 @@ class TemporaryMemoryTest(unittest.TestCase):
         Test load and export function of TemporaryMemory
         """
         memory = TemporaryMemory()
-        user_input = Msg(name="user", content="Hello")
+        user_input = Msg(name="user", content="Hello", role="user")
         agent_input = Msg(
             name="agent",
             content="Hello! How can I help you?",
+            role="assistant",
         )
         memory.load([user_input, agent_input])
-        retrieved_mem = memory.export(to_mem=True)
+        retrieved_mem = memory.export()
         self.assertEqual(
             retrieved_mem,
             [user_input, agent_input],
