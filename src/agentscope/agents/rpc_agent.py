@@ -128,7 +128,7 @@ class RpcAgent(AgentBase):
             x=x,
         )
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         if self.client is None:
             self._launch_server()
         self.client.call_agent_func(
