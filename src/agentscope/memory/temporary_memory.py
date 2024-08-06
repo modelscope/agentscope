@@ -14,11 +14,10 @@ from loguru import logger
 
 from .memory import MemoryBase
 from ..manager import ModelManager
+from ..serialize import serialize, deserialize
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
 from ..message import (
-    deserialize,
-    serialize,
     MessageBase,
     Msg,
     PlaceholderMessage,
@@ -32,20 +31,18 @@ class TemporaryMemory(MemoryBase):
 
     def __init__(
         self,
-        config: Optional[dict] = None,
         embedding_model: Union[str, Callable] = None,
     ) -> None:
         """
         Temporary memory module for conversation.
+
         Args:
-            config (dict):
-                configuration of the memory
             embedding_model (Union[str, Callable])
                 if the temporary memory needs to be embedded,
                 then either pass the name of embedding model or
                 the embedding model itself.
         """
-        super().__init__(config)
+        super().__init__()
 
         self._content = []
 
@@ -220,8 +217,21 @@ class TemporaryMemory(MemoryBase):
                         e.doc,
                         e.pos,
                     )
-        else:
+        elif isinstance(memories, list):
+            for unit in memories:
+                if not isinstance(unit, Msg):
+                    raise TypeError(
+                        f"Expect a list of Msg objects, but get {type(unit)} "
+                        f"instead.",
+                    )
             load_memories = memories
+        elif isinstance(memories, Msg):
+            load_memories = [memories]
+        else:
+            raise TypeError(
+                f"The type of memories to be loaded is not supported. "
+                f"Expect str, list[Msg], or Msg, but get {type(memories)}.",
+            )
 
         # overwrite the original memories after loading the new ones
         if overwrite:

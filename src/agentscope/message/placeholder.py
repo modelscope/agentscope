@@ -3,10 +3,9 @@
 import json
 from typing import Any, Optional, List, Union, Sequence
 
-from loguru import logger
-
 from .msg import Msg, MessageBase
 from ..rpc import RpcAgentClient, ResponseStub, call_in_thread
+from ..serialize import deserialize
 from ..utils.tools import is_web_accessible
 
 
@@ -28,6 +27,12 @@ class PlaceholderMessage(Msg):
         *PLACEHOLDER_ATTRS,
     }
 
+    __serialized_attrs = {
+        "host",
+        "port",
+        "task_id",
+    }
+
     def __init__(
         self,
         name: str,
@@ -38,7 +43,7 @@ class PlaceholderMessage(Msg):
         port: int = None,
         task_id: int = None,
         client: Optional[RpcAgentClient] = None,
-        x: dict = None,
+        x: Optional[Union[Msg, Sequence[Msg]]] = None,
         **kwargs: Any,
     ) -> None:
         """A placeholder message, records the address of the real message.
@@ -70,7 +75,7 @@ class PlaceholderMessage(Msg):
             client (`RpcAgentClient`, defaults to `None`):
                 An RpcAgentClient instance used to connect to the generator of
                 this placeholder.
-            x (`dict`, defaults to `None`):
+            x (`Optional[Msg, Sequence[Msg]]`, defaults to `None`):
                 Input parameters used to call rpc methods on the client.
         """  # noqa
         super().__init__(
@@ -161,63 +166,48 @@ class PlaceholderMessage(Msg):
     def __update_task_id(self) -> None:
         if self._stub is not None:
             try:
-                resp = deserialize(self._stub.get_response())
+                task_id = deserialize(self._stub.get_response())
             except Exception as e:
-                logger.error(
-                    f"Failed to get task_id: {self._stub.get_response()}",
-                )
                 raise ValueError(
                     f"Failed to get task_id: {self._stub.get_response()}",
                 ) from e
-            self._task_id = resp["task_id"]  # type: ignore[call-overload]
+            self._task_id = task_id
             self._stub = None
 
     def serialize(self) -> str:
         if self._is_placeholder:
             self.__update_task_id()
-            return json.dumps(
-                {
-                    "__type": "PlaceholderMessage",
-                    "name": self.name,
-                    "content": None,
-                    "timestamp": self.timestamp,
-                    "host": self._host,
-                    "port": self._port,
-                    "task_id": self._task_id,
-                },
-            )
-        else:
-            states = {
-                k: v
-                for k, v in self.items()
-                if k not in PlaceholderMessage.PLACEHOLDER_ATTRS
+
+            # Serialize the placeholder message
+            serialized_dict = {
+                "__module__": self.__class__.__module__,
+                "__name__": self.__class__.__name__,
             }
-            states["__type"] = "Msg"
-            return json.dumps(states)
 
+            for attr_name in self.__serialized_attrs:
+                serialized_dict[attr_name] = getattr(self, attr_name)
 
-_MSGS = {
-    "Msg": Msg,
-    "PlaceholderMessage": PlaceholderMessage,
-}
+            return json.dumps(serialized_dict, ensure_ascii=False)
 
+        else:
+            # Serialize into a normal Msg object
+            serialized_dict = {
+                "__module__": Msg.__module__,
+                "__name__": Msg.__name__,
+            }
 
-def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
-    """Deserialize json string into MessageBase"""
-    js_msg = json.loads(s)
-    msg_type = js_msg.pop("__type")
-    if msg_type == "List":
-        return [deserialize(s) for s in js_msg["__value"]]
-    elif msg_type not in _MSGS:
-        raise NotImplementedError(
-            f"Deserialization of {msg_type} is not supported.",
-        )
-    return _MSGS[msg_type](**js_msg)
+            # TODO: We will merge the placeholder and message classes in the
+            #  future to avoid the hard coding of the serialized attributes
+            #  here
+            for attr_name in [
+                "id",
+                "name",
+                "content",
+                "role",
+                "metadata",
+                "url",
+                "timestamp",
+            ]:
+                serialized_dict[attr_name] = getattr(self, attr_name)
 
-
-def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
-    """Serialize multiple MessageBase instance"""
-    if isinstance(messages, MessageBase):
-        return messages.serialize()
-    seq = [msg.serialize() for msg in messages]
-    return json.dumps({"__type": "List", "__value": seq})
+            return json.dumps(serialized_dict, ensure_ascii=False)

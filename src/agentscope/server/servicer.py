@@ -31,17 +31,14 @@ except ImportError as import_error:
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
+from agentscope.serialize import deserialize
 from agentscope.agents.agent import AgentBase
 from agentscope.manager import ModelManager
 from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.message import (
-    Msg,
-    PlaceholderMessage,
-    deserialize,
-)
+from agentscope.message import PlaceholderMessage
 
 
 def _register_server_to_studio(
@@ -460,11 +457,7 @@ class AgentServerServicer(RpcAgentServicer):
         )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=Msg(  # type: ignore[arg-type]
-                name=self.get_agent(request.agent_id).name,
-                content=None,
-                task_id=task_id,
-            ).serialize(),
+            message=str(task_id),
         )
 
     def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:

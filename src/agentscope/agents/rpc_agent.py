@@ -5,10 +5,10 @@ from typing import Type, Optional, Union, Sequence
 from agentscope.agents.agent import AgentBase
 from agentscope.message import (
     PlaceholderMessage,
-    serialize,
     Msg,
 )
 from agentscope.rpc import RpcAgentClient
+from agentscope.serialize import serialize
 from agentscope.server.launcher import RpcAgentServerLauncher
 from agentscope.studio._client import _studio_client
 
@@ -123,7 +123,7 @@ class RpcAgent(AgentBase):
             self._launch_server()
         self.client.call_agent_func(
             func_name="_observe",
-            value=serialize(x),  # type: ignore[arg-type]
+            value=serialize(x),
         )
 
     def clone_instances(

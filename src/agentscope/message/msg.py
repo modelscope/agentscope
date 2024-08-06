@@ -105,6 +105,16 @@ class Msg(MessageBase):
     timestamp: str
     """The timestamp of the message."""
 
+    __serialized_attrs = {
+        "id",
+        "name",
+        "content",
+        "role",
+        "metadata",
+        "url",
+        "timestamp",
+    }
+
     def __init__(
         self,
         name: str,
@@ -158,11 +168,13 @@ class Msg(MessageBase):
             **kwargs,
         )
 
-        m1, m2 = _map_string_to_color_mark(self.name)
-        self._colored_name = f"{m1}{self.name}{m2}"
-
         if echo:
             logger.chat(self)
+
+    @property
+    def _colored_name(self) -> str:
+        m1, m2 = _map_string_to_color_mark(self.name)
+        return f"{m1}{self.name}{m2}"
 
     def formatted_str(self, colored: bool = False) -> str:
         """Return the formatted string of the message. If the message has an
@@ -187,4 +199,51 @@ class Msg(MessageBase):
         return "\n".join(colored_strs)
 
     def serialize(self) -> str:
-        return json.dumps({"__type": "Msg", **self})
+        serialized_dict = {
+            "__module__": self.__class__.__module__,
+            "__name__": self.__class__.__name__,
+        }
+
+        for attr_name in self.__serialized_attrs:
+            serialized_dict[attr_name] = getattr(self, attr_name)
+
+        return json.dumps(serialized_dict, ensure_ascii=False)
+
+    @classmethod
+    def from_dict(cls, serialized_dict: dict) -> "Msg":
+        """Deserialize the dictionary to a Msg object.
+
+        Args:
+            serialized_dict (`dict`):
+                A dictionary that must contain the keys in
+                `Msg.__serialized_attrs`, and the keys `__module__` and
+                `__name__`.
+
+        Returns:
+            `Msg`: A Msg object.
+        """
+        assert set(
+            serialized_dict.keys(),
+        ) == cls.__serialized_attrs.union(
+            {
+                "__module__",
+                "__name__",
+            },
+        ), (
+            f"Expect keys {cls.__serialized_attrs}, but get "
+            f"{set(serialized_dict.keys())}",
+        )
+
+        assert serialized_dict.pop("__module__") == cls.__module__
+        assert serialized_dict.pop("__name__") == cls.__name__
+
+        obj = cls(
+            name=serialized_dict["name"],
+            content=serialized_dict["content"],
+            role=serialized_dict["role"],
+            url=serialized_dict["url"],
+            timestamp=serialized_dict["timestamp"],
+            verbose=False,
+        )
+        obj.id = serialized_dict["id"]
+        return obj

@@ -13,10 +13,10 @@ from loguru import logger
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.manager import MonitorManager, ASManager
+from agentscope.serialize import deserialize
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
