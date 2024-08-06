@@ -3,7 +3,7 @@
 from typing import List, Optional, Union, Sequence
 from loguru import logger
 
-from agentscope.models import load_model_by_config_name
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
 from agentscope.agents import UserAgent, AgentBase
 
@@ -79,8 +79,9 @@ class SystemPromptComparer:
                 A list of system prompts to be compared in the abtest.
         """
 
+        model_manager = ModelManager.get_instance()
         self.model_config_name = model_config_name
-        self.model = load_model_by_config_name(model_config_name)
+        self.model = model_manager.get_model_by_config_name(model_config_name)
         self.compared_system_prompts = compared_system_prompts
 
         # TODO: use distributed agent to accelerate the process

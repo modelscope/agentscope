@@ -500,7 +500,8 @@ class ServiceToolkit:
         )
 
         # The arguments that requires the agent to specify
-        args_agent = set(argsspec.args) - set(kwargs.keys())
+        # to support class method, the self args are deprecated
+        args_agent = set(argsspec.args) - set(kwargs.keys()) - {"self", "cls"}
 
         # Check if the arguments from agent have descriptions in docstring
         args_description = {
@@ -657,7 +658,8 @@ class ServiceFactory:
         )
 
         # The arguments that requires the agent to specify
-        args_agent = set(argsspec.args) - set(kwargs.keys())
+        # we remove the self argument, for class methods
+        args_agent = set(argsspec.args) - set(kwargs.keys()) - {"self", "cls"}
 
         # Check if the arguments from agent have descriptions in docstring
         args_description = {
