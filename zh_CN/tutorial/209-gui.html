@@ -74,13 +74,23 @@
 <li class="toctree-l3"><a class="reference internal" href="#id4">引入运行历史</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#about-workstation">About Workstation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#workstation">Workstation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id5">快速使用</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id6">内置样例</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id7">构建应用程序</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id8">运行应用程序</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id9">导入/导出应用程序</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id10">检查应用程序</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#server-manager">Server Manager</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#server">注册 Server 进程</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">管理 Server 进程</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#servers">Servers 列表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agents">Agents 列表</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#memory">Memory 列表</a></li>
 </ul>
 </li>
 </ul>
@@ -141,8 +151,8 @@
 <ul class="simple">
 <li><p><strong>Dashboard</strong>：一个用户友好的界面，可以在其中监视正在运行的应用程序，并查看运行历史。</p></li>
 <li><p><strong>Workstation</strong>：一个强大的界面，可通过<strong>拖拽</strong>的方式构建多智能体应用程序。</p></li>
+<li><p><strong>Server Manager</strong>：一个简单易用的监控与管理工具，用于管理大规模分布式的多智能体应用程序。</p></li>
 <li><p><strong>Gallery</strong>：即将推出！</p></li>
-<li><p><strong>Server Management</strong>：即将推出！</p></li>
 </ul>
 <section id="id1">
 <h2>启动 AgentScope Studio<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
@@ -217,8 +227,8 @@ ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>rem
 </div>
 </section>
 </section>
-<section id="about-workstation">
-<h2>About Workstation<a class="headerlink" href="#about-workstation" title="Link to this heading"></a></h2>
+<section id="workstation">
+<h2>Workstation<a class="headerlink" href="#workstation" title="Link to this heading"></a></h2>
 <p>Workstation 是为零代码用户设计的，可以通过<strong>拖拽</strong>的方式构建多智能体应用程序。</p>
 <blockquote>
 <div><p>注意：Workstation 仍处于快速迭代阶段，界面和功能可能会有所变化。欢迎任何反馈、贡献或建议！</p>
@@ -274,6 +284,55 @@ ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>rem
 <li><p>一致的配置命名：Agent 节点使用的“Model config name”必须对应于 Model 节点中定义的“Config Name”。</p></li>
 <li><p>节点嵌套正确：ReActAgent 等节点应仅包含工具节点。类似地，IfElsePipeline 等 Pipeline 节点应包含正确数量的元素（不超过 2 个），而 ForLoopPipeline、WhileLoopPipeline 和 MsgHub 应遵循一个元素的规则（必须是 SequentialPipeline 作为子节点）。</p></li>
 </ul>
+</section>
+</section>
+</section>
+<section id="server-manager">
+<h2>Server Manager<a class="headerlink" href="#server-manager" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>阅读本节内容需要先了解 AgentScope <a class="reference internal" href="208-distribute.html#distribute-zh"><span class="std std-ref">分布式</span></a> 的基本概念及用法。</p>
+</div></blockquote>
+<p>Server Manager 是一个用于监控和管理 AgentScope 智能体服务器进程（Server）以及大规模分布式应用的图形化界面。</p>
+<section id="server">
+<h3>注册 Server 进程<a class="headerlink" href="#server" title="Link to this heading"></a></h3>
+<p>在初始化 <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code> 时传入 <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> 参数即可实现注册。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>  <span class="c1"># connect to AgentScope Studio</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>更具体的注册方法请参考 <a class="reference internal" href="208-distribute.html#distribute-zh"><span class="std std-ref">分布式</span></a> 中 <em>连接 AgentScope Studio</em> 部分。</p>
+</section>
+<section id="id11">
+<h3>管理 Server 进程<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<p>从 AgentScope Studio 主页面或侧边栏中的 Server Manager 按钮即可进入 Server Manager 页面。
+当前 Server Manager 页面由 Servers 列表， Agents 列表， Memory 列表三个部分构成。</p>
+<h1 align="center">
+<img src="https://gw.alicdn.com/imgextra/i2/O1CN01zvhoVE1MMrmbvu4mU_!!6000000001421-0-tps-3204-1854.jpg
+" width="600" alt="agentscope-manager">
+</h1>
+<section id="servers">
+<h4>Servers 列表<a class="headerlink" href="#servers" title="Link to this heading"></a></h4>
+<p>注册到 Studio 的智能体服务器进程（Server）都会显示在 Server Manager 页面的 Servers 列表中，列表中会不仅会显示每个 Server 的 <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Hostname</span></code>, <code class="docutils literal notranslate"><span class="pre">Port</span></code>, <code class="docutils literal notranslate"><span class="pre">Created</span> <span class="pre">Time</span></code>，还会显示每个 Server 的状态以及计算资源使用情况，包括 <code class="docutils literal notranslate"><span class="pre">Status</span></code>, <code class="docutils literal notranslate"><span class="pre">CPU</span> <span class="pre">Usage</span></code>, <code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Usage</span></code>。</p>
+<p>其中 <code class="docutils literal notranslate"><span class="pre">Status</span></code> 有以下几种：
+- <code class="docutils literal notranslate"><span class="pre">running</span></code>：表示 Server 正在运行。
+- <code class="docutils literal notranslate"><span class="pre">dead</span></code>：表示 Server 已停止运行。
+- <code class="docutils literal notranslate"><span class="pre">unknown</span></code>：表示目前无法正常访问 Studio 服务。</p>
+<p>只有在 <code class="docutils literal notranslate"><span class="pre">running</span></code> 状态的 Server 才会显示 CPU 和 Memory 的使用情况。用户可以点击 Servers 栏左边的刷新按钮来刷新 Servers 列表，同时也能够通过点击 Servers 栏右侧的删除按钮来一键删除所有已经处于 <code class="docutils literal notranslate"><span class="pre">dead</span></code> 状态的 Server。</p>
+<p>Servers 列表每行的最后一列都提供了删除按钮，用于关闭并删除 Server，需要注意的是该操作是无法恢复的，因此需要谨慎使用。</p>
+</section>
+<section id="agents">
+<h4>Agents 列表<a class="headerlink" href="#agents" title="Link to this heading"></a></h4>
+<p>在点击任意处于 <code class="docutils literal notranslate"><span class="pre">running</span></code> 状态的 Server 行后，会在页面中展开 Agents 列表，该列表中会显示该 Server 下所有 Agent，列表中会显示每个 Agent 的 <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Name</span></code>, <code class="docutils literal notranslate"><span class="pre">Class</span></code>, <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Prompt</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">Model</span></code>。</p>
+<p>用户同样可以通过 Agents 列表栏左侧的刷新按钮来刷新 Agents 列表。并且用户也可以通过每个 Agent 行最右侧的删除按钮来删除该 Agent，并通过 Agents 列表栏右侧的删除按钮来批量删除 Server 中所有的 Agent。这里的删除操作都是不可恢复的，因此需要谨慎使用。</p>
+</section>
+<section id="memory">
+<h4>Memory 列表<a class="headerlink" href="#memory" title="Link to this heading"></a></h4>
+<p>在点击任意 Agent 行后，会在页面中展开 Memory 列表，该列表中会显示该 Agent 的 Memory 中的所有消息，每条消息会在左侧显示其 <code class="docutils literal notranslate"><span class="pre">Name</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Role</span></code> 属性值，在点击后会在列表右侧显示该消息的具体内容。
+这里同样可以点击 Memory 列表栏左侧的刷新按钮来刷新当前的 Memory 列表。</p>
+<p><a class="reference internal" href="#gui-zh">[回到顶部]</a></p>
 </section>
 </section>
 </section>

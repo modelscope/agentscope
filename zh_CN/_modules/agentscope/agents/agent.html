@@ -181,7 +181,7 @@
                     <span class="p">),</span>
                     <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
                         <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">,</span>
-                        <span class="mi">1800</span><span class="p">,</span>
+                        <span class="mi">7200</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">local_mode</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
                         <span class="s2">&quot;local_mode&quot;</span><span class="p">,</span>
@@ -221,9 +221,9 @@
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
         <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Init the distributed configuration.</span>
 
@@ -234,12 +234,12 @@
 <span class="sd">                Port of the rpc agent server.</span>
 <span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
 <span class="sd">                Max number of task results that the server can accommodate.</span>
-<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `7200`):</span>
 <span class="sd">                Timeout for task results.</span>
 <span class="sd">            local_mode (`bool`, defaults to `True`):</span>
 <span class="sd">                Whether the started rpc server only listens to local</span>
 <span class="sd">                requests.</span>
-<span class="sd">            lazy_launch (`bool`, defaults to `True`):</span>
+<span class="sd">            lazy_launch (`bool`, defaults to `False`):</span>
 <span class="sd">                Only launch the server when the agent is called.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">host</span>
@@ -590,9 +590,9 @@
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1800</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
         <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">launch_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentBase</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert current agent instance into a distributed version.</span>
@@ -607,7 +607,7 @@
 <span class="sd">                The max number of agent reply messages that the started agent</span>
 <span class="sd">                server can accommodate. Note that the oldest message will be</span>
 <span class="sd">                deleted after exceeding the pool size.</span>
-<span class="sd">            max_timeout_seconds (`int`, defaults to `1800`):</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `7200`):</span>
 <span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
 <span class="sd">                Maximum time for reply messages to be cached in the launched</span>
 <span class="sd">                agent server. Note that expired messages will be deleted.</span>
@@ -615,7 +615,7 @@
 <span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
 <span class="sd">                Whether the started agent server only listens to local</span>
 <span class="sd">                requests.</span>
-<span class="sd">            lazy_launch (`bool`, defaults to `True`):</span>
+<span class="sd">            lazy_launch (`bool`, defaults to `False`):</span>
 <span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
 <span class="sd">                If `True`, launch the agent server when the agent is called,</span>
 <span class="sd">                otherwise, launch the agent server immediately.</span>

@@ -127,6 +127,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Flask</span><span class="p">,</span>
@@ -149,6 +150,7 @@
     <span class="n">_generate_new_runtime_id</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
+
 
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -377,11 +379,7 @@
         <span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;run_id [</span><span class="si">{</span><span class="n">server_id</span><span class="si">}</span><span class="s2">] already exists&quot;</span><span class="p">)</span>
 
     <span class="n">_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-        <span class="n">_ServerTable</span><span class="p">(</span>
-            <span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span>
-            <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
-            <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-        <span class="p">),</span>
+        <span class="n">_ServerTable</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="n">_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
@@ -424,6 +422,7 @@
                 <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;cpu&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;cpu&quot;</span><span class="p">],</span>
                 <span class="s2">&quot;mem&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;mem&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">],</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
@@ -480,6 +479,23 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mem</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">mem</span> <span class="o">=</span> <span class="p">[</span><span class="n">mem</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">mem</span><span class="p">)</span>
+
+
+<span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/alloc&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">_alloc_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="c1"># TODO: check the server is still running</span>
+    <span class="c1"># TODO: support to alloc multiple servers in one call</span>
+    <span class="c1"># TODO: use hints to decide which server to allocate</span>
+    <span class="c1"># TODO: allocate based on server&#39;s cpu and memory usage</span>
+    <span class="c1"># currently random select a server</span>
+    <span class="n">servers</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">servers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/messages/push&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>

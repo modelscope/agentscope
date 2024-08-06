@@ -78,6 +78,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#id7">进阶用法</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#to-dist">更低成本的 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agent-server">管理 Agent Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope-studio">连接 AgentScope Studio</a></li>
 </ul>
 </li>
 </ul>
@@ -211,11 +212,15 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 <span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w">  </span>--model-config-path<span class="w"> </span>model_config_path_a
+<p>为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a<span class="w">  </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b
 </pre></div>
 </div>
+<blockquote>
+<div><p>Note:
+<code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code> 用来指定你的自定义 Agent 类所在的目录。
+请确保所有的自定义 Agent 类都位于 <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code> 指定的目录下，并且它们所依赖的自定义模块也都位于该目录下。
+另外，因为上述指令会加载目录下的所有 Python 文件，在运行前请确保指定的目录内没有恶意文件，以避免出现安全问题。</p>
 </div></blockquote>
 <p>在 <code class="docutils literal notranslate"><span class="pre">Machine2</span></code> 上运行如下代码，这里同样要确保已经将模型配置文件放置在 <code class="docutils literal notranslate"><span class="pre">model_config_path_b</span></code> 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
@@ -238,7 +243,7 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 </div>
 <blockquote>
 <div><p>这里也同样可以用如下指令来代替上面的代码。</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b<span class="w">  </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b
 </pre></div>
 </div>
 </div></blockquote>
@@ -265,6 +270,10 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 </section>
 <section id="id6">
 <h3>步骤2: 编排分布式应用流程<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p>Note:
+当前分布式版本的 Agent 仅支持 <code class="docutils literal notranslate"><span class="pre">__call__</span></code> 方法调用 (即 <code class="docutils literal notranslate"><span class="pre">agent(x)</span></code>)，不支持调用其他方法或是属性读写。</p>
+</div></blockquote>
 <p>在AgentScope中，分布式应用流程的编排和非分布式的程序完全一致，开发者可以用中心化的方式编写全部应用流程。
 同时，AgentScope允许本地和分布式部署的智能体混合使用，开发者不用特意区分哪些智能体是本地的，哪些是分布式部署的。</p>
 <p>以下是不同模式下实现两个智能体之间进行对话的全部代码，对比可见，AgentScope支持零代价将分布式应用流程从中心化向分布式迁移。</p>
@@ -430,6 +439,59 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 </div>
 </li>
 </ul>
+</section>
+<section id="agentscope-studio">
+<h4>连接 AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h4>
+<p>智能体服务器进程可以在启动时连接 <a class="reference internal" href="209-gui.html#gui-zh"><span class="std std-ref">AgentScope Studio</span></a> ，从而让后续搭建的分布式应用中的 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> 方法不再需要填写任何参数，而是由 Stduio 为其自动分配智能体服务器进程。</p>
+<p>对于使用 Python 代码启动智能体服务器进程的场景，只需要在 <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code> 的初始化参数中填入 <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> 即可，这里需要确保填写正确且能够通过网络访问，例如默认情况下启动的 Studio 的 URL 为 <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5000</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+
+<span class="c1"># register models which can be used in the server</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Create an agent service process</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>  <span class="c1"># choose an available port</span>
+    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="c1"># register your customized agent classes</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>  <span class="c1"># connect to AgentScope Studio</span>
+<span class="p">)</span>
+
+<span class="c1"># Start the service</span>
+<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>对于使用命令行 <code class="docutils literal notranslate"><span class="pre">as_server</span></code> 的场景，也只需要在命令行中填入 <code class="docutils literal notranslate"><span class="pre">--studio-url</span></code> 参数。</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a<span class="w">  </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b<span class="w"> </span>--studio-url<span class="w"> </span>http://studio_ip:studio_port
+</pre></div>
+</div>
+<p>执行上述代码或命令后可以进入 AgentScope Studio 的 Server Manager 页面查看是否连接成功。如果连接成功，该智能体服务器进程会显示在页面的表格中，并且可以在页面中观察到该进程的运行状态以及资源占用情况，之后就可以使用 AgentScope Studio 所带来的高级功能了。本节将聚焦于 AgentScope Studio 对 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> 方法带来的影响，而页面的具体用法请参考 <a class="reference internal" href="209-gui.html#gui-zh"><span class="std std-ref">AgentScope Studio</span></a>。</p>
+<p>在智能体服务器进程成功连接 Studio 后，只需要在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 方法中传入该 Studio 的 <code class="docutils literal notranslate"><span class="pre">studio_url</span></code>，后续的 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> 方法就不再需要填写 <code class="docutils literal notranslate"><span class="pre">host</span></code> 和 <code class="docutils literal notranslate"><span class="pre">port</span></code> 域，而是自动选择一个已经连接到 Studio 的智能体服务器进程。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="c1"># automatically select an agent server</span>
+
+<span class="c1"># your application code</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Note:</p>
+<ul class="simple">
+<li><p>该方法中使用的 Agent 必须在智能体服务器进程启动时就已经通过 <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code> 注册。</p></li>
+<li><p>使用该方法时需要确定连接到 Studio 的智能体服务器进程还在正常运行。</p></li>
+</ul>
+</div></blockquote>
+<p>在应用开始运行后，可以在 Studio 的 Server Manager 页面中观察该 Agent 具体运行在哪个智能体服务器进程上，应用运行完成后也可以通过 Server Manager 页面删除该 Agent。</p>
 </section>
 </section>
 </section>

@@ -118,13 +118,14 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Server of distributed agent&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Pipe</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
 <span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
@@ -162,6 +163,7 @@
     <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
     <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">custom_agent_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup agent server.</span>
 
@@ -193,6 +195,9 @@
 <span class="sd">        custom_agent_classes (`list`, defaults to `None`):</span>
 <span class="sd">            A list of customized agent classes that are not in</span>
 <span class="sd">            `agentscope.agents`.</span>
+<span class="sd">        agent_dir (`str`, defaults to `None`):</span>
+<span class="sd">            The abs path to the directory containing customized agent python</span>
+<span class="sd">            files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">_setup_agent_server_async</span><span class="p">(</span>
@@ -208,11 +213,12 @@
             <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
             <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
             <span class="n">custom_agent_classes</span><span class="o">=</span><span class="n">custom_agent_classes</span><span class="p">,</span>
+            <span class="n">agent_dir</span><span class="o">=</span><span class="n">agent_dir</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">_setup_agent_server_async</span><span class="p">(</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">_setup_agent_server_async</span><span class="p">(</span>  <span class="c1"># pylint: disable=R0912</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -225,6 +231,7 @@
     <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
     <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">custom_agent_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup agent server in an async way.</span>
 
@@ -257,6 +264,9 @@
 <span class="sd">        custom_agent_classes (`list`, defaults to `None`):</span>
 <span class="sd">            A list of customized agent classes that are not in</span>
 <span class="sd">            `agentscope.agents`.</span>
+<span class="sd">        agent_dir (`str`, defaults to `None`):</span>
+<span class="sd">            The abs path to the directory containing customized agent python</span>
+<span class="sd">            files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">init_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -271,10 +281,13 @@
         <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
         <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom_agent_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">custom_agent_classes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">agent_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">custom_agent_classes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_agents_from_dir</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">))</span>
     <span class="c1"># update agent registry</span>
-    <span class="k">if</span> <span class="n">custom_agent_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">agent_class</span> <span class="ow">in</span> <span class="n">custom_agent_classes</span><span class="p">:</span>
-            <span class="n">AgentBase</span><span class="o">.</span><span class="n">register_agent_class</span><span class="p">(</span><span class="n">agent_class</span><span class="o">=</span><span class="n">agent_class</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">agent_class</span> <span class="ow">in</span> <span class="n">custom_agent_classes</span><span class="p">:</span>
+        <span class="n">AgentBase</span><span class="o">.</span><span class="n">register_agent_class</span><span class="p">(</span><span class="n">agent_class</span><span class="o">=</span><span class="n">agent_class</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_signal_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -331,6 +344,74 @@
     <span class="p">)</span>
 
 
+<div class="viewcode-block" id="load_agents_from_file">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.load_agents_from_file">[文档]</a>
+<span class="k">def</span> <span class="nf">load_agents_from_file</span><span class="p">(</span><span class="n">agent_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load AgentBase sub classes from a python file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        agent_file (str): the path to the python file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: a list of agent classes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module_path</span> <span class="o">=</span> <span class="n">agent_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">module_name</span> <span class="o">=</span> <span class="n">module_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span>
+        <span class="n">module_name</span><span class="p">,</span>
+        <span class="n">agent_file</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+    <span class="n">custom_agent_classes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">AgentBase</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">AgentBase</span>
+        <span class="p">):</span>
+            <span class="n">custom_agent_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">custom_agent_classes</span></div>
+
+
+
+<div class="viewcode-block" id="load_agents_from_dir">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.load_agents_from_dir">[文档]</a>
+<span class="k">def</span> <span class="nf">load_agents_from_dir</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load customized agents from a directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        agent_dir (`str`): a directory contains customized agent python files.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: a list of customized agent classes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">agent_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">original_sys_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">abs_agent_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">abs_agent_dir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">custom_agent_classes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">module_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+                        <span class="n">custom_agent_classes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                            <span class="n">load_agents_from_file</span><span class="p">(</span><span class="n">module_path</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Failed to load agent class from [</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">custom_agent_classes</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">original_sys_path</span></div>
+
+
+
 <div class="viewcode-block" id="RpcAgentServerLauncher">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher">[文档]</a>
 <span class="k">class</span> <span class="nc">RpcAgentServerLauncher</span><span class="p">:</span>
@@ -345,12 +426,10 @@
         <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
         <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
         <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">custom_agent_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">agent_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">agent_args</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(),</span>
-        <span class="n">agent_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Init a launcher of agent server.</span>
 
@@ -369,6 +448,8 @@
 <span class="sd">            local_mode (`bool`, defaults to `False`):</span>
 <span class="sd">                If `True`, only listen to requests from &quot;localhost&quot;, otherwise,</span>
 <span class="sd">                listen to requests from all hosts.</span>
+<span class="sd">            agent_dir (`str`, defaults to `None`):</span>
+<span class="sd">                The directory containing customized agent python files.</span>
 <span class="sd">            custom_agent_classes (`list`, defaults to `None`):</span>
 <span class="sd">                A list of customized agent classes that are not in</span>
 <span class="sd">                `agentscope.agents`.</span>
@@ -377,12 +458,6 @@
 <span class="sd">                will be generated.</span>
 <span class="sd">            studio_url (`Optional[str]`, defaults to `None`):</span>
 <span class="sd">                The url of the agentscope studio.</span>
-<span class="sd">            agent_class (`Type[AgentBase]`, deprecated):</span>
-<span class="sd">                The AgentBase subclass encapsulated by this wrapper.</span>
-<span class="sd">            agent_args (`tuple`, deprecated): The args tuple used to</span>
-<span class="sd">                initialize the agent_class.</span>
-<span class="sd">            agent_kwargs (`dict`, deprecated): The args dict used to</span>
-<span class="sd">                initialize the agent_class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
@@ -393,21 +468,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">custom_agent_classes</span> <span class="o">=</span> <span class="n">custom_agent_classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_dir</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">)</span> <span class="k">if</span> <span class="n">agent_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">RpcAgentServerLauncher</span><span class="o">.</span><span class="n">generate_server_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">server_id</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="k">else</span> <span class="n">server_id</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">agent_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="ow">or</span> <span class="n">agent_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;`agent_class`, `agent_args` and `agent_kwargs` is deprecated&quot;</span>
-                <span class="s2">&quot; in `RpcAgentServerLauncher`&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span></div>
 
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.generate_server_id">
@@ -433,6 +502,7 @@
                 <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
                 <span class="n">local_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
                 <span class="n">custom_agent_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_agent_classes</span><span class="p">,</span>
+                <span class="n">agent_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_dir</span><span class="p">,</span>
                 <span class="n">studio_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
@@ -458,6 +528,7 @@
                 <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
                 <span class="s2">&quot;studio_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span><span class="p">,</span>
                 <span class="s2">&quot;custom_agent_classes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_agent_classes</span><span class="p">,</span>
+                <span class="s2">&quot;agent_dir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_dir</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">server_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -530,15 +601,20 @@
 <span class="sd">        * `--local-mode`: whether the started agent server only listens to</span>
 <span class="sd">          local requests.</span>
 <span class="sd">        * `--model-config-path`: the path to the model config json file</span>
+<span class="sd">        * `--agent-dir`: the directory containing your customized agent python</span>
+<span class="sd">          files</span>
+<span class="sd">        * `--studio-url`: the url of agentscope studio</span>
 
 <span class="sd">        In most cases, you only need to specify the `--host`, `--port` and</span>
-<span class="sd">        `--model-config-path`.</span>
+<span class="sd">        `--model-config-path`, and `--agent-dir`.</span>
 
 <span class="sd">        .. code-block:: shell</span>
 
-<span class="sd">            as_server --host localhost --port 12345 --model-config-path config.json</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+<span class="sd">            as_server --host localhost \</span>
+<span class="sd">                --port 12345 \</span>
+<span class="sd">                --model-config-path config.json \</span>
+<span class="sd">                --agent-dir ./my_agents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
@@ -597,6 +673,12 @@
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the url of agentscope studio&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--agent-dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the directory containing customized agent python files&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--no-log&quot;</span><span class="p">,</span>

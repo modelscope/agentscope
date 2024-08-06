@@ -69,6 +69,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#start-agentscope-studio">Start AgentScope Studio</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#about-dashboard">About Dashboard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#about-workstation">About Workstation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about-server-manager">About Server Manager</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="210-rag.html">A Quick Introduction to RAG in AgentScope</a></li>
@@ -126,8 +127,8 @@ It provides the following features:</p>
 <ul class="simple">
 <li><p><strong>Dashboard</strong>: A user-friendly interface, where you can monitor your running applications, and look through the running histories.</p></li>
 <li><p><strong>Workstation</strong>: A powerful interface to build your multi-agent applications with <strong>Dragging &amp; Dropping</strong>.</p></li>
+<li><p><strong>Server Manager</strong>: An easy-to-use monitoring and management tool for managing large-scale distributed applications.</p></li>
 <li><p><strong>Gallery</strong>: Coming soon!</p></li>
-<li><p><strong>Server Management</strong>: Coming soon!</p></li>
 </ul>
 <section id="start-agentscope-studio">
 <h2>Start AgentScope Studio<a class="headerlink" href="#start-agentscope-studio" title="Link to this heading"></a></h2>
@@ -261,8 +262,56 @@ as_workflow<span class="w"> </span>config.json<span class="w"> </span>--compile<
 <li><p>Single Connection Policy: A component should not have more than one connection for each input.</p></li>
 <li><p>Mandatory Fields Validation: All required input fields must be populated to ensure that each node has the necessary args to operate correctly.</p></li>
 <li><p>Consistent Configuration Naming: The ‘Model config name’ used by Agent nodes must correspond to a ‘Config Name’ defined in a Model node.</p></li>
-<li><p>Proper Node Nesting: Nodes like ReActAgent should only contain the tool nodes. Similarly, Pipeline nodes like IfElsePipeline should contain the correct number of elements (no more than 2), and ForLoopPipeline, WhileLoopPipeline, and MsgHub should follow the one-element-only rule (must be a SequentialPipeline� as a child node).</p></li>
+<li><p>Proper Node Nesting: Nodes like ReActAgent should only contain the tool nodes. Similarly, Pipeline nodes like IfElsePipeline should contain the correct number of elements (no more than 2), and ForLoopPipeline, WhileLoopPipeline, and MsgHub should follow the one-element-only rule (must be a SequentialPipeline as a child node).</p></li>
 </ul>
+</section>
+</section>
+</section>
+<section id="about-server-manager">
+<h2>About Server Manager<a class="headerlink" href="#about-server-manager" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p>AgentScope <a class="reference internal" href="208-distribute.html#distribute-en"><span class="std std-ref">Distribution</span></a> is required for understanding the content of this section.</p>
+</div></blockquote>
+<p>Server Manager is a web interface used to monitor and manage agent server processes (Servers) and large-scale distributed multi-agent applications.</p>
+<section id="registering-server-process">
+<h3>Registering Server Process<a class="headerlink" href="#registering-server-process" title="Link to this heading"></a></h3>
+<p>The process can be registered by passing the <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> parameter when initializing <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>  <span class="c1"># connect to AgentScope Studio</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For more specific registration methods, please refer to the <em>Connecting to AgentScope Studio</em> section in <a class="reference internal" href="208-distribute.html#distribute-en"><span class="std std-ref">Distribution</span></a>.</p>
+</section>
+<section id="managing-server-process">
+<h3>Managing Server Process<a class="headerlink" href="#managing-server-process" title="Link to this heading"></a></h3>
+<p>You can enter the Server Manager page from the AgentScope Studio home page or via the Server Manager button on the sidebar. The current Server Manager page consists of three parts: Servers list, Agents list, and Memory list.</p>
+<h1 align="center">
+<img src="https://gw.alicdn.com/imgextra/i2/O1CN01zvhoVE1MMrmbvu4mU_!!6000000001421-0-tps-3204-1854.jpg
+" width="600" alt="agentscope-manager">
+</h1>
+<section id="servers-list">
+<h4>Servers List<a class="headerlink" href="#servers-list" title="Link to this heading"></a></h4>
+<p>The AgentScope agent server processes (Servers) registered with the Studio will be displayed on the Servers list in the Server Manager page. The list will display not only the <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Hostname</span></code>, <code class="docutils literal notranslate"><span class="pre">Port</span></code>, and <code class="docutils literal notranslate"><span class="pre">Created</span> <span class="pre">Time</span></code> of each Server but also the status and computational resource usage of each Server, including <code class="docutils literal notranslate"><span class="pre">Status</span></code>, <code class="docutils literal notranslate"><span class="pre">CPU</span> <span class="pre">Usage</span></code>, <code class="docutils literal notranslate"><span class="pre">Memory</span> <span class="pre">Usage</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Status</span></code> includes the following types:
+- <code class="docutils literal notranslate"><span class="pre">running</span></code>: Indicates that the Server is running.
+- <code class="docutils literal notranslate"><span class="pre">dead</span></code>: Indicates that the Server has stopped running.
+- <code class="docutils literal notranslate"><span class="pre">unknown</span></code>: Indicates that the Studio service cannot currently be accessed normally.</p>
+<p>Only Servers in <code class="docutils literal notranslate"><span class="pre">running</span></code> status will display CPU and memory usage. Users can refresh the Servers list by clicking the refresh button on the left of the Servers bar, and all Servers in <code class="docutils literal notranslate"><span class="pre">dead</span></code> status can be deleted at once by clicking the delete button on the right of the Servers bar.</p>
+<p>The last column of each row in the Servers list provides a delete button for closing and deleting the Server. Please note that this operation is irreversible and should be used with caution.</p>
+</section>
+<section id="agents-list">
+<h4>Agents List<a class="headerlink" href="#agents-list" title="Link to this heading"></a></h4>
+<p>By clicking on any Server row with <code class="docutils literal notranslate"><span class="pre">running</span></code> status, the Agents list will expand in the page, displaying all Agents under that Server. The list will display the <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">Name</span></code>, <code class="docutils literal notranslate"><span class="pre">Class</span></code>, <code class="docutils literal notranslate"><span class="pre">System</span> <span class="pre">Prompt</span></code>, and <code class="docutils literal notranslate"><span class="pre">Model</span></code> of each Agent.</p>
+<p>The Agents list can also be refreshed by the user clicking the refresh button on the left of the Agents bar. Each Agent can be deleted by clicking the delete button on the rightmost side of its row, and all Agents within a Server can be deleted in bulk using the delete button on the right side of the Agents bar. As with the deletion of Servers, these operations are irreversible and should be used cautiously.</p>
+</section>
+<section id="memory-list">
+<h4>Memory List<a class="headerlink" href="#memory-list" title="Link to this heading"></a></h4>
+<p>By clicking on any Agent row, the Memory list will expand on the page, displaying all messages within the Agent’s memory. Each message will display its <code class="docutils literal notranslate"><span class="pre">Name</span></code> and <code class="docutils literal notranslate"><span class="pre">Role</span></code> attributes on the left, and clicking on a message will display its content on the right side of the list.
+Similarly, the current Memory list can be refreshed by clicking the refresh button on the left of the Memory bar.</p>
+<p><a class="reference internal" href="#gui-en">[Back to the top]</a></p>
 </section>
 </section>
 </section>

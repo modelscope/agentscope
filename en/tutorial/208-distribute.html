@@ -193,11 +193,15 @@ You can run the following code on <code class="docutils literal notranslate"><sp
 <span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>For similarity, you can run the following command in your terminal rather than the above code:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a
+<p>For simplicity, you can run the following command in your terminal rather than the above code:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a<span class="w">  </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b
 </pre></div>
 </div>
+<blockquote>
+<div><p>Note:
+The <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code> field is used to specify the directory where your customized agent classes are located.
+Please make sure that all custom Agent classes are located in <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code>, and that the custom modules they depend on are also located in the directory.
+Additionally, because the above command will load all Python files in the directory, please ensure that the directory does not contain any malicious files to avoid security risks.</p>
 </div></blockquote>
 <p>Then put your model config file accordingly in <code class="docutils literal notranslate"><span class="pre">model_config_path_b</span></code>, set environment variables, and run the following code on <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
@@ -220,7 +224,7 @@ You can run the following code on <code class="docutils literal notranslate"><sp
 </div>
 <blockquote>
 <div><p>Similarly, you can run the following command in your terminal to setup the agent server:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b
 </pre></div>
 </div>
 </div></blockquote>
@@ -247,6 +251,10 @@ And developers just need to write the application flow in a centralized way in t
 </section>
 <section id="step-2-orchestrate-distributed-application-flow">
 <h3>Step 2: Orchestrate Distributed Application Flow<a class="headerlink" href="#step-2-orchestrate-distributed-application-flow" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p>Note:
+Currently, distributed version of Agent only supports <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method call (i.e. <code class="docutils literal notranslate"><span class="pre">agent(x)</span></code>), not support calling other methods or reading/writing properties.</p>
+</div></blockquote>
 <p>In AgentScope, the orchestration of distributed application flow is exactly the same as non-distributed programs, and developers can write the entire application flow in a centralized way.
 At the same time, AgentScope allows the use of a mixture of locally and distributed deployed agents, and developers do not need to distinguish which agents are local and which are distributed.</p>
 <p>The following is the complete code for two agents to communicate with each other in different modes. It can be seen that AgentScope supports zero-cost migration of distributed application flow from centralized to distributed.</p>
@@ -413,6 +421,59 @@ For agents whose initialization process is time-consuming, the <code class="docu
 </div>
 </li>
 </ul>
+</section>
+<section id="connecting-to-agentscope-studio">
+<h4>Connecting to AgentScope Studio<a class="headerlink" href="#connecting-to-agentscope-studio" title="Link to this heading"></a></h4>
+<p>The agent server process can be connected to <a class="reference internal" href="209-gui.html#gui-en"><span class="std std-ref">AgentScope Studio</span></a> at startup, allowing the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method in subsequent distributed applications to be assigned automatically by Studio without the need for any parameters.</p>
+<p>For scenarios where the agent server process is started using Python code, simply fill in the <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> in the initialization parameters of <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code>. This requires that the URL is correct and accessible over the network, for example, the default URL for the Studio is <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5000</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+
+<span class="c1"># register models which can be used in the server</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># Create an agent service process</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>  <span class="c1"># choose an available port</span>
+    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span> <span class="c1"># register your customized agent classes</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>  <span class="c1"># connect to AgentScope Studio</span>
+<span class="p">)</span>
+
+<span class="c1"># Start the service</span>
+<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For scenarios using the command <code class="docutils literal notranslate"><span class="pre">as_server</span></code> in your command line, simply fill in the <code class="docutils literal notranslate"><span class="pre">--studio-url</span></code> parameter.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b<span class="w"> </span>--studio-url<span class="w"> </span>http://studio_ip:studio_port
+</pre></div>
+</div>
+<p>After executing the above code or command, you can enter the Server Manager page of AgentScope Studio to check if the connection is successful. If the connection is successful, the agent server process will be displayed in the page table, and you can observe the running status and resource occupation of the process in the page, then you can use the advanced functions brought by AgentScope Studio. This section will focus on the impact of <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method brought by AgentScope Studio, and please refer to <a class="reference internal" href="209-gui.html#gui-en"><span class="std std-ref">AgentScope Studio</span></a> for the specific usage of the page.</p>
+<p>After the agent server process successfully connects to Studio, you only need to pass the <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> of this Studio in the <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> method, and then the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method no longer needs to fill in the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> fields, but automatically select an agent server process that has been connected to Studio.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="c1"># automatically select an agent server</span>
+
+<span class="c1"># your application code</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Note:</p>
+<ul class="simple">
+<li><p>The Agent used in this method must be registered at the start of the agent server process through <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code> or <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code>.</p></li>
+<li><p>When using this method, make sure that the agent server process connected to Studio is still running normally.</p></li>
+</ul>
+</div></blockquote>
+<p>After the application starts running, you can observe in the Server Manager page of Studio which agent server process this Agent is specifically running on, and after the application is completed, you can also delete this Agent through the Server Manager page.</p>
 </section>
 </section>
 </section>
