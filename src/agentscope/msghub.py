@@ -6,7 +6,8 @@ from typing import Any, Optional, Union, Sequence
 
 from loguru import logger
 
-from agentscope.agents import AgentBase
+from .agents import AgentBase
+from .message import Msg
 
 
 class MsgHubManager:
@@ -15,7 +16,7 @@ class MsgHubManager:
     def __init__(
         self,
         participants: Sequence[AgentBase],
-        announcement: Optional[Union[Sequence[dict], dict]] = None,
+        announcement: Optional[Union[Sequence[Msg], Msg]] = None,
     ) -> None:
         """Initialize a msghub manager from the given arguments.
 
@@ -23,7 +24,7 @@ class MsgHubManager:
             participants (`Sequence[AgentBase]`):
                 The Sequence of participants in the msghub.
             announcement
-                (`Optional[Union[list[dict], dict]]`, defaults to `None`):
+                (`Optional[Union[list[Msg], Msg]]`, defaults to `None`):
                 The message that will be broadcast to all participants at
                 the first without requiring response.
         """
@@ -102,11 +103,11 @@ class MsgHubManager:
         # Remove this agent from the audience of other agents
         self._reset_audience()
 
-    def broadcast(self, msg: Union[dict, list[dict]]) -> None:
+    def broadcast(self, msg: Union[Msg, Sequence[Msg]]) -> None:
         """Broadcast the message to all participants.
 
         Args:
-            msg (`Union[dict, list[dict]]`):
+            msg (`Union[Msg, Sequence[Msg]]`):
                 One or a list of dict messages to broadcast among all
                 participants.
         """
@@ -116,14 +117,14 @@ class MsgHubManager:
 
 def msghub(
     participants: Sequence[AgentBase],
-    announcement: Optional[Union[Sequence[dict], dict]] = None,
+    announcement: Optional[Union[Sequence[Msg], Msg]] = None,
 ) -> MsgHubManager:
     """msghub is used to share messages among a group of agents.
 
     Args:
         participants (`Sequence[AgentBase]`):
             A Sequence of participated agents in the msghub.
-        announcement (`Optional[Union[list[dict], dict]]`, defaults to `None`):
+        announcement (`Optional[Union[list[Msg], Msg]]`, defaults to `None`):
             The message that will be broadcast to all participants at the
             very beginning without requiring response.
 

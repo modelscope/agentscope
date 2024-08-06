@@ -7,6 +7,7 @@ import os
 import time
 import shutil
 from typing import Optional, Union, Sequence
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
 
@@ -20,6 +21,7 @@ from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.agents import RpcAgent
 from agentscope.exception import AgentCallError, QuotaExceededError
 
 
@@ -153,7 +155,7 @@ class DemoErrorAgent(AgentBase):
 class FileAgent(AgentBase):
     """An agent returns a file"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Msg = None) -> Msg:
         image_path = os.path.abspath(
             os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
@@ -290,19 +292,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test setup multi rpc agent"""
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         agent_b = DemoRpcAgentAdd(
             name="b",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         agent_c = DemoRpcAgentAdd(
             name="c",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
 
         # test sequential
         msg = Msg(
@@ -346,9 +342,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test to use local and rpc agent simultaneously"""
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         # local agent b
         agent_b = DemoLocalAgentAdd(
             name="b",
@@ -356,9 +350,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
             name="c",
-            to_dist=DistConf(
-                lazy_launch=False,
-            ),
+            to_dist=True,
         )
         msg = Msg(
             name="System",
@@ -412,7 +404,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test agent server with multi-agent"""
         launcher = RpcAgentServerLauncher(
             host="127.0.0.1",
-            port=12010,
+            port=-1,
             local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory],
         )
@@ -505,7 +497,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test the clone_instances method of RpcAgent"""
         agent = DemoRpcAgentWithMemory(
             name="a",
-        ).to_dist()
+        ).to_dist(lazy_launch=True)
         # lazy launch will not init client
         self.assertIsNone(agent.client)
         # generate two agents (the first is it self)
@@ -734,4 +726,79 @@ class BasicRpcAgentTest(unittest.TestCase):
         # client.stop()
         # time.sleep(1)
         # self.assertFalse(client.is_alive())
+        launcher.shutdown()
+
+    @patch("agentscope.studio._client.StudioClient.alloc_server")
+    @patch(
+        "agentscope.studio._client.StudioClient.active",
+        new_callable=PropertyMock,
+    )
+    def test_server_auto_alloc(
+        self,
+        mock_active: PropertyMock,
+        mock_alloc: MagicMock,
+    ) -> None:
+        """Test the auto allocation of server"""
+        mock_active.return_value = True
+        host = "localhost"
+        launcher = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            local_mode=False,
+            custom_agent_classes=[DemoRpcAgentWithMemory],
+            agent_dir=os.path.abspath(
+                os.path.join(
+                    os.path.abspath(os.path.dirname(__file__)),
+                    "custom",
+                ),
+            ),
+        )
+        launcher.launch()
+        port = launcher.port
+        mock_alloc.return_value = {"host": host, "port": port}
+
+        # test auto allocation
+        a1 = DemoRpcAgentWithMemory(name="Auto1", to_dist=True)
+        a2 = DemoRpcAgentWithMemory(name="Auto2").to_dist()
+        self.assertEqual(a1.host, host)
+        self.assertEqual(a1.port, port)
+        self.assertEqual(a2.host, host)
+        self.assertEqual(a2.port, port)
+        client = RpcAgentClient(host=host, port=port)
+        al = client.get_agent_list()
+        self.assertEqual(len(al), 2)
+
+        # test not alive server
+        mock_alloc.return_value = {"host": "not_exist", "port": 1234}
+        a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
+        self.assertEqual(a3.host, "localhost")
+        nclient = RpcAgentClient(host=a3.host, port=a3.port)
+        nal = nclient.get_agent_list()
+        self.assertEqual(len(nal), 1)
+
+        # test agent dir loading
+        custom_agent_id = "custom_test"
+        self.assertTrue(
+            client.create_agent(
+                agent_configs={
+                    "args": (),
+                    "kwargs": {"name": "custom"},
+                    "class_name": "CustomAgent",
+                },
+                agent_id=custom_agent_id,
+            ),
+        )
+        ra = RpcAgent(
+            name="custom",
+            host=launcher.host,
+            port=launcher.port,
+            agent_id=custom_agent_id,
+            connect_existing=True,
+        )
+        resp = ra(Msg(name="sys", role="user", content="Hello"))
+        self.assertEqual(resp.name, "custom")
+        self.assertEqual(resp.content, "Hello world")
+        al = client.get_agent_list()
+        self.assertEqual(len(al), 3)
+
         launcher.shutdown()

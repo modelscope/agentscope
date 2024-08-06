@@ -195,6 +195,11 @@ class ServiceToolkit:
 
         """
 
+        # TODO: hotfix for workstation, will be removed in the future
+        if isinstance(service_func, partial):
+            self.add(service_func.func, **service_func.keywords)
+            return
+
         processed_func, json_schema = ServiceToolkit.get(
             service_func,
             **kwargs,
