@@ -89,6 +89,7 @@ as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --ag
 > Note:
 > `--agent-dir` 用来指定你的自定义 Agent 类所在的目录。
 > 请确保所有的自定义 Agent 类都位于 `--agent-dir` 指定的目录下，并且它们所依赖的自定义模块也都位于该目录下。
+> 另外，因为上述指令会加载目录下的所有 Python 文件，在运行前请确保指定的目录内没有恶意文件，以避免出现安全问题。
 
 在 `Machine2` 上运行如下代码，这里同样要确保已经将模型配置文件放置在 `model_config_path_b` 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。
 

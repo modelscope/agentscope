@@ -91,6 +91,7 @@ as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --ag
 > Note:
 > The `--agent-dir` field is used to specify the directory where your customized agent classes are located.
 > Please make sure that all custom Agent classes are located in `--agent-dir`, and that the custom modules they depend on are also located in the directory.
+> Additionally, because the above command will load all Python files in the directory, please ensure that the directory does not contain any malicious files to avoid security risks.
 
 Then put your model config file accordingly in `model_config_path_b`, set environment variables, and run the following code on `Machine2`.
 
