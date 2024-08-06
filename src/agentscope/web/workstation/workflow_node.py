@@ -121,8 +121,9 @@ class ModelNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.models import read_model_configs",
-            "inits": f"read_model_configs([{self.opt_kwargs}])",
+            "imports": "from agentscope.manager import ModelManager",
+            "inits": f"ModelManager.get_instance().load_model_configs("
+            f"[{self.opt_kwargs}])",
             "execs": "",
         }
 
