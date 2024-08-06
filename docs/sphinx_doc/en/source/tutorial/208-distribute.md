@@ -82,11 +82,16 @@ server.launch()
 server.wait_until_terminate()
 ```
 
-> For similarity, you can run the following command in your terminal rather than the above code:
->
-> ```shell
-> as_server --host ip_a --port 12001 --model-config-path model_config_path_a
-> ```
+For simplicity, you can run the following command in your terminal rather than the above code:
+
+```shell
+as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b
+```
+
+> Note:
+> The `--agent-dir` field is used to specify the directory where your customized agent classes are located.
+> Please make sure that all custom Agent classes are located in `--agent-dir`, and that the custom modules they depend on are also located in the directory.
+> Additionally, because the above command will load all Python files in the directory, please ensure that the directory does not contain any malicious files to avoid security risks.
 
 Then put your model config file accordingly in `model_config_path_b`, set environment variables, and run the following code on `Machine2`.
 
@@ -112,7 +117,7 @@ server.wait_until_terminate()
 > Similarly, you can run the following command in your terminal to setup the agent server:
 >
 > ```shell
-> as_server --host ip_b --port 12002 --model-config-path model_config_path_b
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b --agent-dir parent_dir_of_agent_a_and_b
 > ```
 
 Then, you can connect to the agent servers from the main process with the following code.
@@ -138,6 +143,9 @@ The above code will deploy `AgentA` on the agent server process of `Machine1` an
 And developers just need to write the application flow in a centralized way in the main process.
 
 ### Step 2: Orchestrate Distributed Application Flow
+
+> Note:
+> Currently, distributed version of Agent only supports `__call__` method call (i.e. `agent(x)`), not support calling other methods or reading/writing properties.
 
 In AgentScope, the orchestration of distributed application flow is exactly the same as non-distributed programs, and developers can write the entire application flow in a centralized way.
 At the same time, AgentScope allows the use of a mixture of locally and distributed deployed agents, and developers do not need to distinguish which agents are local and which are distributed.
@@ -314,6 +322,65 @@ When running large-scale multi-agent applications, it's common to have multiple 
     ```python
         ok = client.delete_all_agent()
     ```
+
+#### Connecting to AgentScope Studio
+
+The agent server process can be connected to [AgentScope Studio](#209-gui-en) at startup, allowing the `to_dist` method in subsequent distributed applications to be assigned automatically by Studio without the need for any parameters.
+
+For scenarios where the agent server process is started using Python code, simply fill in the `studio_url` in the initialization parameters of `RpcAgentServerLauncher`. This requires that the URL is correct and accessible over the network, for example, the default URL for the Studio is `http://127.0.0.1:5000`.
+
+```python
+# import some packages
+
+# register models which can be used in the server
+agentscope.init(
+    model_configs=model_config_path_a,
+)
+# Create an agent service process
+server = RpcAgentServerLauncher(
+    host="ip_a",
+    port=12001,  # choose an available port
+    custom_agent_classes=[...], # register your customized agent classes
+    studio_url="http://studio_ip:studio_port",  # connect to AgentScope Studio
+)
+
+# Start the service
+server.launch()
+server.wait_until_terminate()
+```
+
+For scenarios using the command `as_server` in your command line, simply fill in the `--studio-url` parameter.
+
+```shell
+as_server --host ip_a --port 12001 --model-config-path model_config_path_a --agent-dir parent_dir_of_agent_a_and_b --studio-url http://studio_ip:studio_port
+```
+
+After executing the above code or command, you can enter the Server Manager page of AgentScope Studio to check if the connection is successful. If the connection is successful, the agent server process will be displayed in the page table, and you can observe the running status and resource occupation of the process in the page, then you can use the advanced functions brought by AgentScope Studio. This section will focus on the impact of `to_dist` method brought by AgentScope Studio, and please refer to [AgentScope Studio](#209-gui-en) for the specific usage of the page.
+
+After the agent server process successfully connects to Studio, you only need to pass the `studio_url` of this Studio in the `agentscope.init` method, and then the `to_dist` method no longer needs to fill in the `host` and `port` fields, but automatically select an agent server process that has been connected to Studio.
+
+```python
+# import some packages
+
+agentscope.init(
+    model_configs=model_config_path_a,
+    studio_url="http://studio_ip:studio_port",
+)
+
+a = AgentA(
+    name="A"
+    # ...
+).to_dist() # automatically select an agent server
+
+# your application code
+```
+
+> Note:
+>
+> - The Agent used in this method must be registered at the start of the agent server process through `custom_agent_classes` or `--agent-dir`.
+> - When using this method, make sure that the agent server process connected to Studio is still running normally.
+
+After the application starts running, you can observe in the Server Manager page of Studio which agent server process this Agent is specifically running on, and after the application is completed, you can also delete this Agent through the Server Manager page.
 
 ## Implementation
 
