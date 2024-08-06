@@ -122,7 +122,8 @@
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
 
 <div class="viewcode-block" id="MsgHubManager">
@@ -135,7 +136,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">participants</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
-        <span class="n">announcement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">announcement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a msghub manager from the given arguments.</span>
 
@@ -143,7 +144,7 @@
 <span class="sd">            participants (`Sequence[AgentBase]`):</span>
 <span class="sd">                The Sequence of participants in the msghub.</span>
 <span class="sd">            announcement</span>
-<span class="sd">                (`Optional[Union[list[dict], dict]]`, defaults to `None`):</span>
+<span class="sd">                (`Optional[Union[list[Msg], Msg]]`, defaults to `None`):</span>
 <span class="sd">                The message that will be broadcast to all participants at</span>
 <span class="sd">                the first without requiring response.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -231,11 +232,11 @@
 
 <div class="viewcode-block" id="MsgHubManager.broadcast">
 <a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.MsgHubManager.broadcast">[docs]</a>
-    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the message to all participants.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            msg (`Union[dict, list[dict]]`):</span>
+<span class="sd">            msg (`Union[Msg, Sequence[Msg]]`):</span>
 <span class="sd">                One or a list of dict messages to broadcast among all</span>
 <span class="sd">                participants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -249,14 +250,14 @@
 <a class="viewcode-back" href="../../agentscope.msghub.html#agentscope.msghub">[docs]</a>
 <span class="k">def</span> <span class="nf">msghub</span><span class="p">(</span>
     <span class="n">participants</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
-    <span class="n">announcement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">announcement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MsgHubManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;msghub is used to share messages among a group of agents.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        participants (`Sequence[AgentBase]`):</span>
 <span class="sd">            A Sequence of participated agents in the msghub.</span>
-<span class="sd">        announcement (`Optional[Union[list[dict], dict]]`, defaults to `None`):</span>
+<span class="sd">        announcement (`Optional[Union[list[Msg], Msg]]`, defaults to `None`):</span>
 <span class="sd">            The message that will be broadcast to all participants at the</span>
 <span class="sd">            very beginning without requiring response.</span>
 

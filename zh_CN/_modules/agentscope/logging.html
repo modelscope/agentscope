@@ -124,9 +124,10 @@
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
-<span class="kn">from</span> <span class="nn">agentscope.web.gradio.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">.utils.tools</span> <span class="kn">import</span> <span class="n">_guess_type_by_extension</span>
+<span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
+<span class="kn">from</span> <span class="nn">.web.gradio.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">generate_image_from_name</span><span class="p">,</span>
     <span class="n">send_msg</span><span class="p">,</span>
     <span class="n">get_reset_msg</span><span class="p">,</span>
@@ -245,56 +246,44 @@
 
 <div class="viewcode-block" id="log_gradio">
 <a class="viewcode-back" href="../../agentscope.logging.html#agentscope.logging.log_gradio">[文档]</a>
-<span class="k">def</span> <span class="nf">log_gradio</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">log_gradio</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Send chat message to studio.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        message (`dict`):</span>
-<span class="sd">            The message to be logged. It should have &quot;name&quot;(or &quot;role&quot;) and</span>
-<span class="sd">            &quot;content&quot; keys, and the message will be logged as &quot;&lt;name/role&gt;:</span>
-<span class="sd">            &lt;content&gt;&quot;.</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message to be logged.</span>
 <span class="sd">        uid (`str`):</span>
 <span class="sd">            The local value &#39;uid&#39; of the thread.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">uid</span><span class="p">:</span>
         <span class="n">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span>
         <span class="n">avatar</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;avatar&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">generate_image_from_name</span><span class="p">(</span>
-            <span class="n">message</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
         <span class="n">flushing</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="s2">&quot;url&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])):</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;img src=&quot;</span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;/&gt;&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;audio_path&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;audio_path&quot;</span><span class="p">]:</span>
-            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;audio_path&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">message</span><span class="p">[</span><span class="s2">&quot;audio_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;audio_path&quot;</span><span class="p">]]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;audio_path&quot;</span><span class="p">])):</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;audio src=&quot;</span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;audio_path&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                controls/&gt;&lt;/audio&gt;&quot;&quot;&quot;</span>
-                <span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;video_path&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;video_path&quot;</span><span class="p">]:</span>
-            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;video_path&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">message</span><span class="p">[</span><span class="s2">&quot;video_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;video_path&quot;</span><span class="p">]]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="s2">&quot;video_path&quot;</span><span class="p">])):</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;&lt;video src=&quot;</span><span class="si">{</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;video_path&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                controls/&gt;&lt;/video&gt;&quot;&quot;&quot;</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">url</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">urls</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">url</span>
+
+            <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+                <span class="n">typ</span> <span class="o">=</span> <span class="n">_guess_type_by_extension</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;img src=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39;/&gt;&quot;</span>
+                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;audio src=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/audio&gt;&quot;</span>
+                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;video src=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/video&gt;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;a href=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&lt;/a&gt;&quot;</span>
 
         <span class="n">send_msg</span><span class="p">(</span>
-            <span class="n">msg</span><span class="p">,</span>
-            <span class="n">role</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
             <span class="n">flushing</span><span class="o">=</span><span class="n">flushing</span><span class="p">,</span>
             <span class="n">avatar</span><span class="o">=</span><span class="n">avatar</span><span class="p">,</span>
