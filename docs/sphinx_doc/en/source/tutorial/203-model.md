@@ -177,6 +177,33 @@ Here we provide example configurations for different model wrappers.
 
 </details>
 
+<details>
+<summary>Azure OpenAI Chat API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/openai_model.py">agents.models.OpenAIChatWrapper</a></code>)</summary>
+
+```python
+{
+    "config_name": "{your_config_name}",
+    "model_type": "openai_chat",
+    "api_type": "azure",
+    # Required parameters
+    "model_name": "gpt-4",
+
+    # Optional parameters
+    "api_key": "{your_api_key}",                 # Azure OpenAI API Key, if not provided, it will be read from the environment variable
+    "organization": "{your_organization}",       # Organization name, if not provided, it will be read from the environment variable
+    "client_args": {
+      "api_version": "{api_version}",            # Azure OpenAI API version, e.g., "2021-04-01", if not provided, it will be read from the environment variable
+      "azure_endpoint": "{your_azure_endpoint}", # Azure endpoint, if not provided, it will be read from the environment variable
+      "azure_ad_token": "xxx",                   # Azure AD Token, if not provided, it will be read from the environment variable
+    },
+    "generate_args": {                           # Parameters passed to the model when calling
+        # e.g. "temperature": 0.0
+    },
+}
+```
+
+</details>
+
 <br/>
 
 #### DashScope API

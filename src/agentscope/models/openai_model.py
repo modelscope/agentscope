@@ -5,6 +5,7 @@ from typing import (
     Union,
     Any,
     List,
+    Literal,
     Sequence,
     Dict,
     Optional,
@@ -62,6 +63,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
     def __init__(
         self,
         config_name: str,
+        api_type: Literal["openai", "azure"] = "openai",
         model_name: str = None,
         api_key: str = None,
         organization: str = None,
@@ -74,6 +76,8 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
         Args:
             config_name (`str`):
                 The name of the model config.
+            api_type (`Literal["openai", "azure"]`, default `openai`):
+                The type of the OpenAI API, which can be "openai" or "azure".
             model_name (`str`, default `None`):
                 The name of the model to use in OpenAI API.
             api_key (`str`, default `None`):
@@ -105,11 +109,20 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
                 "`pip install openai`",
             ) from e
 
-        self.client = openai.OpenAI(
-            api_key=api_key,
-            organization=organization,
-            **(client_args or {}),
-        )
+        if api_type == "openai":
+            self.client = openai.OpenAI(
+                api_key=api_key,
+                organization=organization,
+                **(client_args or {}),
+            )
+        elif api_type == "azure":
+            self.client = openai.AzureOpenAI(
+                api_key=api_key,
+                organization=organization,
+                **(client_args or {}),
+            )
+        else:
+            raise ValueError("api_type should be 'openai' or 'azure'.")
 
         # Set the max length of OpenAI model
         try:
@@ -144,6 +157,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
     def __init__(
         self,
         config_name: str,
+        api_type: Literal['openai', 'azure'] = 'openai',
         model_name: str = None,
         api_key: str = None,
         organization: str = None,
@@ -157,6 +171,8 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         Args:
             config_name (`str`):
                 The name of the model config.
+            api_type (`Literal["openai", "azure"]`, default `openai`):
+                The type of the OpenAI API, which can be "openai" or "azure".
             model_name (`str`, default `None`):
                 The name of the model to use in OpenAI API.
             api_key (`str`, default `None`):
@@ -176,6 +192,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
         super().__init__(
             config_name=config_name,
+            api_type=api_type,
             model_name=model_name,
             api_key=api_key,
             organization=organization,
