@@ -22,9 +22,9 @@ class ChatRoom(BasicAttribute):
 
     def __init__(
         self,
-        name: str,
-        participants: List[AgentBase] = None,
+        name: str = None,
         announcement: Msg = None,
+        participants: List[AgentBase] = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -41,9 +41,9 @@ class ChatRoom(BasicAttribute):
         if agent.agent_id in self.children:
             return False
         self.children[agent.agent_id] = ImmutableAttribute(
-            name=agent.id,
+            name=agent.agent_id,
             value={
-                "history_idx": len(self._value),
+                "history_idx": len(self._value["history"]),
                 "agent": agent,
             },
         )
@@ -62,7 +62,7 @@ class ChatRoom(BasicAttribute):
     @event_func
     def speak(self, message: Msg) -> None:
         """Speak a message in the chatroom."""
-        self._value.append(message)
+        self._value["history"].append(message)
         self._trigger_listener(Event("speak", {"message": message}))
 
     @event_func
@@ -73,7 +73,7 @@ class ChatRoom(BasicAttribute):
             # only participants can get history message
             return []
         history_idx = self.children[agent.agent_id].get()["history_idx"]
-        history = deepcopy(self._value[history_idx:])
+        history = deepcopy(self._value["history"][history_idx:])
         self._trigger_listener(Event("get_history", {"agent": agent}))
         return history
 
