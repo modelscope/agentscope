@@ -72,8 +72,12 @@ class RpcAgent(AgentBase):
         if self.port is None and _studio_client.active:
             server = _studio_client.alloc_server()
             if "host" in server:
-                self.host = server["host"]
-                self.port = server["port"]
+                if RpcAgentClient(
+                    host=server["host"],
+                    port=server["port"],
+                ).is_alive():
+                    self.host = server["host"]
+                    self.port = server["port"]
         launch_server = self.port is None
         if launch_server:
             # check studio first

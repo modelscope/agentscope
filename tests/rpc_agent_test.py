@@ -768,6 +768,14 @@ class BasicRpcAgentTest(unittest.TestCase):
         al = client.get_agent_list()
         self.assertEqual(len(al), 2)
 
+        # test not alive server
+        mock_alloc.return_value = {"host": "not_exist", "port": 1234}
+        a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
+        self.assertEqual(a3.host, "localhost")
+        nclient = RpcAgentClient(host=a3.host, port=a3.port)
+        nal = nclient.get_agent_list()
+        self.assertEqual(len(nal), 1)
+
         # test agent dir loading
         custom_agent_id = "custom_test"
         self.assertTrue(
