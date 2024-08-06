@@ -38,7 +38,19 @@ class EventListener(ABC):
 
 
 class Attribute(ABC):
-    """The base class of all attribute."""
+    """The Attribute Interface.
+    Attribute is a key concept of AgentScope, which is used to
+    represent global data shared among agents.
+
+    Each attribute has its own name and value, and multiple attributes
+    can be organized into a tree structure, where each attribute can
+    have multiple children attributes and one parent attribute.
+
+    Different implementation of attributes may have different event functions,
+    which are marked by `@event_func`.
+    Users can bind `EventListener` to specific event functions, and
+    the listener will be activated when the event function is called.
+    """
 
     @property
     @abstractmethod
@@ -47,15 +59,6 @@ class Attribute(ABC):
 
         Returns:
             `str`: The name of the attribute.
-        """
-
-    @property
-    @abstractmethod
-    def value(self) -> Any:
-        """Value of the attribute.
-
-        returns:
-            `Any`: The value of the attribute.
         """
 
     @abstractmethod
@@ -139,7 +142,13 @@ class Attribute(ABC):
 
 
 class BasicAttribute(Attribute):
-    """A basic implementation of Attribute."""
+    """A basic implementation of Attribute, which has no event function
+    and cannot get value.
+
+    Note:
+        `BasicAttribute` is used as the base class to implement other
+        attributes. Application developers should not use this class.
+    """
 
     def __init__(
         self,
@@ -182,11 +191,6 @@ class BasicAttribute(Attribute):
     def name(self) -> str:
         """Name of the attribtue"""
         return self._name
-
-    @property
-    def value(self) -> Any:
-        """Value of the attribute."""
-        return self._value
 
     def get_parent(self) -> Attribute:
         """Get the parent attribute of the current attribute.
@@ -293,7 +297,7 @@ class BasicAttribute(Attribute):
     def dump(self) -> dict:
         """Dump the attribute tree to a dict."""
         return {
-            "value": self.value,
+            "value": self._value,
             "type": self.__class__.__name__,
             "children": {
                 child.name: child.dump()

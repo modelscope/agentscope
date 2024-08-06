@@ -2,12 +2,12 @@
 """ A Attribute that represented a 2D location point."""
 from typing import List, Tuple, Any
 
-from ..attribute import Attribute, EventListener
+from ..attribute import Attribute, BasicAttribute, EventListener
 from .mutable import MutableAttribute
 from ..event import event_func, Event, Movable2D
 
 
-class Point2D(MutableAttribute, Movable2D):
+class Point2D(BasicAttribute, Movable2D):
     """A Point in 2D space."""
 
     def __init__(
@@ -24,7 +24,10 @@ class Point2D(MutableAttribute, Movable2D):
     @event_func
     def move_to(self, x: float, y: float) -> bool:
         """Move the point to a new position."""
-        cur_loc = {"x": self._value[0], "y": self._value[1]}
+        cur_loc = {
+            "x": self._value[0],  # type: ignore[has-type]
+            "y": self._value[1],  # type: ignore[has-type]
+        }
         self._value = (x, y)
         self._trigger_listener(
             Event("move_to", {"new": {"x": x, "y": y}, "old": cur_loc}),
@@ -42,7 +45,7 @@ class Point2D(MutableAttribute, Movable2D):
         Returns:
             `bool`: Whether the movement was successful.
         """
-        self.move_to(self.value[0] + x, self.value[1] + y)
+        self.move_to(self._value[0] + x, self._value[1] + y)
         return True
 
     @event_func

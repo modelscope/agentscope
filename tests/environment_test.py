@@ -5,7 +5,6 @@ from typing import Any
 
 from agentscope.environment import (
     Attribute,
-    BasicAttribute,
     Event,
     EventListener,
     Environment,
@@ -54,7 +53,7 @@ class AttributeTest(unittest.TestCase):
 
     def test_basic_attribute(self) -> None:
         """Test cases for basic attribute"""
-        attribute = BasicAttribute(name="root", default=0)
+        attribute = MutableAttribute(name="root", value=0)
         get_rec_1 = Recorder()
         get_rec_2 = Recorder()
         set_rec_1 = Recorder()
@@ -164,30 +163,30 @@ class AttributeTest(unittest.TestCase):
 
     def test_basic_environment(self) -> None:
         """Test cases for basic environment"""
-        attr1 = BasicAttribute(
+        attr1 = MutableAttribute(
             name="l0",
-            default=0,
+            value=0,
             children=[
-                BasicAttribute(
+                MutableAttribute(
                     name="l1_0",
-                    default=1,
+                    value=1,
                     children=[
-                        BasicAttribute(name="l2_0", default=3),
-                        BasicAttribute(name="l2_1", default=4),
+                        MutableAttribute(name="l2_0", value=3),
+                        MutableAttribute(name="l2_1", value=4),
                     ],
                 ),
-                BasicAttribute(
+                MutableAttribute(
                     name="l1_1",
-                    default=2,
+                    value=2,
                     children=[
-                        BasicAttribute(name="l2_2", default=5),
-                        BasicAttribute(name="l2_3", default=6),
+                        MutableAttribute(name="l2_2", value=5),
+                        MutableAttribute(name="l2_3", value=6),
                     ],
                 ),
             ],
         )
-        attr2 = BasicAttribute(name="a1", default=10)
-        attr3 = BasicAttribute(name="a2", default=20)
+        attr2 = MutableAttribute(name="a1", value=10)
+        attr3 = MutableAttribute(name="a2", value=20)
         env1 = Environment("test1", attr1)
         self.assertFalse(env1.add_attr(attr1))
         self.assertTrue(env1.add_attr(attr2))
@@ -221,7 +220,7 @@ class AttributeTest(unittest.TestCase):
             x=3,
             y=4,
         )
-        b1 = BasicAttribute(name="b1", default="hi")
+        b1 = MutableAttribute(name="b1", value="hi")
         m.register_point(p1)
         m.register_point(p2)
         m.register_point(p3)
@@ -237,7 +236,7 @@ class AttributeTest(unittest.TestCase):
                 self.owner = owner
 
             def __call__(self, attr: Attribute, event: Event) -> None:
-                self.owner.value[event.args["attr_name"]] = event
+                self.owner._value[event.args["attr_name"]] = event
 
         class OutRangeListener(EventListener):
             """A listener that listen to out of range events"""
@@ -247,8 +246,8 @@ class AttributeTest(unittest.TestCase):
                 self.owner = owner
 
             def __call__(self, attr: Attribute, event: Event) -> None:
-                if event.args["attr_name"] in self.owner.value:
-                    self.owner.value.pop(event.args["attr_name"])
+                if event.args["attr_name"] in self.owner._value:
+                    self.owner._value.pop(event.args["attr_name"])
 
         m.in_range_of(
             "p2",
@@ -272,11 +271,22 @@ class AttributeTest(unittest.TestCase):
             distance=5,
             distance_type="manhattan",
         )
-        self.assertEqual(len(p2.value), 1)
-        self.assertTrue("p1" in p2.value)
-        self.assertEqual(len(p3.value), 0)
+        self.assertEqual(len(p2.get()), 1)
+        self.assertTrue("p1" in p2.get())
+        self.assertEqual(len(p3.get()), 0)
         m.move_attr_to("p3", 2, 3)
-        self.assertEqual(len(p3.value), 1)
-        self.assertTrue("p1" in p3.value)
+        self.assertEqual(len(p3.get()), 1)
+        self.assertTrue("p1" in p3.get())
         m.move_attr_to("p3", 3, 3)
-        self.assertEqual(len(p3.value), 0)
+        self.assertEqual(len(p3.get()), 0)
+        m.move_attr_to("p1", 1, 3)
+        self.assertEqual(len(p3.get()), 1)
+        self.assertTrue("p1" in p3.get())
+        self.assertEqual(len(p2.get()), 0)
+        m.move_attr_to("p2", 2, 3)
+        self.assertEqual(len(p2.get()), 2)
+        self.assertTrue("p1" in p2.get())
+        self.assertTrue("p3" in p2.get())
+        self.assertEqual(len(p3.get()), 2)
+        self.assertTrue("p1" in p3.get())
+        self.assertTrue("p2" in p3.get())

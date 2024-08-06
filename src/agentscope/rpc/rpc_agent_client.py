@@ -342,13 +342,6 @@ class RpcAgentClient:
 
         return file_manager.save_file(_generator(), local_filename)
 
-    def create_attribute(
-        self,
-        attr_id: str = None,
-    ) -> bool:
-        """Create a new attribute."""
-        pass
-
 
 class ResponseStub:
     """A stub used to save the response of a rpc call in a sub-thread."""
