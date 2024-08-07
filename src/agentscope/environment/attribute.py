@@ -37,6 +37,8 @@ class EventListener(ABC):
         """
 
 
+# TODO: Attribute is not a good name
+# TODO: rename to `SharedData`, `SharedNode`, `EnvNode`, `Node` or `Env`?
 class Attribute(ABC):
     """The Attribute Interface.
     Attribute is a key concept of AgentScope, which is used to
@@ -318,16 +320,3 @@ class BasicAttribute(Attribute):
             self.children[attr_name] = attr
         else:
             raise EnvAttributeAlreadyExistError(attr_name)
-
-
-class RpcAttribute(Attribute):
-    """A attribute that can be accessed through RPC."""
-
-    def __init__(
-        self,
-        name: str,
-        host: str = "localhost",
-        port: int = None,
-        attr_id: str = None,
-    ) -> None:
-        pass

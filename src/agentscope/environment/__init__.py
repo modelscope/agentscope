@@ -2,7 +2,6 @@
 """ Import all environment related modules in the package. """
 from .event import Event, event_func
 from .attribute import Attribute, BasicAttribute, EventListener
-from .environment import Environment
 from .attributes.mutable import MutableAttribute
 from .attributes.immutable import ImmutableAttribute
 from .attributes.chatroom import ChatRoom
@@ -15,7 +14,6 @@ __all__ = [
     "Attribute",
     "BasicAttribute",
     "EventListener",
-    "Environment",
     "MutableAttribute",
     "ImmutableAttribute",
     "ChatRoom",

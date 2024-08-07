@@ -7,7 +7,6 @@ from agentscope.environment import (
     Attribute,
     Event,
     EventListener,
-    Environment,
     MutableAttribute,
     Point2D,
     AttributeWithPoint2D,
@@ -186,8 +185,8 @@ class AttributeTest(unittest.TestCase):
             ),
         )
 
-    def test_basic_environment(self) -> None:
-        """Test cases for basic environment"""
+    def test_get_set_child_item(self) -> None:
+        """Test cases for child related operation"""
         attr1 = MutableAttribute(
             name="l0",
             value=0,
@@ -212,18 +211,14 @@ class AttributeTest(unittest.TestCase):
         )
         attr2 = MutableAttribute(name="a1", value=10)
         attr3 = MutableAttribute(name="a2", value=20)
-        env1 = Environment("test1", attr1)
-        self.assertFalse(env1.add_attr(attr1))
-        self.assertTrue(env1.add_attr(attr2))
-        self.assertEqual(env1.get("l0"), 0)
-        self.assertEqual(env1.get(["l0"]), 0)
-        self.assertEqual(env1.get(["l0", "l1_0"]), 1)
-        self.assertEqual(env1.get(["l0", "l1_1"]), 2)
-        self.assertEqual(env1.get(["l0", "l1_0", "l2_0"]), 3)
-        self.assertEqual(env1.get(["l0", "l1_1", "l2_3"]), 6)
-        env2 = Environment("test2", [attr2, attr3])
-        self.assertFalse(env2.add_attr(attr2))
-        self.assertFalse(env2.add_attr(attr3))
+        self.assertEqual(attr1["l1_0"].get(), 1)
+        self.assertEqual(attr1["l1_0"]["l2_0"].get(), 3)
+        self.assertEqual(attr1["l1_1"].get(), 2)
+        self.assertEqual(attr1["l1_1"]["l2_2"].get(), 5)
+        attr1["a3"] = attr3
+        self.assertEqual(attr1["a3"], attr3)
+        attr1["l1_1"]["a2"] = attr2
+        self.assertEqual(attr1["l1_1"]["a2"], attr2)
 
     def test_map2d_env(self) -> None:
         """Test cases for Map2d attribute"""
