@@ -7,11 +7,7 @@ external APIs (like TripAdvisor), and handling user inputs. The game involves
 a gamemaster agent that selects locations and provides hints, and a player
 agent that tries to guess the locations based on images and clues.
 """
-from typing import Dict, Any, List, Optional, Tuple, Union
-import re
-import logging
 
-from agentscope.service.service_toolkit import ServiceToolkit
 import agentscope
 from agentscope.message import Msg
 from agentscope.agents import DialogAgent
@@ -20,50 +16,8 @@ from agentscope.service import (
     search_tripadvisor,
     get_tripadvisor_location_details,
 )
-from agentscope.parsers import ParserBase
-from agentscope.models import ModelResponse
-import ExtendedDialogAgent
-
-class LocationMatcherParser(ParserBase):
-    """
-    A parser to match locations in natural language text
-    against a predefined list of locations.
-    """
-
-    def __init__(self, locations: List[Dict[str, Any]]):
-        """
-        Initialize the parser with a list of location dictionaries.
-
-        Args:
-            locations (list): A list of dictionaries,
-                              each containing location information.
-        """
-        self.locations = locations
-
-    def parse(self, response: ModelResponse) -> ModelResponse:
-        """
-        Parse the response text to find matches with the predefined locations.
-
-        Args:
-            response (ModelResponse): The response object containing
-                                      the text to parse.
-
-        Returns:
-            ModelResponse: The response object with the parsed result added.
-        """
-        text = response.text
-        matches = []
-
-        for location in self.locations:
-            if re.search(
-                r"\b" + re.escape(location["name"]) + r"\b",
-                text,
-                re.IGNORECASE,
-            ):
-                matches.append(location)
-
-        response.parsed = matches
-        return response
+from agentscope.service.service_toolkit import ServiceToolkit
+from ExtendedDialogAgent import ExtendedDialogAgent
 
 
 agentscope.init(
@@ -72,9 +26,7 @@ agentscope.init(
     name="xxx",
     studio_url="http://127.0.0.1:5000",  # The URL of AgentScope Studio
 )
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 
 
 # Initialize the ServiceToolkit and register the TripAdvisor API functions
@@ -146,6 +98,7 @@ def main() -> None:
         name="GeoGuessr Gamemaster",
         sys_prompt="You're a game master for a geography guessing game.",
         model_config_name="gpt-4o_config",
+        service_toolkit=service_toolkit,
         use_memory=True,
     )
 
