@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+from typing import Dict, Any, List, Optional, Tuple, Union
+import os
+import re
+import ast
+import logging
+from io import BytesIO
+
 from IPython.display import display
 import requests
-from io import BytesIO
 from PIL import Image as PILImage
 
-import logging
-from typing import Optional
 from agentscope.service.service_response import (
     ServiceResponse,
     ServiceExecStatus,
@@ -20,13 +24,9 @@ from agentscope.service import (
     search_tripadvisor,
     get_tripadvisor_location_details,
 )
-import ast
 
-from typing import Dict, Any, List
 from agentscope.parsers import ParserBase
 from agentscope.models import ModelResponse
-import re
-import os
 
 
 class LocationMatcherParser(ParserBase):
@@ -35,7 +35,7 @@ class LocationMatcherParser(ParserBase):
     against a predefined list of locations.
     """
 
-    def __init__(self, locations):
+    def __init__(self, locations: List[Dict[str, Any]]):
         """
         Initialize the parser with a list of location dictionaries.
 
@@ -142,7 +142,17 @@ class ExtendedDialogAgent(BaseDialogAgent):
                 result["content"] = ast.literal_eval(json_str)
         return result
 
-    def propose_location(self):
+    def propose_location(self) -> str:
+        """
+        Propose an interesting location for the player to guess.
+
+        This method uses the model to generate a proposal for an interesting
+        location that the player will try to guess. It aims to diversify the
+        proposals and include less known locations.
+
+        Returns:
+            str: The proposed location as a string.
+        """
         messages = [
             {
                 "role": "system",
@@ -163,7 +173,23 @@ class ExtendedDialogAgent(BaseDialogAgent):
         response = self.model(messages).text.strip()
         return response
 
-    def search_and_select_location(self, proposed_location):
+    def search_and_select_location(
+        self,
+        proposed_location: str,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Search for a location using TripAdvisor API and select the most appropriate result.
+
+        This method searches for a location using the provided query, then either
+        automatically selects the first result or asks the model to choose the best
+        match if multiple results are returned.
+
+        Args:
+            proposed_location (str): The location to search for.
+
+        Returns:
+            dict: The selected location information, or None if no location is found.
+        """
         response_str = self.service_toolkit.parse_and_call_func(
             [
                 {
@@ -225,7 +251,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
                 return locations[0]
         return None
 
-    def get_location_details(self, location_id):
+    def get_location_details(self, location_id: str) -> Dict[str, Any]:
         response_str = self.service_toolkit.parse_and_call_func(
             [
                 {
@@ -236,7 +262,10 @@ class ExtendedDialogAgent(BaseDialogAgent):
         )
         return self.parse_service_response(response_str)
 
-    def get_location_photos(self, location_id: str) -> dict:
+    def get_location_photos(
+        self,
+        location_id: str,
+    ) -> Optional[Dict[str, Any]]:
         """
         Get the largest photo for a specific location.
 
@@ -247,8 +276,10 @@ class ExtendedDialogAgent(BaseDialogAgent):
             dict: The largest photo information including the URL.
         """
         logger.info(
-            f"Calling TripAdvisor API for location photos: {location_id}",
+            "Calling TripAdvisor API for location photos: %s",
+            location_id,
         )
+
         response_str = self.service_toolkit.parse_and_call_func(
             [
                 {
@@ -257,7 +288,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
                 },
             ],
         )
-        logger.info(f"TripAdvisor location photos result: {response_str}")
+        logger.info("TripAdvisor location photos result: %s", response_str)
         result = self.parse_service_response(response_str)
         largest_photo = self.find_largest_photo(result["content"]["data"])
         return (
@@ -266,7 +297,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
             else None
         )
 
-    def display_photo(self, location_id):
+    def display_photo(self, location_id: str) -> bool:
         largest_photo = self.get_location_photos(location_id)
 
         if largest_photo:
@@ -277,10 +308,10 @@ class ExtendedDialogAgent(BaseDialogAgent):
                 display(img)
                 return True
             except Exception as e:
-                logger.error(f"Error displaying image: {str(e)}")
+                logger.error("Error displaying image: %s", str(e))
         return False
 
-    def check_guess_location(self, user_guess, location):
+    def check_guess_location(self, user_guess: str, location: str) -> str:
         messages = [
             {
                 "role": "system",
@@ -299,10 +330,14 @@ class ExtendedDialogAgent(BaseDialogAgent):
         ]
 
         response = self.model(messages).text.strip()
-        logger.info(f"check_guess: {response}")
+        logger.info("check_guess: %s", response)
         return response
 
-    def check_guess_ancestors(self, user_guess, ancestors):
+    def check_guess_ancestors(
+        self,
+        user_guess: str,
+        ancestors: List[Dict[str, Any]],
+    ) -> Tuple[str, str, str]:
         matches = []
 
         for location in ancestors:
@@ -337,7 +372,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
 
             response = self.model(messages).text.strip()
             if "True" in response:
-                logger.info(f"check_guess: {response}")
+                logger.info("check_guess: %s", response)
                 response = response.split(",")
                 return response[0], response[1], response[2]
             else:
@@ -358,11 +393,11 @@ class ExtendedDialogAgent(BaseDialogAgent):
                     {"role": "user", "content": user_guess},
                 ]
                 response = self.model(messages).text.strip()
-                logger.info(f"check_guess: {response}")
+                logger.info("check_guess: %s", response)
                 response = response.split(",")
                 return response[0], response[1], response[2]
 
-    def save_image_from_url(self, url, save_path):
+    def save_image_from_url(self, url: str, save_path: str) -> Optional[str]:
         try:
             os.makedirs(save_path, exist_ok=True)
             # Send a HTTP request to the URL
@@ -384,6 +419,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
             return full_path
         except Exception as e:
             print(f"An error occurred: {e}")
+            return None  # Return None in case of an error
 
     def find_largest_photo(
         self,
@@ -416,7 +452,19 @@ class ExtendedDialogAgent(BaseDialogAgent):
 
         return largest_photo_info
 
-    def get_hint(self, details):
+    def get_hint(self, details: Dict[str, Any]) -> str:
+        """
+        Generate a hint about the location based on the provided details.
+
+        This method uses the model to create a hint that gives the user some
+        information about the location without making it too obvious.
+
+        Args:
+            details (Dict[str, Any]): A dictionary containing details about the location.
+
+        Returns:
+            str: A hint about the location.
+        """
         messages = [
             {
                 "role": "system",
@@ -434,125 +482,120 @@ class ExtendedDialogAgent(BaseDialogAgent):
             },
         ]
         response = self.model(messages).text.strip()
-        logger.info(f"Hint: {response}")
+        logger.info("check_guess: %s", response)
         return response
 
     def handle_input(self, user_input: dict) -> dict:
         query = user_input["text"]
+        response = {}
 
         if self.game_state == "start":
-            photo_displayed = False
-            while not photo_displayed:
-                proposed_location = self.propose_location()
-                self.current_location = self.search_and_select_location(
-                    proposed_location,
-                )
-                print("self.current_location: ", self.current_location)
-                if not self.current_location:
-                    return {
-                        "text": (
-                            "I'm sorry, I couldn't find a suitable location. "
-                            "Let's try again."
-                        ),
-                    }
+            response = self.handle_start_state()
+        elif self.game_state == "guessing":
+            response = self.handle_guessing_state(query)
+        else:
+            response = {
+                "text": "I'm sorry, I don't understand. Let's start a new game!",
+            }
 
-                self.current_details = self.get_location_details(
-                    self.current_location["location_id"],
-                )
-                if self.current_details["status"] != ServiceExecStatus.SUCCESS:
-                    return {
-                        "text": (
-                            "I'm having trouble getting details"
-                            " for this location. "
-                            "Let's try again."
-                        ),
-                    }
-                ancestors = self.current_details["content"].get(
-                    "ancestors",
-                    [],
-                )
-                print("ancestors: ", ancestors)
+        return response
 
-                photo_displayed = self.display_photo(
-                    self.current_location["location_id"],
-                )
-                photos = self.get_location_photos(
-                    self.current_location["location_id"],
-                )
-
-            response = (
-                "Let's play a geography guessing game!"
-                " I've chosen a location and displayed "
-                "an image of it. Can you guess which"
-                " country, state, region, city, or "
-                "municipality this location is in?"
+    def handle_start_state(
+        self,
+    ) -> Union[Dict[str, str], List[Dict[str, Union[str, Optional[str]]]]]:
+        photo_displayed = False
+        photos: Any = None
+        while not photo_displayed:
+            proposed_location = self.propose_location()
+            self.current_location = self.search_and_select_location(
+                proposed_location,
             )
-            self.game_state = "guessing"
+            print("self.current_location: ", self.current_location)
+
+            if not self.current_location:
+                return {
+                    "text": "I'm sorry, I couldn't find a suitable location. Let's try again.",
+                }
+
+            self.current_details = self.get_location_details(
+                self.current_location["location_id"],
+            )
+            if self.current_details["status"] != ServiceExecStatus.SUCCESS:
+                return {
+                    "text": "I'm having trouble getting details for this location. Let's try again.",
+                }
+
+            ancestors = self.current_details["content"].get("ancestors", [])
+            print("ancestors: ", ancestors)
+
+            photo_displayed = self.display_photo(
+                self.current_location["location_id"],
+            )
+            photos = self.get_location_photos(
+                self.current_location["location_id"],
+            )
+
+        response = "Let's play a geography guessing game! I've chosen a location and displayed an image of it. Can you guess which country, state, region, city, or municipality this location is in?"
+        self.game_state = "guessing"
+        if isinstance(photos, dict) and isinstance(photos.get("url"), str):
             image_path = self.save_image_from_url(
                 photos["url"],
                 save_path="./images",
             )
-
             return [
                 {"text": response},
                 {"image": image_path},
                 {"image_for_display": photos["url"]},
             ]
+        else:
+            return {"text": response}
 
-        elif self.game_state == "guessing":
-            if (
-                self.check_guess_location(
-                    query.lower(),
-                    self.current_location["name"].lower(),
-                )
-                == "True"
-            ):
+    def handle_guessing_state(self, query: str) -> Dict[str, str]:
+        if self.current_location is None:
+            return {
+                "text": "I'm sorry, there seems to be an issue with the current location. Let's start a new game.",
+            }
+
+        if (
+            self.check_guess_location(
+                query.lower(),
+                self.current_location["name"].lower(),
+            )
+            == "True"
+        ):
+            self.game_state = "end"
+            return {
+                "text": f"Congratulations! You've guessed correctly. The location is indeed in {self.current_location['name']}.",
+            }
+
+        if (
+            self.current_details is None
+            or "content" not in self.current_details
+        ):
+            return {
+                "text": "I'm sorry, there seems to be an issue with the location details. Let's start a new game.",
+            }
+
+        ancestors = self.current_details["content"].get("ancestors", [])
+        level, correct_name, is_smallest = self.check_guess_ancestors(
+            query,
+            ancestors,
+        )
+
+        if level != "None":
+            if is_smallest == "True":
                 self.game_state = "end"
                 return {
-                    "text": (
-                        f"Congratulations! You've guessed correctly."
-                        " The location is indeed in "
-                        f"{self.current_location['name']}."
-                    ),
+                    "text": f"Congratulations! You've guessed correctly. The location is indeed in {level}: {correct_name}.",
                 }
-            ancestors = self.current_details["content"].get("ancestors", [])
-            level, correct_name, is_smallest = self.check_guess_ancestors(
-                query,
-                ancestors,
-            )
-
-            if level != "None":
-                if is_smallest == "True":
-                    self.game_state = "end"
-                    return {
-                        "text": (
-                            f"Congratulations! You've guessed correctly."
-                            f" The location is indeed in {level}: "
-                            f"{correct_name}."
-                        ),
-                    }
-                else:
-                    return {
-                        "text": (
-                            f"Good guess! {level}: {correct_name} is correct,"
-                            " but can you be more specific? "
-                            "Try guessing a smaller region or city."
-                        ),
-                    }
             else:
-                hint = self.get_hint(self.current_details["content"])
                 return {
-                    "text": (
-                        f"I'm sorry, that's not correct. Here's a hint: {hint}"
-                        " Try guessing again!"
-                    ),
+                    "text": f"Good guess! {level}: {correct_name} is correct, but can you be more specific? Try guessing a smaller region or city.",
                 }
-
         else:
+            hint = self.get_hint(self.current_details["content"])
             return {
-                "text": (
-                    "I'm sorry, I don't understand. Let's start a new game!"
-                ),
+                "text": f"I'm sorry, that's not correct. Here's a hint: {hint} Try guessing again!",
             }
 
 
