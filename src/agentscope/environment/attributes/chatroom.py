@@ -25,7 +25,18 @@ class ChatRoom(BasicAttribute):
         name: str = None,
         announcement: Msg = None,
         participants: List[AgentBase] = None,
+        all_history: bool = False,
     ) -> None:
+        """Init a ChatRoom instance.
+
+        Args:
+            name (`str`): The name of the chatroom.
+            announcement (`Msg`): The announcement message.
+            participants (`List[AgentBase]`): A list of agents
+            all_history (`bool`): If `True`, new participant can see all
+            history messages, else only messages generated after joining
+            can be seen. Default to `False`.
+        """
         super().__init__(
             name=name,
             value={"history": [], "announcement": announcement},
@@ -34,6 +45,7 @@ class ChatRoom(BasicAttribute):
             p.name: p for p in (participants if participants else [])
         }
         self.event_listeners = {}
+        self.all_history = all_history
 
     @event_func
     def join(self, agent: AgentBase) -> bool:
@@ -72,7 +84,10 @@ class ChatRoom(BasicAttribute):
         if agent.agent_id not in self.children:
             # only participants can get history message
             return []
-        history_idx = self.children[agent.agent_id].get()["history_idx"]
+        if self.all_history:
+            history_idx = 0
+        else:
+            history_idx = self.children[agent.agent_id].get()["history_idx"]
         history = deepcopy(self._value["history"][history_idx:])
         self._trigger_listener(Event("get_history", {"agent": agent}))
         return history
