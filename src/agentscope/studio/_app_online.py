@@ -248,7 +248,7 @@ def oauth_callback() -> str:
 
         return redirect(
             url_for(
-                "workstation",
+                "_workstation_online",
                 token=verification_token,
                 user_login=user_login,
             ),
