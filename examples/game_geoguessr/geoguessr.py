@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+This module implements the generative version of a Geoguessr-like game using
+the AgentScope framework.
+"""
 import os
 import json
 from typing import List

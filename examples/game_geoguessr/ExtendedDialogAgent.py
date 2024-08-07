@@ -1,4 +1,18 @@
 # -*- coding: utf-8 -*-
+"""
+This module contains the ExtendedDialogAgent class, which is an extension of
+the BaseDialogAgent class for managing a GeoGuessr-like game.
+
+The ExtendedDialogAgent class provides functionality for:
+- Managing game states
+- Interacting with external APIs for location information
+- Handling user inputs and game logic
+- Generating location proposals and hints
+- Processing and validating user guesses
+
+This module is part of a larger project aimed at creating an interactive
+geography guessing game using AI-powered dialogue agents.
+"""
 from typing import Dict, Any, List, Optional, Tuple, Union
 import os
 import ast
@@ -558,7 +572,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
 
             if not self.current_location:
                 raise ValueError(
-                    "Make sure the correct API keys are provided."
+                    "Make sure the correct API keys are provided.",
                 )
 
             self.current_details = self.get_location_details(

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-This module implements a GeoGuessr-like game using AgentScope.
+This module implements the neurosymbolic version of a GeoGuessr-like game
+using AgentScope.
 
 It includes classes and functions for managing the game state, interacting with
 external APIs (like TripAdvisor), and handling user inputs. The game involves
@@ -8,6 +9,7 @@ a gamemaster agent that selects locations and provides hints, and a player
 agent that tries to guess the locations based on images and clues.
 """
 
+from ExtendedDialogAgent import ExtendedDialogAgent
 import agentscope
 from agentscope.message import Msg
 from agentscope.agents import DialogAgent
@@ -17,7 +19,6 @@ from agentscope.service import (
     get_tripadvisor_location_details,
 )
 from agentscope.service.service_toolkit import ServiceToolkit
-from ExtendedDialogAgent import ExtendedDialogAgent
 
 
 agentscope.init(
