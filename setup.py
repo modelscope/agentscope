@@ -30,6 +30,8 @@ service_requires = [
     "pymongo",
     "pymysql",
     "feedparser",
+    "bs4",
+    "beautifulsoup4",
 ]
 
 doc_requires = [
@@ -81,8 +83,6 @@ minimal_requires = [
     "litellm",
     "psutil",
     "scipy",
-    "bs4",
-    "beautifulsoup4",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
