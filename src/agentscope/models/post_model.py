@@ -206,14 +206,14 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         )
 
         # OpenAI
-        if model_name.startswith("gpt-"):
+        if model_name and model_name.startswith("gpt-"):
             return OpenAIChatWrapper.static_format(
                 *args,
                 model_name=model_name,
             )
 
         # Gemini
-        elif model_name.startswith("gemini"):
+        elif model_name and model_name.startswith("gemini"):
             return GeminiChatWrapper.format(*args)
 
         # Include DashScope, ZhipuAI, Ollama, the other models supported by
