@@ -28,7 +28,6 @@ agentscope.init(
 )
 
 
-
 # Initialize the ServiceToolkit and register the TripAdvisor API functions
 service_toolkit = ServiceToolkit()
 service_toolkit.add(
@@ -43,9 +42,6 @@ service_toolkit.add(
     get_tripadvisor_location_photos,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
-
-
-
 
 
 # Initialize AgentScope and run

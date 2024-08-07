@@ -1,11 +1,21 @@
+# -*- coding: utf-8 -*-
 from typing import Dict, Any, List, Optional, Tuple, Union
 import os
 import ast
+import logging
+import re
 
 import requests
 
+from agentscope.service.service_toolkit import ServiceToolkit
 from agentscope.service.service_response import ServiceExecStatus
 from agentscope.agents.dialog_agent import DialogAgent as BaseDialogAgent
+
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class ExtendedDialogAgent(BaseDialogAgent):
     """
@@ -50,6 +60,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
         name: str,
         sys_prompt: str,
         model_config_name: str,
+        service_toolkit: ServiceToolkit,
         use_memory: bool = True,
         memory_config: Optional[dict] = None,
     ):
@@ -546,12 +557,9 @@ class ExtendedDialogAgent(BaseDialogAgent):
             print("self.current_location: ", self.current_location)
 
             if not self.current_location:
-                return {
-                    "text": (
-                        "I'm sorry, I couldn't find a suitable location."
-                        " Let's try again."
-                    ),
-                }
+                raise ValueError(
+                    "Make sure the correct API keys are provided."
+                )
 
             self.current_details = self.get_location_details(
                 self.current_location["location_id"],
