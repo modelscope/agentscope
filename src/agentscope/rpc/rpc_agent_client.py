@@ -4,7 +4,7 @@
 import threading
 import json
 import os
-from typing import Optional, Sequence, Union, Generator
+from typing import Optional, Sequence, Union, Generator, Callable
 from loguru import logger
 
 try:
@@ -30,6 +30,7 @@ from ..exception import AgentCallError
 from ..manager import FileManager
 
 
+# TODO: rename to RpcClient
 class RpcAgentClient:
     """A client of Rpc agent server"""
 
@@ -37,7 +38,6 @@ class RpcAgentClient:
         self,
         host: str,
         port: int,
-        agent_id: str = None,
     ) -> None:
         """Init a rpc agent client
 
@@ -46,16 +46,14 @@ class RpcAgentClient:
             client is connected.
             port (`int`): The port of the rpc agent server which the client
             is connected.
-            agent_id (`str`): The agent id of the agent being called.
-            Defaults to None.
         """
         self.host = host
         self.port = port
-        self.agent_id = agent_id
 
     def call_agent_func(
         self,
         func_name: str,
+        agent_id: str,
         value: Optional[str] = None,
         timeout: int = 300,
     ) -> str:
@@ -78,7 +76,7 @@ class RpcAgentClient:
                     agent_pb2.RpcMsg(
                         value=value,
                         target_func=func_name,
-                        agent_id=self.agent_id,
+                        agent_id=agent_id,
                     ),
                     timeout=timeout,
                 )
@@ -158,9 +156,7 @@ class RpcAgentClient:
                 stub = RpcAgentStub(channel)
                 status = stub.create_agent(
                     agent_pb2.CreateAgentRequest(
-                        agent_id=(
-                            self.agent_id if agent_id is None else agent_id
-                        ),
+                        agent_id=agent_id,
                         agent_init_args=dill.dumps(agent_configs),
                     ),
                 )
@@ -363,18 +359,23 @@ class ResponseStub:
                 self.condition.wait()
             return self.response
 
+    def __getstate__(self) -> dict:
+        """For serialization."""
+        state = self.__dict__.copy()
+        del state["condition"]
+        return state
 
-def call_in_thread(
-    client: RpcAgentClient,
-    value: str,
-    func_name: str,
-) -> ResponseStub:
-    """Call rpc function in a sub-thread.
+    def __setstate__(self, state: dict) -> None:
+        """For deserialization."""
+        self.__dict__.update(state)
+        self.condition = threading.Condition()
+
+
+def call_func_in_thread(func: Callable) -> ResponseStub:
+    """Call a function in a sub-thread.
 
     Args:
-        client (`RpcAgentClient`): The rpc client.
-        value (`str`): The value of the request.
-        func_name (`str`): The name of the function being called.
+        func (`Callable`): The function to be called in sub-thread.
 
     Returns:
         `ResponseStub`: A stub to get the response.
@@ -383,13 +384,10 @@ def call_in_thread(
 
     def wrapper() -> None:
         try:
-            resp = client.call_agent_func(
-                func_name=func_name,
-                value=value,
-            )
+            resp = func()
             stub.set_response(resp)  # type: ignore[arg-type]
         except RpcError as e:
-            logger.error(f"Fail to call {func_name} in thread: {e}")
+            logger.error(f"Fail to call function in thread: {e}")
             stub.set_response(str(e))
 
     thread = threading.Thread(target=wrapper)

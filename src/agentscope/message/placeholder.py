@@ -6,7 +6,7 @@ from typing import Any, Optional, List, Union, Sequence
 from loguru import logger
 
 from .msg import Msg, MessageBase
-from ..rpc import RpcAgentClient, ResponseStub, call_in_thread
+from ..rpc import RpcAgentClient, ResponseStub
 from ..utils.tools import is_web_accessible
 
 
@@ -37,8 +37,7 @@ class PlaceholderMessage(Msg):
         host: str = None,
         port: int = None,
         task_id: int = None,
-        client: Optional[RpcAgentClient] = None,
-        x: dict = None,
+        stub: ResponseStub = None,
         **kwargs: Any,
     ) -> None:
         """A placeholder message, records the address of the real message.
@@ -67,11 +66,8 @@ class PlaceholderMessage(Msg):
                 The port of the rpc server where the real message is located.
             task_id (`int`, defaults to `None`):
                 The task id of the real message in the rpc server.
-            client (`RpcAgentClient`, defaults to `None`):
-                An RpcAgentClient instance used to connect to the generator of
-                this placeholder.
-            x (`dict`, defaults to `None`):
-                Input parameters used to call rpc methods on the client.
+            stub (`ResponseStub`, defaults to `None`):
+                A ResponseStub instance used to get the task_id.
         """  # noqa
         super().__init__(
             name=name,
@@ -82,19 +78,13 @@ class PlaceholderMessage(Msg):
         )
         # placeholder indicates whether the real message is still in rpc server
         self._is_placeholder = True
-        if client is None:
+        self._host: str = host
+        self._port: int = port
+        if stub is None:
             self._stub: ResponseStub = None
-            self._host: str = host
-            self._port: int = port
             self._task_id: int = task_id
         else:
-            self._stub = call_in_thread(
-                client,
-                x.serialize() if x is not None else "",
-                "_reply",
-            )
-            self._host = client.host
-            self._port = client.port
+            self._stub = stub
             self._task_id = None
 
     def __is_local(self, key: Any) -> bool:

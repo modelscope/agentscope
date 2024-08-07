@@ -420,7 +420,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
         )
         self.assertEqual(oid, agent1.agent_id)
-        self.assertEqual(oid, agent1.client.agent_id)
         agent2 = DemoRpcAgentWithMemory(  # pylint: disable=E1123
             name="a",
             to_dist={
@@ -437,7 +436,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
         )
         agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
-        agent3.client.agent_id = agent1.client.agent_id
         msg1 = Msg(
             name="System",
             content="First Msg for agent1",
@@ -497,17 +495,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test the clone_instances method of RpcAgent"""
         agent = DemoRpcAgentWithMemory(
             name="a",
-        ).to_dist(lazy_launch=True)
-        # lazy launch will not init client
-        self.assertIsNone(agent.client)
+        ).to_dist()
         # generate two agents (the first is it self)
         agents = agent.clone_instances(2)
         self.assertEqual(len(agents), 2)
         agent1 = agents[0]
         agent2 = agents[1]
         self.assertNotEqual(agent1.agent_id, agent2.agent_id)
-        self.assertEqual(agent1.agent_id, agent1.client.agent_id)
-        self.assertEqual(agent2.agent_id, agent2.client.agent_id)
         # clone instance will init client
         self.assertIsNotNone(agent.client)
         self.assertEqual(agent.agent_id, agent1.agent_id)

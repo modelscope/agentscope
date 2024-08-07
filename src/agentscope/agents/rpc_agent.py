@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Base class for Rpc Agent """
 from typing import Type, Optional, Union, Sequence
+from functools import partial
+from loguru import logger
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import (
@@ -8,12 +10,12 @@ from agentscope.message import (
     serialize,
     Msg,
 )
-from agentscope.rpc import RpcAgentClient
+from agentscope.rpc import RpcAgentClient, RpcObject, call_func_in_thread
 from agentscope.server.launcher import RpcAgentServerLauncher
 from agentscope.studio._client import _studio_client
 
 
-class RpcAgent(AgentBase):
+class RpcAgent(AgentBase, RpcObject):
     """A wrapper to extend an AgentBase into a gRPC Client."""
 
     def __init__(
@@ -26,9 +28,9 @@ class RpcAgent(AgentBase):
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        lazy_launch: bool = False,
         agent_id: str = None,
         connect_existing: bool = False,
+        lazy_launch: bool = False,
     ) -> None:
         """Initialize a RpcAgent instance.
 
@@ -49,16 +51,16 @@ class RpcAgent(AgentBase):
             local_mode (`bool`, defaults to `True`):
                 Whether the started gRPC server only listens to local
                 requests.
-            lazy_launch (`bool`, defaults to `False`):
-                Only launch the server when the agent is called.
             agent_id (`str`, defaults to `None`):
                 The agent id of this instance. If `None`, it will
                 be generated randomly.
             connect_existing (`bool`, defaults to `False`):
                 Set to `True`, if the agent is already running on the agent
                 server.
+            lazy_launch (`bool`, defaults to `False`):
+                Deprecated.
         """
-        super().__init__(name=name)
+        AgentBase.__init__(self, name=name)
         self.agent_class = agent_class
         self.agent_configs = agent_configs
         self.host = host
@@ -87,25 +89,25 @@ class RpcAgent(AgentBase):
                 studio_url = _studio_client.studio_url
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
-                port=port,
+                port=self.port,
                 max_pool_size=max_pool_size,
                 max_timeout_seconds=max_timeout_seconds,
                 local_mode=local_mode,
                 custom_agent_classes=[agent_class],
                 studio_url=studio_url,
             )
-            if not lazy_launch:
-                self._launch_server()
-        else:
-            self.client = RpcAgentClient(
-                host=self.host,
-                port=self.port,
-                agent_id=self.agent_id,
-            )
-            if not self.connect_existing:
-                self.client.create_agent(
-                    agent_configs,
-                )
+            if lazy_launch:
+                logger.warning("`lazy_launch` is deprecated.")
+            self._launch_server()
+        RpcObject.__init__(
+            self,
+            host=self.host,
+            port=self.port,
+            oid=self._agent_id,
+            cls=agent_class,
+        )
+        if not launch_server and not self.connect_existing:
+            self.client.create_agent(agent_configs, agent_id=self._agent_id)
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
@@ -114,9 +116,8 @@ class RpcAgent(AgentBase):
         self.client = RpcAgentClient(
             host=self.host,
             port=self.port,
-            agent_id=self.agent_id,
         )
-        self.client.create_agent(self.agent_configs)
+        self.client.create_agent(self.agent_configs, self._agent_id)
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         if self.client is None:
@@ -124,7 +125,16 @@ class RpcAgent(AgentBase):
         return PlaceholderMessage(
             name=self.name,
             content=None,
-            client=self.client,
+            host=self.host,
+            port=self.port,
+            stub=call_func_in_thread(
+                partial(
+                    self.client.call_agent_func,
+                    func_name="_reply",
+                    agent_id=self._agent_id,
+                    value=x.serialize() if x is not None else "",
+                ),
+            ),
             x=x,
         )
 
@@ -133,6 +143,7 @@ class RpcAgent(AgentBase):
             self._launch_server()
         self.client.call_agent_func(
             func_name="_observe",
+            agent_id=self._agent_id,
             value=serialize(x),  # type: ignore[arg-type]
         )
 

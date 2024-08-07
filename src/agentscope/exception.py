@@ -159,6 +159,17 @@ class AgentCallError(AgentServerError):
     """The exception class for failing to call agent."""
 
 
+class AgentServerUnsupportedMethodError(AgentServerError):
+    """The exception class for agent server not supporting certain method."""
+
+    def __init__(self, host: str, port: int, oid: str, func_name: str) -> None:
+        super().__init__(
+            host,
+            port,
+            f"Object[{oid}] does not support method[{func_name}]",
+        )
+
+
 # - Monitor related Exceptions
 
 
