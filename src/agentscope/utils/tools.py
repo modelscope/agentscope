@@ -85,8 +85,7 @@ def check_port(port: Optional[int] = None) -> int:
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         try:
-            code = s.connect_ex(("localhost", port))
-            if code != 0:
+            if s.connect_ex(("localhost", port)) == 0:
                 raise RuntimeError("Port is occupied.")
         except Exception:
             new_port = find_available_port()
