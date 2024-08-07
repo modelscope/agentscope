@@ -235,7 +235,6 @@ class RpcAgentClient:
             task_id (`int`): `task_id` of the PlaceholderMessage.
 
         Returns:
-            bool: Whether the update is successful.
             str: Serialized message value.
         """
         with grpc.insecure_channel(
@@ -339,7 +338,7 @@ class RpcAgentClient:
         return file_manager.save_file(_generator(), local_filename)
 
 
-class ResponseStub:
+class ResponseStub(dict):
     """A stub used to save the response of a rpc call in a sub-thread."""
 
     def __init__(self) -> None:

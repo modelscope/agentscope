@@ -195,19 +195,21 @@ _MSGS = {
 def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
     """Deserialize json string into MessageBase"""
     js_msg = json.loads(s)
-    msg_type = js_msg.pop("__type")
+    msg_type = js_msg.pop("__type", None)
     if msg_type == "List":
         return [deserialize(s) for s in js_msg["__value"]]
-    elif msg_type not in _MSGS:
-        raise NotImplementedError(
-            f"Deserialization of {msg_type} is not supported.",
-        )
-    return _MSGS[msg_type](**js_msg)
+    elif msg_type in _MSGS:
+        return _MSGS[msg_type](**js_msg)
+    else:
+        return js_msg
 
 
 def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
     """Serialize multiple MessageBase instance"""
     if isinstance(messages, MessageBase):
         return messages.serialize()
-    seq = [msg.serialize() for msg in messages]
-    return json.dumps({"__type": "List", "__value": seq})
+    elif isinstance(messages, list):
+        seq = [msg.serialize() for msg in messages]
+        return json.dumps({"__type": "List", "__value": seq})
+    else:
+        return json.dumps(messages)

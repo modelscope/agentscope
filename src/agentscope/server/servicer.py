@@ -41,6 +41,7 @@ from agentscope.message import (
     Msg,
     PlaceholderMessage,
     deserialize,
+    serialize,
 )
 
 
@@ -318,12 +319,27 @@ class AgentServerServicer(RpcAgentServicer):
         if hasattr(self, request.target_func):
             return getattr(self, request.target_func)(request)
         else:
-            # TODO: support other user defined method
-            logger.error(f"Unsupported method {request.target_func}")
-            return context.abort(
-                grpc.StatusCode.INVALID_ARGUMENT,
-                f"Unsupported method {request.target_func}",
+            return self.call_custom_func(
+                request.agent_id,
+                request.target_func,
+                deserialize(request.value),
             )
+
+    def call_custom_func(
+        self,
+        agent_id: str,
+        func_name: str,
+        args: dict,
+    ) -> agent_pb2.GeneralResponse:
+        """Call a custom function"""
+        res = getattr(self.agent_pool[agent_id], func_name)(
+            *args["args"],
+            **args["kwargs"],
+        )
+        return agent_pb2.GeneralResponse(
+            ok=True,
+            message=serialize(res) if res else None,
+        )
 
     def update_placeholder(
         self,
@@ -483,6 +499,8 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: Empty RpcMsg.
         """
         msgs = deserialize(request.value)
+        if not isinstance(msgs, list):
+            msgs = [msgs]
         for msg in msgs:
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()

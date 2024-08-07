@@ -37,13 +37,14 @@ class RpcObject(ABC):
         self._supported_attributes = get_public_methods(cls)
         self.client = RpcAgentClient(host, port)
 
-    def _call_rpc_func(self, func_name: str, args: tuple, kwargs: dict) -> Any:
+    def _call_rpc_func(self, func_name: str, args: dict) -> Any:
         """Call a function in rpc server."""
+        from ..message import serialize
+
         return self.client.call_agent_func(
             agent_id=self._agent_id,
             func_name=func_name,
-            *args,
-            **kwargs,
+            value=serialize(args),  # type: ignore[arg-type]
         )
 
     def __getattr__(self, name: str) -> Callable:
@@ -58,8 +59,7 @@ class RpcObject(ABC):
         def wrapper(*args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
             return self._call_rpc_func(
                 func_name=name,
-                args=args,
-                kwargs=kwargs,
+                args={"args": args, "kwargs": kwargs},
             )
 
         return wrapper

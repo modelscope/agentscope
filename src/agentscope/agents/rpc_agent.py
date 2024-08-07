@@ -120,8 +120,6 @@ class RpcAgent(AgentBase, RpcObject):
         self.client.create_agent(self.agent_configs, self._agent_id)
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
-        if self.client is None:
-            self._launch_server()
         return PlaceholderMessage(
             name=self.name,
             content=None,
