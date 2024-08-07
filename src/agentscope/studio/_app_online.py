@@ -67,7 +67,7 @@ def get_locale() -> str:
 
 babel.init_app(_app, locale_selector=get_locale)
 
-load_dotenv()
+load_dotenv(override=True)
 
 _app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "your_default_secret_key")
 _app.config["SESSION_TYPE"] = os.getenv("SESSION_TYPE", "filesystem")
