@@ -7,9 +7,10 @@ from typing import Optional, Literal, Any
 
 from loguru import logger
 
-from agentscope.message import Msg
-from agentscope.studio._client import _studio_client
-from agentscope.web.gradio.utils import (
+from .utils.tools import _guess_type_by_extension
+from .message import Msg
+from .studio._client import _studio_client
+from .web.gradio.utils import (
     generate_image_from_name,
     send_msg,
     get_reset_msg,
@@ -120,56 +121,44 @@ def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
     _save_msg(msg)
 
 
-def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
+def log_gradio(msg: Msg, uid: str, **kwargs: Any) -> None:
     """Send chat message to studio.
 
     Args:
-        message (`dict`):
-            The message to be logged. It should have "name"(or "role") and
-            "content" keys, and the message will be logged as "<name/role>:
-            <content>".
+        msg (`Msg`):
+            The message to be logged.
         uid (`str`):
             The local value 'uid' of the thread.
     """
     if uid:
         get_reset_msg(uid=uid)
-        name = message.get("name", "default") or message.get("role", "default")
         avatar = kwargs.get("avatar", None) or generate_image_from_name(
-            message["name"],
+            msg.name,
         )
 
-        msg = message["content"]
+        content = msg.content
         flushing = True
-        if "url" in message and message["url"]:
+        if msg.url is not None:
             flushing = False
-            if isinstance(message["url"], str):
-                message["url"] = [message["url"]]
-            for i in range(len(message["url"])):
-                msg += "\n" + f"""<img src="{message['url'][i]}"/>"""
-        if "audio_path" in message and message["audio_path"]:
-            flushing = False
-            if isinstance(message["audio_path"], str):
-                message["audio_path"] = [message["audio_path"]]
-            for i in range(len(message["audio_path"])):
-                msg += (
-                    "\n"
-                    + f"""<audio src="{message['audio_path'][i]}"
-                controls/></audio>"""
-                )
-        if "video_path" in message and message["video_path"]:
-            flushing = False
-            if isinstance(message["video_path"], str):
-                message["video_path"] = [message["video_path"]]
-            for i in range(len(message["video_path"])):
-                msg += (
-                    "\n"
-                    + f"""<video src="{message['video_path'][i]}"
-                controls/></video>"""
-                )
+            if isinstance(msg.url, str):
+                urls = [msg.url]
+            else:
+                urls = msg.url
+
+            for url in urls:
+                typ = _guess_type_by_extension(url)
+                if typ == "image":
+                    content += f"\n<img src='{url}'/>"
+                elif typ == "audio":
+                    content += f"\n<audio src='{url}' controls/></audio>"
+                elif typ == "video":
+                    content += f"\n<video src='{url}' controls/></video>"
+                else:
+                    content += f"\n<a href='{url}'>{url}</a>"
 
         send_msg(
-            msg,
-            role=name,
+            content,
+            role=msg.name,
             uid=uid,
             flushing=flushing,
             avatar=avatar,

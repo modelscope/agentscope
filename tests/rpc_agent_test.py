@@ -155,7 +155,7 @@ class DemoErrorAgent(AgentBase):
 class FileAgent(AgentBase):
     """An agent returns a file"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Msg = None) -> Msg:
         image_path = os.path.abspath(
             os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
