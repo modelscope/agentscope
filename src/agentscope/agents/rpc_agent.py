@@ -60,16 +60,10 @@ class RpcAgent(AgentBase, RpcObject):
                 Deprecated.
         """
         AgentBase.__init__(self, name=name)
-        self.agent_class = agent_class
-        self.agent_configs = agent_configs
-        self.server_launcher = None
-        self.client = None
-        self.connect_existing = connect_existing
         if agent_id is not None:
             self._agent_id = agent_id
         if lazy_launch:
             logger.warning("`lazy_launch` is deprecated.")
-
         RpcObject.__init__(
             self,
             cls=agent_class,
@@ -80,10 +74,8 @@ class RpcAgent(AgentBase, RpcObject):
             max_timeout_seconds=max_timeout_seconds,
             local_mode=local_mode,
             connect_existing=connect_existing,
+            configs=agent_configs,
         )
-
-    def create_object(self) -> bool:
-        return self.client.create_agent(self.agent_configs, self._agent_id)
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         return PlaceholderMessage(

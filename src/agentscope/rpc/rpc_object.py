@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """A proxy object which represent a object located in a rpc server."""
 from typing import Any, Callable
-from abc import ABC, abstractmethod
+from abc import ABC
 from inspect import getmembers, isfunction
 from types import FunctionType
 
@@ -34,6 +34,7 @@ class RpcObject(ABC):
         max_timeout_seconds: int = 7200,
         local_mode: bool = True,
         connect_existing: bool = False,
+        configs: dict = None,
     ) -> None:
         """Initialize the rpc object.
 
@@ -69,6 +70,7 @@ class RpcObject(ABC):
                     self.host = server["host"]
                     self.port = server["port"]
         launch_server = self.port is None
+        self.server_launcher = None
         if launch_server:
             # check studio first
             self.host = "localhost"
@@ -87,11 +89,11 @@ class RpcObject(ABC):
             self._launch_server()
         self.client = RpcAgentClient(self.host, self.port)
         if not connect_existing:
-            self.create_object()
+            self.create_object(configs)
 
-    @abstractmethod
-    def create_object(self) -> None:
+    def create_object(self, configs: dict) -> None:
         """create the object on the rpc server."""
+        return self.client.create_agent(configs, self._agent_id)
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""

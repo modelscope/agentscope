@@ -2,6 +2,8 @@
 """The placeholder message for RpcAgent."""
 import json
 from typing import Any, Optional, List, Union, Sequence
+import pickle
+from base64 import b64encode, b64decode
 
 from loguru import logger
 
@@ -186,32 +188,15 @@ class PlaceholderMessage(Msg):
             return json.dumps(states)
 
 
-_MSGS = {
-    "Msg": Msg,
-    "PlaceholderMessage": PlaceholderMessage,
-}
-
-
 def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
     """Deserialize json string into MessageBase"""
-    js_msg = json.loads(s)
-    msg_type = None
-    if isinstance(js_msg, dict):
-        msg_type = js_msg.pop("__type", None)
-    if msg_type == "List":
-        return [deserialize(s) for s in js_msg["__value"]]
-    elif msg_type in _MSGS:
-        return _MSGS[msg_type](**js_msg)
-    else:
-        return js_msg
+    if len(s) == 0:
+        return None
+    return pickle.loads(b64decode(s.encode("utf-8")))
 
 
 def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
     """Serialize multiple MessageBase instance"""
-    if isinstance(messages, MessageBase):
-        return messages.serialize()
-    elif isinstance(messages, list):
-        seq = [msg.serialize() for msg in messages]
-        return json.dumps({"__type": "List", "__value": seq})
-    else:
-        return json.dumps(messages)
+    if messages is None:
+        return ""
+    return b64encode(pickle.dumps(messages)).decode("utf-8")

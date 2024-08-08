@@ -200,9 +200,7 @@ class AgentWithCustomFunc(AgentBase):
 
     def custom_judge_func(self, x: str) -> bool:
         """A custom function with basic value input output"""
-        logger.info(x)
         res = self.judge_func(x)
-        logger.info(res)
         return res
 
 
