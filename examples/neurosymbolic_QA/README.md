@@ -9,7 +9,7 @@ This example will show:
 
 ## Background
 LLMs are good at many tasks, but fall short in rigorous reasoning, like doing complex mathematical calcuations.
-This script demonstrates a neurosymbolic question-answering system using AgentScope, which integrates various external APIs like Wolfram Alpha to assist LLM agents in solving problems that involve mathetical reasoning. The LLM agent first formulates the mathematical problems that need to be solved based on its interpretation of the problem statement, then it uses Wolfram Alpha to solve the mathematical problems, synthesizes the solution and finally returns a reply. 
+This script demonstrates a neurosymbolic question-answering system using AgentScope, which integrates various external APIs like Wolfram Alpha to assist LLM agents in solving problems that involve mathetical reasoning. The LLM agent first formulates the mathematical problems that need to be solved based on its interpretation of the problem statement, then it uses Wolfram Alpha to solve the mathematical problems, synthesizes the solution and finally returns a reply.
 
 Two LLM agents are set up in this demonstration: one with access to Wolfram Alpha APIs for solving mathematical problems, and another without such access, as a comparison, aiming to solve a game theory problem on finding mixed Nash equilibria.
 
