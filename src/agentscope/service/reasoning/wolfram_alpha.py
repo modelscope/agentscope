@@ -74,7 +74,7 @@ def query_wolfram_alpha_short_answers(
 def query_wolfram_alpha_simple(
     api_key: str,
     query: str,
-    save_path: str = "wolfram_alpha_result.png"
+    save_path: str = "wolfram_alpha_result.png",
 ) -> ServiceResponse:
     """
     Query the Wolfram Alpha Simple API. The Simple API generates full
@@ -117,11 +117,11 @@ def query_wolfram_alpha_simple(
         if response.status_code == 200:
             # Get the directory path
             dir_path = os.path.dirname(save_path)
-            
+
             # If dir_path is not empty, create the directory
             if dir_path:
                 os.makedirs(dir_path, exist_ok=True)
-            
+
             with open(save_path, "wb") as file:
                 file.write(response.content)
             logger.info(f"Result saved as '{save_path}'")
