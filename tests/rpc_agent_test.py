@@ -17,7 +17,7 @@ from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize
+from agentscope.message import deserialize, serialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
@@ -238,7 +238,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
         self.assertEqual(result["name"], "a")
-        js_placeholder_result = result.serialize()
+        js_placeholder_result = serialize(result)
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
@@ -263,7 +263,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         self.assertEqual(placeholder_result.id, 0)
         # check msg
-        js_msg_result = result.serialize()
+        js_msg_result = serialize(result)
         msg_result = deserialize(js_msg_result)
         self.assertTrue(isinstance(msg_result, Msg))
         self.assertEqual(msg_result.content, msg.content)

@@ -91,7 +91,7 @@ class RpcObject(ABC):
         if not connect_existing:
             self.create_object(configs)
 
-    def create_object(self, configs: dict) -> None:
+    def create_object(self, configs: dict) -> bool:
         """create the object on the rpc server."""
         return self.client.create_agent(configs, self._agent_id)
 

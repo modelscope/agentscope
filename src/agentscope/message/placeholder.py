@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """The placeholder message for RpcAgent."""
-import json
-from typing import Any, Optional, List, Union, Sequence
 import pickle
+from typing import Any, Optional, List, Union
 from base64 import b64encode, b64decode
 
 from loguru import logger
@@ -164,39 +163,33 @@ class PlaceholderMessage(Msg):
             self._task_id = resp["task_id"]  # type: ignore[call-overload]
             self._stub = None
 
-    def serialize(self) -> str:
+    def __getstate__(self) -> dict:
         if self._is_placeholder:
             self.__update_task_id()
-            return json.dumps(
-                {
-                    "__type": "PlaceholderMessage",
-                    "name": self.name,
-                    "content": None,
-                    "timestamp": self.timestamp,
-                    "host": self._host,
-                    "port": self._port,
-                    "task_id": self._task_id,
-                },
-            )
-        else:
-            states = {
-                k: v
-                for k, v in self.items()
-                if k not in PlaceholderMessage.PLACEHOLDER_ATTRS
+            return {
+                "name": self.name,
+                "content": None,
+                "timestamp": self.timestamp,
+                "host": self._host,
+                "port": self._port,
+                "task_id": self._task_id,
             }
-            states["__type"] = "Msg"
-            return json.dumps(states)
+        else:
+            return self.__dict__
+
+    def __setstate__(self, state: dict) -> None:
+        self.update(state)
 
 
-def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
+def deserialize(s: str) -> Any:
     """Deserialize json string into MessageBase"""
     if len(s) == 0:
         return None
     return pickle.loads(b64decode(s.encode("utf-8")))
 
 
-def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
+def serialize(obj: Any) -> str:
     """Serialize multiple MessageBase instance"""
-    if messages is None:
+    if obj is None:
         return ""
-    return b64encode(pickle.dumps(messages)).decode("utf-8")
+    return b64encode(pickle.dumps(obj)).decode("utf-8")
