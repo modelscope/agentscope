@@ -44,8 +44,14 @@ def require_auth(
     def decorator(view_func: Callable) -> Callable:
         @wraps(view_func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            token_query = request.args.get("token", "")
-            user_login = request.args.get("user_login", "")
+            token_query = request.args.get("token", "") or request.json.get(
+                "token",
+                "",
+            )
+            user_login = request.args.get(
+                "user_login",
+                "",
+            ) or request.json.get("user_login", "")
             token_session = session.get("verification_token")
             valid_user_login = session.get("user_login")
 

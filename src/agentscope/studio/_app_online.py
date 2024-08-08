@@ -302,7 +302,7 @@ def _upload_file_to_oss_online(**kwargs: Any) -> Response:
         return public_url
 
     content = request.json.get("data")
-    user_login = request.args.get("user_login", "")
+    user_login = request.json.get("user_login", "")
 
     workflow_json = json.dumps(content, ensure_ascii=False, indent=4)
     if len(workflow_json.encode("utf-8")) > 1024 * 1024:
