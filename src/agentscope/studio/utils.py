@@ -45,7 +45,7 @@ def require_auth(
         @wraps(view_func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             token_query = request.args.get("token", "") or request.json.get(
-                "token",
+                "token_query",
                 "",
             )
             user_login = request.args.get(
