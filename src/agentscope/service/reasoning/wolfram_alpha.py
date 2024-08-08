@@ -79,7 +79,9 @@ def query_wolfram_alpha_simple(
     """
     Query the Wolfram Alpha Simple API. The Simple API generates full
     Wolfram|Alpha output in a universally viewable image format.
-    Suitable for queries such as knowledge/facts retrieval.
+    Suitable for queries such as knowledge/facts retrieval. See
+    https://products.wolframalpha.com/simple-api/documentation
+    for more details.
 
     Args:
         api_key (`str`):
