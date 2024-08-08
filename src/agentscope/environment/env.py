@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""The env used in environment."""
+"""The env module."""
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from typing import Any, List
+from loguru import logger
 
 from ..exception import (
     EnvNotFoundError,
@@ -35,6 +36,25 @@ class EventListener(ABC):
             attr (`Env`): The env bound to the listener.
             event (`Event`): The event information.
         """
+
+
+class _EnvMeta(ABCMeta):
+    """The metaclass for env."""
+
+    def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
+        if not hasattr(cls, "_registry"):
+            cls._registry = {}
+        else:
+            if name in cls._registry:
+                logger.warning(
+                    f"Env class with name [{name}] already exists.",
+                )
+            else:
+                cls._registry[name] = cls
+        super().__init__(name, bases, attrs)
+
+    def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
+        pass
 
 
 class Env(ABC):

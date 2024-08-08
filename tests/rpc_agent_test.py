@@ -6,7 +6,7 @@ import unittest
 import os
 import time
 import shutil
-from typing import Optional, Union, Sequence
+from typing import Optional, Union, Sequence, Callable
 from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
@@ -174,6 +174,15 @@ class FileAgent(AgentBase):
 class AgentWithCustomFunc(AgentBase):
     """An agent with custom function"""
 
+    def __init__(  # type: ignore[no-untyped-def]
+        self,
+        name: str,
+        judge_func: Callable[[str], bool],
+        **kwargs,
+    ) -> None:
+        super().__init__(name, **kwargs)
+        self.judge_func = judge_func
+
     def reply(self, x: Msg = None) -> Msg:
         return Msg(
             name=self.name,
@@ -188,6 +197,13 @@ class AgentWithCustomFunc(AgentBase):
     def custom_func_with_basic(self, num: int) -> int:
         """A custom function with basic value input output"""
         return num
+
+    def custom_judge_func(self, x: str) -> bool:
+        """A custom function with basic value input output"""
+        logger.info(x)
+        res = self.judge_func(x)
+        logger.info(res)
+        return res
 
 
 class BasicRpcAgentTest(unittest.TestCase):
@@ -822,11 +838,17 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_custom_agent_func(self) -> None:
         """Test the auto allocation of server"""
-        agent = AgentWithCustomFunc("custom", to_dist=True)
+        agent = AgentWithCustomFunc(
+            name="custom",
+            judge_func=lambda x: "$PASS$" in x,
+            to_dist=True,
+        )
 
         msg = agent.reply()
         self.assertEqual(msg.content, "Hello")
         r = agent.custom_func_with_msg(msg)
         self.assertEqual(r["content"], msg.content)
         r = agent.custom_func_with_basic(1)
+        self.assertFalse(agent.custom_judge_func("diuafhsua$FAIL$"))
+        self.assertTrue(agent.custom_judge_func("72354rfv$PASS$"))
         self.assertEqual(r, 1)

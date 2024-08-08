@@ -119,14 +119,15 @@ class DistConf(dict):
                 Whether the started rpc server only listens to local
                 requests.
             lazy_launch (`bool`, defaults to `False`):
-                Only launch the server when the agent is called.
+                Deprecated.
         """
         self["host"] = host
         self["port"] = port
         self["max_pool_size"] = max_pool_size
         self["max_timeout_seconds"] = max_timeout_seconds
         self["local_mode"] = local_mode
-        self["lazy_launch"] = lazy_launch
+        if lazy_launch:
+            logger.warning("lazy_launch is deprecated.")
 
 
 class AgentBase(Operator, metaclass=_AgentMeta):

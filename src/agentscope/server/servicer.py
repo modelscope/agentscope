@@ -344,7 +344,7 @@ class AgentServerServicer(RpcAgentServicer):
         )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=serialize(res) if res else None,
+            message=serialize(res),
         )
 
     def update_placeholder(
