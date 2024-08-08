@@ -332,7 +332,13 @@ class AgentServerServicer(RpcAgentServicer):
         args: dict,
     ) -> agent_pb2.GeneralResponse:
         """Call a custom function"""
-        res = getattr(self.agent_pool[agent_id], func_name)(
+        agent = self.get_agent(agent_id)
+        if not agent:
+            return agent_pb2.GeneralResponse(
+                success=False,
+                message=f"Agent [{agent_id}] not exists.",
+            )
+        res = getattr(agent, func_name)(
             *args["args"],
             **args["kwargs"],
         )
@@ -467,25 +473,24 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: A serialized Msg instance with attributes name, host,
             port and task_id
         """
-        if request.value:
-            msg = deserialize(request.value)
-        else:
-            msg = None
         task_id = self.get_task_id()
         self.result_pool[task_id] = threading.Condition()
         self.executor.submit(
             self._process_messages,
             task_id,
             request.agent_id,
-            msg,  # type: ignore[arg-type]
+            "reply",
+            request.value,
         )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=Msg(  # type: ignore[arg-type]
-                name=self.get_agent(request.agent_id).name,
-                content=None,
-                task_id=task_id,
-            ).serialize(),
+            message=serialize(
+                Msg(  # type: ignore[arg-type]
+                    name=self.get_agent(request.agent_id).name,
+                    content=None,
+                    task_id=task_id,
+                ),
+            ),
         )
 
     def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
@@ -511,21 +516,27 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         task_id: int,
         agent_id: str,
-        task_msg: dict = None,
+        target_func: str,
+        raw_msg: str,
     ) -> None:
         """Processing an input message and generate its reply message.
 
         Args:
             task_id (`int`): task id of the input message, .
             agent_id (`str`): the id of the agent that accepted the message.
-            task_msg (`dict`): the input message.
+            target_func (`str`): the name of the function that will be called.
+            raw_msg (`str`): the input serialized message.
         """
-        if isinstance(task_msg, PlaceholderMessage):
-            task_msg.update_value()
+        if raw_msg:
+            msg = deserialize(raw_msg)
+        else:
+            msg = None
+        if isinstance(msg, PlaceholderMessage):
+            msg.update_value()
         cond = self.result_pool[task_id]
         agent = self.get_agent(agent_id)
         try:
-            result = agent.reply(task_msg)
+            result = getattr(agent, target_func)(msg)
             self.result_pool[task_id] = result
         except Exception:
             error_msg = traceback.format_exc()

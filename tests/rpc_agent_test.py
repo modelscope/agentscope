@@ -171,6 +171,25 @@ class FileAgent(AgentBase):
         )
 
 
+class AgentWithCustomFunc(AgentBase):
+    """An agent with custom function"""
+
+    def reply(self, x: Msg = None) -> Msg:
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content="Hello",
+        )
+
+    def custom_func_with_msg(self, x: Msg = None) -> Msg:
+        """A custom function with Msg input output"""
+        return x
+
+    def custom_func_with_basic(self, num: int) -> int:
+        """A custom function with basic value input output"""
+        return num
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     """Test cases for Rpc Agent"""
 
@@ -241,14 +260,18 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
+        from agentscope.utils.tools import find_available_port
+
+        port = find_available_port()
         launcher = RpcAgentServerLauncher(
             # choose port automatically
             host="127.0.0.1",
-            port=12010,
+            port=port,
             local_mode=False,
             custom_agent_classes=[DemoRpcAgent],
         )
         launcher.launch()
+        self.assertEqual(port, launcher.port)
         client = RpcAgentClient(host=launcher.host, port=launcher.port)
         self.assertTrue(client.is_alive())  # pylint: disable=W0212
         agent_a = DemoRpcAgent(
@@ -796,3 +819,14 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(len(al), 3)
 
         launcher.shutdown()
+
+    def test_custom_agent_func(self) -> None:
+        """Test the auto allocation of server"""
+        agent = AgentWithCustomFunc("custom", to_dist=True)
+
+        msg = agent.reply()
+        self.assertEqual(msg.content, "Hello")
+        r = agent.custom_func_with_msg(msg)
+        self.assertEqual(r["content"], msg.content)
+        r = agent.custom_func_with_basic(1)
+        self.assertEqual(r, 1)

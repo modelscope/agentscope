@@ -10,7 +10,8 @@ from agentscope.message import (
     serialize,
     Msg,
 )
-from agentscope.rpc import RpcAgentClient, RpcObject, call_func_in_thread
+from agentscope.rpc import RpcAgentClient, call_func_in_thread
+from agentscope.rpc.rpc_object import RpcObject
 from agentscope.server.launcher import RpcAgentServerLauncher
 from agentscope.studio._client import _studio_client
 
@@ -130,7 +131,7 @@ class RpcAgent(AgentBase, RpcObject):
                     self.client.call_agent_func,
                     func_name="_reply",
                     agent_id=self._agent_id,
-                    value=x.serialize() if x is not None else "",
+                    value=serialize(x) if x is not None else "",
                 ),
             ),
             x=x,

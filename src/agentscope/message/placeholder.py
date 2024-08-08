@@ -6,7 +6,7 @@ from typing import Any, Optional, List, Union, Sequence
 from loguru import logger
 
 from .msg import Msg, MessageBase
-from ..rpc import RpcAgentClient, ResponseStub
+from ..rpc.rpc_agent_client import RpcAgentClient, ResponseStub
 from ..utils.tools import is_web_accessible
 
 
@@ -195,7 +195,9 @@ _MSGS = {
 def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
     """Deserialize json string into MessageBase"""
     js_msg = json.loads(s)
-    msg_type = js_msg.pop("__type", None)
+    msg_type = None
+    if isinstance(js_msg, dict):
+        msg_type = js_msg.pop("__type", None)
     if msg_type == "List":
         return [deserialize(s) for s in js_msg["__value"]]
     elif msg_type in _MSGS:

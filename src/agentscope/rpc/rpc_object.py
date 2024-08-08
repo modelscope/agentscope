@@ -5,6 +5,7 @@ from abc import ABC
 from inspect import getmembers, isfunction
 from types import FunctionType
 
+from ..message import serialize, deserialize
 from ..rpc import RpcAgentClient
 from ..exception import AgentServerUnsupportedMethodError
 
@@ -39,12 +40,13 @@ class RpcObject(ABC):
 
     def _call_rpc_func(self, func_name: str, args: dict) -> Any:
         """Call a function in rpc server."""
-        from ..message import serialize
 
-        return self.client.call_agent_func(
-            agent_id=self._agent_id,
-            func_name=func_name,
-            value=serialize(args),  # type: ignore[arg-type]
+        return deserialize(
+            self.client.call_agent_func(
+                agent_id=self._agent_id,
+                func_name=func_name,
+                value=serialize(args),  # type: ignore[arg-type]
+            ),
         )
 
     def __getattr__(self, name: str) -> Callable:
