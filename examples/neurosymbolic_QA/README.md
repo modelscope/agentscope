@@ -5,6 +5,7 @@
 This example will show:
 - How to set up and use the ReActAgent from AgentScope for neurosymbolic reasoning.
 - How to integrate various Wolfram Alpha query functions into a neurosymbolic question-answering system, particularly for question involves mathetical reasoning.
+- How to use AgentScope Studio to visualize conversations between the agents.
 
 ## Background
 LLMs are good at many tasks, but fall short in rigorous reasoning, like doing complex mathematical calcuations.
@@ -24,7 +25,12 @@ Furthermore, changing the temperature might affect the output since sometimes wi
 ## Prerequisites
 
 To run this example successfully, ensure you meet the following requirements:
-- The latest AgentScope library installed (`pip install agentscope`).
+- The latest AgentScope library installed.
 - Valid API keys for Wolfram Alpha and Anthropic API, which should be replaced in the placeholders within the script.
-- Network access to connect to the specified API services and AgentScope Studio at `http://127.0.0.1:5000`.
 - [Optional] Knowledge in game theory and understanding of Nash equilibria for interpreting the agent's reasoning trace.
+
+
+
+## Running the Example
+This example has been set to run with AgentScope Studio by default. After starting running the script, open http://127.0.0.1:5000 with your browser (Chorme is preferred).
+For more information on AgentScope Studio see http://doc.agentscope.io/en/tutorial/209-gui.html
