@@ -2,6 +2,7 @@
 """ Import all environment related modules in the package. """
 from .event import Event, event_func
 from .env import Env, BasicEnv, EventListener
+from .rpc_env import RpcEnv
 from .envs.mutable import MutableEnv
 from .envs.immutable import ImmutableEnv
 from .envs.chatroom import ChatRoom
@@ -13,6 +14,7 @@ __all__ = [
     "event_func",
     "Env",
     "BasicEnv",
+    "RpcEnv",
     "EventListener",
     "MutableEnv",
     "ImmutableEnv",

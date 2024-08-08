@@ -139,11 +139,14 @@ class RpcObject(ABC):
 
     def __getstate__(self) -> dict:
         """For serialization."""
-        return self.__dict__.copy()
+        state = self.__dict__.copy()
+        del state["server_launcher"]
+        return state
 
     def __setstate__(self, state: dict) -> None:
         """For deserialization."""
         self.__dict__.update(state)
+        self.server_launcher = None
 
     def __del__(self) -> None:
         self.stop()

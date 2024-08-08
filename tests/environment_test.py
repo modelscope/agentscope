@@ -5,6 +5,7 @@ from typing import Any
 
 from agentscope.environment import (
     Env,
+    RpcEnv,
     Event,
     EventListener,
     MutableEnv,
@@ -376,3 +377,58 @@ class EnvTest(unittest.TestCase):
         # test history_idx
         self.assertEqual(r[a1.agent_id].get()["history_idx"], 0)
         self.assertEqual(r[a2.agent_id].get()["history_idx"], 1)
+
+
+class AgentWithMutableEnv(AgentBase):
+    """Agent with a mutable env"""
+
+    def __init__(self, name: str, cnt: Env) -> None:
+        super().__init__(name)
+        self.cnt = cnt
+
+    def reply(self, x: Msg = None) -> Msg:
+        msg = Msg(name=self.name, role="assistant", content=self.cnt.get())
+        if x is not None and x.content is not None:
+            self.cnt.set(x.content)
+        return msg
+
+
+class RpcEnvTest(unittest.TestCase):
+    """Test rpc version of env"""
+
+    def test_mutable_env(self) -> None:
+        """Test basic env"""
+        cnt1 = MutableEnv(
+            name="cnt1",
+            value={
+                "count": 0,
+            },
+        ).to_dist()
+        self.assertTrue(isinstance(cnt1, RpcEnv))
+        cnt2 = MutableEnv(  # pylint: disable=E1123
+            name="cnt2",
+            value={
+                "count": 1,
+            },
+            children=[cnt1],
+            to_dist=True,
+        )
+        self.assertTrue(isinstance(cnt2, RpcEnv))
+        child = cnt2["cnt1"]
+        self.assertEqual(child.get(), cnt1.get())
+        agent1 = AgentWithMutableEnv(name="local_agent", cnt=cnt1)
+        agent2 = AgentWithMutableEnv(
+            name="remote_agent",
+            cnt=cnt2,
+        ).to_dist()
+        self.assertTrue(isinstance(cnt2, RpcEnv))
+        self.assertTrue(cnt1.set(1))
+        self.assertTrue(cnt2.set(2))
+        self.assertEqual(cnt1.get(), 1)
+        self.assertEqual(cnt2.get(), 2)
+        r1 = agent1(Msg(name="user", role="user", content=3))
+        r2 = agent2(Msg(name="user", role="user", content=-1))
+        self.assertEqual(r1.content, 1)
+        self.assertEqual(r2.content, 2)
+        self.assertEqual(cnt1.get(), 3)
+        self.assertEqual(cnt2.get(), -1)

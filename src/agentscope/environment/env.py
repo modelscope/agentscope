@@ -2,7 +2,7 @@
 """The env module."""
 from __future__ import annotations
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Any, List
+from typing import Any, List, Type
 from loguru import logger
 
 from ..exception import (
@@ -10,6 +10,7 @@ from ..exception import (
     EnvAlreadyExistError,
 )
 from .event import Event
+from ..rpc.rpc_config import DistConf
 
 
 class EventListener(ABC):
@@ -27,17 +28,18 @@ class EventListener(ABC):
     @abstractmethod
     def __call__(
         self,
-        attr: Env,
+        env: Env,
         event: Event,
     ) -> None:
         """Activate the listener.
 
         Args:
-            attr (`Env`): The env bound to the listener.
+            env (`Env`): The env bound to the listener.
             event (`Event`): The event information.
         """
 
 
+# TODO: merge with _AgentMeta
 class _EnvMeta(ABCMeta):
     """The metaclass for env."""
 
@@ -54,10 +56,56 @@ class _EnvMeta(ABCMeta):
         super().__init__(name, bases, attrs)
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
-        pass
+        to_dist = kwargs.pop("to_dist", False)
+        if to_dist is True:
+            to_dist = DistConf()
+        if to_dist is not False and to_dist is not None:
+            from .rpc_env import RpcEnv
+
+            if cls is not RpcEnv and not issubclass(cls, RpcEnv):
+                return RpcEnv(
+                    env_cls=cls,
+                    name=(
+                        args[0]
+                        if len(args) > 0
+                        else kwargs["name"]  # type: ignore[arg-type]
+                    ),
+                    host=to_dist.pop(  # type: ignore[arg-type]
+                        "host",
+                        "localhost",
+                    ),
+                    port=to_dist.pop("port", None),  # type: ignore[arg-type]
+                    max_pool_size=kwargs.pop(  # type: ignore[arg-type]
+                        "max_pool_size",
+                        8192,
+                    ),
+                    max_timeout_seconds=to_dist.pop(  # type: ignore[arg-type]
+                        "max_timeout_seconds",
+                        7200,
+                    ),
+                    local_mode=to_dist.pop(  # type: ignore[arg-type]
+                        "local_mode",
+                        True,
+                    ),
+                    connect_existing=False,
+                    env_configs={
+                        "args": args,
+                        "kwargs": kwargs,
+                        "class_name": cls.__name__,
+                        "type": "env",
+                    },
+                )
+        instance = super().__call__(*args, **kwargs)
+        instance._init_settings = {
+            "args": args,
+            "kwargs": kwargs,
+            "class_name": cls.__name__,
+            "type": "env",
+        }
+        return instance
 
 
-class Env(ABC):
+class Env(ABC, metaclass=_EnvMeta):
     """The Env Interface.
     Env is a key concept of AgentScope, which is used to
     represent global data shared among agents.
@@ -157,8 +205,40 @@ class Env(ABC):
         """Get a child env."""
 
     @abstractmethod
-    def __setitem__(self, env_name: str, attr: Env) -> None:
+    def __setitem__(self, env_name: str, env: Env) -> None:
         """Set a child env."""
+
+    @classmethod
+    def get_env_class(cls, env_class_name: str) -> Type[Env]:
+        """Get the agent class based on the specific agent class name.
+
+        Args:
+            agent_class_name (`str`): the name of the agent class.
+
+        Raises:
+            ValueError: Agent class name not exits.
+
+        Returns:
+            Type[AgentBase]: the AgentBase subclass.
+        """
+        if env_class_name not in cls._registry:
+            raise ValueError(f"Env class <{env_class_name}> not found.")
+        return cls._registry[env_class_name]  # type: ignore[return-value]
+
+    @classmethod
+    def register_env_class(cls, env_class: Type[Env]) -> None:
+        """Register the env class into the registry.
+
+        Args:
+            agent_class (`Type[AgentBase]`): the agent class to be registered.
+        """
+        env_class_name = env_class.__name__
+        if env_class_name in cls._registry:
+            logger.info(
+                f"Env class with name [{env_class_name}] already exists.",
+            )
+        else:
+            cls._registry[env_class_name] = env_class
 
 
 class BasicEnv(Env):
@@ -247,6 +327,7 @@ class BasicEnv(Env):
         if child.name in self.children:
             return False
         self.children[child.name] = child
+        child.set_parent(self)
         return True
 
     def remove_child(self, children_name: str) -> bool:
@@ -329,10 +410,59 @@ class BasicEnv(Env):
         else:
             raise EnvNotFoundError(env_name)
 
-    def __setitem__(self, env_name: str, attr: Env) -> None:
-        if not isinstance(attr, Env):
+    def __setitem__(self, env_name: str, env: Env) -> None:
+        if not isinstance(env, Env):
             raise TypeError("Only Env can be set")
         if env_name not in self.children:
-            self.children[env_name] = attr
+            self.children[env_name] = env
+            env.set_parent(self)
         else:
             raise EnvAlreadyExistError(env_name)
+
+    def to_dist(
+        self,
+        host: str = "localhost",
+        port: int = None,
+        max_pool_size: int = 8192,
+        max_timeout_seconds: int = 7200,
+        local_mode: bool = True,
+    ) -> Env:
+        """Convert current env instance into a distributed version.
+
+        Args:
+            host (`str`, defaults to `"localhost"`):
+                Hostname of the rpc agent server.
+            port (`int`, defaults to `None`):
+                Port of the rpc agent server.
+            max_pool_size (`int`, defaults to `8192`):
+                Only takes effect when `host` and `port` are not filled in.
+                The max number of agent reply messages that the started agent
+                server can accommodate. Note that the oldest message will be
+                deleted after exceeding the pool size.
+            max_timeout_seconds (`int`, defaults to `7200`):
+                Only takes effect when `host` and `port` are not filled in.
+                Maximum time for reply messages to be cached in the launched
+                agent server. Note that expired messages will be deleted.
+            local_mode (`bool`, defaults to `True`):
+                Only takes effect when `host` and `port` are not filled in.
+                Whether the started agent server only listens to local
+                requests.
+
+        Returns:
+            `AgentBase`: the wrapped agent instance with distributed
+            functionality
+        """
+        from .rpc_env import RpcEnv
+
+        if issubclass(self.__class__, RpcEnv):
+            return self
+        return RpcEnv(
+            name=self.name,
+            env_cls=self.__class__,
+            host=host,
+            port=port,
+            max_pool_size=max_pool_size,
+            max_timeout_seconds=max_timeout_seconds,
+            local_mode=local_mode,
+            env_configs=self._init_settings,
+        )

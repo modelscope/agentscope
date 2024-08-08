@@ -182,14 +182,14 @@ class PlaceholderMessage(Msg):
 
 
 def deserialize(s: str) -> Any:
-    """Deserialize json string into MessageBase"""
+    """Deserialize string into any object"""
     if len(s) == 0:
         return None
     return pickle.loads(b64decode(s.encode("utf-8")))
 
 
 def serialize(obj: Any) -> str:
-    """Serialize multiple MessageBase instance"""
+    """Serialize any object into string"""
     if obj is None:
         return ""
     return b64encode(pickle.dumps(obj)).decode("utf-8")

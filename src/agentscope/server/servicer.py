@@ -31,7 +31,6 @@ except ImportError as import_error:
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-from agentscope.agents.agent import AgentBase
 from agentscope.manager import ModelManager
 from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
@@ -133,7 +132,7 @@ class AgentServerServicer(RpcAgentServicer):
         self.task_id_lock = threading.Lock()
         self.agent_id_lock = threading.Lock()
         self.task_id_counter = 0
-        self.agent_pool: dict[str, AgentBase] = {}
+        self.agent_pool: dict[str, Any] = {}
         self.pid = os.getpid()
         self.stop_event = stop_event
 
@@ -155,14 +154,14 @@ class AgentServerServicer(RpcAgentServicer):
         """
         return agent_id in self.agent_pool
 
-    def get_agent(self, agent_id: str) -> AgentBase:
-        """Get the agent by agent id.
+    def get_agent(self, agent_id: str) -> Any:
+        """Get the object by agent id.
 
         Args:
             agent_id (`str`): the agent id.
 
         Returns:
-            AgentBase: the agent.
+            Any: the object.
         """
         with self.agent_id_lock:
             return self.agent_pool.get(agent_id, None)
@@ -205,13 +204,21 @@ class AgentServerServicer(RpcAgentServicer):
                     f"Load class [{cls_name}] from uploaded source code.",
                 )
             else:
+                type_name = agent_configs["type"]
                 cls_name = agent_configs["class_name"]
                 try:
-                    cls = AgentBase.get_agent_class(cls_name)
+                    if type_name == "agent":
+                        from agentscope.agents.agent import AgentBase
+
+                        cls = AgentBase.get_agent_class(cls_name)
+                    elif type_name == "env":
+                        from agentscope.environment import Env
+
+                        cls = Env.get_env_class(cls_name)
+                    else:
+                        raise ValueError("Unknown type: {type_name}")
                 except ValueError as e:
-                    err_msg = (
-                        f"Agent class [{cls_name}] not found: {str(e)}",
-                    )
+                    err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
                     logger.error(err_msg)
                     return agent_pb2.GeneralResponse(ok=False, message=err_msg)
             try:
@@ -339,8 +346,8 @@ class AgentServerServicer(RpcAgentServicer):
                 message=f"Agent [{agent_id}] not exists.",
             )
         res = getattr(agent, func_name)(
-            *args["args"],
-            **args["kwargs"],
+            *args.get("args", ()),
+            **args.get("kwargs", {}),
         )
         return agent_pb2.GeneralResponse(
             ok=True,

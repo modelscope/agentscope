@@ -14,6 +14,7 @@ import uuid
 from loguru import logger
 
 from agentscope.agents.operator import Operator
+from agentscope.rpc.rpc_config import DistConf
 from agentscope.logging import log_stream_msg, log_msg
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
@@ -70,10 +71,6 @@ class _AgentMeta(ABCMeta):
                         "local_mode",
                         True,
                     ),
-                    lazy_launch=to_dist.pop(  # type: ignore[arg-type]
-                        "lazy_launch",
-                        True,
-                    ),
                     agent_id=cls.generate_agent_id(),
                     connect_existing=False,
                     agent_class=cls,
@@ -81,6 +78,7 @@ class _AgentMeta(ABCMeta):
                         "args": args,
                         "kwargs": kwargs,
                         "class_name": cls.__name__,
+                        "type": "agent",
                     },
                 )
         instance = super().__call__(*args, **kwargs)
@@ -88,46 +86,9 @@ class _AgentMeta(ABCMeta):
             "args": args,
             "kwargs": kwargs,
             "class_name": cls.__name__,
+            "type": "agent",
         }
         return instance
-
-
-class DistConf(dict):
-    """Distribution configuration for agents."""
-
-    def __init__(
-        self,
-        host: str = "localhost",
-        port: int = None,
-        max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
-        local_mode: bool = True,
-        lazy_launch: bool = False,
-    ):
-        """Init the distributed configuration.
-
-        Args:
-            host (`str`, defaults to `"localhost"`):
-                Hostname of the rpc agent server.
-            port (`int`, defaults to `None`):
-                Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `8192`):
-                Max number of task results that the server can accommodate.
-            max_timeout_seconds (`int`, defaults to `7200`):
-                Timeout for task results.
-            local_mode (`bool`, defaults to `True`):
-                Whether the started rpc server only listens to local
-                requests.
-            lazy_launch (`bool`, defaults to `False`):
-                Deprecated.
-        """
-        self["host"] = host
-        self["port"] = port
-        self["max_pool_size"] = max_pool_size
-        self["max_timeout_seconds"] = max_timeout_seconds
-        self["local_mode"] = local_mode
-        if lazy_launch:
-            logger.warning("lazy_launch is deprecated.")
 
 
 class AgentBase(Operator, metaclass=_AgentMeta):
@@ -428,7 +389,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         max_timeout_seconds: int = 7200,
         local_mode: bool = True,
         lazy_launch: bool = False,
-        launch_server: bool = None,
     ) -> AgentBase:
         """Convert current agent instance into a distributed version.
 
@@ -451,12 +411,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Whether the started agent server only listens to local
                 requests.
             lazy_launch (`bool`, defaults to `False`):
-                Only takes effect when `host` and `port` are not filled in.
-                If `True`, launch the agent server when the agent is called,
-                otherwise, launch the agent server immediately.
-            launch_server(`bool`, defaults to `None`):
-                This field has been deprecated and will be removed in
-                future releases.
+                Deprecated.
 
         Returns:
             `AgentBase`: the wrapped agent instance with distributed
@@ -466,11 +421,10 @@ class AgentBase(Operator, metaclass=_AgentMeta):
 
         if issubclass(self.__class__, RpcAgent):
             return self
-        if launch_server is not None:
+        if lazy_launch:
             logger.warning(
-                "`launch_server` has been deprecated and will be removed in "
-                "future releases. When `host` and `port` is not provided, the "
-                "agent server will be launched automatically.",
+                "`lazy_launch` has been deprecated and will be removed in "
+                "future releases.",
             )
         return RpcAgent(
             name=self.name,
@@ -481,6 +435,5 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             max_pool_size=max_pool_size,
             max_timeout_seconds=max_timeout_seconds,
             local_mode=local_mode,
-            lazy_launch=lazy_launch,
             agent_id=self.agent_id,
         )

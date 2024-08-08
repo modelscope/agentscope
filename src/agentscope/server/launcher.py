@@ -28,7 +28,6 @@ except ImportError as import_error:
 import agentscope
 from ..server.servicer import AgentServerServicer
 from ..manager import ASManager
-from ..agents.agent import AgentBase
 from ..utils.tools import check_port, generate_id_from_seed
 from ..constants import _DEFAULT_RPC_OPTIONS
 
@@ -170,7 +169,15 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         custom_agent_classes.extend(load_agents_from_dir(agent_dir))
     # update agent registry
     for agent_class in custom_agent_classes:
-        AgentBase.register_agent_class(agent_class=agent_class)
+        from ..agents.agent import AgentBase
+        from ..environment import Env
+
+        if issubclass(agent_class, AgentBase):
+            AgentBase.register_agent_class(agent_class=agent_class)
+        elif issubclass(agent_class, Env):
+            Env.register_env_class(env_class=agent_class)
+        else:
+            logger.warning(f"Class [{agent_class}] is not an agent or env")
 
     async def shutdown_signal_handler() -> None:
         logger.info(
@@ -245,12 +252,15 @@ def load_agents_from_file(agent_file: str) -> list:
     module = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
     spec.loader.exec_module(module)
     custom_agent_classes = []
+    from ..agents.agent import AgentBase
+    from ..environment import Env
+
     for attr_name in dir(module):
         attr = getattr(module, attr_name)
         if (
             isinstance(attr, type)
-            and issubclass(attr, AgentBase)
-            and attr is not AgentBase
+            and (issubclass(attr, AgentBase) or issubclass(attr, Env))
+            and (attr is not AgentBase and attr is not Env)
         ):
             custom_agent_classes.append(attr)
     return custom_agent_classes
