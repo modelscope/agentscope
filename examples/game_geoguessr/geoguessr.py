@@ -50,7 +50,7 @@ YOUR_MODEL_CONFIGURATION = [
     },
     {
         "model_type": "openai_chat",
-        "config_name": "gpt-3.5-turbo",
+        "config_name": "gpt",
         "model_name": "gpt-4o",
         "api_key": "",  # Load from env if not provided
         "generate_args": {
@@ -212,7 +212,7 @@ gamemaster_agent = ReActAgent(
         location or of any object in the image before
         the player guesses it correctly. When the game is over,
         append 'exit = True' to your last output.""",
-    model_config_name="gpt-3.5-turbo",
+    model_config_name="gpt",
     service_toolkit=service_toolkit,
     verbose=False,  # set verbose to True to show the reasoning process
 )

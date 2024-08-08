@@ -52,15 +52,6 @@ def main() -> None:
     agentscope.init(
         model_configs=[
             {
-                "model_type": "openai_chat",
-                "config_name": "gpt-3.5-turbo",
-                "model_name": "gpt-3.5-turbo",
-                "api_key": "",  # Load from env if not provided
-                "generate_args": {
-                    "temperature": 0.5,
-                },
-            },
-            {
                 "config_name": "dashscope_chat-qwen-max",
                 "model_type": "dashscope_chat",
                 "model_name": "qwen-max-1201",
