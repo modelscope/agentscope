@@ -74,7 +74,7 @@ def query_wolfram_alpha_short_answers(
 def query_wolfram_alpha_simple(
     api_key: str,
     query: str,
-    save_path: str = "wolfram_alpha_result.png",
+    save_path: str = "wolfram_alpha_result.png"
 ) -> ServiceResponse:
     """
     Query the Wolfram Alpha Simple API. The Simple API generates full
@@ -107,7 +107,7 @@ def query_wolfram_alpha_simple(
                 save_path="path/to/save/result.png"
             )
             if result.status == ServiceExecStatus.SUCCESS:
-                print(f"Result saved as '{result.content['result']}'")
+                logger.info(f"Result saved as '{result.content['result']}'")
     """
     url = "http://api.wolframalpha.com/v1/simple"
     params = {"i": query, "appid": api_key}
@@ -115,12 +115,16 @@ def query_wolfram_alpha_simple(
     try:
         response = requests.get(url, params=params)
         if response.status_code == 200:
-            # Ensure the directory exists
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-
+            # Get the directory path
+            dir_path = os.path.dirname(save_path)
+            
+            # If dir_path is not empty, create the directory
+            if dir_path:
+                os.makedirs(dir_path, exist_ok=True)
+            
             with open(save_path, "wb") as file:
                 file.write(response.content)
-            print(f"Result saved as '{save_path}'")
+            logger.info(f"Result saved as '{save_path}'")
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content={
@@ -134,6 +138,7 @@ def query_wolfram_alpha_simple(
             },
         )
     except Exception as e:
+        logger.error(f"Error in query_wolfram_alpha_simple: {str(e)}")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": str(e)},
