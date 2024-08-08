@@ -37,5 +37,5 @@ requests
 - **Access to the internet:** Required to interact with the TripAdvisor API and download images.
 
 ## Running the Example
-Both examples have been set to run with AgentScope Studio by default. After starting running the script, open http://127.0.0.1:5000/ with your browser (Chorme is preferred).
+Both examples have been set to run with AgentScope Studio by default. After starting running the script, open http://127.0.0.1:5000 with your browser (Chorme is preferred).
 For more information on AgentScope Studio see http://doc.agentscope.io/en/tutorial/209-gui.html
