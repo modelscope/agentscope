@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-"""A 2D map attribute with mutiple child attribtues
+"""A 2D map env with mutiple child envibtues
 who have Location2D position"""
 import math
 from typing import List
 from ...exception import (
-    EnvAttributeNotFoundError,
-    EnvAttributeTypeError,
-    EnvAttributeAlreadyExistError,
+    EnvNotFoundError,
+    EnvTypeError,
+    EnvAlreadyExistError,
     EnvListenerError,
 )
-from ..attribute import Attribute, BasicAttribute, EventListener
+from ..env import Env, BasicEnv, EventListener
 from ..event import event_func, Event, Movable2D
 
 
@@ -28,26 +28,26 @@ def distance2d(
         return abs(x2 - x1) + abs(y2 - y1)
 
 
-class Map2D(BasicAttribute):
-    """A 2D Map attribute"""
+class Map2D(BasicEnv):
+    """A 2D Map env"""
 
     def __init__(
         self,
         name: str,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        children: List[Env] = None,
+        parent: Env = None,
     ) -> None:
-        """Initialize a Map2D attribute.
+        """Initialize a Map2D env.
 
         Args:
-            name (`str`): The name of the attribute.
-            children (`List[Attribute]`): The children of the attribute. Note
+            name (`str`): The name of the env.
+            children (`List[envibute]`): The children of the env. Note
             that all children must be Movable2D.
-            parent (`Attribute`): The parent of the attribute.
+            parent (`envibute`): The parent of the env.
         """
         for child in children if children else []:
             if not isinstance(child, Movable2D):
-                raise EnvAttributeTypeError(
+                raise EnvTypeError(
                     child.name,
                     "Moveable2D",
                 )
@@ -59,40 +59,40 @@ class Map2D(BasicAttribute):
         )
 
     @event_func
-    def move_attr_to(self, attr_name: str, x: float, y: float) -> None:
-        """Move the attribute to a position.
+    def move_child_to(self, env_name: str, x: float, y: float) -> None:
+        """Move the child env to a position.
 
         Args:
-            attr_name (`str`): The name of the attribute to move.
+            env_name (`str`): The name of the env to move.
             x (`float`): The x coordinate of the new position.
             y (`float`): The y coordinate of the new position.
         """
-        if attr_name in self.children:
-            self.children[attr_name].move_to(x, y)
+        if env_name in self.children:
+            self.children[env_name].move_to(x, y)
             self._trigger_listener(
                 Event(
-                    name="move_attr_to",
+                    name="move_child_to",
                     args={
-                        "attr_name": attr_name,
+                        "env_name": env_name,
                         "x": x,
                         "y": y,
                     },
                 ),
             )
         else:
-            raise EnvAttributeNotFoundError(attr_name)
+            raise EnvNotFoundError(env_name)
 
     @event_func
-    def register_point(self, point: Attribute) -> None:
-        """Register a point attribute to the map.
+    def register_point(self, point: Env) -> None:
+        """Register a point env to the map.
 
         Args:
-            point (`Attribute`): The point attribute to register.
+            point (`envibute`): The point env to register.
         """
         if not isinstance(point, Movable2D):
-            raise EnvAttributeTypeError(point.name, "Moveable2D")
+            raise EnvTypeError(point.name, "Moveable2D")
         if not self.add_child(point):
-            raise EnvAttributeAlreadyExistError(point.name)
+            raise EnvAlreadyExistError(point.name)
         self._trigger_listener(
             Event(
                 name="register_point",
@@ -105,50 +105,50 @@ class Map2D(BasicAttribute):
     # Syntactic sugar, not an event function
     def in_range_of(
         self,
-        attr_name: str,
+        env_name: str,
         listener: EventListener,
         distance: float,
         distance_type: str = "euclidean",
     ) -> None:
         """Set a listenerwhich is activated when the distance from
-        any attribute in the map to `attr_name` is not larger than
+        any env in the map to `env_name` is not larger than
         `distance`.
 
         Args:
-            attr_name (`str`): The name of the attribute that is the center.
+            env_name (`str`): The name of the env that is the center.
             listener (`EventListener`): The listener to activate when the
                 distance is not larger than `distance`.
             distance (`float`): The distance threshold.
             distance_type (`str`): The distance type, either "euclidean" or
                 "manhattan".
         """
-        if attr_name not in self.children:
-            raise EnvAttributeNotFoundError(attr_name)
+        if env_name not in self.children:
+            raise EnvNotFoundError(env_name)
 
         class EnterRangeListener(EventListener):
-            """A middleware that activates `target_listener` when any attribute
-            is in range of `center_attr`"""
+            """A middleware that activates `target_listener` when any env
+            is in range of `center_env`"""
 
             def __init__(
                 self,
                 name: str,
-                center_attr: Attribute,
+                center_env: Env,
                 target_listener: EventListener,
                 distance: float,
                 distance_type: str = "euclidean",
             ) -> None:
                 super().__init__(name=name)
-                self.center_attr = center_attr
+                self.center_env = center_env
                 self.target_listener = target_listener
                 self.distance = distance
                 self.distance_type = distance_type
 
-            def __call__(self, attr: Attribute, event: Event) -> None:
-                if event.args["attr_name"] == self.center_attr.name:
+            def __call__(self, env: Env, event: Event) -> None:
+                if event.args["env_name"] == self.center_env.name:
                     # center is moving, recalculate all distance
-                    x1, y1 = self.center_attr.get_position()
-                    for child in attr.children.values():
-                        if child.name == self.center_attr.name:
+                    x1, y1 = self.center_env.get_position()
+                    for child in env.children.values():
+                        if child.name == self.center_env.name:
                             continue
                         x2, y2 = child.get_position()
                         if (
@@ -156,11 +156,11 @@ class Map2D(BasicAttribute):
                             <= self.distance
                         ):
                             self.target_listener(
-                                attr,
+                                env,
                                 Event(
                                     name="in_range",
                                     args={
-                                        "attr_name": child.name,
+                                        "env_name": child.name,
                                         "x": x2,
                                         "y": y2,
                                     },
@@ -168,7 +168,7 @@ class Map2D(BasicAttribute):
                             )
                     return
                 else:
-                    x1, y1 = self.center_attr.get_position()
+                    x1, y1 = self.center_env.get_position()
                     x2 = event.args["x"]  # type: ignore[index]
                     y2 = event.args["y"]  # type: ignore[index]
                     if (
@@ -176,15 +176,15 @@ class Map2D(BasicAttribute):
                         <= self.distance
                     ):
                         self.target_listener(
-                            attr,
+                            env,
                             Event(name="in_range", args=event.args),
                         )
 
         if not self.add_listener(
-            "move_attr_to",
+            "move_child_to",
             listener=EnterRangeListener(
-                name=f"in_range_of_{attr_name}_{distance}",
-                center_attr=self.children[attr_name],
+                name=f"in_range_of_{env_name}_{distance}",
+                center_env=self.children[env_name],
                 target_listener=listener,
                 distance=distance,
                 distance_type=distance_type,
@@ -192,10 +192,10 @@ class Map2D(BasicAttribute):
         ):
             raise EnvListenerError("Fail to add listener.")
 
-        # trigger listener for existing attributes
-        x1, y1 = self.children[attr_name].get_position()
+        # trigger listener for existing envs
+        x1, y1 = self.children[env_name].get_position()
         for child in self.children.values():
-            if child.name == attr_name:
+            if child.name == env_name:
                 continue
             x2, y2 = child.get_position()
             if distance2d(x1, y1, x2, y2, distance_type) <= distance:
@@ -204,7 +204,7 @@ class Map2D(BasicAttribute):
                     Event(
                         name="in_range",
                         args={
-                            "attr_name": child.name,
+                            "env_name": child.name,
                             "x": x2,
                             "y": y2,
                         },
@@ -213,49 +213,49 @@ class Map2D(BasicAttribute):
 
     def out_of_range_of(
         self,
-        attr_name: str,
+        env_name: str,
         listener: EventListener,
         distance: float,
         distance_type: str = "euclidean",
     ) -> None:
         """Set a listener which is activated when the distance from
-        any attribute in the map to `attr_name` is larger than
+        any env in the map to `env_name` is larger than
         `distance`.
         Args:
-            attr_name (`str`): The name of the attribute that is the center.
+            env_name (`str`): The name of the env that is the center.
             listener (`EventListener`): The listener to activate when the
                 distance is larger than `distance`.
             distance (`float`): The distance threshold.
             distance_type (`str`): The distance type, either "euclidean" or
                 "manhattan".
         """
-        if attr_name not in self.children:
-            raise EnvAttributeNotFoundError(attr_name)
+        if env_name not in self.children:
+            raise EnvNotFoundError(env_name)
 
         class OutofRange(EventListener):
-            """A middleware that activates `target_listener` when any attribute
-            is out of range of `center_attr`"""
+            """A middleware that activates `target_listener` when any env
+            is out of range of `center_env`"""
 
             def __init__(
                 self,
                 name: str,
-                center_attr: Attribute,
+                center_env: Env,
                 target_listener: EventListener,
                 distance: float,
                 distance_type: str = "euclidean",
             ) -> None:
                 super().__init__(name=name)
-                self.center_attr = center_attr
+                self.center_env = center_env
                 self.target_listener = target_listener
                 self.distance = distance
                 self.distance_type = distance_type
 
-            def __call__(self, attr: Attribute, event: Event) -> None:
-                if event.args["attr_name"] == self.center_attr.name:
+            def __call__(self, env: Env, event: Event) -> None:
+                if event.args["env_name"] == self.center_env.name:
                     # center is moving, recalculate all distance
-                    x1, y1 = self.center_attr.get_position()
-                    for child in attr.children.values():
-                        if child.name == self.center_attr.name:
+                    x1, y1 = self.center_env.get_position()
+                    for child in env.children.values():
+                        if child.name == self.center_env.name:
                             continue
                         x2, y2 = child.get_position()
                         if (
@@ -263,18 +263,18 @@ class Map2D(BasicAttribute):
                             > self.distance
                         ):
                             self.target_listener(
-                                attr,
+                                env,
                                 Event(
                                     name="out_of_range",
                                     args={
-                                        "attr_name": child.name,
+                                        "env_name": child.name,
                                         "x": child.get_position()[0],
                                         "y": child.get_position()[1],
                                     },
                                 ),
                             )
                 else:
-                    x1, y1 = self.center_attr.get_position()
+                    x1, y1 = self.center_env.get_position()
                     x2 = event.args["x"]  # type: ignore[index]
                     y2 = event.args["y"]  # type: ignore[index]
                     if (
@@ -282,25 +282,25 @@ class Map2D(BasicAttribute):
                         > self.distance
                     ):
                         self.target_listener(
-                            attr,
+                            env,
                             Event(name="out_of_range", args=event.args),
                         )
 
         if not self.add_listener(
-            "move_attr_to",
+            "move_child_to",
             listener=OutofRange(
-                name=f"out_of_range_of_{attr_name}_{distance}",
-                center_attr=self.children[attr_name],
+                name=f"out_of_range_of_{env_name}_{distance}",
+                center_env=self.children[env_name],
                 target_listener=listener,
                 distance=distance,
                 distance_type=distance_type,
             ),
         ):
             raise EnvListenerError("Fail to add listener.")
-        # trigger listener for existing attributes
-        x1, y1 = self.children[attr_name].get_position()
+        # trigger listener for existing envs
+        x1, y1 = self.children[env_name].get_position()
         for child in self.children.values():
-            if child.name == attr_name:
+            if child.name == env_name:
                 continue
             x2, y2 = child.get_position()
             if distance2d(x1, y1, x2, y2, distance_type) > distance:
@@ -309,7 +309,7 @@ class Map2D(BasicAttribute):
                     Event(
                         name="out_of_range",
                         args={
-                            "attr_name": child.name,
+                            "env_name": child.name,
                             "x": x2,
                             "y": y2,
                         },

@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
-"""The attribute used in environment."""
+"""The env used in environment."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, List
 
 from ..exception import (
-    EnvAttributeNotFoundError,
-    EnvAttributeAlreadyExistError,
+    EnvNotFoundError,
+    EnvAlreadyExistError,
 )
 from .event import Event
 
 
 class EventListener(ABC):
     """A class representing a listener for listening the event of an
-    attribute."""
+    env."""
 
     def __init__(self, name: str) -> None:
         """Init a EventListener instance.
@@ -26,29 +26,27 @@ class EventListener(ABC):
     @abstractmethod
     def __call__(
         self,
-        attr: Attribute,
+        attr: Env,
         event: Event,
     ) -> None:
         """Activate the listener.
 
         Args:
-            attr (`Attribute`): The attribute bound to the listener.
+            attr (`Env`): The env bound to the listener.
             event (`Event`): The event information.
         """
 
 
-# TODO: Attribute is not a good name
-# TODO: rename to `SharedData`, `SharedNode`, `EnvNode`, `Node` or `Env`?
-class Attribute(ABC):
-    """The Attribute Interface.
-    Attribute is a key concept of AgentScope, which is used to
+class Env(ABC):
+    """The Env Interface.
+    Env is a key concept of AgentScope, which is used to
     represent global data shared among agents.
 
-    Each attribute has its own name and value, and multiple attributes
-    can be organized into a tree structure, where each attribute can
-    have multiple children attributes and one parent attribute.
+    Each env has its own name and value, and multiple envs
+    can be organized into a tree structure, where each env can
+    have multiple children envs and one parent env.
 
-    Different implementation of attributes may have different event functions,
+    Different implementation of envs may have different event functions,
     which are marked by `@event_func`.
     Users can bind `EventListener` to specific event functions, and
     the listener will be activated when the event function is called.
@@ -57,43 +55,43 @@ class Attribute(ABC):
     @property
     @abstractmethod
     def name(self) -> str:
-        """Name of the attribute.
+        """Name of the env.
 
         Returns:
-            `str`: The name of the attribute.
+            `str`: The name of the env.
         """
 
     @abstractmethod
-    def get_parent(self) -> Attribute:
-        """Get the parent attribute of the current attribute.
+    def get_parent(self) -> Env:
+        """Get the parent env of the current env.
 
         Returns:
-            `Attribute`: The parent attribute.
+            `Env`: The parent env.
         """
 
     @abstractmethod
-    def set_parent(self, parent: Attribute) -> None:
-        """Set the parent attribute of the current attribute.
+    def set_parent(self, parent: Env) -> None:
+        """Set the parent env of the current env.
 
         Args:
-            parent (`Attribute`): The parent attribute.
+            parent (`Env`): The parent env.
         """
 
     @abstractmethod
-    def get_children(self) -> dict[str, Attribute]:
-        """Get the children attributes of the current attribute.
+    def get_children(self) -> dict[str, Env]:
+        """Get the children envs of the current env.
 
         Returns:
-            `dict[str, Attribute]`: The children attributes.
+            `dict[str, Env]`: The children envs.
         """
 
     @abstractmethod
-    def add_child(self, child: Attribute) -> bool:
-        """Add a child attribute to the current attribute.
+    def add_child(self, child: Env) -> bool:
+        """Add a child env to the current env.
 
         Args:
-            child (`Attribute`): The children
-            attributes.
+            child (`Env`): The children
+            envs.
 
         Returns:
             `bool`: Whether the children were added successfully.
@@ -101,10 +99,10 @@ class Attribute(ABC):
 
     @abstractmethod
     def remove_child(self, children_name: str) -> bool:
-        """Remove a child attribute from the current attribute.
+        """Remove a child env from the current env.
 
         Args:
-            children_name (`str`): The name of the children attribute.
+            children_name (`str`): The name of the children env.
 
         Returns:
             `bool`: Whether the children were removed successfully.
@@ -112,7 +110,7 @@ class Attribute(ABC):
 
     @abstractmethod
     def add_listener(self, target_event: str, listener: EventListener) -> bool:
-        """Add a listener to the attribute.
+        """Add a listener to the env.
 
         Args:
             target_event (`str`): The event function to listen.
@@ -124,7 +122,7 @@ class Attribute(ABC):
 
     @abstractmethod
     def remove_listener(self, target_event: str, listener_name: str) -> bool:
-        """Remove a listener from the attribute.
+        """Remove a listener from the env.
 
         Args:
             target_event (`str`): The event function.
@@ -135,21 +133,21 @@ class Attribute(ABC):
         """
 
     @abstractmethod
-    def __getitem__(self, attr_name: str) -> Attribute:
-        """Get a child attribute."""
+    def __getitem__(self, env_name: str) -> Env:
+        """Get a child env."""
 
     @abstractmethod
-    def __setitem__(self, attr_name: str, attr: Attribute) -> None:
-        """Set a child attribute."""
+    def __setitem__(self, env_name: str, attr: Env) -> None:
+        """Set a child env."""
 
 
-class BasicAttribute(Attribute):
-    """A basic implementation of Attribute, which has no event function
+class BasicEnv(Env):
+    """A basic implementation of Env, which has no event function
     and cannot get value.
 
     Note:
-        `BasicAttribute` is used as the base class to implement other
-        attributes. Application developers should not use this class.
+        `BasicEnv` is used as the base class to implement other
+        envs. Application developers should not use this class.
     """
 
     def __init__(
@@ -157,21 +155,19 @@ class BasicAttribute(Attribute):
         name: str,
         value: Any,
         listeners: dict[str, List[EventListener]] = None,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        children: List[Env] = None,
+        parent: Env = None,
     ) -> None:
-        """Init an BasicAttribute instance.
+        """Init an BasicEnv instance.
 
         Args:
-            name (`str`): The name of the attribute.
-            value (`Any`): The default value of the attribute.
+            name (`str`): The name of the env.
+            value (`Any`): The default value of the env.
             listeners (`dict[str, List[EventListener]]`, optional): The
             listener dict. Defaults to None.
-            env (`Environment`): An instance of the Environment class.
-            Defaults to None.
-            children (`List[Attribute]`, optional): A list of children
-            attributes. Defaults to None.
-            parent (`Attribute`, optional): The parent attribute. Defaults
+            children (`List[Env]`, optional): A list of children
+            envs. Defaults to None.
+            parent (`Env`, optional): The parent env. Defaults
             to None.
         """
         self._name = name
@@ -191,39 +187,39 @@ class BasicAttribute(Attribute):
 
     @property
     def name(self) -> str:
-        """Name of the attribtue"""
+        """Name of the env"""
         return self._name
 
-    def get_parent(self) -> Attribute:
-        """Get the parent attribute of the current attribute.
+    def get_parent(self) -> Env:
+        """Get the parent env of the current env.
 
         Returns:
-            `Attribute`: The parent attribute.
+            `Env`: The parent env.
         """
         return self.parent
 
-    def set_parent(self, parent: Attribute) -> None:
-        """Set the parent attribute of the current attribute.
+    def set_parent(self, parent: Env) -> None:
+        """Set the parent env of the current env.
 
         Args:
-            parent (`Attribute`): The parent attribute.
+            parent (`Env`): The parent env.
         """
         self.parent = parent
 
-    def get_children(self) -> dict[str, Attribute]:
-        """Get the children attributes of the current attribute.
+    def get_children(self) -> dict[str, Env]:
+        """Get the children envs of the current env.
 
         Returns:
-            `dict[str, Attribute]`: The children attributes.
+            `dict[str, Env]`: The children envs.
         """
         return self.children
 
-    def add_child(self, child: Attribute) -> bool:
-        """Add a child attribute to the current attribute.
+    def add_child(self, child: Env) -> bool:
+        """Add a child env to the current env.
 
         Args:
-            child (`Attribute`): The children
-            attributes.
+            child (`Env`): The children
+            envs.
 
         Returns:
             `bool`: Whether the children were added successfully.
@@ -234,10 +230,10 @@ class BasicAttribute(Attribute):
         return True
 
     def remove_child(self, children_name: str) -> bool:
-        """Remove a child attribute from the current attribute.
+        """Remove a child env from the current env.
 
         Args:
-            children_name (`str`): The name of the children attribute.
+            children_name (`str`): The name of the children env.
 
         Returns:
             `bool`: Whether the children were removed successfully.
@@ -248,7 +244,7 @@ class BasicAttribute(Attribute):
         return False
 
     def add_listener(self, target_event: str, listener: EventListener) -> bool:
-        """Add a listener to the attribute.
+        """Add a listener to the env.
 
         Args:
             target_event (`str`): The event function to listen.
@@ -270,7 +266,7 @@ class BasicAttribute(Attribute):
         return False
 
     def remove_listener(self, target_event: str, listener_name: str) -> bool:
-        """Remove a listener from the attribute.
+        """Remove a listener from the env.
 
         Args:
             target_event (`str`): The event function.
@@ -297,7 +293,7 @@ class BasicAttribute(Attribute):
                 listener(self, event)
 
     def dump(self) -> dict:
-        """Dump the attribute tree to a dict."""
+        """Dump the env tree to a dict."""
         return {
             "value": self._value,
             "type": self.__class__.__name__,
@@ -307,16 +303,16 @@ class BasicAttribute(Attribute):
             },
         }
 
-    def __getitem__(self, attr_name: str) -> Attribute:
-        if attr_name in self.children:
-            return self.children[attr_name]
+    def __getitem__(self, env_name: str) -> Env:
+        if env_name in self.children:
+            return self.children[env_name]
         else:
-            raise EnvAttributeNotFoundError(attr_name)
+            raise EnvNotFoundError(env_name)
 
-    def __setitem__(self, attr_name: str, attr: Attribute) -> None:
-        if not isinstance(attr, Attribute):
-            raise TypeError("Only Attribute can be set")
-        if attr_name not in self.children:
-            self.children[attr_name] = attr
+    def __setitem__(self, env_name: str, attr: Env) -> None:
+        if not isinstance(attr, Env):
+            raise TypeError("Only Env can be set")
+        if env_name not in self.children:
+            self.children[env_name] = attr
         else:
-            raise EnvAttributeAlreadyExistError(attr_name)
+            raise EnvAlreadyExistError(env_name)

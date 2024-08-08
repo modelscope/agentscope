@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""An attribute used as a chatroom."""
+"""An env used as a chatroom."""
 from typing import List
 from copy import deepcopy
 
@@ -8,17 +8,17 @@ from ...message import Msg
 from ...exception import (
     EnvListenerError,
 )
-from .immutable import ImmutableAttribute
-from ..attribute import (
-    Attribute,
-    BasicAttribute,
+from .immutable import ImmutableEnv
+from ..env import (
+    Env,
+    BasicEnv,
     EventListener,
 )
 from ..event import event_func, Event
 
 
-class ChatRoom(BasicAttribute):
-    """A chatroom attribute."""
+class ChatRoom(BasicEnv):
+    """A chatroom env."""
 
     def __init__(
         self,
@@ -52,7 +52,7 @@ class ChatRoom(BasicAttribute):
         """Add a participant to the chatroom."""
         if agent.agent_id in self.children:
             return False
-        self.children[agent.agent_id] = ImmutableAttribute(
+        self.children[agent.agent_id] = ImmutableEnv(
             name=agent.agent_id,
             value={
                 "history_idx": len(self._value["history"]),
@@ -131,9 +131,9 @@ class ChatRoom(BasicAttribute):
                 self.target_names = target_names
                 self.target_listener = target_listener
 
-            def __call__(self, attr: Attribute, event: Event) -> None:
+            def __call__(self, env: Env, event: Event) -> None:
                 if event.args["message"].name in self.target_names:
-                    self.target_listener(attr, event)
+                    self.target_listener(env, event)
 
         if not self.add_listener(
             "speak",

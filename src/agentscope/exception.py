@@ -193,8 +193,8 @@ class QuotaExceededError(Exception):
 # - Environment Exceptions
 
 
-class EnvAttributeError(Exception):
-    """The exception class for attribute related errors."""
+class EnvError(Exception):
+    """The exception class for env related errors."""
 
     def __init__(self, message: str) -> None:
         self.message = message
@@ -203,33 +203,33 @@ class EnvAttributeError(Exception):
         return f"{self.__class__.__name__}: {self.message}"
 
 
-class EnvAttributeNotFoundError(EnvAttributeError):
-    """The exception class for attribute not found error."""
+class EnvNotFoundError(EnvError):
+    """The exception class for env not found error."""
 
     def __init__(self, name: str) -> None:
-        super().__init__(f"Attribute {name} not found.")
+        super().__init__(f"Env {name} not found.")
 
 
-class EnvAttributeAlreadyExistError(EnvAttributeError):
-    """The exception class for attribute already exist error."""
+class EnvAlreadyExistError(EnvError):
+    """The exception class for env already exist error."""
 
     def __init__(self, name: str) -> None:
-        super().__init__(f"Attribute {name} already exist.")
+        super().__init__(f"Env {name} already exist.")
 
 
-class EnvAttributeUnsupportedFunctionError(EnvAttributeError):
-    """The exception class for use unsupported function of attribute error."""
+class EnvUnsupportedFunctionError(EnvError):
+    """The exception class for use unsupported function of env error."""
 
-    def __init__(self, attr_name: str, func_name: str) -> None:
-        super().__init__(f"Attribute {attr_name} doesn't have {func_name}.")
+    def __init__(self, env_name: str, func_name: str) -> None:
+        super().__init__(f"Env {env_name} doesn't have {func_name}.")
 
 
-class EnvAttributeTypeError(EnvAttributeError):
-    """The exception class for use wrong type of attribute error."""
+class EnvTypeError(EnvError):
+    """The exception class for use wrong type of env error."""
 
-    def __init__(self, attr_name: str, type_name: str) -> None:
+    def __init__(self, env_name: str, type_name: str) -> None:
         super().__init__(
-            f"Attribtue {attr_name} is not an instance of [{type_name}]",
+            f"Env {env_name} is not an instance of [{type_name}]",
         )
 
 

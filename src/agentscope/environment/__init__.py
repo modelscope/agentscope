@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 """ Import all environment related modules in the package. """
 from .event import Event, event_func
-from .attribute import Attribute, BasicAttribute, EventListener
-from .attributes.mutable import MutableAttribute
-from .attributes.immutable import ImmutableAttribute
-from .attributes.chatroom import ChatRoom
-from .attributes.point2d import Point2D, AttributeWithPoint2D
-from .attributes.map2d import Map2D
+from .env import Env, BasicEnv, EventListener
+from .envs.mutable import MutableEnv
+from .envs.immutable import ImmutableEnv
+from .envs.chatroom import ChatRoom
+from .envs.point2d import Point2D, EnvWithPoint2D
+from .envs.map2d import Map2D
 
 __all__ = [
     "Event",
     "event_func",
-    "Attribute",
-    "BasicAttribute",
+    "Env",
+    "BasicEnv",
     "EventListener",
-    "MutableAttribute",
-    "ImmutableAttribute",
+    "MutableEnv",
+    "ImmutableEnv",
     "ChatRoom",
     "Point2D",
-    "AttributeWithPoint2D",
+    "EnvWithPoint2D",
     "Map2D",
 ]

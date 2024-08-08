@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-""" A Attribute that represented a 2D location point."""
+""" An Env that represented a 2D location point."""
 from typing import List, Tuple, Any
 
-from ..attribute import Attribute, BasicAttribute, EventListener
-from .mutable import MutableAttribute
+from ..env import Env, BasicEnv, EventListener
+from .mutable import MutableEnv
 from ..event import event_func, Event, Movable2D
 
 
-class Point2D(BasicAttribute, Movable2D):
+class Point2D(BasicEnv, Movable2D):
     """A Point in 2D space."""
 
     def __init__(
@@ -16,8 +16,8 @@ class Point2D(BasicAttribute, Movable2D):
         x: float,
         y: float,
         listeners: dict[str, List[EventListener]] = None,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        children: List[Env] = None,
+        parent: Env = None,
     ) -> None:
         super().__init__(name, (x, y), listeners, children, parent)
 
@@ -36,7 +36,7 @@ class Point2D(BasicAttribute, Movable2D):
 
     # Syntactic sugar, not an event function
     def move_by(self, x: float, y: float) -> bool:
-        """Move the attribute in 2D by the given vector.
+        """Move the env in 2D by the given vector.
 
         Args:
             x (`float`): The movement in x direction.
@@ -60,8 +60,8 @@ class Point2D(BasicAttribute, Movable2D):
         return value
 
 
-class AttributeWithPoint2D(MutableAttribute, Movable2D):
-    """An enhanced MutableAttribute whose child `position` is a `Point2D`
+class EnvWithPoint2D(MutableEnv, Movable2D):
+    """An enhanced MutableEnv whose child `position` is a `Point2D`
     instance."""
 
     def __init__(
@@ -71,8 +71,8 @@ class AttributeWithPoint2D(MutableAttribute, Movable2D):
         x: float,
         y: float,
         listeners: dict[str, List[EventListener]] = None,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        children: List[Env] = None,
+        parent: Env = None,
     ) -> None:
         super().__init__(name, value, listeners, children, parent)
         self.add_child(Point2D("position", x, y))
@@ -84,7 +84,7 @@ class AttributeWithPoint2D(MutableAttribute, Movable2D):
 
     # Syntactic sugar, not an event function
     def move_by(self, x: float, y: float) -> bool:
-        """Move the attribute in 2D by the given vector.."""
+        """Move the point in 2D by the given vector.."""
         return self.children["position"].move_by(x, y)
 
     @event_func

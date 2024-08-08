@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-"""A attribute that is immutable and only support get."""
-
+""" An env that is mutable and supports get and set."""
 from typing import List, Any
 from copy import deepcopy
 
-from ..attribute import Attribute, BasicAttribute, EventListener
-from ..event import event_func, Event, Getable
+from ..env import Env, BasicEnv, EventListener
+from ..event import event_func, Event, Getable, Setable
 
 
-class ImmutableAttribute(BasicAttribute, Getable):
-    """An immutable attribute that can be get and set."""
+class MutableEnv(BasicEnv, Getable, Setable):
+    """A mutable env that can be get and set."""
 
     def __init__(
         self,
         name: str,
         value: Any,
         listeners: dict[str, List[EventListener]] = None,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        children: List[Env] = None,
+        parent: Env = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -32,3 +31,9 @@ class ImmutableAttribute(BasicAttribute, Getable):
         value = deepcopy(self._value)
         self._trigger_listener(Event("get", {}))
         return value
+
+    @event_func
+    def set(self, value: Any) -> bool:
+        self._value = value
+        self._trigger_listener(Event("set", {"value": value}))
+        return True

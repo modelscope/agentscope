@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The events which can be bound to attributes."""
+"""The events which can be bound to envs."""
 from abc import ABC, abstractmethod
 from typing import Callable, Any, Tuple
 
@@ -36,26 +36,26 @@ class Event:
 
 
 class Getable(ABC):
-    """Representing an attribute whose value can be gotten."""
+    """Representing an env whose value can be gotten."""
 
     @abstractmethod
     def get(self) -> Any:
-        """Get the value of the attribute.
+        """Get the value of the env.
 
         Returns:
-            `Any`: The value of the attribute.
+            `Any`: The value of the env.
         """
 
 
 class Setable(ABC):
-    """Representing an attribute whose value can be set."""
+    """Representing an env whose value can be set."""
 
     @abstractmethod
     def set(self, value: Any) -> bool:
-        """Set the value of the attribute.
+        """Set the value of the env.
 
         Args:
-            value (`Any`): The new value of the attribute.
+            value (`Any`): The new value of the env.
 
         Returns:
             `bool`: Whether the value was set successfully.
@@ -63,11 +63,11 @@ class Setable(ABC):
 
 
 class Movable2D(ABC):
-    """A class representing an attribute can be moved in 2D."""
+    """A class representing an env can be moved in 2D."""
 
     @abstractmethod
     def move_by(self, x: float, y: float) -> bool:
-        """Move the attribute in 2D by the given vector.
+        """Move the env in 2D by the given vector.
 
         Args:
             x (`float`): The movement in x direction.
@@ -79,7 +79,7 @@ class Movable2D(ABC):
 
     @abstractmethod
     def move_to(self, x: float, y: float) -> bool:
-        """Move the attribute to the given position.
+        """Move the env to the given position.
 
         Args:
             x (`float`): The x coordinate of the new position.
@@ -91,37 +91,37 @@ class Movable2D(ABC):
 
     @abstractmethod
     def get_position(self) -> Tuple[float, float]:
-        """Get the position of the attribute.
+        """Get the position of the env.
 
         Returns:
-            `Tuple[float, float]`: The position of the attribute.
+            `Tuple[float, float]`: The position of the env.
         """
 
 
 class Holdable(ABC):
-    """A class representing an attribute can be held,and during
+    """A class representing an env can be held,and during
     the holding period, all access behaviors except the owner
     are prohibited.
     """
 
     @abstractmethod
     def acquire(self, owner: str) -> bool:
-        """Acquire the attribute.
+        """Acquire the env.
 
         Args:
-            owner (`str`): The owner of the attribute.
+            owner (`str`): The owner of the env.
 
         Returns:
-            `bool`: Whether the attribute was acquired successfully.
+            `bool`: Whether the env was acquired successfully.
         """
 
     @abstractmethod
     def release(self, owner: str) -> bool:
-        """Release the attribute.
+        """Release the env.
 
         Args:
-            owner (`str`): The owner of the attribute.
+            owner (`str`): The owner of the env.
 
         Returns:
-            `bool`: Whether the attribute was released successfully.
+            `bool`: Whether the env was released successfully.
         """

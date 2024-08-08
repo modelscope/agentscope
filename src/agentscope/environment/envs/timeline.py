@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""An attribute representing a timeline."""
+"""An env representing a timeline."""
 
 from typing import List, Any, Optional
-from ..attribute import BasicAttribute, Attribute
+from ..env import BasicEnv, Env
 from ..event import event_func, Getable
 
 
-class Timeline(BasicAttribute, Getable):
-    """A timeline attribute."""
+class Timeline(BasicEnv, Getable):
+    """A timeline env."""
 
     def __init__(
         self,
@@ -15,8 +15,8 @@ class Timeline(BasicAttribute, Getable):
         start: int,
         unit: int = 1,
         end: Optional[int] = None,
-        children: List[Attribute] = None,
-        parent: Attribute = None,
+        children: List[Env] = None,
+        parent: Env = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -29,7 +29,7 @@ class Timeline(BasicAttribute, Getable):
 
     @event_func
     def get(self) -> Any:
-        return self.value
+        return self._value
 
     @event_func
     def step(self) -> None:
@@ -38,5 +38,5 @@ class Timeline(BasicAttribute, Getable):
 
     def run(self) -> None:
         """Run the timeline."""
-        while self.max_value is None or (self.value < self.max_value):
+        while self.max_value is None or (self._value < self.max_value):
             self.step()
