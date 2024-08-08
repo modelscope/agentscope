@@ -32,5 +32,5 @@ To run this example successfully, ensure you meet the following requirements:
 
 
 ## Running the Example
-This example has been set to run with AgentScope Studio by default. After starting running the script, open http://127.0.0.1:5000 with your browser (Chorme is preferred).
-For more information on AgentScope Studio see http://doc.agentscope.io/en/tutorial/209-gui.html
+This example has been set to run with AgentScope Studio by default. After starting running the script, open `http://127.0.0.1:5000` with your browser (Chorme is preferred).
+For more information on AgentScope Studio see `http://doc.agentscope.io/en/tutorial/209-gui.html`
