@@ -1476,7 +1476,7 @@ function showExportPyPopup(userLogin, tokenQuery) {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1514,7 +1514,7 @@ function showExportPyPopup(userLogin, tokenQuery) {
                         showCancelButton: true,
                         confirmButtonText: 'Copy',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1536,7 +1536,7 @@ function showExportPyPopup(userLogin, tokenQuery) {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1576,7 +1576,7 @@ function showExportRunLocalPopup(userLogin, tokenQuery) {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1614,7 +1614,7 @@ function showExportRunLocalPopup(userLogin, tokenQuery) {
                         showCancelButton: true,
                         confirmButtonText: 'Copy Code',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1636,7 +1636,7 @@ function showExportRunLocalPopup(userLogin, tokenQuery) {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1695,7 +1695,7 @@ function showExportRunMSPopup(userLogin, tokenQuery) {
                     title: 'Processing...',
                     text: 'Please wait.',
                     allowOutsideClick: false,
-                    onBeforeOpen: () => {
+                    willOpen: () => {
                         Swal.showLoading()
                     }
                 });
@@ -1753,7 +1753,7 @@ function showExportHTMLPopup() {
         showCancelButton: true,
         confirmButtonText: 'Copy',
         cancelButtonText: 'Close',
-        onBeforeOpen: (element) => {
+        willOpen: (element) => {
             // Find the code element inside the Swal content
             const codeElement = element.querySelector('code');
 
