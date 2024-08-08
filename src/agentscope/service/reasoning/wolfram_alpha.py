@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Query Wolfram Alpha API"""
+import os
 from typing import Any, Dict  # Corrected import order
 import requests  # Corrected import order
 from loguru import logger  # Corrected import order
@@ -73,6 +74,7 @@ def query_wolfram_alpha_short_answers(
 def query_wolfram_alpha_simple(
     api_key: str,
     query: str,
+    save_path: str = "wolfram_alpha_result.png",
 ) -> ServiceResponse:
     """
     Query the Wolfram Alpha Simple API. The Simple API generates full
@@ -86,6 +88,9 @@ def query_wolfram_alpha_simple(
             Your Wolfram Alpha API key.
         query (`str`):
             The query string to search.
+        save_path (`str`, optional):
+            The path where the result image will be saved.
+            Defaults to "wolfram_alpha_result.png" in the current directory.
 
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
@@ -93,18 +98,18 @@ def query_wolfram_alpha_simple(
         and `content` is a dictionary containing
         the result or error information,
         which depends on the `status` variable.
-        The returned image is saved in the save directory as
-        `wolfram_alpha_result.png`.
+        The returned image is saved in the specified save path.
 
     Example:
         .. code-block:: python
 
             result = query_wolfram_alpha_simple(
                 "your_api_key",
-                "Plot sin(x)"
+                "Plot sin(x)",
+                save_path="path/to/save/result.png"
             )
             if result.status == ServiceExecStatus.SUCCESS:
-                print("Result saved as 'wolfram_alpha_result.png'")
+                logger.info(f"Result saved as '{result.content['result']}'")
     """
     url = "http://api.wolframalpha.com/v1/simple"
     params = {"i": query, "appid": api_key}
@@ -112,13 +117,20 @@ def query_wolfram_alpha_simple(
     try:
         response = requests.get(url, params=params)
         if response.status_code == 200:
-            with open("wolfram_alpha_result.png", "wb") as file:
+            # Get the directory path
+            dir_path = os.path.dirname(save_path)
+
+            # If dir_path is not empty, create the directory
+            if dir_path:
+                os.makedirs(dir_path, exist_ok=True)
+
+            with open(save_path, "wb") as file:
                 file.write(response.content)
-            print("Result saved as 'wolfram_alpha_result.png'")
+            logger.info(f"Result saved as '{save_path}'")
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
                 content={
-                    "result": "Image saved as 'wolfram_alpha_result.png'",
+                    "result": save_path,
                 },
             )
         return ServiceResponse(
@@ -128,6 +140,7 @@ def query_wolfram_alpha_simple(
             },
         )
     except Exception as e:
+        logger.error(f"Error in query_wolfram_alpha_simple: {str(e)}")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": str(e)},
