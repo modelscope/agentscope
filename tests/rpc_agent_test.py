@@ -849,7 +849,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         launcher.shutdown()
 
     def test_custom_agent_func(self) -> None:
-        """Test the auto allocation of server"""
+        """Test custom agent funcs"""
         agent = AgentWithCustomFunc(
             name="custom",
             judge_func=lambda x: "$PASS$" in x,
