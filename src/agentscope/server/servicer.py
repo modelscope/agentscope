@@ -51,7 +51,11 @@ def _register_server_to_studio(
     url = f"{studio_url}/api/servers/register"
     resp = requests.post(
         url,
-        json={"server_id": server_id, "host": host, "port": port},
+        json={
+            "server_id": server_id,
+            "host": host,
+            "port": port,
+        },
         timeout=10,  # todo: configurable timeout
     )
     if resp.status_code != 200:
@@ -81,7 +85,7 @@ class AgentServerServicer(RpcAgentServicer):
         server_id: str = None,
         studio_url: str = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
     ):
         """Init the AgentServerServicer.
 
@@ -99,7 +103,7 @@ class AgentServerServicer(RpcAgentServicer):
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Maximum time for reply messages to be cached in the server.
                 Note that expired messages will be deleted.
         """
@@ -371,6 +375,7 @@ class AgentServerServicer(RpcAgentServicer):
         process = psutil.Process(self.pid)
         status["cpu"] = process.cpu_percent(interval=1)
         status["mem"] = process.memory_info().rss / (1024**2)
+        status["size"] = len(self.agent_pool)
         return agent_pb2.GeneralResponse(ok=True, message=serialize(status))
 
     def set_model_configs(

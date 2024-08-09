@@ -93,6 +93,7 @@ function getServerStatus(cell, formatterParams, onRendered) {
                     status: data.status,
                     cpu: data.cpu,
                     mem: data.mem,
+                    size: data.size,
                 });
             } else {
                 cell.getElement().innerHTML =
@@ -175,6 +176,11 @@ function initServerTable(data) {
                 title: "Status",
                 vertAlign: "middle",
                 formatter: getServerStatus,
+            },
+            {
+                title: "Agent Number",
+                field: "size",
+                vertAlign: "middle",
             },
             {
                 title: "CPU Usage",
@@ -441,6 +447,7 @@ function initAgentMemoryTable(agentId, memoryData) {
                 minimap: {
                     enabled: false,
                 },
+                wordWrap: "on",
                 scrollBeyondLastLine: false,
                 readOnly: true,
             }
@@ -475,6 +482,8 @@ function initializeServerPage() {
     };
     let deleteAllAgentBtn = document.getElementById("delete-all-agent-btn");
     deleteAllAgentBtn.onclick = deleteAllAgent;
+    let memoryflushBtn = document.getElementById("flush-memory-btn");
+    memoryflushBtn.onclick = flushAgentMemoryTable;
     window.addEventListener("resize", () => {
         if (messageEditor) {
             messageEditor.layout();

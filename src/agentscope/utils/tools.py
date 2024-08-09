@@ -84,7 +84,10 @@ def check_port(port: Optional[int] = None) -> int:
         new_port = find_available_port()
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        if s.connect_ex(("localhost", port)) == 0:
+        try:
+            if s.connect_ex(("localhost", port)) == 0:
+                raise RuntimeError("Port is occupied.")
+        except Exception:
             new_port = find_available_port()
             return new_port
     return port
@@ -309,42 +312,6 @@ def _convert_to_str(content: Any) -> str:
         return json.dumps(content, ensure_ascii=False)
     else:
         return str(content)
-
-
-def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
-    """record dialog history as a list of strings"""
-    messages = []
-
-    dialogue = []
-    for i, unit in enumerate(input_msgs):
-        if i == 0 and unit["role"] == "system":
-            # system prompt
-            messages.append(
-                {
-                    "role": unit["role"],
-                    "content": _convert_to_str(unit["content"]),
-                },
-            )
-        else:
-            # Merge all messages into a conversation history prompt
-            dialogue.append(
-                f"{unit['name']}: {_convert_to_str(unit['content'])}",
-            )
-
-    dialogue_history = "\n".join(dialogue)
-
-    user_content_template = "## Conversation History\n{dialogue_history}"
-
-    messages.append(
-        {
-            "role": "user",
-            "content": user_content_template.format(
-                dialogue_history=dialogue_history,
-            ),
-        },
-    )
-
-    return messages
 
 
 def _join_str_with_comma_and(elements: List[str]) -> str:
