@@ -4,6 +4,7 @@ from abc import ABC
 from typing import Union, Any, List, Sequence, Optional, Generator
 
 from loguru import logger
+import requests
 
 from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
@@ -359,3 +360,80 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         """
 
         return ModelWrapperBase.format_for_common_chat_models(*args)
+
+from abc import ABC, abstractmethod
+
+# Step 1: Define the interface
+class ImageHandler(ABC):
+    @abstractmethod
+    def send_image(self, image_data, additional_args=None):
+        pass
+
+# Step 2: Implement specific strategies
+class Base64ImageHandler(ImageHandler):
+    def send_image(self, image_path, additional_args=None):
+        encoded_image = self.encode_image(image_path)
+        data = {
+            "inputs": {
+                "prompt": encoded_image,
+                "model": self.model_name,
+                "api_key": self.api_key,
+            },
+            **(additional_args or {})
+        }
+        return requests.post(self.api_url, json=data).json()
+
+class URLImageHandler(ImageHandler):
+    def send_image(self, image_url, additional_args=None):
+        data = {
+            "inputs": {
+                "prompt": image_url,
+                "model": self.model_name,
+                "api_key": self.api_key,
+            },
+            **(additional_args or {})
+        }
+        return requests.post(self.api_url, json=data).json()
+    
+
+class LiteLLMVisionWrapper(LiteLLMChatWrapper):
+    model_type: str = "litellm_chat_v"
+    def __init__(self, config_name, model_name=None, **kwargs):
+        super().__init__(config_name, model_name, **kwargs)
+
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List:
+        input_msgs = []
+        for item in args:
+            if item is None:
+                continue
+            if isinstance(item, Msg):
+                input_msgs.append(item)
+            elif isinstance(item, list) and all(isinstance(subitem, Msg) for subitem in item):
+                input_msgs.extend(item)
+            else:
+                raise TypeError(f"The input should be a Msg object or a list of Msg objects, got {type(item)}.")
+
+        messages = []
+
+        for msg in input_msgs:
+            formatted_content = []
+            if msg.content:  # Handle text content
+                formatted_content.append({
+                    "type": "text",
+                    "text": msg.content
+                })
+
+            if msg.url:  # Handle image URL content
+                formatted_content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": msg.url
+                    }
+                })
+
+            messages.append({
+                "role": msg.role,
+                "content": formatted_content
+            })
+
+        return messages
