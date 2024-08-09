@@ -374,7 +374,7 @@ cite [our paper](https://arxiv.org/abs/2402.14034):
              Daoyuan Chen and
              Liuyi Yao and
              Hongyi Peng and
-             Zeyu Zhang and
+             Ze Yu Zhang and
              Lin Zhu and
              Chen Cheng and
              Hongzhu Shi and
