@@ -31,6 +31,9 @@ The following table outlines the various Service functions by type. These functi
 |                             | `dblp_search_publications` | Search publications in the DBLP database
 |                             | `dblp_search_authors`      | Search for author information in the DBLP database                                                             |
 |                             | `dblp_search_venues`       | Search for venue information in the DBLP database                                                              |
+|                             | `get_tripadvisor_location_photos`       | Retrieve photos for a specific location using the TripAdvisor API.                                |
+|                             | `search_tripadvisor`       | Search for locations using the TripAdvisor API.                                                                |
+|                             | `get_tripadvisor_location_details`       | Get detailed information about a specific location using the TripAdvisor API.                    |
 | File                        | `create_file`              | Create a new file at a specified path, optionally with initial content.                                        |
 |                             | `delete_file`              | Delete a file specified by a file path.                                                                        |
 |                             | `move_file`                | Move or rename a file from one path to another.                                                                |
