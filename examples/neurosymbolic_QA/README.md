@@ -1,6 +1,6 @@
 
 
-# Neurosymbolic Question Answering with AgentScope
+# Neurosymbolic Mathematical Reasoning Question Answering with AgentScope
 
 This example will show:
 - How to set up and use the ReActAgent from AgentScope for neurosymbolic reasoning.
@@ -8,18 +8,17 @@ This example will show:
 - How to use AgentScope Studio to visualize conversations between the agents.
 
 ## Background
-LLMs are good at many tasks, but fall short in rigorous reasoning, like doing complex mathematical calcuations.
+LLMs excel at many tasks, but currently still fall short in rigorous reasoning, like doing complex mathematical calcuations.
 This script demonstrates a neurosymbolic question-answering system using AgentScope, which integrates various external APIs like Wolfram Alpha to assist LLM agents in solving problems that involve mathetical reasoning. The LLM agent first formulates the mathematical problems that need to be solved based on its interpretation of the problem statement, then it uses Wolfram Alpha to solve the mathematical problems, synthesizes the solution and finally returns a reply.
 
-Two LLM agents are set up in this demonstration: one with access to Wolfram Alpha APIs for solving mathematical problems, and another without such access, as a comparison, aiming to solve a game theory problem on finding mixed Nash equilibria.
+Two LLM agents are set up in this demonstration: one with access to Wolfram Alpha APIs for solving mathematical problems, and another without such access (for comparison), aiming to solve a game theory problem on finding mixed Nash equilibria. The agent without access to the tools will often fail to give the correct solution.
 
 
 
 ## Tested Models
 
 These models are tested in this example. For other models, some modifications may be needed.
-- `claude-3-5-sonnet-20240620` - Note that this example currently is only compatible with claude-3-5-sonnet-20240620 API, since other models could not even formulate the right equations for wolfram almpha API to solve.
-Furthermore, changing the temperature might affect the output since sometimes with a different temperature, the model could not properly adapt to the ReAct framework.
+- `gpt-4o-mini` - With the given temperature setting. Note that with temperature tuning or more advanced models such as claude-3.5-sonnet, the agent is able to solve the given problem without relying on external tools. The example servers as a proof-of-concept for the scenario that, given a sufficiently different question for the given model capability, using external tools can increase the chance of successfully solving the problem,
 
 
 ## Prerequisites
