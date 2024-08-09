@@ -1,0 +1,33 @@
+name: AgentScope Benchmark
+
+on: [push, pull_request]
+permissions:
+  contents: write
+
+jobs:
+  bench:
+    permissions:
+      contents: write
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: True
+      matrix:
+        os: [ubuntu-latest]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.9'
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.9
+    - name: Install AgentScope
+      run: |
+        pip install -q -e .[distribute]
+        pip install pytest pytest-benchmark
+    - name: Run bench
+      run: |
+        cd examples/distributed_simulation
+        pytest bench.py --benchmark-json output.json
+        cat output.json| jq -r ".benchmarks[] | .stats"
