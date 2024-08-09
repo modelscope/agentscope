@@ -6,6 +6,8 @@ from .rpc_agent_client import (
     call_func_in_thread,
 )
 
+from .rpc_config import DistConf, async_func
+
 try:
     from .rpc_agent_pb2 import RpcMsg  # pylint: disable=E0611
     from .rpc_agent_pb2_grpc import RpcAgentServicer
@@ -29,6 +31,8 @@ __all__ = [
     "RpcMsg",
     "RpcAgentServicer",
     "RpcAgentStub",
+    "DistConf",
+    "async_func",
     "call_func_in_thread",
     "add_RpcAgentServicer_to_server",
 ]

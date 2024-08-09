@@ -36,12 +36,31 @@ from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
+from agentscope.rpc.rpc_agent_client import RpcAgentClient
 from agentscope.message import (
-    Msg,
     PlaceholderMessage,
     deserialize,
     serialize,
 )
+
+
+class TaskResult:
+    """Use this class to get the the result from rpc server."""
+
+    # TODO: merge into placeholder
+
+    def __init__(self, host: str, port: int, task_id: int) -> None:
+        self.host = host
+        self.port = port
+        self.task_id = task_id
+
+    def get(self) -> Any:
+        """Get the value"""
+        return deserialize(
+            RpcAgentClient(self.host, self.port).update_placeholder(
+                self.task_id,
+            ),
+        )
 
 
 def _register_server_to_studio(
@@ -329,14 +348,14 @@ class AgentServerServicer(RpcAgentServicer):
             return self.call_custom_func(
                 request.agent_id,
                 request.target_func,
-                deserialize(request.value),
+                request.value,
             )
 
     def call_custom_func(
         self,
         agent_id: str,
         func_name: str,
-        args: dict,
+        raw_value: str,
     ) -> agent_pb2.GeneralResponse:
         """Call a custom function"""
         agent = self.get_agent(agent_id)
@@ -345,6 +364,31 @@ class AgentServerServicer(RpcAgentServicer):
                 success=False,
                 message=f"Agent [{agent_id}] not exists.",
             )
+        func = getattr(agent, func_name)
+        if (
+            hasattr(func, "_is_async")
+            and func._is_async  # pylint: disable=W0212
+        ):  # pylint: disable=W0212
+            task_id = self.get_task_id()
+            self.result_pool[task_id] = threading.Condition()
+            self.executor.submit(
+                self._process_messages,
+                task_id,
+                agent_id,
+                func_name,
+                raw_value,
+            )
+            return agent_pb2.GeneralResponse(
+                ok=True,
+                message=serialize(
+                    TaskResult(
+                        host=self.host,
+                        port=self.port,
+                        task_id=task_id,
+                    ),
+                ),
+            )
+        args = deserialize(raw_value)
         res = getattr(agent, func_name)(
             *args.get("args", ()),
             **args.get("kwargs", {}),
@@ -492,11 +536,7 @@ class AgentServerServicer(RpcAgentServicer):
         return agent_pb2.GeneralResponse(
             ok=True,
             message=serialize(
-                Msg(  # type: ignore[arg-type]
-                    name=self.get_agent(request.agent_id).name,
-                    content=None,
-                    task_id=task_id,
-                ),
+                task_id,
             ),
         )
 
@@ -534,16 +574,22 @@ class AgentServerServicer(RpcAgentServicer):
             target_func (`str`): the name of the function that will be called.
             raw_msg (`str`): the input serialized message.
         """
-        if raw_msg:
+        if raw_msg is not None:
             msg = deserialize(raw_msg)
         else:
             msg = None
-        if isinstance(msg, PlaceholderMessage):
-            msg.update_value()
         cond = self.result_pool[task_id]
         agent = self.get_agent(agent_id)
+        if isinstance(msg, PlaceholderMessage):
+            msg.update_value()
         try:
-            result = getattr(agent, target_func)(msg)
+            if target_func == "reply":
+                result = getattr(agent, target_func)(msg)
+            else:
+                result = getattr(agent, target_func)(
+                    *msg.get("args", ()),
+                    **msg.get("kwargs", {}),
+                )
             self.result_pool[task_id] = result
         except Exception:
             error_msg = traceback.format_exc()

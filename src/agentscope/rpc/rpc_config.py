@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 """Configs for Distributed mode."""
+from typing import Callable
 from loguru import logger
+
+
+def async_func(func: Callable) -> Callable:
+    """A decorator for async function.
+    In distributed mode, async functions will return a placeholder message
+    immediately.
+
+    Args:
+        func (`Callable`): The function to decorate.
+    """
+
+    func._is_async = True  # pylint: disable=W0212
+    return func
 
 
 class DistConf(dict):

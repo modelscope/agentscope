@@ -160,7 +160,7 @@ class PlaceholderMessage(Msg):
                 raise ValueError(
                     f"Failed to get task_id: {self._stub.get_response()}",
                 ) from e
-            self._task_id = resp["task_id"]  # type: ignore[call-overload]
+            self._task_id = resp
             self._stub = None
 
     def __getstate__(self) -> dict:

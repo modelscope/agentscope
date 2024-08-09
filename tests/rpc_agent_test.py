@@ -15,12 +15,13 @@ import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
+from agentscope.server.servicer import TaskResult
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
 from agentscope.message import deserialize, serialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
-from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.rpc import RpcAgentClient, async_func
 from agentscope.agents import RpcAgent
 from agentscope.exception import AgentCallError, QuotaExceededError
 
@@ -181,6 +182,7 @@ class AgentWithCustomFunc(AgentBase):
         **kwargs,
     ) -> None:
         super().__init__(name, **kwargs)
+        self.cnt = 0
         self.judge_func = judge_func
 
     def reply(self, x: Msg = None) -> Msg:
@@ -202,6 +204,17 @@ class AgentWithCustomFunc(AgentBase):
         """A custom function with basic value input output"""
         res = self.judge_func(x)
         return res
+
+    @async_func
+    def custom_async_func(self, num: int) -> int:
+        """A custom function that executes in async"""
+        time.sleep(num)
+        self.cnt += num
+        return self.cnt
+
+    def custom_sync_func(self) -> int:
+        """A custom function that executes in sync"""
+        return self.cnt
 
 
 class BasicRpcAgentTest(unittest.TestCase):
@@ -815,6 +828,7 @@ class BasicRpcAgentTest(unittest.TestCase):
                     "args": (),
                     "kwargs": {"name": "custom"},
                     "class_name": "CustomAgent",
+                    "type": "agent",
                 },
                 agent_id=custom_agent_id,
             ),
@@ -850,3 +864,15 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertFalse(agent.custom_judge_func("diuafhsua$FAIL$"))
         self.assertTrue(agent.custom_judge_func("72354rfv$PASS$"))
         self.assertEqual(r, 1)
+        start_time = time.time()
+        r1 = agent.custom_async_func(1)
+        r2 = agent.custom_async_func(1)
+        r3 = agent.custom_sync_func()
+        end_time = time.time()
+        self.assertTrue(end_time - start_time < 1)
+        self.assertEqual(r3, 0)
+        self.assertTrue(isinstance(r1, TaskResult))
+        self.assertTrue(r1.get() <= 2)
+        self.assertTrue(r2.get() <= 2)
+        r4 = agent.custom_sync_func()
+        self.assertEqual(r4, 2)
