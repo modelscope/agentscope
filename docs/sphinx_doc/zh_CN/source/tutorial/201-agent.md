@@ -36,7 +36,6 @@ class AgentBase(Operator):
             sys_prompt: Optional[str] = None,
             model_config_name: str = None,
             use_memory: bool = True,
-            memory_config: Optional[dict] = None,
     ) -> None:
 
     # ... [code omitted for brevity]

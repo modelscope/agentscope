@@ -7,6 +7,9 @@ import os
 from typing import Optional, Sequence, Union, Generator
 from loguru import logger
 
+from ..message import Msg
+from ..serialize import deserialize
+
 try:
     import dill
     import grpc
@@ -304,7 +307,7 @@ class RpcAgentClient:
                 return False
             return True
 
-    def get_agent_memory(self, agent_id: str) -> Union[list, dict]:
+    def get_agent_memory(self, agent_id: str) -> Union[list[Msg], Msg]:
         """Get the memory usage of the specific agent."""
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
@@ -313,7 +316,7 @@ class RpcAgentClient:
             )
             if not resp.ok:
                 logger.error(f"Error in get_agent_memory: {resp.message}")
-            return json.loads(resp.message)
+            return deserialize(resp.message)
 
     def download_file(self, path: str) -> str:
         """Download a file from a remote server to the local machine.

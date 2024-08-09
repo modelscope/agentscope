@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Unit test for logger chat"""
+import json
 import os
 import shutil
 import time
@@ -29,13 +30,11 @@ class LoggerTest(unittest.TestCase):
         msg1 = Msg("abc", "def", "assistant")
         msg1.id = 1
         msg1.timestamp = 1
-        msg1._colored_name = "1"  # pylint: disable=protected-access
 
         # url
         msg2 = Msg("abc", "def", "assistant", url="https://xxx.png")
         msg2.id = 2
         msg2.timestamp = 2
-        msg2._colored_name = "2"  # pylint: disable=protected-access
 
         # urls
         msg3 = Msg(
@@ -46,13 +45,11 @@ class LoggerTest(unittest.TestCase):
         )
         msg3.id = 3
         msg3.timestamp = 3
-        msg3._colored_name = "3"  # pylint: disable=protected-access
 
         # html labels
         msg4 = Msg("Bob", "<red>abc</div", "system")
         msg4.id = 4
         msg4.timestamp = 4
-        msg4._colored_name = "4"  # pylint: disable=protected-access
 
         logger.chat(msg1)
         logger.chat(msg2)
@@ -69,23 +66,27 @@ class LoggerTest(unittest.TestCase):
         ) as file:
             lines = file.readlines()
 
-        ground_truth = [
-            '{"id": 1, "timestamp": 1, "name": "abc", "content": "def", '
-            '"role": "assistant", "url": null, "metadata": null, '
-            '"_colored_name": "1"}\n',
-            '{"id": 2, "timestamp": 2, "name": "abc", "content": "def", '
-            '"role": "assistant", "url": "https://xxx.png", "metadata": null, '
-            '"_colored_name": "2"}\n',
-            '{"id": 3, "timestamp": 3, "name": "abc", "content": "def", '
-            '"role": "assistant", "url": '
-            '["https://yyy.png", "https://xxx.png"], "metadata": null, '
-            '"_colored_name": "3"}\n',
-            '{"id": 4, "timestamp": 4, "name": "Bob", "content": '
-            '"<red>abc</div", "role": "system", "url": null, "metadata": '
-            'null, "_colored_name": "4"}\n',
-        ]
-
-        self.assertListEqual(lines, ground_truth)
+        for line, ground_truth in zip(
+            lines,
+            [
+                '{"__module__": "agentscope.message.msg", "__name__": '
+                '"Msg", "role": "assistant", "url": null, "metadata": null, '
+                '"timestamp": 1, "id": 1, "content": "def", "name": "abc"}\n',
+                '{"__module__": "agentscope.message.msg", "__name__": '
+                '"Msg", "role": "assistant", "url": "https://xxx.png", '
+                '"metadata": null, "timestamp": 2, "id": 2, "content": "def", '
+                '"name": "abc"}\n',
+                '{"__module__": "agentscope.message.msg", "__name__": "Msg", '
+                '"role": "assistant", "url": ["https://yyy.png", '
+                '"https://xxx.png"], "metadata": null, "timestamp": 3, '
+                '"id": 3, "content": "def", "name": "abc"}\n',
+                '{"__module__": "agentscope.message.msg", "__name__": "Msg", '
+                '"role": "system", "url": null, "metadata": null, '
+                '"timestamp": 4, "id": 4, "content": "<red>abc</div", '
+                '"name": "Bob"}\n',
+            ],
+        ):
+            self.assertDictEqual(json.loads(line), json.loads(ground_truth))
 
     def tearDown(self) -> None:
         """Tear down for LoggerTest."""

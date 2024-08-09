@@ -21,7 +21,6 @@ class TextToImageAgent(AgentBase):
         name: str,
         model_config_name: str,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
     ) -> None:
         """Initialize the text to image agent.
 
@@ -33,15 +32,12 @@ class TextToImageAgent(AgentBase):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
         """
         super().__init__(
             name=name,
             sys_prompt="",
             model_config_name=model_config_name,
             use_memory=use_memory,
-            memory_config=memory_config,
         )
 
         logger.warning(

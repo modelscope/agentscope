@@ -27,7 +27,7 @@ from agentscope.models.openai_model import (
 from agentscope.utils.tools import _download_file
 
 
-from agentscope.message import MessageBase
+from agentscope.message import Msg
 
 
 def _url_to_filename(url: str) -> str:
@@ -420,7 +420,7 @@ def openai_image_to_text(
         model_name=model,
         api_key=api_key,
     )
-    messages = MessageBase(
+    messages = Msg(
         name="service_call",
         role="user",
         content=prompt,
