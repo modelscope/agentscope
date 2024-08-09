@@ -3,6 +3,7 @@
 import json
 from typing import Optional, Sequence, Any, Generator, Union, Tuple
 
+from agentscope.constants import Embedding
 from agentscope.utils.tools import _is_json_serializable
 
 
@@ -16,7 +17,7 @@ class ModelResponse:
     def __init__(
         self,
         text: str = None,
-        embedding: Sequence = None,
+        embedding: Embedding = None,
         image_urls: Sequence[str] = None,
         raw: Any = None,
         parsed: Any = None,
@@ -27,7 +28,7 @@ class ModelResponse:
         Args:
             text (`str`, optional):
                 The text field.
-            embedding (`Sequence`, optional):
+            embedding (`Embedding`, optional):
                 The embedding returned by the model.
             image_urls (`Sequence[str]`, optional):
                 The image URLs returned by the model.

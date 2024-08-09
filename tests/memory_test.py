@@ -71,7 +71,7 @@ class TemporaryMemoryTest(unittest.TestCase):
         # test invalid
         self.memory.delete(index=100)
         mock_logging.assert_called_once_with(
-            "Skip delete operation for the invalid index [100]",
+            "Index 100 out of range, skip delete.",
         )
 
     def test_invalid(self) -> None:
@@ -79,22 +79,24 @@ class TemporaryMemoryTest(unittest.TestCase):
         # test invalid add
         with self.assertRaises(Exception) as context:
             self.memory.add(self.invalid)
-        self.assertTrue(
-            f"Cannot add {self.invalid} to memory" in str(context.exception),
-        )
+            self.assertTrue(
+                f"Invalid messages type {type(self.invalid)}, Msg or "
+                f"list[Msg] is expected" == context.exception,
+            )
 
     def test_load_export(self) -> None:
         """
         Test load and export function of TemporaryMemory
         """
         memory = TemporaryMemory()
-        user_input = Msg(name="user", content="Hello")
+        user_input = Msg(name="user", content="Hello", role="user")
         agent_input = Msg(
             name="agent",
             content="Hello! How can I help you?",
+            role="assistant",
         )
         memory.load([user_input, agent_input])
-        retrieved_mem = memory.export(to_mem=True)
+        retrieved_mem = memory.export()
         self.assertEqual(
             retrieved_mem,
             [user_input, agent_input],
