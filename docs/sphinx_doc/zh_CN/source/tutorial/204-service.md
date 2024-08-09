@@ -28,6 +28,9 @@
 |            | `dblp_search_publications`      | 在dblp数据库里搜索文献。
 |            | `dblp_search_authors`      | 在dblp数据库里搜索作者。                          |
 |            | `dblp_search_venues`      | 在dblp数据库里搜索期刊，会议及研讨会。                   |
+|            | `get_tripadvisor_location_photos`       | 使用 TripAdvisor API 检索特定位置的照片。       |
+|            | `search_tripadvisor`       | 使用 TripAdvisor API 搜索位置。                            |
+|            | `get_tripadvisor_location_details`       | 使用 TripAdvisor API 获取特定位置的详细信息。  |
 | 文件处理       | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                |
 |            | `delete_file`         | 删除由文件路径指定的文件。                           |
 |            | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。                   |
