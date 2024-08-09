@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ _("AgentScope WorkStation Login Page") }}</title>
+    <link href="https://img.alicdn.com/imgextra/i3/O1CN01BP6UV221Lr7crkYBo_!!6000000006969-2-tps-380-372.png"
+          rel="icon"
+          type="image/png">
+    <script src="{{ url_for('static', filename='js_third_party/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/button.js') }}"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="{{ url_for('static', filename='css/login.css') }}"
+          rel="stylesheet"
+          type="text/css"/>
+    <link href="{{ url_for('static', filename='css/workstation.css') }}"
+          rel="stylesheet"
+          type="text/css"/>
+</head>
+<body>
+<div class="login-container">
+    <div class="select-container">
+        <select id="language_switch">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+        </select>
+    </div>
+    <h1>{{ _("Welcome to AgentScope WorkStation") }}</h1>
+
+    <a class="github-button" href="https://github.com/modelscope/agentscope"
+       data-color-scheme="no-preference: light; light: light; dark: dark;"
+       data-icon="octicon-star" data-size="large" data-show-count="true"
+       aria-label="Star modelscope/agentscope on GitHub">Star</a>
+
+    <a class="github-button"
+       href="https://github.com/modelscope/agentscope/fork"
+       data-color-scheme="no-preference: light; light: light; dark: dark;"
+       data-icon="octicon-repo-forked" data-size="large" data-show-count="true"
+       aria-label="Fork modelscope/agentscope on GitHub">Fork</a>
+
+    <a class="github-button"
+       href="https://github.com/modelscope/agentscope/subscription"
+       data-color-scheme="no-preference: light; light: light; dark: dark;"
+       data-icon="octicon-eye" data-size="large" data-show-count="true"
+       aria-label="Watch modelscope/agentscope on GitHub">Watch</a>
+    <br>
+    <br>
+
+    <img class="brand-gif"
+         src="https://gw.alicdn.com/imgextra/i3/O1CN01uioF2Z1tYCsWgR3Cf_!!6000000005913-1-tps-2156-1080.gif"
+         alt="AgentScope Animation">
+    <h4>{{ _("Please log in and star the AgentScope repository") }}.</h4>
+    <div class="terms">
+        {{ _("By logging in, you acknowledge that") }}:
+        <ul>
+            <li>{{ _("This service will star🌟 AgentScope repository on your
+                behalf") }}.
+            </li>
+            <li>{{ _("Your API key will NOT be stored and exposed to the website
+                maintainer") }}.
+            </li>
+            <li>{{ _("No user data (e.g., drawn workflow) within the service
+                will be saved") }}.
+            </li>
+        </ul>
+    </div>
+    <div class="checkbox">
+        <input type="checkbox" id="agreeTerms" onchange="toggleLoginButton()">
+        <label for="agreeTerms">{{ _("I agree to the terms of service") }}</label>
+    </div>
+    <button onclick="redirectToGitHub()" disabled
+            id="loginButton">{{ _("Login with GitHub") }}
+    </button>
+    <br><br>
+
+    <div id="loaderContainer" class="waiting" style="display: none;">
+        <div class="css-spinner"></div>
+        <b>{{ _("Please wait") }}...</b>
+    </div>
+</div>
+
+<div id="surveyModal">
+    <div id="surveyContent">
+        <span id="surveyClose">&times;</span>
+        <h3>{{ _("We want to hear from you") }}</h3>
+        <button id="surveyButton">{{ _("Participation in questionnaire
+            surveys") }}
+        </button>
+    </div>
+</div>
+
+<script>
+    function toggleLoginButton() {
+        const checkBox = document.getElementById('agreeTerms');
+        const loginButton = document.getElementById('loginButton');
+        loginButton.disabled = !checkBox.checked;
+    }
+
+    function showLoader() {
+        document.getElementById('loaderContainer').style.display = 'flex';
+    }
+
+    function hideLoader() {
+        document.getElementById('loaderContainer').style.display = 'none';
+    }
+
+    function redirectToGitHub() {
+        showLoader();
+        setTimeout(() => {
+            const ip = "{{ ip }}";
+            const port = "{{ port }}";
+            const scope = encodeURIComponent("public_repo");
+            let address;
+            if (port) {
+                address = `http://${ip}:${port}/workstation`
+            } else {
+                address = `https://${ip}/oauth/callback`
+            }
+
+            if (ip === "127.0.0.1") {
+                window.location.href = address;
+            } else {
+                const otherRedirectUri =
+                    encodeURIComponent(address);
+                window.location.href = `https://github.com/login/oauth/authorize?client_id={{ client_id }}&redirect_uri=${otherRedirectUri}&scope=${scope}`;
+            }
+        }, 500);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                hideLoader();
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        var currentLang = getCookie('locale') || 'en';
+        $('#language_switch').val(currentLang);
+
+        $('#language_switch').change(function () {
+            var selectedLang = $(this).val();
+            console.log("Attempting to change language to:", selectedLang);
+
+            $.ajax({
+                url: '/set_locale',
+                type: 'GET',
+                data: {'language': selectedLang},
+                success: function (ret) {
+                    console.log("Language changed to:", selectedLang);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to change language:", error);
+                }
+            });
+        });
+
+        function getCookie(name) {
+            var matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+    });
+
+    function showSurveyModal() {
+        document.getElementById("surveyModal").style.display = "block";
+    }
+
+    function hideSurveyModal() {
+        document.getElementById("surveyModal").style.display = "none";
+    }
+
+    document.getElementById('surveyButton').addEventListener('click', function () {
+        window.open('https://survey.aliyun.com/apps/zhiliao/vgpTppn22', '_blank');
+    });
+
+    document.getElementById('surveyClose').addEventListener('click', function () {
+        hideSurveyModal();
+    });
+
+    setTimeout(showSurveyModal, 500);
+</script>
+</body>
+</html>

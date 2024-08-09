@@ -773,10 +773,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
 function setupTextInputListeners(nodeId) {
     const newNode = document.getElementById(`node-${nodeId}`);
     if (newNode) {
-        const stopPropagation = function(event) {
+        const stopPropagation = function (event) {
             event.stopPropagation();
         };
-        newNode.addEventListener('mousedown', function(event) {
+        newNode.addEventListener('mousedown', function (event) {
             const target = event.target;
             if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
                 stopPropagation(event);
@@ -1029,7 +1029,7 @@ function setupNodeListeners(nodeId) {
             function doDragSE(e) {
                 newNode.style.width = 'auto';
 
-                const newWidth = (startWidth + e.clientX - startX) ;
+                const newWidth = (startWidth + e.clientX - startX);
                 if (newWidth > 200) {
                     contentBox.style.width = newWidth + 'px';
                     titleBox.style.width = newWidth + 'px';
@@ -1461,7 +1461,7 @@ function disableButtons() {
 }
 
 
-function showExportPyPopup() {
+function showExportPyPopup(userLogin, tokenQuery) {
     if (checkConditions()) {
         const rawData = editor.export();
 
@@ -1476,7 +1476,7 @@ function showExportPyPopup() {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1488,6 +1488,8 @@ function showExportPyPopup() {
             },
             body: JSON.stringify({
                 data: JSON.stringify(filteredData, null, 4),
+                user_login: userLogin,
+                token_query: tokenQuery,
             })
         }).then(response => {
             if (!response.ok) {
@@ -1512,7 +1514,7 @@ function showExportPyPopup() {
                         showCancelButton: true,
                         confirmButtonText: 'Copy',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1534,7 +1536,7 @@ function showExportPyPopup() {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1551,7 +1553,17 @@ function showExportPyPopup() {
 }
 
 
-function showExportRunPopup() {
+function showExportRunPopup(IP, userLogin, tokenQuery) {
+
+    if ((!userLogin || userLogin.trim() === '') && IP === '') {
+        showExportRunLocalPopup(userLogin, tokenQuery);
+    } else {
+        showExportRunMSPopup(userLogin, tokenQuery);
+    }
+}
+
+
+function showExportRunLocalPopup(userLogin, tokenQuery) {
     if (checkConditions()) {
         const rawData = editor.export();
         const hasError = sortElementsByPosition(rawData);
@@ -1564,7 +1576,7 @@ function showExportRunPopup() {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1576,6 +1588,8 @@ function showExportRunPopup() {
             },
             body: JSON.stringify({
                 data: JSON.stringify(filteredData, null, 4),
+                user_login: userLogin,
+                token_query: tokenQuery,
             })
         }).then(response => {
             if (!response.ok) {
@@ -1600,7 +1614,7 @@ function showExportRunPopup() {
                         showCancelButton: true,
                         confirmButtonText: 'Copy Code',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1622,7 +1636,7 @@ function showExportRunPopup() {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1636,6 +1650,82 @@ function showExportRunPopup() {
                     'There was an error running your workflow.',
                     'error');
             });
+    }
+}
+
+
+function filterOutApiKey(obj) {
+    for (let key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            filterOutApiKey(obj[key]);
+        }
+        if (key === 'api_key') {
+            delete obj[key];
+        }
+    }
+}
+
+
+function showExportRunMSPopup(userLogin, tokenQuery) {
+    if (checkConditions()) {
+        Swal.fire({
+            title: 'Are you sure to run the workflow in ModelScope Studio?',
+            text:
+                "You are about to navigate to another page. " +
+                "Please make sure all the configurations are set " +
+                "besides your api-key " +
+                "(your api-key should be set in ModelScope Studio page).",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, create it!',
+            cancelButtonText: 'Close'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const rawData = editor.export();
+                const hasError = sortElementsByPosition(rawData);
+                if (hasError) {
+                    return;
+                }
+                const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
+                filterOutApiKey(filteredData)
+
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait.',
+                    allowOutsideClick: false,
+                    willOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+                fetch('/upload-to-oss', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: JSON.stringify(filteredData, null, 4),
+                        user_login: userLogin,
+                        token_query: tokenQuery,
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const params = {'CONFIG_URL': data.config_url};
+                        const paramsStr = encodeURIComponent(JSON.stringify(params));
+                        const org = "agentscope";
+                        const fork_repo = "agentscope_workstation";
+                        const url = `https://www.modelscope.cn/studios/fork?target=${org}/${fork_repo}&overwriteEnv=${paramsStr}`;
+                        window.open(url, '_blank');
+                        Swal.fire('Success!', '', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Failed', data.message || 'An error occurred while uploading to oss', 'error');
+                    });
+            }
+        })
     }
 }
 
@@ -1663,7 +1753,7 @@ function showExportHTMLPopup() {
         showCancelButton: true,
         confirmButtonText: 'Copy',
         cancelButtonText: 'Close',
-        onBeforeOpen: (element) => {
+        willOpen: (element) => {
             // Find the code element inside the Swal content
             const codeElement = element.querySelector('code');
 
@@ -1763,6 +1853,166 @@ function showImportHTMLPopup() {
 }
 
 
+function showSaveWorkflowPopup(userLogin, tokenQuery) {
+    Swal.fire({
+        title: 'Save Workflow',
+        input: 'text',
+        inputPlaceholder: 'Enter filename',
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+        cancelButtonText: 'Cancel'
+    }).then(result => {
+        if (result.isConfirmed) {
+            const filename = result.value;
+            saveWorkflow(filename, userLogin, tokenQuery);
+        }
+    });
+}
+
+function saveWorkflow(fileName, userLogin, tokenQuery) {
+    const rawData = editor.export();
+    fetch('/save-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: fileName,
+            workflow: rawData,
+            overwrite: false,
+            user_login: userLogin,
+            token_query: tokenQuery,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.message === "Workflow file saved successfully") {
+                Swal.fire('Success', data.message, 'success');
+            } else {
+                Swal.fire('Error', data.message || 'An error occurred while saving the workflow.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while saving the workflow.', 'error');
+        });
+}
+
+function showLoadWorkflowPopup(userLogin, tokenQuery) {
+    fetch('/list-workflows', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            user_login: userLogin,
+            token_query: tokenQuery,
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!Array.isArray(data.files)) {
+                throw new TypeError('The return data is not an array');
+            }
+            const inputOptions = data.files.reduce((options, file) => {
+                options[file] = file;
+                return options;
+            }, {});
+            Swal.fire({
+                title: 'Loading Workflow from Disks',
+                input: 'select',
+                inputOptions: inputOptions,
+                inputPlaceholder: 'Select',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Load',
+                cancelButtonText: 'Cancel',
+                denyButtonText: 'Delete',
+                didOpen: () => {
+                    const selectElement = Swal.getInput();
+                    selectElement.addEventListener('change', (event) => {
+                        selectedFilename = event.target.value;
+                    });
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    loadWorkflow(selectedFilename, userLogin, tokenQuery);
+                } else if (result.isDenied) {
+                    Swal.fire({
+                        title: `Are you sure to delete ${selectedFilename}?`,
+                        text: "This operation cannot be undone!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    }).then((deleteResult) => {
+                        if (deleteResult.isConfirmed) {
+                            deleteWorkflow(selectedFilename, userLogin, tokenQuery);
+                        }
+                    });
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
+
+
+function loadWorkflow(fileName, userLogin, tokenQuery) {
+    fetch('/load-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: fileName,
+            user_login: userLogin,
+            token_query: tokenQuery,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                editor.import(data);
+                Swal.fire('Success', 'Workflow loaded successfully', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
+
+function deleteWorkflow(fileName, userLogin, tokenQuery) {
+    fetch('/delete-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: fileName,
+            user_login: userLogin,
+            token_query: tokenQuery,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                Swal.fire('Deleted!', 'Workflow has been deleted.', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while deleting the workflow.', 'error');
+        });
+}
+
+
 function removeHtmlFromUsers(data) {
     Object.keys(data.drawflow.Home.data).forEach((nodeId) => {
         const node = data.drawflow.Home.data[nodeId];
@@ -1837,7 +2087,7 @@ function copyToClipboard(contentToCopy) {
 }
 
 
-function fetchExample(index, processData) {
+function fetchExample(index, processData, userLogin, tokenQuery) {
     fetch('/read-examples', {
         method: 'POST',
         headers: {
@@ -1845,7 +2095,9 @@ function fetchExample(index, processData) {
         },
         body: JSON.stringify({
             data: index,
-            lang: getCookie('locale') || 'en'
+            lang: getCookie('locale') || 'en',
+            user_login: userLogin,
+            token_query: tokenQuery,
         })
     }).then(response => {
         if (!response.ok) {
@@ -1857,7 +2109,7 @@ function fetchExample(index, processData) {
 }
 
 
-function importExample(index) {
+function importExample(index, userLogin, tokenQuery) {
     fetchExample(index, data => {
         const dataToImport = data.json;
 
@@ -1877,11 +2129,11 @@ function importExample(index) {
                     }
                 });
             });
-    })
+    }, userLogin, tokenQuery)
 }
 
 
-function importExample_step(index) {
+function importExample_step(index, userLogin, tokenQuery) {
     fetchExample(index, data => {
         const dataToImportStep = data.json;
         addHtmlAndReplacePlaceHolderBeforeImport(dataToImportStep).then(() => {
@@ -1890,7 +2142,7 @@ function importExample_step(index) {
                 "DialogAgent"];
             initializeImport(dataToImportStep);
         })
-    });
+    }, userLogin, tokenQuery);
 }
 
 
