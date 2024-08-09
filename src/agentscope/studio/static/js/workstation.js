@@ -1935,7 +1935,7 @@ function showLoadWorkflowPopup(userLogin, tokenQuery) {
                 }
             }).then(result => {
                 if (result.isConfirmed) {
-                    loadWorkflow(selectedFilename);
+                    loadWorkflow(selectedFilename, userLogin, tokenQuery);
                 } else if (result.isDenied) {
                     Swal.fire({
                         title: `Are you sure to delete ${selectedFilename}?`,
@@ -1948,7 +1948,7 @@ function showLoadWorkflowPopup(userLogin, tokenQuery) {
                         cancelButtonText: 'Cancel'
                     }).then((deleteResult) => {
                         if (deleteResult.isConfirmed) {
-                            deleteWorkflow(selectedFilename);
+                            deleteWorkflow(selectedFilename, userLogin, tokenQuery);
                         }
                     });
                 }
@@ -1987,14 +1987,16 @@ function loadWorkflow(fileName, userLogin, tokenQuery) {
         });
 }
 
-function deleteWorkflow(fileName) {
+function deleteWorkflow(fileName, userLogin, tokenQuery) {
     fetch('/delete-workflow', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            filename: fileName
+            filename: fileName,
+            user_login: userLogin,
+            token_query: tokenQuery,
         })
     }).then(response => response.json())
         .then(data => {
