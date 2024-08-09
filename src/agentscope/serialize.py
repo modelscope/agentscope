@@ -4,20 +4,24 @@ import importlib
 import json
 from typing import Any
 
-from .message import Msg
 
+def _default_serialize(obj: Any) -> Any:
+    """Serialize the object when `json.dumps` cannot handle it."""
+    if hasattr(obj, "__module__") and hasattr(obj, "__class__"):
+        # To avoid circular import, we hard code the module name here
+        if (
+            obj.__module__ == "agentscope.message.msg"
+            and obj.__class__.__name__ == "Msg"
+        ):
+            return obj.serialize()
 
-class _AgentScopeEncoder(json.JSONEncoder):
-    def default(self, o: Any) -> Any:
-        """Serialize the object to a JSON string."""
-        # TODO: The serialization of ResponseStub should be avoided
-        # if isinstance(o, ResponseStub):
-        #     return None
+        if (
+            obj.__module__ == "agentscope.message.placeholder"
+            and obj.__class__.__name__ == "PlaceholderMessage"
+        ):
+            return obj.serialize()
 
-        if isinstance(o, Msg):
-            return o.serialize()
-
-        return super().default(o)
+    return obj
 
 
 def _deserialize_hook(data: dict) -> Any:
@@ -40,7 +44,7 @@ def serialize(obj: Any) -> str:
     For AgentScope, this function supports to serialize `Msg` object for now.
     """
     # TODO: We leave the serialization of agents in next PR
-    return json.dumps(obj, ensure_ascii=False, cls=_AgentScopeEncoder)
+    return json.dumps(obj, ensure_ascii=False, default=_default_serialize)
 
 
 def deserialize(s: str) -> Any:
@@ -50,3 +54,12 @@ def deserialize(s: str) -> Any:
     """
     # TODO: We leave the serialization of agents in next PR
     return json.loads(s, object_hook=_deserialize_hook)
+
+
+def is_serializable(obj: Any) -> bool:
+    """Check if the object is serializable in the scope of AgentScope."""
+    try:
+        serialize(obj)
+        return True
+    except Exception:
+        return False

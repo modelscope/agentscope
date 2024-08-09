@@ -1,180 +1,197 @@
 # -*- coding: utf-8 -*-
+# mypy: disable-error-code="misc"
 """The base class for message unit"""
-
-from typing import Any, Optional, Union, Literal, List
+from typing import (
+    Any,
+    Literal,
+    Union,
+    List,
+    Optional,
+)
 from uuid import uuid4
-import json
 
 from loguru import logger
 
-from ..utils.tools import _get_timestamp, _map_string_to_color_mark
+from ..serialize import is_serializable
+from ..utils.tools import (
+    _map_string_to_color_mark,
+    _get_timestamp,
+)
 
 
-class MessageBase(dict):
-    """Base Message class, which is used to maintain information for dialog,
-    memory and used to construct prompt.
+class Msg:
+    """The message class for AgentScope, which is responsible for storing
+    the information of a message, including
+
+    - id:           the identity of the message
+    - name:         who sends the message
+    - content:      the message content
+    - role:         the sender role chosen from 'system', 'user', 'assistant'
+    - url:          the url
+    - metadata:     some additional information
+    - timestamp:    when the message is created
     """
 
-    def __init__(
-        self,
-        name: str,
-        content: Any,
-        role: Literal["user", "system", "assistant"] = "assistant",
-        url: Optional[Union[List[str], str]] = None,
-        timestamp: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Initialize the message object
-
-        Args:
-            name (`str`):
-                The name of who send the message. It's often used in
-                role-playing scenario to tell the name of the sender.
-            content (`Any`):
-                The content of the message.
-            role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
-                The role of who send the message. It can be one of the
-                `"system"`, `"user"`, or `"assistant"`. Default to
-                `"assistant"`.
-            url (`Optional[Union[List[str], str]]`, defaults to None):
-                A url to file, image, video, audio or website.
-            timestamp (`Optional[str]`, defaults to None):
-                The timestamp of the message, if None, it will be set to
-                current time.
-            **kwargs (`Any`):
-                Other attributes of the message.
-        """  # noqa
-        # id and timestamp will be added to the object as its attributes
-        # rather than items in dict
-        self.id = uuid4().hex
-        if timestamp is None:
-            self.timestamp = _get_timestamp()
-        else:
-            self.timestamp = timestamp
-
-        self.name = name
-        self.content = content
-        self.role = role
-
-        self.url = url
-
-        self.update(kwargs)
-
-    def __getattr__(self, key: Any) -> Any:
-        try:
-            return self[key]
-        except KeyError as e:
-            raise AttributeError(f"no attribute '{key}'") from e
-
-    def __setattr__(self, key: Any, value: Any) -> None:
-        self[key] = value
-
-    def __delattr__(self, key: Any) -> None:
-        try:
-            del self[key]
-        except KeyError as e:
-            raise AttributeError(f"no attribute '{key}'") from e
-
-    def serialize(self) -> str:
-        """Return the serialized message."""
-        raise NotImplementedError
-
-
-class Msg(MessageBase):
-    """The Message class."""
-
-    id: str
-    """The id of the message."""
-
-    name: str
-    """The name of who send the message."""
-
-    content: Any
-    """The content of the message."""
-
-    role: Literal["system", "user", "assistant"]
-    """The role of the message sender."""
-
-    metadata: Optional[dict]
-    """Save the information for application's control flow, or other
-    purposes."""
-
-    url: Optional[Union[List[str], str]]
-    """A url to file, image, video, audio or website."""
-
-    timestamp: str
-    """The timestamp of the message."""
-
-    __serialized_attrs = {
+    __serialized_attrs: set = {
         "id",
         "name",
         "content",
         "role",
-        "metadata",
         "url",
+        "metadata",
         "timestamp",
     }
+    """The attributes that need to be serialized and deserialized."""
 
     def __init__(
         self,
         name: str,
         content: Any,
-        role: Literal["system", "user", "assistant"] = None,
-        url: Optional[Union[List[str], str]] = None,
-        timestamp: Optional[str] = None,
-        echo: bool = False,
+        role: Union[str, Literal["system", "user", "assistant"]],
+        url: Optional[Union[str, List[str]]] = None,
         metadata: Optional[Union[dict, str]] = None,
+        echo: bool = False,
         **kwargs: Any,
     ) -> None:
-        """Initialize the message object
+        """Initialize the message object.
+
+        There are two ways to initialize a message object:
+        - Providing `name`, `content`, `role`, `url`(Optional),
+          `metadata`(Optional) to initialize a normal message object.
+        - Providing `host`, `port`, `task_id` to initialize a placeholder.
+
+        Normally, users only need to create a normal message object by
+        providing `name`, `content`, `role`, `url`(Optional) and `metadata`
+        (Optional).
+
+        The initialization of message has a high priority, which means that
+        when `name`, `content`, `role`, `host`, `port`, `task_id` are all
+        provided, the message will be initialized as a normal message object
+        rather than a placeholder.
 
         Args:
             name (`str`):
-                The name of who send the message.
+                The name of who generates the message.
             content (`Any`):
                 The content of the message.
-            role (`Literal["system", "user", "assistant"]`):
-                Used to identify the source of the message, e.g. the system
-                information, the user input, or the model response. This
-                argument is used to accommodate most Chat API formats.
-            url (`Optional[Union[List[str], str]]`, defaults to `None`):
-                A url to file, image, video, audio or website.
-            timestamp (`Optional[str]`, defaults to `None`):
-                The timestamp of the message, if None, it will be set to
-                current time.
-            echo (`bool`, defaults to `False`):
-                Whether to print the message to the console.
+            role (`Union[str, Literal["system", "user", "assistant"]]`):
+                The role of the message sender.
+            url (`Optional[Union[str, List[str]]`, defaults to `None`):
+                The url of the message.
             metadata (`Optional[Union[dict, str]]`, defaults to `None`):
-                Save the information for application's control flow, or other
-                purposes.
-            **kwargs (`Any`):
-                Other attributes of the message.
+                The additional information stored in the message.
+            echo (`bool`, defaults to `False`):
+                Whether to print the message when initializing the message obj.
         """
 
-        if role is None:
-            logger.warning(
-                "A new field `role` is newly added to the message. "
-                "Please specify the role of the message. Currently we use "
-                'a default "assistant" value.',
-            )
+        self.id = uuid4().hex
+        self.name = name
+        self.content = content
+        self.role = role
+        self.url = url
+        self.metadata = metadata
+        self.timestamp = _get_timestamp()
 
-        super().__init__(
-            name=name,
-            content=content,
-            role=role or "assistant",
-            url=url,
-            timestamp=timestamp,
-            metadata=metadata,
-            **kwargs,
-        )
+        if kwargs:
+            logger.warning(
+                f"In current version, the message class in AgentScope does not"
+                f" inherit the dict class. "
+                f"The input arguments {kwargs} are not used.",
+            )
 
         if echo:
             logger.chat(self)
 
     @property
+    def id(self) -> str:
+        """The identity of the message."""
+        return self._id
+
+    @property
+    def name(self) -> str:
+        """The name of the message sender."""
+        return self._name
+
+    @property
     def _colored_name(self) -> str:
+        """The name around with color marks, used to print in the terminal."""
         m1, m2 = _map_string_to_color_mark(self.name)
         return f"{m1}{self.name}{m2}"
+
+    @property
+    def content(self) -> Any:
+        """The content of the message."""
+        return self._content
+
+    @property
+    def role(self) -> Literal["system", "user", "assistant"]:
+        """The role of the message sender, chosen from 'system', 'user',
+        'assistant'."""
+        return self._role
+
+    @property
+    def url(self) -> Optional[Union[str, List[str]]]:
+        """A URL string or a list of URL strings."""
+        return self._url
+
+    @property
+    def metadata(self) -> Optional[Union[dict, str]]:
+        """The metadata of the message, which can store some additional
+        information."""
+        return self._metadata
+
+    @property
+    def timestamp(self) -> str:
+        """The timestamp when the message is created."""
+        return self._timestamp
+
+    @id.setter  # type: ignore[no-redef]
+    def id(self, value: str) -> None:
+        """Set the identity of the message."""
+        self._id = value
+
+    @name.setter  # type: ignore[no-redef]
+    def name(self, value: str) -> None:
+        """Set the name of the message sender."""
+        self._name = value
+
+    @content.setter  # type: ignore[no-redef]
+    def content(self, value: Any) -> None:
+        """Set the content of the message."""
+        if not is_serializable(value):
+            logger.warning(
+                f"The content of {type(value)} is not serializable, which "
+                f"may cause problems.",
+            )
+        self._content = value
+
+    @role.setter  # type: ignore[no-redef]
+    def role(self, value: Literal["system", "user", "assistant"]) -> None:
+        """Set the role of the message sender. The role must be one of
+        'system', 'user', 'assistant'."""
+        if value not in ["system", "user", "assistant"]:
+            raise ValueError(
+                f"Invalid role {value}. The role must be one of "
+                f"['system', 'user', 'assistant']",
+            )
+        self._role = value
+
+    @url.setter  # type: ignore[no-redef]
+    def url(self, value: Union[str, List[str], None]) -> None:
+        """Set the url of the message. The url can be a URL string or a list of
+        URL strings."""
+        self._url = value
+
+    @metadata.setter  # type: ignore[no-redef]
+    def metadata(self, value: Union[dict, str, None]) -> None:
+        """Set the metadata of the message to store some additional
+        information."""
+        self._metadata = value
+
+    @timestamp.setter  # type: ignore[no-redef]
+    def timestamp(self, value: str) -> None:
+        """Set the timestamp of the message."""
+        self._timestamp = value
 
     def formatted_str(self, colored: bool = False) -> str:
         """Return the formatted string of the message. If the message has an
@@ -183,6 +200,9 @@ class Msg(MessageBase):
         Args:
             colored (`bool`, defaults to `False`):
                 Whether to color the name of the message
+
+        Returns:
+            `str`: The formatted string of the message.
         """
         if colored:
             name = self._colored_name
@@ -198,16 +218,21 @@ class Msg(MessageBase):
                 colored_strs.append(f"{name}: {self.url}")
         return "\n".join(colored_strs)
 
-    def serialize(self) -> str:
+    def serialize(self) -> dict:
+        """Return the serialized message.
+
+        Returns:
+            `dict`: The serialized dictionary.
+        """
         serialized_dict = {
             "__module__": self.__class__.__module__,
             "__name__": self.__class__.__name__,
         }
 
         for attr_name in self.__serialized_attrs:
-            serialized_dict[attr_name] = getattr(self, attr_name)
+            serialized_dict[attr_name] = getattr(self, f"_{attr_name}")
 
-        return json.dumps(serialized_dict, ensure_ascii=False)
+        return serialized_dict
 
     @classmethod
     def from_dict(cls, serialized_dict: dict) -> "Msg":
@@ -242,8 +267,9 @@ class Msg(MessageBase):
             content=serialized_dict["content"],
             role=serialized_dict["role"],
             url=serialized_dict["url"],
-            timestamp=serialized_dict["timestamp"],
-            verbose=False,
+            metadata=serialized_dict["metadata"],
+            echo=False,
         )
         obj.id = serialized_dict["id"]
+        obj.timestamp = serialized_dict["timestamp"]
         return obj

@@ -272,7 +272,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             f'"reply" function.',
         )
 
-    def __call__(self, *args: Any, **kwargs: Any) -> dict:
+    def __call__(self, *args: Any, **kwargs: Any) -> Msg:
         """Calling the reply function, and broadcast the generated
         response to all audiences if needed."""
         res = self.reply(*args, **kwargs)

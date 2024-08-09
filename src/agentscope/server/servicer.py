@@ -31,14 +31,14 @@ except ImportError as import_error:
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-from agentscope.serialize import deserialize
+from agentscope.serialize import deserialize, serialize
 from agentscope.agents.agent import AgentBase
 from agentscope.manager import ModelManager
 from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.message import PlaceholderMessage
+from agentscope.message import Msg, PlaceholderMessage
 
 
 def _register_server_to_studio(
@@ -340,7 +340,7 @@ class AgentServerServicer(RpcAgentServicer):
         else:
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=result.serialize(),
+                message=serialize(result),
             )
 
     def get_agent_list(
@@ -355,7 +355,8 @@ class AgentServerServicer(RpcAgentServicer):
                 summaries.append(str(agent))
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=json.dumps(summaries),
+                # TODO: unified into serialize function to avoid error.
+                message=serialize(summaries),
             )
 
     def get_server_info(
@@ -370,7 +371,7 @@ class AgentServerServicer(RpcAgentServicer):
         process = psutil.Process(self.pid)
         status["cpu"] = process.cpu_percent(interval=1)
         status["mem"] = process.memory_info().rss / (1024**2)
-        return agent_pb2.GeneralResponse(ok=True, message=json.dumps(status))
+        return agent_pb2.GeneralResponse(ok=True, message=serialize(status))
 
     def set_model_configs(
         self,
@@ -408,7 +409,7 @@ class AgentServerServicer(RpcAgentServicer):
             )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=json.dumps(agent.memory.get_memory()),
+            message=serialize(agent.memory.get_memory()),
         )
 
     def download_file(
@@ -471,9 +472,13 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: Empty RpcMsg.
         """
         msgs = deserialize(request.value)
-        for msg in msgs:
-            if isinstance(msg, PlaceholderMessage):
-                msg.update_value()
+        if isinstance(msgs, list):
+            for msg in msgs:
+                if isinstance(msg, PlaceholderMessage):
+                    msg.update_value()
+        elif isinstance(msgs, PlaceholderMessage):
+            msgs.update_value()
+
         self.agent_pool[request.agent_id].observe(msgs)
         return agent_pb2.GeneralResponse(ok=True)
 
@@ -481,14 +486,14 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         task_id: int,
         agent_id: str,
-        task_msg: dict = None,
+        task_msg: Msg = None,
     ) -> None:
         """Processing an input message and generate its reply message.
 
         Args:
-            task_id (`int`): task id of the input message, .
+            task_id (`int`): task id of the input message.
             agent_id (`str`): the id of the agent that accepted the message.
-            task_msg (`dict`): the input message.
+            task_msg (`Msg`): the input message.
         """
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()

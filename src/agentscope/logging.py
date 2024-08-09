@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Logging utilities."""
-import json
 import os
 import sys
 from typing import Optional, Literal, Any
@@ -8,6 +7,7 @@ from typing import Optional, Literal, Any
 from loguru import logger
 
 from agentscope.message import Msg
+from agentscope.serialize import serialize
 from agentscope.studio._client import _studio_client
 from agentscope.web.gradio.utils import (
     generate_image_from_name,
@@ -95,7 +95,7 @@ def _save_msg(msg: Msg) -> None:
 
     logger.log(
         LEVEL_SAVE_MSG,
-        json.dumps(msg, ensure_ascii=False, default=lambda _: None),
+        serialize(msg),
     )
 
 

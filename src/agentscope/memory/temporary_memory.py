@@ -17,11 +17,8 @@ from ..manager import ModelManager
 from ..serialize import serialize, deserialize
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
-from ..message import (
-    MessageBase,
-    Msg,
-    PlaceholderMessage,
-)
+from ..message import Msg
+from ..message import PlaceholderMessage
 
 
 class TemporaryMemory(MemoryBase):
@@ -60,7 +57,6 @@ class TemporaryMemory(MemoryBase):
         memories: Union[Sequence[Msg], Msg, None],
         embed: bool = False,
     ) -> None:
-        # pylint: disable=too-many-branches
         """
         Adding new memory fragment, depending on how the memory are stored
         Args:
@@ -77,29 +73,25 @@ class TemporaryMemory(MemoryBase):
         else:
             record_memories = memories
 
-        # if memory doesn't have id attribute, we skip the checking
+        # Assert the message types
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
-            if not issubclass(type(memory_unit), MessageBase):
-                try:
-                    memory_unit = Msg(**memory_unit)
-                except Exception as exc:
-                    raise ValueError(
-                        f"Cannot add {memory_unit} to memory, "
-                        f"must be with subclass of MessageBase",
-                    ) from exc
-
             # in case this is a PlaceholderMessage, try to update
             # the values first
+            # TODO: Unify PlaceholderMessage and Msg into one class to avoid
+            #  type error
             if isinstance(memory_unit, PlaceholderMessage):
                 memory_unit.update_value()
-                memory_unit = Msg(**memory_unit)
+                memory_unit = Msg.from_dict(memory_unit.serialize())
 
-            # add to memory if it's new
-            if (
-                not hasattr(memory_unit, "id")
-                or memory_unit.id not in memories_idx
-            ):
+            if not isinstance(memory_unit, Msg):
+                raise ValueError(
+                    f"Cannot add {type(memory_unit)} to memory, "
+                    f"must be a Msg object.",
+                )
+
+            # Add to memory if it's new
+            if memory_unit.id not in memories_idx:
                 if embed:
                     if self.embedding_model:
                         # TODO: embed only content or its string representation

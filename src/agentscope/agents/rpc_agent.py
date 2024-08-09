@@ -3,10 +3,8 @@
 from typing import Type, Optional, Union, Sequence
 
 from agentscope.agents.agent import AgentBase
-from agentscope.message import (
-    PlaceholderMessage,
-    Msg,
-)
+from agentscope.message import Msg
+from agentscope.message import PlaceholderMessage
 from agentscope.rpc import RpcAgentClient
 from agentscope.serialize import serialize
 from agentscope.server.launcher import RpcAgentServerLauncher
@@ -112,8 +110,6 @@ class RpcAgent(AgentBase):
         if self.client is None:
             self._launch_server()
         return PlaceholderMessage(
-            name=self.name,
-            content=None,
             client=self.client,
             x=x,
         )
