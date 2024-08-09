@@ -53,7 +53,7 @@ if __name__ == "__main__":
             model_config_name="my_model",
         )
         if args.use_dist:
-            answerer = answerer.to_dist(lazy_launch=False)
+            answerer = answerer.to_dist()
         answerers.append(answerer)
 
     user_agent = UserAgent()

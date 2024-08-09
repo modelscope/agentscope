@@ -31,17 +31,36 @@ except ImportError as import_error:
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-from agentscope.agents.agent import AgentBase
 from agentscope.manager import ModelManager
 from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
+from agentscope.rpc.rpc_agent_client import RpcAgentClient
 from agentscope.message import (
-    Msg,
     PlaceholderMessage,
     deserialize,
+    serialize,
 )
+
+
+class TaskResult:
+    """Use this class to get the the result from rpc server."""
+
+    # TODO: merge into placeholder
+
+    def __init__(self, host: str, port: int, task_id: int) -> None:
+        self.host = host
+        self.port = port
+        self.task_id = task_id
+
+    def get(self) -> Any:
+        """Get the value"""
+        return deserialize(
+            RpcAgentClient(self.host, self.port).update_placeholder(
+                self.task_id,
+            ),
+        )
 
 
 def _register_server_to_studio(
@@ -132,7 +151,7 @@ class AgentServerServicer(RpcAgentServicer):
         self.task_id_lock = threading.Lock()
         self.agent_id_lock = threading.Lock()
         self.task_id_counter = 0
-        self.agent_pool: dict[str, AgentBase] = {}
+        self.agent_pool: dict[str, Any] = {}
         self.pid = os.getpid()
         self.stop_event = stop_event
 
@@ -154,14 +173,14 @@ class AgentServerServicer(RpcAgentServicer):
         """
         return agent_id in self.agent_pool
 
-    def get_agent(self, agent_id: str) -> AgentBase:
-        """Get the agent by agent id.
+    def get_agent(self, agent_id: str) -> Any:
+        """Get the object by agent id.
 
         Args:
             agent_id (`str`): the agent id.
 
         Returns:
-            AgentBase: the agent.
+            Any: the object.
         """
         with self.agent_id_lock:
             return self.agent_pool.get(agent_id, None)
@@ -204,13 +223,21 @@ class AgentServerServicer(RpcAgentServicer):
                     f"Load class [{cls_name}] from uploaded source code.",
                 )
             else:
+                type_name = agent_configs["type"]
                 cls_name = agent_configs["class_name"]
                 try:
-                    cls = AgentBase.get_agent_class(cls_name)
+                    if type_name == "agent":
+                        from agentscope.agents.agent import AgentBase
+
+                        cls = AgentBase.get_agent_class(cls_name)
+                    elif type_name == "env":
+                        from agentscope.environment import Env
+
+                        cls = Env.get_env_class(cls_name)
+                    else:
+                        raise ValueError("Unknown type: {type_name}")
                 except ValueError as e:
-                    err_msg = (
-                        f"Agent class [{cls_name}] not found: {str(e)}",
-                    )
+                    err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
                     logger.error(err_msg)
                     return agent_pb2.GeneralResponse(ok=False, message=err_msg)
             try:
@@ -318,12 +345,58 @@ class AgentServerServicer(RpcAgentServicer):
         if hasattr(self, request.target_func):
             return getattr(self, request.target_func)(request)
         else:
-            # TODO: support other user defined method
-            logger.error(f"Unsupported method {request.target_func}")
-            return context.abort(
-                grpc.StatusCode.INVALID_ARGUMENT,
-                f"Unsupported method {request.target_func}",
+            return self.call_custom_func(
+                request.agent_id,
+                request.target_func,
+                request.value,
             )
+
+    def call_custom_func(
+        self,
+        agent_id: str,
+        func_name: str,
+        raw_value: str,
+    ) -> agent_pb2.GeneralResponse:
+        """Call a custom function"""
+        agent = self.get_agent(agent_id)
+        if not agent:
+            return agent_pb2.GeneralResponse(
+                success=False,
+                message=f"Agent [{agent_id}] not exists.",
+            )
+        func = getattr(agent, func_name)
+        if (
+            hasattr(func, "_is_async")
+            and func._is_async  # pylint: disable=W0212
+        ):  # pylint: disable=W0212
+            task_id = self.get_task_id()
+            self.result_pool[task_id] = threading.Condition()
+            self.executor.submit(
+                self._process_messages,
+                task_id,
+                agent_id,
+                func_name,
+                raw_value,
+            )
+            return agent_pb2.GeneralResponse(
+                ok=True,
+                message=serialize(
+                    TaskResult(
+                        host=self.host,
+                        port=self.port,
+                        task_id=task_id,
+                    ),
+                ),
+            )
+        args = deserialize(raw_value)
+        res = getattr(agent, func_name)(
+            *args.get("args", ()),
+            **args.get("kwargs", {}),
+        )
+        return agent_pb2.GeneralResponse(
+            ok=True,
+            message=serialize(res),
+        )
 
     def update_placeholder(
         self,
@@ -347,7 +420,7 @@ class AgentServerServicer(RpcAgentServicer):
         else:
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=result.serialize(),
+                message=serialize(result),
             )
 
     def get_agent_list(
@@ -451,25 +524,20 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: A serialized Msg instance with attributes name, host,
             port and task_id
         """
-        if request.value:
-            msg = deserialize(request.value)
-        else:
-            msg = None
         task_id = self.get_task_id()
         self.result_pool[task_id] = threading.Condition()
         self.executor.submit(
             self._process_messages,
             task_id,
             request.agent_id,
-            msg,  # type: ignore[arg-type]
+            "reply",
+            request.value,
         )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=Msg(  # type: ignore[arg-type]
-                name=self.get_agent(request.agent_id).name,
-                content=None,
-                task_id=task_id,
-            ).serialize(),
+            message=serialize(
+                task_id,
+            ),
         )
 
     def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
@@ -483,6 +551,8 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: Empty RpcMsg.
         """
         msgs = deserialize(request.value)
+        if not isinstance(msgs, list):
+            msgs = [msgs]
         for msg in msgs:
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
@@ -493,21 +563,33 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         task_id: int,
         agent_id: str,
-        task_msg: dict = None,
+        target_func: str,
+        raw_msg: str,
     ) -> None:
         """Processing an input message and generate its reply message.
 
         Args:
             task_id (`int`): task id of the input message, .
             agent_id (`str`): the id of the agent that accepted the message.
-            task_msg (`dict`): the input message.
+            target_func (`str`): the name of the function that will be called.
+            raw_msg (`str`): the input serialized message.
         """
-        if isinstance(task_msg, PlaceholderMessage):
-            task_msg.update_value()
+        if raw_msg is not None:
+            msg = deserialize(raw_msg)
+        else:
+            msg = None
         cond = self.result_pool[task_id]
         agent = self.get_agent(agent_id)
+        if isinstance(msg, PlaceholderMessage):
+            msg.update_value()
         try:
-            result = agent.reply(task_msg)
+            if target_func == "reply":
+                result = getattr(agent, target_func)(msg)
+            else:
+                result = getattr(agent, target_func)(
+                    *msg.get("args", ()),
+                    **msg.get("kwargs", {}),
+                )
             self.result_pool[task_id] = result
         except Exception:
             error_msg = traceback.format_exc()

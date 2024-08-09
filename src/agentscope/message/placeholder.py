@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """The placeholder message for RpcAgent."""
-import json
-from typing import Any, Optional, List, Union, Sequence
+import pickle
+from typing import Any, Optional, List, Union
+from base64 import b64encode, b64decode
 
 from loguru import logger
 
 from .msg import Msg, MessageBase
-from ..rpc import RpcAgentClient, ResponseStub, call_in_thread
+from ..rpc.rpc_agent_client import RpcAgentClient, ResponseStub
 from ..utils.tools import is_web_accessible
 
 
@@ -37,8 +38,7 @@ class PlaceholderMessage(Msg):
         host: str = None,
         port: int = None,
         task_id: int = None,
-        client: Optional[RpcAgentClient] = None,
-        x: dict = None,
+        stub: ResponseStub = None,
         **kwargs: Any,
     ) -> None:
         """A placeholder message, records the address of the real message.
@@ -67,11 +67,8 @@ class PlaceholderMessage(Msg):
                 The port of the rpc server where the real message is located.
             task_id (`int`, defaults to `None`):
                 The task id of the real message in the rpc server.
-            client (`RpcAgentClient`, defaults to `None`):
-                An RpcAgentClient instance used to connect to the generator of
-                this placeholder.
-            x (`dict`, defaults to `None`):
-                Input parameters used to call rpc methods on the client.
+            stub (`ResponseStub`, defaults to `None`):
+                A ResponseStub instance used to get the task_id.
         """  # noqa
         super().__init__(
             name=name,
@@ -82,19 +79,13 @@ class PlaceholderMessage(Msg):
         )
         # placeholder indicates whether the real message is still in rpc server
         self._is_placeholder = True
-        if client is None:
+        self._host: str = host
+        self._port: int = port
+        if stub is None:
             self._stub: ResponseStub = None
-            self._host: str = host
-            self._port: int = port
             self._task_id: int = task_id
         else:
-            self._stub = call_in_thread(
-                client,
-                x.serialize() if x is not None else "",
-                "_reply",
-            )
-            self._host = client.host
-            self._port = client.port
+            self._stub = stub
             self._task_id = None
 
     def __is_local(self, key: Any) -> bool:
@@ -169,55 +160,36 @@ class PlaceholderMessage(Msg):
                 raise ValueError(
                     f"Failed to get task_id: {self._stub.get_response()}",
                 ) from e
-            self._task_id = resp["task_id"]  # type: ignore[call-overload]
+            self._task_id = resp
             self._stub = None
 
-    def serialize(self) -> str:
+    def __getstate__(self) -> dict:
         if self._is_placeholder:
             self.__update_task_id()
-            return json.dumps(
-                {
-                    "__type": "PlaceholderMessage",
-                    "name": self.name,
-                    "content": None,
-                    "timestamp": self.timestamp,
-                    "host": self._host,
-                    "port": self._port,
-                    "task_id": self._task_id,
-                },
-            )
-        else:
-            states = {
-                k: v
-                for k, v in self.items()
-                if k not in PlaceholderMessage.PLACEHOLDER_ATTRS
+            return {
+                "name": self.name,
+                "content": None,
+                "timestamp": self.timestamp,
+                "host": self._host,
+                "port": self._port,
+                "task_id": self._task_id,
             }
-            states["__type"] = "Msg"
-            return json.dumps(states)
+        else:
+            return self.__dict__
+
+    def __setstate__(self, state: dict) -> None:
+        self.update(state)
 
 
-_MSGS = {
-    "Msg": Msg,
-    "PlaceholderMessage": PlaceholderMessage,
-}
+def deserialize(s: str) -> Any:
+    """Deserialize string into any object"""
+    if len(s) == 0:
+        return None
+    return pickle.loads(b64decode(s.encode("utf-8")))
 
 
-def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
-    """Deserialize json string into MessageBase"""
-    js_msg = json.loads(s)
-    msg_type = js_msg.pop("__type")
-    if msg_type == "List":
-        return [deserialize(s) for s in js_msg["__value"]]
-    elif msg_type not in _MSGS:
-        raise NotImplementedError(
-            f"Deserialization of {msg_type} is not supported.",
-        )
-    return _MSGS[msg_type](**js_msg)
-
-
-def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
-    """Serialize multiple MessageBase instance"""
-    if isinstance(messages, MessageBase):
-        return messages.serialize()
-    seq = [msg.serialize() for msg in messages]
-    return json.dumps({"__type": "List", "__value": seq})
+def serialize(obj: Any) -> str:
+    """Serialize any object into string"""
+    if obj is None:
+        return ""
+    return b64encode(pickle.dumps(obj)).decode("utf-8")

@@ -6,7 +6,7 @@ import unittest
 import os
 import time
 import shutil
-from typing import Optional, Union, Sequence
+from typing import Optional, Union, Sequence, Callable
 from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
@@ -15,12 +15,13 @@ import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
+from agentscope.server.servicer import TaskResult
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize
+from agentscope.message import deserialize, serialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
-from agentscope.rpc.rpc_agent_client import RpcAgentClient
+from agentscope.rpc import RpcAgentClient, async_func
 from agentscope.agents import RpcAgent
 from agentscope.exception import AgentCallError, QuotaExceededError
 
@@ -171,6 +172,51 @@ class FileAgent(AgentBase):
         )
 
 
+class AgentWithCustomFunc(AgentBase):
+    """An agent with custom function"""
+
+    def __init__(  # type: ignore[no-untyped-def]
+        self,
+        name: str,
+        judge_func: Callable[[str], bool],
+        **kwargs,
+    ) -> None:
+        super().__init__(name, **kwargs)
+        self.cnt = 0
+        self.judge_func = judge_func
+
+    def reply(self, x: Msg = None) -> Msg:
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content="Hello",
+        )
+
+    def custom_func_with_msg(self, x: Msg = None) -> Msg:
+        """A custom function with Msg input output"""
+        return x
+
+    def custom_func_with_basic(self, num: int) -> int:
+        """A custom function with basic value input output"""
+        return num
+
+    def custom_judge_func(self, x: str) -> bool:
+        """A custom function with basic value input output"""
+        res = self.judge_func(x)
+        return res
+
+    @async_func
+    def custom_async_func(self, num: int) -> int:
+        """A custom function that executes in async"""
+        time.sleep(num)
+        self.cnt += num
+        return self.cnt
+
+    def custom_sync_func(self) -> int:
+        """A custom function that executes in sync"""
+        return self.cnt
+
+
 class BasicRpcAgentTest(unittest.TestCase):
     """Test cases for Rpc Agent"""
 
@@ -205,7 +251,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
         self.assertEqual(result["name"], "a")
-        js_placeholder_result = result.serialize()
+        js_placeholder_result = serialize(result)
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
@@ -230,7 +276,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         self.assertEqual(placeholder_result.id, 0)
         # check msg
-        js_msg_result = result.serialize()
+        js_msg_result = serialize(result)
         msg_result = deserialize(js_msg_result)
         self.assertTrue(isinstance(msg_result, Msg))
         self.assertEqual(msg_result.content, msg.content)
@@ -241,14 +287,18 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
+        from agentscope.utils.tools import find_available_port
+
+        port = find_available_port()
         launcher = RpcAgentServerLauncher(
             # choose port automatically
             host="127.0.0.1",
-            port=12010,
+            port=port,
             local_mode=False,
             custom_agent_classes=[DemoRpcAgent],
         )
         launcher.launch()
+        self.assertEqual(port, launcher.port)
         client = RpcAgentClient(host=launcher.host, port=launcher.port)
         self.assertTrue(client.is_alive())  # pylint: disable=W0212
         agent_a = DemoRpcAgent(
@@ -420,7 +470,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
         )
         self.assertEqual(oid, agent1.agent_id)
-        self.assertEqual(oid, agent1.client.agent_id)
         agent2 = DemoRpcAgentWithMemory(  # pylint: disable=E1123
             name="a",
             to_dist={
@@ -437,7 +486,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             port=launcher.port,
         )
         agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
-        agent3.client.agent_id = agent1.client.agent_id
         msg1 = Msg(
             name="System",
             content="First Msg for agent1",
@@ -497,17 +545,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test the clone_instances method of RpcAgent"""
         agent = DemoRpcAgentWithMemory(
             name="a",
-        ).to_dist(lazy_launch=True)
-        # lazy launch will not init client
-        self.assertIsNone(agent.client)
+        ).to_dist()
         # generate two agents (the first is it self)
         agents = agent.clone_instances(2)
         self.assertEqual(len(agents), 2)
         agent1 = agents[0]
         agent2 = agents[1]
         self.assertNotEqual(agent1.agent_id, agent2.agent_id)
-        self.assertEqual(agent1.agent_id, agent1.client.agent_id)
-        self.assertEqual(agent2.agent_id, agent2.client.agent_id)
         # clone instance will init client
         self.assertIsNotNone(agent.client)
         self.assertEqual(agent.agent_id, agent1.agent_id)
@@ -784,6 +828,7 @@ class BasicRpcAgentTest(unittest.TestCase):
                     "args": (),
                     "kwargs": {"name": "custom"},
                     "class_name": "CustomAgent",
+                    "type": "agent",
                 },
                 agent_id=custom_agent_id,
             ),
@@ -802,3 +847,32 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(len(al), 3)
 
         launcher.shutdown()
+
+    def test_custom_agent_func(self) -> None:
+        """Test custom agent funcs"""
+        agent = AgentWithCustomFunc(
+            name="custom",
+            judge_func=lambda x: "$PASS$" in x,
+            to_dist=True,
+        )
+
+        msg = agent.reply()
+        self.assertEqual(msg.content, "Hello")
+        r = agent.custom_func_with_msg(msg)
+        self.assertEqual(r["content"], msg.content)
+        r = agent.custom_func_with_basic(1)
+        self.assertFalse(agent.custom_judge_func("diuafhsua$FAIL$"))
+        self.assertTrue(agent.custom_judge_func("72354rfv$PASS$"))
+        self.assertEqual(r, 1)
+        start_time = time.time()
+        r1 = agent.custom_async_func(1)
+        r2 = agent.custom_async_func(1)
+        r3 = agent.custom_sync_func()
+        end_time = time.time()
+        self.assertTrue(end_time - start_time < 1)
+        self.assertEqual(r3, 0)
+        self.assertTrue(isinstance(r1, TaskResult))
+        self.assertTrue(r1.get() <= 2)
+        self.assertTrue(r2.get() <= 2)
+        r4 = agent.custom_sync_func()
+        self.assertEqual(r4, 2)

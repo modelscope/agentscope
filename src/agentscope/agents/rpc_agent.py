@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Base class for Rpc Agent """
 from typing import Type, Optional, Union, Sequence
+from functools import partial
+from loguru import logger
 
 from agentscope.agents.agent import AgentBase
 from agentscope.message import (
@@ -8,12 +10,11 @@ from agentscope.message import (
     serialize,
     Msg,
 )
-from agentscope.rpc import RpcAgentClient
-from agentscope.server.launcher import RpcAgentServerLauncher
-from agentscope.studio._client import _studio_client
+from agentscope.rpc import call_func_in_thread
+from agentscope.rpc.rpc_object import RpcObject
 
 
-class RpcAgent(AgentBase):
+class RpcAgent(AgentBase, RpcObject):
     """A wrapper to extend an AgentBase into a gRPC Client."""
 
     def __init__(
@@ -26,9 +27,9 @@ class RpcAgent(AgentBase):
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        lazy_launch: bool = False,
         agent_id: str = None,
         connect_existing: bool = False,
+        lazy_launch: bool = False,
     ) -> None:
         """Initialize a RpcAgent instance.
 
@@ -49,82 +50,47 @@ class RpcAgent(AgentBase):
             local_mode (`bool`, defaults to `True`):
                 Whether the started gRPC server only listens to local
                 requests.
-            lazy_launch (`bool`, defaults to `False`):
-                Only launch the server when the agent is called.
             agent_id (`str`, defaults to `None`):
                 The agent id of this instance. If `None`, it will
                 be generated randomly.
             connect_existing (`bool`, defaults to `False`):
                 Set to `True`, if the agent is already running on the agent
                 server.
+            lazy_launch (`bool`, defaults to `False`):
+                Deprecated.
         """
-        super().__init__(name=name)
-        self.agent_class = agent_class
-        self.agent_configs = agent_configs
-        self.host = host
-        self.port = port
-        self.server_launcher = None
-        self.client = None
-        self.connect_existing = connect_existing
+        AgentBase.__init__(self, name=name)
         if agent_id is not None:
             self._agent_id = agent_id
-        # if host and port are not provided, launch server locally
-        if self.port is None and _studio_client.active:
-            server = _studio_client.alloc_server()
-            if "host" in server:
-                if RpcAgentClient(
-                    host=server["host"],
-                    port=server["port"],
-                ).is_alive():
-                    self.host = server["host"]
-                    self.port = server["port"]
-        launch_server = self.port is None
-        if launch_server:
-            # check studio first
-            self.host = "localhost"
-            studio_url = None
-            if _studio_client.active:
-                studio_url = _studio_client.studio_url
-            self.server_launcher = RpcAgentServerLauncher(
-                host=self.host,
-                port=port,
-                max_pool_size=max_pool_size,
-                max_timeout_seconds=max_timeout_seconds,
-                local_mode=local_mode,
-                custom_agent_classes=[agent_class],
-                studio_url=studio_url,
-            )
-            if not lazy_launch:
-                self._launch_server()
-        else:
-            self.client = RpcAgentClient(
-                host=self.host,
-                port=self.port,
-                agent_id=self.agent_id,
-            )
-            if not self.connect_existing:
-                self.client.create_agent(
-                    agent_configs,
-                )
-
-    def _launch_server(self) -> None:
-        """Launch a rpc server and update the port and the client"""
-        self.server_launcher.launch()
-        self.port = self.server_launcher.port
-        self.client = RpcAgentClient(
-            host=self.host,
-            port=self.port,
-            agent_id=self.agent_id,
+        if lazy_launch:
+            logger.warning("`lazy_launch` is deprecated.")
+        RpcObject.__init__(
+            self,
+            cls=agent_class,
+            oid=self._agent_id,
+            host=host,
+            port=port,
+            max_pool_size=max_pool_size,
+            max_timeout_seconds=max_timeout_seconds,
+            local_mode=local_mode,
+            connect_existing=connect_existing,
+            configs=agent_configs,
         )
-        self.client.create_agent(self.agent_configs)
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
-        if self.client is None:
-            self._launch_server()
         return PlaceholderMessage(
             name=self.name,
             content=None,
-            client=self.client,
+            host=self.host,
+            port=self.port,
+            stub=call_func_in_thread(
+                partial(
+                    self.client.call_agent_func,
+                    func_name="_reply",
+                    agent_id=self._agent_id,
+                    value=serialize(x) if x is not None else "",
+                ),
+            ),
             x=x,
         )
 
@@ -133,6 +99,7 @@ class RpcAgent(AgentBase):
             self._launch_server()
         self.client.call_agent_func(
             func_name="_observe",
+            agent_id=self._agent_id,
             value=serialize(x),  # type: ignore[arg-type]
         )
 
@@ -180,11 +147,3 @@ class RpcAgent(AgentBase):
                 ),
             )
         return generated_instances
-
-    def stop(self) -> None:
-        """Stop the RpcAgent and the rpc server."""
-        if self.server_launcher is not None:
-            self.server_launcher.shutdown()
-
-    def __del__(self) -> None:
-        self.stop()
