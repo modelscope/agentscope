@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """ A large-scale social simulation experiment """
-
+# pylint: disable=E0611,C0411
 import argparse
 import os
 
 import agentscope
-from agentscope.agents import AgentBase
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 
 from utils.participant import (
@@ -55,7 +54,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
     )
     parser.add_argument("--model-per-host", type=int, default=1)
-    parser.add_argument("--moderator-per-host", type=int, default=1)
+    parser.add_argument("--group-per-host", type=int, default=1)
     parser.add_argument("--ann-id", type=str, default="1")
     parser.add_argument("--pmt-id", type=str, default="3")
     parser.add_argument("--model-name", type=str, default="llama3_8b")
@@ -83,7 +82,6 @@ def setup_participant_agent_server(host: str, port: int) -> None:
         port=port,
         max_pool_size=16384,
         custom_agents=[
-            Moderator,
             RandomParticipant,
             LLMParticipant,
             ParserAgent,
@@ -91,31 +89,6 @@ def setup_participant_agent_server(host: str, port: int) -> None:
     )
     assistant_server_launcher.launch(in_subprocess=False)
     assistant_server_launcher.wait_until_terminate()
-
-
-def init_moderator(
-    name: str,
-    configs: list[dict],
-    host: str,
-    port: int,
-    agent_type: str,
-    max_value: int,
-    sleep_time: float,
-    usr_id: str,
-) -> AgentBase:
-    """Init moderator"""
-    return Moderator(  # pylint: disable=E1123
-        name=name,
-        part_configs=configs,
-        agent_type=agent_type,
-        max_value=max_value,
-        sleep_time=sleep_time,
-        to_dist={
-            "host": host,
-            "port": port,
-        },
-        usr_id=usr_id,
-    )
 
 
 if __name__ == "__main__":
@@ -129,14 +102,14 @@ if __name__ == "__main__":
             participant_num=args.participant_num,
             server_per_host=args.server_per_host,
             model_per_host=args.model_per_host,
-            env_per_host=args.moderator_per_host,
+            group_per_host=args.group_per_host,
             agent_type=args.agent_type,
             sleep_time=args.sleep_time,
             max_value=args.max_value,
             model_name=args.model_name,
             sys_id=args.sys_id,
             usr_id=args.usr_id,
-            exp_name=args.exp_name,
+            name=args.exp_name,
             ratio=args.ratio,
             round=args.round,
         ).run()

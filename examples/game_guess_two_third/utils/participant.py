@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa: E501
+# pylint: disable=C0301,R1732,W0613,R1716,W0622
 """The participant agent."""
 import random
 import time
@@ -407,8 +408,11 @@ def save_result(
             "time": run_time,
         }
         values = [int(v) for v in values]
-        logger.info(stats)
-        with open(os.path.join(save_path, f"result_{r}.json"), "w") as file:
+        with open(
+            os.path.join(save_path, f"result_{r}.json"),
+            "w",
+            encoding="utf-8",
+        ) as file:
             file.write(
                 json.dumps(
                     {"data": result, "stats": stats},

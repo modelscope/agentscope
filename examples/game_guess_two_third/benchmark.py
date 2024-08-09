@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Run benchmark"""
+# pylint: disable=C0301,W1514,C0116,W0622
 import time
 import os
 import csv
