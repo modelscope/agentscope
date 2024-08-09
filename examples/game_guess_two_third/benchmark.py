@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Run benchmark"""
 import time
 import os
 import csv
@@ -14,7 +15,8 @@ def setup_agent_server(
 ) -> None:
     """Start agent servers"""
     os.system(
-        f"./start_cluster_server.sh {','.join(hosts)} {agent_server_num} {env_server_num}",
+        f"./start_cluster_server.sh {','.join(hosts)}"
+        f" {agent_server_num} {env_server_num}",
     )
     time.sleep(10)
 
@@ -91,7 +93,8 @@ def load_exp_config(cfg_path: str) -> list:
     return configs
 
 
-def main(name: str = None, config: str = None):
+def main(name: str = None, config: str = None) -> None:
+    """The main function of the benchmark"""
     hosts = ["worker1", "worker2", "worker3", "worker4"]
     configs = load_exp_config(config)
     for cfg in configs:

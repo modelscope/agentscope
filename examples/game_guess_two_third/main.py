@@ -9,7 +9,6 @@ from agentscope.agents import AgentBase
 from agentscope.agents.rpc_agent import RpcAgentServerLauncher
 
 from utils.participant import (
-    Moderator,
     RandomParticipant,
     LLMParticipant,
     ParserAgent,

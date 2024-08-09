@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa: E501
 """The participant agent."""
 import random
 import time
@@ -30,27 +31,7 @@ RATIO_MAP = {
     "67/100": 67 / 100,
 }
 
-PROMPT = {
-    "SYSTEM": {
-        "1": "You are playing a multiplayer game.\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to {ratio} of the average of all reported numbers.\n\n",  # noqa
-        "2": "You are playing a multiplayer game.\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to {ratio} of the average of all reported numbers.\n\n# Note:\n1. All players are rational.\n\n",  # noqa
-        "3": "You are playing a multiplayer game.\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to {ratio} of the average of all reported numbers.\n\n# Note:\n1. All players are rational.\n2. All players will try to guess the others' strategies to adjust their own strategies.\n\n",  # noqa
-        "4": 'You are playing a multiplayer game.\n\n# Game Rule\n1. This game is a variation of the famous "guess 2/3 of the average" game\n2. Each player reports a real number between 0 and {max_value}, inclusive.\n3. The winner will be the player whose number is the closest to {ratio} of the average of all reported numbers.\n\n',  # noqa
-        "5": 'You are playing a multiplayer game.\n\n# Game Rule\n1. This game is a variation of the famous "guess 2/3 of the average" game\n2. Each player reports a real number between 0 and {max_value}, inclusive.\n3. The winner will be the player whose number is the closest to {ratio} of the average of all reported numbers.\n\n# Note:\n1. All players are rational.\n\n',  # noqa
-        "6": "You are playing a multiplayer game.\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to 5 plus {ratio} of the average of all reported numbers .\n\n",  # noqa
-        "7": "You are playing a multiplayer game.\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to 5 plus {ratio} of the average of all reported numbers .\n\n# Note:\n1. All players are rational.\n\n",  # noqa
-        "8": 'You are playing a multiplayer game.\n\n# Game Rule\n1. This game is a variation of the famous "guess 2/3 of the average" game\n2. Each player reports a real number between 0 and {max_value}, inclusive.\n3. The winner will be the player whose number is the closest to 5 plus {ratio} of the average of all reported numbers .\n\n',  # noqa
-        "9": 'You are playing a multiplayer game.\n\n# Game Rule\n1. This game is a variation of the famous "guess 2/3 of the average" game\n2. Each player reports a real number between 0 and {max_value}, inclusive.\n3. The winner will be the player whose number is the closest to 5 plus {ratio} of the average of all reported numbers .\n\n# Note:\n1. All players are rational.\n\n',  # noqa
-        "10": "You are playing a role in a multiplayer game, make sure your behavior fits the following character background.\n\n# Character Background\n\n{background}\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to the {ratio} of the average of all reported numbers.\n\n# Note\n1. Please strictly follow your character background in the game.\n\n",  # noqa
-        "11": "You are playing a role in a multiplayer game, make sure your behavior fits the following character background.\n\n# Character background\n\n{background}\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to the {ratio} of the average of all reported numbers.\n\n# Note:\n1. Please strictly follow your character background in the game.\n2. There are a total of 1000 players, with 200 individuals at each education level: Elementary School, High School, Bachelor's Degree, Master's Degree, and Ph.D.\n\n",  # noqa
-        "12": "You are playing a role in a multiplayer game, make sure your behavior fits the following character background.\n\n# Character background\n\n{background}\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to the {ratio} of the average of all reported numbers.\n\n# Note:\n1. Please strictly follow your character background in the game.\n2. There are a total of 1200 players, with 200 individuals in each profession: Writers, Artists, Psychologists, Economists, and Professor of game theory\n\n",  # noqa
-        "13": "You are playing a role in a multiplayer game, make sure your behavior fits the following character background.\n\n# Character background\n\n{background}\n\n# Game Rule\n1. Each player reports a real number between 0 and {max_value}, inclusive.\n2. The winner will be the player whose number is the closest to the {ratio} of the average of all reported numbers.\n\n# Note:\n1. Please strictly follow your character background in the game.\n2. There are a total of 1200 players, with different professions, including Writers, Artists, Psychologists, Economists, and Professors.\n3. Only one player is an expert in the field of game theory (it may be you, please judge for yourself based on your background information)\n\n",  # noqa
-    },
-    "USER": {
-        "1": "Directly report your number without additional information.",
-        "2": "Think step by step and then report your number.",
-    },
-}
+PROMPT = json.load(open("configs/prompt.json", "r", encoding="utf-8"))
 SYSTEM = PROMPT["SYSTEM"]
 USER = PROMPT["USER"]
 
@@ -58,7 +39,7 @@ USER = PROMPT["USER"]
 class RandomParticipant(AgentBase):
     """A fake participant who generates number randomly."""
 
-    def __init__(
+    def __init__(  # type: ignore[no-untyped-def]
         self,
         name: str,
         max_value: int = 100,
@@ -87,7 +68,7 @@ class RandomParticipant(AgentBase):
 class LLMParticipant(AgentBase):
     """A participant agent who generates number using LLM."""
 
-    def __init__(
+    def __init__(  # type: ignore[no-untyped-def]
         self,
         name: str,
         model_config_name: str,
@@ -118,13 +99,13 @@ class LLMParticipant(AgentBase):
             Msg(
                 name="system",
                 role="system",
-                content="You need to extract the number that the speaker wants to answer from the following text.\n"  # noqa
+                content="You need to extract the number that the speaker wants to answer from the following text.\n"
                 + txt,
             ),
             Msg(
                 name="user",
                 role="user",
-                content="Now please directly give the extracted number in the following format:\nThe answer is [number].\n\nIf you can't extract the number, please reply directly:\nI CAN'T.\n",  # noqa
+                content="Now please directly give the extracted number in the following format:\nThe answer is [number].\n\nIf you can't extract the number, please reply directly:\nI CAN'T.\n",
             ),
         )
         parse_result = self.model(prompt).text
@@ -178,87 +159,10 @@ class LLMParticipant(AgentBase):
         return msg
 
 
-class Moderator(AgentBase):
-    """A Moderator to collect values from participants."""
-
-    def __init__(
-        self,
-        name: str,
-        part_configs: list[dict],
-        agent_type: str = "random",
-        max_value: int = 100,
-        sleep_time: float = 1.0,
-        usr_id: str = "1",
-    ) -> None:
-        super().__init__(name)
-        self.max_value = max_value
-        self.usr_id = usr_id
-        self.round = 1
-        if agent_type == "llm":
-            self.participants = [
-                LLMParticipant(
-                    name=config["name"],
-                    model_config_name=config["model_config_name"],
-                    ratio=config["ratio"],
-                    max_value=max_value,
-                    sys_id=config["sys_id"],
-                    to_dist={
-                        "host": config["host"],
-                        "port": config["port"],
-                    },
-                )
-                for config in part_configs
-            ]
-        else:
-            self.participants = [
-                RandomParticipant(
-                    name=config["name"],
-                    max_value=max_value,
-                    sleep_time=sleep_time,
-                ).to_dist(
-                    host=config["host"],
-                    port=config["port"],
-                )
-                for config in part_configs
-            ]
-
-    def reply(self, x: dict = None) -> dict:
-        results = []
-        content = USER[self.usr_id].format(round=self.round)
-        self.round += 1
-        if x is not None:
-            content = f"The winner number of this round is {x['content']['value']:.2f}. Let's move on to the next round.\n{content}"  # noqa
-        msg = Msg(
-            name="moderator",
-            role="user",
-            content=content,
-        )
-        for p in self.participants:
-            results.append(p(msg))
-        summ = 0
-        cnt = 0
-        for r in results:
-            try:
-                v = float(r["content"])
-                if v <= self.max_value:
-                    summ += v
-                    cnt += 1
-            except Exception as e:
-                print(e)
-        return Msg(
-            name=self.name,
-            role="assistant",
-            content={
-                "sum": summ,
-                "cnt": cnt,
-            },
-        )
-
-
 class LLMParticipantWithBackground(AgentBase):
     """A participant agent with background"""
 
-    def __init__(
+    def __init__(  # type: ignore[no-untyped-def]
         self,
         name: str,
         model_config_name: str,
@@ -307,9 +211,9 @@ class LLMParticipantWithBackground(AgentBase):
             logger.error(
                 f"Fail to parse value from [{txt}]",
             )
-            return "101"
+            return -1
         else:
-            return numbers[0][0]
+            return float(numbers[0][0])
 
     def reply(self, x: dict = None) -> dict:
         """Generate a value by LLM"""
@@ -355,17 +259,17 @@ class LLMParticipantWithBackground(AgentBase):
 class ParserAgent(AgentBase):
     """Parse the experiment result"""
 
-    def __init__(self, name: str, **kwargs):
+    def __init__(self, name: str, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(name=name, use_memory=False)
 
-    def parse_result(self, log_dir: str) -> dict:
+    def parse_result(self, log_dir: str) -> list:
         """Parse result from log files"""
         results = []
         tasks = []
 
-        def parse_file(filepath):
+        def parse_file(filepath: str) -> list:
             result = []
-            with open(filepath, "r") as file:
+            with open(filepath, "r", encoding="utf-8") as file:
                 for line in file.readlines():
                     rec = json.loads(line)
                     result.append(rec)
@@ -393,14 +297,16 @@ class ParserAgent(AgentBase):
 class Group(BasicEnv):
     """A group of participants."""
 
-    def __init__(
+    def __init__(  # type: ignore[no-untyped-def]
         self,
         name: str,
         agent_type: str = "random",
         ratio: str = "2/3",
         max_value: int = 100,
+        sleep_time: float = 1.0,
         usr_id: str = "2",
         participant_configs: list[dict] = None,
+        **kwargs,
     ) -> None:
         super().__init__(name=name)
         if agent_type == "llm":
@@ -423,6 +329,7 @@ class Group(BasicEnv):
                 RandomParticipant(
                     name=config["name"],
                     max_value=max_value,
+                    sleep_time=sleep_time,
                     to_dist={
                         "host": config["host"],
                         "port": config["port"],
@@ -440,7 +347,7 @@ class Group(BasicEnv):
         """Play one round of game in this group."""
         if round != 0:
             content = (
-                f"The winner number of this round is {winner:.2f}. Let's move on to the next round.\n{self.usr_prompt}",  # noqa
+                f"The winner number of this round is {winner:.2f}. Let's move on to the next round.\n{self.usr_prompt}",
             )
         else:
             content = self.usr_prompt
@@ -477,7 +384,7 @@ def save_result(
     results: list,
     run_time: float,
     save_path: str = "./result",
-    ratio="2/3",
+    ratio: str = "2/3",
 ) -> None:
     """Save the result into file"""
     print(f"Round: {len(results)}")
@@ -659,9 +566,9 @@ class GuessTwoThirdGame(BasicEnv):
                         name=f"group_{i}",
                         agent_type=self.agent_type,
                         ratio=self.ratio,
-                        configs=configs[
+                        participant_configs=configs[
                             i
-                            * participant_per_group : (i + 1)  # noqa
+                            * participant_per_group : (i + 1)
                             * participant_per_group
                         ],
                         max_value=self.max_value,
@@ -679,7 +586,7 @@ class GuessTwoThirdGame(BasicEnv):
         iet = time.time()
         logger.info(f"[init takes {iet - ist} s]")
 
-    def step(self):
+    def step(self) -> None:
         """Run one step of the game."""
         tasks = []
         summ = 0
