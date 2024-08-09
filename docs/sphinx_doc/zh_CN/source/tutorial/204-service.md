@@ -47,6 +47,10 @@
 |                             | `openai_image_to_text` | 使用 OpenAI API 根据图片生成文字。
 |                             | `openai_text_to_audio` | 使用 OpenAI API 根据文本生成音频。
 |                             | `openai_audio_to_text` | 使用OpenAI API将音频转换为文本。
+| 推理                         | query_wolfram_alpha_short_answers  | 查询 Wolfram Alpha Short Answers API。                |
+|                             | query_wolfram_alpha_simple         | 查询 Wolfram Alpha Simple API。                       |
+|                             | query_wolfram_alpha_show_steps     | 查询 Wolfram Alpha Show Steps API。                   |
+|                             | query_wolfram_alpha_llm            | 查询 Wolfram Alpha LLM API。                          |
 | *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。  |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。
