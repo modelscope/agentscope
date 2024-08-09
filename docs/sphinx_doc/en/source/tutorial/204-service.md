@@ -50,7 +50,10 @@ The following table outlines the various Service functions by type. These functi
 |                             | `openai_image_to_text` | Convert text to image using OpenAI API
 |                             | `openai_text_to_audio` | Convert text to audio using OpenAI API
 |                             | `openai_audio_to_text` | Convert audio to text using OpenAI API
-
+| Reasoning                   | `query_wolfram_alpha_short_answers`  | Query the Wolfram Alpha Short Answers API.                                                           |
+|                             | `query_wolfram_alpha_simple`         | Query the Wolfram Alpha Simple API.                                                                  |
+|                             | `query_wolfram_alpha_show_steps`     | Query the Wolfram Alpha Show Steps API.                                                              |
+|                             | `query_wolfram_alpha_llm`            | Query the Wolfram Alpha LLM API.                                                                     |
 
 | *More services coming soon* |                            | More service functions are in development and will be added to AgentScope to further enhance its capabilities. |
 
