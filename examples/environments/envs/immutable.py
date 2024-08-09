@@ -4,8 +4,8 @@
 from typing import List, Any
 from copy import deepcopy
 
-from ..env import Env, BasicEnv, EventListener
-from ..event import event_func, Event, Getable
+from agentscope.environment.env import Env, BasicEnv, EventListener
+from agentscope.environment.event import event_func, Event, Getable
 
 
 class ImmutableEnv(BasicEnv, Getable):
@@ -21,11 +21,16 @@ class ImmutableEnv(BasicEnv, Getable):
     ) -> None:
         super().__init__(
             name=name,
-            value=value,
             listeners=listeners,
             children=children,
             parent=parent,
         )
+        self._value = value
+
+    @property
+    def value(self) -> Any:
+        """Get the value of the env."""
+        return self.get()
 
     @event_func
     def get(self) -> Any:

@@ -2,9 +2,9 @@
 """ An Env that represented a 2D location point."""
 from typing import List, Tuple, Any
 
-from ..env import Env, BasicEnv, EventListener
+from agentscope.environment.env import Env, BasicEnv, EventListener
+from agentscope.environment.event import event_func, Event, Movable2D
 from .mutable import MutableEnv
-from ..event import event_func, Event, Movable2D
 
 
 class Point2D(BasicEnv, Movable2D):
@@ -19,16 +19,24 @@ class Point2D(BasicEnv, Movable2D):
         children: List[Env] = None,
         parent: Env = None,
     ) -> None:
-        super().__init__(name, (x, y), listeners, children, parent)
+        super().__init__(
+            name=name,
+            listeners=listeners,
+            children=children,
+            parent=parent,
+        )
+        self.x = x
+        self.y = y
 
     @event_func
     def move_to(self, x: float, y: float) -> bool:
         """Move the point to a new position."""
         cur_loc = {
-            "x": self._value[0],  # type: ignore[has-type]
-            "y": self._value[1],  # type: ignore[has-type]
+            "x": self.x,  # type: ignore[has-type]
+            "y": self.y,  # type: ignore[has-type]
         }
-        self._value = (x, y)
+        self.x = x
+        self.y = y
         self._trigger_listener(
             Event("move_to", {"new": {"x": x, "y": y}, "old": cur_loc}),
         )
@@ -45,7 +53,7 @@ class Point2D(BasicEnv, Movable2D):
         Returns:
             `bool`: Whether the movement was successful.
         """
-        self.move_to(self._value[0] + x, self._value[1] + y)
+        self.move_to(self.x + x, self.y + y)
         return True
 
     @event_func
@@ -55,7 +63,7 @@ class Point2D(BasicEnv, Movable2D):
         Returns:
             `Tuple[float, float]`: The current position of the point.
         """
-        value = (self._value[0], self._value[1])
+        value = (self.x, self.y)
         self._trigger_listener(Event("get", {}))
         return value
 
@@ -74,7 +82,13 @@ class EnvWithPoint2D(MutableEnv, Movable2D):
         children: List[Env] = None,
         parent: Env = None,
     ) -> None:
-        super().__init__(name, value, listeners, children, parent)
+        super().__init__(
+            name=name,
+            value=value,
+            listeners=listeners,
+            children=children,
+            parent=parent,
+        )
         self.add_child(Point2D("position", x, y))
 
     @event_func

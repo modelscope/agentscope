@@ -3,18 +3,18 @@
 from typing import List
 from copy import deepcopy
 
-from ...agents import AgentBase
-from ...message import Msg
-from ...exception import (
+from agentscope.agents import AgentBase
+from agentscope.message import Msg
+from agentscope.exception import (
     EnvListenerError,
 )
-from .immutable import ImmutableEnv
-from ..env import (
+from agentscope.environment.env import (
     Env,
     BasicEnv,
     EventListener,
 )
-from ..event import event_func, Event
+from agentscope.environment.event import event_func, Event
+from .immutable import ImmutableEnv
 
 
 class ChatRoom(BasicEnv):
@@ -39,13 +39,14 @@ class ChatRoom(BasicEnv):
         """
         super().__init__(
             name=name,
-            value={"history": [], "announcement": announcement},
         )
         self.children = {
             p.name: p for p in (participants if participants else [])
         }
         self.event_listeners = {}
         self.all_history = all_history
+        self.history = []
+        self.announcement = announcement
 
     @event_func
     def join(self, agent: AgentBase) -> bool:
@@ -55,7 +56,7 @@ class ChatRoom(BasicEnv):
         self.children[agent.agent_id] = ImmutableEnv(
             name=agent.agent_id,
             value={
-                "history_idx": len(self._value["history"]),
+                "history_idx": len(self.history),
                 "agent": agent,
             },
         )
@@ -74,7 +75,7 @@ class ChatRoom(BasicEnv):
     @event_func
     def speak(self, message: Msg) -> None:
         """Speak a message in the chatroom."""
-        self._value["history"].append(message)
+        self.history.append(message)
         self._trigger_listener(Event("speak", {"message": message}))
 
     @event_func
@@ -88,14 +89,14 @@ class ChatRoom(BasicEnv):
             history_idx = 0
         else:
             history_idx = self.children[agent.agent_id].get()["history_idx"]
-        history = deepcopy(self._value["history"][history_idx:])
+        history = deepcopy(self.history[history_idx:])
         self._trigger_listener(Event("get_history", {"agent": agent}))
         return history
 
     @event_func
     def set_announcement(self, announcement: Msg) -> None:
         """Set the announcement of the chatroom."""
-        self._value["announcement"] = announcement
+        self.announcement = announcement
         self._trigger_listener(
             Event("set_announcement", {"announcement": announcement}),
         )
@@ -103,7 +104,7 @@ class ChatRoom(BasicEnv):
     @event_func
     def get_announcement(self) -> Msg:
         """Get the announcement of the chatroom."""
-        ann = self._value["announcement"]
+        ann = self.announcement
         self._trigger_listener(Event("get_announcement", {}))
         return ann
 

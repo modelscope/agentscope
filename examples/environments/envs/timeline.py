@@ -2,8 +2,8 @@
 """An env representing a timeline."""
 
 from typing import List, Any, Optional
-from ..env import BasicEnv, Env
-from ..event import event_func, Getable
+from agentscope.environment.env import BasicEnv, Env
+from agentscope.environment.event import event_func, Event, Getable
 
 
 class Timeline(BasicEnv, Getable):
@@ -20,23 +20,25 @@ class Timeline(BasicEnv, Getable):
     ) -> None:
         super().__init__(
             name=name,
-            value=start,
             children=children,
             parent=parent,
         )
+        self.cur_time = start
         self.unit = unit
         self.max_value = end
 
-    @event_func
     def get(self) -> Any:
-        return self._value
+        return self.cur_time
 
     @event_func
     def step(self) -> None:
         """Step the timeline."""
-        self._value += self.unit
+        self.cur_time += self.unit
+        self._trigger_listener(
+            event=Event("step", args={"time": self.cur_time}),
+        )
 
     def run(self) -> None:
         """Run the timeline."""
-        while self.max_value is None or (self._value < self.max_value):
+        while self.max_value is None or (self.cur_time < self.max_value):
             self.step()

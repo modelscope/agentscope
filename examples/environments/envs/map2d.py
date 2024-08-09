@@ -3,14 +3,14 @@
 who have Location2D position"""
 import math
 from typing import List
-from ...exception import (
+from agentscope.exception import (
     EnvNotFoundError,
     EnvTypeError,
     EnvAlreadyExistError,
     EnvListenerError,
 )
-from ..env import Env, BasicEnv, EventListener
-from ..event import event_func, Event, Movable2D
+from agentscope.environment.env import Env, BasicEnv, EventListener
+from agentscope.environment.event import event_func, Event, Movable2D
 
 
 def distance2d(
@@ -53,7 +53,6 @@ class Map2D(BasicEnv):
                 )
         super().__init__(
             name=name,
-            value=None,
             children=children,
             parent=parent,
         )

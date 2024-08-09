@@ -253,7 +253,6 @@ class BasicEnv(Env):
     def __init__(
         self,
         name: str,
-        value: Any,
         listeners: dict[str, List[EventListener]] = None,
         children: List[Env] = None,
         parent: Env = None,
@@ -262,7 +261,6 @@ class BasicEnv(Env):
 
         Args:
             name (`str`): The name of the env.
-            value (`Any`): The default value of the env.
             listeners (`dict[str, List[EventListener]]`, optional): The
             listener dict. Defaults to None.
             children (`List[Env]`, optional): A list of children
@@ -271,7 +269,6 @@ class BasicEnv(Env):
             to None.
         """
         self._name = name
-        self._value = value
         self.children = {
             child.name: child for child in (children if children else [])
         }
@@ -396,7 +393,6 @@ class BasicEnv(Env):
     def dump(self) -> dict:
         """Dump the env tree to a dict."""
         return {
-            "value": self._value,
             "type": self.__class__.__name__,
             "children": {
                 child.name: child.dump()

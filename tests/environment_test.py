@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Unit tests for environment"""
+import os
+import sys
 import unittest
 from typing import Any
 
@@ -8,11 +10,6 @@ from agentscope.environment import (
     RpcEnv,
     Event,
     EventListener,
-    MutableEnv,
-    Point2D,
-    EnvWithPoint2D,
-    Map2D,
-    ChatRoom,
 )
 
 from agentscope.exception import (
@@ -22,6 +19,19 @@ from agentscope.exception import (
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+env_dir = os.path.join(parent_dir, "examples", "environments")
+sys.path.append(env_dir)
+
+from envs import (  # pylint: disable=C0413,C0411 # noqa: E402
+    ChatRoom,
+    MutableEnv,
+    Map2D,
+    Point2D,
+    EnvWithPoint2D,
+)
 
 
 class Recorder:

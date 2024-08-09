@@ -3,8 +3,8 @@
 from typing import List, Any
 from copy import deepcopy
 
-from ..env import Env, BasicEnv, EventListener
-from ..event import event_func, Event, Getable, Setable
+from agentscope.environment import Env, BasicEnv, EventListener
+from agentscope.environment.event import event_func, Event, Getable, Setable
 
 
 class MutableEnv(BasicEnv, Getable, Setable):
@@ -20,11 +20,11 @@ class MutableEnv(BasicEnv, Getable, Setable):
     ) -> None:
         super().__init__(
             name=name,
-            value=value,
             listeners=listeners,
             children=children,
             parent=parent,
         )
+        self._value = value
 
     @event_func
     def get(self) -> Any:
