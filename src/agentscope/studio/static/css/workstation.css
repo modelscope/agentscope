@@ -592,6 +592,65 @@ pre[class*="language-"] {
     margin-top: 10px;
     color: #888;
 }
+/* Newly added */
+.dropzone {
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.stacked-list {
+    list-style-type: none;
+    padding: 5px;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.stacked-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.stacked-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.stacked-item-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.stacked-item-actions button:hover {
+    color: #4CAF50;
+}
+
+.stacked-item-actions .material-icons {
+    font-size: 18px;
+}
+
+.hidden-node {
+    display: none !important;
+}
+/* END */
+
+
+
 
 .swal2-container {
     z-index: 20000 !important;

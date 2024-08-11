@@ -195,6 +195,8 @@ async function initializeWorkstationPage() {
 
     editor.on('nodeMoved', function (id) {
         console.log("Node moved " + id);
+        // dropzoneDetection
+        dropzoneDetection(id);
         disableButtons();
     })
 
@@ -275,6 +277,7 @@ async function initializeWorkstationPage() {
 
     editor.on("nodeMoved", (id) => {
         const dragNode = id;
+
         if (dragElementHover !== null) {
             const dropNode = dragElementHover.id.slice(5);
             if (dragNode !== dropNode) {
@@ -2037,4 +2040,366 @@ function showSurveyModal() {
 
 function hideSurveyModal() {
     document.getElementById("surveyModal").style.display = "none";
+}
+
+// Added for the dropzone
+function dropzoneDetection(nodeId) {
+  var node = editor.getNodeFromId(nodeId);
+  const nodeElement = document.getElementById(`node-${nodeId}`);
+  var dropzones = document.querySelectorAll(".dropzone");
+
+  dropzones.forEach(function (dropzone) {
+    // Prevent conflicts of drag-and-drop events between drawflow node and dropzone
+    if (!dropzone.hasDropEventListeners) {
+      dropzone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      });
+
+      dropzone.hasDropEventListeners = true;
+    }
+
+    // Check if the dropzone is not a child of the current node
+    if (!nodeElement.contains(dropzone)) {
+      if (
+        isColliding(nodeElement, dropzone) &&
+        node.name !== "dropzoneNode" &&
+        !node.data.attachedToDropzone
+      ) {
+        console.log(
+          `Collision detected: Node "${node.name}" (ID: ${nodeId}) collided with ${dropzone.id}`
+        );
+        dropNodeToDropzone(nodeId, dropzone);
+      }
+    }
+  });
+}
+
+function isColliding(element1, element2) {
+  var rect1 = element1.getBoundingClientRect();
+  var rect2 = element2.getBoundingClientRect();
+
+  return !(
+    rect1.right < rect2.left ||
+    rect1.left > rect2.right ||
+    rect1.bottom < rect2.top ||
+    rect1.top > rect2.bottom
+  );
+}
+
+function dropNodeToDropzone(nodeId, dropzoneElement) {
+  var node = editor.getNodeFromId(nodeId);
+  var dropzoneNodeId = dropzoneElement
+    .closest(".drawflow-node")
+    .id.split("-")[1];
+
+  if (nodeId === dropzoneNodeId) {
+    console.log(`Prevented node ${nodeId} from being dropped into itself`);
+    return;
+  }
+  var dropzoneNode = editor.getNodeFromId(dropzoneNodeId);
+  var stackedList = dropzoneElement.querySelector(".stacked-list");
+
+  if (!dropzoneNode.data.stackedItems) {
+    dropzoneNode.data.stackedItems = [];
+  }
+
+  var nodeElement = document.getElementById(`node-${nodeId}`);
+  var nodeRect = nodeElement.getBoundingClientRect();
+  var startX = nodeRect.left;
+  var startY = nodeRect.top;
+
+  // Make sure the logic is the same
+  nodeElement.classList.add("hidden-node");
+
+  // Should be modified to display the header of the node
+  var stackedItem = document.createElement("li");
+  stackedItem.className = "stacked-item";
+  stackedItem.id = `stacked-item-${nodeId}`;
+  stackedItem.innerHTML = `
+        <span>${node.name}</span>
+        <div  class="stacked-item-actions">
+            <button class="expand-btn" title="Expand"><i class="material-icons">open_in_full</i></button>
+            <button class="detach-btn" title="Detach"><i class="material-icons">open_in_new</i></button>
+            <button class="remove-btn" title="Remove"><i class="material-icons">delete</i></button>
+        </div>
+    `;
+  // Keep track of the dropzone Id it attached to
+  stackedItem.dataset.attachedDropzoneId = dropzoneNodeId;
+  stackedItem.draggable = true;
+  stackedList.appendChild(stackedItem);
+
+  // Try Sortable.js
+  // Mainly for reordering the stacked items
+  // Not necessary, but nice to have some animations
+  new Sortable(stackedList, {
+    group: "shared",
+    animation: 150,
+    filter: ".undraggable",
+    onEnd: function (evt) {
+      console.log("Item dropped");
+    },
+  });
+
+  // Makesure the stackedList in dropzone is actually a sortableInstance
+  stackedItem.addEventListener("mousedown", handleStackedItemMouseDown);
+  stackedItem.addEventListener("dragstart", handleStackedItemDragStart);
+  stackedItem.addEventListener("drag", handleStackedItemDrag);
+  stackedItem.addEventListener("dragend", handleStackedItemDragEnd);
+
+  // add button event listeners
+  stackedItem
+    .querySelector(".detach-btn")
+    .addEventListener("click", function () {
+      detachNodeFromDropzone(node, dropzoneNode, stackedItem);
+    });
+  stackedItem
+    .querySelector(".remove-btn")
+    .addEventListener("click", function () {
+      removeNodeFromDropzone(node, dropzoneNode, stackedItem);
+    });
+  stackedItem
+    .querySelector(".expand-btn")
+    .addEventListener("click", function (e) {
+      e.stopPropagation();
+      expandNodeFromDropzone(node, dropzoneNode, stackedItem);
+    });
+
+  var itemRect = stackedItem.getBoundingClientRect();
+  var endX = itemRect.left;
+  var endY = itemRect.top;
+
+  anime({
+    targets: stackedItem,
+    translateX: [startX - endX, 0],
+    translateY: [startY - endY, 0],
+    scale: [1.5, 1],
+    opacity: [0, 1],
+    duration: 800,
+    easing: "easeOutElastic(1, .8)",
+    complete: function () {
+      stackedItem.style.transform = "none";
+    },
+  });
+
+  if (node && node.data) {
+    node.data.attachedToDropzone = true;
+    node.data.attachedDropzoneId = dropzoneNodeId;
+    console.log(`Node ${nodeId} attached to the dropzone ${dropzoneNodeId}`);
+  }
+
+  dropzoneNode.data.stackedItems.push({
+    id: nodeId,
+    name: node.name,
+  });
+  console.log(
+    `Node ${nodeId} (${node.name}) added to the stackedItems in the dropzone ${dropzoneNodeId}`
+  );
+}
+
+function handleStackedItemMouseDown(e) {
+  console.log("Mouse down");
+  e.stopPropagation();
+}
+
+function handleStackedItemDragStart(e) {
+  console.log("Drag start");
+  e.dataTransfer.setData("text/plain", e.target.id);
+  e.target.style.opacity = "0.5";
+}
+
+function handleStackedItemDrag(e) {
+  console.log("Dragging");
+  const attachedDropzoneId = e.target.dataset.attachedDropzoneId;
+  const dropzone = document
+    .getElementById(`node-${attachedDropzoneId}`)
+    .querySelector(".dropzone");
+  const nodeId = e.target.id.split("-")[2];
+  const originalNode = document.getElementById(`node-${nodeId}`);
+  if (
+    dropzone &&
+    !dropzone.contains(document.elementFromPoint(e.clientX, e.clientY))
+  ) {
+    console.log("Item dragged outside the dropzone");
+    // display forbidden cursor
+    e.target.style.cursor = "not-allowed";
+  } else {
+    console.log("Item dragged inside the dropzone");
+    e.target.style.cursor = "grab";
+  }
+}
+
+function handleStackedItemDragEnd(e) {
+  console.log("Drag ended");
+  e.target.style.opacity = "";
+  e.target.style.cursor = "grab";
+}
+
+function detachNodeFromDropzone(node, dropzoneNode, stackedItem) {
+  dropzoneElement = document
+    .getElementById(`node-${dropzoneNode.id}`)
+    .querySelector(".dropzone");
+  anime({
+    targets: stackedItem,
+    translateX: [0, -20],
+    opacity: [1, 0],
+    duration: 300,
+    easing: "easeOutCubic",
+    complete: function () {
+      stackedItem.remove();
+      dropzoneNode.data.stackedItems = dropzoneNode.data.stackedItems.filter(
+        (item) => item.id !== node.id
+      );
+      if (node && node.data) {
+        node.data.attachedToDropzone = false;
+        node.data.attachedDropzoneId = null;
+        console.log(
+          `Node ${node.id} detached from the dropzone ${dropzoneNode.id}`
+        );
+        nodeElement = document.getElementById(`node-${node.id}`);
+        nodeElement.classList.remove("hidden-node");
+        const pos_x = node.data.pos_x;
+        const pos_y = node.data.pos_y;
+        anime({
+          targets: nodeElement,
+          left: pos_x,
+          top: pos_y,
+          opacity: [0, 1],
+          duration: 300,
+          easing: "easeOutCubic",
+        });
+      }
+    },
+  });
+}
+
+
+
+
+function expandNodeFromDropzone(node, dropzoneNode, stackedItem) {
+  const nodeElement = document.getElementById(`node-${node.id}`);
+  const dropzoneElement = document.getElementById(`node-${dropzoneNode.id}`);
+
+  // Store the original position
+  const originalPosition = {
+    x: node.pos_x,
+    y: node.pos_y,
+  };
+
+  // Unhide the node and set its position
+  nodeElement.classList.remove("hidden-node");
+  nodeElement.style.position = "absolute";
+
+  // Position the node next to the dropzone
+  const dropzoneRect = dropzoneElement.getBoundingClientRect();
+  const stackedItemRect = stackedItem.getBoundingClientRect();
+  const expandedLeft = dropzoneRect.right + 20;
+  const expandedTop = stackedItemRect.top;
+  node.data.pos_x = expandedLeft;
+  node.data.pos_y = expandedTop;
+
+  // Create and position the speech bubble tail
+  const tail = document.createElement("div");
+  tail.className = "speech-bubble-tail";
+  nodeElement.appendChild(tail);
+
+  // Calculate tail position
+  const expandedRect = nodeElement.getBoundingClientRect();
+  const tailSize = 15; // Size of the tail in pixels
+  let tailLeft, tailTop, tailStyle;
+
+  if (
+    stackedItemRect.top + stackedItemRect.height / 2 <
+    expandedRect.top + expandedRect.height / 2
+  ) {
+    // Tail should be on the top-left corner
+    tailLeft = -tailSize;
+    tailTop = 0;
+    tailStyle = `
+            border-top: ${tailSize}px solid transparent;
+            border-bottom: ${tailSize}px solid transparent;
+            border-right: ${tailSize}px solid #4CAF50;
+        `;
+  } else {
+    // Tail should be on the bottom-left corner
+    tailLeft = -tailSize;
+    tailTop = expandedRect.height - 2 * tailSize;
+    tailStyle = `
+            border-top: ${tailSize}px solid transparent;
+            border-bottom: ${tailSize}px solid transparent;
+            border-right: ${tailSize}px solid #4CAF50;
+        `;
+  }
+
+  tail.style.cssText = `
+        position: absolute;
+        left: ${tailLeft}px;
+        top: ${tailTop}px;
+        width: 0;
+        height: 0;
+        ${tailStyle}
+    `;
+
+  // Make the node undraggable by overriding Drawflow's drag behavior
+  const originalOnMouseDown = nodeElement.onmousedown;
+  nodeElement.onmousedown = function (e) {
+    if (
+      e.target.tagName === "INPUT" ||
+      e.target.tagName === "SELECT" ||
+      e.target.tagName === "BUTTON"
+    ) {
+      return;
+    }
+    e.stopPropagation();
+  };
+
+  // Highlight the stacked item
+  stackedItem.style.backgroundColor = "#45a049";
+  stackedItem.classList.add("undraggable");
+
+  // Function to collapse the expanded node
+  function collapseNode() {
+    nodeElement.classList.add("hidden-node");
+    stackedItem.style.backgroundColor = "";
+    stackedItem.classList.remove("undraggable");
+    nodeElement.onmousedown = originalOnMouseDown;
+    node.pos_x = originalPosition.x;
+    node.pos_y = originalPosition.y;
+    tail.remove();
+    document.removeEventListener("click", handleOutsideClick);
+  }
+
+  // Handle clicks outside the node
+  function handleOutsideClick(event) {
+    if (!nodeElement.contains(event.target) && event.target !== stackedItem) {
+      collapseNode();
+    }
+  }
+
+  // Add event listener for outside clicks
+  setTimeout(() => {
+    document.addEventListener("click", handleOutsideClick);
+  }, 0);
+}
+
+function removeNodeFromDropzone(node, dropzoneNode, stackedItem) {
+  anime({
+    targets: stackedItem,
+    translateX: [0, -20],
+    opacity: [1, 0],
+    duration: 300,
+    easing: "easeOutCubic",
+    complete: function () {
+      stackedItem.remove();
+      node.data.attachedToDropzone = false;
+      node.data.attachedDropzoneId = null;
+      node.data.stackedItems = dropzoneNode.data.stackedItems.filter(
+        (item) => item.id !== node.id
+      );
+      editor.removeNodeId("node-" + node.id);
+      console.log(
+        `Node ${node.id} removed from the dropzone ${dropzoneNode.id}`
+      );
+    },
+  });
 }
