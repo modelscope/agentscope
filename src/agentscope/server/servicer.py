@@ -73,8 +73,15 @@ class _AgentError:
         return f"Agent[{self.agent_id}] error: {self.err_msg}"
 
 
+def register_agent_classes(custom_agent_classes_str: str) -> None:
+    """Register agent classes."""
+    if custom_agent_classes_str:
+        custom_agent_classes = dill.loads(eval(custom_agent_classes_str))
+        for agent_class in custom_agent_classes:
+            AgentBase.register_agent_class(agent_class=agent_class)
+
+
 def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
-    print(f"agent_id = {agent_id}, agent_init_args = {agent_init_args}, agent_source_code = {agent_source_code}")
     agent_configs = dill.loads(agent_init_args)
     if len(agent_source_code) > 0:
         cls = dill.loads(agent_source_code)
@@ -98,6 +105,7 @@ def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
             **agent_configs["kwargs"],
         )
         agent_instance._agent_id = agent_id  # pylint: disable=W0212
+        logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
         return agent_instance, None
     except Exception as e:
         err_msg = (
@@ -263,7 +271,6 @@ class AgentServerServicer(RpcAgentServicer):
                 return agent_pb2.GeneralResponse(ok=False, message=err_msg)
             agent_instance._agent_id = agent_id  # pylint: disable=W0212
             self.agent_pool[agent_id] = agent_instance
-            print(str(agent_instance), '!!!!!!!!')
             logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
             return agent_pb2.GeneralResponse(ok=True)
 

@@ -168,6 +168,8 @@ class RpcAgentClient:
                     logger.error(
                         f"Error when creating agent: {status.message}",
                     )
+                    if status.message.startswith("("):
+                        raise AgentCallError(status.message)
                 return status.ok
         except Exception as e:
             # check the server and raise a more reasonable error

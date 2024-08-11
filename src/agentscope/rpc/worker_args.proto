@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package WorkerArgs;
+
+message CreateAgentArgs {
+    string agent_id = 1;
+    bytes agent_init_args = 2;
+    bytes agent_source_code = 3;
+};
+
+message AgentArgs {
+    string agent_id = 1;
+};
+
+message ReplyArgs {
+    string agent_id = 1;
+    bytes message = 2;
+    int32 task_id = 3;
+    int32 callback_id = 4;
+};
+
+message ObserveArgs {
+    string agent_id = 1;
+    bytes message = 2;
+}
+
+message ModelConfigsArgs {
+    bytes model_configs = 1;
+}
+
+message AgentMemoryReturn {
+    bool ok = 1;
+    string message = 2;
+}
+
+message ReplyReturn {
+    bool ok = 1;
+    string message = 2;
+}

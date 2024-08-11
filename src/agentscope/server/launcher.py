@@ -5,6 +5,8 @@ import asyncio
 import signal
 import argparse
 import time
+import dill
+import json
 from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
 from typing import Type
@@ -26,7 +28,6 @@ except ImportError as import_error:
     )
 import agentscope
 from agentscope.server.servicer import AgentServerServicer
-from agentscope.server.cpp_servicer import CppAgentServerServicer
 from agentscope.agents.agent import AgentBase
 from agentscope.utils.tools import check_port, generate_id_from_seed
 from agentscope.constants import _DEFAULT_RPC_OPTIONS
@@ -141,6 +142,46 @@ async def _setup_agent_server_async(
             A list of customized agent classes that are not in
             `agentscope.agents`.
     """
+    if os.environ.get('USE_CPP_SERVER', '').lower() == 'yes':
+        current_file_path = os.path.abspath(__file__)
+        current_directory = os.path.dirname(current_file_path)
+        custom_agent_classes_str = repr(dill.dumps(custom_agent_classes)) if custom_agent_classes is not None else ''
+        init_settings_str = repr(json.dumps(init_settings)) if init_settings is not None else ''
+        env = os.environ.copy()
+        env['PYTHONPATH'] = os.pathsep.join([env.get('PYTHONPATH', ''), os.path.join(current_directory, '../../../')])
+        pid = os.getpid()
+        f = open(f'logs/{port}.log', 'w')
+        process = await asyncio.create_subprocess_exec(
+            'make',
+            f'INIT_SETTINGS_STR={init_settings_str}',
+            f'HOST={host}',
+            f'PORT={port}',
+            f'SERVER_ID={server_id}',
+            f'CUSTOM_AGENT_CLASSES="{custom_agent_classes_str}"',
+            f'STUDIO_URL={studio_url}',
+            f'MAX_TASKS={max_pool_size}',
+            f'TIMEOUT_SECONDS={max_timeout_seconds}',
+            f'NUM_WORKERS={2}',
+            f'LAUNCHER_PID={pid}',
+            cwd=current_directory,
+            env=env,
+            # stdout=sys.stdout, # asyncio.subprocess.PIPE,
+            # stderr=sys.stderr, # asyncio.subprocess.PIPE
+            stdout=f,
+            stderr=f,
+        )
+
+        if start_event is not None:
+            pipe.send(port)
+            # event_loop = asyncio.get_running_loop()
+            # async def set_start_event():
+            #     start_event.set()
+            # event_loop.add_signal_handler(signal.SIGALRM, lambda: asyncio.create_task(set_start_event()))
+            await asyncio.sleep(10)
+            start_event.set()
+        await process.wait()
+        return
+
     from agentscope._init import init_process
 
     if init_settings is not None:
@@ -367,8 +408,12 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            self.server.join()
+            self.server.join(10)
             if self.server.is_alive():
+                import psutil
+                process = psutil.Process(self.server.pid)
+                for sub_process in process.children(recursive=True):
+                    sub_process.kill()
                 self.server.kill()
                 logger.info(
                     f"Agent server at port [{self.port}] is killed.",

@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 .idea/
+.vscode/
 
 # macOS
 .DS_Store

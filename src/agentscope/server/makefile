@@ -23,19 +23,22 @@ PROTOS_PATH = ../rpc
 
 vpath %.proto $(PROTOS_PATH)
 
-all: rpc_agent.grpc.pb.cc rpc_agent.pb.cc rpc_agent_servicer launch_server
+all: rpc_agent.grpc.pb.cc rpc_agent.pb.cc worker_args.pb.cc rpc_agent_servicer launch_server
 
-rpc_agent_servicer: rpc_agent.pb.o rpc_agent.grpc.pb.o rpc_agent_servicer.o
+rpc_agent_servicer: rpc_agent.pb.o rpc_agent.grpc.pb.o worker_args.pb.o worker.o rpc_agent_servicer.o
 	$(CXX) $^ $(CXXFLAGS) $(LDFLAGS) -o $@
 
-launch_server:
-	export DYLD_LIBRARY_PATH=/opt/anaconda3/lib:$DYLD_LIBRARY_PATH; export PYTHONPATH=/Users/chenyushuo/workspace/agentscope/src:$PYTHONPATH; ./rpc_agent_servicer
+woker.o: worker.cc worker.h
+	$(CXX) -c $< $(CXXFLAGS) -o $@
 
-%.grpc.pb.cc: ../rpc/%.proto
+launch_server:
+	cd ../../../; DYLD_LIBRARY_PATH=/opt/anaconda3/lib:$$DYLD_LIBRARY_PATH OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ./src/agentscope/server/rpc_agent_servicer $(INIT_SETTINGS_STR) $(HOST) $(PORT) $(SERVER_ID) $(CUSTOM_AGENT_CLASSES) $(STUDIO_URL) $(MAX_TASKS) $(TIMEOUT_SECONDS) $(NUM_WORKERS) $(LAUNCHER_PID)
+
+%.grpc.pb.cc: $(PROTOS_PATH)/%.proto
 	$(PROTOC) -I $(PROTOS_PATH) --grpc_out=. --plugin=protoc-gen-grpc=$(GRPC_CPP_PLUGIN_PATH) $<
 
-%.pb.cc: ../rpc/%.proto
+%.pb.cc: $(PROTOS_PATH)/%.proto
 	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
 
 clean:
-	rm -f *.o *.pb.cc *.pb.h rpc_agent_servicer
+	rm -f *.o *.so *.pb.cc *.pb.h rpc_agent_servicer

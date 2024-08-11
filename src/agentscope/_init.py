@@ -202,3 +202,8 @@ def init_process(
             run_dir=file_manager.dir_root,
             pid=os.getpid(),
         )
+
+
+def init_process_with_str(init_settings_str):
+    init_settings = json.loads(init_settings_str)
+    init_process(**init_settings)
