@@ -37,3 +37,7 @@ jobs:
     - name: Generate coverage report
       run: |
         coverage report -m
+    - name: CPP gRPC Server Tests
+      if: ${{ matrix.os != 'windows-latest' }}
+      run: |
+        USE_CPP_SERVER=YES python -m unittest tests/rpc_agent_test.py

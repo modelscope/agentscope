@@ -25,6 +25,8 @@ using grpc::Status;
 
 using google::protobuf::Empty;
 
+Worker *worker = nullptr;
+
 class RpcAgentServiceImpl final : public RpcAgent::Service
 {
 private:
@@ -220,7 +222,9 @@ public:
         const StringMsg *request,
         ServerWriter<ByteMsg> *writer) override
     {
+        _worker->logger("download_file: start!");
         std::string filepath = request->value();
+        _worker->logger("download_file: filepath = " + filepath);
         if (!std::filesystem::exists(filepath))
         {
             return Status(grpc::StatusCode::NOT_FOUND, string("File ") + filepath + " not found");
@@ -232,35 +236,37 @@ public:
             return Status(grpc::StatusCode::NOT_FOUND, "Failed to open the file");
         }
 
-        char buffer[1024 * 1024]; // 1MB buffer
-        while (file.read(buffer, sizeof(buffer)))
+        auto buffer = std::make_unique<char[]>(1024 * 1024);
+        auto read_size = sizeof(char) * 1024 * 1024;
+        _worker->logger("downloading sizeof(buffer) = " + std::to_string(sizeof(buffer)) + " read_size = " + std::to_string(read_size));
+        while (true)
         {
+            file.read(buffer.get(), read_size);
+            if (!file && !file.eof())
+            {
+                file.close();
+                return Status(grpc::StatusCode::INTERNAL, "Error occurred while reading the file");
+            }
             ByteMsg piece;
-            piece.set_data(std::string(buffer, file.gcount()));
+            string data = std::string(buffer.get(), file.gcount());
+            _worker->logger("download_file: read_size = " + std::to_string(read_size) + " file.gcount() = " + std::to_string(file.gcount()) + " data.size() = " + std::to_string(data.size()));
+            piece.set_data(data);
             if (!writer->Write(piece))
             {
-                // send fail
+                file.close();
                 return Status(grpc::StatusCode::ABORTED, "Failed to send data to client");
             }
+            if (file.eof())
+            {
+                file.close();
+                return Status::OK;
+            }
         }
-
-        // check eof
-        if (file.eof())
-        {
-            return Status::OK;
-        }
-        else if (file.fail())
-        {
-            return Status(grpc::StatusCode::INTERNAL, "Error occurred while reading the file");
-        }
-
-        return Status::OK;
     }
 };
 
-void RunServer(int argc, char **argv, Worker *worker)
+void RunServer(const string &server_address)
 {
-    std::string server_address(argv[2] + string(":") + argv[3]);
     RpcAgentServiceImpl service(worker);
 
     ServerBuilder builder;
@@ -271,8 +277,6 @@ void RunServer(int argc, char **argv, Worker *worker)
     std::cout << "Server listening on " << server_address << std::endl;
     server->Wait();
 }
-
-Worker *worker = nullptr;
 
 void signal_handler(int signum)
 {
@@ -288,9 +292,6 @@ int main(int argc, char **argv)
     if (argc < 9)
     {
         std::cerr << "Usage: " << argv[0] << " <init_settings_str> <host> <port> <server_id> <custom_agent_classes_str> <studio_url> <max_tasks> <timeout_seconds> [<num_workers>] [<launcher_pid>]" << std::endl;
-        for (int i = 0; i < argc; i ++)
-            std::cerr << "[" << argv[i] << "] ";
-        std::cerr << std::endl;
         return 1;
     }
     struct sigaction act;
@@ -300,10 +301,19 @@ int main(int argc, char **argv)
     sigaction(SIGINT, &act, NULL);
     sigaction(SIGKILL, &act, NULL);
 
+    string init_settings_str = argv[1];
+    string host = argv[2];
+    string port = argv[3];
+    std::string server_address(host + ":" + port);
+    string server_id = argv[4];
+    string custom_agent_classes_str = argv[5];
+    string studio_url = argv[6];
+    int max_tasks = std::atoi(argv[7]);
+    int timeout_seconds = std::atoi(argv[8]);
     int num_workers = argc >= 10 ? std::atoi(argv[9]) : 2;
     int launcher_pid = argc >= 11 ? std::atoi(argv[10]) : 0;
-    worker = new Worker(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], std::atoi(argv[7]), std::atoi(argv[8]), num_workers, launcher_pid);
-    RunServer(argc, argv, worker);
+    worker = new Worker(init_settings_str, host, port, server_id, custom_agent_classes_str, studio_url, max_tasks, timeout_seconds, num_workers, launcher_pid);
+    RunServer(server_address);
     delete worker;
     return 0;
 }

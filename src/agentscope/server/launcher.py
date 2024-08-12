@@ -150,7 +150,8 @@ async def _setup_agent_server_async(
         env = os.environ.copy()
         env['PYTHONPATH'] = os.pathsep.join([env.get('PYTHONPATH', ''), os.path.join(current_directory, '../../../')])
         pid = os.getpid()
-        f = open(f'logs/{port}.log', 'w')
+        os.makedirs('logs/', exist_ok=True)
+        f = open(f'logs/{port}.log', 'wb')
         process = await asyncio.create_subprocess_exec(
             'make',
             f'INIT_SETTINGS_STR={init_settings_str}',
@@ -165,21 +166,25 @@ async def _setup_agent_server_async(
             f'LAUNCHER_PID={pid}',
             cwd=current_directory,
             env=env,
-            # stdout=sys.stdout, # asyncio.subprocess.PIPE,
-            # stderr=sys.stderr, # asyncio.subprocess.PIPE
-            stdout=f,
-            stderr=f,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
         )
 
         if start_event is not None:
             pipe.send(port)
-            # event_loop = asyncio.get_running_loop()
-            # async def set_start_event():
-            #     start_event.set()
-            # event_loop.add_signal_handler(signal.SIGALRM, lambda: asyncio.create_task(set_start_event()))
-            await asyncio.sleep(10)
-            start_event.set()
+            is_set = False
+            while True:
+                line = await process.stdout.readline()
+                if not line:
+                    break
+                f.write(line)
+                if not is_set:
+                    line = line.decode('utf-8')
+                    if f'Server listening on {host}:{port}' in line:
+                        start_event.set()
+                        is_set = True
         await process.wait()
+        f.close()
         return
 
     from agentscope._init import init_process
@@ -408,7 +413,7 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            self.server.join(10)
+            self.server.join(2)
             if self.server.is_alive():
                 import psutil
                 process = psutil.Process(self.server.pid)
