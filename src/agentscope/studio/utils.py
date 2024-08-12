@@ -7,15 +7,20 @@ Functions:
     require_auth - A decorator for protecting views by requiring
         authentication.
 """
-from typing import Any, Callable
+from datetime import datetime, timedelta
 from functools import wraps
-from flask import request, session, redirect, url_for
+from typing import Any, Callable
+
+import jwt
+from flask import session, redirect, url_for, abort
+
+EXP_TIME = 1440  # One day long
 
 
 def require_auth(
     redirect_url: str = "_home",
     fail_with_exception: bool = False,
-    ip: str = "",
+    secret_key: str = "",
     **decorator_kwargs: Any,
 ) -> Callable:
     """
@@ -32,8 +37,8 @@ def require_auth(
             redirected.
         fail_with_exception (bool): If True, raise an exception for
             unauthorized access, otherwise redirect to the redirect_url.
-        ip (str): The request IP address to check against '127.0.0.1' for
-            bypass.
+        local_serving (bool): online service or local servering
+        secret_key (str): The secret key for generate jwt token.
         **decorator_kwargs: Additional keyword arguments passed to the
             decorated view.
 
@@ -44,30 +49,23 @@ def require_auth(
     def decorator(view_func: Callable) -> Callable:
         @wraps(view_func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            token_query = request.args.get("token", "") or request.json.get(
-                "token_query",
-                "",
-            )
-            user_login = request.args.get(
-                "user_login",
-                "",
-            ) or request.json.get("user_login", "")
-            token_session = session.get("verification_token")
-            valid_user_login = session.get("user_login")
+            verification_token = session.get("verification_token")
+            user_login = session.get("user_login")
+            jwt_token = session.get("jwt_token")
+
+            token_dict = decode_jwt(jwt_token, secret_key=secret_key)
+            valid_user_login = token_dict["user_login"]
+            valid_verification_token = token_dict["verification_token"]
 
             if (
-                token_query
-                and token_query == token_session
+                verification_token == valid_verification_token
                 and user_login == valid_user_login
-            ) or ip == "127.0.0.1":
+            ):
                 kwargs = {
                     **kwargs,
                     **decorator_kwargs,
-                    "token_query": token_query,
-                    "user_login": user_login,
+                    "token_dict": token_dict,
                 }
-                if ip:
-                    kwargs["ip"] = ip
                 return view_func(*args, **kwargs)
             else:
                 if fail_with_exception:
@@ -77,3 +75,63 @@ def require_auth(
         return wrapper
 
     return decorator
+
+
+def generate_jwt(
+    user_login: str,
+    access_token: str,
+    verification_token: str,
+    secret_key: str,
+    version: str = None,
+) -> str:
+    """
+    Generates a JSON Web Token (JWT) with the specified payload.
+
+    Args:
+        user_login (str): The user's login or identifier.
+        access_token (str): The access token associated with the user.
+        verification_token (str): A verification token for additional security.
+        secret_key (str): The secret key used to sign the JWT.
+        version (str, optional): Optional version of the token.
+
+    Returns:
+        str: The encoded JWT as a string.
+    """
+    payload = {
+        "user_login": user_login,
+        "access_token": access_token,
+        "verification_token": verification_token,
+        "exp": datetime.utcnow() + timedelta(minutes=EXP_TIME),
+    }
+    if version:
+        payload["version"] = version
+    return jwt.encode(payload, secret_key, algorithm="HS256")
+
+
+def decode_jwt(token: str, secret_key: str) -> Any:
+    """
+    Decodes a JSON Web Token (JWT) using the provided secret key.
+
+    Args:
+        token (str): The encoded JWT to decode.
+        secret_key (str): The secret key used for decoding the JWT.
+
+    Returns:
+        dict: The payload of the decoded token if successful.
+
+    Raises:
+        abort: If the token is expired or invalid, a 401 or 403 error is
+        raised.
+    """
+
+    try:
+        return jwt.decode(token, secret_key, algorithms=["HS256"])
+    except jwt.ExpiredSignatureError:
+        abort(401, description="The provided token has expired.")
+        return None
+    except Exception:
+        abort(
+            403,
+            description="The provided token is invalid. Please log in again.",
+        )
+        return None

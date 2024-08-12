@@ -50,38 +50,38 @@
                 <div class="workstation-sidebar-item">Example</div>
                 <ul>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(1, '{{ user_login }}', '{{ token_query }}');">
+                        onclick="importExample(1);">
                         Two Agents
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                                     importExample_step(1, '{{ user_login }}', '{{ token_query }}')">
+                                     importExample_step(1)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(2, '{{ user_login }}', '{{ token_query }}');">
+                        onclick="importExample(2);">
                         Pipeline
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                                     importExample_step(2, '{{ user_login }}', '{{ token_query }}')">
+                                     importExample_step(2)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(3, '{{ user_login }}', '{{ token_query }}');">
+                        onclick="importExample(3);">
                         Conversation
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                                     importExample_step(3, '{{ user_login }}', '{{ token_query }}')">
+                                     importExample_step(3)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(4, '{{ user_login }}', '{{ token_query }}');">
+                        onclick="importExample(4);">
                         Group Chat
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                                     importExample_step(4, '{{ user_login }}', '{{ token_query }}')">
+                                     importExample_step(4)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
@@ -287,22 +287,23 @@
                 </div>
                 <div class="menu-btn unselectable-text"
                      title="Export Python code"
-                     onclick="showExportPyPopup('{{ user_login }}', '{{ token_query }}')">
+                     onclick="showExportPyPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M896.170667 497.365333l-241.365334 241.365334-60.330666-60.373334 180.992-180.992-180.992-181.034666L654.805333 256l241.365334 241.365333z m-647.509334 0l181.034667 180.992-60.330667 60.373334L128 497.365333 369.365333 256l60.330667 60.330667-181.034667 181.034666z"></path>
                     </svg>
                 </div>
+                {% set version = token_dict.get('version') if token_dict is defined else "local" %}
                 <div class="menu-btn unselectable-text"
                      title="Run the workflow"
-                     onclick="showExportRunPopup('{{ ip }}', '{{ user_login }}', '{{ token_query }}');">
+                     onclick="showExportRunPopup('{{ version }}');">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M256 252.245333c0-6.613333 1.578667-13.098667 4.565333-18.901333 9.813333-18.773333 32-25.557333 49.621334-15.104l439.04 259.754667c5.973333 3.541333 10.88 8.789333 14.165333 15.146666 9.813333 18.773333 3.413333 42.453333-14.165333 52.864L310.186667 805.76a34.730667 34.730667 0 0 1-17.706667 4.906667C272.341333 810.666667 256 793.258667 256 771.797333V252.245333z"></path>
                     </svg>
                 </div>
                 <div class="menu-btn unselectable-text" title="Save workflow"
-                     onclick="showSaveWorkflowPopup('{{ user_login }}', '{{ token_query }}')">
+                     onclick="showSaveWorkflowPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          version="1.1" xmlns="http://www.w3.org/2000/svg"
                          p-id="5904">
@@ -313,7 +314,7 @@
                 </div>
 
                 <div class="menu-btn unselectable-text" title="Load workflow"
-                     onclick="showLoadWorkflowPopup('{{ user_login }}', '{{ token_query }}')">
+                     onclick="showLoadWorkflowPopup()">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          version="1.1" xmlns="http://www.w3.org/2000/svg"
                          p-id="6932">

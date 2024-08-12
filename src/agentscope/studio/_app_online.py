@@ -4,9 +4,9 @@ import ipaddress
 import json
 import os
 import secrets
-import fcntl
 import tempfile
 from typing import Tuple, Any
+from datetime import timedelta
 
 import requests
 import oss2
@@ -25,7 +25,7 @@ from flask import (
 from flask_babel import Babel, refresh
 from dotenv import load_dotenv
 
-from agentscope.studio.utils import require_auth
+from agentscope.studio.utils import require_auth, generate_jwt
 from agentscope.studio._app import (
     _convert_config_to_py,
     _read_examples,
@@ -69,12 +69,16 @@ babel.init_app(_app, locale_selector=get_locale)
 
 load_dotenv(override=True)
 
-_app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "your_default_secret_key")
+SECRET_KEY = os.getenv("SECRET_KEY") or os.urandom(24)
+_app.config["SECRET_KEY"] = SECRET_KEY
+_app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=1)
 _app.config["SESSION_TYPE"] = os.getenv("SESSION_TYPE", "filesystem")
 if os.getenv("LOCAL_WORKSTATION", "false").lower() == "true":
+    LOCAL_WORKSTATION = True
     IP = "127.0.0.1"
     COPILOT_IP = "127.0.0.1"
 else:
+    LOCAL_WORKSTATION = False
     IP = os.getenv("IP", "127.0.0.1")
     COPILOT_IP = os.getenv("COPILOT_IP", "127.0.0.1")
 
@@ -89,7 +93,6 @@ if not is_ip(COPILOT_IP):
 CLIENT_ID = os.getenv("CLIENT_ID")
 OWNER = os.getenv("OWNER")
 REPO = os.getenv("REPO")
-USER_FILE_NAME = os.getenv("USER_FILE_NAME", "user_logins.txt")
 OSS_ENDPOINT = os.getenv("OSS_ENDPOINT")
 OSS_BUCKET_NAME = os.getenv("OSS_BUCKET_NAME")
 OSS_ACCESS_KEY_ID = os.getenv("OSS_ACCESS_KEY_ID")
@@ -105,23 +108,6 @@ required_envs = {
 for key, value in required_envs.items():
     if not value:
         logger.warning(f"{key} is not set on envs!")
-
-
-def add_login_safe(
-    file_name: str,
-    user_login: str,
-    verification_token: str,
-) -> None:
-    """
-    Log user status when user login to verify login status.
-    """
-    with open(file_name, "a+", encoding="utf-8") as file:
-        fcntl.flock(file, fcntl.LOCK_EX)
-        file.seek(0)
-        existing_logins = set(file.read().splitlines())
-        if f"【{user_login}】?【{verification_token}】" not in existing_logins:
-            file.write(f"【{user_login}】?【{verification_token}】\n")
-        fcntl.flock(file, fcntl.LOCK_UN)
 
 
 def get_oss_config() -> Tuple:
@@ -196,6 +182,16 @@ def _home() -> str:
     """
     Render the login page.
     """
+    # if LOCAL_WORKSTATION:
+    #     session["verification_token"] = "verification_token"
+    #     session["user_login"] = "local_user"
+    #     session["jwt_token"] = generate_jwt(
+    #         user_login="local_user",
+    #         access_token="access_token",
+    #         verification_token="verification_token",
+    #         secret_key=SECRET_KEY,
+    #         version="online",
+    #     )
     return render_template("login.html", client_id=CLIENT_ID, ip=IP, port=PORT)
 
 
@@ -228,23 +224,17 @@ def oauth_callback() -> str:
 
     user_login = user_status.get("login")
 
-    try:
-        with open(USER_FILE_NAME, "r", encoding="utf-8") as file:
-            existing_logins = set(file.read().splitlines())
-    except FileNotFoundError:
-        existing_logins = set()
-
     if star_repository(access_token=access_token):
         verification_token = generate_verification_token()
+        # Used for compare with `verification_token` in `jwt_token`
         session["verification_token"] = verification_token
         session["user_login"] = user_login
-
-        if f"【{user_login}】?【{verification_token}】" not in existing_logins:
-            add_login_safe(
-                file_name=USER_FILE_NAME,
-                user_login=user_login,
-                verification_token=verification_token,
-            )
+        session["jwt_token"] = generate_jwt(
+            user_login=user_login,
+            access_token=access_token,
+            verification_token=verification_token,
+            secret_key=SECRET_KEY,
+        )
 
         return redirect(
             url_for(
@@ -258,17 +248,14 @@ def oauth_callback() -> str:
 
 
 @_app.route("/workstation")
-@require_auth(ip=IP, copilot_ip=COPILOT_IP, copilot_port=COPILOT_PORT)
+@require_auth(secret_key=SECRET_KEY)
 def _workstation_online(**kwargs: Any) -> str:
     """Render the workstation page."""
-    user_login = request.args.get("user_login", "local_user")
-    kwargs["user_login"] = user_login
-
     return render_template("workstation.html", **kwargs)
 
 
 @_app.route("/upload-to-oss", methods=["POST"])
-@require_auth(fail_with_exception=True, ip=IP)
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _upload_file_to_oss_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -302,7 +289,7 @@ def _upload_file_to_oss_online(**kwargs: Any) -> Response:
         return public_url
 
     content = request.json.get("data")
-    user_login = request.json.get("user_login", "")
+    user_login = session.get("user_login", "local_user")
 
     workflow_json = json.dumps(content, ensure_ascii=False, indent=4)
     if len(workflow_json.encode("utf-8")) > 1024 * 1024:
@@ -315,7 +302,7 @@ def _upload_file_to_oss_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/convert-to-py", methods=["POST"])
-@require_auth(fail_with_exception=True, ip=IP)
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _online_convert_config_to_py(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -325,7 +312,7 @@ def _online_convert_config_to_py(**kwargs: Any) -> Response:
 
 
 @_app.route("/read-examples", methods=["POST"])
-@require_auth(fail_with_exception=True, ip=IP)
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _read_examples_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -335,6 +322,7 @@ def _read_examples_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/save-workflow", methods=["POST"])
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _save_workflow_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -344,7 +332,7 @@ def _save_workflow_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/delete-workflow", methods=["POST"])
-@require_auth(fail_with_exception=True, ip=IP)
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _delete_workflow_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -354,7 +342,7 @@ def _delete_workflow_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/list-workflows", methods=["POST"])
-@require_auth(fail_with_exception=True, ip=IP)
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _list_workflows_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -364,7 +352,7 @@ def _list_workflows_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/load-workflow", methods=["POST"])
-@require_auth(fail_with_exception=True, ip=IP)
+@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _load_workflow_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """

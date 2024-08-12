@@ -15,6 +15,7 @@ from flask import (
     Flask,
     request,
     jsonify,
+    session,
     render_template,
     Response,
     abort,
@@ -657,7 +658,7 @@ def _save_workflow() -> Response:
     """
     Save the workflow JSON data to the local user folder.
     """
-    user_login = request.args.get("user_login", "local_user")
+    user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
@@ -712,7 +713,7 @@ def _delete_workflow() -> Response:
     """
     Deletes a workflow JSON file from the user folder.
     """
-    user_login = request.args.get("user_login", "local_user")
+    user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
@@ -738,7 +739,7 @@ def _list_workflows() -> Response:
     """
     Get all workflow JSON files in the user folder.
     """
-    user_login = request.args.get("user_login", "local_user")
+    user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
@@ -752,7 +753,7 @@ def _load_workflow() -> Response:
     """
     Reads and returns workflow data from the specified JSON file.
     """
-    user_login = request.args.get("user_login", "local_user")
+    user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
