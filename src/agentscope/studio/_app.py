@@ -666,13 +666,17 @@ def _save_workflow() -> Response:
     data = request.json
     overwrite = data.get("overwrite", False)
     filename = data.get("filename")
-    workflow = data.get("workflow")
+    workflow_str = data.get("workflow")
     if not filename:
         return jsonify({"message": "Filename is required"})
 
     filepath = os.path.join(user_dir, f"{filename}.json")
 
-    if not isinstance(workflow, dict):
+    try:
+        workflow = json.loads(workflow_str)
+        if not isinstance(workflow, dict):
+            raise ValueError
+    except (json.JSONDecodeError, ValueError):
         return jsonify({"message": "Invalid workflow data"})
 
     workflow_json = json.dumps(workflow, ensure_ascii=False, indent=4)

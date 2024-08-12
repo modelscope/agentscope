@@ -1864,6 +1864,11 @@ function showSaveWorkflowPopup() {
 
 function saveWorkflow(fileName) {
     const rawData = editor.export();
+
+    // Remove the html attribute from the nodes to avoid inconsistencies in html
+    removeHtmlFromUsers(rawData);
+
+    const exportData = JSON.stringify(rawData, null, 4);
     fetch('/save-workflow', {
         method: 'POST',
         headers: {
@@ -1871,7 +1876,7 @@ function saveWorkflow(fileName) {
         },
         body: JSON.stringify({
             filename: fileName,
-            workflow: rawData,
+            workflow: exportData,
             overwrite: false,
         })
     }).then(response => response.json())
@@ -1963,7 +1968,21 @@ function loadWorkflow(fileName) {
             if (data.error) {
                 Swal.fire('Error', data.error, 'error');
             } else {
-                editor.import(data);
+                try {
+                    const parsedData = JSON.parse(data);
+
+                    // Add html source code to the nodes data
+                    addHtmlAndReplacePlaceHolderBeforeImport(parsedData)
+                        .then(() => {
+                            editor.clear();
+                            editor.import(parsedData);
+                            importSetupNodes(parsedData);
+                            Swal.fire('Imported!', '', 'success');
+                        });
+
+                } catch (error) {
+                    Swal.showValidationMessage(`Import error: ${error}`);
+                }
                 Swal.fire('Success', 'Workflow loaded successfully', 'success');
             }
         })
