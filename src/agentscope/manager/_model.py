@@ -100,7 +100,7 @@ class ModelManager:
                 f"list of dicts), but got {type(model_configs)}",
             )
 
-        formatted_configs = format_configs(configs=cfgs)
+        formatted_configs = _format_configs(configs=cfgs)
 
         # check if name is unique
         for cfg in formatted_configs:
@@ -164,7 +164,7 @@ class ModelManager:
         self.clear_model_configs()
 
 
-def format_configs(
+def _format_configs(
     configs: Union[Sequence[dict], dict],
 ) -> Sequence:
     """Check the format of model configs.
