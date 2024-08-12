@@ -148,7 +148,7 @@ class Moderator(AgentBase):
         summ = 0
         for r in results:
             try:
-                summ += int(r["content"])
+                summ += int(r.content)
             except Exception as e:
                 print(e)
         return Msg(

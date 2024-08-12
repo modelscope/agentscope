@@ -111,7 +111,7 @@ class LlamaIndexAgent(AgentBase):
             )
             query = (
                 "/n".join(
-                    [msg["content"] for msg in history],
+                    [msg.content for msg in history],
                 )
                 if isinstance(history, list)
                 else str(history)

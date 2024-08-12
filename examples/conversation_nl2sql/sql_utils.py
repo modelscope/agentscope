@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Utils and helpers for performing sql querys.
+Utils and helpers for performing sql queries.
 Referenced from https://github.com/BeachWang/DAIL-SQL.
 """
 import sqlite3
@@ -261,11 +261,10 @@ class DailSQLPromptGenerator:
         }
         return self.sql_prompt.is_sql_question(target)
 
-    def generate_prompt(self, x: dict = None) -> dict:
+    def generate_prompt(self, question: str) -> dict:
         """
         Generate prompt given input question
         """
-        question = x["content"]
         target = {
             "path_db": self.db_path,
             "question": question,
@@ -277,7 +276,6 @@ class DailSQLPromptGenerator:
                 self.NUM_EXAMPLE * self.scope_factor,
             )
             prompt_example = []
-            question = target["question"]
             example_prefix = self.question_style.get_example_prefix()
             for example in examples:
                 example_format = self.question_style.format_example(example)

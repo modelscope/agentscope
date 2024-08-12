@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
-from typing import Optional, Union, Sequence
+from typing import Optional, Union, Sequence, Any
+
+from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
@@ -16,6 +18,7 @@ class DialogAgent(AgentBase):
         sys_prompt: str,
         model_config_name: str,
         use_memory: bool = True,
+        **kwargs: Any,
     ) -> None:
         """Initialize the dialog agent.
 
@@ -36,6 +39,10 @@ class DialogAgent(AgentBase):
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             use_memory=use_memory,
+        )
+
+        logger.warning(
+            f"Unused keyword arguments is provided: {kwargs}",
         )
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:

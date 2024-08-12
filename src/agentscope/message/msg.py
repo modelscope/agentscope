@@ -27,7 +27,7 @@ class Msg:
     - name:         who sends the message
     - content:      the message content
     - role:         the sender role chosen from 'system', 'user', 'assistant'
-    - url:          the url
+    - url:          the url(s) refers to multimodal content
     - metadata:     some additional information
     - timestamp:    when the message is created
     """
@@ -101,6 +101,16 @@ class Msg:
 
         if echo:
             logger.chat(self)
+
+    def __getitem__(self, item: str) -> Any:
+        """The getitem function, which will be deprecated in the new version"""
+        logger.error(
+            f"The Msg class doesn't inherit dict any more. Please refer to "
+            f"its attribute by `msg.{item}` directly."
+            f"The support of __getitem__ will also be deprecated in the "
+            f"future.",
+        )
+        return self.__getattribute__(item)
 
     @property
     def id(self) -> str:

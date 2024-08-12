@@ -127,15 +127,15 @@ def main() -> None:
         # 5. repeat
         x = user_agent()
         x.role = "user"  # to enforce dashscope requirement on roles
-        if len(x["content"]) == 0 or str(x["content"]).startswith("exit"):
+        if len(x.content) == 0 or str(x.content).startswith("exit"):
             break
-        speak_list = filter_agents(x.get("content", ""), rag_agent_list)
+        speak_list = filter_agents(x.content, rag_agent_list)
         if len(speak_list) == 0:
             guide_response = guide_agent(x)
             # Only one agent can be called in the current version,
             # we may support multi-agent conversation later
             speak_list = filter_agents(
-                guide_response.get("content", ""),
+                guide_response.content,
                 rag_agent_list,
             )
         agent_name_list = [agent.name for agent in speak_list]
