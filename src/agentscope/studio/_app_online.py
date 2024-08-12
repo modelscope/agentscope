@@ -182,16 +182,16 @@ def _home() -> str:
     """
     Render the login page.
     """
-    # if LOCAL_WORKSTATION:
-    #     session["verification_token"] = "verification_token"
-    #     session["user_login"] = "local_user"
-    #     session["jwt_token"] = generate_jwt(
-    #         user_login="local_user",
-    #         access_token="access_token",
-    #         verification_token="verification_token",
-    #         secret_key=SECRET_KEY,
-    #         version="online",
-    #     )
+    if LOCAL_WORKSTATION:
+        session["verification_token"] = "verification_token"
+        session["user_login"] = "local_user"
+        session["jwt_token"] = generate_jwt(
+            user_login="local_user",
+            access_token="access_token",
+            verification_token="verification_token",
+            secret_key=SECRET_KEY,
+            version="online",
+        )
     return render_template("login.html", client_id=CLIENT_ID, ip=IP, port=PORT)
 
 
@@ -239,8 +239,6 @@ def oauth_callback() -> str:
         return redirect(
             url_for(
                 "_workstation_online",
-                token=verification_token,
-                user_login=user_login,
             ),
         )
     else:

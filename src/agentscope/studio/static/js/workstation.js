@@ -2044,6 +2044,7 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
         const node = data.drawflow.Home.data[nodeId];
 
         if (!node.html) {
+            console.log(node.name)
             const sourceCode = await fetchHtmlSourceCodeByName(node.name);
 
             // Add new html attribute to the node
