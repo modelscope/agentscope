@@ -104,7 +104,7 @@ class Msg:
 
     def __getitem__(self, item: str) -> Any:
         """The getitem function, which will be deprecated in the new version"""
-        logger.error(
+        logger.warning(
             f"The Msg class doesn't inherit dict any more. Please refer to "
             f"its attribute by `msg.{item}` directly."
             f"The support of __getitem__ will also be deprecated in the "
