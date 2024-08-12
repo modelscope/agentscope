@@ -4,6 +4,7 @@ import os
 import threading
 import traceback
 import json
+import base64
 from concurrent import futures
 from multiprocessing.synchronize import Event as EventClass
 from typing import Any
@@ -80,7 +81,8 @@ class _AgentError:
 def register_agent_classes(custom_agent_classes_str: str) -> None:
     """Register agent classes."""
     if custom_agent_classes_str:
-        custom_agent_classes = dill.loads(eval(custom_agent_classes_str))
+        custom_agent_classes_str = eval(custom_agent_classes_str)
+        custom_agent_classes = dill.loads(base64.b64decode(custom_agent_classes_str))
         for agent_class in custom_agent_classes:
             AgentBase.register_agent_class(agent_class=agent_class)
 

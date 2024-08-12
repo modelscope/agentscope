@@ -140,11 +140,8 @@ Worker::Worker(
             {
                 servicer.attr("register_agent_classes")(custom_agent_classes_str);
             }
-            logger("worker start 1:");
             py::gil_scoped_release release;
-            logger("worker start 2:");
             auto t = sem_post(worker_avail_sem);
-            logger("worker start 3:");
             while (true)
             {
                 sem_wait(func_ready_sem);
@@ -741,7 +738,7 @@ void Worker::set_model_configs_worker(const int call_id)
     string model_configs_str = args.model_configs();
     py::gil_scoped_acquire acquire;
     py::object model_configs = py::module::import("json").attr("loads")(model_configs_str);
-    py::module::import("agentscope.models").attr("read_model_configs")(model_configs);
+    py::module::import("agentscope.manager").attr("ModelManager").attr("get_instance")().attr("load_model_configs")(model_configs);
     set_result(call_id, "");
 }
 
@@ -920,15 +917,10 @@ string Worker::call_server_info()
 void Worker::server_info_worker(const int call_id)
 {
     py::gil_scoped_acquire acquire;
-    logger("server_info_worker 1: call_id = " + to_string(call_id) + " pid = " + to_string(_pid));
     py::object process = py::module::import("psutil").attr("Process")(_pid);
-    logger("server_info_worker 2: call_id = " + to_string(call_id) + " pid = " + to_string(_pid));
     double cpu_info = process.attr("cpu_percent")("interval"_a = 1).cast<double>();
-    logger("server_info_worker 3: call_id = " + to_string(call_id) + " pid = " + to_string(_pid));
     double mem_info = process.attr("memory_info")().attr("rss").cast<double>() / (1 << 20);
-    logger("server_info_worker 4: call_id = " + to_string(call_id) + " pid = " + to_string(_pid));
     py::dict result("pid"_a = _pid, "id"_a = _server_id, "cpu"_a = cpu_info, "mem"_a = mem_info);
-    logger("server_info_worker 5: call_id = " + to_string(call_id) + " pid = " + to_string(_pid));
     string result_str = py::module::import("json").attr("dumps")(result).cast<string>();
     set_result(call_id, result_str);
 }

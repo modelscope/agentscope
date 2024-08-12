@@ -9,6 +9,7 @@ import time
 import importlib
 import dill
 import json
+import base64
 from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
 from concurrent import futures
@@ -154,12 +155,23 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             files.
     """
     if os.environ.get('USE_CPP_SERVER', '').lower() == 'yes':
+        env = os.environ.copy()
         current_file_path = os.path.abspath(__file__)
         current_directory = os.path.dirname(current_file_path)
-        custom_agent_classes_str = repr(dill.dumps(custom_agent_classes)) if custom_agent_classes is not None else ''
+        if custom_agent_classes is None:
+            custom_agent_classes = []
+        if agent_dir is not None:
+            env['PYTHONPATH'] = os.pathsep.join([
+                env.get('PYTHONPATH', ''),
+                agent_dir,
+            ])
+            custom_agent_classes.extend(load_agents_from_dir(agent_dir))
         init_settings_str = repr(json.dumps(init_settings)) if init_settings is not None else ''
-        env = os.environ.copy()
-        env['PYTHONPATH'] = os.pathsep.join([env.get('PYTHONPATH', ''), os.path.join(current_directory, '../../../')])
+        custom_agent_classes_str = base64.b64encode(dill.dumps(custom_agent_classes)) if custom_agent_classes is not None else ''
+        env['PYTHONPATH'] = os.pathsep.join([
+            env.get('PYTHONPATH', ''),
+            os.path.join(current_directory, '../../../'),
+        ])
         pid = os.getpid()
         os.makedirs('logs/', exist_ok=True)
         f = open(f'logs/{port}.log', 'wb')
@@ -478,12 +490,13 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            self.server.join(2)
-            if self.server.is_alive():
+            if os.environ.get('USE_CPP_SERVER', '').lower() == 'yes':
                 import psutil
                 process = psutil.Process(self.server.pid)
                 for sub_process in process.children(recursive=True):
-                    sub_process.kill()
+                    sub_process.send_signal(signal.SIGINT)
+            self.server.join()
+            if self.server.is_alive():
                 self.server.kill()
                 logger.info(
                     f"Agent server at port [{self.port}] is killed.",

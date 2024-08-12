@@ -126,4 +126,4 @@ def print_llm_usage() -> dict:
 
 def init_process_with_str(init_settings_str):
     init_settings = json.loads(init_settings_str)
-    ASManager.get_instance().initialize(**init_settings)
+    ASManager.get_instance().load_dict(init_settings)

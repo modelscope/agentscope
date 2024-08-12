@@ -299,7 +299,6 @@ int main(int argc, char **argv)
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
     sigaction(SIGINT, &act, NULL);
-    sigaction(SIGKILL, &act, NULL);
 
     string init_settings_str = argv[1];
     string host = argv[2];
