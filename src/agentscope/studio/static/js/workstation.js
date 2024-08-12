@@ -1864,6 +1864,7 @@ function showSaveWorkflowPopup() {
 
 function saveWorkflow(fileName) {
     const rawData = editor.export();
+    filterOutApiKey(rawData)
 
     // Remove the html attribute from the nodes to avoid inconsistencies in html
     removeHtmlFromUsers(rawData);
