@@ -100,10 +100,10 @@ class ModelManager:
                 f"list of dicts), but got {type(model_configs)}",
             )
 
-        formated_configs = format_configs(configs=cfgs)
+        formatted_configs = format_configs(configs=cfgs)
 
         # check if name is unique
-        for cfg in formated_configs:
+        for cfg in formatted_configs:
             if cfg["config_name"] in self.model_configs:
                 logger.warning(
                     f"config_name [{cfg['config_name']}] already exists.",
