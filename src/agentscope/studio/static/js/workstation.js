@@ -1476,7 +1476,7 @@ function showExportPyPopup() {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1512,7 +1512,7 @@ function showExportPyPopup() {
                         showCancelButton: true,
                         confirmButtonText: 'Copy',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1534,7 +1534,7 @@ function showExportPyPopup() {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1573,7 +1573,7 @@ function showExportRunLocalPopup() {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1609,7 +1609,7 @@ function showExportRunLocalPopup() {
                         showCancelButton: true,
                         confirmButtonText: 'Copy Code',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1631,7 +1631,7 @@ function showExportRunLocalPopup() {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1690,7 +1690,7 @@ function showExportRunMSPopup() {
                     title: 'Processing...',
                     text: 'Please wait.',
                     allowOutsideClick: false,
-                    onBeforeOpen: () => {
+                    willOpen: () => {
                         Swal.showLoading()
                     }
                 });
@@ -1746,7 +1746,7 @@ function showExportHTMLPopup() {
         showCancelButton: true,
         confirmButtonText: 'Copy',
         cancelButtonText: 'Close',
-        onBeforeOpen: (element) => {
+        willOpen: (element) => {
             // Find the code element inside the Swal content
             const codeElement = element.querySelector('code');
 
@@ -1923,7 +1923,7 @@ function showLoadWorkflowPopup() {
                 }
             }).then(result => {
                 if (result.isConfirmed) {
-                    loadWorkflow(selectedFilename);
+                    loadWorkflow(selectedFilename, userLogin, tokenQuery);
                 } else if (result.isDenied) {
                     Swal.fire({
                         title: `Are you sure to delete ${selectedFilename}?`,
@@ -1936,7 +1936,7 @@ function showLoadWorkflowPopup() {
                         cancelButtonText: 'Cancel'
                     }).then((deleteResult) => {
                         if (deleteResult.isConfirmed) {
-                            deleteWorkflow(selectedFilename);
+                            deleteWorkflow(selectedFilename, userLogin, tokenQuery);
                         }
                     });
                 }
@@ -1973,14 +1973,16 @@ function loadWorkflow(fileName) {
         });
 }
 
-function deleteWorkflow(fileName) {
+function deleteWorkflow(fileName, userLogin, tokenQuery) {
     fetch('/delete-workflow', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            filename: fileName
+            filename: fileName,
+            user_login: userLogin,
+            token_query: tokenQuery,
         })
     }).then(response => response.json())
         .then(data => {
