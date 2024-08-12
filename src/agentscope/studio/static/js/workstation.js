@@ -1968,15 +1968,15 @@ function loadWorkflow(fileName) {
             if (data.error) {
                 Swal.fire('Error', data.error, 'error');
             } else {
+                console.log(data)
                 try {
-                    const parsedData = JSON.parse(data);
-
                     // Add html source code to the nodes data
-                    addHtmlAndReplacePlaceHolderBeforeImport(parsedData)
+                    addHtmlAndReplacePlaceHolderBeforeImport(data)
                         .then(() => {
+                            console.log(data)
                             editor.clear();
-                            editor.import(parsedData);
-                            importSetupNodes(parsedData);
+                            editor.import(data);
+                            importSetupNodes(data);
                             Swal.fire('Imported!', '', 'success');
                         });
 
@@ -2042,8 +2042,12 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
     const idPlaceholderRegex = /ID_PLACEHOLDER/g;
     for (const nodeId of Object.keys(data.drawflow.Home.data)) {
         const node = data.drawflow.Home.data[nodeId];
-
         if (!node.html) {
+            if (node.name === "readme") {
+                // Remove the node if its name is "readme"
+                delete data.drawflow.Home.data[nodeId];
+                continue; // Skip to the next iteration
+            }
             console.log(node.name)
             const sourceCode = await fetchHtmlSourceCodeByName(node.name);
 
