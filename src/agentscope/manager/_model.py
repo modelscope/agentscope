@@ -137,7 +137,7 @@ class ModelManager:
                 f"Cannot find [{config_name}] in loaded configurations.",
             )
 
-        model_type = config.model_type
+        model_type = config["model_type"]
 
         kwargs = {k: v for k, v in config.items() if k != "model_type"}
 
