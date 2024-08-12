@@ -10,6 +10,7 @@ import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
+from random import choice
 
 from flask import (
     Flask,
@@ -24,11 +25,15 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-from .._runtime import _runtime
 from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from ._studio_utils import _check_and_convert_id_type
-from ..utils.tools import _is_process_alive, _is_windows
+from ..utils.tools import (
+    _is_process_alive,
+    _is_windows,
+    _generate_new_runtime_id,
+)
 from ..rpc.rpc_agent_client import RpcAgentClient
+
 
 _app = Flask(__name__)
 
@@ -257,11 +262,7 @@ def _register_server() -> Response:
         abort(400, f"run_id [{server_id}] already exists")
 
     _db.session.add(
-        _ServerTable(
-            id=server_id,
-            host=host,
-            port=port,
-        ),
+        _ServerTable(id=server_id, host=host, port=port),
     )
     _db.session.commit()
 
@@ -304,6 +305,7 @@ def _get_server_status(server_id: str) -> Response:
                 "status": "running",
                 "cpu": status["cpu"],
                 "mem": status["mem"],
+                "size": status["size"],
             },
         )
 
@@ -360,6 +362,23 @@ def _agent_memory() -> Response:
     if isinstance(mem, dict):
         mem = [mem]
     return jsonify(mem)
+
+
+@_app.route("/api/servers/alloc", methods=["GET"])
+def _alloc_server() -> Response:
+    # TODO: check the server is still running
+    # TODO: support to alloc multiple servers in one call
+    # TODO: use hints to decide which server to allocate
+    # TODO: allocate based on server's cpu and memory usage
+    # currently random select a server
+    servers = _ServerTable.query.all()
+    server = choice(servers)
+    return jsonify(
+        {
+            "host": server.host,
+            "port": server.port,
+        },
+    )
 
 
 @_app.route("/api/messages/push", methods=["POST"])
@@ -593,7 +612,7 @@ def _convert_config_to_py_and_run() -> Response:
     """
     content = request.json.get("data")
     studio_url = request.url_root.rstrip("/")
-    run_id = _runtime.generate_new_runtime_id()
+    run_id = _generate_new_runtime_id()
     status, py_code = _convert_to_py(
         content,
         runtime_id=run_id,

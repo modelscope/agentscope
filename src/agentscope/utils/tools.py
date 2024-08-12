@@ -84,7 +84,10 @@ def check_port(port: Optional[int] = None) -> int:
         new_port = find_available_port()
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        if s.connect_ex(("localhost", port)) == 0:
+        try:
+            if s.connect_ex(("localhost", port)) == 0:
+                raise RuntimeError("Port is occupied.")
+        except Exception:
             new_port = find_available_port()
             return new_port
     return port
@@ -311,42 +314,6 @@ def _convert_to_str(content: Any) -> str:
         return str(content)
 
 
-def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
-    """record dialog history as a list of strings"""
-    messages = []
-
-    dialogue = []
-    for i, unit in enumerate(input_msgs):
-        if i == 0 and unit["role"] == "system":
-            # system prompt
-            messages.append(
-                {
-                    "role": unit["role"],
-                    "content": _convert_to_str(unit["content"]),
-                },
-            )
-        else:
-            # Merge all messages into a dialogue history prompt
-            dialogue.append(
-                f"{unit['name']}: {_convert_to_str(unit['content'])}",
-            )
-
-    dialogue_history = "\n".join(dialogue)
-
-    user_content_template = "## Dialogue History\n{dialogue_history}"
-
-    messages.append(
-        {
-            "role": "user",
-            "content": user_content_template.format(
-                dialogue_history=dialogue_history,
-            ),
-        },
-    )
-
-    return messages
-
-
 def _join_str_with_comma_and(elements: List[str]) -> str:
     """Return the JSON string with comma, and use " and " between the last two
     elements."""
@@ -502,3 +469,11 @@ def _map_string_to_color_mark(
     hash_value = hash(target_str)
     index = hash_value % len(color_marks)
     return color_marks[index]
+
+
+def _generate_new_runtime_id() -> str:
+    """Generate a new random runtime id."""
+    _RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
+    return _get_timestamp(_RUNTIME_ID_FORMAT).format(
+        _generate_random_code(uppercase=False),
+    )

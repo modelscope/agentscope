@@ -7,7 +7,6 @@ from flask import Flask
 from flask import request
 
 import modelscope
-from agentscope.utils.tools import reform_dialogue
 
 
 def create_timestamp(format_: str = "%Y-%m-%d %H:%M:%S") -> str:
@@ -23,9 +22,7 @@ def get_response() -> dict:
     """Receive post request and return response"""
     json = request.get_json()
 
-    inputs = json.pop("inputs")
-
-    inputs = reform_dialogue(inputs)
+    inputs = json.pop("messages")
 
     global model, tokenizer
 

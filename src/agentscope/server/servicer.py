@@ -32,9 +32,9 @@ except ImportError as import_error:
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.agents.agent import AgentBase
-from agentscope.models import read_model_configs
+from agentscope.manager import ModelManager
+from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
-from agentscope._runtime import _runtime
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from agentscope.message import (
@@ -54,7 +54,11 @@ def _register_server_to_studio(
     url = f"{studio_url}/api/servers/register"
     resp = requests.post(
         url,
-        json={"server_id": server_id, "host": host, "port": port},
+        json={
+            "server_id": server_id,
+            "host": host,
+            "port": port,
+        },
         timeout=10,  # todo: configurable timeout
     )
     if resp.status_code != 200:
@@ -134,7 +138,7 @@ class AgentServerServicer(RpcAgentServicer):
         server_id: str = None,
         studio_url: str = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
     ):
         """Init the AgentServerServicer.
 
@@ -152,7 +156,7 @@ class AgentServerServicer(RpcAgentServicer):
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Maximum time for reply messages to be cached in the server.
                 Note that expired messages will be deleted.
         """
@@ -167,7 +171,8 @@ class AgentServerServicer(RpcAgentServicer):
                 host=host,
                 port=port,
             )
-            _studio_client.initialize(_runtime.runtime_id, studio_url)
+            run_id = ASManager.get_instance().run_id
+            _studio_client.initialize(run_id, studio_url)
 
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,
@@ -422,6 +427,7 @@ class AgentServerServicer(RpcAgentServicer):
         process = psutil.Process(self.pid)
         status["cpu"] = process.cpu_percent(interval=1)
         status["mem"] = process.memory_info().rss / (1024**2)
+        status["size"] = len(self.agent_pool)
         return agent_pb2.GeneralResponse(ok=True, message=json.dumps(status))
 
     def set_model_configs(
@@ -432,7 +438,7 @@ class AgentServerServicer(RpcAgentServicer):
         """Set the model configs of the agent server."""
         model_configs = json.loads(request.value)
         try:
-            read_model_configs(model_configs)
+            ModelManager.get_instance().load_model_configs(model_configs)
         except Exception as e:
             return agent_pb2.GeneralResponse(
                 ok=False,
