@@ -384,4 +384,12 @@ def set_locale() -> Response:
 
 
 if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1:
+        try:
+            PORT = int(sys.argv[1])
+        except ValueError:
+            print(f"Invalid port number. Using default port {PORT}.")
+
     _app.run(host="0.0.0.0", port=PORT)
