@@ -62,15 +62,13 @@ from typing import Sequence, Any, Callable, Union, List, Type
 
 from loguru import logger
 
-from agentscope.utils import QuotaExceededError
 from .response import ModelResponse
 from ..exception import ResponseParsingError
 
-from ..file_manager import file_manager
+from ..manager import FileManager
+from ..manager import MonitorManager
 from ..message import Msg
-from ..utils import MonitorFactory
-from ..utils.monitor import get_full_name
-from ..utils.tools import _get_timestamp
+from ..utils.tools import _get_timestamp, _convert_to_str
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -183,6 +181,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
     def __init__(
         self,  # pylint: disable=W0613
         config_name: str,
+        model_name: str,
         **kwargs: Any,
     ) -> None:
         """Base class for model wrapper.
@@ -194,10 +193,13 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             config_name (`str`):
                 The id of the model, which is used to extract configuration
                 from the config file.
+            model_name (`str`):
+                The name of the model.
         """
-        self.monitor = MonitorFactory.get_monitor()
+        self.monitor = MonitorManager.get_instance()
 
         self.config_name = config_name
+        self.model_name = model_name
         logger.info(f"Initialize model by configuration [{config_name}]")
 
     @classmethod
@@ -236,6 +238,127 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             f" is missing the required `format` method",
         )
 
+    @staticmethod
+    def format_for_common_chat_models(
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List[dict]:
+        """A common format strategy for chat models, which will format the
+        input messages into a user message.
+
+        Note this strategy maybe not suitable for all scenarios,
+        and developers are encouraged to implement their own prompt
+        engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt1 = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+            prompt2 = model.format(
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            # prompt1
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "You're a helpful assistant\\n"
+                        "\\n"
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
+            # prompt2
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
+
+        Args:
+            args (`Union[Msg, Sequence[Msg]]`):
+                The input arguments to be formatted, where each argument
+                should be a `Msg` object, or a list of `Msg` objects.
+                In distribution, placeholder is also allowed.
+
+        Returns:
+            `List[dict]`:
+                The formatted messages.
+        """
+        if len(args) == 0:
+            raise ValueError(
+                "At least one message should be provided. An empty message "
+                "list is not allowed.",
+            )
+
+        # Parse all information into a list of messages
+        input_msgs = []
+        for _ in args:
+            if _ is None:
+                continue
+            if isinstance(_, Msg):
+                input_msgs.append(_)
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
+                input_msgs.extend(_)
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(_)}.",
+                )
+
+        # record dialog history as a list of strings
+        dialogue = []
+        sys_prompt = None
+        for i, unit in enumerate(input_msgs):
+            if i == 0 and unit.role == "system":
+                # if system prompt is available, place it at the beginning
+                sys_prompt = _convert_to_str(unit.content)
+            else:
+                # Merge all messages into a conversation history prompt
+                dialogue.append(
+                    f"{unit.name}: {_convert_to_str(unit.content)}",
+                )
+
+        content_components = []
+        # Add system prompt at the beginning if provided
+        if sys_prompt is not None:
+            if not sys_prompt.endswith("\n"):
+                sys_prompt += "\n"
+            content_components.append(sys_prompt)
+
+        # The conversation history is added to the user message if not empty
+        if len(dialogue) > 0:
+            content_components.extend(["## Conversation History"] + dialogue)
+
+        messages = [
+            {
+                "role": "user",
+                "content": "\n".join(content_components),
+            },
+        ]
+
+        return messages
+
     def _save_model_invocation(
         self,
         arguments: dict,
@@ -252,54 +375,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             "response": response,
         }
 
-        file_manager.save_api_invocation(
+        FileManager.get_instance().save_api_invocation(
             f"model_{model_class}_{timestamp}",
             invocation_record,
         )
-
-    def _register_budget(self, model_name: str, budget: float) -> None:
-        """Register the budget of the model by model_name."""
-        self.monitor.register_budget(
-            model_name=model_name,
-            value=budget,
-            prefix=model_name,
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-
-    def _metric(self, metric_name: str) -> str:
-        """Add the class name and model name as prefix to the metric name.
-
-        Args:
-            metric_name (`str`):
-                The metric name.
-
-        Returns:
-            `str`: Metric name of this wrapper.
-        """
-
-        if hasattr(self, "model_name"):
-            return get_full_name(name=metric_name, prefix=self.model_name)
-        else:
-            return get_full_name(name=metric_name)
-
-    def update_monitor(self, **kwargs: Any) -> None:
-        """Update the monitor with the given values.
-
-        Args:
-            kwargs (`dict`):
-                The values to be updated to the monitor.
-        """
-        if hasattr(self, "model_name"):
-            prefix = self.model_name
-        else:
-            prefix = None
-
-        try:
-            self.monitor.update(
-                kwargs,
-                prefix=prefix,
-            )
-        except QuotaExceededError as e:
-            logger.error(e.message)

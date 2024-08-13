@@ -4,6 +4,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock, patch
 
+import agentscope
 from agentscope.message import Msg
 from agentscope.models import (
     OpenAIChatWrapper,
@@ -14,18 +15,25 @@ from agentscope.models import (
     DashScopeChatWrapper,
     DashScopeMultiModalWrapper,
     LiteLLMChatWrapper,
+    ModelWrapperBase,
 )
 
 
-class ExampleTest(unittest.TestCase):
-    """
-    ExampleTest for a unit test.
-    """
+class FormatTest(unittest.TestCase):
+    """Unit test for the format function in the model wrappers."""
 
     def setUp(self) -> None:
         """Init for ExampleTest."""
+        agentscope.init(disable_saving=True)
         self.inputs = [
             Msg("system", "You are a helpful assistant", role="system"),
+            [
+                Msg("user", "What is the weather today?", role="user"),
+                Msg("assistant", "It is sunny today", role="assistant"),
+            ],
+        ]
+
+        self.inputs_wo_sys_prompt = [
             [
                 Msg("user", "What is the weather today?", role="user"),
                 Msg("assistant", "It is sunny today", role="assistant"),
@@ -210,6 +218,61 @@ class ExampleTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             model.format(*self.wrong_inputs)  # type: ignore[arg-type]
 
+    @patch("builtins.open", mock.mock_open(read_data=b"abcdef"))
+    @patch("openai.OpenAI")
+    def test_openai_chat_with_other_models(
+        self,
+        mock_client: MagicMock,
+    ) -> None:
+        """Test openai chat wrapper with other models."""
+        # Prepare the mock client
+        mock_client.return_value = "client_dummy"
+
+        model = OpenAIChatWrapper(
+            config_name="",
+            model_name="glm-4",
+            client_args={
+                "base_url": "http://127.0.0.1:8011/v1/",
+            },
+        )
+
+        # correct format
+        ground_truth = [
+            {
+                "role": "user",
+                "content": (
+                    "You are a helpful assistant\n"
+                    "\n"
+                    "## Conversation History\n"
+                    "user: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
+            },
+        ]
+
+        prompt = model.format(*self.inputs)  # type: ignore[arg-type]
+        print(prompt)
+        self.assertListEqual(prompt, ground_truth)
+
+    def test_format_for_common_models(self) -> None:
+        """Unit test for format function for common models."""
+        prompt = ModelWrapperBase.format_for_common_chat_models(*self.inputs)
+
+        # correct format
+        ground_truth = [
+            {
+                "role": "user",
+                "content": (
+                    "You are a helpful assistant\n"
+                    "\n"
+                    "## Conversation History\n"
+                    "user: What is the weather today?\n"
+                    "assistant: It is sunny today"
+                ),
+            },
+        ]
+        self.assertListEqual(prompt, ground_truth)
+
     def test_ollama_chat(self) -> None:
         """Unit test for the format function in ollama chat api wrapper."""
         model = OllamaChatWrapper(
@@ -224,7 +287,7 @@ class ExampleTest(unittest.TestCase):
                 "content": (
                     "You are a helpful assistant\n"
                     "\n"
-                    "## Dialogue History\n"
+                    "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
                 ),
@@ -246,7 +309,7 @@ class ExampleTest(unittest.TestCase):
 
         # correct format
         ground_truth = (
-            "You are a helpful assistant\n\n## Dialogue History\nuser: "
+            "You are a helpful assistant\n\n## Conversation History\nuser: "
             "What is the weather today?\nassistant: It is sunny today"
         )
         prompt = model.format(*self.inputs)  # type: ignore[arg-type]
@@ -272,7 +335,7 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "user",
                 "parts": [
-                    "You are a helpful assistant\n\n## Dialogue History\n"
+                    "You are a helpful assistant\n\n## Conversation History\n"
                     "user: What is the weather today?\nassistant: It is "
                     "sunny today",
                 ],
@@ -296,12 +359,10 @@ class ExampleTest(unittest.TestCase):
 
         ground_truth = [
             {
-                "content": "You are a helpful assistant",
-                "role": "system",
-            },
-            {
                 "content": (
-                    "## Dialogue History\n"
+                    "You are a helpful assistant\n"
+                    "\n"
+                    "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
                 ),
@@ -326,12 +387,10 @@ class ExampleTest(unittest.TestCase):
 
         ground_truth = [
             {
-                "content": "You are a helpful assistant",
-                "role": "system",
-            },
-            {
                 "content": (
-                    "## Dialogue History\n"
+                    "You are a helpful assistant\n"
+                    "\n"
+                    "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
                 ),
@@ -358,8 +417,10 @@ class ExampleTest(unittest.TestCase):
             {
                 "role": "user",
                 "content": (
-                    "You are a helpful assistant\n\n"
-                    "## Dialogue History\nuser: What is the weather today?\n"
+                    "You are a helpful assistant\n"
+                    "\n"
+                    "## Conversation History\n"
+                    "user: What is the weather today?\n"
                     "assistant: It is sunny today"
                 ),
             },
@@ -419,7 +480,7 @@ class ExampleTest(unittest.TestCase):
                     {"image": "url3.png"},
                     {
                         "text": (
-                            "## Dialogue History\n"
+                            "## Conversation History\n"
                             "user: What is the weather today?\n"
                             "assistant: It is sunny today"
                         ),
@@ -482,7 +543,7 @@ class ExampleTest(unittest.TestCase):
                     {"audio": "url3.mp3"},
                     {
                         "text": (
-                            "## Dialogue History\n"
+                            "## Conversation History\n"
                             "user: What is the weather today?\n"
                             "assistant: It is sunny today"
                         ),

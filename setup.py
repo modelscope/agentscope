@@ -82,8 +82,12 @@ minimal_requires = [
     "google-generativeai>=0.4.0",
     "zhipuai",
     "litellm",
+    "notebook",
+    "nbclient",
+    "nbformat",
     "psutil",
     "scipy",
+    "pillow",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
