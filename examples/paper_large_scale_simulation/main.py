@@ -76,7 +76,7 @@ def setup_participant_agent_server(host: str, port: int) -> None:
         save_api_invoke=False,
         model_configs="configs/model_configs.json",
         use_monitor=False,
-        logger_level="INFO",
+        logger_level="ERROR",
         save_dir=SAVE_DIR,
     )
     assistant_server_launcher = RpcAgentServerLauncher(

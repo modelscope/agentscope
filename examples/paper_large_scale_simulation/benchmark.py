@@ -94,9 +94,12 @@ def load_exp_config(cfg_path: str) -> list:
     return configs
 
 
-def main(name: str = None, config: str = None) -> None:
+def main(
+    name: str = None,
+    hosts: list[str] = None,
+    config: str = None,
+) -> None:
     """The main function of the benchmark"""
-    hosts = ["worker1", "worker2", "worker3", "worker4"]
     configs = load_exp_config(config)
     for cfg in configs:
         run_case(
@@ -128,5 +131,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(
         name=args.name,
+        hosts=args.hosts,
         config=os.path.join("./configs", f"{args.config}.csv"),
     )

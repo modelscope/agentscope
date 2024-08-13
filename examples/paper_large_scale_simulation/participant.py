@@ -375,7 +375,6 @@ class Group(BasicEnv):
                     self.cnt += 1
             except Exception as e:
                 print(e)
-        logger.info(f"sum: {self.sum}, cnt: {self.cnt}")
         return (self.sum, self.cnt)
 
 
@@ -400,14 +399,12 @@ def save_result(
     ratio: str = "2/3",
 ) -> None:
     """Save the result into file"""
-    print(f"Round: {len(results)}")
     os.makedirs(save_path, exist_ok=True)
     import numpy as np
     from matplotlib import pyplot as plt
 
     for r, result in enumerate(results):
         values = [v["value"] for v in result.values()]
-        logger.info(f"get {len(values)} values")
         win = np.mean(values) * RATIO_MAP[ratio]
         stats = {
             "win": win,
@@ -628,7 +625,7 @@ class GuessTwoThirdGame(BasicEnv):
             Msg(
                 name="Moderator",
                 role="assistant",
-                content=f"The average value is {summ / cnt :.2f} [takes {et - st :.3f} s]",
+                content=f"The average value of round {self.round + 1} is {summ / cnt :.2f} [takes {et - st :.3f} s]",
             ),
         )
 
@@ -650,6 +647,13 @@ class GuessTwoThirdGame(BasicEnv):
             _get_timestamp(format_="%Y-%m-%d-%H:%M:%S"),
         )
         save_result(result, run_time, save_path, self.ratio)
+        log_msg(
+            Msg(
+                name="Moderator",
+                role="assistant",
+                content=f"Save result to {save_path}",
+            ),
+        )
 
     def run(self) -> None:
         """Run the game"""
