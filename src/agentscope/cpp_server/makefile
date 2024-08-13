@@ -26,7 +26,7 @@ worker.o: worker.cc worker.h
 	$(CXX) -c $< $(CXXFLAGS) $(LDFLAGS) -o $@
 
 launch_server:
-	cd ../../../; DYLD_LIBRARY_PATH=$(PY_LIB_PATH):$$DYLD_LIBRARY_PATH OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ./src/agentscope/server/rpc_agent_servicer $(INIT_SETTINGS_STR) $(HOST) $(PORT) $(SERVER_ID) $(CUSTOM_AGENT_CLASSES) $(STUDIO_URL) $(MAX_TASKS) $(TIMEOUT_SECONDS) $(NUM_WORKERS) $(LAUNCHER_PID)
+	cd ../../../; DYLD_LIBRARY_PATH=$(PY_LIB_PATH):$$DYLD_LIBRARY_PATH OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ./src/agentscope/cpp_server/rpc_agent_servicer $(INIT_SETTINGS_STR) $(HOST) $(PORT) $(SERVER_ID) $(CUSTOM_AGENT_CLASSES) $(STUDIO_URL) $(MAX_TASKS) $(TIMEOUT_SECONDS) $(NUM_WORKERS)
 
 %.grpc.pb.cc: $(PROTOS_PATH)/%.proto
 	$(PROTOC) -I $(PROTOS_PATH) --grpc_out=. --plugin=protoc-gen-grpc=$(GRPC_CPP_PLUGIN_PATH) $<

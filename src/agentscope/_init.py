@@ -122,8 +122,3 @@ def state_dict() -> dict:
 def print_llm_usage() -> dict:
     """Print the usage of LLM."""
     return ASManager.get_instance().monitor.print_llm_usage()
-
-
-def init_process_with_str(init_settings_str):
-    init_settings = json.loads(init_settings_str)
-    ASManager.get_instance().load_dict(init_settings)

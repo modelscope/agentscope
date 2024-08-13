@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <semaphore.h>
@@ -11,6 +12,7 @@
 
 #include "worker.h"
 
+using std::getenv;
 using std::to_string;
 
 using namespace pybind11::literals;
@@ -52,24 +54,32 @@ Worker::Worker(
     const string &studio_url,
     const unsigned int max_tasks,
     const unsigned int max_timeout_seconds,
-    const unsigned int num_workers,
-    const int launcher_pid) : _host(host), _port(port), _server_id(server_id),
-                              _num_workers(std::min(std::max(num_workers, 1u), std::thread::hardware_concurrency())),
-                              _pid(getpid()),
-                              _worker_id(-1),
-                              _num_calls(0),
-                              _func_call_shm_prefix("/call_" + std::to_string(_pid) + "_"),
-                              _func_args_shm_prefix("/args_" + std::to_string(_pid) + "_"),
-                              _func_result_shm_prefix("/result_" + std::to_string(_pid) + "_"),
-                              _worker_avail_sem_prefix("/avail_" + std::to_string(_pid) + "_"),
-                              _func_ready_sem_prefix("/func_" + std::to_string(_pid) + "_"),
-                              _set_result_sem_prefix("/set_result_" + std::to_string(_pid) + "_"),
-                              _get_result_sem_prefix("/get_result_" + std::to_string(_pid) + "_"),
-                              _call_shm_size(1024),
-                              _num_tasks(0),
-                              _max_tasks(std::max(max_tasks, 1u)),
-                              _max_timeout_seconds(std::max(max_timeout_seconds, 1u))
+    const unsigned int num_workers) : _host(host), _port(port), _server_id(server_id),
+                                      _num_workers(std::min(std::max(num_workers, 1u), std::thread::hardware_concurrency())),
+                                      _pid(getpid()),
+                                      _worker_id(-1),
+                                      _num_calls(0),
+                                      _func_call_shm_prefix("/call_" + std::to_string(_pid) + "_"),
+                                      _func_args_shm_prefix("/args_" + std::to_string(_pid) + "_"),
+                                      _func_result_shm_prefix("/result_" + std::to_string(_pid) + "_"),
+                                      _worker_avail_sem_prefix("/avail_" + std::to_string(_pid) + "_"),
+                                      _func_ready_sem_prefix("/func_" + std::to_string(_pid) + "_"),
+                                      _set_result_sem_prefix("/set_result_" + std::to_string(_pid) + "_"),
+                                      _get_result_sem_prefix("/get_result_" + std::to_string(_pid) + "_"),
+                                      _call_shm_size(1024),
+                                      _num_tasks(0),
+                                      _max_tasks(std::max(max_tasks, 1u)),
+                                      _max_timeout_seconds(std::max(max_timeout_seconds, 1u))
 {
+    char *use_logger = getenv("AGENTSCOPE_USE_CPP_LOGGER");
+    if (use_logger != nullptr && std::string(use_logger) == "True")
+    {
+        _use_logger = true;
+    }
+    else
+    {
+        _use_logger = false;
+    }
     for (int i = 0; i < _num_workers; i++)
     {
         string shm_name = _func_call_shm_prefix + std::to_string(i);
@@ -122,9 +132,10 @@ Worker::Worker(
             _worker_id = i;
             char *shm_ptr = (char *)shm;
             py::scoped_interpreter guard{};
-            if (!init_settings_str.empty())
+            py::object cpp_server = py::module::import("agentscope.cpp_server");
+            if (init_settings_str != "None")
             {
-                py::module::import("agentscope._init").attr("init_process_with_str")(init_settings_str);
+                cpp_server.attr("init_process_with_str")(init_settings_str);
             }
 
             py::object servicer = py::module::import("agentscope.server.servicer");
@@ -135,11 +146,7 @@ Worker::Worker(
                 py::object runtime = py::module::import("agentscope._runtime").attr("_runtime");
                 studio_client.attr("initialize")(runtime.attr("runtime_id"), studio_url);
             }
-            // _logger = py::module::import("loguru").attr("logger").attr("opt")("depth"_a = -1);
-            if (!custom_agent_classes_str.empty())
-            {
-                servicer.attr("register_agent_classes")(custom_agent_classes_str);
-            }
+            cpp_server.attr("register_agent_classes")(custom_agent_classes_str);
             py::gil_scoped_release release;
             auto t = sem_post(worker_avail_sem);
             while (true)
@@ -213,10 +220,6 @@ Worker::Worker(
             exit(1);
         }
     }
-    // if (launcher_pid != 0)
-    // {
-    //     kill(launcher_pid, SIGALRM);
-    // }
 }
 
 Worker::~Worker() // for main process to release resources
@@ -277,20 +280,19 @@ int Worker::find_avail_worker_id()
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, _num_workers - 1);
-    for (int cnt = 0;; cnt++)
+    int i;
+    for (int cnt = 0; cnt < 4 * _num_workers; cnt++)
     {
-        int i = dis(gen);
+        i = dis(gen);
         if (sem_trywait(_worker_semaphores[i].first) == 0)
         {
             logger("get worker id: " + std::to_string(i));
             return i;
         }
-        if (cnt % (2 * _num_workers) == 0)
-        {
-            sleep(1);
-        }
     }
-    return -1;
+    sem_wait(_worker_semaphores[i].first);
+    logger("get worker id: " + std::to_string(i));
+    return i;
 }
 
 int Worker::get_call_id()
@@ -386,7 +388,6 @@ string Worker::get_result(const int call_id)
         perror(("Error: sem_open in get_result:" + std::to_string(call_id)).c_str());
         exit(1);
     }
-    // logger("get_result 2: set_result_name = " + set_result_name + " start wait");
     sem_wait(set_result_sem);
 
     string result = get_content(_func_result_shm_prefix, call_id);
@@ -541,7 +542,7 @@ void Worker::create_agent_worker(const int call_id)
     logger("create_agent_worker: call_id = " + std::to_string(call_id) + " agent_id = " + agent_id);
 
     py::gil_scoped_acquire acquire;
-    py::tuple create_result = py::module::import("agentscope.server.servicer").attr("create_agent")(agent_id, py::bytes(agent_init_args), py::bytes(agent_source_code));
+    py::tuple create_result = py::module::import("agentscope.cpp_server").attr("create_agent")(agent_id, py::bytes(agent_init_args), py::bytes(agent_source_code));
     py::object agent = create_result[0];
     py::object error_msg = create_result[1];
     string result;

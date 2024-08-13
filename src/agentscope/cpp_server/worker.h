@@ -78,7 +78,7 @@ private:
     const string _get_result_sem_prefix;
     const unsigned int _call_shm_size;
 
-    // py::object _logger;
+    bool _use_logger;
     mutex _logger_mutex;
 
     unordered_map<string, int> _agent_id_map; // map agent id to worker id
@@ -152,14 +152,16 @@ public:
         const string &studio_url,
         const unsigned int max_tasks,
         const unsigned int max_timeout_seconds,
-        const unsigned int num_workers = 2,
-        const int launcher_pid = 0);
+        const unsigned int num_workers);
     ~Worker();
 
     void logger(const string &msg)
     {
-        unique_lock<std::mutex> lock(_logger_mutex);
-        std::cout << "pid = " << getpid() << " tid = " << std::this_thread::get_id() << " " << msg << std::endl;
+        if (_use_logger)
+        {
+            unique_lock<std::mutex> lock(_logger_mutex);
+            std::cout << "pid = " << getpid() << " tid = " << std::this_thread::get_id() << " " << msg << std::endl;
+        }
     }
 
     string call_create_agent(const string &agent_id, const string &agent_init_args, const string &agent_source_code);

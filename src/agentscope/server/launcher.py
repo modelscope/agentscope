@@ -154,10 +154,11 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             The abs path to the directory containing customized agent python
             files.
     """
-    if os.environ.get('USE_CPP_SERVER', '').lower() == 'yes':
+    if os.environ.get('AGENTSCOPE_USE_CPP_SERVER', '').lower() == 'yes':
         env = os.environ.copy()
         current_file_path = os.path.abspath(__file__)
         current_directory = os.path.dirname(current_file_path)
+        target_directory = os.path.join(os.path.dirname(current_directory), 'cpp_server')
         if custom_agent_classes is None:
             custom_agent_classes = []
         if agent_dir is not None:
@@ -166,13 +167,11 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
                 agent_dir,
             ])
             custom_agent_classes.extend(load_agents_from_dir(agent_dir))
-        init_settings_str = repr(json.dumps(init_settings)) if init_settings is not None else ''
-        custom_agent_classes_str = base64.b64encode(dill.dumps(custom_agent_classes)) if custom_agent_classes is not None else ''
-        env['PYTHONPATH'] = os.pathsep.join([
-            env.get('PYTHONPATH', ''),
-            os.path.join(current_directory, '../../../'),
-        ])
-        pid = os.getpid()
+        init_settings_str = repr(json.dumps(init_settings)) if init_settings is not None else 'None'
+        custom_agent_classes_str = base64.b64encode(dill.dumps(custom_agent_classes)).decode()
+        env['PYTHONPATH'] = os.pathsep.join([env.get('PYTHONPATH', '')] + sys.path)
+        import multiprocessing
+        num_workers = env.get('AGENTSCOPE_NUM_WORKERS', f'{multiprocessing.cpu_count()}')
         os.makedirs('logs/', exist_ok=True)
         f = open(f'logs/{port}.log', 'wb')
         process = await asyncio.create_subprocess_exec(
@@ -181,31 +180,31 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             f'HOST={host}',
             f'PORT={port}',
             f'SERVER_ID={server_id}',
-            f'CUSTOM_AGENT_CLASSES="{custom_agent_classes_str}"',
+            f'CUSTOM_AGENT_CLASSES={custom_agent_classes_str}',
             f'STUDIO_URL={studio_url}',
             f'MAX_TASKS={max_pool_size}',
             f'TIMEOUT_SECONDS={max_timeout_seconds}',
-            f'NUM_WORKERS={2}',
-            f'LAUNCHER_PID={pid}',
-            cwd=current_directory,
+            f'NUM_WORKERS={num_workers}',
+            cwd=target_directory,
             env=env,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
 
-        if start_event is not None:
-            pipe.send(port)
-            is_set = False
-            while True:
-                line = await process.stdout.readline()
-                if not line:
-                    break
-                f.write(line)
-                if not is_set:
-                    line = line.decode('utf-8')
-                    if f'Server listening on {host}:{port}' in line:
+        is_start = False
+        while True:
+            line = await process.stdout.readline()
+            if not line:
+                break
+            f.write(line)
+            f.flush()
+            if not is_start:
+                line = line.decode('utf-8')
+                if f'Server listening on {host}:{port}' in line:
+                    is_start = True
+                    if start_event is not None:
+                        pipe.send(port)
                         start_event.set()
-                        is_set = True
         await process.wait()
         f.close()
         return
@@ -490,7 +489,7 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            if os.environ.get('USE_CPP_SERVER', '').lower() == 'yes':
+            if os.environ.get('AGENTSCOPE_USE_CPP_SERVER', '').lower() == 'yes':
                 import psutil
                 process = psutil.Process(self.server.pid)
                 for sub_process in process.children(recursive=True):

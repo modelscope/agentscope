@@ -144,7 +144,6 @@ public:
         GeneralResponse *response) override
     {
         const string &model_configs = request->value();
-        std::cout << "set_model_configs: " << model_configs << std::endl;
         const string &result = _worker->call_set_model_configs(model_configs);
         response->set_ok(result.size() == 0);
         response->set_message(result);
@@ -206,9 +205,6 @@ public:
     {
         auto task_id = request->task_id();
         auto [is_ok, result] = _worker->call_update_placeholder(task_id);
-        // bool is_ok = true;
-        // string result = "{\"__type\": \"Msg\", \"id\": \"000b39a7472142339197cd3acaddf81b\", \"timestamp\": \"2024-08-12 00:58:51\", \"name\": \"File\", \"content\": \"Image\", \"role\": \"assistant\", \"url\": \"/Users/chenyushuo/workspace/agentscope/tests/data/image.png\", \"metadata\": null, \"_colored_name\": \"\\u001b[92mFile\\u001b[0m\"}";
-        // string result = "{\"__type\": \"Msg\", \"name\": \"\", \"content\": \"\", \"url\": \"\"}";
         _worker->logger("rpc server update_placeholder 1: task_id = " + std::to_string(task_id) + " is_ok = " + std::to_string(is_ok) + " result = [" + result + "]");
         response->set_ok(is_ok);
         response->set_message(result);
@@ -291,7 +287,7 @@ int main(int argc, char **argv)
 {
     if (argc < 9)
     {
-        std::cerr << "Usage: " << argv[0] << " <init_settings_str> <host> <port> <server_id> <custom_agent_classes_str> <studio_url> <max_tasks> <timeout_seconds> [<num_workers>] [<launcher_pid>]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <init_settings_str> <host> <port> <server_id> <custom_agent_classes_str> <studio_url> <max_tasks> <timeout_seconds> [<num_workers>]" << std::endl;
         return 1;
     }
     struct sigaction act;
@@ -310,8 +306,7 @@ int main(int argc, char **argv)
     int max_tasks = std::atoi(argv[7]);
     int timeout_seconds = std::atoi(argv[8]);
     int num_workers = argc >= 10 ? std::atoi(argv[9]) : 2;
-    int launcher_pid = argc >= 11 ? std::atoi(argv[10]) : 0;
-    worker = new Worker(init_settings_str, host, port, server_id, custom_agent_classes_str, studio_url, max_tasks, timeout_seconds, num_workers, launcher_pid);
+    worker = new Worker(init_settings_str, host, port, server_id, custom_agent_classes_str, studio_url, max_tasks, timeout_seconds, num_workers);
     RunServer(server_address);
     delete worker;
     return 0;
