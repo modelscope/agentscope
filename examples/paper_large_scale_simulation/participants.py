@@ -20,7 +20,6 @@ from agentscope.environment import BasicEnv
 from agentscope.exception import ResponseParsingError
 from agentscope.utils.tools import _get_timestamp
 from agentscope.logging import log_msg
-from agentscope.models.openai_model import OpenAIChatWrapper
 
 SAVE_DIR = f"./runs/{os.uname().nodename}"
 
@@ -665,7 +664,7 @@ class GuessTwoThirdGame(BasicEnv):
         save_path = os.path.join(
             "./result",
             self.name,
-            f"{self.model_name}",
+            f"{self.model_name}" if self.agent_type == "llm" else "random",
             f"{self.sys_id}-{self.usr_id}-{self.participant_num}-{self.host_num}-{RATIO_MAP[self.ratio]:.3f}",
             _get_timestamp(format_="%Y-%m-%d-%H:%M:%S"),
         )

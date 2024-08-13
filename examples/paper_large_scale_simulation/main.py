@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--agent-type",
-        choices=["random", "llm", "background"],
+        choices=["random", "llm"],
         default="random",
     )
     parser.add_argument("--max-value", type=int, default=100)

@@ -82,14 +82,25 @@ result
 ```
 
 And during the experiment, you can also view the experiment results on the command line.
+
 ```text
-2024-08-13 06:20:40.028 | INFO     | participant:_generate_participant_configs:525 - init 100 random participant agents...
-2024-08-13 06:20:40.028 | INFO     | participant:_init_env:574 - init 1 envs...
-2024-08-13 06:20:40.171 | INFO     | participant:_init_env:603 - [init takes 0.1432037353515625 s]
-Moderator: The average value is 49.70 [takes 1.130 s]
-Moderator: The average value is 48.44 [takes 1.125 s]
-Moderator: The average value is 47.81 [takes 1.129 s]
-Moderator: Save result to ./result/studio/qwen2_72b/1-1-100-1-0.667/2024-08-13-06:20:43
+2024-08-13 07:24:00.118 | INFO     | participants:_generate_participant_configs:546 - init 100 llm participant agents...
+2024-08-13 07:24:00.119 | INFO     | participants:_init_env:595 - init 1 envs...
+2024-08-13 07:24:02.560 | INFO     | participants:_init_env:624 - [init takes 2.4416518211364746 s]
+Moderator: The average value of round 1 is 19.52 [takes 42.809 s]
+Moderator: The average value of round 2 is 15.75 [takes 56.072 s]
+Moderator: The average value of round 3 is 13.53 [takes 61.641 s]
+Moderator: Save result to ./result/studio/qwen2_72b/1-2-100-1-0.667/2024-08-13-07:26:43
+```
+
+```text
+2024-08-13 07:35:40.925 | INFO     | participants:_generate_participant_configs:548 - init 100 random participant agents...
+2024-08-13 07:35:40.926 | INFO     | participants:_init_env:597 - init 1 envs...
+2024-08-13 07:35:41.071 | INFO     | participants:_init_env:626 - [init takes 0.1457688808441162 s]
+Moderator: The average value of round 1 is 50.51 [takes 1.139 s]
+Moderator: The average value of round 2 is 45.15 [takes 1.143 s]
+Moderator: The average value of round 3 is 48.32 [takes 1.134 s]
+Moderator: Save result to ./result/studio/random/1-2-100-1-0.667/2024-08-13-07:35:44
 ```
 
 ## References
