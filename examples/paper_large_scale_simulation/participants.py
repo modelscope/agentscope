@@ -9,6 +9,7 @@ import re
 import os
 from concurrent import futures
 import math
+from typing import Union, List
 
 from loguru import logger
 
@@ -19,6 +20,7 @@ from agentscope.environment import BasicEnv
 from agentscope.exception import ResponseParsingError
 from agentscope.utils.tools import _get_timestamp
 from agentscope.logging import log_msg
+from agentscope.models.openai_model import OpenAIChatWrapper
 
 SAVE_DIR = f"./runs/{os.uname().nodename}"
 
@@ -33,6 +35,22 @@ RATIO_MAP = {
 PROMPT = json.load(open("configs/prompt.json", "r", encoding="utf-8"))
 SYSTEM = PROMPT["SYSTEM"]
 USER = PROMPT["USER"]
+
+
+def format_messages(msgs: Union[Msg, List[Msg]]) -> list[dict]:
+    """Format the messages"""
+    messages = []
+    if isinstance(msgs, Msg):
+        msgs = [msgs]
+    for msg in msgs:
+        messages.append(
+            {
+                "role": msg.role,
+                "name": msg.name,
+                "content": str(msg.content),
+            },
+        )
+    return messages
 
 
 class RandomParticipant(AgentBase):
@@ -106,20 +124,22 @@ class LLMParticipant(AgentBase):
 
     def parse_value(self, txt: str) -> float:
         """Parse the number from the response."""
-        prompt = self.model.format(
-            Msg(
-                name="system",
-                role="system",
-                content="You need to extract the number that the speaker wants to answer from the following text.\n"
-                + txt,
-            ),
-            Msg(
-                name="user",
-                role="user",
-                content="Now please directly give the extracted number in the following format:\nThe answer is [number].\n\nIf you can't extract the number, please reply directly:\nI CAN'T.\n",
-            ),
+        prompts = format_messages(
+            [
+                Msg(
+                    name="system",
+                    role="system",
+                    content="You need to extract the number that the speaker wants to answer from the following text.\n"
+                    + txt,
+                ),
+                Msg(
+                    name="user",
+                    role="user",
+                    content="Now please directly give the extracted number in the following format:\nThe answer is [number].\n\nIf you can't extract the number, please reply directly:\nI CAN'T.\n",
+                ),
+            ],
         )
-        parse_result = self.model(prompt).text
+        parse_result = self.model(prompts).text
         numbers = re.findall(r"(\d+(\.\d+)?)", parse_result)
         if len(numbers) == 0:
             logger.error(
@@ -135,7 +155,7 @@ class LLMParticipant(AgentBase):
             self.memory.add(x)
         self.round += 1
         # prepare prompt
-        prompt = self.model.format(self.prompt, self.memory.get_memory())
+        prompt = format_messages([self.prompt, *self.memory.get_memory()])
         # call llm and generate response
         for attempts in range(3):
             try:
@@ -203,18 +223,20 @@ class LLMParticipantWithBackground(AgentBase):
 
     def parse_value(self, txt: str) -> float:
         """Parse the number from the response."""
-        prompt = self.model.format(
-            Msg(
-                name="system",
-                role="system",
-                content="You need to extract the number that the speaker wants to answer from the following text.\n"
-                + txt,
-            ),
-            Msg(
-                name="user",
-                role="user",
-                content="Now please directly give the extracted number in the following format:\nThe answer is [number].\n\nIf you can't extract the number, please reply directly:\nI CAN'T.\n",
-            ),
+        prompt = format_messages(
+            [
+                Msg(
+                    name="system",
+                    role="system",
+                    content="You need to extract the number that the speaker wants to answer from the following text.\n"
+                    + txt,
+                ),
+                Msg(
+                    name="user",
+                    role="user",
+                    content="Now please directly give the extracted number in the following format:\nThe answer is [number].\n\nIf you can't extract the number, please reply directly:\nI CAN'T.\n",
+                ),
+            ],
         )
         parse_result = self.model(prompt).text
         numbers = re.findall(r"(\d+(\.\d+)?)", parse_result)
@@ -232,7 +254,7 @@ class LLMParticipantWithBackground(AgentBase):
             self.memory.add(x)
         self.round += 1
         # prepare prompt
-        prompt = self.model.format(self.prompt, self.memory.get_memory())
+        prompt = format_messages([self.prompt, *self.memory.get_memory()])
         # call llm and generate response
         for attempts in range(3):
             try:
@@ -358,12 +380,13 @@ class Group(BasicEnv):
     def run(self, round: int, winner: float) -> tuple:
         """Play one round of game in this group."""
         if round != 0:
-            content = (
-                f"The winner number of this round is {winner:.2f}. Let's move on to the next round.\n{self.usr_prompt}",
-            )
+            content = f"The winner number of this round is {winner:.2f}. Let's move on to the next round.\n{self.usr_prompt}"
+
         else:
             content = self.usr_prompt
         msg = Msg(name="group", role="user", content=content)
+        self.sum = 0
+        self.cnt = 0
         result = []
         for p in self.participants:
             result.append(p(msg))

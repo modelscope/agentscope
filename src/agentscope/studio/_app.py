@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """The Web Server of the AgentScope Studio."""
+# pylint: disable=C0302
 import json
 import os
 import re
