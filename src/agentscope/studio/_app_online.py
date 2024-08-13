@@ -26,7 +26,7 @@ from flask_babel import Babel, refresh
 from dotenv import load_dotenv
 
 from agentscope.constants import EXPIRATION_SECONDS, FILE_SIZE_LIMIT
-from agentscope.studio.utils import require_auth, generate_jwt
+from agentscope.studio.utils import _require_auth, generate_jwt
 from agentscope.studio._app import (
     _convert_config_to_py,
     _read_examples,
@@ -246,14 +246,14 @@ def oauth_callback() -> str:
 
 
 @_app.route("/workstation")
-@require_auth(secret_key=SECRET_KEY)
+@_require_auth(secret_key=SECRET_KEY)
 def _workstation_online(**kwargs: Any) -> str:
     """Render the workstation page."""
     return render_template("workstation.html", **kwargs)
 
 
 @_app.route("/upload-to-oss", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _upload_file_to_oss_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -303,7 +303,7 @@ def _upload_file_to_oss_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/convert-to-py", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _online_convert_config_to_py(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -313,7 +313,7 @@ def _online_convert_config_to_py(**kwargs: Any) -> Response:
 
 
 @_app.route("/read-examples", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _read_examples_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -323,7 +323,7 @@ def _read_examples_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/save-workflow", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _save_workflow_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -333,7 +333,7 @@ def _save_workflow_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/delete-workflow", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _delete_workflow_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -343,7 +343,7 @@ def _delete_workflow_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/list-workflows", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _list_workflows_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """
@@ -353,7 +353,7 @@ def _list_workflows_online(**kwargs: Any) -> Response:
 
 
 @_app.route("/load-workflow", methods=["POST"])
-@require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
 def _load_workflow_online(**kwargs: Any) -> Response:
     # pylint: disable=unused-argument
     """

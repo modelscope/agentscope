@@ -4,7 +4,7 @@ This module provides utilities for securing views in a web application with
 authentication and authorization checks.
 
 Functions:
-    require_auth - A decorator for protecting views by requiring
+    _require_auth - A decorator for protecting views by requiring
         authentication.
 """
 from datetime import datetime, timedelta
@@ -16,7 +16,7 @@ from flask import session, redirect, url_for, abort
 from agentscope.constants import TOKEN_EXP_TIME
 
 
-def require_auth(
+def _require_auth(
     redirect_url: str = "_home",
     fail_with_exception: bool = False,
     secret_key: str = "",
