@@ -99,7 +99,6 @@ def main(name: str = None, config: str = None) -> None:
     hosts = ["worker1", "worker2", "worker3", "worker4"]
     configs = load_exp_config(config)
     for cfg in configs:
-        print(cfg)
         run_case(
             participant_num=cfg["participant_num"],
             agent_server_num=cfg["agent_server_num"],

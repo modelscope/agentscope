@@ -7,7 +7,7 @@ import os
 import agentscope
 from agentscope.server import RpcAgentServerLauncher
 
-from utils.participant import (
+from participant import (
     RandomParticipant,
     LLMParticipant,
     ParserAgent,
