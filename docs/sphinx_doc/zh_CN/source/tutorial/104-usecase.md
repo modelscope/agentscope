@@ -47,9 +47,14 @@
 
 ```python
 from agentscope.agents import AgentBase
+from agentscope.message import Msg
+
+from typing import Optional, Union, Sequence
+
 
 class MyAgent(AgentBase):
-    def reply(self, x):
+
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # Do something here
         ...
         return x

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Unit test for msghub."""
 import unittest
-from typing import Optional
+from typing import Optional, Union, Sequence
 
 from agentscope.agents import AgentBase
 from agentscope import msghub
@@ -11,7 +11,7 @@ from agentscope.message import Msg
 class TestAgent(AgentBase):
     """Test agent class for msghub."""
 
-    def reply(self, x: Optional[dict] = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Reply function for agent."""
         if x is not None:
             self.memory.add(x)

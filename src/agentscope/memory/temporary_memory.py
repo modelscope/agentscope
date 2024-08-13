@@ -13,7 +13,7 @@ from typing import Callable
 from loguru import logger
 
 from .memory import MemoryBase
-from ..models import load_model_by_config_name
+from ..manager import ModelManager
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
 from ..message import (
@@ -21,7 +21,6 @@ from ..message import (
     serialize,
     MessageBase,
     Msg,
-    Tht,
     PlaceholderMessage,
 )
 
@@ -52,24 +51,26 @@ class TemporaryMemory(MemoryBase):
 
         # prepare embedding model if needed
         if isinstance(embedding_model, str):
-            self.embedding_model = load_model_by_config_name(embedding_model)
+            model_manager = ModelManager.get_instance()
+            self.embedding_model = model_manager.get_model_by_config_name(
+                embedding_model,
+            )
         else:
             self.embedding_model = embedding_model
 
     def add(
         self,
-        memories: Union[Sequence[dict], dict, None],
+        memories: Union[Sequence[Msg], Msg, None],
         embed: bool = False,
     ) -> None:
         # pylint: disable=too-many-branches
         """
         Adding new memory fragment, depending on how the memory are stored
         Args:
-            memories (Union[Sequence[dict], dict, None]):
-                memories to be added. If the memory is not in MessageBase,
-                it will first be converted into a message type.
-            embed (bool):
-                whether to generate embedding for the new added memories
+            memories (`Union[Sequence[Msg], Msg, None]`):
+                Memories to be added.
+            embed (`bool`):
+                Whether to generate embedding for the new added memories
         """
         if memories is None:
             return
@@ -84,13 +85,7 @@ class TemporaryMemory(MemoryBase):
         for memory_unit in record_memories:
             if not issubclass(type(memory_unit), MessageBase):
                 try:
-                    if (
-                        "name" in memory_unit
-                        and memory_unit["name"] == "thought"
-                    ):
-                        memory_unit = Tht(**memory_unit)
-                    else:
-                        memory_unit = Msg(**memory_unit)
+                    memory_unit = Msg(**memory_unit)
                 except Exception as exc:
                     raise ValueError(
                         f"Cannot add {memory_unit} to memory, "
@@ -186,14 +181,14 @@ class TemporaryMemory(MemoryBase):
 
     def load(
         self,
-        memories: Union[str, list[MessageBase], MessageBase],
+        memories: Union[str, list[Msg], Msg],
         overwrite: bool = False,
     ) -> None:
         """
         Load memory, depending on how the memory are passed, design to load
         from both file or dict
         Args:
-            memories (Union[str, list[MessageBase], MessageBase]):
+            memories (Union[str, list[Msg], Msg]):
                 memories to be loaded.
                 If it is in str type, it will be first checked if it is a
                 file; otherwise it will be deserialized as messages.

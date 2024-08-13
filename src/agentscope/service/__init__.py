@@ -4,6 +4,7 @@ from loguru import logger
 
 from .execute_code.exec_python import execute_python_code
 from .execute_code.exec_shell import execute_shell_command
+from .execute_code.exec_notebook import NoteBookExecutor
 from .file.common import (
     create_file,
     delete_file,
@@ -31,6 +32,15 @@ from .multi_modality.dashscope_services import (
     dashscope_text_to_image,
     dashscope_text_to_audio,
 )
+from .multi_modality.openai_services import (
+    openai_audio_to_text,
+    openai_text_to_audio,
+    openai_text_to_image,
+    openai_image_to_text,
+    openai_edit_image,
+    openai_create_image_variation,
+)
+
 from .service_response import ServiceResponse
 from .service_toolkit import ServiceToolkit
 from .service_toolkit import ServiceFactory
@@ -75,6 +85,8 @@ __all__ = [
     "bing_search",
     "google_search",
     "arxiv_search",
+    "wikipedia_search",
+    "wikipedia_search_categories",
     "query_mysql",
     "query_sqlite",
     "query_mongodb",
@@ -88,11 +100,16 @@ __all__ = [
     "dblp_search_publications",
     "dblp_search_authors",
     "dblp_search_venues",
+    "NoteBookExecutor",
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
-    "wikipedia_search",
-    "wikipedia_search_categories",
+    "openai_audio_to_text",
+    "openai_text_to_audio",
+    "openai_text_to_image",
+    "openai_image_to_text",
+    "openai_edit_image",
+    "openai_create_image_variation",
     # to be deprecated
     "ServiceFactory",
 ]

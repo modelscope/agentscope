@@ -9,7 +9,7 @@ from agentscope.service import ServiceResponse
 from agentscope.service import load_web, digest_webpage
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.message import Msg, MessageBase
+from agentscope.message import Msg
 
 
 class TestWebDigest(unittest.TestCase):
@@ -85,7 +85,7 @@ class TestWebDigest(unittest.TestCase):
 
             def format(
                 self,
-                *args: Union[MessageBase, Sequence[MessageBase]],
+                *args: Union[Msg, Sequence[Msg]],
             ) -> Union[List[dict], str]:
                 return str(args)
 
