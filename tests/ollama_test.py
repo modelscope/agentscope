@@ -3,20 +3,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import agentscope
-from agentscope.models import load_model_by_config_name
-from agentscope._runtime import _Runtime
-from agentscope.file_manager import _FileManager
-from agentscope.utils.monitor import MonitorFactory
-
-
-def flush() -> None:
-    """
-    ** Only for unittest usage. Don't use this function in your code. **
-    Clear the runtime dir and destroy all singletons.
-    """
-    _Runtime._flush()  # pylint: disable=W0212
-    _FileManager._flush()  # pylint: disable=W0212
-    MonitorFactory.flush()
+from agentscope.manager import ModelManager, ASManager
 
 
 class OllamaModelWrapperTest(unittest.TestCase):
@@ -92,7 +79,6 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_count": 9,
             "eval_duration": 223689000,
         }
-        flush()
 
     @patch("agentscope.models.ollama_model.ollama")
     def test_ollama_chat(self, mock_ollama: MagicMock) -> None:
@@ -113,9 +99,12 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 },
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_chat")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_chat",
+        )
         response = model(messages=[{"role": "user", "content": "Hi!"}])
 
         self.assertEqual(response.raw, self.dummy_response)
@@ -139,9 +128,12 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 },
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_embedding")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_embedding",
+        )
         response = model(prompt="Hi!")
 
         self.assertEqual(response.raw, self.dummy_embedding)
@@ -163,16 +155,19 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 "options": None,
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_generate")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_generate",
+        )
         response = model(prompt="1+1=")
 
         self.assertEqual(response.raw, self.dummy_generate)
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        flush()
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

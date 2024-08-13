@@ -40,7 +40,7 @@ class BasicAgentTest(unittest.TestCase):
     """Test cases for basic agents"""
 
     def test_agent_init(self) -> None:
-        """Test the init of agentbase sub-class."""
+        """Test the init of AgentBase subclass."""
         a1 = TestAgent(
             "a",
             "Hi",

@@ -22,7 +22,7 @@ class UserProxyAgent(UserAgent):
             self.speak(x)
         return super().reply(x, required_keys)
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         """
         Observe with `self.speak(x)`
         """

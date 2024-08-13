@@ -8,7 +8,6 @@ from loguru import logger
 from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
-from ..utils.tools import _convert_to_str
 
 try:
     import zhipuai
@@ -53,7 +52,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
         if zhipuai is None:
             raise ImportError(
@@ -68,8 +67,6 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
             **(client_args or {}),
         )
 
-        self._register_default_metrics()
-
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
@@ -82,7 +79,35 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
 
 class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
-    """The model wrapper for ZhipuAI's chat API."""
+    """The model wrapper for ZhipuAI's chat API.
+
+    Response:
+        - From https://maas.aminer.cn/dev/api#glm-4
+
+        ```json
+        {
+            "created": 1703487403,
+            "id": "8239375684858666781",
+            "model": "glm-4",
+            "request_id": "8239375684858666781",
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "message": {
+                        "content": "Drawing blueprints with ...",
+                        "role": "assistant"
+                    }
+                }
+            ],
+            "usage": {
+                "completion_tokens": 217,
+                "prompt_tokens": 31,
+                "total_tokens": 248
+            }
+        }
+        ```
+    """
 
     model_type: str = "zhipuai_chat"
 
@@ -126,26 +151,6 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         )
 
         self.stream = stream
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -279,21 +284,71 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             response=response,
         )
 
-        if response.get("usage", None) is not None:
-            self.update_monitor(call_counter=1, **response["usage"])
+        usage = response.get("usage", None)
+        if usage is not None:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+            )
 
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
-        """Format the input string and dictionary into the format that
-        ZhipuAI Chat API required.
+        """A common format strategy for chat models, which will format the
+        input messages into a user message.
 
-        In this format function, the input messages are formatted into a
-        single system messages with format "{name}: {content}" for each
-        message. Note this strategy maybe not suitable for all scenarios,
+        Note this strategy maybe not suitable for all scenarios,
         and developers are encouraged to implement their own prompt
         engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt1 = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+            prompt2 = model.format(
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            # prompt1
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "You're a helpful assistant\\n"
+                        "\\n"
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
+            # prompt2
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
@@ -303,62 +358,42 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
         Returns:
             `List[dict]`:
-                The formatted messages in the format that ZhipuAI Chat API
-                required.
+                The formatted messages.
         """
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        messages = []
-
-        # record dialog history as a list of strings
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                messages.append(
-                    {
-                        "role": unit.role,
-                        "content": _convert_to_str(unit.content),
-                    },
-                )
-            else:
-                # Merge all messages into a dialogue history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        dialogue_history = "\n".join(dialogue)
-
-        user_content_template = "## Dialogue History\n{dialogue_history}"
-
-        messages.append(
-            {
-                "role": "user",
-                "content": user_content_template.format(
-                    dialogue_history=dialogue_history,
-                ),
-            },
-        )
-
-        return messages
+        return ModelWrapperBase.format_for_common_chat_models(*args)
 
 
 class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
-    """The model wrapper for ZhipuAI embedding API."""
+    """The model wrapper for ZhipuAI embedding API.
+
+    Example Response:
+
+    ```json
+    {
+        "model": "embedding-2",
+        "data": [
+            {
+                "embedding": [ (a total of 1024 elements)
+                    -0.02675454691052437,
+                    0.019060475751757622,
+                    ......
+                    -0.005519774276763201,
+                    0.014949671924114227
+                ],
+                "index": 0,
+                "object": "embedding"
+            }
+        ],
+        "object": "list",
+        "usage": {
+            "completion_tokens": 0,
+            "prompt_tokens": 4,
+            "total_tokens": 4
+        }
+    }
+    ```
+    """
 
     model_type: str = "zhipuai_embedding"
 
@@ -416,31 +451,16 @@ class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=response.usage.prompt_tokens,
+            completion_tokens=response.usage.completion_tokens,
+            total_tokens=response.usage.total_tokens,
+        )
 
         # step5: return response
         response_json = response.model_dump()
         return ModelResponse(
             embedding=[_["embedding"] for _ in response_json["data"]],
             raw=response_json,
-        )
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
         )
