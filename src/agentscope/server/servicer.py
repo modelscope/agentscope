@@ -4,7 +4,6 @@ import os
 import threading
 import traceback
 import json
-import base64
 from concurrent import futures
 from multiprocessing.synchronize import Event as EventClass
 from typing import Any

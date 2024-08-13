@@ -2,9 +2,15 @@
 """Related functions for cpp server."""
 
 import json
-import dill
 import base64
 from loguru import logger
+
+try:
+    import dill
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    dill = ImportErrorReporter(import_error, "distribute")
 
 from agentscope.manager import ASManager
 from agentscope.agents.agent import AgentBase
