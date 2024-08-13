@@ -41,13 +41,9 @@ from .service_status import ServiceExecStatus
 from .web.web_digest import digest_webpage, load_web, parse_html_to_text
 from .web.download import download_from_url
 
-from .web.wiki import (
-    wiki_get_category_members,
-    wiki_get_infobox,
-    wiki_get_page_content_by_paragraph,
-    wiki_get_all_wikipedia_tables,
-    wiki_get_page_images_with_captions,
-    wiki_page_retrieval
+from .web.wikipedia import (
+    wikipedia_search,
+    wikipedia_search_categories,
 )
 
 
@@ -95,11 +91,8 @@ __all__ = [
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
-    "wiki_get_category_members",
-    "wiki_get_infobox",
-    "wiki_get_page_content_by_paragraph",
-    "wiki_get_all_wikipedia_tables",
-    "wiki_get_page_images_with_captions",
+    "wikipedia_search",
+    "wikipedia_search_categories",
     # to be deprecated
     "ServiceFactory",
 ]

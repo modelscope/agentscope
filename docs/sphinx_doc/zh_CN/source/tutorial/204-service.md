@@ -27,6 +27,8 @@
 |            | `dblp_search_publications`      | 在dblp数据库里搜索文献。
 |            | `dblp_search_authors`      | 在dblp数据库里搜索作者。                          |
 |            | `dblp_search_venues`      | 在dblp数据库里搜索期刊，会议及研讨会。                   |
+|            | `wikipedia_search`             | 在Wikipedia中进行搜索。                        |
+|            | `wikipedia_search_categories`  | 在Wikipedia的Category中搜索相关的category。      |
 | 文件处理       | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                |
 |            | `delete_file`         | 删除由文件路径指定的文件。                           |
 |            | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。                   |
@@ -39,7 +41,7 @@
 |            | `write_json_file`     | 将 Python 对象序列化为 JSON 并写入到文件。            |
 | 多模态        | `dashscope_text_to_image`  | 使用 DashScope API 将文本生成图片。               |
 |            | `dashscope_image_to_text`  | 使用 DashScope API 根据图片生成文字。              |
-|            | `dashscope_text_to_audio`  | 使用 DashScope API 根据文本生成音频。             |
+|            | `dashscope_text_to_audio`  | 使用 DashScope API 根据文本生成音频。              |
 | *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。  |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。
