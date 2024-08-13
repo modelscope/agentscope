@@ -13,8 +13,7 @@ from typing import Any, Callable
 
 import jwt
 from flask import session, redirect, url_for, abort
-
-EXP_TIME = 1440  # One day long
+from .constant import TOKEN_EXP_TIME
 
 
 def require_auth(
@@ -101,7 +100,7 @@ def generate_jwt(
         "user_login": user_login,
         "access_token": access_token,
         "verification_token": verification_token,
-        "exp": datetime.utcnow() + timedelta(minutes=EXP_TIME),
+        "exp": datetime.utcnow() + timedelta(minutes=TOKEN_EXP_TIME),
     }
     if version:
         payload["version"] = version

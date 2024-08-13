@@ -30,6 +30,7 @@ from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
 from ._studio_utils import _check_and_convert_id_type
 from ..utils.tools import _is_process_alive, _is_windows
 from ..rpc.rpc_agent_client import RpcAgentClient
+from .constant import FILE_SIZE_LIMIT, FILE_COUNT_LIMIT
 
 _app = Flask(__name__)
 
@@ -680,9 +681,12 @@ def _save_workflow() -> Response:
         return jsonify({"message": "Invalid workflow data"})
 
     workflow_json = json.dumps(workflow, ensure_ascii=False, indent=4)
-    if len(workflow_json.encode("utf-8")) > 1024 * 1024:
+    if len(workflow_json.encode("utf-8")) > FILE_SIZE_LIMIT:
         return jsonify(
-            {"message": "The workflow file size exceeds 1MB limit"},
+            {
+                "message": f"The workflow file size exceeds "
+                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+            },
         )
 
     user_files = [
@@ -691,11 +695,12 @@ def _save_workflow() -> Response:
         if os.path.isfile(os.path.join(user_dir, f))
     ]
 
-    if len(user_files) >= 10 and not os.path.exists(filepath):
+    if len(user_files) >= FILE_COUNT_LIMIT and not os.path.exists(filepath):
         return jsonify(
             {
-                "message": "You have reached the limit of 10 workflow files, "
-                "please delete some files.",
+                "message": f"You have reached the limit of "
+                f"{FILE_COUNT_LIMIT} workflow files, please "
+                f"delete some files.",
             },
         )
 

@@ -25,8 +25,9 @@ from flask import (
 from flask_babel import Babel, refresh
 from dotenv import load_dotenv
 
-from agentscope.studio.utils import require_auth, generate_jwt
-from agentscope.studio._app import (
+from .studio.utils import require_auth, generate_jwt
+from .constant import EXPIRATION_SECONDS, FILE_SIZE_LIMIT
+from .studio._app import (
     _convert_config_to_py,
     _read_examples,
     _save_workflow,
@@ -39,7 +40,6 @@ _app = Flask(__name__)
 _app.config["BABEL_DEFAULT_LOCALE"] = "en"
 
 babel = Babel(_app)
-EXPIRATION_SECONDS = 604800  # One week
 
 
 def is_ip(address: str) -> bool:
@@ -290,9 +290,12 @@ def _upload_file_to_oss_online(**kwargs: Any) -> Response:
     user_login = session.get("user_login", "local_user")
 
     workflow_json = json.dumps(content, ensure_ascii=False, indent=4)
-    if len(workflow_json.encode("utf-8")) > 1024 * 1024:
+    if len(workflow_json.encode("utf-8")) > FILE_SIZE_LIMIT:
         return jsonify(
-            {"message": "The workflow data size exceeds 1MB limit"},
+            {
+                "message": f"The workflow data size exceeds "
+                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+            },
         )
 
     config_url = write_and_upload(content, user_login)
