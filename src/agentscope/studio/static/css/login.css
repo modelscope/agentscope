@@ -1,0 +1,130 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    padding: 2rem;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    max-width: 80%;
+}
+
+#loginButton {
+    background-color: #2ea44f;
+    color: white;
+    font-size: 18px;
+    padding: 15px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 14px -3px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 1rem;
+    display: inline-block;
+    width: 100%;
+}
+
+#loginButton:hover {
+    background-color: #2c974b;
+    transform: scale(1.05);
+}
+
+#loginButton:active {
+    background-color: #258741;
+    transform: scale(1);
+}
+
+#loginButton:disabled {
+    background-color: #94d3a2;
+    cursor: not-allowed;
+}
+
+.terms {
+    background: #fff;
+    padding: 20px;
+    margin: 1rem auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    max-width: 600px;
+}
+
+.terms ul {
+    margin-left: 20px;
+}
+
+.terms li {
+    margin-bottom: 10px;
+}
+
+.checkbox {
+    margin-bottom: 1rem;
+}
+
+.brand-gif {
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 50%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.link-like {
+    color: #707070;
+    text-decoration: underline;
+    cursor: pointer;
+    opacity: 0.15;
+}
+
+.link-like:hover {
+    opacity: 1.0;
+}
+
+.waiting {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px 40px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+    flex-direction: column;
+}
+
+.css-spinner {
+    border: 4px solid rgba(0, 0, 0, .1);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.waiting b {
+    color: #555;
+    font-weight: normal;
+    font-size: 1.5em;
+}
