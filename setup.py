@@ -30,9 +30,9 @@ service_requires = [
     "docker",
     "pymongo",
     "pymysql",
-    "feedparser",
     "bs4",
     "beautifulsoup4",
+    "feedparser",
 ]
 
 doc_requires = [
