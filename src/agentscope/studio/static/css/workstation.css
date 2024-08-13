@@ -592,7 +592,6 @@ pre[class*="language-"] {
     margin-top: 10px;
     color: #888;
 }
-/* Newly added */
 .dropzone {
     height: 200px;
     overflow: hidden;
