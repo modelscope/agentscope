@@ -36,7 +36,6 @@ def _require_auth(
             redirected.
         fail_with_exception (bool): If True, raise an exception for
             unauthorized access, otherwise redirect to the redirect_url.
-        local_serving (bool): online service or local servering
         secret_key (str): The secret key for generate jwt token.
         **decorator_kwargs: Additional keyword arguments passed to the
             decorated view.
