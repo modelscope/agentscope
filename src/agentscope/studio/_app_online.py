@@ -234,6 +234,7 @@ def oauth_callback() -> str:
             access_token=access_token,
             verification_token=verification_token,
             secret_key=SECRET_KEY,
+            version="online",
         )
 
         return redirect(
