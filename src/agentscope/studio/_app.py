@@ -26,11 +26,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
 from .._runtime import _runtime
-from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
+from ..constants import (
+    _DEFAULT_SUBDIR_CODE,
+    _DEFAULT_SUBDIR_INVOKE,
+    FILE_SIZE_LIMIT,
+    FILE_COUNT_LIMIT,
+)
 from ._studio_utils import _check_and_convert_id_type
 from ..utils.tools import _is_process_alive, _is_windows
 from ..rpc.rpc_agent_client import RpcAgentClient
-from .constant import FILE_SIZE_LIMIT, FILE_COUNT_LIMIT
 
 _app = Flask(__name__)
 

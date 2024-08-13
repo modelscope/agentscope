@@ -13,7 +13,7 @@ from typing import Any, Callable
 
 import jwt
 from flask import session, redirect, url_for, abort
-from .constant import TOKEN_EXP_TIME
+from agentscope.constants import TOKEN_EXP_TIME
 
 
 def require_auth(
