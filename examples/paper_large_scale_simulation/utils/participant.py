@@ -9,7 +9,6 @@ import re
 import os
 from concurrent import futures
 import math
-import traceback
 
 from loguru import logger
 
@@ -18,8 +17,6 @@ from agentscope.message import Msg
 from agentscope.agents import AgentBase
 from agentscope.environment import BasicEnv
 from agentscope.exception import ResponseParsingError
-from agentscope.manager import FileManager
-from agentscope.logging import _save_msg
 from agentscope.utils.tools import _get_timestamp
 from agentscope.logging import log_msg
 

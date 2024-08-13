@@ -107,17 +107,18 @@ class _EnvMeta(ABCMeta):
 
 class Env(ABC, metaclass=_EnvMeta):
     """The Env Interface.
-    Env is a key concept of AgentScope, which is used to
-    represent global data shared among agents.
+    `Env` is a key concept of AgentScope, representing global
+    data shared among agents.
 
-    Each env has its own name and value, and multiple envs
-    can be organized into a tree structure, where each env can
-    have multiple children envs and one parent env.
+    Each env has its own name and value, and multiple envs can
+    be organized into a tree structure, where each env can have
+    multiple children envs and one parent env.
 
-    Different implementation of envs may have different event functions,
-    which are marked by `@event_func`.
-    Users can bind `EventListener` to specific event functions, and
-    the listener will be activated when the event function is called.
+    Different implementations of envs may have different event
+    functions, which are marked by `@event_func`.
+    Users can bind `EventListener` to specific event functions,
+    and the listener will be activated when the event function
+    is called.
     """
 
     @property

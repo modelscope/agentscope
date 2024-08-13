@@ -22,7 +22,7 @@ def get_public_methods(cls: type) -> list[str]:
 
 
 class RpcObject(ABC):
-    """A proxy object which represent a object located in a rpc server."""
+    """A proxy object which represent an object located in a rpc server."""
 
     def __init__(
         self,
