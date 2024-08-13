@@ -1,2 +1,2 @@
-pariticipant_num,par_server_num,mod_server_num,model_per_host,model_name,ann_id,pmt_id,host_num,ratio,round
-1000,8,1,2,qwen2_72b,17,5,1,2/3,5
+participant_num,agent_type,agent_server_num,env_server_num,model_per_host,model_name,sys_id,usr_id,host_num,ratio,round
+8,random,4,1,2,qwen2_72b,1,1,1,2/3,3

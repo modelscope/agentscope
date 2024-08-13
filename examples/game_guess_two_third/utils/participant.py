@@ -9,6 +9,7 @@ import re
 import os
 from concurrent import futures
 import math
+import traceback
 
 from loguru import logger
 
@@ -20,9 +21,9 @@ from agentscope.exception import ResponseParsingError
 from agentscope.manager import FileManager
 from agentscope.logging import _save_msg
 from agentscope.utils.tools import _get_timestamp
+from agentscope.logging import log_msg
 
-
-RUN_DIR = f"./{os.uname().nodename}"
+SAVE_DIR = f"./runs/{os.uname().nodename}"
 
 RATIO_MAP = {
     "1/2": 1 / 2,
@@ -53,16 +54,28 @@ class RandomParticipant(AgentBase):
         )
         self.max_value = max_value
         self.sleep_time = sleep_time
+        self.round = 0
 
-    def _generate_random_response(self) -> str:
+    def _generate_random_response(self) -> float:
         """generate a random int"""
         time.sleep(self.sleep_time)
-        return str(random.randint(0, self.max_value))
+        return random.randint(0, self.max_value)
 
     def reply(self, x: dict = None) -> dict:
         """Generate a random value"""
+        self.round += 1
         response = self._generate_random_response()
-        msg = Msg(self.name, content=response)
+        msg = Msg(name=self.name, role="assistant", content=response)
+        log_msg(
+            Msg(
+                self.name,
+                content={
+                    "value": float(response),
+                    "round": self.round,
+                },
+                role="assistant",
+            ),
+        )
         return msg
 
 
@@ -139,7 +152,7 @@ class LLMParticipant(AgentBase):
                     response = str(-1)
         v = float(response)
         if v <= self.max_value and v >= 0:
-            _save_msg(
+            log_msg(
                 Msg(
                     self.name,
                     content={
@@ -247,7 +260,7 @@ class LLMParticipantWithBackground(AgentBase):
                     role="assistant",
                 ),
             )
-        msg = Msg(self.name, response, role="assistant")
+        msg = Msg(self.name, content=response, role="assistant")
         # Record the message in memory
         if self.memory:
             self.memory.add(
@@ -265,6 +278,7 @@ class ParserAgent(AgentBase):
 
     def parse_result(self, log_dir: str) -> list:
         """Parse result from log files"""
+        logger.info(f"parse result from {log_dir}")
         results = []
         tasks = []
 
@@ -287,11 +301,10 @@ class ParserAgent(AgentBase):
         return results
 
     def reply(self, x: dict = None) -> dict:
-        file_manager = FileManager.get_instance()
         return Msg(
             name=self.name,
             role="assistant",
-            content=self.parse_result(file_manager.dir),
+            content=self.parse_result(SAVE_DIR),
         )
 
 
@@ -309,6 +322,7 @@ class Group(BasicEnv):
         participant_configs: list[dict] = None,
         **kwargs,
     ) -> None:
+        logger.info(f"init Group {name}")
         super().__init__(name=name)
         if agent_type == "llm":
             self.participants = [
@@ -352,7 +366,7 @@ class Group(BasicEnv):
             )
         else:
             content = self.usr_prompt
-        msg = Msg(name="moderator", role="user", content=content)
+        msg = Msg(name="group", role="user", content=content)
         result = []
         for p in self.participants:
             result.append(p(msg))
@@ -364,6 +378,7 @@ class Group(BasicEnv):
                     self.cnt += 1
             except Exception as e:
                 print(e)
+        logger.info(f"sum: {self.sum}, cnt: {self.cnt}")
         return (self.sum, self.cnt)
 
 
@@ -390,7 +405,7 @@ def save_result(
     """Save the result into file"""
     print(f"Round: {len(results)}")
     os.makedirs(save_path, exist_ok=True)
-    from numpy import np
+    import numpy as np
     from matplotlib import pyplot as plt
 
     for r, result in enumerate(results):
@@ -445,12 +460,12 @@ def save_result(
 def check_server_alive(
     hosts: list,
     base_port: int,
-    server_per_host: int,
+    agent_server_per_host: int,
 ) -> None:
     """Check server alive"""
     max_retry = 10
     for host in hosts:
-        for port in range(base_port, base_port + server_per_host):
+        for port in range(base_port, base_port + agent_server_per_host):
             client = RpcAgentClient(host, port)
             i = 0
             while not client.is_alive() and i < max_retry:
@@ -472,10 +487,10 @@ class GuessTwoThirdGame(BasicEnv):
         name: str,
         hosts: list[str],
         base_port: int,
-        server_per_host: int,
+        agent_server_per_host: int,
         model_per_host: int,
         participant_num: int,
-        group_per_host: int = 10,
+        env_server_per_host: int = 10,
         agent_type: str = "random",
         sys_id: str = "1",
         usr_id: str = "1",
@@ -489,10 +504,10 @@ class GuessTwoThirdGame(BasicEnv):
         self.hosts = hosts
         self.host_num = len(hosts)
         self.base_port = base_port
-        self.server_per_host = server_per_host
+        self.agent_server_per_host = agent_server_per_host
+        self.env_server_per_host = env_server_per_host
         self.model_per_host = model_per_host
         self.participant_num = participant_num
-        self.group_per_host = group_per_host
         self.agent_type = agent_type
         self.sys_id = sys_id
         self.usr_id = usr_id
@@ -508,7 +523,7 @@ class GuessTwoThirdGame(BasicEnv):
     def _generate_participant_configs(
         self,
     ) -> list:
-        total_agent_server_num = self.server_per_host * self.host_num
+        total_agent_server_num = self.agent_server_per_host * self.host_num
         participant_per_agent_server = math.ceil(
             self.participant_num / total_agent_server_num,
         )
@@ -519,12 +534,11 @@ class GuessTwoThirdGame(BasicEnv):
         # build init configs of participants
         for i in range(self.participant_num):
             idx = i // participant_per_agent_server
-            host_id = idx // self.server_per_host
-            port_id = idx % self.server_per_host
+            host_id = idx // self.agent_server_per_host
+            port_id = idx % self.agent_server_per_host
             model_id = i % self.model_per_host
             host = self.hosts[host_id]
             port = self.base_port + port_id
-            config_name = f"model_{model_id + 1}"
             if self.agent_type == "random":
                 configs.append(
                     {
@@ -534,6 +548,9 @@ class GuessTwoThirdGame(BasicEnv):
                     },
                 )
             else:
+                config_name = (
+                    f"{self.model_name}_{self.model_per_host}_{model_id + 1}"
+                )
                 configs.append(
                     {
                         "name": f"P{i}",
@@ -551,19 +568,19 @@ class GuessTwoThirdGame(BasicEnv):
         check_server_alive(
             hosts=self.hosts,
             base_port=self.base_port,
-            server_per_host=self.server_per_host,
+            agent_server_per_host=self.agent_server_per_host,
         )
         ist = time.time()
         configs = self._generate_participant_configs()
 
-        self.groups = []
-        group_num = self.group_per_host * self.host_num
-        participant_per_group = self.participant_num // group_num
+        self.envs = []
+        env_num = self.env_server_per_host * self.host_num
+        participant_per_group = self.participant_num // env_num
         tasks = []
-        logger.info(f"init {group_num} moderator agents...")
+        logger.info(f"init {env_num} envs...")
         # init moderators
         with futures.ThreadPoolExecutor(max_workers=None) as executor:
-            for i in range(group_num):
+            for i in range(env_num):
                 tasks.append(
                     executor.submit(
                         Group,
@@ -577,25 +594,27 @@ class GuessTwoThirdGame(BasicEnv):
                         ],
                         max_value=self.max_value,
                         sleep_time=self.sleep_time,
+                        usr_id=self.usr_id,
                         to_dist={
-                            "host": self.hosts[i // self.group_per_host],
+                            "host": self.hosts[i // self.env_server_per_host],
                             "port": self.base_port
-                            + self.server_per_host
-                            + i % self.group_per_host,
+                            + self.agent_server_per_host
+                            + i % self.env_server_per_host,
                         },
                     ),
                 )
             for task in tasks:
-                self.groups.append(task.result())
+                self.envs.append(task.result())
         iet = time.time()
         logger.info(f"[init takes {iet - ist} s]")
 
     def step(self) -> None:
         """Run one step of the game."""
+        st = time.time()
         tasks = []
         summ = 0
         cnt = 0
-        for g in self.groups:
+        for g in self.envs:
             tasks.append(
                 g.run(
                     self.round,
@@ -607,13 +626,21 @@ class GuessTwoThirdGame(BasicEnv):
             summ += s
             cnt += c
         self.winners.append(summ / cnt * RATIO_MAP[self.ratio])
+        et = time.time()
+        log_msg(
+            Msg(
+                name="Moderator",
+                role="assistant",
+                content=f"The average value is {summ / cnt :.2f} [takes {et - st :.3f} s]",
+            ),
+        )
 
     def record(self, run_time: float) -> None:
         """Record the game result."""
         results = []
         for host in self.hosts:
             parser = ParserAgent(
-                f"parser-{host}",
+                name=f"parser-{host}",
                 to_dist={"host": host, "port": self.base_port},
             )
             results.append(parser())

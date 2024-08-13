@@ -16,7 +16,7 @@ def setup_agent_server(
 ) -> None:
     """Start agent servers"""
     os.system(
-        f"./start_cluster_server.sh {','.join(hosts)}"
+        f"./scripts/start_cluster_server.sh {','.join(hosts)}"
         f" {agent_server_num} {env_server_num}",
     )
     time.sleep(10)
@@ -24,7 +24,7 @@ def setup_agent_server(
 
 def clean_environment(hosts: list) -> None:
     """Clean the environment of the last run"""
-    os.system(f"./stop_cluster_server.sh {','.join(hosts)}")
+    os.system(f"./scripts/stop_cluster_server.sh {','.join(hosts)}")
 
 
 def simulation(
@@ -39,12 +39,12 @@ def simulation(
     hosts: list,
     round: int,
     ratio: str,
-    use_llm: bool,
+    agent_type: str,
 ) -> None:
     """Run the simulation."""
     hosts = " ".join(hosts)
     os.system(
-        f"python main.py --role main --hosts {hosts} --base-port 12330 --participant-num {participant_num} --server-per-host {agent_server_num} --moderator-per-host {env_server_num} --model-per-host {model_per_host} --agent-type {'llm' if use_llm else 'random'} --max-value 100 --model-name {model_name} --ann-id {sys_id} --pmt-id {usr_id} --exp-name {exp_name} --ratio {ratio} --round {round}",  # noqa
+        f"python main.py --role main --hosts {hosts} --base-port 12330 --participant-num {participant_num} --agent-server-per-host {agent_server_num} --env-server-per-host {env_server_num} --model-per-host {model_per_host} --agent-type {agent_type} --max-value 100 --model-name {model_name} --sys-id {sys_id} --usr-id {usr_id} --exp-name {exp_name} --ratio {ratio} --round {round}",  # noqa
     )
 
 
@@ -60,7 +60,7 @@ def run_case(
     hosts: list,
     round: int,
     ratio: str,
-    use_llm: bool,
+    agent_type: str,
 ) -> None:
     """Run an experiment case."""
     clean_environment(hosts=hosts)
@@ -77,7 +77,7 @@ def run_case(
         hosts=hosts,
         round=round,
         ratio=ratio,
-        use_llm=use_llm,
+        agent_type=agent_type,
     )
 
 
@@ -99,8 +99,9 @@ def main(name: str = None, config: str = None) -> None:
     hosts = ["worker1", "worker2", "worker3", "worker4"]
     configs = load_exp_config(config)
     for cfg in configs:
+        print(cfg)
         run_case(
-            participant_num=cfg["pariticipant_num"],
+            participant_num=cfg["participant_num"],
             agent_server_num=cfg["agent_server_num"],
             env_server_num=cfg["env_server_num"],
             model_per_host=cfg["model_per_host"],
@@ -111,14 +112,14 @@ def main(name: str = None, config: str = None) -> None:
             exp_name=name,
             round=cfg["round"],
             ratio=cfg["ratio"],
-            use_llm=cfg["use_llm"],
+            agent_type=cfg["agent_type"],
         )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", "-n", type=str, default="simulation")
-    parser.add_argument("--exp", "-c", type=str, default="exp")
+    parser.add_argument("--config", "-c", type=str, default="exp")
     parser.add_argument(
         "--hosts",
         type=str,
@@ -126,4 +127,7 @@ if __name__ == "__main__":
         default=["worker1", "worker2", "worker3", "worker4"],
     )
     args = parser.parse_args()
-    main(name=args.name, config=os.path.join("./configs", f"{args.exp}.csv"))
+    main(
+        name=args.name,
+        config=os.path.join("./configs", f"{args.config}.csv"),
+    )

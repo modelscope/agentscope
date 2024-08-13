@@ -209,37 +209,30 @@ class AgentServerServicer(RpcAgentServicer):
     ) -> agent_pb2.GeneralResponse:
         """Create a new agent on the server."""
         agent_id = request.agent_id
+        agent_configs = dill.loads(request.agent_init_args)
+        type_name = agent_configs["type"]
+        cls_name = agent_configs["class_name"]
+        try:
+            if type_name == "agent":
+                from agentscope.agents.agent import AgentBase
+
+                cls = AgentBase.get_agent_class(cls_name)
+            elif type_name == "env":
+                from agentscope.environment import Env
+
+                cls = Env.get_env_class(cls_name)
+            else:
+                raise ValueError("Unknown type: {type_name}")
+        except ValueError as e:
+            err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
+            logger.error(err_msg)
+            return agent_pb2.GeneralResponse(ok=False, message=err_msg)
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
                 return agent_pb2.GeneralResponse(
                     ok=False,
                     message=f"Agent with agent_id [{agent_id}] already exists",
                 )
-            agent_configs = dill.loads(request.agent_init_args)
-            if len(request.agent_source_code) > 0:
-                cls = dill.loads(request.agent_source_code)
-                cls_name = cls.__name__
-                logger.info(
-                    f"Load class [{cls_name}] from uploaded source code.",
-                )
-            else:
-                type_name = agent_configs["type"]
-                cls_name = agent_configs["class_name"]
-                try:
-                    if type_name == "agent":
-                        from agentscope.agents.agent import AgentBase
-
-                        cls = AgentBase.get_agent_class(cls_name)
-                    elif type_name == "env":
-                        from agentscope.environment import Env
-
-                        cls = Env.get_env_class(cls_name)
-                    else:
-                        raise ValueError("Unknown type: {type_name}")
-                except ValueError as e:
-                    err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
-                    logger.error(err_msg)
-                    return agent_pb2.GeneralResponse(ok=False, message=err_msg)
             try:
                 agent_instance = cls(
                     *agent_configs["args"],
@@ -253,8 +246,8 @@ class AgentServerServicer(RpcAgentServicer):
                 return agent_pb2.GeneralResponse(ok=False, message=err_msg)
             agent_instance._agent_id = agent_id  # pylint: disable=W0212
             self.agent_pool[agent_id] = agent_instance
-            logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
-            return agent_pb2.GeneralResponse(ok=True)
+        logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
+        return agent_pb2.GeneralResponse(ok=True)
 
     def delete_agent(
         self,
