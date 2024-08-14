@@ -3,11 +3,11 @@
 
 from loguru import logger
 import requests
-from agentscope.service.service_response import ServiceResponse
-from agentscope.service.service_status import ServiceExecStatus
+from ..service_response import ServiceResponse
+from ..service_status import ServiceExecStatus
 
 
-def get_tripadvisor_location_photos(
+def tripadvisor_get_location_photos(
     api_key: str,
     location_id: str = None,
     query: str = None,
@@ -20,8 +20,8 @@ def get_tripadvisor_location_photos(
         api_key (`str`):
             Your TripAdvisor API key.
         location_id (`str`, optional):
-            The ID of the location for which to retrieve photos.
-            Required if query is not provided.
+            The unique identifier for a location on Tripadvisor. The location
+            ID can be obtained using the tripadvisor_search function
         query (`str`, optional):
             The search query to find a location. Required if
             location_id is not provided.
@@ -36,43 +36,55 @@ def get_tripadvisor_location_photos(
 
         If successful, the `content` will be a dictionary
         with the following structure:
-        {
-            'photo_data': {
-                'data': [
-                    {
-                        'id': int,
-                        'is_blessed': bool,
-                        'caption': str,
-                        'published_date': str,
-                        'images': {
-                            'thumbnail': {
-                                'height': int,
-                                'width': int,
-                                'url': str
+
+        .. code-block:: json
+
+            {
+                'photo_data': {
+                    'data': [
+                        {
+                            'id': int,
+                            'is_blessed': bool,
+                            'caption': str,
+                            'published_date': str,
+                            'images': {
+                                'thumbnail': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'small': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'medium': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'large': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'original': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                }
                             },
-                            'small': {'height': int, 'width': int, 'url': str},
-                            'medium': {
-                                'height': int,
-                                'width': int,
-                                'url': str
-                            },
-                            'large': {'height': int, 'width': int, 'url': str},
-                            'original': {
-                                'height': int,
-                                'width': int,
-                                'url': str
-                            }
+                            'album': str,
+                            'source': {'name': str, 'localized_name': str},
+                            'user': {'username': str}
                         },
-                        'album': str,
-                        'source': {'name': str, 'localized_name': str},
-                        'user': {'username': str}
-                    },
-                    ...
-                ]
+                        ...
+                    ]
+                }
             }
-        }
-        Each item in the 'data' list represents
-        a photo associated with the location.
+
+        Each item in the 'data' list represents a photo associated with the
+        location.
 
     Note:
         Either `location_id` or `query` must be provided. If both are provided,
@@ -82,14 +94,14 @@ def get_tripadvisor_location_photos(
         .. code-block:: python
 
             # Using location_id
-            result = get_tripadvisor_location_photos(
+            result = tripadvisor_get_location_photos(
                 "your_api_key", location_id="123456", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
             # Or using a query
-            result = get_tripadvisor_location_photos(
+            result = tripadvisor_get_location_photos(
                 "your_api_key", query="Eiffel Tower", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
@@ -136,7 +148,7 @@ def get_tripadvisor_location_photos(
 
     if location_id is None:
         # Use search_tripadvisor to get the location_id
-        search_result = search_tripadvisor(api_key, query, language)
+        search_result = tripadvisor_search(api_key, query, language)
         if search_result.status != ServiceExecStatus.SUCCESS:
             return search_result
 
@@ -171,7 +183,7 @@ def get_tripadvisor_location_photos(
     logger.info(f"Requesting photos for location ID {location_id}")
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)
         logger.info(
             f"Received response with status code {response.status_code}",
         )
@@ -200,7 +212,7 @@ def get_tripadvisor_location_photos(
         )
 
 
-def search_tripadvisor(
+def tripadvisor_search(
     api_key: str,
     query: str,
     language: str = "en",
@@ -294,7 +306,7 @@ def search_tripadvisor(
     logger.info(f"Searching for locations with query '{query}'")
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)
         logger.info(
             f"Received response with status code {response.status_code}",
         )
@@ -323,7 +335,7 @@ def search_tripadvisor(
         )
 
 
-def get_tripadvisor_location_details(
+def tripadvisor_get_location_details(
     api_key: str,
     location_id: str = None,
     query: str = None,
@@ -344,9 +356,10 @@ def get_tripadvisor_location_details(
             The search query to find a location. Required if
             location_id is not provided.
         language (`str`, optional):
-            The language for the response. Defaults to 'en'.
+            The language for the response. Defaults to 'en', 'zh' for Chinese.
         currency (`str`, optional):
-            The currency for pricing information. Defaults to 'USD'.
+            The currency code to use for request and response
+            (should follow ISO 4217). Defaults to 'USD'.
 
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
@@ -461,7 +474,7 @@ def get_tripadvisor_location_details(
 
     if location_id is None:
         # Use search_tripadvisor to get the location_id
-        search_result = search_tripadvisor(api_key, query, language)
+        search_result = tripadvisor_search(api_key, query, language)
         if search_result.status != ServiceExecStatus.SUCCESS:
             return search_result
 
@@ -495,7 +508,7 @@ def get_tripadvisor_location_details(
     logger.info(f"Requesting details for location ID {location_id}")
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)
         logger.info(
             f"Received response with status code {response.status_code}",
         )
