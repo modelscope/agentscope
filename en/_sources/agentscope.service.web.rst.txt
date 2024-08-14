@@ -12,6 +12,7 @@ Submodules
    agentscope.service.web.download
    agentscope.service.web.search
    agentscope.service.web.web_digest
+   agentscope.service.web.wikipedia
 
 Module contents
 ---------------

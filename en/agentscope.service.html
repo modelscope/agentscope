@@ -269,6 +269,11 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.digest_webpage"><code class="docutils literal notranslate"><span class="pre">digest_webpage()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.web.wikipedia.html">agentscope.service.web.wikipedia module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.service.web.wikipedia.html#agentscope.service.web.wikipedia.wikipedia_search_categories"><code class="docutils literal notranslate"><span class="pre">wikipedia_search_categories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.service.web.wikipedia.html#agentscope.service.web.wikipedia.wikipedia_search"><code class="docutils literal notranslate"><span class="pre">wikipedia_search()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.service.web.html#module-agentscope.service.web">Module contents</a></li>
@@ -971,6 +976,82 @@ search_query ti:”Deep Learning” AND au:”LeCun”</p></li>
 <cite>content</cite>. The <cite>status</cite> variable is from the ServiceExecStatus enum,
 and <cite>content</cite> is a list of search results or error information,
 which depends on the <cite>status</cite> variable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.wikipedia_search">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">wikipedia_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/wikipedia.html#wikipedia_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.wikipedia_search" title="Link to this definition"></a></dt>
+<dd><p>Search the given query in Wikipedia. Note the returned text maybe related entities, which means you should adjust your query as needed and search again.</p>
+<p>Note the returned text maybe too long for some llm, it’s recommended to
+summarize the returned text first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<cite>str</cite>) – The searched query in wikipedia.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A response that contains the execution status and
+returned content.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.wikipedia_search_categories">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.</span></span><span class="sig-name descname"><span class="pre">wikipedia_search_categories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_members</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/wikipedia.html#wikipedia_search_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.wikipedia_search_categories" title="Link to this definition"></a></dt>
+<dd><p>Retrieve categories from Wikipedia:Category pages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – The given searching keywords</p></li>
+<li><p><strong>max_members</strong> (<em>int</em>) – The maximum number of members to output</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A response that contains the execution status and
+returned content. In the returned content, the meanings of keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>”pageid”: unique page ID for the member</p></li>
+<li><p>”ns”: namespace for the member</p></li>
+<li><p>”title”: title of the member</p></li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">members</span> <span class="o">=</span> <span class="n">wiki_get_category_members</span><span class="p">(</span>
+    <span class="s2">&quot;Machine_learning&quot;</span><span class="p">,</span>
+    <span class="n">max_members</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It returns contents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;pageid&#39;</span><span class="p">:</span> <span class="mi">67911196</span><span class="p">,</span>
+            <span class="s1">&#39;ns&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Bayesian learning mechanisms&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;pageid&#39;</span><span class="p">:</span> <span class="mi">233488</span><span class="p">,</span>
+            <span class="s1">&#39;ns&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Machine learning&#39;</span>
+        <span class="p">},</span>
+        <span class="c1"># ...</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>ServiceResponse</cite></p>

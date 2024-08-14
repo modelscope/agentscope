@@ -168,6 +168,11 @@
 <span class="kn">from</span> <span class="nn">.web.web_digest</span> <span class="kn">import</span> <span class="n">digest_webpage</span><span class="p">,</span> <span class="n">load_web</span><span class="p">,</span> <span class="n">parse_html_to_text</span>
 <span class="kn">from</span> <span class="nn">.web.download</span> <span class="kn">import</span> <span class="n">download_from_url</span>
 
+<span class="kn">from</span> <span class="nn">.web.wikipedia</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">wikipedia_search</span><span class="p">,</span>
+    <span class="n">wikipedia_search_categories</span><span class="p">,</span>
+<span class="p">)</span>
+
 
 <div class="viewcode-block" id="get_help">
 <a class="viewcode-back" href="../../agentscope.service.html#agentscope.service.get_help">[文档]</a>
@@ -200,6 +205,8 @@
     <span class="s2">&quot;bing_search&quot;</span><span class="p">,</span>
     <span class="s2">&quot;google_search&quot;</span><span class="p">,</span>
     <span class="s2">&quot;arxiv_search&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;wikipedia_search&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;wikipedia_search_categories&quot;</span><span class="p">,</span>
     <span class="s2">&quot;query_mysql&quot;</span><span class="p">,</span>
     <span class="s2">&quot;query_sqlite&quot;</span><span class="p">,</span>
     <span class="s2">&quot;query_mongodb&quot;</span><span class="p">,</span>
