@@ -51,6 +51,11 @@ from .service_status import ServiceExecStatus
 from .web.web_digest import digest_webpage, load_web, parse_html_to_text
 from .web.download import download_from_url
 
+from .web.wikipedia import (
+    wikipedia_search,
+    wikipedia_search_categories,
+)
+
 
 def get_help() -> None:
     """Get help message."""
@@ -80,6 +85,8 @@ __all__ = [
     "bing_search",
     "google_search",
     "arxiv_search",
+    "wikipedia_search",
+    "wikipedia_search_categories",
     "query_mysql",
     "query_sqlite",
     "query_mongodb",
