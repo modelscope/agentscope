@@ -44,30 +44,31 @@ class Auction(BasicEnv):
         )
 
     @event_func
-    def bid(self, bidder: Bidder, item: Item, bid: int) -> None:
+    def bid(self, bidder: Bidder, item: Item, bid: int) -> bool:
         """Bid for the auction.
         Args:
             bidder (`Bidder`): The bidder agent.
             item (`Item`): The item.
             bid (`int`): The bid of the bidder.
+
+        Returns:
+            `bool`: Whether the bid was successful.
         """
-        if self.cur_bid_info is None and bid >= item.opening_price:
-            self.cur_bid_info = {"bidder": bidder, "bid": bid}
-            self._trigger_listener(
-                Event(
-                    "bid",
-                    args={"bidder": bidder, "item": item, "bid": bid},
-                ),
-            )
-        elif bid > self.cur_bid_info["bid"]:  # type: ignore[index]
-            self.cur_bid_info["bidder"] = bidder  # type: ignore[index]
-            self.cur_bid_info["bid"] = bid  # type: ignore[index]
-            self._trigger_listener(
-                Event(
-                    "bid",
-                    args={"bidder": bidder, "item": item, "bid": bid},
-                ),
-            )
+        if (
+            item.is_auctioned
+            or bid < item.opening_price
+            or (self.cur_bid_info and bid <= self.cur_bid_info["bid"])
+        ):
+            return False
+        self.cur_bid_info = {"bidder": bidder, "bid": bid}
+        logger.info(f"{bidder.name} bid {bid} for {item.name}")
+        self._trigger_listener(
+            Event(
+                "bid",
+                args={"bidder": bidder, "item": item, "bid": bid},
+            ),
+        )
+        return True
 
     @event_func
     def fail(self, item: Item) -> None:

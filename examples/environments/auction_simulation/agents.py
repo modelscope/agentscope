@@ -149,7 +149,7 @@ class Bidder(AgentBase):
         if self.memory:
             self.memory.add(x)
 
-        item = x["content"]  # type: ignore[index, call-overload]
+        item = x.content
         bidder = x.get("bidder", None)
         prev_bid = x.get("bid", None)
         content = (

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """Listerners for the auction simulation."""
-from loguru import logger
-
 from agents import Auctioneer, Bidder
 from env import Auction
 
@@ -36,14 +34,8 @@ class StartListener(EventListener):
         if not item.is_auctioned:
             bid = self.bidder(
                 Msg("auctioneer", content=item, role="assistant"),
-            )["content"]
-            if bid is not None and bid >= item.opening_price:
-                if (
-                    env.cur_bid_info is not None
-                    and bid <= env.cur_bid_info["bid"]
-                ):
-                    return
-                logger.info(f"{self.bidder.name} bid {bid} for {item.name}")
+            ).content
+            if bid:
                 env.bid(self.bidder, item, bid)
 
 
@@ -87,9 +79,8 @@ class BidListener(EventListener):
                     bid=prev_bid,
                     role="assistant",
                 ),
-            )["content"]
-            if bid is not None and bid > env.cur_bid_info["bid"]:
-                logger.info(f"{self.bidder.name} bid {bid} for {item.name}")
+            ).content
+            if bid:
                 env.bid(self.bidder, item, bid)
 
 
