@@ -969,6 +969,9 @@ NODE_NAME_MAPPING = {
     "PythonService": PythonServiceNode,
     "ReadTextService": ReadTextServiceNode,
     "WriteTextService": WriteTextServiceNode,
+    "StartNode": StartNode,
+    "EndNode": EndNode,
+    "PythonServiceUserTypingNode": PythonServiceUserTypingNode,
 }
 
 

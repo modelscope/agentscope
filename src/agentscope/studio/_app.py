@@ -23,6 +23,7 @@ from flask import (
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
+from loguru import logger
 
 from .._runtime import _runtime
 from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
@@ -200,6 +201,7 @@ def _convert_to_py(  # type: ignore[no-untyped-def]
 
     try:
         cfg = json.loads(content)
+        logger.info(f"cfg {cfg}")
         return "True", build_dag(cfg).compile(**kwargs)
     except Exception as e:
         return "False", _remove_file_paths(
@@ -594,6 +596,7 @@ def _convert_config_to_py_and_run() -> Response:
     content = request.json.get("data")
     studio_url = request.url_root.rstrip("/")
     run_id = _runtime.generate_new_runtime_id()
+    logger.info(f"Loading configs from {content}")
     status, py_code = _convert_to_py(
         content,
         runtime_id=run_id,

@@ -7,6 +7,7 @@ a computational DAG. Each node represents a step in the DAG and
 can perform certain actions when called.
 """
 import copy
+import json
 from typing import Any
 from loguru import logger
 
@@ -71,6 +72,13 @@ class ASDiGraph(nx.DiGraph):
         ]
 
         self.execs = ["\n"]
+        self.config = {}
+
+    def save(self, save_filepath: str = "",) -> None:
+        if len(self.config) > 0:
+            # Write the script to file
+            with open(save_filepath, "w", encoding="utf-8") as file:
+                json.dump(self.config, file)
 
     def run(self) -> None:
         """
@@ -155,6 +163,7 @@ class ASDiGraph(nx.DiGraph):
 
         formatted_code = format_python_code(script)
 
+        logger.info(f"compiled_filename: {compiled_filename}")
         if len(compiled_filename) > 0:
             # Write the script to file
             with open(compiled_filename, "w", encoding="utf-8") as file:
@@ -182,6 +191,7 @@ class ASDiGraph(nx.DiGraph):
             The computation object associated with the added node.
         """
         node_cls = NODE_NAME_MAPPING[node_info.get("name", "")]
+        # 适配新增节点
         if node_cls.node_type not in [
             WorkflowNodeType.MODEL,
             WorkflowNodeType.AGENT,
@@ -189,6 +199,8 @@ class ASDiGraph(nx.DiGraph):
             WorkflowNodeType.PIPELINE,
             WorkflowNodeType.COPY,
             WorkflowNodeType.SERVICE,
+            WorkflowNodeType.START,
+            WorkflowNodeType.END,
         ]:
             raise NotImplementedError(node_cls)
 
@@ -310,6 +322,9 @@ def build_dag(config: dict) -> ASDiGraph:
     """
     dag = ASDiGraph()
 
+    dag.config = config
+    dag.save("D:/project-workflow/agentscope/tests/test.json")
+    logger.info((f"config {config}"))
     for node_id, node_info in config.items():
         config[node_id] = sanitize_node_data(node_info)
 
