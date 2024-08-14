@@ -40,7 +40,8 @@ DEFAULT_FLOW_VAR = "flow"
 
 
 class WorkflowNodeType(IntEnum):
-    """Enum for workflow node."""
+    """Enum for workflow node.
+    添加了两种类型，START和END类型"""
 
     MODEL = 0
     AGENT = 1
@@ -48,6 +49,8 @@ class WorkflowNodeType(IntEnum):
     SERVICE = 3
     MESSAGE = 4
     COPY = 5
+    START = 6
+    END = 7
 
 
 class WorkflowNode(ABC):
@@ -819,6 +822,126 @@ class WriteTextServiceNode(WorkflowNode):
             "from agentscope.service import write_text_file",
             "inits": f"{self.var_name} = ServiceFactory.get(write_text_file)",
             "execs": "",
+        }
+
+
+# 20240813
+# 新增的开始节点
+# 开始节点实际上是定义全局变量的，此外别无操作，那么可以参考massage_hub节点实现
+class StartNode(WorkflowNode):
+    """
+    新增的开始节点用于接收和存储用户输入的变量为全局变量.
+    source_kwargs输入dict比如
+    {"k1": "v1", "k2": "v2"}
+    """
+
+    node_type = WorkflowNodeType.START
+
+    def __init__(
+            self,
+            node_id: str,
+            opt_kwargs: dict,
+            source_kwargs: dict,
+            dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        # source_kwargs 包含用户输入的变量
+        self.variables = source_kwargs
+
+        # 将变量variables存储为全局变量
+        for key, value in self.variables.items():
+            globals()[key] = value
+
+    def compile(self) -> dict:
+        inits = "\n".join(
+            [f"global {key}; {key} = {repr(value)}" for key, value in self.variables.items()]
+        )
+
+        return {
+            "imports": "",
+            "inits": inits,
+            "execs": "",
+        }
+
+
+class EndNode(WorkflowNode):
+    """
+    新增的结束节点
+    """
+    node_type = WorkflowNodeType.END
+
+    def __init__(self,
+                 node_id: str,
+                 opt_kwargs: dict,
+                 source_kwargs: dict,
+                 dep_opts: list,
+                 ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        # source_kwargs contains the list of variable names to retrieve
+        self.variable_names = source_kwargs.get("variable_names", [])
+
+    def __call__(self, x: dict = None) -> dict:
+        result = {}
+        for var_name in self.variable_names:
+            if var_name in globals():
+                result[var_name] = globals()[var_name]
+            else:
+                result[var_name] = None
+
+        return result
+
+    def compile(self) -> dict:
+        execs = "\n".join(
+            [
+                f'{DEFAULT_FLOW_VAR}["{var_name}"] = globals().get("{var_name}", None)'
+                for var_name in self.variable_names
+            ]
+        )
+
+        return {
+            "imports": "",
+            "inits": "",
+            "execs": execs,
+        }
+
+
+class PythonServiceUserTypingNode(WorkflowNode):
+    """
+    Execute Python Node,支持用户输入
+    使用 source_kwargs 获取用户输入的 Python 代码
+    这个代码将作为 execute_python_code 函数的 code 参数传入。
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+            self,
+            node_id: str,
+            opt_kwargs: dict,
+            source_kwargs: dict,
+            dep_opts: list,
+    ) -> None:
+        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+        self.service_func = ServiceFactory.get(execute_python_code)
+        self.python_code = opt_kwargs.get("python_code", "")
+        self.timeout = opt_kwargs.get("timeout", 300)
+        self.use_docker = opt_kwargs.get("use_docker", None)
+        self.maximum_memory_bytes = opt_kwargs.get("maximum_memory_bytes", None)
+
+    def compile(self) -> dict:
+        # 将代码执行的所有必要参数格式化为字典
+        execs = (
+            f'{DEFAULT_FLOW_VAR} = {self.var_name}('
+            f'code={repr(self.python_code)}, '
+            f'timeout={self.timeout}, '
+            f'use_docker={self.use_docker}, '
+            f'maximum_memory_bytes={self.maximum_memory_bytes})'
+        )
+        return {
+            "imports": "from agentscope.service import ServiceFactory\n"
+                       "from agentscope.service import execute_python_code",
+            "inits": f"{self.var_name} = ServiceFactory.get(execute_python_code)",
+            "execs": f"{self.var_name}.run({repr(self.python_code)})",
         }
 
 
