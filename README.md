@@ -148,6 +148,7 @@ the following libraries.
 - File Operation
 - Text Processing
 - Multi Modality
+- Wikipedia search and retrieval
 
 **Example Applications**
 
