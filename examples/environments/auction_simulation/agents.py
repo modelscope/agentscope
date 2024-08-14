@@ -8,8 +8,8 @@ from typing import Optional, Sequence, Union
 
 from loguru import logger
 from agentscope.agents import AgentBase
-from agentscope.message.msg import Msg
-from agentscope.environment.env import BasicEnv
+from agentscope.message import Msg
+from agentscope.environment import BasicEnv
 
 
 class Item:

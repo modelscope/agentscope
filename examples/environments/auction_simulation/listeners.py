@@ -3,9 +3,8 @@
 from agents import Auctioneer, Bidder
 from env import Auction
 
-from agentscope.environment.env import EventListener
-from agentscope.environment.event import Event
-from agentscope.message.msg import Msg
+from agentscope.environment import Event, EventListener
+from agentscope.message import Msg
 
 
 class StartListener(EventListener):

@@ -6,8 +6,8 @@ from loguru import logger
 
 from agents import Item, Bidder
 
-from agentscope.environment.env import BasicEnv, EventListener
-from agentscope.environment.event import Event, event_func
+from agentscope.environment import Event, BasicEnv, EventListener, event_func
+from agentscope.environment.env import trigger_listener
 
 
 class Auction(BasicEnv):
@@ -39,11 +39,7 @@ class Auction(BasicEnv):
         """
         self.cur_item = item
         self.cur_bid_info = None
-        self._trigger_listener(
-            Event("start", args={"item": item}),
-        )
 
-    @event_func
     def bid(self, bidder: Bidder, item: Item, bid: int) -> bool:
         """Bid for the auction.
         Args:
@@ -62,7 +58,8 @@ class Auction(BasicEnv):
             return False
         self.cur_bid_info = {"bidder": bidder, "bid": bid}
         logger.info(f"{bidder.name} bid {bid} for {item.name}")
-        self._trigger_listener(
+        trigger_listener(
+            self,
             Event(
                 "bid",
                 args={"bidder": bidder, "item": item, "bid": bid},
@@ -78,9 +75,6 @@ class Auction(BasicEnv):
         """
         item.is_auctioned = True
         logger.info(f"{item.name} is not sold")
-        self._trigger_listener(
-            Event("failed", args={"item": item}),
-        )
 
     @event_func
     def sold(self, bidder: Bidder, item: Item, price: int) -> None:
@@ -92,9 +86,3 @@ class Auction(BasicEnv):
         """
         item.is_auctioned = True
         logger.info(f"{item.name} is sold to {bidder.name} for {price}")
-        self._trigger_listener(
-            Event(
-                "sold",
-                args={"bidder": bidder, "item": item, "price": price},
-            ),
-        )
