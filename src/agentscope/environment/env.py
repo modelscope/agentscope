@@ -2,15 +2,66 @@
 """The env module."""
 from __future__ import annotations
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Any, List, Type
+from typing import Any, List, Type, Callable
+from concurrent.futures import ThreadPoolExecutor
+import inspect
 from loguru import logger
-
 from ..exception import (
     EnvNotFoundError,
     EnvAlreadyExistError,
 )
 from .event import Event
 from ..rpc.rpc_config import DistConf
+
+
+def trigger_listener(env: "Env", event: Event) -> None:
+    """Trigger the listener bound to the event.
+
+    Args:
+        env (`Env`): The env that trigger the listener.
+        event (`Event`): The event information.
+    """
+    futures = []
+    with ThreadPoolExecutor() as executor:
+        for listener in env.get_listeners(event.name):
+            futures.append(executor.submit(listener, env, event))
+    for future in futures:
+        future.result()
+
+
+def event_func(func: Callable) -> Callable:
+    """A decorator to register an event function.
+
+    Args:
+        func (`Callable`): The event function.
+
+    Returns:
+        `Callable`: The decorated event function.
+    """
+
+    def wrapper(  # type: ignore[no-untyped-def]
+        *args,
+        **kwargs,
+    ) -> Any:
+        # get the dict format args of the decorated function
+        sig = inspect.signature(func)
+        bound_args = sig.bind(*args, **kwargs)
+        bound_args.apply_defaults()
+        args_dict = bound_args.arguments
+        # call the function
+        returns = func(*args, **kwargs)
+        self = args_dict.pop("self")
+        trigger_listener(
+            env=self,
+            event=Event(
+                name=func.__name__,
+                args=args_dict,
+                returns=returns,
+            ),
+        )
+        return returns
+
+    return wrapper
 
 
 class EventListener(ABC):
@@ -202,12 +253,27 @@ class Env(ABC, metaclass=_EnvMeta):
         """
 
     @abstractmethod
+    def get_listeners(self, target_event: str) -> List[EventListener]:
+        """Get the listeners of the specific event.
+
+        Args:
+            target_event (`str`): The event name.
+
+        Returns:
+            `List[EventListener]`: The listeners of the specific event.
+        """
+
+    @abstractmethod
     def __getitem__(self, env_name: str) -> Env:
         """Get a child env."""
 
     @abstractmethod
     def __setitem__(self, env_name: str, env: Env) -> None:
         """Set a child env."""
+
+    @abstractmethod
+    def describe(self) -> str:
+        """Describe the current state of the environment."""
 
     @classmethod
     def get_env_class(cls, env_class_name: str) -> Type[Env]:
@@ -346,17 +412,13 @@ class BasicEnv(Env):
         """Add a listener to the env.
 
         Args:
-            target_event (`str`): The event function to listen.
+            target_event (`str`): The name of the event to listen.
             listener (`EventListener`): The listener to add.
 
         Returns:
             `bool`: Whether the listener was added successfully.
         """
-        if (
-            hasattr(self, target_event)
-            and hasattr(getattr(self, target_event), "_is_event")
-            and getattr(self, target_event)._is_event  # pylint: disable=W0212
-        ):
+        if hasattr(self, target_event):
             if target_event not in self.event_listeners:
                 self.event_listeners[target_event] = {}
             if listener.name not in self.event_listeners[target_event]:
@@ -368,7 +430,7 @@ class BasicEnv(Env):
         """Remove a listener from the env.
 
         Args:
-            target_event (`str`): The event function.
+            target_event (`str`): The event name.
             listener_name (`str`): The name of the listener to remove.
 
         Returns:
@@ -380,26 +442,25 @@ class BasicEnv(Env):
                 return True
         return False
 
-    def _trigger_listener(self, event: Event) -> None:
-        """Trigger the listeners of the specific event.
+    def get_listeners(self, target_event: str) -> List[EventListener]:
+        """Get the listeners of the specific event.
 
         Args:
-            event_name (`str`): The event function name.
-            args (`dict`): The arguments to pass to the event.
-        """
-        if event.name in self.event_listeners:
-            for listener in self.event_listeners[event.name].values():
-                listener(self, event)
+            target_event (`str`): The event name.
 
-    def dump(self) -> dict:
-        """Dump the env tree to a dict."""
-        return {
-            "type": self.__class__.__name__,
-            "children": {
-                child.name: child.dump()
-                for child in (self.children.values() if self.children else [])
-            },
-        }
+        Returns:
+            `List[EventListener]`: The listeners of the specific event.
+        """
+        if target_event in self.event_listeners:
+            return list(self.event_listeners[target_event].values())
+        else:
+            return []
+
+    def describe(self) -> str:
+        """Describe the current state of the environment."""
+        raise NotImplementedError(
+            "`describe` is not implemented in `BasicEnv`.",
+        )
 
     def __getitem__(self, env_name: str) -> Env:
         if env_name in self.children:

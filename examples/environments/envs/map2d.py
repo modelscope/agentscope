@@ -9,8 +9,14 @@ from agentscope.exception import (
     EnvAlreadyExistError,
     EnvListenerError,
 )
-from agentscope.environment.env import Env, BasicEnv, EventListener
-from agentscope.environment.event import event_func, Event, Movable2D
+from agentscope.environment import (
+    Env,
+    BasicEnv,
+    EventListener,
+    Event,
+    event_func,
+)
+from agentscope.environment.event import Movable2D
 
 
 def distance2d(
@@ -68,16 +74,6 @@ class Map2D(BasicEnv):
         """
         if env_name in self.children:
             self.children[env_name].move_to(x, y)
-            self._trigger_listener(
-                Event(
-                    name="move_child_to",
-                    args={
-                        "env_name": env_name,
-                        "x": x,
-                        "y": y,
-                    },
-                ),
-            )
         else:
             raise EnvNotFoundError(env_name)
 
@@ -92,14 +88,6 @@ class Map2D(BasicEnv):
             raise EnvTypeError(point.name, "Moveable2D")
         if not self.add_child(point):
             raise EnvAlreadyExistError(point.name)
-        self._trigger_listener(
-            Event(
-                name="register_point",
-                args={
-                    "point": point.name,
-                },
-            ),
-        )
 
     # Syntactic sugar, not an event function
     def in_range_of(

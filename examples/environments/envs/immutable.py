@@ -4,8 +4,13 @@
 from typing import List, Any
 from copy import deepcopy
 
-from agentscope.environment.env import Env, BasicEnv, EventListener
-from agentscope.environment.event import event_func, Event, Getable
+from agentscope.environment import (
+    Env,
+    BasicEnv,
+    EventListener,
+    event_func,
+)
+from agentscope.environment.event import Getable
 
 
 class ImmutableEnv(BasicEnv, Getable):
@@ -34,6 +39,4 @@ class ImmutableEnv(BasicEnv, Getable):
 
     @event_func
     def get(self) -> Any:
-        value = deepcopy(self._value)
-        self._trigger_listener(Event("get", {}))
-        return value
+        return deepcopy(self._value)

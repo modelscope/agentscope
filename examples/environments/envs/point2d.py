@@ -2,8 +2,13 @@
 """ An Env that represented a 2D location point."""
 from typing import List, Tuple, Any
 
-from agentscope.environment.env import Env, BasicEnv, EventListener
-from agentscope.environment.event import event_func, Event, Movable2D
+from agentscope.environment import (
+    Env,
+    BasicEnv,
+    EventListener,
+    event_func,
+)
+from agentscope.environment.event import Movable2D
 from .mutable import MutableEnv
 
 
@@ -31,15 +36,8 @@ class Point2D(BasicEnv, Movable2D):
     @event_func
     def move_to(self, x: float, y: float) -> bool:
         """Move the point to a new position."""
-        cur_loc = {
-            "x": self.x,  # type: ignore[has-type]
-            "y": self.y,  # type: ignore[has-type]
-        }
         self.x = x
         self.y = y
-        self._trigger_listener(
-            Event("move_to", {"new": {"x": x, "y": y}, "old": cur_loc}),
-        )
         return True
 
     # Syntactic sugar, not an event function
@@ -53,8 +51,7 @@ class Point2D(BasicEnv, Movable2D):
         Returns:
             `bool`: Whether the movement was successful.
         """
-        self.move_to(self.x + x, self.y + y)
-        return True
+        return self.move_to(self.x + x, self.y + y)
 
     @event_func
     def get_position(self) -> Tuple[float, float]:
@@ -63,9 +60,7 @@ class Point2D(BasicEnv, Movable2D):
         Returns:
             `Tuple[float, float]`: The current position of the point.
         """
-        value = (self.x, self.y)
-        self._trigger_listener(Event("get", {}))
-        return value
+        return (self.x, self.y)
 
 
 class EnvWithPoint2D(MutableEnv, Movable2D):

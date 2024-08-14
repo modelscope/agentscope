@@ -3,8 +3,13 @@
 from typing import List, Any
 from copy import deepcopy
 
-from agentscope.environment import Env, BasicEnv, EventListener
-from agentscope.environment.event import event_func, Event, Getable, Setable
+from agentscope.environment import (
+    Env,
+    BasicEnv,
+    EventListener,
+    event_func,
+)
+from agentscope.environment.event import Getable, Setable
 
 
 class MutableEnv(BasicEnv, Getable, Setable):
@@ -28,12 +33,9 @@ class MutableEnv(BasicEnv, Getable, Setable):
 
     @event_func
     def get(self) -> Any:
-        value = deepcopy(self._value)
-        self._trigger_listener(Event("get", {}))
-        return value
+        return deepcopy(self._value)
 
     @event_func
     def set(self, value: Any) -> bool:
         self._value = value
-        self._trigger_listener(Event("set", {"value": value}))
         return True
