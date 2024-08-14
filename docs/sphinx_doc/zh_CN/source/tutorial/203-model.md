@@ -142,7 +142,6 @@ API如下：
     "generate_args": {                          # 模型API接口被调用时传入的参数
         # 例如："temperature": 0.0
     },
-    "budget": 100                               # API费用预算
 }
 ```
 

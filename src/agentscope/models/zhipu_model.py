@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for ZhipuAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence
+from typing import Union, Any, List, Sequence, Optional, Generator
 
 from loguru import logger
 
+from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
-from ..utils.tools import _convert_to_str
 
 try:
     import zhipuai
@@ -52,7 +52,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
         if zhipuai is None:
             raise ImportError(
@@ -67,8 +67,6 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
             **(client_args or {}),
         )
 
-        self._register_default_metrics()
-
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
@@ -81,33 +79,83 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
 
 class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
-    """The model wrapper for ZhipuAI's chat API."""
+    """The model wrapper for ZhipuAI's chat API.
+
+    Response:
+        - From https://maas.aminer.cn/dev/api#glm-4
+
+        ```json
+        {
+            "created": 1703487403,
+            "id": "8239375684858666781",
+            "model": "glm-4",
+            "request_id": "8239375684858666781",
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "index": 0,
+                    "message": {
+                        "content": "Drawing blueprints with ...",
+                        "role": "assistant"
+                    }
+                }
+            ],
+            "usage": {
+                "completion_tokens": 217,
+                "prompt_tokens": 31,
+                "total_tokens": 248
+            }
+        }
+        ```
+    """
 
     model_type: str = "zhipuai_chat"
 
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        stream: bool = False,
+        client_args: dict = None,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the zhipuai client.
+        To init the ZhipuAi client, the api_key is required.
+        Other client args include base_url and timeout.
+        The base_url is set to https://open.bigmodel.cn/api/paas/v4
+        if not specified. The timeout arg is set for http request timeout.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in ZhipuAI API.
+            api_key (`str`, default `None`):
+                The API key for ZhipuAI API. If not specified, it will
+                be read from the environment variable.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in zhipuai api generation,
+                e.g. `temperature`, `seed`.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            client_args=client_args,
+            generate_args=generate_args,
         )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
+
+        self.stream = stream
 
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the ZhipuAI
@@ -118,6 +166,9 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                Whether to enable stream mode. If not specified, it will
+                use the stream mode set in the constructor.
             **kwargs (`Any`):
                 The keyword arguments to ZhipuAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -159,43 +210,145 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             )
 
         # step3: forward to generate response
-        response = self.client.chat.completions.create(
-            model=self.model_name,
-            messages=messages,
-            **kwargs,
-        )
+        if stream is None:
+            stream = self.stream
 
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
-                **kwargs,
+                "stream": stream,
             },
-            response=response.model_dump(),
         )
 
-        # step5: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        response = self.client.chat.completions.create(**kwargs)
 
-        # step6: return response
-        return ModelResponse(
-            text=response.choices[0].message.content,
-            raw=response.model_dump(),
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                """The generator of response text"""
+                text = ""
+                last_chunk = {}
+                for chunk in response:
+                    chunk = chunk.model_dump()
+                    if _verify_text_content_in_openai_delta_response(chunk):
+                        text += chunk["choices"][0]["delta"]["content"]
+                        yield text
+                    last_chunk = chunk
+
+                # Update the last chunk to save locally
+                if last_chunk.get("choices", []) in [None, []]:
+                    last_chunk["choices"] = [{}]
+
+                last_chunk["choices"][0]["message"] = {
+                    "role": "assistant",
+                    "content": text,
+                }
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+            )
+
+        else:
+            response = response.model_dump()
+
+            self._save_model_invocation_and_update_monitor(kwargs, response)
+
+            # Return response
+            return ModelResponse(
+                text=response["choices"][0]["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: dict,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments used in model invocation
+            response (`dict`):
+                The response from model API
+        """
+
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=response,
         )
+
+        usage = response.get("usage", None)
+        if usage is not None:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+            )
 
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
-        """Format the input string and dictionary into the format that
-        ZhipuAI Chat API required.
+        """A common format strategy for chat models, which will format the
+        input messages into a user message.
 
-        In this format function, the input messages are formatted into a
-        single system messages with format "{name}: {content}" for each
-        message. Note this strategy maybe not suitable for all scenarios,
+        Note this strategy maybe not suitable for all scenarios,
         and developers are encouraged to implement their own prompt
         engineering strategies.
+
+        The following is an example:
+
+        .. code-block:: python
+
+            prompt1 = model.format(
+                Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+            prompt2 = model.format(
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+        The prompt will be as follows:
+
+        .. code-block:: python
+
+            # prompt1
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "You're a helpful assistant\\n"
+                        "\\n"
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
+            # prompt2
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
@@ -205,62 +358,42 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
         Returns:
             `List[dict]`:
-                The formatted messages in the format that ZhipuAI Chat API
-                required.
+                The formatted messages.
         """
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        messages = []
-
-        # record dialog history as a list of strings
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                messages.append(
-                    {
-                        "role": unit.role,
-                        "content": _convert_to_str(unit.content),
-                    },
-                )
-            else:
-                # Merge all messages into a dialogue history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        dialogue_history = "\n".join(dialogue)
-
-        user_content_template = "## Dialogue History\n{dialogue_history}"
-
-        messages.append(
-            {
-                "role": "user",
-                "content": user_content_template.format(
-                    dialogue_history=dialogue_history,
-                ),
-            },
-        )
-
-        return messages
+        return ModelWrapperBase.format_for_common_chat_models(*args)
 
 
 class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
-    """The model wrapper for ZhipuAI embedding API."""
+    """The model wrapper for ZhipuAI embedding API.
+
+    Example Response:
+
+    ```json
+    {
+        "model": "embedding-2",
+        "data": [
+            {
+                "embedding": [ (a total of 1024 elements)
+                    -0.02675454691052437,
+                    0.019060475751757622,
+                    ......
+                    -0.005519774276763201,
+                    0.014949671924114227
+                ],
+                "index": 0,
+                "object": "embedding"
+            }
+        ],
+        "object": "list",
+        "usage": {
+            "completion_tokens": 0,
+            "prompt_tokens": 4,
+            "total_tokens": 4
+        }
+    }
+    ```
+    """
 
     model_type: str = "zhipuai_embedding"
 
@@ -318,31 +451,16 @@ class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(call_counter=1, **response.usage.model_dump())
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=response.usage.prompt_tokens,
+            completion_tokens=response.usage.completion_tokens,
+            total_tokens=response.usage.total_tokens,
+        )
 
         # step5: return response
         response_json = response.model_dump()
         return ModelResponse(
             embedding=[_["embedding"] for _ in response_json["data"]],
             raw=response_json,
-        )
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
         )

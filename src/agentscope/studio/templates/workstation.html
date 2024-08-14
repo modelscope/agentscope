@@ -34,7 +34,7 @@
             integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
             src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
 
-    <script src="{{ url_for('static', filename='js_third_party/sweetalert2@9') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/sweetalert2@11') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/micromodal.min.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/workstation.js') }}"></script>
@@ -50,34 +50,38 @@
                 <div class="workstation-sidebar-item">Example</div>
                 <ul>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(1);">Two Agents
+                        onclick="importExample(1);">
+                        Two Agents
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                             importExample_step(1)">
+                                     importExample_step(1)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(2);">Pipeline
+                        onclick="importExample(2);">
+                        Pipeline
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                             importExample_step(2)">
+                                     importExample_step(2)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(3);">Conversation
+                        onclick="importExample(3);">
+                        Conversation
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                             importExample_step(3)">
+                                     importExample_step(3)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(4);">Group Chat
+                        onclick="importExample(4);">
+                        Group Chat
                         <div class="new-action"
                              onclick="event.stopPropagation();
-                             importExample_step(4)">
+                                     importExample_step(4)">
                             <i class="fas fa-book-open"></i>
                         </div>
                     </li>
@@ -289,12 +293,33 @@
                         <path d="M896.170667 497.365333l-241.365334 241.365334-60.330666-60.373334 180.992-180.992-180.992-181.034666L654.805333 256l241.365334 241.365333z m-647.509334 0l181.034667 180.992-60.330667 60.373334L128 497.365333 369.365333 256l60.330667 60.330667-181.034667 181.034666z"></path>
                     </svg>
                 </div>
+                {% set version = token_dict.get('version') if token_dict is defined else "local" %}
                 <div class="menu-btn unselectable-text"
                      title="Run the workflow"
-                     onclick="showExportRunPopup();">
+                     onclick="showExportRunPopup('{{ version }}');">
                     <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M256 252.245333c0-6.613333 1.578667-13.098667 4.565333-18.901333 9.813333-18.773333 32-25.557333 49.621334-15.104l439.04 259.754667c5.973333 3.541333 10.88 8.789333 14.165333 15.146666 9.813333 18.773333 3.413333 42.453333-14.165333 52.864L310.186667 805.76a34.730667 34.730667 0 0 1-17.706667 4.906667C272.341333 810.666667 256 793.258667 256 771.797333V252.245333z"></path>
+                    </svg>
+                </div>
+                <div class="menu-btn unselectable-text" title="Save workflow"
+                     onclick="showSaveWorkflowPopup()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         version="1.1" xmlns="http://www.w3.org/2000/svg"
+                         p-id="5904">
+                        <path d="M704 128l192 192v512a64 64 0 0 1-64 64H192a64 64 0 0 1-64-64V192a64 64 0 0 1 64-64h512z m-64 64H384v96h256V192z m64 26.496V352H320V192H192v640h128V512h384v320h128V346.496l-128-128zM640 832V576H384v256h256z"
+                              fill="#000000" fill-opacity=".9"
+                              p-id="5905"></path>
+                    </svg>
+                </div>
+
+                <div class="menu-btn unselectable-text" title="Load workflow"
+                     onclick="showLoadWorkflowPopup()">
+                    <svg class="menu-btn-svg" viewBox="0 0 1024 1024"
+                         version="1.1" xmlns="http://www.w3.org/2000/svg"
+                         p-id="6932">
+                        <path d="M932.8 196.8H515.2L448 107.2H91.2c-38.4 0-68.8 30.4-68.8 68.8v680c0 38.4 30.4 68.8 68.8 68.8h843.2c38.4 0 68.8-30.4 68.8-68.8v-592c0-36.8-32-67.2-70.4-67.2z m24 660.8c0 12.8-11.2 22.4-22.4 22.4H91.2c-12.8 0-22.4-11.2-22.4-22.4V176c0-12.8 11.2-22.4 22.4-22.4h334.4l14.4 19.2 148.8 203.2h369.6v481.6z m0-528H609.6l-64-86.4h385.6c12.8 0 22.4 11.2 22.4 22.4v64zM707.2 788.8L624 705.6c22.4-28.8 35.2-65.6 35.2-104 0-96-78.4-172.8-172.8-172.8s-172.8 78.4-172.8 172.8 78.4 172.8 172.8 172.8c40 0 76.8-14.4 107.2-36.8l83.2 83.2c9.6 9.6 24 9.6 32 0 6.4-8 6.4-22.4-1.6-32zM356.8 601.6c0-70.4 57.6-128 128-128s128 57.6 128 128-57.6 128-128 128-128-59.2-128-128z"
+                              fill="#2C2C2C" p-id="6933"></path>
                     </svg>
                 </div>
             </div>

@@ -3,9 +3,12 @@
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence
+from typing import Any, Union, List, Sequence, Optional, Generator
+
+from dashscope.api_entities.dashscope_response import GenerationResponse
 from loguru import logger
 
+from ..manager import FileManager
 from ..message import Msg
 from ..utils.tools import _convert_to_str, _guess_type_by_extension
 
@@ -15,8 +18,6 @@ except ImportError:
     dashscope = None
 
 from .model import ModelWrapperBase, ModelResponse
-
-from ..file_manager import file_manager
 
 
 class DashScopeWrapperBase(ModelWrapperBase, ABC):
@@ -47,22 +48,19 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
             model_name = config_name
             logger.warning("model_name is not set, use config_name instead.")
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
         if dashscope is None:
             raise ImportError(
                 "Cannot find dashscope package in current python environment.",
             )
 
-        self.model_name = model_name
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
-        dashscope.api_key = self.api_key
+        if self.api_key:
+            dashscope.api_key = self.api_key
         self.max_length = None
-
-        # Set monitor accordingly
-        self._register_default_metrics()
 
     def format(
         self,
@@ -78,35 +76,83 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/api-details
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw
+
+        ```json
+        {
+            "status_code": 200,
+            "request_id": "a75a1b22-e512-957d-891b-37db858ae738",
+            "code": "",
+            "message": "",
+            "output": {
+                "text": null,
+                "finish_reason": null,
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "role": "assistant",
+                            "content": "xxx"
+                        }
+                    }
+                ]
+            },
+            "usage": {
+                "input_tokens": 25,
+                "output_tokens": 77,
+                "total_tokens": 102
+            }
+        }
+        ```
     """
 
     model_type: str = "dashscope_chat"
 
     deprecated_model_type: str = "tongyi_chat"
 
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str = None,
+        api_key: str = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the DashScope wrapper.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in DashScope API.
+            api_key (`str`, default `None`):
+                The API key for DashScope API.
+            stream (`bool`, default `False`):
+                If True, the response will be a generator in the `stream`
+                field of the returned `ModelResponse` object.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in DashScope api generation,
+                e.g. `temperature`, `seed`.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            api_key=api_key,
+            generate_args=generate_args,
+            **kwargs,
         )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
+
+        self.stream = stream
 
     def __call__(
         self,
         messages: list,
+        stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the
@@ -123,6 +169,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         Args:
             messages (`list`):
                 A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                The stream flag to control the response format, which will
+                overwrite the stream flag in the constructor.
             **kwargs (`Any`):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -132,8 +181,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         Returns:
             `ModelResponse`:
-                The response text in text field, and the raw response in
-                raw field.
+                A response object with the response text in text field, and
+                the raw response in raw field. If stream is True, the response
+                will be a generator in the `stream` field.
 
         Note:
             `parse_func`, `fault_handler` and `max_retries` are reserved for
@@ -168,58 +218,118 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             )
 
         # step3: forward to generate response
-        response = dashscope.Generation.call(
-            model=self.model_name,
-            messages=messages,
-            result_format="message",  # set the result to be "message" format.
-            **kwargs,
-        )
+        if stream is None:
+            stream = self.stream
 
-        if response.status_code != HTTPStatus.OK:
-            error_msg = (
-                f" Request id: {response.request_id},"
-                f" Status code: {response.status_code},"
-                f" error code: {response.code},"
-                f" error message: {response.message}."
-            )
-
-            raise RuntimeError(error_msg)
-
-        # step4: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
-                **kwargs,
+                # Set the result to be "message" format.
+                "result_format": "message",
+                "stream": stream,
             },
+        )
+
+        # Switch to the incremental_output mode
+        if stream:
+            kwargs["incremental_output"] = True
+
+        response = dashscope.Generation.call(**kwargs)
+
+        # step3: invoke llm api, record the invocation and update the monitor
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                last_chunk = None
+                text = ""
+                for chunk in response:
+                    if chunk.status_code != HTTPStatus.OK:
+                        error_msg = (
+                            f"Request id: {chunk.request_id}\n"
+                            f"Status code: {chunk.status_code}\n"
+                            f"Error code: {chunk.code}\n"
+                            f"Error message: {chunk.message}"
+                        )
+                        raise RuntimeError(error_msg)
+
+                    text += chunk.output["choices"][0]["message"]["content"]
+                    yield text
+                    last_chunk = chunk
+
+                # Replace the last chunk with the full text
+                last_chunk.output["choices"][0]["message"]["content"] = text
+
+                # Save the model invocation and update the monitor
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+                raw=response,
+            )
+
+        else:
+            if response.status_code != HTTPStatus.OK:
+                error_msg = (
+                    f"Request id: {response.request_id},\n"
+                    f"Status code: {response.status_code},\n"
+                    f"Error code: {response.code},\n"
+                    f"Error message: {response.message}."
+                )
+
+                raise RuntimeError(error_msg)
+
+            # Record the model invocation and update the monitor
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            return ModelResponse(
+                text=response.output["choices"][0]["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: GenerationResponse,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments to the DashScope chat API.
+            response (`GenerationResponse`):
+                The response object returned by the DashScope chat API.
+        """
+        input_tokens = response.usage.get("input_tokens", 0)
+        output_tokens = response.usage.get("output_tokens", 0)
+
+        # Update the token record accordingly
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+        )
+
+        # Save the model invocation after the stream is exhausted
+        self._save_model_invocation(
+            arguments=kwargs,
             response=response,
-        )
-
-        # step5: update monitor accordingly
-        # The metric names are unified for comparison
-        self.update_monitor(
-            call_counter=1,
-            prompt_tokens=response.usage.get("input_tokens", 0),
-            completion_tokens=response.usage.get("output_tokens", 0),
-            total_tokens=response.usage.get("input_tokens", 0)
-            + response.usage.get("output_tokens", 0),
-        )
-
-        # step6: return response
-        return ModelResponse(
-            text=response.output["choices"][0]["message"]["content"],
-            raw=response,
         )
 
     def format(
         self,
         *args: Union[Msg, Sequence[Msg]],
-    ) -> List:
-        """Format the messages for DashScope Chat API.
+    ) -> List[dict]:
+        """A common format strategy for chat models, which will format the
+        input messages into a user message.
 
-        In this format function, the input messages are formatted into a
-        single system messages with format "{name}: {content}" for each
-        message. Note this strategy maybe not suitable for all scenarios,
+        Note this strategy maybe not suitable for all scenarios,
         and developers are encouraged to implement their own prompt
         engineering strategies.
 
@@ -227,8 +337,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         .. code-block:: python
 
-            prompt = model.format(
+            prompt1 = model.format(
                 Msg("system", "You're a helpful assistant", role="system"),
+                Msg("Bob", "Hi, how can I help you?", role="assistant"),
+                Msg("user", "What's the date today?", role="user")
+            )
+
+            prompt2 = model.format(
                 Msg("Bob", "Hi, how can I help you?", role="assistant"),
                 Msg("user", "What's the date today?", role="user")
             )
@@ -237,15 +352,26 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         .. code-block:: python
 
+            # prompt1
             [
-                {
-                    "role": "system",
-                    "content": "You're a helpful assistant",
-                }
                 {
                     "role": "user",
                     "content": (
-                        "## Dialogue History\\n"
+                        "You're a helpful assistant\\n"
+                        "\\n"
+                        "## Conversation History\\n"
+                        "Bob: Hi, how can I help you?\\n"
+                        "user: What's the date today?"
+                    )
+                }
+            ]
+
+            # prompt2
+            [
+                {
+                    "role": "user",
+                    "content": (
+                        "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
                     )
@@ -264,74 +390,48 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 The formatted messages.
         """
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        messages = []
-
-        # record dialog history as a list of strings
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                messages.append(
-                    {
-                        "role": unit.role,
-                        "content": _convert_to_str(unit.content),
-                    },
-                )
-            else:
-                # Merge all messages into a dialogue history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        dialogue_history = "\n".join(dialogue)
-
-        user_content_template = "## Dialogue History\n{dialogue_history}"
-
-        messages.append(
-            {
-                "role": "user",
-                "content": user_content_template.format(
-                    dialogue_history=dialogue_history,
-                ),
-            },
-        )
-
-        return messages
+        return ModelWrapperBase.format_for_common_chat_models(*args)
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Image Synthesis API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF
+
+        ```json
+        {
+            "status_code": 200,
+            "request_id": "b54ffeb8-6212-9dac-808c-b3771cba3788",
+            "code": null,
+            "message": "",
+            "output": {
+                "task_id": "996523eb-034d-459b-ac88-b340b95007a4",
+                "task_status": "SUCCEEDED",
+                "results": [
+                    {
+                        "url": "RESULT_URL1"
+                    },
+                    {
+                        "url": "RESULT_URL2"
+                    },
+                ],
+                "task_metrics": {
+                    "TOTAL": 2,
+                    "SUCCEEDED": 2,
+                    "FAILED": 0
+                }
+            },
+            "usage": {
+                "image_count": 2
+            }
+        }
+        ```
     """
 
     model_type: str = "dashscope_image_synthesis"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("image_count"),
-            metric_unit="image",
-        )
 
     def __call__(
         self,
@@ -400,9 +500,10 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(
-            call_counter=1,
-            **response.usage,
+        self.monitor.update_image_tokens(
+            model_name=self.model_name,
+            image_count=response.usage.image_count,
+            resolution=kwargs.get("size", "1024*1024"),
         )
 
         # step5: return response
@@ -411,27 +512,43 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         urls = [_["url"] for _ in images]
 
         if save_local:
+            file_manager = FileManager.get_instance()
             # Return local url if save_local is True
             urls = [file_manager.save_image(_) for _ in urls]
         return ModelResponse(image_urls=urls, raw=response)
 
 
 class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
-    """The model wrapper for DashScope Text Embedding API."""
+    """The model wrapper for DashScope Text Embedding API.
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3
+
+        ```json
+        {
+            "status_code": 200, // 200 indicate success otherwise failed.
+            "request_id": "fd564688-43f7-9595-b986", // The request id.
+            "code": "", // If failed, the error code.
+            "message": "", // If failed, the error message.
+            "output": {
+                "embeddings": [ // embeddings
+                    {
+                        "embedding": [ // one embedding output
+                            -3.8450357913970947, ...,
+                        ],
+                        "text_index": 0 // the input index.
+                    }
+                ]
+            },
+            "usage": {
+                "total_tokens": 3 // the request tokens.
+            }
+        }
+        ```
+    """
 
     model_type: str = "dashscope_text_embedding"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -497,9 +614,10 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         )
 
         # step4: update monitor accordingly
-        self.update_monitor(
-            call_counter=1,
-            **response.usage,
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=response.usage.get("total_tokens"),
+            total_tokens=response.usage.get("total_tokens"),
         )
 
         # step5: return response
@@ -512,29 +630,44 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
 class DashScopeMultiModalWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Multimodal API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api
+
+    Response:
+        - Refer to
+        https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN
+
+        ```json
+        {
+            "status_code": 200,
+            "request_id": "a0dc436c-2ee7-93e0-9667-c462009dec4d",
+            "code": "",
+            "message": "",
+            "output": {
+                "text": null,
+                "finish_reason": null,
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "role": "assistant",
+                            "content": [
+                                {
+                                    "text": "这张图片显..."
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "usage": {
+                "input_tokens": 1277,
+                "output_tokens": 81,
+                "image_tokens": 1247
+            }
+        }
+        ```
     """
 
     model_type: str = "dashscope_multimodal"
-
-    def _register_default_metrics(self) -> None:
-        # Set monitor accordingly
-        # TODO: set quota to the following metrics
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
 
     def __call__(
         self,
@@ -582,18 +715,6 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             Therefore, you should input a list matching the content value
             above.
             If only involving words, just input them.
-
-            `parse_func`, `fault_handler` and `max_retries` are reserved
-            for `_response_parse_decorator` to parse and check the response
-            generated by model wrapper. Their usages are listed as follows:
-                - `parse_func` is a callable function used to parse and
-                check the response generated by the model, which takes the
-                response as input.
-                - `max_retries` is the maximum number of retries when the
-                `parse_func` raise an exception.
-                - `fault_handler` is a callable function which is called
-                when the response generated by the model is invalid after
-                `max_retries` retries.
         """
         # step1: prepare keyword arguments
         kwargs = {**self.generate_args, **kwargs}
@@ -629,16 +750,12 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         # step4: update monitor accordingly
         input_tokens = response.usage.get("input_tokens", 0)
         image_tokens = response.usage.get("image_tokens", 0)
-        audio_tokens = response.usage.get("audio_tokens", 0)
         output_tokens = response.usage.get("output_tokens", 0)
-        self.update_monitor(
-            call_counter=1,
+        # TODO: update the tokens
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
             prompt_tokens=input_tokens,
-            completion_tokens=output_tokens,
-            total_tokens=input_tokens
-            + output_tokens
-            + image_tokens
-            + audio_tokens,
+            completion_tokens=output_tokens + image_tokens,
         )
 
         # step5: return response
@@ -672,8 +789,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
             - If the first message is a system message, then we will keep it as
                 system prompt.
-            - We merge all messages into a dialogue history prompt in a single
-                message with the role "user".
+            - We merge all messages into a conversation history prompt in a
+                single message with the role "user".
             - When there are multiple figures in the given messages, we will
                 attach it to the user message by order. Note if there are
                 multiple figures, this strategy may cause misunderstanding for
@@ -721,7 +838,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                         {"image": "figure3"},
                         {
                             "text": (
-                                "## Dialogue History\\n"
+                                "## Conversation History\\n"
                                 "Bob: How about this picture?\\n"
                                 "user: It's wonderful! How about mine?"
                             )
@@ -787,13 +904,13 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         dialogue_history = "\n".join(dialogue)
 
-        user_content_template = "## Dialogue History\n{dialogue_history}"
+        user_content_template = "## Conversation History\n{dialogue_history}"
 
         messages.append(
             {
                 "role": "user",
                 "content": [
-                    # Place the image or audio before the dialogue history
+                    # Place the image or audio before the conversation history
                     *image_or_audio_dicts,
                     {
                         "text": user_content_template.format(
