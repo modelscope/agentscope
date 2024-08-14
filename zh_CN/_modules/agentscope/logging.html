@@ -209,15 +209,18 @@
 <span class="sd">        msg (`Msg`):</span>
 <span class="sd">            The message object to be saved.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-        <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
-        <span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-    <span class="p">)</span>
+    <span class="c1"># TODO: Unified into a manager rather than an indicated attribute here</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
+        <span class="c1"># Not initialize yet</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-        <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
-    <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">)</span>
 
 
 <div class="viewcode-block" id="log_msg">
