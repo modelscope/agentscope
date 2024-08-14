@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The rpc version of env."""
 import uuid
-from typing import Type
+from typing import List, Type
 
 from .env import EventListener, Env
 from ..rpc.rpc_object import RpcObject
@@ -100,6 +100,18 @@ class RpcEnv(Env, RpcObject):
 
     def remove_listener(self, target_event: str, listener_name: str) -> bool:
         raise NotImplementedError("Currently, RpcEnv not supports listener")
+
+    def get_listeners(self, target_event: str) -> List[EventListener]:
+        return self._call_rpc_func(
+            "get_listeners",
+            {"kwargs": {"target_event": target_event}},
+        )
+
+    def describe(self) -> str:
+        return self._call_rpc_func(
+            "describe",
+            {},
+        )
 
     def __getitem__(self, env_name: str) -> Env:
         return self._call_rpc_func(

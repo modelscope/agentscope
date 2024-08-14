@@ -8,12 +8,13 @@ from agentscope.message import Msg
 from agentscope.exception import (
     EnvListenerError,
 )
-from agentscope.environment.env import (
+from agentscope.environment import (
     Env,
     BasicEnv,
     EventListener,
+    Event,
+    event_func,
 )
-from agentscope.environment.event import event_func, Event
 from .immutable import ImmutableEnv
 
 
@@ -60,7 +61,6 @@ class ChatRoom(BasicEnv):
                 "agent": agent,
             },
         )
-        self._trigger_listener(Event("join", {"agent": agent}))
         return True
 
     @event_func
@@ -69,14 +69,12 @@ class ChatRoom(BasicEnv):
         if agent.agent_id not in self.children:
             return False
         del self.children[agent.agent_id]
-        self._trigger_listener(Event("leave", {"agent": agent}))
         return True
 
     @event_func
     def speak(self, message: Msg) -> None:
         """Speak a message in the chatroom."""
         self.history.append(message)
-        self._trigger_listener(Event("speak", {"message": message}))
 
     @event_func
     def get_history(self, agent: AgentBase) -> List[Msg]:
@@ -90,23 +88,17 @@ class ChatRoom(BasicEnv):
         else:
             history_idx = self.children[agent.agent_id].get()["history_idx"]
         history = deepcopy(self.history[history_idx:])
-        self._trigger_listener(Event("get_history", {"agent": agent}))
         return history
 
     @event_func
     def set_announcement(self, announcement: Msg) -> None:
         """Set the announcement of the chatroom."""
         self.announcement = announcement
-        self._trigger_listener(
-            Event("set_announcement", {"announcement": announcement}),
-        )
 
     @event_func
     def get_announcement(self) -> Msg:
         """Get the announcement of the chatroom."""
-        ann = self.announcement
-        self._trigger_listener(Event("get_announcement", {}))
-        return ann
+        return deepcopy(self.announcement)
 
     # Syntaic sugar, not an event function
     def listen_to(

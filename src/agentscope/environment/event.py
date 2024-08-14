@@ -1,28 +1,25 @@
 # -*- coding: utf-8 -*-
 """The events which can be bound to envs."""
 from abc import ABC, abstractmethod
-from typing import Callable, Any, Tuple
-
-
-def event_func(func: Callable) -> Callable:
-    """A decorator to register an event function.
-
-    Args:
-        func (`Callable`): The event function.
-
-    Returns:
-        `Callable`: The decorated function.
-    """
-    func._is_event = True  # pylint: disable=W0212
-    return func
+from typing import Any, Tuple
 
 
 class Event:
-    """A class representing the information of an event."""
+    """A class representing the information of an event.
 
-    def __init__(self, name: str, args: dict = None) -> None:
+    It contains the name of the event, the arguments of the event,
+    and the returns of the event.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        args: dict = None,
+        returns: Any = None,
+    ) -> None:
         self._name = name
         self._args = args
+        self._returns = returns
 
     @property
     def name(self) -> str:
@@ -33,6 +30,11 @@ class Event:
     def args(self) -> dict:
         """Return the arguments of the event."""
         return self._args
+
+    @property
+    def returns(self) -> Any:
+        """Return the returns of the event."""
+        return self._returns
 
 
 class Getable(ABC):

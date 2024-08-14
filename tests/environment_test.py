@@ -338,17 +338,29 @@ class EnvTest(unittest.TestCase):
         ann = Msg(name="system", content="announce", role="system")
         r = ChatRoom(announcement=ann)
         master = AgentWithChatRoom("master", r)
-        r.add_listener("speak", Listener("speak_listener", master))
-        r.add_listener("join", Listener("join_listener", master))
-        r.add_listener("leave", Listener("leave_listener", master))
-        r.add_listener("get_history", Listener("get_listener", master))
-        r.add_listener(
-            "set_announcement",
-            Listener("set_announcement_listener", master),
+        self.assertTrue(
+            r.add_listener("speak", Listener("speak_listener", master)),
         )
-        r.add_listener(
-            "get_announcement",
-            Listener("get_announcement_listener", master),
+        self.assertTrue(
+            r.add_listener("join", Listener("join_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener("leave", Listener("leave_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener("get_history", Listener("get_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener(
+                "set_announcement",
+                Listener("set_announcement_listener", master),
+            ),
+        )
+        self.assertTrue(
+            r.add_listener(
+                "get_announcement",
+                Listener("get_announcement_listener", master),
+            ),
         )
 
         # test join
