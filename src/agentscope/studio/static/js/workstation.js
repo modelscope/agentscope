@@ -569,6 +569,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                     "args":
                         {
                             "name": '',
+                            "role": '',
                             "content": '',
                             "url": ''
                         }
@@ -1326,6 +1327,21 @@ function checkConditions() {
                 isApiKeyEmpty = isApiKeyEmpty || true;
             }
         }
+
+        if (node.name === "Message") {
+            const validRoles = ["system", "assistant", "user"];
+            if (!validRoles.includes(node.data.args.role)) {
+                Swal.fire({
+                        title: 'Invalid Role for Message',
+                        html:
+                            `Invalid role ${node.data.args.role}. <br>The role must be in ['system', 'user', 'assistant']`,
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    });
+                return false;
+            }
+        }
+
         if (node.name.includes('Agent') && "model_config_name" in node.data.args) {
             hasAgentError = false;
             if (node.data && node.data.args) {
