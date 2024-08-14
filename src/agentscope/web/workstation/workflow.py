@@ -31,7 +31,7 @@ def start_workflow(config: dict) -> None:
     This function will initialize and launch the application.
     """
     logger.info("Launching...")
-
+    logger.info(f"start_workflow_config {config}")
     dag = build_dag(config)
     dag.run()
 
@@ -79,7 +79,9 @@ def main() -> None:
         const="",
     )
     args = parser.parse_args()
+    logger.info(f"parse_args {args}")
     cfg_path = args.cfg
+    logger.info(f"cfg_path {cfg_path}")
     compiled_filename = args.compile
 
     if cfg_path:
