@@ -55,10 +55,11 @@ class MonitorManager:
                 cls,
             )
         else:
-            raise RuntimeError(
-                "The monitor manager has been initialized. Try to use "
-                "MonitorManager.get_instance() to get the instance.",
-            )
+            pass
+            # raise RuntimeError(
+            #     "The monitor manager has been initialized. Try to use "
+            #     "MonitorManager.get_instance() to get the instance.",
+            # )
         return cls._instance
 
     @property
