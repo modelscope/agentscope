@@ -10,7 +10,7 @@ from agentscope.service.service_response import (
 )
 
 
-def query_wolfram_alpha_short_answers(
+def wolfram_alpha_short_answers_query(
     api_key: str,
     query: str,
 ) -> ServiceResponse:
@@ -40,7 +40,7 @@ def query_wolfram_alpha_short_answers(
     Example:
         .. code-block:: python
 
-            result = query_wolfram_alpha_short_answers(
+            result = wolfram_alpha_short_answers_query(
                 "your_api_key",
                 "What is the capital of France?"
             )
@@ -71,7 +71,7 @@ def query_wolfram_alpha_short_answers(
         )
 
 
-def query_wolfram_alpha_simple(
+def wolfram_alpha_simple_query(
     api_key: str,
     query: str,
     save_path: str = "wolfram_alpha_result.png",
@@ -103,7 +103,7 @@ def query_wolfram_alpha_simple(
     Example:
         .. code-block:: python
 
-            result = query_wolfram_alpha_simple(
+            result = wolfram_alpha_simple_query(
                 "your_api_key",
                 "Plot sin(x)",
                 save_path="path/to/save/result.png"
@@ -140,14 +140,14 @@ def query_wolfram_alpha_simple(
             },
         )
     except Exception as e:
-        logger.error(f"Error in query_wolfram_alpha_simple: {str(e)}")
+        logger.error(f"Error in wolfram_alpha_simple_query: {str(e)}")
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content={"error": str(e)},
         )
 
 
-def query_wolfram_alpha_show_steps(
+def wolfram_alpha_show_steps_query(
     api_key: str,
     query: str,
 ) -> ServiceResponse:
@@ -178,7 +178,7 @@ def query_wolfram_alpha_show_steps(
     Example:
         .. code-block:: python
 
-            result = query_wolfram_alpha_show_steps(
+            result = wolfram_alpha_show_steps_query(
                 "your_api_key",
                 "Solve x^2 + 2x + 1 = 0"
             )
@@ -250,7 +250,7 @@ def query_wolfram_alpha_show_steps(
         )
 
 
-def query_wolfram_alpha_llm(
+def wolfram_alpha_llm_query(
     api_key: str,
     query: str,
 ) -> ServiceResponse:
@@ -278,7 +278,7 @@ def query_wolfram_alpha_llm(
     Example:
         .. code-block:: python
 
-            result = query_wolfram_alpha_llm(
+            result = wolfram_alpha_llm_query(
                 "your_api_key",
                 "3 densest elemental metals"
             )
