@@ -4,10 +4,16 @@ from typing import Type, Optional, Union, Sequence
 from functools import partial
 from loguru import logger
 
+try:
+    import cloudpickle as pickle
+except ImportError as e:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    pickle = ImportErrorReporter(e, "distribute")
+
 from agentscope.agents.agent import AgentBase
 from agentscope.message import (
     PlaceholderMessage,
-    serialize,
     Msg,
 )
 from agentscope.rpc import call_func_in_thread
@@ -88,7 +94,7 @@ class RpcAgent(AgentBase, RpcObject):
                     self.client.call_agent_func,
                     func_name="_reply",
                     agent_id=self._agent_id,
-                    value=serialize(x) if x is not None else "",
+                    value=pickle.dumps(x),
                 ),
             ),
             x=x,
@@ -99,8 +105,8 @@ class RpcAgent(AgentBase, RpcObject):
             self._launch_server()
         self.client.call_agent_func(
             func_name="_observe",
+            value=pickle.dumps(x),
             agent_id=self._agent_id,
-            value=serialize(x),  # type: ignore[arg-type]
         )
 
     def clone_instances(

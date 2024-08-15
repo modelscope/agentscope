@@ -11,7 +11,7 @@ from loguru import logger
 import requests
 
 try:
-    import cloudpickle
+    import cloudpickle as pickle
     import psutil
     import grpc
     from grpc import ServicerContext
@@ -20,7 +20,7 @@ try:
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    cloudpickle = ImportErrorReporter(import_error, "distribute")
+    pickle = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
     ServicerContext = ImportErrorReporter(import_error, "distribute")
@@ -39,8 +39,6 @@ from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
 from agentscope.message import (
     PlaceholderMessage,
-    deserialize,
-    serialize,
 )
 
 
@@ -56,7 +54,7 @@ class TaskResult:
 
     def get(self) -> Any:
         """Get the value"""
-        return deserialize(
+        return pickle.loads(
             RpcAgentClient(self.host, self.port).update_placeholder(
                 self.task_id,
             ),
@@ -209,7 +207,7 @@ class AgentServerServicer(RpcAgentServicer):
     ) -> agent_pb2.GeneralResponse:
         """Create a new agent on the server."""
         agent_id = request.agent_id
-        agent_configs = cloudpickle.loads(request.agent_init_args)
+        agent_configs = pickle.loads(request.agent_init_args)
         type_name = agent_configs["type"]
         cls_name = agent_configs["class_name"]
         try:
@@ -326,7 +324,7 @@ class AgentServerServicer(RpcAgentServicer):
 
     def call_agent_func(  # pylint: disable=W0236
         self,
-        request: agent_pb2.RpcMsg,
+        request: agent_pb2.CallFuncRequest,
         context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Call the specific servicer function."""
@@ -348,7 +346,7 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         agent_id: str,
         func_name: str,
-        raw_value: str,
+        raw_value: bytes,
     ) -> agent_pb2.GeneralResponse:
         """Call a custom function"""
         agent = self.get_agent(agent_id)
@@ -371,9 +369,9 @@ class AgentServerServicer(RpcAgentServicer):
                 func_name,
                 raw_value,
             )
-            return agent_pb2.GeneralResponse(
+            return agent_pb2.CallFuncResponse(
                 ok=True,
-                message=serialize(
+                value=pickle.dumps(
                     TaskResult(
                         host=self.host,
                         port=self.port,
@@ -381,21 +379,21 @@ class AgentServerServicer(RpcAgentServicer):
                     ),
                 ),
             )
-        args = deserialize(raw_value)
+        args = pickle.loads(raw_value)
         res = getattr(agent, func_name)(
             *args.get("args", ()),
             **args.get("kwargs", {}),
         )
-        return agent_pb2.GeneralResponse(
+        return agent_pb2.CallFuncResponse(
             ok=True,
-            message=serialize(res),
+            value=pickle.dumps(res),
         )
 
     def update_placeholder(
         self,
         request: agent_pb2.UpdatePlaceholderRequest,
         context: ServicerContext,
-    ) -> agent_pb2.GeneralResponse:
+    ) -> agent_pb2.CallFuncResponse:
         """Update the value of a placeholder."""
         task_id = request.task_id
         while True:
@@ -406,14 +404,14 @@ class AgentServerServicer(RpcAgentServicer):
             else:
                 break
         if isinstance(result, _AgentError):
-            return agent_pb2.GeneralResponse(
+            return agent_pb2.CallFuncResponse(
                 ok=False,
                 message=result.err_msg,
             )
         else:
-            return agent_pb2.GeneralResponse(
+            return agent_pb2.CallFuncResponse(
                 ok=True,
-                message=serialize(result),
+                value=pickle.dumps(result),
             )
 
     def get_agent_list(
@@ -505,17 +503,20 @@ class AgentServerServicer(RpcAgentServicer):
                     break
                 yield agent_pb2.ByteMsg(data=piece)
 
-    def _reply(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
+    def _reply(
+        self,
+        request: agent_pb2.CallFuncRequest,
+    ) -> agent_pb2.CallFuncResponse:
         """Call function of RpcAgentService
 
         Args:
-            request (`RpcMsg`):
+            request (`CallFuncRequest`):
                 Message containing input parameters or input parameter
                 placeholders.
 
         Returns:
-            `RpcMsg`: A serialized Msg instance with attributes name, host,
-            port and task_id
+            `CallFuncRequest`: A serialized Msg instance with attributes name,
+            host, port and task_id
         """
         task_id = self.get_task_id()
         self.result_pool[task_id] = threading.Condition()
@@ -526,38 +527,41 @@ class AgentServerServicer(RpcAgentServicer):
             "reply",
             request.value,
         )
-        return agent_pb2.GeneralResponse(
+        return agent_pb2.CallFuncResponse(
             ok=True,
-            message=serialize(
+            value=pickle.dumps(
                 task_id,
             ),
         )
 
-    def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
+    def _observe(
+        self,
+        request: agent_pb2.CallFuncRequest,
+    ) -> agent_pb2.CallFuncResponse:
         """Observe function of the original agent.
 
         Args:
-            request (`RpcMsg`):
+            request (`CallFuncRequest`):
                 The serialized input to be observed.
 
         Returns:
-            `RpcMsg`: Empty RpcMsg.
+            `CallFuncRequest`: Empty CallFuncRequest.
         """
-        msgs = deserialize(request.value)
+        msgs = pickle.loads(request.value)
         if not isinstance(msgs, list):
             msgs = [msgs]
         for msg in msgs:
             if isinstance(msg, PlaceholderMessage):
                 msg.update_value()
         self.agent_pool[request.agent_id].observe(msgs)
-        return agent_pb2.GeneralResponse(ok=True)
+        return agent_pb2.CallFuncResponse(ok=True)
 
     def _process_messages(
         self,
         task_id: int,
         agent_id: str,
         target_func: str,
-        raw_msg: str,
+        raw_msg: bytes,
     ) -> None:
         """Processing an input message and generate its reply message.
 
@@ -565,10 +569,10 @@ class AgentServerServicer(RpcAgentServicer):
             task_id (`int`): task id of the input message, .
             agent_id (`str`): the id of the agent that accepted the message.
             target_func (`str`): the name of the function that will be called.
-            raw_msg (`str`): the input serialized message.
+            raw_msg (`bytes`): the input serialized message.
         """
         if raw_msg is not None:
-            msg = deserialize(raw_msg)
+            msg = pickle.loads(raw_msg)
         else:
             msg = None
         cond = self.result_pool[task_id]

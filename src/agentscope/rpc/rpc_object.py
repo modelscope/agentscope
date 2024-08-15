@@ -5,7 +5,13 @@ from abc import ABC
 from inspect import getmembers, isfunction
 from types import FunctionType
 
-from ..message import serialize, deserialize
+try:
+    import cloudpickle as pickle
+except ImportError as e:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    pickle = ImportErrorReporter(e, "distribute")
+
 from ..rpc import RpcAgentClient
 from ..exception import AgentServerUnsupportedMethodError
 from ..studio._client import _studio_client
@@ -112,11 +118,11 @@ class RpcObject(ABC):
     def _call_rpc_func(self, func_name: str, args: dict) -> Any:
         """Call a function in rpc server."""
 
-        return deserialize(
+        return pickle.loads(
             self.client.call_agent_func(
                 agent_id=self._agent_id,
                 func_name=func_name,
-                value=serialize(args),  # type: ignore[arg-type]
+                value=pickle.dumps(args),
             ),
         )
 

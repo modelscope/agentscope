@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """The placeholder message for RpcAgent."""
-from typing import Any, Optional, List, Union
-from base64 import b64encode, b64decode
-
+from typing import Any, Optional, List, Union, Sequence
+import json
 from loguru import logger
 
 try:
-    import cloudpickle
+    import cloudpickle as pickle
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    cloudpickle = ImportErrorReporter(import_error, "distribute")
+    pickle = ImportErrorReporter(import_error, "distribute")
 
 from .msg import Msg, MessageBase
 from ..rpc.rpc_agent_client import RpcAgentClient, ResponseStub
@@ -130,7 +129,7 @@ class PlaceholderMessage(Msg):
             self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
             result = client.update_placeholder(task_id=self._task_id)
-            msg = deserialize(result)
+            msg = pickle.loads(result)
             self.__update_url(msg)  # type: ignore[arg-type]
             self.update(msg)
             # the actual value has been updated, not a placeholder anymore
@@ -158,7 +157,7 @@ class PlaceholderMessage(Msg):
     def __update_task_id(self) -> None:
         if self._stub is not None:
             try:
-                resp = deserialize(self._stub.get_response())
+                resp = pickle.loads(self._stub.get_response())
             except Exception as e:
                 logger.error(
                     f"Failed to get task_id: {self._stub.get_response()}",
@@ -186,16 +185,52 @@ class PlaceholderMessage(Msg):
     def __setstate__(self, state: dict) -> None:
         self.update(state)
 
+    def serialize(self) -> str:
+        if self._is_placeholder:
+            self.__update_task_id()
+            return json.dumps(
+                {
+                    "__type": "PlaceholderMessage",
+                    "name": self.name,
+                    "content": None,
+                    "timestamp": self.timestamp,
+                    "host": self._host,
+                    "port": self._port,
+                    "task_id": self._task_id,
+                },
+            )
+        else:
+            states = {
+                k: v
+                for k, v in self.items()
+                if k not in PlaceholderMessage.PLACEHOLDER_ATTRS
+            }
+            states["__type"] = "Msg"
+            return json.dumps(states)
 
-def deserialize(s: str) -> Any:
-    """Deserialize string into any object"""
-    if len(s) == 0:
-        return None
-    return cloudpickle.loads(b64decode(s.encode("utf-8")))
+
+_MSGS = {
+    "Msg": Msg,
+    "PlaceholderMessage": PlaceholderMessage,
+}
 
 
-def serialize(obj: Any) -> str:
-    """Serialize any object into string"""
-    if obj is None:
-        return ""
-    return b64encode(cloudpickle.dumps(obj)).decode("utf-8")
+def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
+    """Deserialize json string into MessageBase"""
+    js_msg = json.loads(s)
+    msg_type = js_msg.pop("__type")
+    if msg_type == "List":
+        return [deserialize(s) for s in js_msg["__value"]]
+    elif msg_type not in _MSGS:
+        raise NotImplementedError(
+            f"Deserialization of {msg_type} is not supported.",
+        )
+    return _MSGS[msg_type](**js_msg)
+
+
+def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
+    """Serialize multiple MessageBase instance"""
+    if isinstance(messages, MessageBase):
+        return messages.serialize()
+    seq = [msg.serialize() for msg in messages]
+    return json.dumps({"__type": "List", "__value": seq})
