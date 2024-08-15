@@ -77,18 +77,17 @@ class ChatRoom(BasicEnv):
         self.history.append(message)
 
     @event_func
-    def get_history(self, agent: AgentBase) -> List[Msg]:
+    def get_history(self, agent_id: str) -> List[Msg]:
         """Get all history messages, since the participant join in the
         chatroom"""
-        if agent.agent_id not in self.children:
+        if agent_id not in self.children:
             # only participants can get history message
             return []
         if self.all_history:
             history_idx = 0
         else:
-            history_idx = self.children[agent.agent_id].get()["history_idx"]
-        history = deepcopy(self.history[history_idx:])
-        return history
+            history_idx = self.children[agent_id].get()["history_idx"]
+        return deepcopy(self.history[history_idx:])
 
     @event_func
     def set_announcement(self, announcement: Msg) -> None:

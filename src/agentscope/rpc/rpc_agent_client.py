@@ -8,7 +8,7 @@ from typing import Optional, Sequence, Union, Generator, Callable
 from loguru import logger
 
 try:
-    import dill
+    import cloudpickle
     import grpc
     from grpc import RpcError
     from google.protobuf.empty_pb2 import Empty
@@ -17,7 +17,7 @@ try:
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    dill = ImportErrorReporter(import_error, "distribute")
+    cloudpickle = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
     agent_pb2 = ImportErrorReporter(import_error, "distribute")
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
@@ -157,7 +157,7 @@ class RpcAgentClient:
                 status = stub.create_agent(
                     agent_pb2.CreateAgentRequest(
                         agent_id=agent_id,
-                        agent_init_args=dill.dumps(agent_configs),
+                        agent_init_args=cloudpickle.dumps(agent_configs),
                     ),
                 )
                 if not status.ok:

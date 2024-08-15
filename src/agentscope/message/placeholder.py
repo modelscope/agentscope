@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """The placeholder message for RpcAgent."""
-import pickle
 from typing import Any, Optional, List, Union
 from base64 import b64encode, b64decode
 
 from loguru import logger
+import cloudpickle
 
 from .msg import Msg, MessageBase
 from ..rpc.rpc_agent_client import RpcAgentClient, ResponseStub
@@ -185,11 +185,11 @@ def deserialize(s: str) -> Any:
     """Deserialize string into any object"""
     if len(s) == 0:
         return None
-    return pickle.loads(b64decode(s.encode("utf-8")))
+    return cloudpickle.loads(b64decode(s.encode("utf-8")))
 
 
 def serialize(obj: Any) -> str:
     """Serialize any object into string"""
     if obj is None:
         return ""
-    return b64encode(pickle.dumps(obj)).decode("utf-8")
+    return b64encode(cloudpickle.dumps(obj)).decode("utf-8")

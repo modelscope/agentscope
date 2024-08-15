@@ -96,16 +96,30 @@ class RpcEnv(Env, RpcObject):
         )
 
     def add_listener(self, target_event: str, listener: EventListener) -> bool:
-        raise NotImplementedError("Currently, RpcEnv not supports listener")
+        # raise
+        return self._call_rpc_func(
+            "add_listener",
+            {
+                "kwargs": {
+                    "target_event": target_event,
+                    "listener": listener,
+                },
+            },
+        )
 
     def remove_listener(self, target_event: str, listener_name: str) -> bool:
-        raise NotImplementedError("Currently, RpcEnv not supports listener")
+        return self._call_rpc_func(
+            "remove_listener",
+            {
+                "kwargs": {
+                    "target_event": target_event,
+                    "listener_name": listener_name,
+                },
+            },
+        )
 
     def get_listeners(self, target_event: str) -> List[EventListener]:
-        return self._call_rpc_func(
-            "get_listeners",
-            {"kwargs": {"target_event": target_event}},
-        )
+        raise NotImplementedError("Currently, RpcEnv not supports listener")
 
     def describe(self) -> str:
         return self._call_rpc_func(
