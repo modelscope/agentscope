@@ -4,7 +4,13 @@ from typing import Any, Optional, List, Union
 from base64 import b64encode, b64decode
 
 from loguru import logger
-import cloudpickle
+
+try:
+    import cloudpickle
+except ImportError as import_error:
+    from agentscope.utils.tools import ImportErrorReporter
+
+    cloudpickle = ImportErrorReporter(import_error, "distribute")
 
 from .msg import Msg, MessageBase
 from ..rpc.rpc_agent_client import RpcAgentClient, ResponseStub
