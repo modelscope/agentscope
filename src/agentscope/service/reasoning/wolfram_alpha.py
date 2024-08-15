@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Query Wolfram Alpha API"""
 import os
-from typing import Any, Dict  # Corrected import order
-import requests  # Corrected import order
-from loguru import logger  # Corrected import order
+from typing import Any, Dict
+import requests
+from loguru import logger
 from agentscope.service.service_response import (
     ServiceResponse,
     ServiceExecStatus,
@@ -16,11 +16,12 @@ def wolfram_alpha_short_answers_query(
 ) -> ServiceResponse:
     """
     Query the Wolfram Alpha Short Answers API. The Short Answers API returns
-    a single plain text result directly from Wolfram|Alpha. In general, this
-    text is taken directly from the Result pod of Wolfram|Alpha output. This
-    API type is designed to deliver brief answers in the most basic
-    format possible. Suitable for queries such as simple knowledge/facts
-    retrieval. See
+    a single plain text result directly from Wolfram|Alpha.
+
+    In general, this text is taken directly from the Result pod of
+    Wolfram|Alpha output. This API type is designed to deliver brief
+    answers in the most basic format possible. Suitable for queries
+    such as simple knowledge/facts retrieval. See
     https://products.wolframalpha.com/short-answers-api/documentation
     for more details.
 
@@ -79,6 +80,7 @@ def wolfram_alpha_simple_query(
     """
     Query the Wolfram Alpha Simple API. The Simple API generates full
     Wolfram|Alpha output in a universally viewable image format.
+
     Suitable for queries such as knowledge/facts retrieval. See
     https://products.wolframalpha.com/simple-api/documentation
     for more details.
@@ -152,12 +154,14 @@ def wolfram_alpha_show_steps_query(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha Show Steps API. An extension of the
-    Full Results API, the Show Steps API gives direct access to
-    Wolfram|Alpha's full for queries in a variety of mathematical
-    and scientific subjects. These explanations of computed answers
-    are designed to provide clarity and understanding to the
-    end user and are especially useful in educational and
+    Query the Wolfram Alpha Show Steps API, gives step-by-step solution
+    in text.
+
+    An extension of the Full Results API, the Show Steps API gives
+    direct access to Wolfram|Alpha's full for queries in a variety
+    of mathematical and scientific subjects. These explanations of
+    computed answers are designed to provide clarity and understanding
+    to the end user and are especially useful in educational and
     training applications. see
     https://products.wolframalpha.com/show-steps-api/documentation
     for more details.
@@ -255,12 +259,15 @@ def wolfram_alpha_llm_query(
     query: str,
 ) -> ServiceResponse:
     """
-    Query the Wolfram Alpha LLM API. The LLM API is built for
-    use specifically with large language models and chat products.
-    Although the majority of data available through the
-    Wolfram|Alpha website is also available through this API,
-    certain subjects may be restricted by default. see
-    https://products.wolframalpha.com/llm-api/documentation for more details.
+    Query the Wolfram Alpha LLM API and return solution as text.
+
+    The LLM API is built for use specifically with large language
+    models and chat products. Although the majority of data
+    available through the Wolfram|Alpha website is also available
+    through this API, certain subjects may be restricted by default.
+    see
+    https://products.wolframalpha.com/llm-api/documentation
+    for more details.
 
     Args:
         api_key (`str`):
