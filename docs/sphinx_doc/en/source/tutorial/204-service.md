@@ -50,7 +50,7 @@ The following table outlines the various Service functions by type. These functi
 |                             | `openai_text_to_audio` | Convert text to audio using OpenAI API
 |                             | `openai_audio_to_text` | Convert audio to text using OpenAI API
 | Reasoning                   | `wolfram_alpha_short_answers_query`  | Query the Wolfram Alpha Short Answers API and return the answer as a string.                                                            |
-|                             | `wolfram_alpha_simple_query`         | Query the Wolfram Alpha Simple API and return the answer as an image.                                                                  |
+|                             | `wolfram_alpha_simple_query`         | Query the Wolfram Alpha Simple API and return the answer as a PNG image.                                                                  |
 |                             | `wolfram_alpha_show_steps_query`     | Query the Wolfram Alpha Show Steps API and return the step-by-step solution as a string.                                                              |
 |                             | `wolfram_alpha_llm_query`            | Query the Wolfram Alpha LLM API and return the answer from the LLM as a string.                                                                     |
 
