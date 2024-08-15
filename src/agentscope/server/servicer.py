@@ -11,7 +11,7 @@ from loguru import logger
 import requests
 
 try:
-    import dill
+    import cloudpickle
     import psutil
     import grpc
     from grpc import ServicerContext
@@ -20,7 +20,7 @@ try:
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    dill = ImportErrorReporter(import_error, "distribute")
+    cloudpickle = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
     ServicerContext = ImportErrorReporter(import_error, "distribute")
@@ -209,7 +209,7 @@ class AgentServerServicer(RpcAgentServicer):
     ) -> agent_pb2.GeneralResponse:
         """Create a new agent on the server."""
         agent_id = request.agent_id
-        agent_configs = dill.loads(request.agent_init_args)
+        agent_configs = cloudpickle.loads(request.agent_init_args)
         type_name = agent_configs["type"]
         cls_name = agent_configs["class_name"]
         try:
@@ -227,24 +227,24 @@ class AgentServerServicer(RpcAgentServicer):
             err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
+        try:
+            agent_instance = cls(
+                *agent_configs["args"],
+                **agent_configs["kwargs"],
+            )
+        except Exception as e:
+            err_msg = (
+                f"Failed to create agent instance <{cls_name}>: {str(e)}",
+            )
+            logger.error(err_msg)
+            return agent_pb2.GeneralResponse(ok=False, message=err_msg)
+        agent_instance._agent_id = agent_id  # pylint: disable=W0212
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
                 return agent_pb2.GeneralResponse(
                     ok=False,
                     message=f"Agent with agent_id [{agent_id}] already exists",
                 )
-            try:
-                agent_instance = cls(
-                    *agent_configs["args"],
-                    **agent_configs["kwargs"],
-                )
-            except Exception as e:
-                err_msg = (
-                    f"Failed to create agent instance <{cls_name}>: {str(e)}",
-                )
-                logger.error(err_msg)
-                return agent_pb2.GeneralResponse(ok=False, message=err_msg)
-            agent_instance._agent_id = agent_id  # pylint: disable=W0212
             self.agent_pool[agent_id] = agent_instance
         logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
         return agent_pb2.GeneralResponse(ok=True)

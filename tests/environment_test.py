@@ -65,11 +65,19 @@ class SimpleListener(EventListener):
 class AgentWithChatRoom(AgentBase):
     """A agent with chat room"""
 
-    def __init__(self, name: str, room: ChatRoom) -> None:
+    def __init__(  # pylint: disable=W0613
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(name=name)
-        self.room = room
+        self.room = None
         self.event_list = []
-        self.room.join(self)
+
+    def join(self, room: ChatRoom) -> bool:
+        """Join a room"""
+        self.room = room
+        return room.join(self)
 
     def reply(self, x: Msg = None) -> Msg:
         if "event" in x:
@@ -77,10 +85,14 @@ class AgentWithChatRoom(AgentBase):
             self.event_list.append(event)
             return Msg(name=self.name, content="", role="assistant")
         else:
-            history = self.room.get_history(self)
+            history = self.room.get_history(self.agent_id)
             msg = Msg(name=self.name, content=len(history), role="assistant")
             self.room.speak(msg)
             return msg
+
+    def get_event(self, idx: int) -> Event:
+        """Get the specific event."""
+        return self.event_list[idx]
 
 
 class EnvTest(unittest.TestCase):
@@ -336,8 +348,9 @@ class EnvTest(unittest.TestCase):
                 self.agent(Msg(name="system", content="", event=event))
 
         ann = Msg(name="system", content="announce", role="system")
-        r = ChatRoom(announcement=ann)
-        master = AgentWithChatRoom("master", r)
+        r = ChatRoom(name="chat", announcement=ann)
+        master = AgentWithChatRoom("master")
+        master.join(r)
         self.assertTrue(
             r.add_listener("speak", Listener("speak_listener", master)),
         )
@@ -364,7 +377,8 @@ class EnvTest(unittest.TestCase):
         )
 
         # test join
-        a1 = AgentWithChatRoom("a1", r)
+        a1 = AgentWithChatRoom("a1")
+        a1.join(r)
         self.assertEqual(len(master.event_list), 1)
         self.assertEqual(master.event_list[-1].name, "join")
         self.assertEqual(master.event_list[-1].args["agent"], a1)
@@ -383,17 +397,18 @@ class EnvTest(unittest.TestCase):
         self.assertEqual(master.event_list[-1].name, "speak")
         self.assertEqual(master.event_list[-1].args["message"], r1)
         self.assertEqual(master.event_list[-2].name, "get_history")
-        self.assertEqual(master.event_list[-2].args["agent"], a1)
+        self.assertEqual(master.event_list[-2].args["agent_id"], a1.agent_id)
         self.assertEqual(r1.content, 0)
 
-        a2 = AgentWithChatRoom("a2", r)
+        a2 = AgentWithChatRoom("a2")
+        a2.join(r)
         self.assertEqual(master.event_list[-1].name, "join")
         self.assertEqual(master.event_list[-1].args["agent"], a2)
         r2 = a2(Msg(name="user", role="user", content="hello"))
         self.assertEqual(master.event_list[-1].name, "speak")
         self.assertEqual(master.event_list[-1].args["message"], r2)
         self.assertEqual(master.event_list[-2].name, "get_history")
-        self.assertEqual(master.event_list[-2].args["agent"], a2)
+        self.assertEqual(master.event_list[-2].args["agent_id"], a2.agent_id)
         self.assertEqual(r2.content, 0)
 
         # test history_idx
@@ -454,3 +469,97 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(r2.content, 2)
         self.assertEqual(cnt1.get(), 3)
         self.assertEqual(cnt2.get(), -1)
+
+    def test_chat_room(self) -> None:
+        """Test chat room."""
+
+        class Listener(EventListener):
+            """Listener to record events"""
+
+            def __init__(self, name: str, agent: AgentBase) -> None:
+                super().__init__(name)
+                self.agent = agent
+
+            def __call__(self, env: Env, event: Event) -> None:
+                msg = self.agent(Msg(name="system", content="", event=event))
+                msg.update_value()
+
+        ann = Msg(name="system", content="announce", role="system")
+        r = ChatRoom(  # pylint: disable=E1123
+            name="chat",
+            announcement=ann,
+            to_dist=True,
+        )
+        master = AgentWithChatRoom("master", to_dist=True)
+        master.join(r)
+        self.assertTrue(
+            r.add_listener("speak", Listener("speak_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener("join", Listener("join_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener("leave", Listener("leave_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener("get_history", Listener("get_listener", master)),
+        )
+        self.assertTrue(
+            r.add_listener(
+                "set_announcement",
+                Listener("set_announcement_listener", master),
+            ),
+        )
+        self.assertTrue(
+            r.add_listener(
+                "get_announcement",
+                Listener("get_announcement_listener", master),
+            ),
+        )
+
+        # test join
+        a1 = AgentWithChatRoom("a1", to_dist=True)
+        a1.join(r)
+        self.assertEqual(master.get_event(-1).name, "join")
+        self.assertEqual(master.get_event(-1).args["agent"].name, a1.name)
+        self.assertEqual(
+            master.get_event(-1).args["agent"].agent_id,
+            a1.agent_id,
+        )
+
+        # test announcement
+        self.assertEqual(r.get_announcement(), ann)
+        self.assertEqual(master.get_event(-1).name, "get_announcement")
+        rann = Msg(name="system", content="Hello", role="system")
+        r.set_announcement(rann)
+        self.assertEqual(master.get_event(-1).name, "set_announcement")
+        self.assertEqual(master.get_event(-1).args["announcement"], rann)
+
+        # test speak
+        r1 = a1(Msg(name="user", role="user", content="hello"))
+        self.assertEqual(r1.content, 0)
+        event = master.get_event(-1)
+        self.assertEqual(event.name, "speak")
+        self.assertEqual(event.args["message"].id, r1.id)
+        self.assertEqual(event.args["message"].name, r1.name)
+        self.assertEqual(event.args["message"].role, r1.role)
+        self.assertEqual(event.args["message"].content, r1.content)
+        event = master.get_event(-2)
+        self.assertEqual(event.name, "get_history")
+        self.assertEqual(event.args["agent_id"], a1.agent_id)
+
+        # test mix of rpc agent and local agent
+        a2 = AgentWithChatRoom("a2")
+        a2.join(r)
+        event = master.get_event(-1)
+        self.assertEqual(event.name, "join")
+        self.assertEqual(event.args["agent"].agent_id, a2.agent_id)
+        r2 = a2(Msg(name="user", role="user", content="hello"))
+        self.assertEqual(r2.content, 0)
+        self.assertEqual(master.get_event(-1).name, "speak")
+        self.assertEqual(master.get_event(-1).args["message"], r2)
+        self.assertEqual(master.get_event(-2).name, "get_history")
+
+        # test history_idx
+        self.assertEqual(r[a1.agent_id].get()["history_idx"], 0)
+        self.assertEqual(r[a2.agent_id].get()["history_idx"], 1)

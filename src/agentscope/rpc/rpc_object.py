@@ -150,3 +150,20 @@ class RpcObject(ABC):
 
     def __del__(self) -> None:
         self.stop()
+
+    def __deepcopy__(self, memo: dict) -> Any:
+        """For deepcopy."""
+        if id(self) in memo:
+            return memo[id(self)]
+
+        clone = RpcObject(
+            cls=self.__class__,
+            oid=self._agent_id,
+            host=self.host,
+            port=self.port,
+            connect_existing=True,
+        )
+        clone._supported_attributes = self._supported_attributes
+        memo[id(self)] = clone
+
+        return clone

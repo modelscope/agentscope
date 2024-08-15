@@ -22,7 +22,7 @@ rpc_requires = [
     "grpcio-tools==1.60.0",
     "protobuf==4.25.0",
     "expiringdict",
-    "dill",
+    "cloudpickle==3.0.0",
     "psutil",
 ]
 
