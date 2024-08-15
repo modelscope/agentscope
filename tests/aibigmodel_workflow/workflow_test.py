@@ -116,7 +116,7 @@ def test_json_load():
 
 
 def test_json_load_file():
-    with open('test.json', 'r') as file:
+    with open('../test.json', 'r') as file:
         data = json.load(file)
 
     content = json.dumps(data)
@@ -127,6 +127,6 @@ def test_json_load_file():
     assert result[0] == "True"
     assert "a" in result[1]
 
-
-# 运行测试
-test_json_load_file()
+if __name__ == "__main__":
+    # 运行测试
+    test_json_load_file()

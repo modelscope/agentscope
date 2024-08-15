@@ -323,7 +323,7 @@ def build_dag(config: dict) -> ASDiGraph:
     dag = ASDiGraph()
 
     dag.config = config
-    dag.save("D:/project-workflow/agentscope/tests/test.json")
+    dag.save("./test.json")
     logger.info((f"config {config}"))
     for node_id, node_info in config.items():
         config[node_id] = sanitize_node_data(node_info)
