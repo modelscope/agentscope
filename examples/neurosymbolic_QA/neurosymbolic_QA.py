@@ -61,7 +61,7 @@ service_toolkit.add(
 )  # Replace with your actual TripAdvisor API key
 service_toolkit.add(
     query_wolfram_alpha_llm,
-    api_key="G8HLH5-VRXT87K52T",
+    api_key="",
 )  # Replace with your actual TripAdvisor API key
 
 agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION)
