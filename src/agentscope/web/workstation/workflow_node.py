@@ -73,6 +73,8 @@ class WorkflowNode(ABC):
         Initialize nodes. Implement specific initialization logic in
         subclasses.
         """
+        self._has_init = False
+
         self.node_id = node_id
         self.opt_kwargs = opt_kwargs
         self.source_kwargs = source_kwargs
@@ -81,6 +83,21 @@ class WorkflowNode(ABC):
         self.var_name = f"{self.node_type.name.lower()}_{self.node_id}"
 
     def __call__(self, x: dict = None):  # type: ignore[no-untyped-def]
+        """
+        Invokes the node's operations with the provided input.
+
+        This method is designed to be called as a function. It delegates the
+        actual execution of the node's logic to the _execute method.
+        Subclasses should implement their specific logic in the
+        `_execute` method.
+        """
+        # if not self._has_init:
+        #     for key, value in self.opt_kwargs.items():
+        #         if
+
+        return self._execute(x)
+
+    def _execute(self, x: dict = None):  # type: ignore[no-untyped-def]
         """
         Performs the operations of the node. Implement specific logic in
         subclasses.

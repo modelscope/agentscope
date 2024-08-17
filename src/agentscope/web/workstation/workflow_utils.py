@@ -1,16 +1,33 @@
 # -*- coding: utf-8 -*-
 """Workflow node utils."""
+import ast
+import builtins
+
+from typing import Any
 
 
-def is_callable_expression(s: str) -> bool:
-    """Check a expression whether a callable expression"""
+def is_callable_expression(value: str) -> bool:
+    """
+    Check if the given string could represent a callable expression
+    (including lambda and built-in functions).
+    """
     try:
-        # Do not detect exp like this
-        if s in ["input", "print"]:
-            return False
-        result = eval(s)
-        return callable(result)
-    except Exception:
+        # Attempt to parse the expression using the AST module
+        node = ast.parse(value, mode='eval')
+
+        # Check for callable expressions
+        if isinstance(node.body, (ast.Call, ast.Lambda)):
+            return True
+
+        if isinstance(node.body, ast.Name):
+            # Exclude undesired built-in functions
+            excluded_builtins = {"input", "print"}
+            if node.body.id in excluded_builtins:
+                return False
+            return node.body.id in dir(builtins)
+
+        return False
+    except (SyntaxError, ValueError):
         return False
 
 
@@ -23,6 +40,13 @@ def kwarg_converter(kwargs: dict) -> str:
         else:
             kwarg_parts.append(f"{key}={repr(value)}")
     return ", ".join(kwarg_parts)
+
+
+def convert_str_to_callable(item) -> Any:
+    """Convert a str to callable if it can be called."""
+    if is_callable_expression(item):
+        return eval(item)
+    return item
 
 
 def deps_converter(dep_vars: list) -> str:

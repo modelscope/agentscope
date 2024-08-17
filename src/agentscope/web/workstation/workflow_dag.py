@@ -16,10 +16,7 @@ from agentscope.web.workstation.workflow_node import (
     WorkflowNodeType,
     DEFAULT_FLOW_VAR,
 )
-from agentscope.web.workstation.workflow_utils import (
-    is_callable_expression,
-    kwarg_converter,
-)
+from agentscope.web.workstation.workflow_utils import kwarg_converter
 
 try:
     import networkx as nx
@@ -286,8 +283,6 @@ def sanitize_node_data(raw_info: dict) -> dict:
         if value == "":
             raw_info["data"]["args"].pop(key)
             raw_info["data"]["source"].pop(key)
-        elif is_callable_expression(value):
-            raw_info["data"]["args"][key] = eval(value)
     return raw_info
 
 
