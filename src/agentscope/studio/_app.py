@@ -682,6 +682,8 @@ def _save_workflow() -> Response:
     """
     Save the workflow JSON data to the local user folder.
     """
+    filename_regex = re.compile(r"^[\w\-.]+$")  # Alphanumeric, _, -, .
+
     user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
     if not os.path.exists(user_dir):
@@ -691,8 +693,15 @@ def _save_workflow() -> Response:
     overwrite = data.get("overwrite", False)
     filename = data.get("filename")
     workflow_str = data.get("workflow")
-    if not filename:
-        return jsonify({"message": "Filename is required"})
+
+    # Validate the filename using the regex pattern
+    if not filename or not filename_regex.match(filename):
+        return jsonify(
+            {
+                "message": "Invalid filename. Only alphanumeric characters, "
+                "underscores, hyphens, and dots are allowed.",
+            },
+        )
 
     filepath = os.path.join(user_dir, f"{filename}.json")
 

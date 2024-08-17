@@ -27,6 +27,8 @@ from agentscope.web.workstation.workflow_utils import (
     kwarg_converter,
     deps_converter,
     dict_converter,
+    convert_str_to_callable,
+    is_callable_expression,
 )
 from agentscope.service import (
     bing_search,
@@ -91,9 +93,11 @@ class WorkflowNode(ABC):
         Subclasses should implement their specific logic in the
         `_execute` method.
         """
-        # if not self._has_init:
-        #     for key, value in self.opt_kwargs.items():
-        #         if
+        if not self._has_init:
+            for key, value in self.opt_kwargs.items():
+                if is_callable_expression(value):
+                    self.opt_kwargs[key] = convert_str_to_callable(value)
+            self._has_init = True
 
         return self._execute(x)
 
@@ -165,7 +169,7 @@ class MsgNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.msg = Msg(**self.opt_kwargs)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.msg
 
     def compile(self) -> dict:
@@ -194,7 +198,7 @@ class DialogAgentNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = DialogAgent(**self.opt_kwargs)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -224,7 +228,7 @@ class UserAgentNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = UserAgent(**self.opt_kwargs)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -254,7 +258,7 @@ class TextToImageAgentNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = TextToImageAgent(**self.opt_kwargs)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -284,7 +288,7 @@ class DictDialogAgentNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = DictDialogAgent(**self.opt_kwargs)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -323,7 +327,7 @@ class ReActAgentNode(WorkflowNode):
             **self.opt_kwargs,
         )
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -379,7 +383,7 @@ class MsgHubNode(WorkflowNode):
         self.participants = get_all_agents(self.pipeline)
         self.participants_var = get_all_agents(self.pipeline, return_var=True)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         with msghub(self.participants, announcement=self.announcement):
             x = self.pipeline(x)
         return x
@@ -424,7 +428,7 @@ class PlaceHolderNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = placeholder
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -457,7 +461,7 @@ class SequentialPipelineNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = SequentialPipeline(operators=self.dep_opts)
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -496,7 +500,7 @@ class ForLoopPipelineNode(WorkflowNode):
             **self.opt_kwargs,
         )
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -537,7 +541,7 @@ class WhileLoopPipelineNode(WorkflowNode):
             **self.opt_kwargs,
         )
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -585,7 +589,7 @@ class IfElsePipelineNode(WorkflowNode):
                 **self.opt_kwargs,
             )
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -662,7 +666,7 @@ class SwitchPipelineNode(WorkflowNode):
             **self.opt_kwargs,
         )
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -703,7 +707,7 @@ class CopyNode(WorkflowNode):
         assert len(self.dep_opts) == 1, "CopyNode can only have one parent!"
         self.pipeline = self.dep_opts[0]
 
-    def __call__(self, x: dict = None) -> dict:
+    def _execute(self, x: dict = None) -> dict:
         return self.pipeline(x)
 
     def compile(self) -> dict:

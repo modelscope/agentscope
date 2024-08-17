@@ -13,7 +13,7 @@ def is_callable_expression(value: str) -> bool:
     """
     try:
         # Attempt to parse the expression using the AST module
-        node = ast.parse(value, mode='eval')
+        node = ast.parse(value, mode="eval")
 
         # Check for callable expressions
         if isinstance(node.body, (ast.Call, ast.Lambda)):
@@ -42,7 +42,7 @@ def kwarg_converter(kwargs: dict) -> str:
     return ", ".join(kwarg_parts)
 
 
-def convert_str_to_callable(item) -> Any:
+def convert_str_to_callable(item: str) -> Any:
     """Convert a str to callable if it can be called."""
     if is_callable_expression(item):
         return eval(item)
