@@ -19,35 +19,30 @@ from agentscope.environment import (
     event_func,
 )
 from agentscope.models import ModelResponse
-from .immutable import ImmutableEnv
 
 
-class ChatRoomAgentEnv(ImmutableEnv):
-    """An immutable env that can be get and set."""
+class ChatRoomMember(BasicEnv):
+    """A member of chatroom."""
 
     def __init__(
         self,
         name: str,
-        value: Any,
-        listeners: dict[str, List[EventListener]] = None,
-        children: List[Env] = None,
-        parent: Env = None,
+        agent: AgentBase,
+        history_idx: int = 0,
     ) -> None:
-        super().__init__(
-            name=name,
-            listeners=listeners,
-            children=children,
-            parent=parent,
-            value=value,
-        )
-
-    @property
-    def history_idx(self) -> int:
-        return self._value['history_idx']
+        super().__init__(name)
+        self._agent = agent
+        self._history_idx = history_idx
 
     @property
     def agent_name(self) -> str:
-        return self._value['agent'].name
+        """Get the name of the agent."""
+        return self._agent.name
+
+    @property
+    def history_idx(self) -> int:
+        """Get the history index of the agent."""
+        return self._history_idx
 
     async def chatting(self, delay: int = 1):
         await asyncio.sleep(delay)
@@ -94,14 +89,11 @@ class ChatRoom(BasicEnv):
         """Add a participant to the chatroom."""
         if agent.agent_id in self.children:
             return False
-        self.children[agent.agent_id] = ChatRoomAgentEnv(
+        self.children[agent.agent_id] = ChatRoomMember(
             name=agent.agent_id,
-            value={
-                "history_idx": len(self.history),
-                "agent": agent,
-            },
+            agent=agent,
+            history_idx=len(self.history),
         )
-        self.add_listener("speak", Mentioned(agent))
         return True
 
     @event_func

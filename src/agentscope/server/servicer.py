@@ -212,13 +212,15 @@ class AgentServerServicer(RpcAgentServicer):
         cls_name = agent_configs["class_name"]
         try:
             if type_name == "agent":
-                from agentscope.agents.agent import AgentBase
+                from agentscope.agents import AgentBase, RpcAgent
 
                 cls = AgentBase.get_agent_class(cls_name)
+                rpc_cls = RpcAgent
             elif type_name == "env":
-                from agentscope.environment import Env
+                from agentscope.environment import Env, RpcEnv
 
                 cls = Env.get_env_class(cls_name)
+                rpc_cls = RpcEnv
             else:
                 raise ValueError("Unknown type: {type_name}")
         except ValueError as e:
@@ -236,6 +238,23 @@ class AgentServerServicer(RpcAgentServicer):
             )
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
+        if type_name == "agent":
+            rpc_init_cfg = {
+                "host": self.host,
+                "port": self.port,
+                "name": agent_instance.name,
+                "agent_class": cls_name,
+                "connect_existing": True,
+            }
+        else:
+            rpc_init_cfg = {
+                "host": self.host,
+                "port": self.port,
+                "name": agent_instance.name,
+                "env_cls": cls_name,
+                "connect_existing": True,
+            }
+        agent_instance.__reduce__ = lambda s: (rpc_cls, rpc_init_cfg)
         agent_instance._agent_id = agent_id  # pylint: disable=W0212
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
