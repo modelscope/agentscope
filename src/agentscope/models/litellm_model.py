@@ -368,6 +368,9 @@ class LiteLLMVisionWrapper(LiteLLMChatWrapper):
     including both text and images. It is designed to work with vision-language
     models that can process and respond to both textual and visual information.
 
+    reference:
+    https://docs.litellm.ai/docs/completion/vision#checking-if-a-model-supports-vision
+
     Note:
         - The model used must support vision capabilities (e.g., GPT-4o).
 
