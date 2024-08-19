@@ -20,6 +20,16 @@ According to the different relationships between the main process and the agent 
 
 The above concepts may seem complex, but don't worry, for application developers, you only need to convert your existing agent to its distributed version.
 
+### Security Warning
+
+To provide the ability to run customized agents on the agent server process, AgentScope allows to run **arbitrary code** on the **agent server process**. Therefore, you need to take extra care when using the distributed mode.
+
+To avoid security risks, you can follow the methods below:
+
+1. Only execute trusted agent code on the agent server process.
+2. Deploy AgentScope agent server processes in a controlled network, and only allow access to the agent server processes from the trusted IPs.
+3. Set `local_mode=True` in `to_dist` and `RpcAgentServerLauncher` (will introduce later) when you don't need to access the agent server process from other machines.
+
 ### Step 1: Convert your agent to its distributed version
 
 All agents in AgentScope can automatically convert to its distributed version by calling its {func}`to_dist<agentscope.agents.AgentBase.to_dist>` method.
@@ -56,6 +66,9 @@ b = AgentB(
 ).to_dist()
 ```
 
+> Note:
+> The `local_mode` parameter is set to `True` by default in this mode, which means that the agent server process can only be accessed from the same machine.
+
 #### Independent Process Mode
 
 In the Independent Process Mode, we need to start the agent server process on the target machine first.
@@ -74,6 +87,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
+    local_mode=False, # allow communication among agents from different machines (be careful when setting this parameter)
     custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
@@ -85,13 +99,15 @@ server.wait_until_terminate()
 For simplicity, you can run the following command in your terminal rather than the above code:
 
 ```shell
-as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b
+as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b --local-mode False
 ```
 
 > Note:
 > The `--agent-dir` field is used to specify the directory where your customized agent classes are located.
 > Please make sure that all custom Agent classes are located in `--agent-dir`, and that the custom modules they depend on are also located in the directory.
 > Additionally, because the above command will load all Python files in the directory, please ensure that the directory does not contain any malicious files to avoid security risks.
+>
+> The `--local-mode` field is used to specify whether the server only listens to requests from 'localhost'. To enable communication among agents from different machines, you need to set it to `False`. But before running the command, make sure you have set up a network firewall to avoid malicious access from untrusted IPs.
 
 Then put your model config file accordingly in `model_config_path_b`, set environment variables, and run the following code on `Machine2`.
 
@@ -106,6 +122,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_b",
     port=12002, # choose an available port
+    local_mode=False, # allow communication among agents from different machines (be careful when setting this parameter)
     custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
@@ -117,7 +134,7 @@ server.wait_until_terminate()
 > Similarly, you can run the following command in your terminal to setup the agent server:
 >
 > ```shell
-> as_server --host ip_b --port 12002 --model-config-path model_config_path_b --agent-dir parent_dir_of_agent_a_and_b
+> as_server --host ip_b --port 12002 --model-config-path model_config_path_b --agent-dir parent_dir_of_agent_a_and_b --local-mode False
 > ```
 
 Then, you can connect to the agent servers from the main process with the following code.
@@ -341,6 +358,7 @@ server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
     custom_agent_classes=[...], # register your customized agent classes
+    local_mode=False, # allow communication among agents from different machines
     studio_url="http://studio_ip:studio_port",  # connect to AgentScope Studio
 )
 

@@ -41,7 +41,7 @@ def _setup_agent_server(
     start_event: EventClass = None,
     stop_event: EventClass = None,
     pipe: int = None,
-    local_mode: bool = True,
+    local_mode: bool = False,
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
@@ -67,7 +67,7 @@ def _setup_agent_server(
             process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `True`):
+        local_mode (`bool`, defaults to `False`):
             Only listen to local requests.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
@@ -109,7 +109,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     start_event: EventClass = None,
     stop_event: EventClass = None,
     pipe: int = None,
-    local_mode: bool = True,
+    local_mode: bool = False,
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
@@ -132,7 +132,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             has been started.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `True`):
+        local_mode (`bool`, defaults to `False`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
         max_pool_size (`int`, defaults to `8192`):
@@ -202,6 +202,15 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             if local_mode:
                 server.add_insecure_port(f"localhost:{port}")
             else:
+                logger.warning(
+                    "`local_mode` is set to False, the server will listen to "
+                    "all hosts from the network.",
+                )
+                logger.warning(
+                    "Please ensure that only trusted IPs are allowed to access"
+                    " the machine, or malicious attacker may execute arbitrary"
+                    " code on the server.",
+                )
                 server.add_insecure_port(f"0.0.0.0:{port}")
             await server.start()
             break
@@ -507,7 +516,7 @@ def as_server() -> None:
     parser.add_argument(
         "--local-mode",
         type=bool,
-        default=False,
+        default=True,
         help=(
             "if `True`, only listen to requests from 'localhost', otherwise, "
             "listen to requests from all hosts."

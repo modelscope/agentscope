@@ -18,6 +18,16 @@ AgentScope中，我们将运行应用流程的进程称为**主进程 (Main Proc
 
 上述概念有些复杂，但是不用担心，对于应用开发者而言，仅需将已有的智能体转化为对应的分布式版本，其余操作都和正常的单机版本完全一致。
 
+### 安全警告
+
+为了支持运行用户自定义的智能体，AgentScope 允许在 **智能体服务器进程** 上运行 **任意代码**。因此，在使用分布式模式时，你需要注意可能会出现的安全风险。
+
+为了避免安全风险，你可以参考以下方法：
+
+1. 只在智能体服务器进程上执行可信的智能体代码。
+2. 在可控的网络中部署智能体服务器进程，并且通过合理设置防火墙，只允许从可信的 IP 访问智能体服务器进程。
+3. 不需要从其他机器访问智能体服务器进程时，在 `to_dist` 和 `RpcAgentServerLauncher` (稍后会介绍) 中设置 `local_mode=True`。
+
 ### 步骤1: 转化为分布式版本
 
 AgentScope 中所有智能体都可以通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为对应的分布式版本。
@@ -55,6 +65,9 @@ b = AgentB(
 ).to_dist()
 ```
 
+> Note:
+> 该模式下 `local_mode` 参数默认为 `True`，这意味着该智能体服务器进程只能被来自相同机器的进程访问。
+
 #### 独立进程模式
 
 在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
@@ -72,6 +85,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_a",
     port=12001,  # choose an available port
+    local_mode=False, # allow communication among agents from different machines (be careful when setting this parameter)
     custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
@@ -83,13 +97,15 @@ server.wait_until_terminate()
 为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
 
 ```shell
-as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b
+as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b --local-mode False
 ```
 
 > Note:
 > `--agent-dir` 用来指定你的自定义 Agent 类所在的目录。
 > 请确保所有的自定义 Agent 类都位于 `--agent-dir` 指定的目录下，并且它们所依赖的自定义模块也都位于该目录下。
 > 另外，因为上述指令会加载目录下的所有 Python 文件，在运行前请确保指定的目录内没有恶意文件，以避免出现安全问题。
+>
+> `local-mode` 用来指定该服务器是否只监听来自 `localhost` 的请求。为了允许不同机器上的智能体进程之间进行通信，你需要将 `local_mode` 设置为 `False`。但在运行该命令之前，请确保您已经设置了网络防火墙，以避免来自不受信任的 IP 的恶意访问。
 
 在 `Machine2` 上运行如下代码，这里同样要确保已经将模型配置文件放置在 `model_config_path_b` 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。
 
@@ -104,6 +120,7 @@ agentscope.init(
 server = RpcAgentServerLauncher(
     host="ip_b",
     port=12002, # choose an available port
+    local_mode=False, # allow communication among agents from different machines (be careful when setting this parameter)
     custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
 )
 
