@@ -41,7 +41,7 @@ def _setup_agent_server(
     start_event: EventClass = None,
     stop_event: EventClass = None,
     pipe: int = None,
-    local_mode: bool = False,
+    local_mode: bool = True,
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
@@ -67,7 +67,7 @@ def _setup_agent_server(
             process has been stopped.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `False`):
+        local_mode (`bool`, defaults to `True`):
             Only listen to local requests.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
@@ -109,7 +109,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     start_event: EventClass = None,
     stop_event: EventClass = None,
     pipe: int = None,
-    local_mode: bool = False,
+    local_mode: bool = True,
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
@@ -132,7 +132,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             has been started.
         pipe (`int`, defaults to `None`):
             A pipe instance used to pass the actual port of the server.
-        local_mode (`bool`, defaults to `False`):
+        local_mode (`bool`, defaults to `True`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
         max_pool_size (`int`, defaults to `8192`):
@@ -307,7 +307,7 @@ class RpcAgentServerLauncher:
         port: int = None,
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
-        local_mode: bool = False,
+        local_mode: bool = True,
         agent_dir: str = None,
         custom_agent_classes: list = None,
         server_id: str = None,
@@ -327,7 +327,7 @@ class RpcAgentServerLauncher:
             max_timeout_seconds (`int`, defaults to `7200`):
                 Maximum time for reply messages to be cached in the server.
                 Note that expired messages will be deleted.
-            local_mode (`bool`, defaults to `False`):
+            local_mode (`bool`, defaults to `True`):
                 If `True`, only listen to requests from "localhost", otherwise,
                 listen to requests from all hosts.
             agent_dir (`str`, defaults to `None`):

@@ -245,7 +245,6 @@ class BasicRpcAgentTest(unittest.TestCase):
             # choose port automatically
             host="127.0.0.1",
             port=12010,
-            local_mode=False,
             custom_agent_classes=[DemoRpcAgent],
         )
         launcher.launch()
@@ -405,7 +404,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         launcher = RpcAgentServerLauncher(
             host="127.0.0.1",
             port=-1,
-            local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory],
         )
         launcher.launch()
@@ -566,14 +564,12 @@ class BasicRpcAgentTest(unittest.TestCase):
             # choose port automatically
             host=host,
             port=12010,
-            local_mode=False,
             custom_agent_classes=[DemoGatherAgent, DemoGeneratorAgent],
         )
         launcher2 = RpcAgentServerLauncher(
             # choose port automatically
             host=host,
             port=12011,
-            local_mode=False,
             custom_agent_classes=[DemoGatherAgent, DemoGeneratorAgent],
         )
         launcher1.launch()
@@ -624,7 +620,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         launcher = RpcAgentServerLauncher(
             host="localhost",
             port=12010,
-            local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory, FileAgent],
         )
         launcher.launch()
@@ -744,7 +739,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         launcher = RpcAgentServerLauncher(
             # choose port automatically
             host=host,
-            local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory],
             agent_dir=os.path.abspath(
                 os.path.join(
