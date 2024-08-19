@@ -245,6 +245,7 @@ class AgentServerServicer(RpcAgentServicer):
                 "name": agent_instance.name,
                 "agent_class": cls_name,
                 "connect_existing": True,
+                "agent_id": agent_id,
             }
         else:
             rpc_init_cfg = {
@@ -253,6 +254,7 @@ class AgentServerServicer(RpcAgentServicer):
                 "name": agent_instance.name,
                 "env_cls": cls_name,
                 "connect_existing": True,
+                "env_id": agent_id,
             }
         agent_instance.__reduce__ = lambda s: (rpc_cls, rpc_init_cfg)
         agent_instance._agent_id = agent_id  # pylint: disable=W0212
