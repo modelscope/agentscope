@@ -94,12 +94,18 @@ class WorkflowNode(ABC):
         `_execute` method.
         """
         if not self._has_init:
-            for key, value in self.opt_kwargs.items():
-                if is_callable_expression(value):
-                    self.opt_kwargs[key] = convert_str_to_callable(value)
+            self._execute_init()
             self._has_init = True
 
         return self._execute(x)
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        for key, value in self.opt_kwargs.items():
+            if is_callable_expression(value):
+                self.opt_kwargs[key] = convert_str_to_callable(value)
 
     def _execute(self, x: dict = None):  # type: ignore[no-untyped-def]
         """
@@ -159,14 +165,11 @@ class MsgNode(WorkflowNode):
 
     node_type = WorkflowNodeType.MESSAGE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.msg = Msg(**self.opt_kwargs)
 
     def _execute(self, x: dict = None) -> dict:
@@ -188,14 +191,11 @@ class DialogAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = DialogAgent(**self.opt_kwargs)
 
     def _execute(self, x: dict = None) -> dict:
@@ -218,14 +218,11 @@ class UserAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = UserAgent(**self.opt_kwargs)
 
     def _execute(self, x: dict = None) -> dict:
@@ -258,8 +255,12 @@ class TextToImageAgentNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = TextToImageAgent(**self.opt_kwargs)
 
-    def _execute(self, x: dict = None) -> dict:
-        return self.pipeline(x)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
+        self.pipeline = TextToImageAgent(**self.opt_kwargs)
 
     def compile(self) -> dict:
         return {
@@ -288,8 +289,12 @@ class DictDialogAgentNode(WorkflowNode):
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         self.pipeline = DictDialogAgent(**self.opt_kwargs)
 
-    def _execute(self, x: dict = None) -> dict:
-        return self.pipeline(x)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
+        self.pipeline = DictDialogAgent(**self.opt_kwargs)
 
     def compile(self) -> dict:
         return {
@@ -308,17 +313,13 @@ class ReActAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        # Build tools
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.service_toolkit = ServiceToolkit()
-        for tool in dep_opts:
+        for tool in self.dep_opts:
             if not hasattr(tool, "service_func"):
                 raise TypeError(f"{tool} must be tool!")
             self.service_toolkit.add(tool.service_func)
@@ -366,17 +367,23 @@ class MsgHubNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.announcement = Msg(
-            name=self.opt_kwargs["announcement"].get("name", "Host"),
-            content=self.opt_kwargs["announcement"].get("content", "Welcome!"),
-            role="system",
-        )
         assert len(self.dep_opts) == 1 and hasattr(
             self.dep_opts[0],
             "pipeline",
         ), (
             "MsgHub members must be a list of length 1, with the first "
             "element being an instance of PipelineBaseNode"
+        )
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
+        self.announcement = Msg(
+            name=self.opt_kwargs["announcement"].get("name", "Host"),
+            content=self.opt_kwargs["announcement"].get("content", "Welcome!"),
+            role="system",
         )
 
         self.pipeline = self.dep_opts[0]
@@ -418,14 +425,11 @@ class PlaceHolderNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = placeholder
 
     def _execute(self, x: dict = None) -> dict:
@@ -451,14 +455,11 @@ class SequentialPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = SequentialPipeline(operators=self.dep_opts)
 
     def _execute(self, x: dict = None) -> dict:
@@ -495,6 +496,12 @@ class ForLoopPipelineNode(WorkflowNode):
         assert (
             len(self.dep_opts) == 1
         ), "ForLoopPipelineNode can only contain one PipelineNode."
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = ForLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
@@ -536,6 +543,12 @@ class WhileLoopPipelineNode(WorkflowNode):
         assert (
             len(self.dep_opts) == 1
         ), "WhileLoopPipelineNode can only contain one PipelineNode."
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = WhileLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
@@ -577,6 +590,12 @@ class IfElsePipelineNode(WorkflowNode):
         assert (
             0 < len(self.dep_opts) <= 2
         ), "IfElsePipelineNode must contain one or two PipelineNode."
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         if len(self.dep_opts) == 1:
             self.pipeline = IfElsePipeline(
                 if_body_operators=self.dep_opts[0],
@@ -634,16 +653,13 @@ class SwitchPipelineNode(WorkflowNode):
         assert 0 < len(self.dep_opts), (
             "SwitchPipelineNode must contain at least " "one PipelineNode."
         )
-        case_operators = {}
         self.case_operators_var = {}
 
         if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
             # No default_operators provided
-            default_operators = placeholder
             self.default_var_name = "placeholder"
         elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
             # default_operators provided
-            default_operators = self.dep_opts.pop(-1)
             self.default_var_name = self.dep_vars.pop(-1)
         else:
             raise ValueError(
@@ -651,13 +667,36 @@ class SwitchPipelineNode(WorkflowNode):
                 f"cases {self.opt_kwargs['cases']}.",
             )
 
-        for key, value, var in zip(
+        for key, var in zip(
             self.opt_kwargs["cases"],
-            self.dep_opts,
             self.dep_vars,
         ):
-            case_operators[key] = value.pipeline
             self.case_operators_var[key] = var
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
+        case_operators = {}
+
+        if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
+            # No default_operators provided
+            default_operators = placeholder
+        elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
+            # default_operators provided
+            default_operators = self.dep_opts.pop(-1)
+        else:
+            raise ValueError(
+                f"SwitchPipelineNode deps {self.dep_opts} not matches "
+                f"cases {self.opt_kwargs['cases']}.",
+            )
+
+        for key, value in zip(
+            self.opt_kwargs["cases"],
+            self.dep_opts,
+        ):
+            case_operators[key] = value.pipeline
         self.opt_kwargs.pop("cases")
         self.source_kwargs.pop("cases")
         self.pipeline = SwitchPipeline(
@@ -705,6 +744,12 @@ class CopyNode(WorkflowNode):
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
         assert len(self.dep_opts) == 1, "CopyNode can only have one parent!"
+
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.pipeline = self.dep_opts[0]
 
     def _execute(self, x: dict = None) -> dict:
@@ -726,14 +771,11 @@ class BingSearchServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.service_func = partial(bing_search, **self.opt_kwargs)
 
     def compile(self) -> dict:
@@ -754,14 +796,11 @@ class GoogleSearchServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.service_func = partial(google_search, **self.opt_kwargs)
 
     def compile(self) -> dict:
@@ -782,14 +821,11 @@ class PythonServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.service_func = execute_python_code
 
     def compile(self) -> dict:
@@ -808,14 +844,11 @@ class ReadTextServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.service_func = read_text_file
 
     def compile(self) -> dict:
@@ -834,14 +867,11 @@ class WriteTextServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
+    def _execute_init(self) -> None:
+        """
+        Init before running.
+        """
+        super()._execute_init()
         self.service_func = write_text_file
 
     def compile(self) -> dict:

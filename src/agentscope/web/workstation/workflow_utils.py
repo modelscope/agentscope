@@ -48,7 +48,11 @@ def kwarg_converter(kwargs: dict) -> str:
 def convert_str_to_callable(item: str) -> Any:
     """Convert a str to callable if it can be called."""
     if is_callable_expression(item):
+        print(111111)
+        print(item, eval(item))
         return eval(item)
+    print(222222222)
+    print(item)
     return item
 
 

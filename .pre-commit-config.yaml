@@ -96,6 +96,7 @@ repos:
           --disable=W0632,
           --disable=W0123,
           --disable=C3001,
+          --disable=W0201,
         ]
   - repo: https://github.com/regebro/pyroma
     rev: "4.0"
