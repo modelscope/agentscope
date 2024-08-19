@@ -412,8 +412,8 @@ class EnvTest(unittest.TestCase):
         self.assertEqual(r2.content, 0)
 
         # test history_idx
-        self.assertEqual(r[a1.agent_id].get()["history_idx"], 0)
-        self.assertEqual(r[a2.agent_id].get()["history_idx"], 1)
+        self.assertEqual(r[a1.agent_id].history_idx, 0)
+        self.assertEqual(r[a2.agent_id].history_idx, 1)
 
 
 class AgentWithMutableEnv(AgentBase):
@@ -561,5 +561,5 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(master.get_event(-2).name, "get_history")
 
         # test history_idx
-        self.assertEqual(r[a1.agent_id].get()["history_idx"], 0)
-        self.assertEqual(r[a2.agent_id].get()["history_idx"], 1)
+        self.assertEqual(r[a1.agent_id].history_idx, 0)
+        self.assertEqual(r[a2.agent_id].history_idx, 1)
