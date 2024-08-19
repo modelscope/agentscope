@@ -193,7 +193,7 @@ class FileManager:
 
     def save_image(
         self,
-        image: Union[str, np.ndarray, bytes],
+        image: Union[str, np.ndarray, bytes, Image.Image],
         filename: Optional[str] = None,
     ) -> str:
         """Save image file locally, and return the local image path.
@@ -225,10 +225,13 @@ class FileManager:
         elif isinstance(image, bytes):
             # save image via bytes
             Image.open(io.BytesIO(image)).save(path_file)
+        elif isinstance(image, Image.Image):
+            # save image via PIL.Image.Image
+            image.save(path_file)
         else:
             raise ValueError(
-                f"Unsupported image type: {type(image)}"
-                "Must be str, np.ndarray, or bytes.",
+                f"Unsupported image type: {type(image)} Must be str, "
+                f"np.ndarray, bytes, or PIL.Image.Image.",
             )
 
         return path_file
