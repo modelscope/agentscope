@@ -1,21 +1,37 @@
 import os
+import argparse
 
 import agentscope
 from agentscope.message import Msg
+from agentscope.logging import LOG_LEVEL
 
 from envs.chatroom import ChatRoom, AgentWithChatRoom
 
 
-def main():
+def parse_args() -> argparse.Namespace:
+    """Parse arguments"""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--logger-level",
+        choices=LOG_LEVEL,
+        default="INFO",
+    )
+    parser.add_argument(
+        "--use-dist",
+        action="store_true",
+    )
+    return parser.parse_args()
+
+def main(args):
     # Prepare the model configuration
     YOUR_MODEL_CONFIGURATION_NAME = "dash"
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
 
     # Initialize the agents
-    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level="INFO")
+    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level)
 
     ann = Msg(name="Boss", content="This is a game development work group, please discuss how to develop an open world game.", role="system")
-    r = ChatRoom(name="chat", announcement=ann)
+    r = ChatRoom(name="chat", announcement=ann, to_dist=args.use_dist)
 
     # Setup the persona of Alice, Bob and Carol
     alice = AgentWithChatRoom(
@@ -26,6 +42,7 @@ def main():
         r"""You only need to output Alice's possible replies, without giving anyone else's replies or continuing the conversation. """
         r"""When the discussion is complete, you need to reply with a message containing 'Goodbye' to indicate exiting the conversation.""", # Game Art Designer
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
+        to_dist=args.use_dist,
     )
     alice.join(r)
 
@@ -37,6 +54,7 @@ def main():
         r"""You only need to output Bob's possible replies, without giving anyone else's replies or continuing the conversation. """
         r"""When the discussion is complete, you need to reply with a message containing 'Goodbye' to indicate exiting the conversation.""", # Game Programmer
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
+        to_dist=args.use_dist,
     )
     bob.join(r)
 
@@ -48,6 +66,7 @@ def main():
         r"""You only need to output Carol's possible replies, without giving anyone else's replies or continuing the conversation. """
         r"""When the discussion is complete, you need to reply with a message containing 'Goodbye' to indicate exiting the conversation.""", # Game Designer
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
+        to_dist=args.use_dist,
     )
     carol.join(r)
 
@@ -57,4 +76,5 @@ def main():
 
 if __name__ == '__main__':
     # TODO: add argparse and to dist
-    main()
+    args = parse_args()
+    main(args)

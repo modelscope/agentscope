@@ -115,7 +115,6 @@ class ChatRoom(BasicEnv):
     def speak(self, message: Msg) -> None:
         """Speak a message in the chatroom."""
         self.history.append(message)
-        logger.debug(f'id(self) = {id(self)}, len(history) = {len(self.history)}')
 
     @event_func
     def get_history(self, agent_id: str) -> List[Msg]:
@@ -128,7 +127,6 @@ class ChatRoom(BasicEnv):
             history_idx = 0
         else:
             history_idx = self.children[agent_id].history_idx
-        logger.debug(f'id(self) = {id(self)}, hisotry_idx = {history_idx}, len(self.history) = {len(self.history)}')
         return deepcopy(self.history[history_idx:])
 
     @event_func
@@ -221,6 +219,7 @@ class AgentWithChatRoom(AgentBase):
         self.mentioned_messages = []
 
     def add_mentioned_listener(self, room: ChatRoom) -> None:
+        """Add listener to get mentioned messages"""
         class Mentioned(EventListener):
             def __init__(
                 self,
@@ -240,7 +239,6 @@ class AgentWithChatRoom(AgentBase):
     def join(self, room: ChatRoom) -> bool:
         """Join a room"""
         self.room = room
-        logger.debug(f'id(room) = {id(room)}')
         self.add_mentioned_listener(room)
         return room.join(self)
 
