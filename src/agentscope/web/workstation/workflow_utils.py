@@ -12,6 +12,9 @@ def is_callable_expression(value: str) -> bool:
     (including lambda and built-in functions).
     """
     try:
+        if not isinstance(value, str):
+            return False
+
         # Attempt to parse the expression using the AST module
         node = ast.parse(value, mode="eval")
 
