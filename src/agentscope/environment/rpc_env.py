@@ -21,6 +21,7 @@ class RpcEnv(Env, RpcObject):
         local_mode: bool = True,
         connect_existing: bool = False,
         env_configs: dict = None,
+        env_id: str = None,
     ) -> None:
         """Initialize an RpcEnv instance.
 
@@ -40,12 +41,14 @@ class RpcEnv(Env, RpcObject):
                 requests.
             connect_existing (`bool`, defaults to `False`):
                 Set to `True`, if the env is already running on the server.
+            env_id (`str`, defaults to `None`):
+                The id of the env.
         """
         self._name = name
         RpcObject.__init__(
             self,
             cls=env_cls,
-            oid=uuid.uuid4().hex,
+            oid=uuid.uuid4().hex if env_id is None else env_id,
             host=host,
             port=port,
             max_pool_size=max_pool_size,
