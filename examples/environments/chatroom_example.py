@@ -5,7 +5,7 @@ import agentscope
 from agentscope.message import Msg
 from agentscope.logging import LOG_LEVEL
 
-from envs.chatroom import ChatRoom, AgentWithChatRoom
+from envs.chatroom import ChatRoom, ChatRoomAgent
 
 
 def parse_args() -> argparse.Namespace:
@@ -34,7 +34,7 @@ def main(args):
     r = ChatRoom(name="chat", announcement=ann, to_dist=args.use_dist)
 
     # Setup the persona of Alice, Bob and Carol
-    alice = AgentWithChatRoom(
+    alice = ChatRoomAgent(
         name="Alice", 
         sys_prompt=r"""You are a game art designer named Alice. Programmer Bob and game planner Carol are your colleagues, and you need to collaborate with them to complete an open world game. """
         r"""Please ask appropriate question to planner or generate appropriate responses in this work group based on the following chat history. """
@@ -45,8 +45,9 @@ def main(args):
         to_dist=args.use_dist,
     )
     alice.join(r)
+    r.join(alice)
 
-    bob = AgentWithChatRoom(
+    bob = ChatRoomAgent(
         name="Bob",
         sys_prompt=r"""You are a game programmer named Bob. Art designer Alice and game planner Carol are your colleagues, and you need to collaborate with them to complete an open world game. """
         r"""Please ask appropriate questions or generate appropriate responses in the work group based on the following historical records. """
@@ -57,8 +58,9 @@ def main(args):
         to_dist=args.use_dist,
     )
     bob.join(r)
+    r.join(bob)
 
-    carol = AgentWithChatRoom(
+    carol = ChatRoomAgent(
         name="Carol",
         sys_prompt=r"""You are a game planner named Carol. Programmer Bob and art designer Alice are your colleagues, and you need to guide them in developing an open world game. """
         r"""Please generate a suitable response in this work group based on the following chat history. """
@@ -69,6 +71,7 @@ def main(args):
         to_dist=args.use_dist,
     )
     carol.join(r)
+    r.join(carol)
 
     # Start the chat
     r.chatting(delay={carol._agent_id: 0, alice._agent_id: 5, bob._agent_id:7})

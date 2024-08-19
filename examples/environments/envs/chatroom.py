@@ -101,6 +101,7 @@ class ChatRoom(BasicEnv):
                 "agent": agent,
             },
         )
+        self.add_listener("speak", Mentioned(agent))
         return True
 
     @event_func
@@ -201,7 +202,23 @@ class ChatRoom(BasicEnv):
         asyncio.run(start_chatting())
 
 
-class AgentWithChatRoom(AgentBase):
+class Mentioned(EventListener):
+    def __init__(
+        self,
+        agent: AgentBase,
+    ) -> None:
+        super().__init__(name=f'mentioned_agent_{agent.name}')
+        self.agent = agent
+        self.pattern = re.compile(r"""(?<=@)\w*""", re.DOTALL)
+
+    def __call__(self, env: Env, event: Event) -> None:
+        find_result = self.pattern.findall(event.args["message"].content)
+        if self.agent.name in find_result:
+            logger.info(f"{event.args['message'].name} mentioned {self.agent.name}.")
+            self.agent.add_mentioned_message(event.args["message"])
+
+
+class ChatRoomAgent(AgentBase):
     """A agent with chat room"""
 
     def __init__(  # pylint: disable=W0613
@@ -218,29 +235,14 @@ class AgentWithChatRoom(AgentBase):
         self.room = None
         self.mentioned_messages = []
 
-    def add_mentioned_listener(self, room: ChatRoom) -> None:
-        """Add listener to get mentioned messages"""
-        class Mentioned(EventListener):
-            def __init__(
-                self,
-                agent: AgentBase,
-            ) -> None:
-                super().__init__(name=f'mentioned_agent_{agent.name}')
-                self.agent = agent
-                self.pattern = re.compile(r"""(?<=@)\w*""", re.DOTALL)
-
-            def __call__(self, env: Env, event: Event) -> None:
-                find_result = self.pattern.findall(event.args["message"].content)
-                if self.agent.name in find_result:
-                    logger.info(f"{event.args['message'].name} mentioned {self.agent.name}.")
-                    self.agent.mentioned_messages.append(event.args["message"])
-        room.add_listener("speak", Mentioned(self))
+    def add_mentioned_message(self, msg: Msg) -> None:
+        """Add mentioned messages"""
+        self.mentioned_messages.append(msg)
 
     def join(self, room: ChatRoom) -> bool:
         """Join a room"""
         self.room = room
-        self.add_mentioned_listener(room)
-        return room.join(self)
+        # return room.join(self)
 
     def generate_hint(self) -> Msg:
         if self.mentioned_messages:
