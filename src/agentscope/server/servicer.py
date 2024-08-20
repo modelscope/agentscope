@@ -35,30 +35,11 @@ from agentscope.manager import ModelManager
 from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
+from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.rpc.rpc_agent_client import RpcAgentClient
 from agentscope.message import (
     PlaceholderMessage,
 )
-
-
-class TaskResult:
-    """Use this class to get the the result from rpc server."""
-
-    # TODO: merge into placeholder
-
-    def __init__(self, host: str, port: int, task_id: int) -> None:
-        self.host = host
-        self.port = port
-        self.task_id = task_id
-
-    def get(self) -> Any:
-        """Get the value"""
-        return pickle.loads(
-            RpcAgentClient(self.host, self.port).update_placeholder(
-                self.task_id,
-            ),
-        )
 
 
 def _register_server_to_studio(
@@ -239,6 +220,9 @@ class AgentServerServicer(RpcAgentServicer):
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
 
+        # Reset the __reduce_ex__ method of the instance
+        # With this method, all objects stored in agent_pool will be serialized
+        # into their Rpc version
         rpc_init_cfg = (
             instance.name,
             cls,
@@ -247,6 +231,10 @@ class AgentServerServicer(RpcAgentServicer):
             agent_id,
             True,
         )
+        instance._dist_config = {  # pylint: disable=W0212
+            "cls": rpc_cls,
+            "args": rpc_init_cfg,
+        }
 
         def to_rpc(obj, _) -> tuple:  # type: ignore[no-untyped-def]
             return (
@@ -254,14 +242,11 @@ class AgentServerServicer(RpcAgentServicer):
                 obj._dist_config["args"],  # pylint: disable=W0212
             )
 
-        instance._dist_config = {  # pylint: disable=W0212
-            "cls": rpc_cls,
-            "args": rpc_init_cfg,
-        }
         instance.__reduce_ex__ = to_rpc.__get__(  # pylint: disable=E1120
             instance,
         )
         instance._agent_id = agent_id  # pylint: disable=W0212
+
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
                 return agent_pb2.GeneralResponse(
@@ -397,7 +382,7 @@ class AgentServerServicer(RpcAgentServicer):
             return agent_pb2.CallFuncResponse(
                 ok=True,
                 value=pickle.dumps(
-                    TaskResult(
+                    AsyncResult(
                         host=self.host,
                         port=self.port,
                         task_id=task_id,

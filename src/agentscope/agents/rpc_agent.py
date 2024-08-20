@@ -17,6 +17,7 @@ from agentscope.message import (
     Msg,
 )
 from agentscope.rpc import call_func_in_thread
+from agentscope.rpc.rpc_config import AsyncResult
 from agentscope.rpc.rpc_object import RpcObject
 
 
@@ -86,18 +87,18 @@ class RpcAgent(AgentBase, RpcObject):
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         return PlaceholderMessage(
             name=self.name,
-            content=None,
-            host=self.host,
-            port=self.port,
-            stub=call_func_in_thread(
-                partial(
-                    self.client.call_agent_func,
-                    func_name="_reply",
-                    agent_id=self._agent_id,
-                    value=pickle.dumps(x),
+            async_result=AsyncResult(
+                self.host,
+                self.port,
+                stub=call_func_in_thread(
+                    partial(
+                        self.client.call_agent_func,
+                        func_name="_reply",
+                        agent_id=self._agent_id,
+                        value=pickle.dumps(x),
+                    ),
                 ),
             ),
-            x=x,
         )
 
     def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
