@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The placeholder message for RpcAgent."""
-from typing import Any, Optional, List, Union, Sequence
 import json
+from typing import Any, Optional, List, Union, Sequence
 from loguru import logger
 
 try:

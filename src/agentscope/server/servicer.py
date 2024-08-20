@@ -239,6 +239,9 @@ class AgentServerServicer(RpcAgentServicer):
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
 
+        # Reset the __reduce_ex__ method of the instance
+        # With this method, all objects stored in agent_pool will be serialized
+        # into their Rpc version
         rpc_init_cfg = (
             instance.name,
             cls,
@@ -247,6 +250,10 @@ class AgentServerServicer(RpcAgentServicer):
             agent_id,
             True,
         )
+        instance._dist_config = {  # pylint: disable=W0212
+            "cls": rpc_cls,
+            "args": rpc_init_cfg,
+        }
 
         def to_rpc(obj, _) -> tuple:  # type: ignore[no-untyped-def]
             return (
@@ -254,14 +261,11 @@ class AgentServerServicer(RpcAgentServicer):
                 obj._dist_config["args"],  # pylint: disable=W0212
             )
 
-        instance._dist_config = {  # pylint: disable=W0212
-            "cls": rpc_cls,
-            "args": rpc_init_cfg,
-        }
         instance.__reduce_ex__ = to_rpc.__get__(  # pylint: disable=E1120
             instance,
         )
         instance._agent_id = agent_id  # pylint: disable=W0212
+
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
                 return agent_pb2.GeneralResponse(
