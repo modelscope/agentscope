@@ -819,6 +819,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(a2.port, port)
         client = RpcAgentClient(host=host, port=port)
         al = client.get_agent_list()
+        a1._check_created()  # pylint: disable=W0212
+        a2._check_created()  # pylint: disable=W0212
         self.assertEqual(len(al), 2)
 
         # test not alive server
@@ -826,6 +828,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
         self.assertEqual(a3.host, "localhost")
         nclient = RpcAgentClient(host=a3.host, port=a3.port)
+        a3._check_created()  # pylint: disable=W0212
         nal = nclient.get_agent_list()
         self.assertEqual(len(nal), 1)
 
