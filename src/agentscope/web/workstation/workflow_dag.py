@@ -310,6 +310,19 @@ def build_dag(config: dict) -> ASDiGraph:
     """
     dag = ASDiGraph()
 
+    if (
+        "drawflow" in config
+        and "Home" in config["drawflow"]
+        and "data" in config["drawflow"]["Home"]
+    ):
+        config = config["drawflow"]["Home"]["data"]
+
+        config = {
+            k: v
+            for k, v in config.items()
+            if not ("class" in v and v["class"] == "welcome")
+        }
+
     for node_id, node_info in config.items():
         config[node_id] = sanitize_node_data(node_info)
 
