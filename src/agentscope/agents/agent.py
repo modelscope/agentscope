@@ -381,6 +381,15 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         """
         return self._agent_id
 
+    # def __reduce__(self) -> Tuple[Any]:
+    #     if hasattr(self, "_dist_config"):
+    #         return (
+    #             self._dist_config["cls"],
+    #             self._dist_config["args"],
+    #         )
+    #     else:
+    #         return super().__reduce__()
+
     def to_dist(
         self,
         host: str = "localhost",

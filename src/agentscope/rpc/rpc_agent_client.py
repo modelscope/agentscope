@@ -4,20 +4,19 @@
 import threading
 import json
 import os
-from typing import Optional, Sequence, Union, Generator, Callable
+from typing import Optional, Sequence, Union, Generator, Callable, Any
 from loguru import logger
 
 try:
-    import cloudpickle
+    import cloudpickle as pickle
     import grpc
-    from grpc import RpcError
     from google.protobuf.empty_pb2 import Empty
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
     import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
-    cloudpickle = ImportErrorReporter(import_error, "distribute")
+    pickle = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
     agent_pb2 = ImportErrorReporter(import_error, "distribute")
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
@@ -26,7 +25,7 @@ except ImportError as import_error:
 from ..utils.tools import generate_id_from_seed
 from ..exception import AgentServerNotAliveError
 from ..constants import _DEFAULT_RPC_OPTIONS
-from ..exception import AgentCallError
+from ..exception import AgentCallError, AgentCreationError
 from ..manager import FileManager
 
 
@@ -54,33 +53,33 @@ class RpcAgentClient:
         self,
         func_name: str,
         agent_id: str,
-        value: Optional[str] = None,
+        value: Optional[bytes] = None,
         timeout: int = 300,
-    ) -> str:
+    ) -> bytes:
         """Call the specific function of an agent running on the server.
 
         Args:
             func_name (`str`): The name of the function being called.
-            value (`str`, optional): The serialized function input value.
+            value (`bytes`, optional): The serialized function input value.
             Defaults to None.
             timeout (`int`, optional): The timeout for the RPC call in seconds.
             Defaults to 300.
 
         Returns:
-            str: serialized return data.
+            bytes: serialized return data.
         """
         try:
             with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
                 stub = RpcAgentStub(channel)
                 result_msg = stub.call_agent_func(
-                    agent_pb2.RpcMsg(
-                        value=value,
+                    agent_pb2.CallFuncRequest(
                         target_func=func_name,
+                        value=value,
                         agent_id=agent_id,
                     ),
                     timeout=timeout,
                 )
-                return result_msg.message
+                return result_msg.value
         except Exception as e:
             # check the server and raise a more reasonable error
             if not self.is_alive():
@@ -157,7 +156,7 @@ class RpcAgentClient:
                 status = stub.create_agent(
                     agent_pb2.CreateAgentRequest(
                         agent_id=agent_id,
-                        agent_init_args=cloudpickle.dumps(agent_configs),
+                        agent_init_args=pickle.dumps(agent_configs),
                     ),
                 )
                 if not status.ok:
@@ -173,7 +172,7 @@ class RpcAgentClient:
                     port=self.port,
                     message=str(e),
                 ) from e
-            raise e
+            raise AgentCreationError(host=self.host, port=self.port) from e
 
     def delete_agent(
         self,
@@ -235,7 +234,7 @@ class RpcAgentClient:
             task_id (`int`): `task_id` of the PlaceholderMessage.
 
         Returns:
-            str: Serialized message value.
+            bytes: Serialized message value.
         """
         with grpc.insecure_channel(
             f"{self.host}:{self.port}",
@@ -251,7 +250,7 @@ class RpcAgentClient:
                     port=self.port,
                     message=f"Failed to update placeholder: {resp.message}",
                 )
-            return resp.message
+            return resp.value
 
     def get_agent_list(self) -> Sequence[dict]:
         """
@@ -345,14 +344,14 @@ class ResponseStub(dict):
         self.response = None
         self.condition = threading.Condition()
 
-    def set_response(self, response: str) -> None:
-        """Set the message."""
+    def set_response(self, response: Any) -> None:
+        """Set the response value."""
         with self.condition:
             self.response = response
             self.condition.notify_all()
 
-    def get_response(self) -> str:
-        """Get the message."""
+    def get_response(self) -> Any:
+        """Get the response value."""
         with self.condition:
             while self.response is None:
                 self.condition.wait()
@@ -385,7 +384,7 @@ def call_func_in_thread(func: Callable) -> ResponseStub:
         try:
             resp = func()
             stub.set_response(resp)  # type: ignore[arg-type]
-        except RpcError as e:
+        except Exception as e:
             logger.error(f"Fail to call function in thread: {e}")
             stub.set_response(str(e))
 

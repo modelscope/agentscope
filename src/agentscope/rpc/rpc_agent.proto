@@ -35,10 +35,10 @@ service RpcAgent {
     rpc get_agent_memory (StringMsg) returns (GeneralResponse) {}
 
     // call funcs of agent running on the server
-    rpc call_agent_func(RpcMsg) returns (GeneralResponse) {}
+    rpc call_agent_func(CallFuncRequest) returns (CallFuncResponse) {}
 
     // update value of PlaceholderMessage
-    rpc update_placeholder(UpdatePlaceholderRequest) returns (GeneralResponse) {}
+    rpc update_placeholder(UpdatePlaceholderRequest) returns (CallFuncResponse) {}
 
     // file transfer
     rpc download_file(StringMsg) returns (stream ByteMsg) {}
@@ -74,8 +74,14 @@ message ByteMsg {
 }
 
 // Message class for agent function call
-message RpcMsg {
-    string value = 1;
-    string target_func = 2;
+message CallFuncRequest {
+    string target_func = 1;
+    bytes value = 2;
     string agent_id = 3;
+}
+
+message CallFuncResponse {
+    bool ok = 1;
+    bytes value = 2;
+    string message = 3;
 }

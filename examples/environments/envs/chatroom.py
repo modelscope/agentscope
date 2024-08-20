@@ -15,7 +15,35 @@ from agentscope.environment import (
     Event,
     event_func,
 )
-from .immutable import ImmutableEnv
+
+
+class ChatRoomMember(BasicEnv):
+    """A member of chatroom."""
+
+    def __init__(
+        self,
+        name: str,
+        agent: AgentBase,
+        history_idx: int = 0,
+    ) -> None:
+        super().__init__(name)
+        self._agent = agent
+        self._history_idx = history_idx
+
+    @property
+    def agent_name(self) -> str:
+        """Get the name of the agent."""
+        return self._agent.name
+
+    @property
+    def history_idx(self) -> int:
+        """Get the history index of the agent."""
+        return self._history_idx
+
+    @property
+    def agent(self) -> AgentBase:
+        """Get the agent of the member."""
+        return self._agent
 
 
 class ChatRoom(BasicEnv):
@@ -54,12 +82,10 @@ class ChatRoom(BasicEnv):
         """Add a participant to the chatroom."""
         if agent.agent_id in self.children:
             return False
-        self.children[agent.agent_id] = ImmutableEnv(
+        self.children[agent.agent_id] = ChatRoomMember(
             name=agent.agent_id,
-            value={
-                "history_idx": len(self.history),
-                "agent": agent,
-            },
+            agent=agent,
+            history_idx=len(self.history),
         )
         return True
 
@@ -86,7 +112,7 @@ class ChatRoom(BasicEnv):
         if self.all_history:
             history_idx = 0
         else:
-            history_idx = self.children[agent_id].get()["history_idx"]
+            history_idx = self.children[agent_id].history_idx
         return deepcopy(self.history[history_idx:])
 
     @event_func
