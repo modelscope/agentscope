@@ -4,13 +4,12 @@
 import threading
 import json
 import os
-from typing import Optional, Sequence, Union, Generator, Callable
+from typing import Optional, Sequence, Union, Generator, Callable, Any
 from loguru import logger
 
 try:
     import cloudpickle as pickle
     import grpc
-    from grpc import RpcError
     from google.protobuf.empty_pb2 import Empty
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
     import agentscope.rpc.rpc_agent_pb2 as agent_pb2
@@ -26,7 +25,7 @@ except ImportError as import_error:
 from ..utils.tools import generate_id_from_seed
 from ..exception import AgentServerNotAliveError
 from ..constants import _DEFAULT_RPC_OPTIONS
-from ..exception import AgentCallError
+from ..exception import AgentCallError, AgentCreationError
 from ..manager import FileManager
 
 
@@ -173,7 +172,7 @@ class RpcAgentClient:
                     port=self.port,
                     message=str(e),
                 ) from e
-            raise e
+            raise AgentCreationError(host=self.host, port=self.port) from e
 
     def delete_agent(
         self,
@@ -345,14 +344,14 @@ class ResponseStub(dict):
         self.response = None
         self.condition = threading.Condition()
 
-    def set_response(self, response: str) -> None:
-        """Set the message."""
+    def set_response(self, response: Any) -> None:
+        """Set the response value."""
         with self.condition:
             self.response = response
             self.condition.notify_all()
 
-    def get_response(self) -> str:
-        """Get the message."""
+    def get_response(self) -> Any:
+        """Get the response value."""
         with self.condition:
             while self.response is None:
                 self.condition.wait()
@@ -385,7 +384,7 @@ def call_func_in_thread(func: Callable) -> ResponseStub:
         try:
             resp = func()
             stub.set_response(resp)  # type: ignore[arg-type]
-        except RpcError as e:
+        except Exception as e:
             logger.error(f"Fail to call function in thread: {e}")
             stub.set_response(str(e))
 

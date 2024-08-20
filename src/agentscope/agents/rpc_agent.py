@@ -85,6 +85,7 @@ class RpcAgent(AgentBase, RpcObject):
         )
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
+        self._check_created()
         return PlaceholderMessage(
             name=self.name,
             async_result=AsyncResult(
@@ -102,8 +103,7 @@ class RpcAgent(AgentBase, RpcObject):
         )
 
     def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
-        if self.client is None:
-            self._launch_server()
+        self._check_created()
         self.client.call_agent_func(
             func_name="_observe",
             value=pickle.dumps(x),
@@ -133,14 +133,11 @@ class RpcAgent(AgentBase, RpcObject):
         )
         generated_instances = []
 
-        # launch the server before clone instances
-        if self.client is None:
-            self._launch_server()
-
         # put itself as the first element of the returned list
         if including_self:
             generated_instances.append(self)
 
+        self._check_created()
         # clone instances without agent server
         for _ in range(generated_instance_number):
             new_agent_id = self.client.clone_agent(self.agent_id)
@@ -154,3 +151,17 @@ class RpcAgent(AgentBase, RpcObject):
                 ),
             )
         return generated_instances
+
+    def __reduce__(self) -> tuple:
+        self._check_created()
+        return (
+            RpcAgent,
+            (
+                self.name,
+                self._cls,
+                self.host,
+                self.port,
+                self._agent_id,
+                True,
+            ),
+        )
