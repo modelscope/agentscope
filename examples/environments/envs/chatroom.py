@@ -47,7 +47,7 @@ class ChatRoomMember(BasicEnv):
     async def chatting(self, delay: int = 1):
         await asyncio.sleep(delay)
         while True:
-            msg = self._value['agent'](Msg(name="user", content="", role="user"))
+            msg = self._agent(Msg(name="user", content="", role="user"))
             if 'goodbye' in msg.content.lower():
                 break
             await asyncio.sleep(5)
@@ -234,7 +234,7 @@ class ChatRoomAgent(AgentBase):
     def join(self, room: ChatRoom) -> bool:
         """Join a room"""
         self.room = room
-        # return room.join(self)
+        return room.join(self)
 
     def generate_hint(self) -> Msg:
         if self.mentioned_messages:
