@@ -1,13 +1,27 @@
 # -*- coding: utf-8 -*-
 """The envs used to simulate an auction."""
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from loguru import logger
 
-from agents import Item, Bidder
-
+from agentscope.agents import AgentBase
 from agentscope.environment import Event, BasicEnv, EventListener, event_func
 from agentscope.environment.env import trigger_listener
+
+
+class Item:
+    """The item class."""
+
+    def __init__(
+        self,
+        name: str,
+        opening_price: int = 5,
+        is_auctioned: bool = False,
+    ) -> None:
+        """Initialize the item."""
+        self.name = name
+        self.opening_price = opening_price
+        self.is_auctioned = is_auctioned
 
 
 class Auction(BasicEnv):
@@ -31,6 +45,13 @@ class Auction(BasicEnv):
         self.cur_item = None
         self.cur_bid_info = None
 
+    def get_bid_info(self) -> Optional[Dict[str, Any]]:
+        """Get the bid info.
+        Returns:
+            `Dict[str, Any]`: The bid info.
+        """
+        return self.cur_bid_info
+
     @event_func
     def start(self, item: Item) -> None:
         """Start bidding for an item.
@@ -40,10 +61,10 @@ class Auction(BasicEnv):
         self.cur_item = item
         self.cur_bid_info = None
 
-    def bid(self, bidder: Bidder, item: Item, bid: int) -> bool:
+    def bid(self, bidder: AgentBase, item: Item, bid: int) -> bool:
         """Bid for the auction.
         Args:
-            bidder (`Bidder`): The bidder agent.
+            bidder (`AgentBase`): The bidder agent.
             item (`Item`): The item.
             bid (`int`): The bid of the bidder.
 
@@ -51,7 +72,7 @@ class Auction(BasicEnv):
             `bool`: Whether the bid was successful.
         """
         if (
-            item.is_auctioned
+            self.cur_item.is_auctioned
             or bid < item.opening_price
             or (self.cur_bid_info and bid <= self.cur_bid_info["bid"])
         ):
@@ -62,27 +83,23 @@ class Auction(BasicEnv):
             self,
             Event(
                 "bid",
-                args={"bidder": bidder, "item": item, "bid": bid},
+                args={"bidder": bidder, "item": self.cur_item, "bid": bid},
             ),
         )
         return True
 
     @event_func
-    def fail(self, item: Item) -> None:
-        """Pass the auction. (No bid for the item)
-        Args:
-            item (`Item`): The item.
-        """
-        item.is_auctioned = True
-        logger.info(f"{item.name} is not sold")
+    def fail(self) -> None:
+        """Pass the auction. (No bid for the item)"""
+        self.cur_item.is_auctioned = True
+        logger.info(f"{self.cur_item.name} is not sold")
 
     @event_func
-    def sold(self, bidder: Bidder, item: Item, price: int) -> None:
-        """Sold the item.
-        Args:
-            bidder (`Bidder`): The bidder agent.
-            item (`Item`): The item.
-            price (`int`): The final price of the item.
-        """
-        item.is_auctioned = True
-        logger.info(f"{item.name} is sold to {bidder.name} for {price}")
+    def sold(self) -> None:
+        """Sold the item."""
+        self.cur_item.is_auctioned = True
+        logger.info(
+            f"{self.cur_item.name} is sold to "
+            f"{self.cur_bid_info['bidder'].name} "  # type: ignore[index]
+            f"for {self.cur_bid_info['bid']}",  # type: ignore[index]
+        )

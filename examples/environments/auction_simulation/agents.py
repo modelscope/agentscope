@@ -6,25 +6,11 @@ import threading
 import time
 from typing import Optional, Sequence, Union
 
+from env import Auction
+
 from loguru import logger
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from agentscope.environment import BasicEnv
-
-
-class Item:
-    """The item class."""
-
-    def __init__(
-        self,
-        name: str,
-        opening_price: int = 5,
-        is_auctioned: bool = False,
-    ) -> None:
-        """Initialize the item."""
-        self.name = name
-        self.opening_price = opening_price
-        self.is_auctioned = is_auctioned
 
 
 class Auctioneer(AgentBase):
@@ -33,7 +19,7 @@ class Auctioneer(AgentBase):
     def __init__(
         self,
         name: str,
-        auction: BasicEnv,
+        auction: Auction,
         waiting_time: float = 3.0,
     ) -> None:
         """Initialize the auctioneer agent.
@@ -57,14 +43,10 @@ class Auctioneer(AgentBase):
 
     def decide_winner(self) -> None:
         """Decide the winner of the auction."""
-        if self.auction.cur_bid_info is None:
-            self.auction.fail(self.auction.cur_item)
+        if self.auction.get_bid_info() is None:
+            self.auction.fail()
         else:
-            self.auction.sold(
-                bidder=self.auction.cur_bid_info["bidder"],
-                item=self.auction.cur_item,
-                price=self.auction.cur_bid_info["bid"],
-            )
+            self.auction.sold()
 
 
 class RandomBidder(AgentBase):
@@ -92,7 +74,7 @@ class RandomBidder(AgentBase):
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Generate a random value"""
-        item = x["content"]  # type: ignore[index, call-overload]
+        item = x.content
         # generate a random bid or not to bid
         response = self.generate_random_response(item.opening_price)
         msg = Msg(self.name, content=response, role="assistant")

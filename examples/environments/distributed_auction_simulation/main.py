@@ -7,8 +7,8 @@ import math
 from concurrent import futures
 from loguru import logger
 
-from agents import Item, Auctioneer, Bidder, RandomBidder
-from env import Auction
+from agents import Auctioneer, Bidder, RandomBidder
+from env import Item, Auction
 from listeners import StartListener, BidListener, BidTimerListener
 
 import agentscope
@@ -60,7 +60,7 @@ def setup_agent_server(host: str, port: int) -> None:
         host=host,
         port=port,
         max_pool_size=16384,
-        custom_agent_classes=[RandomBidder, Bidder],
+        custom_agent_classes=[RandomBidder, Bidder, Auctioneer, Auction],
     )
     assistant_server_launcher.launch(in_subprocess=False)
     assistant_server_launcher.wait_until_terminate()
@@ -119,7 +119,12 @@ def run_main_process(
                 },
             )
 
-    auctioneer = Auctioneer("auctioneer", auction, waiting_time=waiting_time)
+    auctioneer = Auctioneer(
+        "auctioneer",
+        auction,
+        waiting_time=waiting_time,
+        to_dist={"host": hosts[0], "port": base_port},
+    )
 
     # init bidders
     bidders = []

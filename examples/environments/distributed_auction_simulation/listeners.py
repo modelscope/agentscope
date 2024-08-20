@@ -66,7 +66,7 @@ class BidListener(EventListener):
         bidder = event.args["bidder"]
         item = event.args["item"]
         prev_bid = event.args["bid"]
-        if bidder == self.bidder:
+        if bidder.agent_id == self.bidder.agent_id:
             return
 
         if not item.is_auctioned:

@@ -2,8 +2,8 @@
 """An auction simulation."""
 import argparse
 
-from agents import Item, Auctioneer, Bidder, RandomBidder
-from env import Auction
+from agents import Auctioneer, Bidder, RandomBidder
+from env import Item, Auction
 from listeners import StartListener, BidListener, BidTimerListener
 
 import agentscope
