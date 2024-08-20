@@ -10,15 +10,16 @@ from typing import Optional, Union, Sequence, Callable
 from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
+import cloudpickle as pickle
+
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
 from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
-from agentscope.server.servicer import TaskResult
+from agentscope.rpc import AsyncResult
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize, serialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.rpc import RpcAgentClient, async_func
@@ -248,12 +249,13 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         result = agent_a(msg)
+        self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         # get name without waiting for the server
         self.assertEqual(result.name, "a")
         self.assertEqual(result["name"], "a")
-        js_placeholder_result = serialize(result)
+        js_placeholder_result = pickle.dumps(result)
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
-        placeholder_result = deserialize(js_placeholder_result)
+        placeholder_result = pickle.loads(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
         self.assertEqual(placeholder_result.name, "a")
         self.assertEqual(
@@ -276,8 +278,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         self.assertEqual(placeholder_result.id, 0)
         # check msg
-        js_msg_result = serialize(result)
-        msg_result = deserialize(js_msg_result)
+        js_msg_result = pickle.dumps(result)
+        msg_result = pickle.loads(js_msg_result)
         self.assertTrue(isinstance(msg_result, Msg))
         self.assertEqual(msg_result.content, msg.content)
         self.assertEqual(msg_result.id, 0)
@@ -871,7 +873,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         end_time = time.time()
         self.assertTrue(end_time - start_time < 1)
         self.assertEqual(r3, 0)
-        self.assertTrue(isinstance(r1, TaskResult))
+        self.assertTrue(isinstance(r1, AsyncResult))
         self.assertTrue(r1.get() <= 2)
         self.assertTrue(r2.get() <= 2)
         r4 = agent.custom_sync_func()

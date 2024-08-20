@@ -35,30 +35,11 @@ from agentscope.manager import ModelManager
 from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
+from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.rpc.rpc_agent_client import RpcAgentClient
 from agentscope.message import (
     PlaceholderMessage,
 )
-
-
-class TaskResult:
-    """Use this class to get the the result from rpc server."""
-
-    # TODO: merge into placeholder
-
-    def __init__(self, host: str, port: int, task_id: int) -> None:
-        self.host = host
-        self.port = port
-        self.task_id = task_id
-
-    def get(self) -> Any:
-        """Get the value"""
-        return pickle.loads(
-            RpcAgentClient(self.host, self.port).update_placeholder(
-                self.task_id,
-            ),
-        )
 
 
 def _register_server_to_studio(
@@ -401,7 +382,7 @@ class AgentServerServicer(RpcAgentServicer):
             return agent_pb2.CallFuncResponse(
                 ok=True,
                 value=pickle.dumps(
-                    TaskResult(
+                    AsyncResult(
                         host=self.host,
                         port=self.port,
                         task_id=task_id,
