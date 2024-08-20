@@ -245,22 +245,15 @@ class TextToImageAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.pipeline = TextToImageAgent(**self.opt_kwargs)
-
     def _execute_init(self) -> None:
         """
         Init before running.
         """
         super()._execute_init()
         self.pipeline = TextToImageAgent(**self.opt_kwargs)
+
+    def _execute(self, x: dict = None) -> dict:
+        return self.pipeline(x)
 
     def compile(self) -> dict:
         return {
@@ -279,22 +272,15 @@ class DictDialogAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.pipeline = DictDialogAgent(**self.opt_kwargs)
-
     def _execute_init(self) -> None:
         """
         Init before running.
         """
         super()._execute_init()
         self.pipeline = DictDialogAgent(**self.opt_kwargs)
+
+    def _execute(self, x: dict = None) -> dict:
+        return self.pipeline(x)
 
     def compile(self) -> dict:
         return {
