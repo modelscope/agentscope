@@ -28,7 +28,7 @@ def main(args):
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
 
     # Initialize the agents
-    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level)
+    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level, studio_url="http://127.0.0.1:5000")
 
     ann = Msg(name="Boss", content="This is a game development work group, please discuss how to develop an open world game.", role="system")
     r = ChatRoom(name="chat", announcement=ann, to_dist=args.use_dist)

@@ -4,6 +4,7 @@ from typing import List, Any, Union, Mapping
 from copy import deepcopy
 import asyncio
 import re
+import random
 from loguru import logger
 
 from agentscope.agents import AgentBase
@@ -55,7 +56,8 @@ class ChatRoomMember(BasicEnv):
             msg = self._agent(Msg(name="user", content="", role="user"))
             if 'goodbye' in msg.content.lower():
                 break
-            await asyncio.sleep(5)
+            sleep_time = random.randint(1, 5)
+            await asyncio.sleep(sleep_time)
 
 
 class ChatRoom(BasicEnv):
