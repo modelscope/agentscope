@@ -12,26 +12,30 @@ class RpcEnv(Env, RpcObject):
 
     def __init__(
         self,
-        env_cls: Type[Env],
         name: str,
+        env_cls: Type[Env],
         host: str = "localhost",
         port: int = None,
+        env_id: str = None,
+        connect_existing: bool = False,
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        connect_existing: bool = False,
         env_configs: dict = None,
-        env_id: str = None,
     ) -> None:
         """Initialize an RpcEnv instance.
 
         Args:
-            cls (type): The Env sub-class.
             name (`str`): the name of the env.
+            cls (type): The Env sub-class.
             host (`str`, defaults to `localhost`):
                 Hostname of the rpc agent server.
             port (`int`, defaults to `None`):
                 Port of the rpc agent server.
+            env_id (`str`, defaults to `None`):
+                The id of the env.
+            connect_existing (`bool`, defaults to `False`):
+                Set to `True`, if the env is already running on the server.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
             max_timeout_seconds (`int`, defaults to `7200`):
@@ -39,10 +43,6 @@ class RpcEnv(Env, RpcObject):
             local_mode (`bool`, defaults to `True`):
                 Whether the started gRPC server only listens to local
                 requests.
-            connect_existing (`bool`, defaults to `False`):
-                Set to `True`, if the env is already running on the server.
-            env_id (`str`, defaults to `None`):
-                The id of the env.
         """
         self._name = name
         RpcObject.__init__(

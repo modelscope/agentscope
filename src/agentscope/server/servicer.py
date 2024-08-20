@@ -228,7 +228,7 @@ class AgentServerServicer(RpcAgentServicer):
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
         try:
-            agent_instance = cls(
+            instance = cls(
                 *agent_configs["args"],
                 **agent_configs["kwargs"],
             )
@@ -238,33 +238,37 @@ class AgentServerServicer(RpcAgentServicer):
             )
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
-        if type_name == "agent":
-            rpc_init_cfg = {
-                "host": self.host,
-                "port": self.port,
-                "name": agent_instance.name,
-                "agent_class": cls_name,
-                "connect_existing": True,
-                "agent_id": agent_id,
-            }
-        else:
-            rpc_init_cfg = {
-                "host": self.host,
-                "port": self.port,
-                "name": agent_instance.name,
-                "env_cls": cls_name,
-                "connect_existing": True,
-                "env_id": agent_id,
-            }
-        agent_instance.__reduce__ = lambda s: (rpc_cls, rpc_init_cfg)
-        agent_instance._agent_id = agent_id  # pylint: disable=W0212
+
+        rpc_init_cfg = (
+            instance.name,
+            cls,
+            self.host,
+            self.port,
+            agent_id,
+            True,
+        )
+
+        def to_rpc(obj, _) -> tuple:  # type: ignore[no-untyped-def]
+            return (
+                obj._dist_config["cls"],  # pylint: disable=W0212
+                obj._dist_config["args"],  # pylint: disable=W0212
+            )
+
+        instance._dist_config = {  # pylint: disable=W0212
+            "cls": rpc_cls,
+            "args": rpc_init_cfg,
+        }
+        instance.__reduce_ex__ = to_rpc.__get__(  # pylint: disable=E1120
+            instance,
+        )
+        instance._agent_id = agent_id  # pylint: disable=W0212
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
                 return agent_pb2.GeneralResponse(
                     ok=False,
                     message=f"Agent with agent_id [{agent_id}] already exists",
                 )
-            self.agent_pool[agent_id] = agent_instance
+            self.agent_pool[agent_id] = instance
         logger.info(f"create agent instance <{cls_name}>[{agent_id}]")
         return agent_pb2.GeneralResponse(ok=True)
 
