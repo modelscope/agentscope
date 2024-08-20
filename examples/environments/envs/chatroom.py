@@ -44,6 +44,11 @@ class ChatRoomMember(BasicEnv):
         """Get the history index of the agent."""
         return self._history_idx
 
+    @property
+    def agent(self) -> AgentBase:
+        """Get the agent of the member."""
+        return self._agent
+
     async def chatting(self, delay: int = 1):
         await asyncio.sleep(delay)
         while True:

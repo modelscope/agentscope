@@ -17,7 +17,7 @@ from agentscope.exception import (
     EnvTypeError,
 )
 
-from agentscope.agents import AgentBase
+from agentscope.agents import AgentBase, RpcAgent
 from agentscope.message import Msg
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -93,6 +93,10 @@ class AgentWithChatRoom(AgentBase):
     def get_event(self, idx: int) -> Event:
         """Get the specific event."""
         return self.event_list[idx]
+
+    def chatroom(self) -> Env:
+        """Get the chatroom"""
+        return self.room
 
 
 class EnvTest(unittest.TestCase):
@@ -470,7 +474,7 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(cnt1.get(), 3)
         self.assertEqual(cnt2.get(), -1)
 
-    def test_chat_room(self) -> None:
+    def test_chat_room(self) -> None:  # pylint: disable=R0915
         """Test chat room."""
 
         class Listener(EventListener):
@@ -559,6 +563,14 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(master.get_event(-1).name, "speak")
         self.assertEqual(master.get_event(-1).args["message"], r2)
         self.assertEqual(master.get_event(-2).name, "get_history")
+
+        # test rpc type
+        ra1 = r[a1.agent_id].agent
+        self.assertTrue(isinstance(ra1, RpcAgent))
+        self.assertEqual(ra1.agent_id, a1.agent_id)
+        rr = a1.chatroom()
+        self.assertTrue(isinstance(rr, RpcEnv))
+        self.assertEqual(r._agent_id, rr._agent_id)  # pylint: disable=W0212
 
         # test history_idx
         self.assertEqual(r[a1.agent_id].history_idx, 0)
