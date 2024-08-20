@@ -17,6 +17,7 @@ let nameToHtmlFile = {
     'openai_chat': 'model-openai-chat.html',
     'post_api_chat': 'model-post-api-chat.html',
     'post_api_dall_e': 'model-post-api-dall-e.html',
+    'dashscope_image_synthesis': 'model-wanx.html',
     'Message': 'message-msg.html',
     'DialogAgent': 'agent-dialogagent.html',
     'UserAgent': 'agent-useragent.html',
@@ -560,6 +561,28 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                 },
                 htmlSourceCode);
             addEventListenersToNumberInputs(post_api_dall_eId);
+            break;
+
+        case 'dashscope_image_synthesis':
+            const dashscope_image_synthesisId = editor.addNode('dashscope_image_synthesis', 0,
+                0,
+                pos_x, pos_y,
+                'dashscope_image_synthesis', {
+                    "args":
+                        {
+                            "config_name": '',
+                            "model_name": '',
+                            "generate_args": {
+                                "n": 1,
+                                "size": "",
+                                "temperature": 0.0,
+                                "seed": 0,
+                            },
+                            "model_type": 'dashscope_image_synthesis',
+                            "messages_key": 'prompt'
+                        }
+                }, htmlSourceCode);
+            addEventListenersToNumberInputs(dashscope_image_synthesisId);
             break;
 
         // Message
