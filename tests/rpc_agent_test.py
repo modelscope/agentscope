@@ -528,7 +528,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         res2 = agent2(msg2)
-        self.assertRaises(ValueError, res2.__getattr__, "content")
+        self.assertRaises(Exception, res2.__getattr__, "content")
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(
@@ -818,9 +818,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(a2.host, host)
         self.assertEqual(a2.port, port)
         client = RpcAgentClient(host=host, port=port)
-        al = client.get_agent_list()
         a1._check_created()  # pylint: disable=W0212
         a2._check_created()  # pylint: disable=W0212
+        al = client.get_agent_list()
         self.assertEqual(len(al), 2)
 
         # test not alive server

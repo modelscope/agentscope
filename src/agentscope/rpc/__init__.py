@@ -2,7 +2,6 @@
 """Import all rpc related modules in the package."""
 from .rpc_agent_client import (
     RpcAgentClient,
-    ResponseStub,
     call_func_in_thread,
 )
 
@@ -22,7 +21,6 @@ except ImportError as import_error:
 
 __all__ = [
     "RpcAgentClient",
-    "ResponseStub",
     "CallFuncRequest",
     "RpcAgentServicer",
     "RpcAgentStub",

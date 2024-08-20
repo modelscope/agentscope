@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Configs for Distributed mode."""
 from typing import Callable, Any
+from concurrent.futures import Future
 from loguru import logger
 
 try:
@@ -10,7 +11,7 @@ except ImportError as import_error:
 
     pickle = ImportErrorReporter(import_error, "distribtue")
 
-from .rpc_agent_client import RpcAgentClient, ResponseStub
+from .rpc_agent_client import RpcAgentClient
 from ..utils.tools import is_web_accessible
 
 
@@ -35,7 +36,7 @@ class AsyncResult:
         host: str,
         port: int,
         task_id: int = None,
-        stub: ResponseStub = None,
+        stub: Future = None,
     ) -> None:
         self.host = host
         self.port = port
@@ -49,13 +50,13 @@ class AsyncResult:
     def get_task_id(self) -> str:
         """get the task_id."""
         try:
-            return pickle.loads(self.stub.get_response())
+            return pickle.loads(self.stub.result())
         except Exception as e:
             logger.error(
-                f"Failed to get task_id: {self.stub.get_response()}",
+                f"Failed to get task_id: {self.stub.result()}",
             )
             raise ValueError(
-                f"Failed to get task_id: {self.stub.get_response()}",
+                f"Failed to get task_id: {self.stub.result()}",
             ) from e
 
     def get(self) -> Any:

@@ -128,7 +128,7 @@ class RpcObject(ABC):
     def _check_created(self) -> None:
         """Check if the object is created on the rpc server."""
         if self._creating_stub is not None:
-            response = self._creating_stub.get_response()
+            response = self._creating_stub.result()
             if response is not True:
                 if issubclass(response.__class__, Exception):
                     raise response
