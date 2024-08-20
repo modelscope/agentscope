@@ -99,6 +99,7 @@ class ChatRoom(BasicEnv):
             agent=agent,
             history_idx=len(self.history),
         )
+        self.add_listener("speak", Mentioned(agent))
         return True
 
     @event_func
