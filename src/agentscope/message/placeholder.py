@@ -34,25 +34,10 @@ class PlaceholderMessage(Msg):
                 However, you can also only use `role` when calling openai api.
                 The usage of `name` refers to
                 https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
-            content (`Any`):
-                The content of the message.
-            role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
-                The role of the message, which can be one of the `"system"`,
-                `"user"`, or `"assistant"`.
-            url (`Optional[Union[List[str], str]]`, defaults to None):
-                A url to file, image, video, audio or website.
             timestamp (`Optional[str]`, defaults to None):
                 The timestamp of the message, if None, it will be set to
                 current time.
-            host (`str`, defaults to `None`):
-                The hostname of the rpc server where the real message is
-                located.
-            port (`int`, defaults to `None`):
-                The port of the rpc server where the real message is located.
-            task_id (`int`, defaults to `None`):
-                The task id of the real message in the rpc server.
-            stub (`ResponseStub`, defaults to `None`):
-                A ResponseStub instance used to get the task_id.
+            async_result (`AsyncResult`): The AsyncResult object returned by server.
         """  # noqa
         super().__init__(
             name=name,

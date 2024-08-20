@@ -41,13 +41,13 @@ class AsyncResult:
         self.port = port
         self.stub = None
         self.task_id: int = None
-        if stub is None:
+        if task_id is not None:
             self.task_id = task_id
         else:
             self.stub = stub
 
-    def update_task_id(self) -> str:
-        """Update the task_id."""
+    def get_task_id(self) -> str:
+        """get the task_id."""
         try:
             return pickle.loads(self.stub.get_response())
         except Exception as e:
@@ -61,8 +61,7 @@ class AsyncResult:
     def get(self) -> Any:
         """Get the value"""
         if self.task_id is None:
-            self.task_id = self.update_task_id
-        self.update_task_id()
+            self.task_id = self.get_task_id()
         return pickle.loads(
             RpcAgentClient(self.host, self.port).update_placeholder(
                 self.task_id,
@@ -83,7 +82,8 @@ class AsyncResult:
         return checked_urls
 
     def __getstate__(self) -> dict:
-        self.update_task_id()
+        if self.task_id is None:
+            self.task_id = self.get_task_id()
         return {
             "host": self.host,
             "port": self.port,
