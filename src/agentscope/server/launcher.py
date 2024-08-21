@@ -494,7 +494,8 @@ class RpcAgentServerLauncher:
                 import psutil
                 process = psutil.Process(self.server.pid)
                 for sub_process in process.children(recursive=True):
-                    sub_process.send_signal(signal.SIGINT)
+                    if sub_process.is_running():
+                        sub_process.send_signal(signal.SIGINT)
             self.server.join()
             if self.server.is_alive():
                 self.server.kill()

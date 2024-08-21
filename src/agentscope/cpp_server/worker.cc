@@ -545,15 +545,11 @@ void Worker::create_agent_worker(const int call_id)
     py::tuple create_result = py::module::import("agentscope.cpp_server").attr("create_agent")(agent_id, py::bytes(agent_init_args), py::bytes(agent_source_code));
     py::object agent = create_result[0];
     py::object error_msg = create_result[1];
-    string result;
-    if (error_msg.is_none())
+    string result = error_msg.cast<string>();
+    if (result.empty())
     {
         unique_lock<shared_mutex> lock(_agent_pool_mutex);
         _agent_pool.insert(std::make_pair(agent_id, agent));
-    }
-    else
-    {
-        result = error_msg.cast<string>();
     }
     logger("create_agent_worker: call_id = " + to_string(call_id) + " result = " + result);
     set_result(call_id, result);
