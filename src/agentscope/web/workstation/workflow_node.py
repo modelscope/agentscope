@@ -717,7 +717,7 @@ class BingSearchServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from functools import partial\n"
             "from agentscope.service import bing_search",
             "inits": f"{self.var_name} = partial(bing_search,"
@@ -745,7 +745,7 @@ class GoogleSearchServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from functools import partial\n"
             "from agentscope.service import google_search",
             "inits": f"{self.var_name} = partial(google_search,"
@@ -773,7 +773,7 @@ class PythonServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import execute_python_code",
             "inits": f"{self.var_name} = execute_python_code",
             "execs": "",
@@ -799,7 +799,7 @@ class ReadTextServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import read_text_file",
             "inits": f"{self.var_name} = read_text_file",
             "execs": "",
@@ -825,7 +825,7 @@ class WriteTextServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import write_text_file",
             "inits": f"{self.var_name} = write_text_file",
             "execs": "",
