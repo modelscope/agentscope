@@ -988,7 +988,7 @@
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.BingSearchServiceNode.compile">[文档]</a>
     <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceToolkit</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from functools import partial</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from agentscope.service import bing_search&quot;</span><span class="p">,</span>
             <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = partial(bing_search,&quot;</span>
@@ -1025,7 +1025,7 @@
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.GoogleSearchServiceNode.compile">[文档]</a>
     <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceToolkit</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from functools import partial</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from agentscope.service import google_search&quot;</span><span class="p">,</span>
             <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = partial(google_search,&quot;</span>
@@ -1062,7 +1062,7 @@
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PythonServiceNode.compile">[文档]</a>
     <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceToolkit</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from agentscope.service import execute_python_code&quot;</span><span class="p">,</span>
             <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = execute_python_code&quot;</span><span class="p">,</span>
             <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -1097,7 +1097,7 @@
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReadTextServiceNode.compile">[文档]</a>
     <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceToolkit</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from agentscope.service import read_text_file&quot;</span><span class="p">,</span>
             <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = read_text_file&quot;</span><span class="p">,</span>
             <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -1132,7 +1132,7 @@
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WriteTextServiceNode.compile">[文档]</a>
     <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceFactory</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.service import ServiceToolkit</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;from agentscope.service import write_text_file&quot;</span><span class="p">,</span>
             <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = write_text_file&quot;</span><span class="p">,</span>
             <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>

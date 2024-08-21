@@ -452,6 +452,22 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dag</span> <span class="o">=</span> <span class="n">ASDiGraph</span><span class="p">()</span>
 
+    <span class="c1"># for html json file,</span>
+    <span class="c1"># retrieve the contents of config[&quot;drawflow&quot;][&quot;Home&quot;][&quot;data&quot;],</span>
+    <span class="c1"># and remove the node whose class is &quot;welcome&quot;</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="s2">&quot;drawflow&quot;</span> <span class="ow">in</span> <span class="n">config</span>
+        <span class="ow">and</span> <span class="s2">&quot;Home&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;drawflow&quot;</span><span class="p">]</span>
+        <span class="ow">and</span> <span class="s2">&quot;data&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;drawflow&quot;</span><span class="p">][</span><span class="s2">&quot;Home&quot;</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;drawflow&quot;</span><span class="p">][</span><span class="s2">&quot;Home&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;class&quot;</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;welcome&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+
     <span class="k">for</span> <span class="n">node_id</span><span class="p">,</span> <span class="n">node_info</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">config</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">sanitize_node_data</span><span class="p">(</span><span class="n">node_info</span><span class="p">)</span>
 
