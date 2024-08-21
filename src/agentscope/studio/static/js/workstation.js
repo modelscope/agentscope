@@ -336,6 +336,10 @@ async function initializeWorkstationPage() {
     });
 
     setTimeout(showSurveyModal, 30000);
+
+    if(!localStorage.getItem('firstGuide')){
+        startGuide();
+    }
 }
 
 
@@ -2141,6 +2145,10 @@ function importExample(index) {
 
 
 function importExample_step(index) {
+    if(!localStorage.getItem('firstGuide')){
+        localStorage.setItem('firstGuide', 'true');
+        skipGuide();
+    }
     fetchExample(index, data => {
         const dataToImportStep = data.json;
         addHtmlAndReplacePlaceHolderBeforeImport(dataToImportStep).then(() => {
@@ -2300,4 +2308,47 @@ function showSurveyModal() {
 
 function hideSurveyModal() {
     document.getElementById("surveyModal").style.display = "none";
+}
+
+function startGuide(){
+    const targetElement = document.querySelector('.guide-Example');
+    const element = document.querySelector('.tour-guide');
+    positionElementRightOf(element, targetElement);
+}
+
+function getElementCoordinates(targetElement) {
+    const style = window.getComputedStyle(targetElement);
+    const rect = targetElement.getBoundingClientRect();
+    return {
+      left: rect.left + (parseFloat(style.left) || 0),
+      top: rect.top + (parseFloat(style.top) || 0),
+      right: rect.right + (parseFloat(style.top) || 0),
+      bottom: rect.bottom + (parseFloat(style.top) || 0),
+      width: rect.width,
+      height: rect.height,
+      x: rect.x,
+      y: rect.y,
+    };
+}
+
+function positionElementRightOf(element, targetElement) {
+    const targetCoordinates = getElementCoordinates(targetElement);
+    const mask  = document.querySelector(".overlay");
+    mask.style.display = "block";
+    element.style.position = 'absolute';
+    element.style.display = 'block';
+    element.style.left = `${targetCoordinates.x + targetCoordinates.right}px`;
+    element.style.top = `${targetCoordinates.y}px`;
+}
+
+function skipGuide(){
+    const element = document.querySelector(".tour-guide");
+    const mask  = document.querySelector(".overlay");
+    localStorage.setItem('firstGuide', 'true');
+    if(element){
+        element.style.display = "none";
+        element.remove();
+        mask.style.display = "none";
+        mask.remove();
+    }
 }

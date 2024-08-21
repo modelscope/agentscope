@@ -840,3 +840,73 @@ pre[class*="language-"] {
     line-height: 1.2;
     resize: vertical;
 }
+
+.tour-guide {
+    display: none;
+    z-index: 3;
+}
+
+.tour-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.tour-arrow {
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #ccc transparent transparent;
+    transform: translateY(-50%);
+}
+
+.tour-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    display: none;
+}
+
+.guide-Example{
+    background: #fff;
+    height: fit-content;
+    border-radius: 4px;
+    border: 1px solid #fff;
+    color: #000;
+    z-index: 2;
+}
+
+.guide-skip{
+    padding: 8px 12px;
+    margin: 4px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--main-color);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}

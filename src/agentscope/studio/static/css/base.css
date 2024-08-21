@@ -34,6 +34,7 @@ a {
 
 .page-titlebar {
     display: flex;
+    justify-content: space-between;
     width: 100%;
     height: var(--page-titlebar-height);
     flex-direction: row;
@@ -42,3 +43,68 @@ a {
     box-sizing: border-box;
     padding: 0 20px;
 }
+
+.github-user-content{
+    display: flex;
+    align-items: center;
+}
+.user-detail{
+    display: flex;
+    position: relative;
+    cursor: pointer;
+}
+.user-option{
+    position: relative;
+    display: flex;;
+    margin-right: 5px;
+}
+.user-option a{
+    color: black;
+    text-decoration: none;
+    font-weight: normal;
+}
+.triangle-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid gray;
+    position: relative;
+    transform: translateY(10px);
+    margin-left: 5px;
+}
+
+.user-detail:hover .dropdown {
+    display: block;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top:100%;
+    left: 0;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    white-space: nowrap;
+    border-radius: 0 0px 5px 5px;
+    overflow: hidden;
+}
+
+.dropdown a {
+    color: black;
+    padding: 4px 8px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.triangle-down:hover {
+    border-top: 5px solid #000;
+}
+
+
