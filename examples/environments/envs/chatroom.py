@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """An env used as a chatroom."""
-from typing import List, Any, Union, Mapping
+from typing import List, Any, Tuple, Union, Mapping
 from copy import deepcopy
 import asyncio
 import re
 import random
 from loguru import logger
+import time
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -183,10 +184,11 @@ class ChatRoom(BasicEnv):
         for child in self.children.values():
             if pattern_str:
                 pattern_str += "|"
-            pattern_str += rf"""\s{child.agent_name}: """
+            pattern_str += rf"""\s?{child.agent_name}: """
         pattern = re.compile(pattern_str, re.DOTALL)
+        logger.debug(repr(pattern_str))
         logger.debug(response.text)
-        texts = [s.strip() for s in pattern.split(response.text) if s.strip()]
+        texts = [s.strip() for s in pattern.split(response.text)]
         logger.debug(texts)
         return ModelResponse(text=texts[0])
 
@@ -197,6 +199,8 @@ class ChatRoom(BasicEnv):
                 if isinstance(delay, int):
                     tasks.append(asyncio.create_task(child.chatting(delay=delay)))
                 else:
+                    if agent_id not in delay:
+                        continue
                     tasks.append(asyncio.create_task(child.chatting(delay=delay[agent_id])))
             await asyncio.gather(*tasks)
         asyncio.run(start_chatting())
@@ -254,6 +258,10 @@ class ChatRoomAgent(AgentBase):
         else:
             return Msg("system", self.sys_prompt, role="system")
 
+    def speak(self, content) -> None:
+        super().speak(content)
+        self.room.speak(content)
+
     def reply(self, x: Msg = None) -> Msg:
         msg_hint = self.generate_hint()
         self_msg = Msg(name=self.name, content=f"", role="assistant")
@@ -271,6 +279,6 @@ class ChatRoomAgent(AgentBase):
             max_retries=3,
         ).text
         msg = Msg(name=self.name, content=response, role="assistant")
-        self.speak(msg)
-        self.room.speak(msg)
+        if response:
+            self.speak(msg)
         return msg

@@ -20,6 +20,11 @@ def parse_args() -> argparse.Namespace:
         "--use-dist",
         action="store_true",
     )
+    parser.add_argument(
+        '--studio-url',
+        default=None,
+        type=str,
+    )
     return parser.parse_args()
 
 def main(args):
@@ -28,7 +33,7 @@ def main(args):
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
 
     # Initialize the agents
-    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level, studio_url="http://127.0.0.1:5000")
+    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level, studio_url=args.studio_url)
 
     ann = Msg(name="Boss", content="This is a game development work group, please discuss how to develop an open world game.", role="system")
     r = ChatRoom(name="chat", announcement=ann, to_dist=args.use_dist)
@@ -78,6 +83,5 @@ def main(args):
 
 
 if __name__ == '__main__':
-    # TODO: add argparse and to dist
     args = parse_args()
     main(args)
