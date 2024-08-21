@@ -5,12 +5,12 @@ import threading
 import json
 import os
 from typing import Optional, Sequence, Union, Generator, Callable
+from concurrent.futures import Future
 from loguru import logger
 
 try:
     import cloudpickle as pickle
     import grpc
-    from grpc import RpcError
     from google.protobuf.empty_pb2 import Empty
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
     import agentscope.rpc.rpc_agent_pb2 as agent_pb2
@@ -26,7 +26,7 @@ except ImportError as import_error:
 from ..utils.tools import generate_id_from_seed
 from ..exception import AgentServerNotAliveError
 from ..constants import _DEFAULT_RPC_OPTIONS
-from ..exception import AgentCallError
+from ..exception import AgentCallError, AgentCreationError
 from ..manager import FileManager
 
 
@@ -173,7 +173,7 @@ class RpcAgentClient:
                     port=self.port,
                     message=str(e),
                 ) from e
-            raise e
+            raise AgentCreationError(host=self.host, port=self.port) from e
 
     def delete_agent(
         self,
@@ -338,57 +338,25 @@ class RpcAgentClient:
         return file_manager.save_file(_generator(), local_filename)
 
 
-class ResponseStub(dict):
-    """A stub used to save the response of a rpc call in a sub-thread."""
-
-    def __init__(self) -> None:
-        self.response = None
-        self.condition = threading.Condition()
-
-    def set_response(self, response: str) -> None:
-        """Set the message."""
-        with self.condition:
-            self.response = response
-            self.condition.notify_all()
-
-    def get_response(self) -> str:
-        """Get the message."""
-        with self.condition:
-            while self.response is None:
-                self.condition.wait()
-            return self.response
-
-    def __getstate__(self) -> dict:
-        """For serialization."""
-        state = self.__dict__.copy()
-        del state["condition"]
-        return state
-
-    def __setstate__(self, state: dict) -> None:
-        """For deserialization."""
-        self.__dict__.update(state)
-        self.condition = threading.Condition()
-
-
-def call_func_in_thread(func: Callable) -> ResponseStub:
+def call_func_in_thread(func: Callable) -> Future:
     """Call a function in a sub-thread.
 
     Args:
         func (`Callable`): The function to be called in sub-thread.
 
     Returns:
-        `ResponseStub`: A stub to get the response.
+        `Future`: A stub to get the response.
     """
-    stub = ResponseStub()
+    future = Future()
 
     def wrapper() -> None:
         try:
-            resp = func()
-            stub.set_response(resp)  # type: ignore[arg-type]
-        except RpcError as e:
-            logger.error(f"Fail to call function in thread: {e}")
-            stub.set_response(str(e))
+            result = func()
+            future.set_result(result)
+        except Exception as e:
+            future.set_exception(e)
 
     thread = threading.Thread(target=wrapper)
     thread.start()
-    return stub
+
+    return future

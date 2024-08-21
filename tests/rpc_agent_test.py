@@ -24,7 +24,11 @@ from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.rpc import RpcAgentClient, async_func
 from agentscope.agents import RpcAgent
-from agentscope.exception import AgentCallError, QuotaExceededError
+from agentscope.exception import (
+    AgentCallError,
+    QuotaExceededError,
+    AgentCreationError,
+)
 
 
 class DemoRpcAgent(AgentBase):
@@ -524,7 +528,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         res2 = agent2(msg2)
-        self.assertRaises(ValueError, res2.__getattr__, "content")
+        self.assertRaises(Exception, res2.__getattr__, "content")
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(
@@ -724,9 +728,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent_lists = client.get_agent_list()
         self.assertEqual(len(agent_lists), 2)
         # model not exists error
-        self.assertRaises(
-            Exception,
-            DialogAgent,
+        dialog = DialogAgent(  # pylint: disable=E1123
             name="dialogue",
             sys_prompt="You are a helful assistant.",
             model_config_name="my_openai",
@@ -734,6 +736,11 @@ class BasicRpcAgentTest(unittest.TestCase):
                 "host": "localhost",
                 "port": launcher.port,
             },
+        )
+        self.assertRaises(
+            AgentCreationError,
+            dialog,
+            Msg(name="system", role="system", content="hello"),
         )
         # set model configs
         client.set_model_configs(
@@ -811,6 +818,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(a2.host, host)
         self.assertEqual(a2.port, port)
         client = RpcAgentClient(host=host, port=port)
+        a1._check_created()  # pylint: disable=W0212
+        a2._check_created()  # pylint: disable=W0212
         al = client.get_agent_list()
         self.assertEqual(len(al), 2)
 
@@ -819,6 +828,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
         self.assertEqual(a3.host, "localhost")
         nclient = RpcAgentClient(host=a3.host, port=a3.port)
+        a3._check_created()  # pylint: disable=W0212
         nal = nclient.get_agent_list()
         self.assertEqual(len(nal), 1)
 

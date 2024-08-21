@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """A proxy object which represent a object located in a rpc server."""
 from typing import Any, Callable
+from functools import partial
 from abc import ABC
 from inspect import getmembers, isfunction
 from types import FunctionType
@@ -12,8 +13,8 @@ except ImportError as e:
 
     pickle = ImportErrorReporter(e, "distribute")
 
-from ..rpc import RpcAgentClient
-from ..exception import AgentServerUnsupportedMethodError
+from ..rpc import RpcAgentClient, call_func_in_thread
+from ..exception import AgentServerUnsupportedMethodError, AgentCreationError
 from ..studio._client import _studio_client
 from ..server import RpcAgentServerLauncher
 
@@ -63,6 +64,7 @@ class RpcObject(ABC):
         self.host = host
         self.port = port
         self._agent_id = oid
+        self._cls = cls
         self._supported_attributes = get_public_methods(cls)
         self.connect_existing = connect_existing
 
@@ -95,11 +97,19 @@ class RpcObject(ABC):
             self._launch_server()
         self.client = RpcAgentClient(self.host, self.port)
         if not connect_existing:
-            self.create_object(configs)
+            self.create(configs)
+        else:
+            self._creating_stub = None
 
-    def create_object(self, configs: dict) -> bool:
+    def create(self, configs: dict) -> None:
         """create the object on the rpc server."""
-        return self.client.create_agent(configs, self._agent_id)
+        self._creating_stub = call_func_in_thread(
+            partial(
+                self.client.create_agent,
+                configs,
+                self._agent_id,
+            ),
+        )
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
@@ -115,9 +125,19 @@ class RpcObject(ABC):
         if self.server_launcher is not None:
             self.server_launcher.shutdown()
 
+    def _check_created(self) -> None:
+        """Check if the object is created on the rpc server."""
+        if self._creating_stub is not None:
+            response = self._creating_stub.result()
+            if response is not True:
+                if issubclass(response.__class__, Exception):
+                    raise response
+                raise AgentCreationError(self.host, self.port)
+            self._creating_stub = None
+
     def _call_rpc_func(self, func_name: str, args: dict) -> Any:
         """Call a function in rpc server."""
-
+        self._check_created()
         return pickle.loads(
             self.client.call_agent_func(
                 agent_id=self._agent_id,
@@ -128,7 +148,7 @@ class RpcObject(ABC):
 
     def __getattr__(self, name: str) -> Callable:
         if name not in self._supported_attributes:
-            raise AgentServerUnsupportedMethodError(
+            raise AttributeError from AgentServerUnsupportedMethodError(
                 host=self.host,
                 port=self.port,
                 oid=self._agent_id,
@@ -163,13 +183,12 @@ class RpcObject(ABC):
             return memo[id(self)]
 
         clone = RpcObject(
-            cls=self.__class__,
+            cls=self._cls,
             oid=self._agent_id,
             host=self.host,
             port=self.port,
             connect_existing=True,
         )
-        clone._supported_attributes = self._supported_attributes
         memo[id(self)] = clone
 
         return clone

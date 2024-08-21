@@ -141,3 +141,17 @@ class RpcEnv(Env, RpcObject):
             "__setitem__",
             {"kwargs": {"env_name": env_name}},
         )
+
+    def __reduce__(self) -> tuple:
+        self._check_created()
+        return (
+            RpcEnv,
+            (
+                self.name,
+                self._cls,
+                self.host,
+                self.port,
+                self._agent_id,
+                True,
+            ),
+        )
