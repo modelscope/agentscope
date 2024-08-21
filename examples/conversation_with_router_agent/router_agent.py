@@ -35,7 +35,7 @@ class RouterAgent(AgentBase):
 
 - When routing questions to agents:
 <thought>what you thought</thought>
-<agent>the agent name, e.g. math, history</agent>
+<agent>the agent name</agent>
 
 - When answering questions directly:
 <thought>what you thought</thought>
