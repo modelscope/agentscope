@@ -159,7 +159,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Mixture of Agents算法](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[流式对话](https://github.com/modelscope/agentscope/blob/main/examples/conversation_in_stream_mode/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与CodeAct智能体对话](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_codeact_agent/)
-  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Router Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_router_agent/)
+  - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[与Router Agent对话](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_router_agent/)
 
 - 游戏
   - [五子棋](./examples/game_gomoku)
