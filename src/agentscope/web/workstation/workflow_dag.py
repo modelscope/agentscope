@@ -310,6 +310,9 @@ def build_dag(config: dict) -> ASDiGraph:
     """
     dag = ASDiGraph()
 
+    # for html json file,
+    # retrieve the contents of config["drawflow"]["Home"]["data"],
+    # and remove the node whose class is "welcome"
     if (
         "drawflow" in config
         and "Home" in config["drawflow"]
