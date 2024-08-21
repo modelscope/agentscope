@@ -89,15 +89,18 @@ def _save_msg(msg: Msg) -> None:
         msg (`Msg`):
             The message object to be saved.
     """
-    logger.log(
-        LEVEL_SAVE_LOG,
-        msg.formatted_str(colored=False),
-    )
+    # TODO: Unified into a manager rather than an indicated attribute here
+    if hasattr(logger, "chat"):
+        # Not initialize yet
+        logger.log(
+            LEVEL_SAVE_LOG,
+            msg.formatted_str(colored=False),
+        )
 
-    logger.log(
-        LEVEL_SAVE_MSG,
-        serialize(msg),
-    )
+        logger.log(
+            LEVEL_SAVE_MSG,
+            serialize(msg),
+        )
 
 
 def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
