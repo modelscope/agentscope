@@ -24,7 +24,9 @@ def init_process_with_str(init_settings_str):
 def register_agent_classes(custom_agent_classes_str: str) -> None:
     """Register agent classes."""
     if custom_agent_classes_str:
-        custom_agent_classes = dill.loads(base64.b64decode(custom_agent_classes_str.encode()))
+        custom_agent_classes = dill.loads(
+            base64.b64decode(custom_agent_classes_str.encode())
+        )
         for agent_class in custom_agent_classes:
             AgentBase.register_agent_class(agent_class=agent_class)
 
@@ -42,9 +44,7 @@ def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
         try:
             cls = AgentBase.get_agent_class(cls_name)
         except ValueError as e:
-            err_msg = (
-                f"Agent class [{cls_name}] not found: {str(e)}",
-            )
+            err_msg = (f"Agent class [{cls_name}] not found: {str(e)}",)
             logger.error(err_msg)
             return None, str(err_msg)
     try:
@@ -53,11 +53,11 @@ def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
             **agent_configs["kwargs"],
         )
         agent_instance._agent_id = agent_id  # pylint: disable=W0212
-        logger.info(f"create agent instance <{cls_name}>[{agent_id}] [{agent_instance.name}]")
+        logger.info(
+            f"create agent instance <{cls_name}>[{agent_id}] [{agent_instance.name}]"
+        )
         return agent_instance, ""
     except Exception as e:
-        err_msg = (
-            f"Failed to create agent instance <{cls_name}>: {str(e)}",
-        )
+        err_msg = (f"Failed to create agent instance <{cls_name}>: {str(e)}",)
         logger.error(err_msg)
         return None, str(err_msg)
