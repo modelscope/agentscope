@@ -1,75 +1,10 @@
 import os
 import argparse
-import time
-from loguru import logger
 
 import agentscope
 from agentscope.message import Msg
-from agentscope.studio._client import _studio_client
-from agentscope.web.gradio.utils import user_input
 
-from envs.chatroom import ChatRoom, ChatRoomAgent
-
-
-class ChatRoomAgentWithAssistant(ChatRoomAgent):
-    """A ChatRoomAgent with assistant"""
-    def __init__(
-        self,
-        timeout: float | None = None,
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-        self.timeout = timeout
-
-    def reply(self, x: Msg = None) -> Msg:
-        if _studio_client.active:
-            logger.info(
-                f"Waiting for input from:\n\n"
-                f"    * {_studio_client.get_run_detail_page_url()}\n",
-            )
-            raw_input = _studio_client.get_user_input(
-                agent_id=self.agent_id,
-                name=self.name,
-                require_url=False,
-                required_keys=None,
-                timeout=self.timeout,
-            )
-
-            logger.info("Python: receive ", raw_input)
-            if raw_input is None:
-                content = None
-            else:
-                content = raw_input["content"]
-        else:
-            time.sleep(0.5)
-            try:
-                content = user_input(timeout=self.timeout)
-            except TimeoutError:
-                content = None
-
-        if content is not None:  # user input
-            response = content
-        else:  # assistant reply
-            msg_hint = self.generate_hint()
-            self_msg = Msg(name=self.name, content=f"", role="assistant")
-
-            history = self.room.get_history(self.agent_id)
-            prompt = self.model.format(
-                msg_hint,
-                history,
-                self_msg,
-            )
-            logger.debug(prompt)
-            response = self.model(
-                prompt,
-                parse_func=self.room.chatting_parse_func,
-                max_retries=3,
-            ).text
-            if not response.startswith('[auto reply]'):
-                response = '[auto reply] ' + response
-        msg = Msg(name=self.name, content=response, role="user")
-        self.speak(msg)
-        return msg
+from envs.chatroom import ChatRoom, ChatRoomAgent, ChatRoomAgentWithAssistant
 
 
 def parse_args() -> argparse.Namespace:
@@ -88,6 +23,11 @@ def parse_args() -> argparse.Namespace:
         '--studio-url',
         default=None,
         type=str,
+    )
+    parser.add_argument(
+        '--timeout',
+        default=5,
+        type=int,
     )
     return parser.parse_args()
 
@@ -119,7 +59,7 @@ def main(args):
         r"""The content you reply to must be based on the chat history. Please refuse to reply to questions that are beyond the scope of the chat history.""",
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
         to_dist=args.use_dist,
-        timeout=5,
+        timeout=args.timeout,
     )
     bob.join(r)
 

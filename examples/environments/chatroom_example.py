@@ -51,7 +51,6 @@ def main(args):
         to_dist=args.use_dist,
     )
     alice.join(r)
-    # r.join(alice)
 
     bob = ChatRoomAgent(
         name="Bob",
@@ -64,7 +63,6 @@ def main(args):
         to_dist=args.use_dist,
     )
     bob.join(r)
-    # r.join(bob)
 
     carol = ChatRoomAgent(
         name="Carol",
@@ -77,7 +75,6 @@ def main(args):
         to_dist=args.use_dist,
     )
     carol.join(r)
-    # r.join(carol)
 
     # Start the chat
     r.chatting(delay={carol._agent_id: 0, alice._agent_id: 5, bob._agent_id:7})
