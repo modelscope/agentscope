@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Answerer Agent."""
+from typing import Optional, Union, Sequence
 
 from agentscope.message import Msg
 from agentscope.agents import AgentBase
@@ -22,7 +23,7 @@ class AnswererAgent(AgentBase):
             use_memory=False,
         )
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         response = load_web(
             url=x.url,
             keep_raw=False,

@@ -144,7 +144,9 @@ def check_uuid(uid: Optional[str]) -> str:
 
 def generate_image_from_name(name: str) -> str:
     """Generates an image based on the hash of the given name."""
-    from agentscope.file_manager import file_manager
+    from agentscope.manager import FileManager
+
+    file_manager = FileManager.get_instance()
 
     # Using hashlib to generate a hash of the name
     hash_func = hashlib.md5()
@@ -157,17 +159,11 @@ def generate_image_from_name(name: str) -> str:
     color_hex = "#" + hash_value[:6]
     color_rgb = Image.new("RGB", (1, 1), color_hex).getpixel((0, 0))
 
-    image_filepath = os.path.join(file_manager.dir_root, f"{name}_image.png")
-
-    # Check if the image already exists
-    if os.path.exists(image_filepath):
-        return image_filepath
-
     # If the image does not exist, generate and save it
     width, height = 200, 200
     image = Image.new("RGB", (width, height), color_rgb)
 
-    image.save(image_filepath)
+    image_filepath = file_manager.save_image(image, f"{name}_image.png")
 
     return image_filepath
 

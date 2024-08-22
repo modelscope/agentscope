@@ -5,7 +5,7 @@ gpu_num=8
 model_path="path-to-your-model-dir"
 base_port=8010
 
-> .vllm_pid
+>> .vllm_pid
 mkdir -p log
 
 for ((i=0; i<8; i++)); do

@@ -10,11 +10,13 @@ import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
+from random import choice
 
 from flask import (
     Flask,
     request,
     jsonify,
+    session,
     render_template,
     Response,
     abort,
@@ -24,9 +26,20 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-from agentscope._runtime import _runtime
-from agentscope.constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
-from agentscope.utils.tools import _is_process_alive, _is_windows
+from ..constants import (
+    _DEFAULT_SUBDIR_CODE,
+    _DEFAULT_SUBDIR_INVOKE,
+    FILE_SIZE_LIMIT,
+    FILE_COUNT_LIMIT,
+)
+from ._studio_utils import _check_and_convert_id_type
+from ..utils.tools import (
+    _is_process_alive,
+    _is_windows,
+    _generate_new_runtime_id,
+)
+from ..rpc.rpc_agent_client import RpcAgentClient
+
 
 _app = Flask(__name__)
 
@@ -127,7 +140,7 @@ class _ServerTable(_db.Model):  # type: ignore[name-defined]
 class _MessageTable(_db.Model):  # type: ignore[name-defined]
     """Message object."""
 
-    id = _db.Column(_db.Integer, primary_key=True)
+    id = _db.Column(_db.String, primary_key=True)
     run_id = _db.Column(
         _db.String,
         _db.ForeignKey("run_table.run_id"),
@@ -255,16 +268,123 @@ def _register_server() -> Response:
         abort(400, f"run_id [{server_id}] already exists")
 
     _db.session.add(
-        _ServerTable(
-            id=server_id,
-            host=host,
-            port=port,
-        ),
+        _ServerTable(id=server_id, host=host, port=port),
     )
     _db.session.commit()
 
     _app.logger.info(f"Register server id {server_id}")
     return jsonify(status="ok")
+
+
+@_app.route("/api/servers/all", methods=["GET"])
+def _get_all_servers() -> Response:
+    """Get all servers."""
+    servers = _ServerTable.query.all()
+
+    return jsonify(
+        [
+            {
+                "id": server.id,
+                "host": server.host,
+                "port": server.port,
+                "create_time": server.create_time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                ),
+            }
+            for server in servers
+        ],
+    )
+
+
+@_app.route("/api/servers/status/<server_id>", methods=["GET"])
+def _get_server_status(server_id: str) -> Response:
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    status = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_server_info()
+    if not status or status["id"] != server_id:
+        return jsonify({"status": "dead"})
+    else:
+        return jsonify(
+            {
+                "status": "running",
+                "cpu": status["cpu"],
+                "mem": status["mem"],
+                "size": status["size"],
+            },
+        )
+
+
+@_app.route("/api/servers/delete", methods=["POST"])
+def _delete_server() -> Response:
+    server_id = request.json.get("server_id")
+    stop_server = request.json.get("stop", False)
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    if stop_server:
+        RpcAgentClient(host=server.host, port=server.port).stop()
+    _ServerTable.query.filter_by(id=server_id).delete()
+    _db.session.commit()
+    return jsonify({"status": "ok"})
+
+
+@_app.route("/api/servers/agent_info/<server_id>", methods=["GET"])
+def _get_server_agent_info(server_id: str) -> Response:
+    _app.logger.info(f"Get info of server [{server_id}]")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    agents = RpcAgentClient(
+        host=server.host,
+        port=server.port,
+    ).get_agent_list()
+    return jsonify(agents)
+
+
+@_app.route("/api/servers/agents/delete", methods=["POST"])
+def _delete_agent() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id", None)
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    # delete all agents if agent_id is None
+    if agent_id is not None:
+        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+            agent_id,
+        )
+    else:
+        ok = RpcAgentClient(
+            host=server.host,
+            port=server.port,
+        ).delete_all_agent()
+    return jsonify(status="ok" if ok else "fail")
+
+
+@_app.route("/api/servers/agents/memory", methods=["POST"])
+def _agent_memory() -> Response:
+    server_id = request.json.get("server_id")
+    agent_id = request.json.get("agent_id")
+    server = _ServerTable.query.filter_by(id=server_id).first()
+    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+        agent_id,
+    )
+    if isinstance(mem, dict):
+        mem = [mem]
+    return jsonify(mem)
+
+
+@_app.route("/api/servers/alloc", methods=["GET"])
+def _alloc_server() -> Response:
+    # TODO: check the server is still running
+    # TODO: support to alloc multiple servers in one call
+    # TODO: use hints to decide which server to allocate
+    # TODO: allocate based on server's cpu and memory usage
+    # currently random select a server
+    servers = _ServerTable.query.all()
+    server = choice(servers)
+    return jsonify(
+        {
+            "host": server.host,
+            "port": server.port,
+        },
+    )
 
 
 @_app.route("/api/messages/push", methods=["POST"])
@@ -275,6 +395,7 @@ def _push_message() -> Response:
     data = request.json
 
     run_id = data["run_id"]
+    msg_id = data["id"]
     name = data["name"]
     role = data["role"]
     content = data["content"]
@@ -282,16 +403,21 @@ def _push_message() -> Response:
     timestamp = data["timestamp"]
     url = data["url"]
 
+    # First check if the message exists in the database, if exists, we update
+    # it, otherwise, we add it.
+    _MessageTable.query.filter_by(id=msg_id).delete()
+    _db.session.commit()
     try:
         new_message = _MessageTable(
+            id=msg_id,
             run_id=run_id,
             name=name,
             role=role,
             content=content,
             # Before storing into the database, we need to convert the url into
             # a string
-            meta=json.dumps(metadata),
-            url=json.dumps(url),
+            meta=json.dumps(metadata, ensure_ascii=False),
+            url=json.dumps(url, ensure_ascii=False),
             timestamp=timestamp,
         )
         _db.session.add(new_message)
@@ -300,6 +426,7 @@ def _push_message() -> Response:
         abort(400, "Fail to put message with error: " + str(e))
 
     data = {
+        "id": msg_id,
         "run_id": run_id,
         "name": name,
         "role": role,
@@ -491,7 +618,7 @@ def _convert_config_to_py_and_run() -> Response:
     """
     content = request.json.get("data")
     studio_url = request.url_root.rstrip("/")
-    run_id = _runtime.generate_new_runtime_id()
+    run_id = _generate_new_runtime_id()
     status, py_code = _convert_to_py(
         content,
         runtime_id=run_id,
@@ -548,6 +675,134 @@ def _read_examples() -> Response:
     ) as jf:
         data = json.load(jf)
     return jsonify(json=data)
+
+
+@_app.route("/save-workflow", methods=["POST"])
+def _save_workflow() -> Response:
+    """
+    Save the workflow JSON data to the local user folder.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    data = request.json
+    overwrite = data.get("overwrite", False)
+    filename = data.get("filename")
+    workflow_str = data.get("workflow")
+    if not filename:
+        return jsonify({"message": "Filename is required"})
+
+    filepath = os.path.join(user_dir, f"{filename}.json")
+
+    try:
+        workflow = json.loads(workflow_str)
+        if not isinstance(workflow, dict):
+            raise ValueError
+    except (json.JSONDecodeError, ValueError):
+        return jsonify({"message": "Invalid workflow data"})
+
+    workflow_json = json.dumps(workflow, ensure_ascii=False, indent=4)
+    if len(workflow_json.encode("utf-8")) > FILE_SIZE_LIMIT:
+        return jsonify(
+            {
+                "message": f"The workflow file size exceeds "
+                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+            },
+        )
+
+    user_files = [
+        f
+        for f in os.listdir(user_dir)
+        if os.path.isfile(os.path.join(user_dir, f))
+    ]
+
+    if len(user_files) >= FILE_COUNT_LIMIT and not os.path.exists(filepath):
+        return jsonify(
+            {
+                "message": f"You have reached the limit of "
+                f"{FILE_COUNT_LIMIT} workflow files, please "
+                f"delete some files.",
+            },
+        )
+
+    if overwrite:
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(workflow, f, ensure_ascii=False, indent=4)
+    else:
+        if os.path.exists(filepath):
+            return jsonify({"message": "Workflow file exists!"})
+        else:
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump(workflow, f, ensure_ascii=False, indent=4)
+
+    return jsonify({"message": "Workflow file saved successfully"})
+
+
+@_app.route("/delete-workflow", methods=["POST"])
+def _delete_workflow() -> Response:
+    """
+    Deletes a workflow JSON file from the user folder.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    data = request.json
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"})
+
+    filepath = os.path.join(user_dir, filename)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"})
+
+    try:
+        os.remove(filepath)
+        return jsonify({"message": "Workflow file deleted successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@_app.route("/list-workflows", methods=["POST"])
+def _list_workflows() -> Response:
+    """
+    Get all workflow JSON files in the user folder.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    files = [file for file in os.listdir(user_dir) if file.endswith(".json")]
+    return jsonify(files=files)
+
+
+@_app.route("/load-workflow", methods=["POST"])
+def _load_workflow() -> Response:
+    """
+    Reads and returns workflow data from the specified JSON file.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    data = request.json
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"}), 400
+
+    filepath = os.path.join(user_dir, filename)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+
+    return jsonify(json_data)
 
 
 @_app.route("/")
@@ -694,6 +949,10 @@ def init(
         _app.logger.setLevel("DEBUG")
     else:
         _app.logger.setLevel("INFO")
+
+    # To be compatible with the old table schema, we need to check and convert
+    # the id column of the message_table from INTEGER to VARCHAR.
+    _check_and_convert_id_type(str(_cache_db), "message_table")
 
     _socketio.run(
         _app,

@@ -23,6 +23,7 @@ AgentScope 文档
    tutorial/103-example.md
 
    tutorial/203-model.md
+   tutorial/203-stream.md
    tutorial/206-prompt.md
    tutorial/201-agent.md
    tutorial/205-memory.md

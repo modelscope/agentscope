@@ -50,6 +50,8 @@ class OperateFileTest(unittest.TestCase):
             shutil.rmtree(self.moved_dir_name)
         if os.path.exists(self.txt_file_name):
             os.remove(self.txt_file_name)
+        if os.path.exists(self.json_file_name):
+            os.remove(self.json_file_name)
 
     def test_file(self) -> None:
         """Execute file test."""

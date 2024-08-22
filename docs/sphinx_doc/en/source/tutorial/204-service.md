@@ -15,6 +15,7 @@ The following table outlines the various Service functions by type. These functi
 | Service Scene               | Service Function Name      | Description                                                                                                    |
 |-----------------------------|----------------------------|----------------------------------------------------------------------------------------------------------------|
 | Code                        | `execute_python_code`      | Execute a piece of Python code, optionally inside a Docker container.                                          |
+|                             | `NoteBookExecutor.run_code_on_notebook`                  | Compute Execute a segment of Python code in the IPython environment of the NoteBookExecutor, adhering to the IPython interactive computing style.                                       |
 | Retrieval                   | `retrieve_from_list`       | Retrieve a specific item from a list based on given criteria.                                                  |
 |                             | `cos_sim`                  | Compute the cosine similarity between two different embeddings.                                                |
 | SQL Query                   | `query_mysql`              | Execute SQL queries on a MySQL database and return results.                                                    |
@@ -43,6 +44,14 @@ The following table outlines the various Service functions by type. These functi
 | Multi Modality              | `dashscope_text_to_image`  | Convert text to image using Dashscope API.                                                                     |
 |                             | `dashscope_image_to_text`  | Convert image to text using Dashscope API.                                                                     |
 |                             | `dashscope_text_to_audio`  | Convert text to audio using Dashscope API.                                                                     |
+|                             | `openai_text_to_image`     | Convert text to image using OpenAI API
+|                             | `openai_edit_image`        | Edit an image based on the provided mask and prompt using  OpenAI API
+|                             | `openai_create_image_variation`        | Create variations of an image using  OpenAI API
+|                             | `openai_image_to_text` | Convert text to image using OpenAI API
+|                             | `openai_text_to_audio` | Convert text to audio using OpenAI API
+|                             | `openai_audio_to_text` | Convert audio to text using OpenAI API
+
+
 | *More services coming soon* |                            | More service functions are in development and will be added to AgentScope to further enhance its capabilities. |
 
 About each service function, you can find detailed information in the
@@ -262,6 +271,9 @@ import json
 import inspect
 from agentscope.service import ServiceResponse
 from agentscope.agents import AgentBase
+from agentscope.message import Msg
+
+from typing import Optional, Union, Sequence
 
 
 def create_file(file_path: str, content: str = "") -> ServiceResponse:
@@ -282,7 +294,7 @@ def create_file(file_path: str, content: str = "") -> ServiceResponse:
 class YourAgent(AgentBase):
     # ... [omitted for brevity]
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         # ... [omitted for brevity]
 
         # construct a prompt to ask the agent to provide the parameters in JSON format

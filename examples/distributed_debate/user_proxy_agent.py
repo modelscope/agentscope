@@ -4,6 +4,7 @@ from typing import Sequence, Union
 from typing import Optional
 
 from agentscope.agents import UserAgent
+from agentscope.message import Msg
 
 
 class UserProxyAgent(UserAgent):
@@ -11,9 +12,9 @@ class UserProxyAgent(UserAgent):
 
     def reply(  # type: ignore[override]
         self,
-        x: dict = None,
+        x: Optional[Union[Msg, Sequence[Msg]]] = None,
         required_keys: Optional[Union[list[str], str]] = None,
-    ) -> dict:
+    ) -> Msg:
         """
         Reply with `self.speak(x)`
         """
@@ -21,7 +22,7 @@ class UserProxyAgent(UserAgent):
             self.speak(x)
         return super().reply(x, required_keys)
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         """
         Observe with `self.speak(x)`
         """

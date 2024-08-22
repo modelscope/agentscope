@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 import agentscope
-from agentscope.models import load_model_by_config_name
+from agentscope.manager import ModelManager, ASManager
 
 
 class TestLiteLLMChatWrapper(unittest.TestCase):
@@ -17,10 +17,9 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             {"role": "assistant", "content": "How can I assist you?"},
         ]
 
-    @patch("agentscope.models.litellm_model.litellm")
+    @patch("litellm.completion")
     def test_chat(self, mock_litellm: MagicMock) -> None:
-        """
-        Test chat"""
+        """Test chat"""
         mock_response = MagicMock()
         mock_response.model_dump.return_value = {
             "choices": [
@@ -36,7 +35,7 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
             0
         ].message.content = "Hello, this is a mocked response!"
 
-        mock_litellm.completion.return_value = mock_response
+        mock_litellm.return_value = mock_response
 
         agentscope.init(
             model_configs={
@@ -45,9 +44,12 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
                 "model_name": "ollama/llama3:8b",
                 "api_key": self.api_key,
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("test_config")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "test_config",
+        )
 
         response = model(
             messages=self.messages,
@@ -55,6 +57,10 @@ class TestLiteLLMChatWrapper(unittest.TestCase):
         )
 
         self.assertEqual(response.text, "Hello, this is a mocked response!")
+
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":
