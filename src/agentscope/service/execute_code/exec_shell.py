@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Service to execute shell commands."""
 import subprocess
+
+from loguru import logger
+
 from agentscope.service.service_status import ServiceExecStatus
 from agentscope.service.service_response import ServiceResponse
 
@@ -26,6 +29,19 @@ def execute_shell_command(command: str) -> ServiceResponse:
         change/edit the files current directory (e.g. rm, sed).
     ...
     """
+
+    if any(_ in command for _ in execute_shell_command.insecure_commands):
+        logger.warning(
+            f"The command {command} is blocked for security reasons. "
+            f"If you want to enable the command, try to reset the "
+            f"insecure command list by executing "
+            f'`execute_shell_command.insecure_commands = ["xxx", "xxx"]`',
+        )
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=f"The command {command} is blocked for security reasons.",
+        )
+
     try:
         result = subprocess.run(
             command,
@@ -55,3 +71,19 @@ def execute_shell_command(command: str) -> ServiceResponse:
             status=ServiceExecStatus.ERROR,
             content=str(e),
         )
+
+
+# Security check: Block insecure commands
+execute_shell_command.insecure_commands = [
+    # System management
+    "shutdown",
+    "kill",
+    "reboot",
+    "pkill",
+    # User management
+    "useradd",
+    "userdel",
+    "usermod",
+    # File management
+    "rm -rf",
+]
