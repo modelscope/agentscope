@@ -228,8 +228,9 @@ class Msg:
                 colored_strs.append(f"{name}: {self.url}")
         return "\n".join(colored_strs)
 
-    def serialize(self) -> dict:
-        """Return the serialized message.
+    def to_dict(self) -> dict:
+        """Serialize the message into a dictionary, which can be
+        deserialized by calling the `from_dict` function.
 
         Returns:
             `dict`: The serialized dictionary.

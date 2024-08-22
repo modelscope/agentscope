@@ -82,7 +82,7 @@ class TemporaryMemory(MemoryBase):
             #  type error
             if isinstance(memory_unit, PlaceholderMessage):
                 memory_unit.update_value()
-                memory_unit = Msg.from_dict(memory_unit.serialize())
+                memory_unit = Msg.from_dict(memory_unit.to_dict())
 
             if not isinstance(memory_unit, Msg):
                 raise ValueError(

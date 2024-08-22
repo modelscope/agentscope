@@ -257,7 +257,7 @@ class PlaceholderMessage(Msg):
             self._task_id = task_id
             self._stub = None
 
-    def serialize(self) -> dict:
+    def to_dict(self) -> dict:
         """Serialize the placeholder message."""
         if self._is_placeholder:
             self.__update_task_id()

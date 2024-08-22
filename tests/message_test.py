@@ -33,7 +33,7 @@ class MessageTest(unittest.TestCase):
     def test_serialize(self) -> None:
         """Test the serialization and deserialization of Msg object."""
         msg = Msg(name="A", content="B", role="assistant")
-        serialized_msg = msg.serialize()
+        serialized_msg = msg.to_dict()
         deserialized_msg = Msg.from_dict(serialized_msg)
         self.assertEqual(msg.id, deserialized_msg.id)
         self.assertEqual(msg.name, deserialized_msg.name)

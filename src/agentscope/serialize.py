@@ -13,13 +13,13 @@ def _default_serialize(obj: Any) -> Any:
             obj.__module__ == "agentscope.message.msg"
             and obj.__class__.__name__ == "Msg"
         ):
-            return obj.serialize()
+            return obj.to_dict()
 
         if (
             obj.__module__ == "agentscope.message.placeholder"
             and obj.__class__.__name__ == "PlaceholderMessage"
         ):
-            return obj.serialize()
+            return obj.to_dict()
 
     return obj
 

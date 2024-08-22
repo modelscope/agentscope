@@ -41,9 +41,10 @@ class DialogAgent(AgentBase):
             use_memory=use_memory,
         )
 
-        logger.warning(
-            f"Unused keyword arguments is provided: {kwargs}",
-        )
+        if kwargs:
+            logger.warning(
+                f"Unused keyword arguments are provided: {kwargs}",
+            )
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Reply function of the agent. Processes the input data,
