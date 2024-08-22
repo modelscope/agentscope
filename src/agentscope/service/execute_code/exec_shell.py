@@ -38,7 +38,7 @@ def execute_shell_command(command: str) -> ServiceResponse:
             f'`execute_shell_command.insecure_commands = ["xxx", "xxx"]`',
         )
         return ServiceResponse(
-            status=ServiceExecStatus.SUCCESS,
+            status=ServiceExecStatus.ERROR,
             content=f"The command {command} is blocked for security reasons.",
         )
 
