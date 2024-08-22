@@ -118,6 +118,9 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Service to execute shell commands.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+
 <span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 <span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
 
@@ -145,6 +148,19 @@
 <span class="sd">        change/edit the files current directory (e.g. rm, sed).</span>
 <span class="sd">    ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">_</span> <span class="ow">in</span> <span class="n">command</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">execute_shell_command</span><span class="o">.</span><span class="n">insecure_commands</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The command </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2"> is blocked for security reasons. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;If you want to enable the command, try to reset the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;insecure command list by executing &quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;`execute_shell_command.insecure_commands = [&quot;xxx&quot;, &quot;xxx&quot;]`&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The command </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2"> is blocked for security reasons.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
             <span class="n">command</span><span class="p">,</span>
@@ -175,6 +191,22 @@
             <span class="n">content</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
         <span class="p">)</span></div>
 
+
+
+<span class="c1"># Security check: Block insecure commands</span>
+<span class="n">execute_shell_command</span><span class="o">.</span><span class="n">insecure_commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># System management</span>
+    <span class="s2">&quot;shutdown&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kill&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;reboot&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pkill&quot;</span><span class="p">,</span>
+    <span class="c1"># User management</span>
+    <span class="s2">&quot;useradd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;userdel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;usermod&quot;</span><span class="p">,</span>
+    <span class="c1"># File management</span>
+    <span class="s2">&quot;rm -rf&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
            </div>
