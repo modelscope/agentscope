@@ -12,6 +12,7 @@ from envs.chatroom import ChatRoom, ChatRoomAgent
 
 
 class ChatRoomAgentWithAssistant(ChatRoomAgent):
+    """A ChatRoomAgent with assistant"""
     def __init__(
         self,
         timeout: float | None = None,
@@ -19,6 +20,7 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
     ):
         super().__init__(**kwargs)
         self.timeout = timeout
+
     def reply(self, x: Msg = None) -> Msg:
         if _studio_client.active:
             logger.info(
@@ -45,9 +47,9 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
             except TimeoutError:
                 content = None
 
-        if content is not None:
+        if content is not None:  # user input
             response = content
-        else:
+        else:  # assistant reply
             msg_hint = self.generate_hint()
             self_msg = Msg(name=self.name, content=f"", role="assistant")
 
@@ -90,6 +92,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main(args):
+    """Example for chatroom with assistant"""
     # Prepare the model configuration
     YOUR_MODEL_CONFIGURATION_NAME = "dash"
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
@@ -97,10 +100,10 @@ def main(args):
     # Initialize the agents
     agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level, studio_url=args.studio_url)
 
-    ann = Msg(name="Boss", content="This is a game development work group, please discuss how to develop an open world game.", role="system")
+    ann = Msg(name="", content="", role="system")
     r = ChatRoom(name="chat", announcement=ann, to_dist=args.use_dist)
 
-    # Setup the persona of Alice, Bob and Carol
+    # Setup the persona of Alice and Bob
     alice = ChatRoomAgent(
         name="Alice", 
         sys_prompt=r"""""",
@@ -130,6 +133,7 @@ def main(args):
     alice.speak(Msg(name="Alice", content="Board games are a wonderful way to unwind and connect with friends and family. It sounds like you have a great balance between your professional and personal life, Bob. Thanks for sharing!", role="assistant"))
     bob.speak(Msg(name="Bob", content="Absolutely, thank you for asking, Alice. It was a pleasure chatting with you.", role="user"))
 
+    # Setup the persona of Carol
     carol = ChatRoomAgent(
         name="Carol",
         sys_prompt=r"""You are Carol, and now you need to interview Bob. Just ask him where he is from, which school he graduated from, his profession, and his hobbies. """

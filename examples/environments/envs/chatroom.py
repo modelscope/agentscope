@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """An env used as a chatroom."""
-from typing import List, Any, Tuple, Union, Mapping
+from typing import List, Any, Union, Mapping
 from copy import deepcopy
-import asyncio
 import re
 import random
 from loguru import logger
 import time
+import threading
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -51,14 +51,15 @@ class ChatRoomMember(BasicEnv):
         """Get the agent of the member."""
         return self._agent
 
-    async def chatting(self, delay: int = 1):
-        await asyncio.sleep(delay)
+    def chatting(self, delay: int = 1):
+        """Make the agent chatting in the chatroom."""
+        time.sleep(delay)
         while True:
             msg = self._agent(Msg(name="user", content="", role="user"))
             if 'goodbye' in msg.content.lower():
                 break
             sleep_time = random.randint(1, 5)
-            await asyncio.sleep(sleep_time)
+            time.sleep(sleep_time)
 
 
 class ChatRoom(BasicEnv):
@@ -180,6 +181,7 @@ class ChatRoom(BasicEnv):
             raise EnvListenerError("Fail to add listener.")
 
     def chatting_parse_func(self, response: ModelResponse) -> ModelResponse:
+        """Parse the response of the chatting agent."""
         pattern_str = ""
         for child in self.children.values():
             if pattern_str:
@@ -193,20 +195,23 @@ class ChatRoom(BasicEnv):
         return ModelResponse(text=texts[0])
 
     def chatting(self, delay: Union[int, Mapping[str, int]] = 1):
-        async def start_chatting():
-            tasks = []
-            for agent_id, child in self.children.items():
-                if isinstance(delay, int):
-                    tasks.append(asyncio.create_task(child.chatting(delay=delay)))
-                else:
-                    if agent_id not in delay:
-                        continue
-                    tasks.append(asyncio.create_task(child.chatting(delay=delay[agent_id])))
-            await asyncio.gather(*tasks)
-        asyncio.run(start_chatting())
+        """Make all agents chatting in the chatroom."""
+        tasks = []
+        for agent_id, child in self.children.items():
+            if isinstance(delay, int):
+                tasks.append(threading.Thread(target=child.chatting, args=(delay,)))
+            else:
+                if agent_id not in delay:
+                    continue
+                tasks.append(threading.Thread(target=child.chatting, args=(delay[agent_id],)))
+        for task in tasks:
+            task.start()
+        for task in tasks:
+            task.join()
 
 
 class Mentioned(EventListener):
+    """A listener that will be called when a message is mentioned the agent"""
     def __init__(
         self,
         agent: AgentBase,
@@ -238,10 +243,12 @@ class ChatRoomAgent(AgentBase):
             model_config_name=model_config_name)
         self.room = None
         self.mentioned_messages = []
+        self.mentioned_messages_lock = threading.Lock()
 
     def add_mentioned_message(self, msg: Msg) -> None:
         """Add mentioned messages"""
-        self.mentioned_messages.append(msg)
+        with self.mentioned_messages_lock:
+            self.mentioned_messages.append(msg)
 
     def join(self, room: ChatRoom) -> bool:
         """Join a room"""
@@ -249,6 +256,7 @@ class ChatRoomAgent(AgentBase):
         return room.join(self)
 
     def generate_hint(self) -> Msg:
+        """Generate a hint for the agent"""
         if self.mentioned_messages:
             hint = self.sys_prompt + r"""\n\nYou have be mentioned in the following message, please generate an appropriate response."""
             for message in self.mentioned_messages:
@@ -259,10 +267,12 @@ class ChatRoomAgent(AgentBase):
             return Msg("system", self.sys_prompt, role="system")
 
     def speak(self, content) -> None:
+        """Speak to room"""
         super().speak(content)
         self.room.speak(content)
 
     def reply(self, x: Msg = None) -> Msg:
+        """Generate reply to chat room"""
         msg_hint = self.generate_hint()
         self_msg = Msg(name=self.name, content=f"", role="assistant")
 

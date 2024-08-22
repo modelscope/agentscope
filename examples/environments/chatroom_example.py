@@ -28,6 +28,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main(args):
+    """Example for chatroom"""
     # Prepare the model configuration
     YOUR_MODEL_CONFIGURATION_NAME = "dash"
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
