@@ -12,6 +12,13 @@ from envs.chatroom import ChatRoom, ChatRoomAgent
 
 
 class ChatRoomAgentWithAssistant(ChatRoomAgent):
+    def __init__(
+        self,
+        timeout: float | None = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.timeout = timeout
     def reply(self, x: Msg = None) -> Msg:
         if _studio_client.active:
             logger.info(
@@ -23,15 +30,22 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
                 name=self.name,
                 require_url=False,
                 required_keys=None,
+                timeout=self.timeout,
             )
 
-            print("Python: receive ", raw_input)
-            content = raw_input["content"]
+            logger.info("Python: receive ", raw_input)
+            if raw_input is None:
+                content = None
+            else:
+                content = raw_input["content"]
         else:
             time.sleep(0.5)
-            content = user_input(timeout=None)
+            try:
+                content = user_input(timeout=self.timeout)
+            except TimeoutError:
+                content = None
 
-        if content != '[assistant]':
+        if content is not None:
             response = content
         else:
             msg_hint = self.generate_hint()
@@ -49,8 +63,8 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
                 parse_func=self.room.chatting_parse_func,
                 max_retries=3,
             ).text
-            if not response.startswith('[assistant]'):
-                response = '[assistant] ' + response
+            if not response.startswith('[auto reply]'):
+                response = '[auto reply] ' + response
         msg = Msg(name=self.name, content=response, role="user")
         self.speak(msg)
         return msg
@@ -100,9 +114,9 @@ def main(args):
         sys_prompt=r"""You are Bob's chat room assistant and he is currently unable to reply to messages. """
         r"""Please generate a suitable response based on the following chat history. """
         r"""The content you reply to must be based on the chat history. Please refuse to reply to questions that are beyond the scope of the chat history.""",
-        # r"""Your reply must have appeared in the chat history. If you are unable to reply, please refuse to reply.""",
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
         to_dist=args.use_dist,
+        timeout=5,
     )
     bob.join(r)
 
