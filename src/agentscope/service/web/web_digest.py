@@ -3,10 +3,11 @@
 import json
 from urllib.parse import urlparse
 from typing import Optional, Callable, Sequence, Any
-import requests
-from loguru import logger
 import socket
 import ipaddress
+import requests
+from loguru import logger
+
 
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
@@ -37,7 +38,8 @@ def is_valid_url(url: str) -> bool:
     except ValueError:
         return False  # A ValueError indicates that the URL is not valid.
 
-def sanitize_url(url: str) -> bool:
+
+def is_internal_ip_address(url: str) -> bool:
     """
     Check if a URL is to interal IP addresses
     Args:
@@ -49,17 +51,25 @@ def sanitize_url(url: str) -> bool:
     """
     parsed_url = urlparse(url)
     hostname = parsed_url.hostname
+    if hostname is None:
+        # illegal hostname is ignore in this function
+        return False
+
     # Resolve the hostname to an IP address
     ip = socket.gethostbyname(hostname)
     # Check if it's localhost or within the loopback range
-    if (ip.startswith("127.")
-            or ip == "::1"
-            or ipaddress.ip_address(ip).is_private):
-        logger.warning(f"Access to this URL {url} is "
-                       f"restricted because it is private")
-        return False
+    if (
+        ip.startswith("127.")
+        or ip == "::1"
+        or ipaddress.ip_address(ip).is_private
+    ):
+        logger.warning(
+            f"Access to this URL {url} is "
+            f"restricted because it is private",
+        )
+        return True
 
-    return True
+    return False
 
 
 def load_web(
@@ -115,10 +125,11 @@ def load_web(
                 "selected_tags_text": xxxxx
             }
     """
-    if exclude_internal_ips and not sanitize_url(url):
+    if exclude_internal_ips and is_internal_ip_address(url):
         return ServiceResponse(
             ServiceExecStatus.ERROR,
-            content=f"Access to this URL {url} is restricted because it is private"
+            content=f"Access to this URL {url} is restricted "
+            f"because it is private",
         )
 
     header = {

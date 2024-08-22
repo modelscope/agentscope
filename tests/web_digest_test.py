@@ -106,6 +106,7 @@ class TestWebDigest(unittest.TestCase):
         response = load_web(internal_url)
         self.assertEqual(ServiceExecStatus.ERROR, response.status)
 
+
 # This allows the tests to be run from the command line
 if __name__ == "__main__":
     unittest.main()
