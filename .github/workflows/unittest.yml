@@ -40,9 +40,6 @@ jobs:
       run: |
         pip install -q -e .[full]
         pip install coverage
-        ls -l
-        ls -l build
-        ls -l src/agentscope/cpp_server
     - name: Run tests with coverage
       run: |
         coverage run tests/run.py
@@ -52,7 +49,5 @@ jobs:
     - name: CPP gRPC Server Tests
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
-        ls -l
-        ls -l build
-        ls -l src/agentscope/cpp_server
+        python setup.py build
         AGENTSCOPE_USE_CPP_SERVER=YES AGENTSCOPE_NUM_WORKERS=2 python -m unittest tests/rpc_agent_test.py
