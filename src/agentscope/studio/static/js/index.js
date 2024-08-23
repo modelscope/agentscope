@@ -11,11 +11,18 @@ let activeExpanded = false;
 
 // Check if the script is already loaded
 function isScriptLoaded(src) {
+    let curURL = new URL(src, window.location.href).pathname;
     return Array.from(document.scripts).some((script) => {
-        return (
-            new URL(script.src).pathname ===
-            new URL(src, window.location.href).pathname
-        );
+        try {
+            let existURL = new URL(script.src).pathname;
+            return existURL === curURL;
+        } catch (error) {
+            console.warn(
+                "Error occurred when checking if the script is loaded: ",
+                error
+            );
+            return false;
+        }
     });
 }
 
@@ -29,6 +36,9 @@ function initializeTabPageByUrl(pageUrl) {
             let script = document.createElement("script");
             script.src = "static/js/workstation_iframe.js";
             document.head.appendChild(script);
+            break;
+        case "static/html/server.html":
+            initializeServerPage();
             break;
     }
 }
@@ -55,6 +65,9 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 activeExpanded = false;
             }
 
+            // Load the page content
+            document.getElementById("content").innerHTML = html;
+
             // Load the javascript file
             if (javascriptUrl && !isScriptLoaded(javascriptUrl)) {
                 let script = document.createElement("script");
@@ -69,9 +82,6 @@ function loadTabPage(pageUrl, javascriptUrl) {
                 // If is not the first time, we can directly call the initialization function
                 initializeTabPageByUrl(pageUrl);
             }
-
-            // Load the page content
-            document.getElementById("content").innerHTML = html;
 
             // switch selected status of the tab buttons
             switch (pageUrl) {

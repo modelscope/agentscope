@@ -12,6 +12,7 @@
 | Service场景  | Service函数名称           | 描述                                      |
 |------------|-----------------------|-----------------------------------------|
 | 代码         | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。 |
+|            | `NoteBookExecutor.run_code_on_notebook`             | 在 NoteBookExecutor 的 IPython 环境中执行一段 Python 代码，遵循 IPython 交互式计算风格。                |
 | 检索         | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。                      |
 |            | `cos_sim`             | 计算2个embedding的余弦相似度。                    |
 | SQL查询      | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。             |
@@ -40,6 +41,12 @@
 | 多模态        | `dashscope_text_to_image`  | 使用 DashScope API 将文本生成图片。               |
 |            | `dashscope_image_to_text`  | 使用 DashScope API 根据图片生成文字。              |
 |            | `dashscope_text_to_audio`  | 使用 DashScope API 根据文本生成音频。             |
+|                             | `openai_text_to_image`     | 使用 OpenAI API根据文本生成图片。
+|                             | `openai_edit_image`        | 使用 OpenAI API 根据提供的遮罩和提示编辑图像。
+|                             | `openai_create_image_variation`        | 使用 OpenAI API 创建图像的变体。
+|                             | `openai_image_to_text` | 使用 OpenAI API 根据图片生成文字。
+|                             | `openai_text_to_audio` | 使用 OpenAI API 根据文本生成音频。
+|                             | `openai_audio_to_text` | 使用OpenAI API将音频转换为文本。
 | *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。  |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。

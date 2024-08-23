@@ -9,7 +9,7 @@ import string
 import socket
 import hashlib
 import random
-from typing import Any, Literal, List, Optional
+from typing import Any, Literal, List, Optional, Tuple
 
 from urllib.parse import urlparse
 import psutil
@@ -84,7 +84,10 @@ def check_port(port: Optional[int] = None) -> int:
         new_port = find_available_port()
         return new_port
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        if s.connect_ex(("localhost", port)) == 0:
+        try:
+            if s.connect_ex(("localhost", port)) == 0:
+                raise RuntimeError("Port is occupied.")
+        except Exception:
             new_port = find_available_port()
             return new_port
     return port
@@ -252,6 +255,21 @@ def generate_id_from_seed(seed: str, length: int = 8) -> str:
     return "".join(id_chars)
 
 
+def is_web_accessible(url: str) -> bool:
+    """Whether the url is accessible from the Web.
+
+    Args:
+        url (`str`):
+            The url to check.
+
+    Note:
+        This function is not perfect, it only checks if the URL starts with
+        common web protocols, e.g., http, https, ftp, oss.
+    """
+    parsed_url = urlparse(url)
+    return parsed_url.scheme in ["http", "https", "ftp", "oss"]
+
+
 def _is_json_serializable(obj: Any) -> bool:
     """Check if the given object is json serializable."""
     try:
@@ -294,42 +312,6 @@ def _convert_to_str(content: Any) -> str:
         return json.dumps(content, ensure_ascii=False)
     else:
         return str(content)
-
-
-def reform_dialogue(input_msgs: list[dict]) -> list[dict]:
-    """record dialog history as a list of strings"""
-    messages = []
-
-    dialogue = []
-    for i, unit in enumerate(input_msgs):
-        if i == 0 and unit["role"] == "system":
-            # system prompt
-            messages.append(
-                {
-                    "role": unit["role"],
-                    "content": _convert_to_str(unit["content"]),
-                },
-            )
-        else:
-            # Merge all messages into a dialogue history prompt
-            dialogue.append(
-                f"{unit['name']}: {_convert_to_str(unit['content'])}",
-            )
-
-    dialogue_history = "\n".join(dialogue)
-
-    user_content_template = "## Dialogue History\n{dialogue_history}"
-
-    messages.append(
-        {
-            "role": "user",
-            "content": user_content_template.format(
-                dialogue_history=dialogue_history,
-            ),
-        },
-    )
-
-    return messages
 
 
 def _join_str_with_comma_and(elements: List[str]) -> str:
@@ -459,3 +441,39 @@ def _is_process_alive(
 def _is_windows() -> bool:
     """Check if the system is Windows."""
     return os.name == "nt"
+
+
+def _map_string_to_color_mark(
+    target_str: str,
+) -> Tuple[str, str]:
+    """Map a string into an index within a given length.
+
+    Args:
+        target_str (`str`):
+            The string to be mapped.
+
+    Returns:
+        `Tuple[str, str]`: A color marker tuple
+    """
+    color_marks = [
+        ("\033[90m", "\033[0m"),
+        ("\033[91m", "\033[0m"),
+        ("\033[92m", "\033[0m"),
+        ("\033[93m", "\033[0m"),
+        ("\033[94m", "\033[0m"),
+        ("\033[95m", "\033[0m"),
+        ("\033[96m", "\033[0m"),
+        ("\033[97m", "\033[0m"),
+    ]
+
+    hash_value = hash(target_str)
+    index = hash_value % len(color_marks)
+    return color_marks[index]
+
+
+def _generate_new_runtime_id() -> str:
+    """Generate a new random runtime id."""
+    _RUNTIME_ID_FORMAT = "run_%Y%m%d-%H%M%S_{}"
+    return _get_timestamp(_RUNTIME_ID_FORMAT).format(
+        _generate_random_code(uppercase=False),
+    )

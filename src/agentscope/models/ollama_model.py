@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for Ollama models."""
 from abc import ABC
-from typing import Sequence, Any, Optional, List, Union
+from typing import Sequence, Any, Optional, List, Union, Generator
 
 from agentscope.message import Msg
 from agentscope.models import ModelWrapperBase, ModelResponse
@@ -44,6 +44,7 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
         model_name: str,
         options: dict = None,
         keep_alive: str = "5m",
+        host: Optional[Union[str, None]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the model wrapper for Ollama API.
@@ -57,25 +58,89 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
             keep_alive (`str`, default `5m`):
                 Controls how long the model will stay loaded into memory
                 following the request.
+            host (`str`, default `None`):
+                The host port of the ollama server.
+                Defaults to `None`, which is 127.0.0.1:11434.
         """
 
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
-        self.model_name = model_name
         self.options = options
         self.keep_alive = keep_alive
-
-        self._register_default_metrics()
+        self.client = ollama.Client(host=host, **kwargs)
 
 
 class OllamaChatWrapper(OllamaWrapperBase):
-    """The model wrapper for Ollama chat API."""
+    """The model wrapper for Ollama chat API.
+
+    Response:
+        - Refer to
+        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion
+
+        ```json
+        {
+            "model": "registry.ollama.ai/library/llama3:latest",
+            "created_at": "2023-12-12T14:13:43.416799Z",
+            "message": {
+                "role": "assistant",
+                "content": "Hello! How are you today?"
+            },
+            "done": true,
+            "total_duration": 5191566416,
+            "load_duration": 2154458,
+            "prompt_eval_count": 26,
+            "prompt_eval_duration": 383809000,
+            "eval_count": 298,
+            "eval_duration": 4799921000
+        }
+        ```
+    """
 
     model_type: str = "ollama_chat"
+
+    def __init__(
+        self,
+        config_name: str,
+        model_name: str,
+        stream: bool = False,
+        options: dict = None,
+        keep_alive: str = "5m",
+        host: Optional[Union[str, None]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the model wrapper for Ollama API.
+
+        Args:
+            model_name (`str`):
+                The model name used in ollama API.
+            stream (`bool`, default `False`):
+                Whether to enable stream mode.
+            options (`dict`, default `None`):
+                The extra keyword arguments used in Ollama api generation,
+                e.g. `{"temperature": 0., "seed": 123}`.
+            keep_alive (`str`, default `5m`):
+                Controls how long the model will stay loaded into memory
+                following the request.
+            host (`str`, default `None`):
+                The host port of the ollama server.
+                Defaults to `None`, which is 127.0.0.1:11434.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            model_name=model_name,
+            options=options,
+            keep_alive=keep_alive,
+            host=host,
+            **kwargs,
+        )
+
+        self.stream = stream
 
     def __call__(
         self,
         messages: Sequence[dict],
+        stream: Optional[bool] = None,
         options: Optional[dict] = None,
         keep_alive: Optional[str] = None,
         **kwargs: Any,
@@ -86,6 +151,9 @@ class OllamaChatWrapper(OllamaWrapperBase):
             messages (`Sequence[dict]`):
                 A list of messages, each message is a dict contains the `role`
                 and `content` of the message.
+            stream (`bool`, default `None`):
+                Whether to enable stream mode, which will override the `stream`
+                input in the constructor.
             options (`dict`, default `None`):
                 The extra arguments used in ollama chat API, which takes
                 effect only on this call, and will be merged with the
@@ -110,58 +178,82 @@ class OllamaChatWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
-        response = ollama.chat(
-            model=self.model_name,
-            messages=messages,
-            options=options,
-            keep_alive=keep_alive,
-            **kwargs,
-        )
+        if stream is None:
+            stream = self.stream
 
-        # step2: record the api invocation if needed
-        self._save_model_invocation(
-            arguments={
+        kwargs.update(
+            {
                 "model": self.model_name,
                 "messages": messages,
+                "stream": stream,
                 "options": options,
                 "keep_alive": keep_alive,
-                **kwargs,
             },
+        )
+
+        response = self.client.chat(**kwargs)
+
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                last_chunk = {}
+                text = ""
+                for chunk in response:
+                    text += chunk["message"]["content"]
+                    yield text
+                    last_chunk = chunk
+
+                # Replace the last chunk with the full text
+                last_chunk["message"]["content"] = text
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+                raw=response,
+            )
+
+        else:
+            # step3: save model invocation and update monitor
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            # step4: return response
+            return ModelResponse(
+                text=response["message"]["content"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: dict,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+
+        Args:
+            kwargs (`dict`):
+                The keyword arguments to the DashScope chat API.
+            response (`dict`):
+                The response object returned by the DashScope chat API.
+        """
+        prompt_eval_count = response.get("prompt_eval_count", 0)
+        eval_count = response.get("eval_count", 0)
+
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=prompt_eval_count,
+            completion_tokens=eval_count,
+        )
+
+        self._save_model_invocation(
+            arguments=kwargs,
             response=response,
-        )
-
-        # step3: monitor the response
-        self.update_monitor(
-            call_counter=1,
-            prompt_tokens=response.get("prompt_eval_count", 0),
-            completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0)
-            + response.get("eval_count", 0),
-        )
-
-        # step4: return response
-        return ModelResponse(
-            text=response["message"]["content"],
-            raw=response,
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="tokens",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
         )
 
     def format(
@@ -171,7 +263,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         """Format the messages for ollama Chat API.
 
         All messages will be formatted into a single system message with
-        system prompt and dialogue history.
+        system prompt and conversation history.
 
         Note:
         1. This strategy maybe not suitable for all scenarios,
@@ -198,7 +290,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
                     "role": "user",
                     "content": (
                         "You're a helpful assistant\\n\\n"
-                        "## Dialogue History\\n"
+                        "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
                     )
@@ -245,7 +337,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
                     system_prompt += "\n"
                 system_content_template.append(system_prompt)
             else:
-                # Merge all messages into a dialogue history prompt
+                # Merge all messages into a conversation history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
@@ -257,7 +349,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
             dialogue_history = "\n".join(dialogue)
 
             system_content_template.extend(
-                ["## Dialogue History", dialogue_history],
+                ["## Conversation History", dialogue_history],
             )
 
         system_content = "\n".join(system_content_template)
@@ -274,7 +366,22 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
-    """The model wrapper for Ollama embedding API."""
+    """The model wrapper for Ollama embedding API.
+
+    Response:
+        - Refer to
+        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
+
+        ```json
+        {
+            "model": "all-minilm",
+            "embeddings": [[
+                0.010071029, -0.0017594862, 0.05007221, 0.04692972,
+                0.008599704, 0.105441414, -0.025878139, 0.12958129,
+            ]]
+        }
+        ```
+    """
 
     model_type: str = "ollama_embedding"
 
@@ -314,7 +421,7 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
-        response = ollama.embeddings(
+        response = self.client.embeddings(
             model=self.model_name,
             prompt=prompt,
             options=options,
@@ -335,19 +442,14 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         )
 
         # step4: monitor the response
-        self.update_monitor(call_counter=1)
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+        )
 
         # step5: return response
         return ModelResponse(
             embedding=[response["embedding"]],
             raw=response,
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
         )
 
     def format(
@@ -362,7 +464,28 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
 
 
 class OllamaGenerationWrapper(OllamaWrapperBase):
-    """The model wrapper for Ollama generation API."""
+    """The model wrapper for Ollama generation API.
+
+    Response:
+        - From
+        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
+
+        ```json
+        {
+            "model": "llama3",
+            "created_at": "2023-08-04T19:22:45.499127Z",
+            "response": "The sky is blue because it is the color of the sky.",
+            "done": true,
+            "context": [1, 2, 3],
+            "total_duration": 5043500667,
+            "load_duration": 5025959,
+            "prompt_eval_count": 26,
+            "prompt_eval_duration": 325953000,
+            "eval_count": 290,
+            "eval_duration": 4709213000
+        }
+        ```
+    """
 
     model_type: str = "ollama_generate"
 
@@ -403,7 +526,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         keep_alive = keep_alive or self.keep_alive
 
         # step2: forward to generate response
-        response = ollama.generate(
+        response = self.client.generate(
             model=self.model_name,
             prompt=prompt,
             options=options,
@@ -423,37 +546,16 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         )
 
         # step4: monitor the response
-        self.update_monitor(
-            call_counter=1,
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
             prompt_tokens=response.get("prompt_eval_count", 0),
             completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0)
-            + response.get("eval_count", 0),
         )
 
         # step5: return response
         return ModelResponse(
             text=response["response"],
             raw=response,
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register metrics to the monitor."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="tokens",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
         )
 
     def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
@@ -490,7 +592,7 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
                 # system prompt
                 sys_prompt = _convert_to_str(unit.content)
             else:
-                # Merge all messages into a dialogue history prompt
+                # Merge all messages into a conversation history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
@@ -498,12 +600,12 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         dialogue_history = "\n".join(dialogue)
 
         if sys_prompt is None:
-            prompt_template = "## Dialogue History\n{dialogue_history}"
+            prompt_template = "## Conversation History\n{dialogue_history}"
         else:
             prompt_template = (
                 "{system_prompt}\n"
                 "\n"
-                "## Dialogue History\n"
+                "## Conversation History\n"
                 "{dialogue_history}"
             )
 

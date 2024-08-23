@@ -9,13 +9,9 @@ from typing import Any, List, Literal, Optional, Union
 from loguru import logger
 from tqdm import tqdm
 
-from agentscope.file_manager import file_manager
+from agentscope.manager import FileManager, ModelManager
 from agentscope.message import Msg
-from agentscope.models import (
-    load_model_by_config_name,
-    load_config_by_name,
-    ModelResponse,
-)
+from agentscope.models import ModelResponse
 from agentscope.prompt._prompt_utils import _find_top_k_embeddings
 
 
@@ -101,8 +97,8 @@ class SystemPromptGeneratorBase(ABC):
                 If the example selection method is `"similarity"`, an embedding
                 model config name is required.
         """
-
-        self.model = load_model_by_config_name(model_config_name)
+        model_manager = ModelManager.get_instance()
+        self.model = model_manager.get_model_by_config_name(model_config_name)
         self.meta_prompt = meta_prompt
         self.response_prompt_template = response_prompt_template
 
@@ -140,10 +136,11 @@ class SystemPromptGeneratorBase(ABC):
                 )
                 self.embed_model_name = self.local_embedding_model
             else:
-                self.embed_model = load_model_by_config_name(
+                model_manager = ModelManager.get_instance()
+                self.embed_model = model_manager.get_model_by_config_name(
                     embed_model_config_name,
                 )
-                self.embed_model_name = load_config_by_name(
+                self.embed_model_name = model_manager.get_config_by_name(
                     embed_model_config_name,
                 )
 
@@ -218,6 +215,7 @@ class SystemPromptGeneratorBase(ABC):
             user_prompt = example["user_prompt"]
 
             # Load cached embedding instead of generating them again
+            file_manager = FileManager.get_instance()
             cached_embedding = file_manager.fetch_cached_text_embedding(
                 text=user_prompt,
                 embedding_model=self.embed_model_name,

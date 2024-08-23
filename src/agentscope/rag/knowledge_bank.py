@@ -6,10 +6,9 @@ import copy
 import json
 from typing import Optional, Union
 from loguru import logger
-from agentscope.models import load_model_by_config_name
 from agentscope.agents import AgentBase
 from .llama_index_knowledge import LlamaIndexKnowledge
-
+from ..manager import ModelManager
 
 DEFAULT_INDEX_CONFIG = {
     "knowledge_id": "",
@@ -120,11 +119,13 @@ class KnowledgeBank:
                 loader_config["load_data"]["loader"]["init_args"] = loader_init
                 knowledge_config["data_processing"].append(loader_config)
 
+        model_manager = ModelManager.get_instance()
+
         self.stored_knowledge[knowledge_id] = LlamaIndexKnowledge(
             knowledge_id=knowledge_id,
-            emb_model=load_model_by_config_name(emb_model_name),
+            emb_model=model_manager.get_model_by_config_name(emb_model_name),
             knowledge_config=knowledge_config,
-            model=load_model_by_config_name(model_name)
+            model=model_manager.get_model_by_config_name(model_name)
             if model_name
             else None,
         )

@@ -8,7 +8,7 @@ especially with different requirements from various model APIs.
 
 To ease the process of adapting prompt to different model APIs, AgentScope
 provides a structured way to organize different data types (e.g. instruction,
-hints, dialogue history) into the desired format.
+hints, conversation history) into the desired format.
 
 Note there is no **one-size-fits-all** solution for prompt crafting.
 **The goal of built-in strategies is to enable beginners to smoothly invoke
@@ -184,7 +184,7 @@ print(prompt)
 
 #### Prompt Strategy
 
-If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history.
+If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the conversation history.
 
 An example is shown below:
 
@@ -207,10 +207,18 @@ prompt = model.format(
 print(prompt)
 ```
 
-```bash
-[
-  {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+```python
+prompt = [
+    {
+        "role": "user",
+        "content": (
+            "You are a helpful assistant\n"
+            "\n"
+            "## Conversation History\n"
+            "Bob: Hi!\n"
+            "Alice: Nice to meet you!"
+        )
+   },
 ]
 ```
 
@@ -257,7 +265,7 @@ print(prompt)
 Based on the above rules, the `format` function in `DashScopeMultiModalWrapper` will parse the input messages as follows:
 
 - If the first message in the input message list has a `role` field with the value `"system"`, it will be converted into a system message with the `role` field as `"system"` and the `content` field as the system message. If the `url` field in the input `Msg` object is not `None`, a dictionary with the key `"image"` or `"audio"` will be added to the `content` based on its type.
-- The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history. For each message, if their `url` field is not `None`, it will add a dictionary with the key `"image"` or `"audio"` to the `content` based on the file type that the `url` points to.
+- The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the conversation history. For each message, if their `url` field is not `None`, it will add a dictionary with the key `"image"` or `"audio"` to the `content` based on the file type that the `url` points to.
 
 An example:
 
@@ -292,7 +300,7 @@ print(prompt)
   {
     "role": "user",
     "content": [
-      {"text": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+      {"text": "## Conversation History\nBob: Hi!\nAlice: Nice to meet you!"},
       {"image": "url_to_png2"},
       {"image": "url_to_png3"},
     ]
@@ -316,10 +324,11 @@ own format function for your model.
 
 #### Prompt Strategy
 
-- Messages will consist dialogue history in the `user` message prefixed by the system message and "## Dialogue History".
+- Messages will consist conversation history in the `user` message prefixed by the system message and "## Conversation History".
 
 ```python
 from agentscope.models import LiteLLMChatWrapper
+from agentscope.message import Msg
 
 model = LiteLLMChatWrapper(
     config_name="", # empty since we directly initialize the model wrapper
@@ -342,8 +351,10 @@ print(prompt)
     {
         "role": "user",
         "content": (
-            "You are a helpful assistant\n\n"
-            "## Dialogue History\nuser: What is the weather today?\n"
+            "You are a helpful assistant\n"
+            "\n"
+            "## Conversation History\n"
+            "user: What is the weather today?\n"
             "assistant: It is sunny today"
         ),
     },
@@ -364,12 +375,13 @@ messages as input. The message must obey the following rules (updated in
 
 - If the role field of the first input message is `"system"`,
 it will be treated as system prompt and the other messages will consist
-dialogue history in the system message prefixed by "## Dialogue History".
+conversation history in the system message prefixed by "## Conversation History".
 - If the `url` attribute of messages is not `None`, we will gather all urls in
 the `"images"` field in the returned dictionary.
 
 ```python
 from agentscope.models import OllamaChatWrapper
+from agentscope.message import Msg
 
 model = OllamaChatWrapper(
     config_name="", # empty since we directly initialize the model wrapper
@@ -387,13 +399,19 @@ prompt = model.format(
 print(prompt)
 ```
 
-```bash
+```python
 [
-  {
-    "role": "system",
-    "content": "You are a helpful assistant\n\n## Dialogue History\nBob: Hi.\nAlice: Nice to meet you!",
-    "images": ["https://example.com/image.jpg"]
-  },
+    {
+        "role": "system",
+        "content": (
+            "You are a helpful assistant\n"
+            "\n"
+            "## Conversation History\n"
+            "Bob: Hi.\n"
+            "Alice: Nice to meet you!",
+        ),
+        "images": ["https://example.com/image.jpg"]
+    },
 ]
 ```
 
@@ -404,7 +422,7 @@ takes a string prompt as input without any constraints (updated to 2024/03/22).
 
 #### Prompt Strategy
 
-If the role field of the first message is `"system"`, a system prompt will be created. The rest of the messages will be combined into dialogue history in string format.
+If the role field of the first message is `"system"`, a system prompt will be created. The rest of the messages will be combined into conversation history in string format.
 
 ```python
 from agentscope.models import OllamaGenerationWrapper
@@ -429,7 +447,7 @@ print(prompt)
 ```bash
 You are a helpful assistant
 
-## Dialogue History
+## Conversation History
 Bob: Hi.
 Alice: Nice to meet you!
 ```
@@ -452,7 +470,7 @@ in our built-in `format` function.
 
 #### Prompt Strategy
 
-If the role field of the first message is `"system"`, a system prompt will be added in the beginning. The other messages will be combined into dialogue history.
+If the role field of the first message is `"system"`, a system prompt will be added in the beginning. The other messages will be combined into conversation history.
 
 **Note** sometimes the `parts` field may contain image urls, which is not
 supported in `format` function. We recommend developers to customize the
@@ -478,14 +496,17 @@ prompt = model.format(
 print(prompt)
 ```
 
-```bash
+```python
 [
-  {
-    "role": "user",
-    "parts": [
-      "You are a helpful assistant\n## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"
-    ]
-  }
+    {
+        "role": "user",
+        "parts": [
+            "You are a helpful assistant\n"
+            "## Conversation History\n"
+            "Bob: Hi!\n"
+            "Alice: Nice to meet you!"
+        ]
+    }
 ]
 ```
 
@@ -499,7 +520,7 @@ print(prompt)
 
 #### Prompt Strategy
 
-If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the dialogue history.
+If the role field of the first message is `"system"`, it will be converted into a single message with the `role` field as `"system"` and the `content` field as the system message. The rest of the messages will be converted into a message with the `role` field as `"user"` and the `content` field as the conversation history.
 
 An example is shown below:
 
@@ -526,7 +547,7 @@ print(prompt)
 ```bash
 [
   {"role": "system", "content": "You are a helpful assistant"},
-  {"role": "user", "content": "## Dialogue History\nBob: Hi!\nAlice: Nice to meet you!"},
+  {"role": "user", "content": "## Conversation History\nBob: Hi!\nAlice: Nice to meet you!"},
 ]
 ```
 
@@ -537,7 +558,7 @@ prompts for large language models (LLMs).
 
 ## About `PromptEngine` Class
 
-The `PromptEngine` class provides a structured way to combine different components of a prompt, such as instructions, hints, dialogue history, and user inputs, into a format that is suitable for the underlying language model.
+The `PromptEngine` class provides a structured way to combine different components of a prompt, such as instructions, hints, conversation history, and user inputs, into a format that is suitable for the underlying language model.
 
 ### Key Features of PromptEngine
 

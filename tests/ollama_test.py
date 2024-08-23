@@ -3,20 +3,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import agentscope
-from agentscope.models import load_model_by_config_name
-from agentscope._runtime import _Runtime
-from agentscope.file_manager import _FileManager
-from agentscope.utils.monitor import MonitorFactory
-
-
-def flush() -> None:
-    """
-    ** Only for unittest usage. Don't use this function in your code. **
-    Clear the runtime dir and destroy all singletons.
-    """
-    _Runtime._flush()  # pylint: disable=W0212
-    _FileManager._flush()  # pylint: disable=W0212
-    MonitorFactory.flush()
+from agentscope.manager import ModelManager, ASManager
 
 
 class OllamaModelWrapperTest(unittest.TestCase):
@@ -92,13 +79,14 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_count": 9,
             "eval_duration": 223689000,
         }
-        flush()
 
-    @patch("ollama.chat")
-    def test_ollama_chat(self, mock_chat: MagicMock) -> None:
+    @patch("agentscope.models.ollama_model.ollama")
+    def test_ollama_chat(self, mock_ollama: MagicMock) -> None:
         """Unit test for ollama chat API."""
         # prepare the mock
-        mock_chat.return_value = self.dummy_response
+        mock_ollama_client = MagicMock()
+        mock_ollama.Client.return_value = mock_ollama_client
+        mock_ollama_client.chat.return_value = self.dummy_response
 
         # run test
         agentscope.init(
@@ -111,18 +99,23 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 },
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_chat")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_chat",
+        )
         response = model(messages=[{"role": "user", "content": "Hi!"}])
 
         self.assertEqual(response.raw, self.dummy_response)
 
-    @patch("ollama.embeddings")
-    def test_ollama_embedding(self, mock_embeddings: MagicMock) -> None:
+    @patch("agentscope.models.ollama_model.ollama")
+    def test_ollama_embedding(self, mock_ollama: MagicMock) -> None:
         """Unit test for ollama embeddings API."""
         # prepare the mock
-        mock_embeddings.return_value = self.dummy_embedding
+        mock_ollama_client = MagicMock()
+        mock_ollama.Client.return_value = mock_ollama_client
+        mock_ollama_client.embeddings.return_value = self.dummy_embedding
 
         # run test
         agentscope.init(
@@ -135,18 +128,23 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 },
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_embedding")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_embedding",
+        )
         response = model(prompt="Hi!")
 
         self.assertEqual(response.raw, self.dummy_embedding)
 
-    @patch("ollama.generate")
-    def test_ollama_generate(self, mock_generate: MagicMock) -> None:
+    @patch("agentscope.models.ollama_model.ollama")
+    def test_ollama_generate(self, mock_ollama: MagicMock) -> None:
         """Unit test for ollama generate API."""
         # prepare the mock
-        mock_generate.return_value = self.dummy_generate
+        mock_ollama_client = MagicMock()
+        mock_ollama.Client.return_value = mock_ollama_client
+        mock_ollama_client.generate.return_value = self.dummy_generate
 
         # run test
         agentscope.init(
@@ -157,16 +155,19 @@ class OllamaModelWrapperTest(unittest.TestCase):
                 "options": None,
                 "keep_alive": "5m",
             },
+            disable_saving=True,
         )
 
-        model = load_model_by_config_name("my_ollama_generate")
+        model = ModelManager.get_instance().get_model_by_config_name(
+            "my_ollama_generate",
+        )
         response = model(prompt="1+1=")
 
         self.assertEqual(response.raw, self.dummy_generate)
 
     def tearDown(self) -> None:
         """Clean up after each test."""
-        flush()
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

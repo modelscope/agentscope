@@ -23,6 +23,7 @@ rpc_requires = [
     "protobuf==4.25.0",
     "expiringdict",
     "dill",
+    "psutil",
 ]
 
 service_requires = [
@@ -81,8 +82,12 @@ minimal_requires = [
     "google-generativeai>=0.4.0",
     "zhipuai",
     "litellm",
+    "notebook",
+    "nbclient",
+    "nbformat",
     "psutil",
     "scipy",
+    "pillow",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
@@ -99,6 +104,13 @@ full_requires = (
     + rag_requires
     + studio_requires
 )
+
+online_requires = full_requires + [
+    "oss2",
+    "flask_babel",
+    "babel==2.15.0",
+    "gunicorn",
+]
 
 with open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
@@ -125,6 +137,7 @@ setuptools.setup(
         "distribute": distribute_requires,
         "dev": dev_requires,
         "full": full_requires,
+        "online": online_requires,
     },
     license="Apache License 2.0",
     classifiers=[
