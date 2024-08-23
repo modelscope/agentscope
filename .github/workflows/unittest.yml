@@ -24,6 +24,8 @@ jobs:
     - name: Install Ubuntu Dependencies
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
+        sudo apt install curl gnupg lsb-release
+        curl -s https://packagecloud.io/install/repositories/grpc/stable/script.deb.sh | sudo bash
         sudo apt-get update
         sudo apt-get install -y libprotobuf-dev protobuf-compiler libgrpc++-dev grpc-cpp-plugin
     - name: Install Mac Dependencies
