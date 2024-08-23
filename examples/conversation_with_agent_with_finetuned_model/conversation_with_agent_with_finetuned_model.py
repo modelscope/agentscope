@@ -9,7 +9,10 @@ The conversation continues until the user exits.
 Features include model and tokenizer loading,
 and fine-tuning on the lima dataset with adjustable parameters.
 """
-
+# This import is necessary for AgentScope to properly use
+# HuggingFaceWrapper even though it's not explicitly used in this file.
+# To remove the pylint disable without causing issues
+# HuggingFaceWrapper needs to be put under src/agentscope/agents.
 # pylint: disable=unused-import
 from huggingface_model import HuggingFaceWrapper
 from FinetuneDialogAgent import FinetuneDialogAgent
@@ -52,6 +55,7 @@ def main() -> None:
                 # loading a model saved as lora model
                 "fine_tune_config": {
                     "continue_lora_finetuning": False,
+                    "max_seq_length": 4096,
                     "lora_config": {
                         "r": 16,
                         "lora_alpha": 32,

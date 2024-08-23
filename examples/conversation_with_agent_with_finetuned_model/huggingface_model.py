@@ -80,10 +80,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
                                                fine-tuning the model.
             **kwargs: Additional keyword arguments.
         """
-        super().__init__(config_name=config_name)
+        super().__init__(
+            config_name=config_name,
+            model_name=pretrained_model_name_or_path,
+        )
         self.model = None
         self.tokenizer = None
-        self.max_length = max_length  # Set max_length as an attribute
+        self.max_length = max_length
         self.pretrained_model_name_or_path = pretrained_model_name_or_path
         self.local_model_path = local_model_path
         self.lora_config = None
@@ -358,6 +361,8 @@ class HuggingFaceWrapper(ModelWrapperBase):
                     f" from '{local_model_path}'",
                 )
             self.tokenizer.padding_side = "right"
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
 
         except Exception as e:
             # Handle exceptions during model loading,
@@ -666,10 +671,13 @@ class HuggingFaceWrapper(ModelWrapperBase):
             "optim": "paged_adamw_8bit",
             "logging_steps": 1,
         }
+        max_seq_length_default = 4096
 
         lora_config_default = {}
 
         if fine_tune_config is not None:
+            if fine_tune_config.get("max_seq_length") is not None:
+                max_seq_length_default = fine_tune_config["max_seq_length"]
             if fine_tune_config.get("training_args") is not None:
                 training_defaults.update(fine_tune_config["training_args"])
             if fine_tune_config.get("lora_config") is not None:
@@ -709,7 +717,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
                 else {}
             ),
             args=trainer_args,
-            max_seq_length=4096,
+            max_seq_length=max_seq_length_default,
         )
 
         logger.info(
@@ -718,14 +726,7 @@ class HuggingFaceWrapper(ModelWrapperBase):
             timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         )
 
-        try:
-            trainer.train()
-        except Exception as e:
-            import traceback
-
-            logger.error(f"Error during training: {e}")
-            traceback.print_exc()
-            raise
+        trainer.train()
 
         now = datetime.now()
         time_string = now.strftime("%Y-%m-%d_%H-%M-%S")

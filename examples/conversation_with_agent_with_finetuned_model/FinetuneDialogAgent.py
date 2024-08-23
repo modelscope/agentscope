@@ -43,7 +43,6 @@ class FinetuneDialogAgent(DialogAgent):
         Note:
             Refer to `class DialogAgent(AgentBase)` for more information.
         """
-        # pylint: disable=useless-parent-delegation
         super().__init__(
             name,
             sys_prompt,
@@ -51,6 +50,7 @@ class FinetuneDialogAgent(DialogAgent):
             use_memory,
             memory_config,
         )
+        self.finetune = True
 
     def load_model(
         self,
