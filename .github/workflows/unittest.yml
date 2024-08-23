@@ -50,4 +50,5 @@ jobs:
       if: ${{ matrix.os != 'windows-latest' }}
       run: |
         python setup.py build
+        pip install -q -e .[full]
         AGENTSCOPE_USE_CPP_SERVER=YES AGENTSCOPE_NUM_WORKERS=2 python -m unittest tests/rpc_agent_test.py
