@@ -8,7 +8,6 @@ from concurrent import futures
 from multiprocessing.synchronize import Event as EventClass
 from typing import Any
 from loguru import logger
-import requests
 
 try:
     import dill
@@ -33,37 +32,12 @@ except ImportError as import_error:
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.agents.agent import AgentBase
 from agentscope.manager import ModelManager
-from agentscope.manager import ASManager
-from agentscope.studio._client import _studio_client
-from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from agentscope.message import (
     Msg,
     PlaceholderMessage,
     deserialize,
 )
-
-
-def _register_server_to_studio(
-    studio_url: str,
-    server_id: str,
-    host: str,
-    port: int,
-) -> None:
-    """Register a server to studio."""
-    url = f"{studio_url}/api/servers/register"
-    resp = requests.post(
-        url,
-        json={
-            "server_id": server_id,
-            "host": host,
-            "port": port,
-        },
-        timeout=10,  # todo: configurable timeout
-    )
-    if resp.status_code != 200:
-        logger.error(f"Failed to register server: {resp.text}")
-        raise StudioRegisterError(f"Failed to register server: {resp.text}")
 
 
 class _AgentError:
@@ -114,15 +88,6 @@ class AgentServerServicer(RpcAgentServicer):
         self.port = port
         self.server_id = server_id
         self.studio_url = studio_url
-        if studio_url is not None:
-            _register_server_to_studio(
-                studio_url=studio_url,
-                server_id=server_id,
-                host=host,
-                port=port,
-            )
-            run_id = ASManager.get_instance().run_id
-            _studio_client.initialize(run_id, studio_url)
 
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,

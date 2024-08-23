@@ -7,12 +7,12 @@ import signal
 import argparse
 import time
 import importlib
-import json
-import base64
+import multiprocessing
 from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
 from concurrent import futures
 from loguru import logger
+import requests
 
 try:
     import dill
@@ -30,11 +30,37 @@ except ImportError as import_error:
         "distribute",
     )
 import agentscope
+from agentscope.studio._client import _studio_client
+from agentscope.exception import StudioRegisterError
 from ..server.servicer import AgentServerServicer
 from ..manager import ASManager
 from ..agents.agent import AgentBase
 from ..utils.tools import check_port, generate_id_from_seed
 from ..constants import _DEFAULT_RPC_OPTIONS
+
+
+def _register_server_to_studio(
+    studio_url: str,
+    server_id: str,
+    host: str,
+    port: int,
+) -> None:
+    """Register a server to studio."""
+    url = f"{studio_url}/api/servers/register"
+    resp = requests.post(
+        url,
+        json={
+            "server_id": server_id,
+            "host": host,
+            "port": port,
+        },
+        timeout=10,  # todo: configurable timeout
+    )
+    if resp.status_code != 200:
+        logger.error(f"Failed to register server: {resp.text}")
+        raise StudioRegisterError(f"Failed to register server: {resp.text}")
+    run_id = ASManager.get_instance().run_id
+    _studio_client.initialize(run_id, studio_url)
 
 
 def _setup_agent_server(
@@ -155,95 +181,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             The abs path to the directory containing customized agent python
             files.
     """
-    if os.environ.get("AGENTSCOPE_USE_CPP_SERVER", "").lower() == "yes":
-        from agentscope.cpp_server.cpp_server import setup_cpp_server
-
-        # setup_cpp_server(...)
-
-        # env = os.environ.copy()
-        # current_file_path = os.path.abspath(__file__)
-        # current_directory = os.path.dirname(current_file_path)
-        # target_directory = os.path.join(
-        #     os.path.dirname(current_directory),
-        #     "cpp_server",
-        # )
-        # if custom_agent_classes is None:
-        #     custom_agent_classes = []
-        # if agent_dir is not None:
-        #     env["PYTHONPATH"] = os.pathsep.join(
-        #         [
-        #             env.get("PYTHONPATH", ""),
-        #             agent_dir,
-        #         ],
-        #     )
-        #     custom_agent_classes.extend(load_agents_from_dir(agent_dir))
-        # init_settings_str = (
-        #     repr(json.dumps(init_settings))
-        #     if init_settings is not None
-        #     else "None"
-        # )
-        # custom_agent_classes_str = base64.b64encode(
-        #     dill.dumps(custom_agent_classes),
-        # ).decode()
-        # env["PYTHONPATH"] = os.pathsep.join(
-        #     [env.get("PYTHONPATH", "")] + sys.path,
-        # )
-        # import multiprocessing
-
-        # num_workers = env.get(
-        #     "AGENTSCOPE_NUM_WORKERS",
-        #     f"{multiprocessing.cpu_count()}",
-        # )
-        # cpp_server = env.get("CPP_SERVER_PATH")
-        # os.makedirs("logs/", exist_ok=True)
-        # f = open(f"logs/{port}.log", "wb")
-        # process = await asyncio.create_subprocess_exec(
-        #     'make',
-        #     f'INIT_SETTINGS_STR={init_settings_str}',
-        #     f'HOST={host}',
-        #     f'PORT={port}',
-        #     f'SERVER_ID={server_id}',
-        #     f'CUSTOM_AGENT_CLASSES={custom_agent_classes_str}',
-        #     f'STUDIO_URL={studio_url}',
-        #     f'MAX_TASKS={max_pool_size}',
-        #     f'TIMEOUT_SECONDS={max_timeout_seconds}',
-        #     f'NUM_WORKERS={num_workers}',
-        #     cwd=target_directory,
-        #     env=env,
-        #     stdout=asyncio.subprocess.PIPE,
-        #     stderr=asyncio.subprocess.STDOUT,
-        # )
-
-        # is_start = False
-        # while True:
-        #     line = await process.stdout.readline()
-        #     if not line:
-        #         break
-        #     f.write(line)
-        #     f.flush()
-        #     if not is_start:
-        #         line = line.decode("utf-8")
-        #         if f"Server listening on {host}:{port}" in line:
-        #             is_start = True
-        #             if start_event is not None:
-        #                 pipe.send(port)
-        #                 start_event.set()
-        # await process.wait()
-        # f.close()
-        return
-
     if init_settings is not None:
         ASManager.get_instance().load_dict(init_settings)
-
-    servicer = AgentServerServicer(
-        stop_event=stop_event,
-        host=host,
-        port=port,
-        server_id=server_id,
-        studio_url=studio_url,
-        max_pool_size=max_pool_size,
-        max_timeout_seconds=max_timeout_seconds,
-    )
     if custom_agent_classes is None:
         custom_agent_classes = []
     if agent_dir is not None:
@@ -269,6 +208,45 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
                 sig,
                 lambda: asyncio.create_task(shutdown_signal_handler()),
             )
+    if studio_url is not None:
+        _register_server_to_studio(
+            studio_url=studio_url,
+            server_id=server_id,
+            host=host,
+            port=port,
+        )
+
+    # start cpp server
+    if os.environ.get("AGENTSCOPE_USE_CPP_SERVER", "").lower() == "yes":
+        from agentscope.cpp_server.cpp_server import setup_cpp_server, shutdown_cpp_server
+        num_workers = int(os.environ.get('AGENTSCOPE_NUM_WORKERS', f'{multiprocessing.cpu_count()}'))
+        setup_cpp_server(
+            host, str(port), max_pool_size, max_timeout_seconds, True,
+            server_id, str(studio_url), num_workers
+        )
+        logger.info(
+            f"CPP agent server [{server_id}] at {host}:{port} started successfully",
+        )
+        if start_event is not None:
+            pipe.send(port)
+            start_event.set()
+        if stop_event is not None:
+            stop_event.wait()
+            logger.info(
+                f"CPP agent server [{server_id}] at {host}:{port} stopped successfully",
+            )
+            shutdown_cpp_server()
+        return
+
+    servicer = AgentServerServicer(
+        stop_event=stop_event,
+        host=host,
+        port=port,
+        server_id=server_id,
+        studio_url=studio_url,
+        max_pool_size=max_pool_size,
+        max_timeout_seconds=max_timeout_seconds,
+    )
     while True:
         try:
             port = check_port(port)
@@ -512,16 +490,6 @@ class RpcAgentServerLauncher:
             if self.stop_event is not None:
                 self.stop_event.set()
                 self.stop_event = None
-            if (
-                os.environ.get("AGENTSCOPE_USE_CPP_SERVER", "").lower()
-                == "yes"
-            ):
-                import psutil
-
-                process = psutil.Process(self.server.pid)
-                for sub_process in process.children(recursive=True):
-                    if sub_process.is_running():
-                        sub_process.send_signal(signal.SIGINT)
             self.server.join()
             if self.server.is_alive():
                 self.server.kill()

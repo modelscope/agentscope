@@ -144,11 +144,9 @@ private:
 
 public:
     Worker(
-        const string &init_settings_str,
         const string &host,
         const string &port,
         const string &server_id,
-        const string &custom_agent_classes_str,
         const string &studio_url,
         const unsigned int max_tasks,
         const unsigned int max_timeout_seconds,

@@ -27,6 +27,7 @@ using grpc::Status;
 using google::protobuf::Empty;
 
 Worker *worker = nullptr;
+std::unique_ptr<Server> server = nullptr;
 
 class RpcAgentServiceImpl final : public RpcAgent::Service {
 private:
@@ -226,8 +227,7 @@ void RunServer(const string &server_address) {
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   builder.RegisterService(&service);
 
-  std::unique_ptr<Server> server(builder.BuildAndStart());
-  std::cout << "Server listening on " << server_address << std::endl;
+  server = builder.BuildAndStart();
   server->Wait();
 }
 
@@ -241,9 +241,26 @@ void signal_handler(int signum) {
 void SetupCppServer(const string &host, const string &port,
                     const int max_pool_size, const int max_timeout_seconds,
                     const bool local_mode, const string &server_id,
-                    const string &studio_url) {
-  // TODO: check the init parameters and complete the implementation
-  std::cerr << "cpp_server::SetupCppServer" << std::endl;
+                    const string &studio_url, const int num_workers) {
+  struct sigaction act;
+  act.sa_handler = signal_handler;
+  sigemptyset(&act.sa_mask);
+  act.sa_flags = 0;
+  sigaction(SIGINT, &act, NULL);
+  std::string server_address(host + ":" + port);
+  worker = new Worker(host, port, server_id,
+                      studio_url, max_pool_size,
+                      max_timeout_seconds, num_workers);
+  auto server_thread = std::thread([&]() { RunServer(server_address); });
+  server_thread.detach();
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+}
+
+
+void ShutdownCppServer() {
+  worker->logger("Shutdown");
+  server->Shutdown();
+  delete worker;
 }
 
 PYBIND11_MODULE(cpp_server, m) {
@@ -251,39 +268,7 @@ PYBIND11_MODULE(cpp_server, m) {
   m.def("setup_cpp_server", &SetupCppServer, "Run the gRPC server",
         py::arg("host"), py::arg("port"), py::arg("max_pool_size"),
         py::arg("max_timeout_seconds"), py::arg("local_mode"),
-        py::arg("server_id"), py::arg("studio_url"));
-}
-
-int main(int argc, char **argv) {
-  if (argc < 9) {
-    std::cerr << "Usage: " << argv[0]
-              << " <init_settings_str> <host> <port> <server_id> "
-                 "<custom_agent_classes_str> <studio_url> <max_tasks> "
-                 "<timeout_seconds> [<num_workers>]"
-              << std::endl;
-    return 1;
-  }
-  struct sigaction act;
-  act.sa_handler = signal_handler;
-  sigemptyset(&act.sa_mask);
-  act.sa_flags = 0;
-  sigaction(SIGINT, &act, NULL);
-  printf("Server starting");
-  string init_settings_str = argv[1];
-  string host = argv[2];
-  string port = argv[3];
-  std::string server_address(host + ":" + port);
-  string server_id = argv[4];
-  string custom_agent_classes_str = argv[5];
-  string studio_url = argv[6];
-  int max_tasks = std::atoi(argv[7]);
-  int timeout_seconds = std::atoi(argv[8]);
-  int num_workers = argc >= 10 ? std::atoi(argv[9]) : 2;
-  worker = new Worker(init_settings_str, host, port, server_id,
-                      custom_agent_classes_str, studio_url, max_tasks,
-                      timeout_seconds, num_workers);
-  printf("Init workers");
-  RunServer(server_address);
-  delete worker;
-  return 0;
+        py::arg("server_id"), py::arg("studio_url"),
+        py::arg("num_workers"));
+  m.def("shutdown_cpp_server", &ShutdownCppServer, "Shutdown the gRPC server");
 }

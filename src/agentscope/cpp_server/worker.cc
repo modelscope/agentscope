@@ -46,11 +46,9 @@ string Task::get_result()
 }
 
 Worker::Worker(
-    const string &init_settings_str,
     const string &host,
     const string &port,
     const string &server_id,
-    const string &custom_agent_classes_str,
     const string &studio_url,
     const unsigned int max_tasks,
     const unsigned int max_timeout_seconds,
@@ -71,6 +69,7 @@ Worker::Worker(
                                       _max_tasks(std::max(max_tasks, 1u)),
                                       _max_timeout_seconds(std::max(max_timeout_seconds, 1u))
 {
+    py::gil_scoped_release release;
     char *use_logger = getenv("AGENTSCOPE_USE_CPP_LOGGER");
     if (use_logger != nullptr && std::string(use_logger) == "True")
     {
@@ -131,23 +130,6 @@ Worker::Worker(
             _pid = getpid();
             _worker_id = i;
             char *shm_ptr = (char *)shm;
-            py::scoped_interpreter guard{};
-            py::object cpp_server = py::module::import("agentscope.cpp_server");
-            if (init_settings_str != "None")
-            {
-                cpp_server.attr("init_process_with_str")(init_settings_str);
-            }
-
-            py::object servicer = py::module::import("agentscope.server.servicer");
-            if (studio_url != "None" && _worker_id == 0)
-            {
-                servicer.attr("_register_server_to_studio")(studio_url, server_id, host, std::stoi(port));
-                py::object studio_client = py::module::import("agentscope.studio._client").attr("_studio_client");
-                py::object runtime = py::module::import("agentscope._runtime").attr("_runtime");
-                studio_client.attr("initialize")(runtime.attr("runtime_id"), studio_url);
-            }
-            cpp_server.attr("register_agent_classes")(custom_agent_classes_str);
-            py::gil_scoped_release release;
             auto t = sem_post(worker_avail_sem);
             while (true)
             {
@@ -226,7 +208,7 @@ Worker::~Worker() // for main process to release resources
 {
     for (auto pid : _worker_pids)
     {
-        kill(pid, SIGKILL);
+        kill(pid, SIGINT);
         waitpid(pid, NULL, 0);
     }
     for (auto iter : _worker_semaphores)
@@ -514,13 +496,14 @@ string Worker::call_create_agent(const string &agent_id, const string &agent_ini
     {
         return "Agent with agent_id [" + agent_id + "] already exists.";
     }
-    logger("call_create_agent " + agent_id);
+    logger("call_create_agent 1:" + agent_id);
     int worker_id = find_avail_worker_id();
     CreateAgentArgs args;
     args.set_agent_id(agent_id);
     args.set_agent_init_args(agent_init_args);
     args.set_agent_source_code(agent_source_code);
     int call_id = call_worker_func(worker_id, function_ids::create_agent, &args, false);
+    logger("call_create_agent 2:" + agent_id + " call_id = " + to_string(call_id) + " worker_id = " + to_string(worker_id));
     string result = get_result(call_id);
     if (result.empty())
     {
