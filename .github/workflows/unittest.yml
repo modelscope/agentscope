@@ -21,6 +21,14 @@ jobs:
     - name: Update setuptools
       run: |
         pip install setuptools==68.2.2 wheel==0.41.2
+    - name: Install Dependencies
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libprotobuf-dev protobuf-compiler libgrpc++-dev grpc-cpp-plugin
+      if: ${{ matrix.os == 'macos-13' }}
+      run: |
+        brew install protobuf grpc
     - name: Install Minimal Dependencies
       run: |
         pip install -q -e .
