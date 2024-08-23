@@ -25,7 +25,7 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         sudo apt-get update
-        sudo apt-get install -y libprotobuf-dev protobuf-compiler cmake libgrpc++-dev
+        sudo apt-get install -y libprotobuf-dev protobuf-compiler cmake libgrpc++-dev grpc-tools
     - name: Install Mac Dependencies
       if: ${{ matrix.os == 'macos-13' }}
       run: |
