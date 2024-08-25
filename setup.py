@@ -125,6 +125,8 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def run(self):
+        if platform.system() == "Windows":
+            return
         from setuptools import Distribution
         distribution = Distribution()
         distribution.parse_config_files()
@@ -149,10 +151,7 @@ class CMakeBuild(build_ext):
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
 
-        if platform.system() == "Windows":
-            return
-        else:
-            cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
+        cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
 
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
