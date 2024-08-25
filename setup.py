@@ -128,8 +128,6 @@ class CMakeBuild(build_ext):
         from setuptools import Distribution
         distribution = Distribution()
         distribution.parse_config_files()
-        if 'full' not in distribution.extras_require and 'cpp_distribute' not in distribution.extras_require:
-            return
         try:
             out = subprocess.check_output(['cmake', '--version'])
         except OSError:
