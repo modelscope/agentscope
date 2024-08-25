@@ -128,7 +128,8 @@ class CMakeBuild(build_ext):
         except OSError:
             raise RuntimeError("CMake must be installed to build the following extensions: " + ", ".join(e.name for e in self.extensions))
 
-        os.environ['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), os.environ.get('CMAKE_PREFIX_PATH', '')])
+        self.env = os.environ.copy()
+        self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), self.env.get('CMAKE_PREFIX_PATH', '')])
         for ext in self.extensions:
             self.build_extension(ext)
 
@@ -148,9 +149,9 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         print(f'self.build_temp = {self.build_temp}')
-        subprocess.check_call(['cmake', '-B', 'build', ext.sourcedir] + cmake_args, cwd=self.build_temp) # , env=env)
-        subprocess.check_call(['cmake', '--build', 'build'] + build_args, cwd=self.build_temp)
-        subprocess.check_call(['cmake', '--install', 'build'], cwd=self.build_temp)
+        subprocess.check_call(['cmake', '-B', 'build', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=self.env)
+        subprocess.check_call(['cmake', '--build', 'build'] + build_args, cwd=self.build_temp, env=self.env)
+        subprocess.check_call(['cmake', '--install', 'build'], cwd=self.build_temp, env=self.env)
 
 
 setuptools.setup(
