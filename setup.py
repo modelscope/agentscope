@@ -32,6 +32,10 @@ rpc_requires = [
     "psutil",
 ]
 
+cpp_rpc_requires = [
+    "pybind11",
+]
+
 service_requires = [
     "docker",
     "pymongo",
@@ -97,12 +101,14 @@ minimal_requires = [
 ]
 
 distribute_requires = minimal_requires + rpc_requires
+cpp_distribute_requires = distribute_requires + cpp_rpc_requires
 
 dev_requires = minimal_requires + test_requires
 
 full_requires = (
     minimal_requires
     + rpc_requires
+    + cpp_rpc_requires
     + service_requires
     + doc_requires
     + test_requires
@@ -123,6 +129,11 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def run(self):
+        from setuptools import Distribution
+        distribution = Distribution()
+        distribution.parse_config_files()
+        if 'full' not in distribution.extras_require and 'cpp_distribute' not in distribution.extras_require:
+            return
         try:
             out = subprocess.check_output(['cmake', '--version'])
         except OSError:
@@ -176,6 +187,7 @@ setuptools.setup(
     install_requires=minimal_requires,
     extras_require={
         "distribute": distribute_requires,
+        "cpp_distribute": cpp_distribute_requires,
         "dev": dev_requires,
         "full": full_requires,
     },
