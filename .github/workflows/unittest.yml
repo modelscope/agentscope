@@ -51,5 +51,8 @@ jobs:
       run: |
         python setup.py build
         ls -l src/agentscope/cpp_server/
-        python -c "from agentscope.cpp_server.cpp_server import setup_cpp_server, shutdown_cpp_server"
+        python -c "import agentscope; print(agentscope)"
+        echo ------------------------------------------
+        PYTHONPATH=./src/ python -c "from agentscope.cpp_server.cpp_server import setup_cpp_server, shutdown_cpp_server"
+        echo ------------------------------------------
         AGENTSCOPE_USE_CPP_SERVER=YES AGENTSCOPE_NUM_WORKERS=2 python -m unittest tests/rpc_agent_test.py
