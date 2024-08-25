@@ -32,10 +32,6 @@ rpc_requires = [
     "psutil",
 ]
 
-cpp_rpc_requires = [
-    "pybind11",
-]
-
 service_requires = [
     "docker",
     "pymongo",
@@ -98,17 +94,17 @@ minimal_requires = [
     "psutil",
     "scipy",
     "pillow",
+    "pybind11",
 ]
 
 distribute_requires = minimal_requires + rpc_requires
-cpp_distribute_requires = distribute_requires + cpp_rpc_requires
+cpp_distribute_requires = distribute_requires
 
 dev_requires = minimal_requires + test_requires
 
 full_requires = (
     minimal_requires
     + rpc_requires
-    + cpp_rpc_requires
     + service_requires
     + doc_requires
     + test_requires
@@ -145,6 +141,7 @@ class CMakeBuild(build_ext):
         self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), pybind11_path, self.env.get('CMAKE_PREFIX_PATH', '')])
         for ext in self.extensions:
             self.build_extension(ext)
+        super().run()
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
@@ -191,7 +188,7 @@ setuptools.setup(
         "dev": dev_requires,
         "full": full_requires,
     },
-    ext_modules=[CMakeExtension('CPP gRPC Server')],
+    ext_modules=[CMakeExtension('agentscope.cpp_server.cpp_server')],
     cmdclass=dict(build_ext=CMakeBuild),
     license="Apache License 2.0",
     classifiers=[
