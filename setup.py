@@ -129,7 +129,9 @@ class CMakeBuild(build_ext):
             raise RuntimeError("CMake must be installed to build the following extensions: " + ", ".join(e.name for e in self.extensions))
 
         self.env = os.environ.copy()
-        self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), self.env.get('CMAKE_PREFIX_PATH', '')])
+        import pybind11
+        pybind11_path = os.path.dirname(pybind11.get_include())
+        self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), pybind11_path, self.env.get('CMAKE_PREFIX_PATH', '')])
         for ext in self.extensions:
             self.build_extension(ext)
 
