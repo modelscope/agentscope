@@ -1732,6 +1732,7 @@ function showExportHTMLPopup() {
 
     // Remove the html attribute from the nodes to avoid inconsistencies in html
     removeHtmlFromUsers(rawData);
+    sortElementsByPosition(rawData);
 
     const exportData = JSON.stringify(rawData, null, 4);
 
