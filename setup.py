@@ -138,7 +138,9 @@ class CMakeBuild(build_ext):
         self.env = os.environ.copy()
         # import pybind11
         # pybind11_path = os.path.dirname(pybind11.get_include())
-        pybind11_path = ''
+        # pybind11_path = ''
+        import site
+        pybind11_path = os.path.join(site.getsitepackages()[0], 'pybind11')
         self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), pybind11_path, self.env.get('CMAKE_PREFIX_PATH', '')])
         for ext in self.extensions:
             self.build_extension(ext)
