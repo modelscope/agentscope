@@ -79,6 +79,11 @@ Worker::Worker(
     {
         _use_logger = false;
     }
+    struct stat info;
+    if (stat("./logs/", &info) != 0)
+    {
+        mkdir("./logs", 0755);
+    }
     for (int i = 0; i < _num_workers; i++)
     {
         string shm_name = _func_call_shm_prefix + std::to_string(i);
