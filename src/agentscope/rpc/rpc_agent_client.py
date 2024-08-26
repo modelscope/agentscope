@@ -4,7 +4,7 @@
 import threading
 import json
 import os
-from typing import Optional, Sequence, Union, Generator, Callable
+from typing import Optional, Sequence, Union, Generator, Callable, Any
 from concurrent.futures import Future
 from loguru import logger
 
@@ -34,6 +34,8 @@ from ..manager import FileManager
 class RpcAgentClient:
     """A client of Rpc agent server"""
 
+    _CHANNEL_POOL = {}
+
     def __init__(
         self,
         host: str,
@@ -49,6 +51,23 @@ class RpcAgentClient:
         """
         self.host = host
         self.port = port
+        self.channel = RpcAgentClient._get_channel(host, port)
+
+    @classmethod
+    def _get_channel(
+        cls,
+        host: str,
+        port: int,
+    ) -> Any:
+        """Get a channel from channel pool."""
+        if f"{host}:{port}" not in RpcAgentClient._CHANNEL_POOL:
+            RpcAgentClient._CHANNEL_POOL[
+                f"{host}:{port}"
+            ] = grpc.insecure_channel(
+                f"{host}:{port}",
+                options=_DEFAULT_RPC_OPTIONS,
+            )
+        return RpcAgentClient._CHANNEL_POOL[f"{host}:{port}"]
 
     def call_agent_func(
         self,
@@ -70,17 +89,16 @@ class RpcAgentClient:
             bytes: serialized return data.
         """
         try:
-            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-                stub = RpcAgentStub(channel)
-                result_msg = stub.call_agent_func(
-                    agent_pb2.CallFuncRequest(
-                        target_func=func_name,
-                        value=value,
-                        agent_id=agent_id,
-                    ),
-                    timeout=timeout,
-                )
-                return result_msg.value
+            stub = RpcAgentStub(self.channel)
+            result_msg = stub.call_agent_func(
+                agent_pb2.CallFuncRequest(
+                    target_func=func_name,
+                    value=value,
+                    agent_id=agent_id,
+                ),
+                timeout=timeout,
+            )
+            return result_msg.value
         except Exception as e:
             # check the server and raise a more reasonable error
             if not self.is_alive():
@@ -99,15 +117,14 @@ class RpcAgentClient:
         """
 
         try:
-            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-                stub = RpcAgentStub(channel)
-                status = stub.is_alive(Empty(), timeout=5)
-                if not status.ok:
-                    raise AgentServerNotAliveError(
-                        host=self.host,
-                        port=self.port,
-                    )
-                return status.ok
+            stub = RpcAgentStub(self.channel)
+            status = stub.is_alive(Empty(), timeout=5)
+            if not status.ok:
+                raise AgentServerNotAliveError(
+                    host=self.host,
+                    port=self.port,
+                )
+            return status.ok
         except Exception:
             logger.info(
                 f"Agent server [{self.host}:{self.port}] not alive.",
@@ -117,20 +134,19 @@ class RpcAgentClient:
     def stop(self) -> None:
         """Stop the agent server."""
         try:
-            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-                stub = RpcAgentStub(channel)
+            stub = RpcAgentStub(self.channel)
+            logger.info(
+                f"Stopping agent server at [{self.host}:{self.port}].",
+            )
+            resp = stub.stop(Empty(), timeout=5)
+            if resp.ok:
                 logger.info(
-                    f"Stopping agent server at [{self.host}:{self.port}].",
+                    f"Agent server at [{self.host}:{self.port}] stopped.",
                 )
-                resp = stub.stop(Empty(), timeout=5)
-                if resp.ok:
-                    logger.info(
-                        f"Agent server at [{self.host}:{self.port}] stopped.",
-                    )
-                else:
-                    logger.error(
-                        f"Fail to stop the agent server: {resp.message}",
-                    )
+            else:
+                logger.error(
+                    f"Fail to stop the agent server: {resp.message}",
+                )
         except Exception as e:
             logger.error(
                 f"Fail to stop the agent server: {e}",
@@ -152,19 +168,18 @@ class RpcAgentClient:
             bool: Indicate whether the creation is successful
         """
         try:
-            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-                stub = RpcAgentStub(channel)
-                status = stub.create_agent(
-                    agent_pb2.CreateAgentRequest(
-                        agent_id=agent_id,
-                        agent_init_args=pickle.dumps(agent_configs),
-                    ),
+            stub = RpcAgentStub(self.channel)
+            status = stub.create_agent(
+                agent_pb2.CreateAgentRequest(
+                    agent_id=agent_id,
+                    agent_init_args=pickle.dumps(agent_configs),
+                ),
+            )
+            if not status.ok:
+                logger.error(
+                    f"Error when creating agent: {status.message}",
                 )
-                if not status.ok:
-                    logger.error(
-                        f"Error when creating agent: {status.message}",
-                    )
-                return status.ok
+            return status.ok
         except Exception as e:
             # check the server and raise a more reasonable error
             if not self.is_alive():
@@ -188,23 +203,21 @@ class RpcAgentClient:
         Returns:
             bool: Indicate whether the deletion is successful
         """
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            status = stub.delete_agent(
-                agent_pb2.StringMsg(value=agent_id),
-            )
-            if not status.ok:
-                logger.error(f"Error when deleting agent: {status.message}")
-            return status.ok
+        stub = RpcAgentStub(self.channel)
+        status = stub.delete_agent(
+            agent_pb2.StringMsg(value=agent_id),
+        )
+        if not status.ok:
+            logger.error(f"Error when deleting agent: {status.message}")
+        return status.ok
 
     def delete_all_agent(self) -> bool:
         """Delete all agents on the server."""
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            status = stub.delete_all_agents(Empty())
-            if not status.ok:
-                logger.error(f"Error when delete all agents: {status.message}")
-            return status.ok
+        stub = RpcAgentStub(self.channel)
+        status = stub.delete_all_agents(Empty())
+        if not status.ok:
+            logger.error(f"Error when delete all agents: {status.message}")
+        return status.ok
 
     def clone_agent(self, agent_id: str) -> Optional[str]:
         """Clone a new agent instance from the origin instance.
@@ -215,18 +228,17 @@ class RpcAgentClient:
         Returns:
             str: The `agent_id` of the generated agent.
         """
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            resp = stub.clone_agent(
-                agent_pb2.StringMsg(value=agent_id),
+        stub = RpcAgentStub(self.channel)
+        resp = stub.clone_agent(
+            agent_pb2.StringMsg(value=agent_id),
+        )
+        if not resp.ok:
+            logger.error(
+                f"Error when clone agent [{agent_id}]: {resp.message}",
             )
-            if not resp.ok:
-                logger.error(
-                    f"Error when clone agent [{agent_id}]: {resp.message}",
-                )
-                return None
-            else:
-                return resp.message
+            return None
+        else:
+            return resp.message
 
     def update_placeholder(self, task_id: int) -> str:
         """Update the placeholder value.
@@ -237,21 +249,17 @@ class RpcAgentClient:
         Returns:
             bytes: Serialized message value.
         """
-        with grpc.insecure_channel(
-            f"{self.host}:{self.port}",
-            options=_DEFAULT_RPC_OPTIONS,
-        ) as channel:
-            stub = RpcAgentStub(channel)
-            resp = stub.update_placeholder(
-                agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
+        stub = RpcAgentStub(self.channel)
+        resp = stub.update_placeholder(
+            agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
+        )
+        if not resp.ok:
+            raise AgentCallError(
+                host=self.host,
+                port=self.port,
+                message=f"Failed to update placeholder: {resp.message}",
             )
-            if not resp.ok:
-                raise AgentCallError(
-                    host=self.host,
-                    port=self.port,
-                    message=f"Failed to update placeholder: {resp.message}",
-                )
-            return resp.value
+        return resp.value
 
     def get_agent_list(self) -> Sequence[dict]:
         """
@@ -260,26 +268,24 @@ class RpcAgentClient:
         Returns:
             Sequence[str]: list of agent summary information.
         """
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            resp = stub.get_agent_list(Empty())
-            if not resp.ok:
-                logger.error(f"Error when get agent list: {resp.message}")
-                return []
-            return [
-                json.loads(agent_str) for agent_str in json.loads(resp.message)
-            ]
+        stub = RpcAgentStub(self.channel)
+        resp = stub.get_agent_list(Empty())
+        if not resp.ok:
+            logger.error(f"Error when get agent list: {resp.message}")
+            return []
+        return [
+            json.loads(agent_str) for agent_str in json.loads(resp.message)
+        ]
 
     def get_server_info(self) -> dict:
         """Get the agent server resource usage information."""
         try:
-            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-                stub = RpcAgentStub(channel)
-                resp = stub.get_server_info(Empty())
-                if not resp.ok:
-                    logger.error(f"Error in get_server_info: {resp.message}")
-                    return {}
-                return json.loads(resp.message)
+            stub = RpcAgentStub(self.channel)
+            resp = stub.get_server_info(Empty())
+            if not resp.ok:
+                logger.error(f"Error in get_server_info: {resp.message}")
+                return {}
+            return json.loads(resp.message)
         except Exception as e:
             logger.error(f"Error in get_server_info: {e}")
             return {}
@@ -289,26 +295,24 @@ class RpcAgentClient:
         model_configs: Union[dict, list[dict]],
     ) -> bool:
         """Set the model configs of the server."""
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            resp = stub.set_model_configs(
-                agent_pb2.StringMsg(value=json.dumps(model_configs)),
-            )
-            if not resp.ok:
-                logger.error(f"Error in set_model_configs: {resp.message}")
-                return False
-            return True
+        stub = RpcAgentStub(self.channel)
+        resp = stub.set_model_configs(
+            agent_pb2.StringMsg(value=json.dumps(model_configs)),
+        )
+        if not resp.ok:
+            logger.error(f"Error in set_model_configs: {resp.message}")
+            return False
+        return True
 
     def get_agent_memory(self, agent_id: str) -> Union[list, dict]:
         """Get the memory usage of the specific agent."""
-        with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-            stub = RpcAgentStub(channel)
-            resp = stub.get_agent_memory(
-                agent_pb2.StringMsg(value=agent_id),
-            )
-            if not resp.ok:
-                logger.error(f"Error in get_agent_memory: {resp.message}")
-            return json.loads(resp.message)
+        stub = RpcAgentStub(self.channel)
+        resp = stub.get_agent_memory(
+            agent_pb2.StringMsg(value=agent_id),
+        )
+        if not resp.ok:
+            logger.error(f"Error in get_agent_memory: {resp.message}")
+        return json.loads(resp.message)
 
     def download_file(self, path: str) -> str:
         """Download a file from a remote server to the local machine.
@@ -329,13 +333,18 @@ class RpcAgentClient:
         )
 
         def _generator() -> Generator[bytes, None, None]:
-            with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
-                for resp in RpcAgentStub(channel).download_file(
-                    agent_pb2.StringMsg(value=path),
-                ):
-                    yield resp.data
+            for resp in RpcAgentStub(self.channel).download_file(
+                agent_pb2.StringMsg(value=path),
+            ):
+                yield resp.data
 
         return file_manager.save_file(_generator(), local_filename)
+
+    def __reduce__(self) -> tuple:
+        return (
+            RpcAgentClient,
+            (self.host, self.port),
+        )
 
 
 def call_func_in_thread(func: Callable) -> Future:
