@@ -11,6 +11,7 @@ except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
     redis = ImportErrorReporter(import_error, "distribute")
+    expiringdict = ImportErrorReporter(import_error, "distribute")
 
 
 class AsyncResultPool(ABC):
