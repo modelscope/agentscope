@@ -55,7 +55,23 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <a href="{{ url_for('logout') }}">log out</a>
+                    <!-- <a href="{{ url_for('logout') }}">log out</a> -->
+                    <a onclick="createNotification({
+                        title: 'Notification',
+                        content: `You've been logout`,
+                        position: 'top-right',
+                        closeBtn: true,
+                        intervalTime: 3000,
+                        progress: true,
+                        confirmBtn: 'Yes',
+                        cancelBtn: 'No',
+                        onConfirm: () => {
+                            window.location.href = '/logout';
+                        },
+                        onCancel: () => {
+
+                        }
+                    })">log out</a>
                 </div>
             </div>
             <div>

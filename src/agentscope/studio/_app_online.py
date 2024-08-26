@@ -259,7 +259,7 @@ def logout() -> str:
     Logout the user by clearing the session and redirecting to the login page.
     """
     session.clear()
-    return render_template("logout.html")
+    return redirect(url_for(_home))
 
 
 @_app.route("/upload-to-oss", methods=["POST"])
