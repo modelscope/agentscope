@@ -36,7 +36,8 @@ def create_agent(agent_id: str, agent_init_args: str, agent_source_code: str):
         )
         agent_instance._agent_id = agent_id  # pylint: disable=W0212
         logger.info(
-            f"create agent instance <{cls_name}>[{agent_id}] [{agent_instance.name}]"
+            f"create agent instance <{cls_name}>[{agent_id}]"
+            f" [{agent_instance.name}]"
         )
         return agent_instance, ""
     except Exception as e:

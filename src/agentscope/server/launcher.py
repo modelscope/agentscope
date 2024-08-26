@@ -225,7 +225,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             server_id, str(studio_url), num_workers
         )
         logger.info(
-            f"CPP agent server [{server_id}] at {host}:{port} started successfully",
+            f"CPP agent server [{server_id}] at {host}:{port} "
+            "started successfully",
         )
         if start_event is not None:
             pipe.send(port)
@@ -233,7 +234,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         if stop_event is not None:
             stop_event.wait()
             logger.info(
-                f"CPP agent server [{server_id}] at {host}:{port} stopped successfully",
+                f"CPP agent server [{server_id}] at {host}:{port} "
+                "stopped successfully",
             )
             shutdown_cpp_server()
         return

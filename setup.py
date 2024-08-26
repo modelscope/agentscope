@@ -7,6 +7,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 import os
 import sys
+import site
 import platform
 import subprocess
 
@@ -139,9 +140,7 @@ class CMakeBuild(build_ext):
         # import pybind11
         # pybind11_path = os.path.dirname(pybind11.get_include())
         # pybind11_path = ''
-        import site
-        pybind11_path = os.path.join(site.getsitepackages()[0], 'pybind11')
-        self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), pybind11_path, self.env.get('CMAKE_PREFIX_PATH', '')])
+        self.env['CMAKE_PREFIX_PATH'] = os.pathsep.join([os.path.dirname(sys.executable), self.env.get('CMAKE_PREFIX_PATH', '')])
         for ext in self.extensions:
             self.build_extension(ext)
         super().run()
@@ -149,7 +148,8 @@ class CMakeBuild(build_ext):
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                      '-DPython3_EXECUTABLE=' + sys.executable]
+                      '-DPython3_EXECUTABLE=' + sys.executable,
+                      '-Dpybind11_DIR=' + os.path.join(site.getsitepackages()[0], 'pybind11/share/cmake/pybind11/')]
 
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg]
