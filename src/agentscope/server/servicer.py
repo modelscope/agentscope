@@ -16,7 +16,6 @@ try:
     import grpc
     from grpc import ServicerContext
     from google.protobuf.empty_pb2 import Empty
-    from expiringdict import ExpiringDict
 except ImportError as import_error:
     from agentscope.utils.tools import ImportErrorReporter
 
@@ -28,7 +27,6 @@ except ImportError as import_error:
         import_error,
         "distribute",
     )
-    ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 from agentscope.manager import ModelManager
@@ -37,9 +35,8 @@ from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.message import (
-    PlaceholderMessage,
-)
+from agentscope.message import PlaceholderMessage
+from agentscope.server.async_result_pool import get_pool
 
 
 def _register_server_to_studio(
@@ -64,15 +61,7 @@ def _register_server_to_studio(
         raise StudioRegisterError(f"Failed to register server: {resp.text}")
 
 
-class _AgentError:
-    """Use this class to represent an error when calling agent funcs."""
-
-    def __init__(self, agent_id: str, err_msg: str) -> None:
-        self.agent_id = agent_id
-        self.err_msg = err_msg
-
-    def __repr__(self) -> str:
-        return f"Agent[{self.agent_id}] error: {self.err_msg}"
+MAGIC_PREFIX = b"$$AS$$"
 
 
 class AgentServerServicer(RpcAgentServicer):
@@ -122,9 +111,9 @@ class AgentServerServicer(RpcAgentServicer):
             run_id = ASManager.get_instance().run_id
             _studio_client.initialize(run_id, studio_url)
 
-        self.result_pool = ExpiringDict(
+        self.result_pool = get_pool(
             max_len=max_pool_size,
-            max_age_seconds=max_timeout_seconds,
+            max_timeout=max_timeout_seconds,
         )
         self.executor = futures.ThreadPoolExecutor(max_workers=None)
         self.task_id_lock = threading.Lock()
@@ -133,13 +122,6 @@ class AgentServerServicer(RpcAgentServicer):
         self.agent_pool: dict[str, Any] = {}
         self.pid = os.getpid()
         self.stop_event = stop_event
-
-    def get_task_id(self) -> int:
-        """Get the auto-increment task id.
-        Each reply call will get a unique task id."""
-        with self.task_id_lock:
-            self.task_id_counter += 1
-            return self.task_id_counter
 
     def agent_exists(self, agent_id: str) -> bool:
         """Check whether the agent exists.
@@ -370,8 +352,7 @@ class AgentServerServicer(RpcAgentServicer):
             hasattr(func, "_is_async")
             and func._is_async  # pylint: disable=W0212
         ):  # pylint: disable=W0212
-            task_id = self.get_task_id()
-            self.result_pool[task_id] = threading.Condition()
+            task_id = self.result_pool.prepare()
             self.executor.submit(
                 self._process_messages,
                 task_id,
@@ -406,22 +387,16 @@ class AgentServerServicer(RpcAgentServicer):
     ) -> agent_pb2.CallFuncResponse:
         """Update the value of a placeholder."""
         task_id = request.task_id
-        while True:
-            result = self.result_pool.get(task_id)
-            if isinstance(result, threading.Condition):
-                with result:
-                    result.wait(timeout=1)
-            else:
-                break
-        if isinstance(result, _AgentError):
+        result = self.result_pool.get(task_id)
+        if result[:6] == MAGIC_PREFIX:
             return agent_pb2.CallFuncResponse(
                 ok=False,
-                message=result.err_msg,
+                message=result[6:].decode("utf-8"),
             )
         else:
             return agent_pb2.CallFuncResponse(
                 ok=True,
-                value=pickle.dumps(result),
+                value=result,
             )
 
     def get_agent_list(
@@ -528,8 +503,7 @@ class AgentServerServicer(RpcAgentServicer):
             `CallFuncRequest`: A serialized Msg instance with attributes name,
             host, port and task_id
         """
-        task_id = self.get_task_id()
-        self.result_pool[task_id] = threading.Condition()
+        task_id = self.result_pool.prepare()
         self.executor.submit(
             self._process_messages,
             task_id,
@@ -585,7 +559,6 @@ class AgentServerServicer(RpcAgentServicer):
             msg = pickle.loads(raw_msg)
         else:
             msg = None
-        cond = self.result_pool[task_id]
         agent = self.get_agent(agent_id)
         if isinstance(msg, PlaceholderMessage):
             msg.update_value()
@@ -597,10 +570,12 @@ class AgentServerServicer(RpcAgentServicer):
                     *msg.get("args", ()),
                     **msg.get("kwargs", {}),
                 )
-            self.result_pool[task_id] = result
+            self.result_pool.set(task_id, pickle.dumps(result))
         except Exception:
-            error_msg = traceback.format_exc()
-            logger.error(f"Error in agent [{agent_id}]:\n{error_msg}")
-            self.result_pool[task_id] = _AgentError(agent_id, error_msg)
-        with cond:
-            cond.notify_all()
+            trace = traceback.format_exc()
+            error_msg = f"Agent[{agent_id}] error: {trace}"
+            logger.error(error_msg)
+            self.result_pool.set(
+                task_id,
+                MAGIC_PREFIX + error_msg.encode("utf-8"),
+            )
