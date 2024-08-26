@@ -21,6 +21,8 @@ jobs:
     - name: Update setuptools
       run: |
         pip install setuptools==68.2.2 wheel==0.41.2
+        pip install pybind11
+        python -c "import os, site; print(os.path.join(site.getsitepackages()[0], 'pybind11')); print(os.listdir(os.path.join(site.getsitepackages()[0], 'pybind11/share/cmake/pybind11/')))"
     - name: Install Ubuntu Dependencies
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
