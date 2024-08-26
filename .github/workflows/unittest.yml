@@ -27,7 +27,7 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: |
         sudo apt-get update
-        sudo apt-get install -y libprotobuf-dev protobuf-compiler cmake libgrpc++-dev
+        sudo apt-get install -y libprotobuf-dev protobuf-compiler cmake libgrpc++-dev python3-pybind11
         git clone --recurse-submodules -b v1.62.2 --depth 1 --shallow-submodules https://github.com/grpc/grpc
         cd grpc
         mkdir -p cmake/build
