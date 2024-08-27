@@ -61,6 +61,7 @@ def _register_server_to_studio(
         raise StudioRegisterError(f"Failed to register server: {resp.text}")
 
 
+# todo: opt this
 MAGIC_PREFIX = b"$$AS$$"
 
 
