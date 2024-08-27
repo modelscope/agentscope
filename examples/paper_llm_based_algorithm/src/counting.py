@@ -58,7 +58,7 @@ class CountingSolver(ProblemSolver):
         for i in range(nsamples):
             x = self.invoke_llm_call(x_request, dialog_agent)
             candidate_solutions[i] = self.parse_llm_response_counting(
-                x["content"],
+                x.content,
             )  # int
 
         solution = max(

@@ -6,7 +6,7 @@ from typing import Any
 
 from agentscope.service import retrieve_from_list, cos_sim
 from agentscope.service.service_status import ServiceExecStatus
-from agentscope.message import MessageBase, Msg
+from agentscope.message import Msg
 from agentscope.memory.temporary_memory import TemporaryMemory
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
 
@@ -40,11 +40,11 @@ class TestRetrieval(unittest.TestCase):
         m2 = Msg(name="env", content="test2", role="assistant")
         m2.embedding = [0.5, 0.5]
         m2.timestamp = "2023-12-18 21:50:59"
-        memory = TemporaryMemory(config={}, embedding_model=dummy_model)
+        memory = TemporaryMemory(embedding_model=dummy_model)
         memory.add(m1)
         memory.add(m2)
 
-        def score_func(m1: MessageBase, m2: MessageBase) -> float:
+        def score_func(m1: Msg, m2: Msg) -> float:
             relevance = cos_sim(m1.embedding, m2.embedding).content
             time_gap = (
                 datetime.strptime(m1.timestamp, "%Y-%m-%d %H:%M:%S")

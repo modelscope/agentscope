@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
+# mypy: disable-error-code="misc"
 """The placeholder message for RpcAgent."""
-import json
-from typing import Any, Optional, List, Union, Sequence
+import os
+from typing import Any, Optional, List, Union, Sequence, Literal
 
 from loguru import logger
 
-from .msg import Msg, MessageBase
+from .msg import Msg
 from ..rpc import RpcAgentClient, ResponseStub, call_in_thread
-from ..utils.tools import is_web_accessible
+from ..serialize import deserialize, is_serializable, serialize
+from ..utils.tools import _is_web_url
 
 
 class PlaceholderMessage(Msg):
     """A placeholder for the return message of RpcAgent."""
 
-    PLACEHOLDER_ATTRS = {
+    __placeholder_attrs = {
         "_host",
         "_port",
         "_client",
@@ -22,44 +24,26 @@ class PlaceholderMessage(Msg):
         "_is_placeholder",
     }
 
-    LOCAL_ATTRS = {
-        "name",
-        "timestamp",
-        *PLACEHOLDER_ATTRS,
+    __serialized_attrs = {
+        "_host",
+        "_port",
+        "_task_id",
     }
+
+    _is_placeholder: bool
+    """Indicates whether the real message is still in the rpc server."""
 
     def __init__(
         self,
-        name: str,
-        content: Any,
-        url: Optional[Union[List[str], str]] = None,
-        timestamp: Optional[str] = None,
         host: str = None,
         port: int = None,
         task_id: int = None,
         client: Optional[RpcAgentClient] = None,
-        x: dict = None,
-        **kwargs: Any,
+        x: Optional[Union[Msg, Sequence[Msg]]] = None,
     ) -> None:
         """A placeholder message, records the address of the real message.
 
         Args:
-            name (`str`):
-                The name of who send the message. It's often used in
-                role-playing scenario to tell the name of the sender.
-                However, you can also only use `role` when calling openai api.
-                The usage of `name` refers to
-                https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models.
-            content (`Any`):
-                The content of the message.
-            role (`Literal["system", "user", "assistant"]`, defaults to "assistant"):
-                The role of the message, which can be one of the `"system"`,
-                `"user"`, or `"assistant"`.
-            url (`Optional[Union[List[str], str]]`, defaults to None):
-                A url to file, image, video, audio or website.
-            timestamp (`Optional[str]`, defaults to None):
-                The timestamp of the message, if None, it will be set to
-                current time.
             host (`str`, defaults to `None`):
                 The hostname of the rpc server where the real message is
                 located.
@@ -70,15 +54,15 @@ class PlaceholderMessage(Msg):
             client (`RpcAgentClient`, defaults to `None`):
                 An RpcAgentClient instance used to connect to the generator of
                 this placeholder.
-            x (`dict`, defaults to `None`):
+            x (`Optional[Msg, Sequence[Msg]]`, defaults to `None`):
                 Input parameters used to call rpc methods on the client.
-        """  # noqa
+        """
         super().__init__(
-            name=name,
-            content=content,
-            url=url,
-            timestamp=timestamp,
-            **kwargs,
+            name="",
+            content="",
+            role="assistant",
+            url=None,
+            metadata=None,
         )
         # placeholder indicates whether the real message is still in rpc server
         self._is_placeholder = True
@@ -90,134 +74,232 @@ class PlaceholderMessage(Msg):
         else:
             self._stub = call_in_thread(
                 client,
-                x.serialize() if x is not None else "",
+                serialize(x),
                 "_reply",
             )
             self._host = client.host
             self._port = client.port
             self._task_id = None
 
-    def __is_local(self, key: Any) -> bool:
-        return (
-            key in PlaceholderMessage.LOCAL_ATTRS or not self._is_placeholder
-        )
-
-    def __getattr__(self, __name: str) -> Any:
-        """Get attribute value from PlaceholderMessage. Get value from rpc
-        agent server if necessary.
-
-        Args:
-            __name (`str`):
-                Attribute name.
-        """
-        if not self.__is_local(__name):
+    @property
+    def id(self) -> str:
+        """The identity of the message."""
+        if self._is_placeholder:
             self.update_value()
-        return MessageBase.__getattr__(self, __name)
+        return self._id
 
-    def __getitem__(self, __key: Any) -> Any:
-        """Get item value from PlaceholderMessage. Get value from rpc
-        agent server if necessary.
-
-        Args:
-            __key (`Any`):
-                Item name.
-        """
-        if not self.__is_local(__key):
+    @property
+    def name(self) -> str:
+        """The name of the message sender."""
+        if self._is_placeholder:
             self.update_value()
-        return MessageBase.__getitem__(self, __key)
+        return self._name
 
-    def update_value(self) -> MessageBase:
+    @property
+    def content(self) -> Any:
+        """The content of the message."""
+        if self._is_placeholder:
+            self.update_value()
+        return self._content
+
+    @property
+    def role(self) -> Literal["system", "user", "assistant"]:
+        """The role of the message sender, chosen from 'system', 'user',
+        'assistant'."""
+        if self._is_placeholder:
+            self.update_value()
+        return self._role
+
+    @property
+    def url(self) -> Optional[Union[str, List[str]]]:
+        """A URL string or a list of URL strings."""
+        if self._is_placeholder:
+            self.update_value()
+        return self._url
+
+    @property
+    def metadata(self) -> Optional[Union[dict, str]]:
+        """The metadata of the message, which can store some additional
+        information."""
+        if self._is_placeholder:
+            self.update_value()
+        return self._metadata
+
+    @property
+    def timestamp(self) -> str:
+        """The timestamp when the message is created."""
+        if self._is_placeholder:
+            self.update_value()
+        return self._timestamp
+
+    @id.setter  # type: ignore[no-redef]
+    def id(self, value: str) -> None:
+        """Set the identity of the message."""
+        self._id = value
+
+    @name.setter  # type: ignore[no-redef]
+    def name(self, value: str) -> None:
+        """Set the name of the message sender."""
+        self._name = value
+
+    @content.setter  # type: ignore[no-redef]
+    def content(self, value: Any) -> None:
+        """Set the content of the message."""
+        if not is_serializable(value):
+            logger.warning(
+                f"The content of {type(value)} is not serializable, which "
+                f"may cause problems.",
+            )
+        self._content = value
+
+    @role.setter  # type: ignore[no-redef]
+    def role(self, value: Literal["system", "user", "assistant"]) -> None:
+        """Set the role of the message sender. The role must be one of
+        'system', 'user', 'assistant'."""
+        if value not in ["system", "user", "assistant"]:
+            raise ValueError(
+                f"Invalid role {value}. The role must be one of "
+                f"['system', 'user', 'assistant']",
+            )
+        self._role = value
+
+    @url.setter  # type: ignore[no-redef]
+    def url(self, value: Union[str, List[str], None]) -> None:
+        """Set the url of the message. The url can be a URL string or a list of
+        URL strings."""
+        self._url = value
+
+    @metadata.setter  # type: ignore[no-redef]
+    def metadata(self, value: Union[dict, str, None]) -> None:
+        """Set the metadata of the message to store some additional
+        information."""
+        self._metadata = value
+
+    @timestamp.setter  # type: ignore[no-redef]
+    def timestamp(self, value: str) -> None:
+        """Set the timestamp of the message."""
+        self._timestamp = value
+
+    def update_value(self) -> None:
         """Get attribute values from rpc agent server immediately"""
         if self._is_placeholder:
             # retrieve real message from rpc agent server
             self.__update_task_id()
             client = RpcAgentClient(self._host, self._port)
             result = client.update_placeholder(task_id=self._task_id)
-            msg = deserialize(result)
-            self.__update_url(msg)  # type: ignore[arg-type]
-            self.update(msg)
-            # the actual value has been updated, not a placeholder anymore
-            self._is_placeholder = False
-        return self
 
-    def __update_url(self, msg: MessageBase) -> None:
-        """Update the url field of the message."""
-        if hasattr(msg, "url") and msg.url is None:
-            return
-        url = msg.url
+            # Update the values according to the result obtained from the
+            # distributed agent
+            data = deserialize(result)
+
+            self.id = data.id
+            self.name = data.name
+            self.role = data.role
+            self.content = data.content
+            self.metadata = data.metadata
+
+            self.timestamp = data.timestamp
+
+            # For url field, download the file if it's a local file of the
+            # distributed agent, and turn it into a local url
+            self.url = self.__update_url(data.url)
+
+            self._is_placeholder = False
+
+    def __update_url(
+        self,
+        url: Union[list[str], str, None],
+    ) -> Union[list, str, None]:
+        """If the url links to
+            - a file that the main process can access, return the url directly
+            - a web resource, return the url directly
+            - a local file of the distributed agent (maybe in the deployed
+            machine of the distributed agent), we download the file and update
+            the url to the local url.
+            - others (maybe a meaningless url, e.g "xxx.com"), return the url.
+
+        Args:
+            url (`Union[List[str], str, None]`):
+                The url to be updated.
+        """
+
+        if url is None:
+            return None
+
         if isinstance(url, str):
-            urls = [url]
-        else:
-            urls = url
-        checked_urls = []
-        for url in urls:
-            if not is_web_accessible(url):
-                client = RpcAgentClient(self._host, self._port)
-                checked_urls.append(client.download_file(path=url))
-            else:
-                checked_urls.append(url)
-        msg.url = checked_urls[0] if isinstance(url, str) else checked_urls
+            if os.path.exists(url) or _is_web_url(url):
+                return url
+
+            # Try to get the file from the distributed agent
+            client = RpcAgentClient(self.host, self.port)
+            # TODO: what if failed here?
+            local_url = client.download_file(path=url)
+
+            return local_url
+
+        if isinstance(url, list):
+            return [self.__update_url(u) for u in url]
+
+        raise TypeError(
+            f"Invalid URL type, expect str, list[str] or None, "
+            f"got {type(url)}.",
+        )
 
     def __update_task_id(self) -> None:
+        """Get the task_id from the rpc server."""
         if self._stub is not None:
             try:
-                resp = deserialize(self._stub.get_response())
+                task_id = deserialize(self._stub.get_response())
             except Exception as e:
-                logger.error(
-                    f"Failed to get task_id: {self._stub.get_response()}",
-                )
                 raise ValueError(
                     f"Failed to get task_id: {self._stub.get_response()}",
                 ) from e
-            self._task_id = resp["task_id"]  # type: ignore[call-overload]
+            self._task_id = task_id
             self._stub = None
 
-    def serialize(self) -> str:
+    def to_dict(self) -> dict:
+        """Serialize the placeholder message."""
         if self._is_placeholder:
             self.__update_task_id()
-            return json.dumps(
-                {
-                    "__type": "PlaceholderMessage",
-                    "name": self.name,
-                    "content": None,
-                    "timestamp": self.timestamp,
-                    "host": self._host,
-                    "port": self._port,
-                    "task_id": self._task_id,
-                },
-            )
-        else:
-            states = {
-                k: v
-                for k, v in self.items()
-                if k not in PlaceholderMessage.PLACEHOLDER_ATTRS
+
+            # Serialize the placeholder message
+            serialized_dict = {
+                "__module__": self.__class__.__module__,
+                "__name__": self.__class__.__name__,
             }
-            states["__type"] = "Msg"
-            return json.dumps(states)
 
+            for attr_name in self.__serialized_attrs:
+                serialized_dict[attr_name] = getattr(self, attr_name)
 
-_MSGS = {
-    "Msg": Msg,
-    "PlaceholderMessage": PlaceholderMessage,
-}
+            return serialized_dict
 
+        else:
+            # Serialize into a normal Msg object
+            serialized_dict = {
+                "__module__": Msg.__module__,
+                "__name__": Msg.__name__,
+            }
 
-def deserialize(s: Union[str, bytes]) -> Union[Msg, Sequence]:
-    """Deserialize json string into MessageBase"""
-    js_msg = json.loads(s)
-    msg_type = js_msg.pop("__type")
-    if msg_type == "List":
-        return [deserialize(s) for s in js_msg["__value"]]
-    elif msg_type not in _MSGS:
-        raise NotImplementedError(
-            f"Deserialization of {msg_type} is not supported.",
+            # TODO: We will merge the placeholder and message classes in the
+            #  future to avoid the hard coding of the serialized attributes
+            #  here
+            for attr_name in [
+                "id",
+                "name",
+                "content",
+                "role",
+                "url",
+                "metadata",
+                "timestamp",
+            ]:
+                serialized_dict[attr_name] = getattr(self, attr_name)
+            return serialized_dict
+
+    @classmethod
+    def from_dict(cls, serialized_dict: dict) -> "PlaceholderMessage":
+        """Create a PlaceholderMessage from a dictionary."""
+        return cls(
+            host=serialized_dict["_host"],
+            port=serialized_dict["_port"],
+            task_id=serialized_dict["_task_id"],
         )
-    return _MSGS[msg_type](**js_msg)
-
-
-def serialize(messages: Union[Sequence[MessageBase], MessageBase]) -> str:
-    """Serialize multiple MessageBase instance"""
-    if isinstance(messages, MessageBase):
-        return messages.serialize()
-    seq = [msg.serialize() for msg in messages]
-    return json.dumps({"__type": "List", "__value": seq})

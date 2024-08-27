@@ -55,7 +55,7 @@ x = load_txt(
 
 x = Msg("user", x, role="user")
 settings = agent_builder(x)
-scenario_participants = extract_scenario_and_participants(settings["content"])
+scenario_participants = extract_scenario_and_participants(settings.content)
 
 # set the agents that participant the discussion
 agents = [

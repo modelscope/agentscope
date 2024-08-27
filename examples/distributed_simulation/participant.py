@@ -36,7 +36,7 @@ class RandomParticipant(AgentBase):
         """Generate a random value"""
         # generate a response in content
         response = self.generate_random_response()
-        msg = Msg(self.name, content=response)
+        msg = Msg(self.name, content=response, role="assistant")
         return msg
 
 
@@ -148,7 +148,7 @@ class Moderator(AgentBase):
         summ = 0
         for r in results:
             try:
-                summ += int(r["content"])
+                summ += int(r.content)
             except Exception as e:
                 print(e)
         return Msg(

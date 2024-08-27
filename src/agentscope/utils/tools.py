@@ -255,7 +255,7 @@ def generate_id_from_seed(seed: str, length: int = 8) -> str:
     return "".join(id_chars)
 
 
-def is_web_accessible(url: str) -> bool:
+def _is_web_url(url: str) -> bool:
     """Whether the url is accessible from the Web.
 
     Args:
@@ -466,7 +466,7 @@ def _map_string_to_color_mark(
         ("\033[97m", "\033[0m"),
     ]
 
-    hash_value = hash(target_str)
+    hash_value = int(hashlib.sha256(target_str.encode()).hexdigest(), 16)
     index = hash_value % len(color_marks)
     return color_marks[index]
 

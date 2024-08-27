@@ -21,7 +21,6 @@ class DialogAgentWithMoA(AgentBase):
         name: str,
         moa_module: MixtureOfAgents,  # changed to passing moa_module here
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
     ) -> None:
         """Initialize the dialog agent.
 
@@ -35,14 +34,11 @@ class DialogAgentWithMoA(AgentBase):
                 The inited MoA module you want to use as the main module.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
         """
         super().__init__(
             name=name,
             sys_prompt="",
             use_memory=use_memory,
-            memory_config=memory_config,
         )
         self.moa_module = moa_module  # change model init to moa_module
 

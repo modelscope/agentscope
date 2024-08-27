@@ -80,11 +80,13 @@ class SearcherAgent(AgentBase):
                 Msg(
                     name=self.name,
                     content=result,
+                    role="assistant",
                     url=result["link"],
-                    query=x.content,
+                    metadata=x.content,
                 )
                 for result in results
             ],
+            role="assistant",
         )
         self.speak(
             Msg(
