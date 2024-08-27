@@ -20,7 +20,6 @@ let nameToHtmlFile = {
     'Message': 'message-msg.html',
     'DialogAgent': 'agent-dialogagent.html',
     'UserAgent': 'agent-useragent.html',
-    'TextToImageAgent': 'agent-texttoimageagent.html',
     'DictDialogAgent': 'agent-dictdialogagent.html',
     'ReActAgent': 'agent-reactagent.html',
     'Placeholder': 'pipeline-placeholder.html',
@@ -602,22 +601,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             var nodeElement = document.querySelector(`#node-${UserAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = UserAgentID;
-            }
-            break;
-
-        case 'TextToImageAgent':
-            const TextToImageAgentID =
-                editor.addNode('TextToImageAgent', 1,
-                    1, pos_x, pos_y,
-                    'TextToImageAgent', {
-                        "args": {
-                            "name": '',
-                            "model_config_name": ''
-                        }
-                    }, htmlSourceCode);
-            var nodeElement = document.querySelector(`#node-${TextToImageAgentID} .node-id`);
-            if (nodeElement) {
-                nodeElement.textContent = TextToImageAgentID;
             }
             break;
 
