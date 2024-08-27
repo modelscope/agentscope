@@ -148,17 +148,14 @@
     <span class="n">ExpiringDict</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="k">as</span> <span class="nn">agent_pb2</span>
+<span class="kn">from</span> <span class="nn">agentscope.serialize</span> <span class="kn">import</span> <span class="n">deserialize</span><span class="p">,</span> <span class="n">serialize</span>
 <span class="kn">from</span> <span class="nn">agentscope.agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
 <span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">StudioRegisterError</span>
 <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Msg</span><span class="p">,</span>
-    <span class="n">PlaceholderMessage</span><span class="p">,</span>
-    <span class="n">deserialize</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span>
 
 
 <span class="k">def</span> <span class="nf">_register_server_to_studio</span><span class="p">(</span>
@@ -501,7 +498,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
                 <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">serialize</span><span class="p">(</span><span class="n">result</span><span class="p">),</span>
             <span class="p">)</span></div>
 
 
@@ -519,7 +516,8 @@
                 <span class="n">summaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">agent</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
                 <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">summaries</span><span class="p">),</span>
+                <span class="c1"># TODO: unified into serialize function to avoid error.</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">serialize</span><span class="p">(</span><span class="n">summaries</span><span class="p">),</span>
             <span class="p">)</span></div>
 
 
@@ -538,7 +536,7 @@
         <span class="n">status</span><span class="p">[</span><span class="s2">&quot;cpu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">cpu_percent</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">status</span><span class="p">[</span><span class="s2">&quot;mem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">memory_info</span><span class="p">()</span><span class="o">.</span><span class="n">rss</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">status</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">status</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">serialize</span><span class="p">(</span><span class="n">status</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="AgentServerServicer.set_model_configs">
@@ -582,7 +580,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
             <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">message</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()),</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">serialize</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()),</span>
         <span class="p">)</span></div>
 
 
@@ -635,11 +633,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span>
             <span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">message</span><span class="o">=</span><span class="n">Msg</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_agent</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">content</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span>
+            <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">task_id</span><span class="p">),</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
@@ -653,9 +647,13 @@
 <span class="sd">            `RpcMsg`: Empty RpcMsg.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">msgs</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
-                <span class="n">msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
+                    <span class="n">msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
+            <span class="n">msgs</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">agent_pool</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">agent_id</span><span class="p">]</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">(</span><span class="n">ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -663,14 +661,14 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">task_msg</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">task_msg</span><span class="p">:</span> <span class="n">Msg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processing an input message and generate its reply message.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            task_id (`int`): task id of the input message, .</span>
+<span class="sd">            task_id (`int`): task id of the input message.</span>
 <span class="sd">            agent_id (`str`): the id of the agent that accepted the message.</span>
-<span class="sd">            task_msg (`dict`): the input message.</span>
+<span class="sd">            task_msg (`Msg`): the input message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task_msg</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
             <span class="n">task_msg</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>

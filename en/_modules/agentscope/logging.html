@@ -116,7 +116,6 @@
   <h1>Source code for agentscope.logging</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Logging utilities.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Any</span>
@@ -125,6 +124,7 @@
 
 <span class="kn">from</span> <span class="nn">.utils.tools</span> <span class="kn">import</span> <span class="n">_guess_type_by_extension</span>
 <span class="kn">from</span> <span class="nn">.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">.serialize</span> <span class="kn">import</span> <span class="n">serialize</span>
 <span class="kn">from</span> <span class="nn">.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
 <span class="kn">from</span> <span class="nn">.web.gradio.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">generate_image_from_name</span><span class="p">,</span>
@@ -218,7 +218,7 @@
 
         <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
             <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">serialize</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
         <span class="p">)</span>
 
 

@@ -130,15 +130,11 @@
 
 <span class="kn">from</span> <span class="nn">.memory</span> <span class="kn">import</span> <span class="n">MemoryBase</span>
 <span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span> <span class="nn">..serialize</span> <span class="kn">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
 <span class="kn">from</span> <span class="nn">..service.retrieval.retrieval_from_list</span> <span class="kn">import</span> <span class="n">retrieve_from_list</span>
 <span class="kn">from</span> <span class="nn">..service.retrieval.similarity</span> <span class="kn">import</span> <span class="n">Embedding</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">deserialize</span><span class="p">,</span>
-    <span class="n">serialize</span><span class="p">,</span>
-    <span class="n">MessageBase</span><span class="p">,</span>
-    <span class="n">Msg</span><span class="p">,</span>
-    <span class="n">PlaceholderMessage</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">PlaceholderMessage</span>
 
 
 <div class="viewcode-block" id="TemporaryMemory">
@@ -152,20 +148,18 @@
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Temporary memory module for conversation.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            config (dict):</span>
-<span class="sd">                configuration of the memory</span>
 <span class="sd">            embedding_model (Union[str, Callable])</span>
 <span class="sd">                if the temporary memory needs to be embedded,</span>
 <span class="sd">                then either pass the name of embedding model or</span>
 <span class="sd">                the embedding model itself.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -186,7 +180,6 @@
         <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">embed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># pylint: disable=too-many-branches</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adding new memory fragment, depending on how the memory are stored</span>
 <span class="sd">        Args:</span>
@@ -203,29 +196,25 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">record_memories</span> <span class="o">=</span> <span class="n">memories</span>
 
-        <span class="c1"># if memory doesn&#39;t have id attribute, we skip the checking</span>
+        <span class="c1"># Assert the message types</span>
         <span class="n">memories_idx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">memory_unit</span> <span class="ow">in</span> <span class="n">record_memories</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">),</span> <span class="n">MessageBase</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="o">**</span><span class="n">memory_unit</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Cannot add </span><span class="si">{</span><span class="n">memory_unit</span><span class="si">}</span><span class="s2"> to memory, &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;must be with subclass of MessageBase&quot;</span><span class="p">,</span>
-                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
-
             <span class="c1"># in case this is a PlaceholderMessage, try to update</span>
             <span class="c1"># the values first</span>
+            <span class="c1"># TODO: Unify PlaceholderMessage and Msg into one class to avoid</span>
+            <span class="c1">#  type error</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
                 <span class="n">memory_unit</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
-                <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="o">**</span><span class="n">memory_unit</span><span class="p">)</span>
+                <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Msg</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">memory_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
-            <span class="c1"># add to memory if it&#39;s new</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">memory_unit</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memories_idx</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot add </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">)</span><span class="si">}</span><span class="s2"> to memory, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;must be a Msg object.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Add to memory if it&#39;s new</span>
+            <span class="k">if</span> <span class="n">memory_unit</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memories_idx</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">embed</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">:</span>
                         <span class="c1"># TODO: embed only content or its string representation</span>
@@ -352,8 +341,21 @@
                         <span class="n">e</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
                         <span class="n">e</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
                     <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">memories</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Expect a list of Msg objects, but get </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;instead.&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
             <span class="n">load_memories</span> <span class="o">=</span> <span class="n">memories</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+            <span class="n">load_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">memories</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The type of memories to be loaded is not supported. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Expect str, list[Msg], or Msg, but get </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># overwrite the original memories after loading the new ones</span>
         <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>

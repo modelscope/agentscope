@@ -138,32 +138,6 @@
 
     <span class="n">_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="MemoryBase.__init__">
-<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;MemoryBase is a base class for memory of agents.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            config (`Optional[dict]`, defaults to `None`):</span>
-<span class="sd">                Configuration of this memory.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">config</span></div>
-
-
-<div class="viewcode-block" id="MemoryBase.update_config">
-<a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.update_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Configure memory as specified in config</span>
-<span class="sd">        Args:</span>
-<span class="sd">            config (`dict`): Configuration of resetting this memory</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span></div>
-
-
 <div class="viewcode-block" id="MemoryBase.get_memory">
 <a class="viewcode-back" href="../../../agentscope.memory.memory.html#agentscope.memory.MemoryBase.get_memory">[docs]</a>
     <span class="nd">@abstractmethod</span>

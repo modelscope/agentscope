@@ -270,7 +270,6 @@
         <span class="n">sys_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">memory_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">to_dist</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">DistConf</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize an agent from the given arguments.</span>
@@ -286,8 +285,6 @@
 <span class="sd">                configuration.</span>
 <span class="sd">            use_memory (`bool`, defaults to `True`):</span>
 <span class="sd">                Whether the agent has memory.</span>
-<span class="sd">            memory_config (`Optional[dict]`):</span>
-<span class="sd">                The config of memory.</span>
 <span class="sd">            to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):</span>
 <span class="sd">                The configurations passed to :py:meth:`to_dist` method. Used in</span>
 <span class="sd">                :py:class:`_AgentMeta`, when this parameter is provided,</span>
@@ -315,7 +312,6 @@
 <span class="sd">                See :doc:`Tutorial&lt;tutorial/208-distribute&gt;` for detail.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">memory_config</span> <span class="o">=</span> <span class="n">memory_config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span>
 
         <span class="c1"># TODO: support to receive a ModelWrapper instance</span>
@@ -326,7 +322,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">use_memory</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">TemporaryMemory</span><span class="p">(</span><span class="n">memory_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">TemporaryMemory</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -415,34 +411,7 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AgentBase.load_from_config">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.load_from_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load configuration for this agent.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            config (`dict`): model configuration</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
-
-
-<div class="viewcode-block" id="AgentBase.export_config">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.export_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">export_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return configuration of this agent.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The configuration of current agent.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{}</span></div>
-
-
-<div class="viewcode-block" id="AgentBase.load_memory">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.load_memory">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load input memory.&quot;&quot;&quot;</span></div>
-
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calling the reply function, and broadcast the generated</span>
 <span class="sd">        response to all audiences if needed.&quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

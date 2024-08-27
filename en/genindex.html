@@ -202,23 +202,17 @@
 </li>
         <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.__init__">(agentscope.manager.MonitorManager method)</a>
 </li>
-        <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.__init__">(agentscope.memory.memory.MemoryBase method)</a>
-</li>
-        <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase.__init__">(agentscope.memory.MemoryBase method)</a>
-</li>
         <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.__init__">(agentscope.memory.temporary_memory.TemporaryMemory method)</a>
 </li>
         <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.__init__">(agentscope.memory.TemporaryMemory method)</a>
 </li>
-        <li><a href="agentscope.message.html#agentscope.message.MessageBase.__init__">(agentscope.message.MessageBase method)</a>
-</li>
         <li><a href="agentscope.message.html#agentscope.message.Msg.__init__">(agentscope.message.Msg method)</a>
-</li>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.MessageBase.__init__">(agentscope.message.msg.MessageBase method)</a>
 </li>
         <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.__init__">(agentscope.message.msg.Msg method)</a>
 </li>
         <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.__init__">(agentscope.message.placeholder.PlaceholderMessage method)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.__init__">(agentscope.message.PlaceholderMessage method)</a>
 </li>
         <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.__init__">(agentscope.models.dashscope_model.DashScopeChatWrapper method)</a>
 </li>
@@ -841,13 +835,20 @@
         <li><a href="agentscope.rpc.rpc_agent_pb2.html#module-agentscope.rpc.rpc_agent_pb2">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.rpc.rpc_agent_pb2_grpc
 
       <ul>
         <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#module-agentscope.rpc.rpc_agent_pb2_grpc">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    agentscope.serialize
+
+      <ul>
+        <li><a href="agentscope.serialize.html#module-agentscope.serialize">module</a>
 </li>
       </ul></li>
       <li>
@@ -1114,6 +1115,13 @@
 
       <ul>
         <li><a href="agentscope.studio.utils.html#module-agentscope.studio.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.test
+
+      <ul>
+        <li><a href="agentscope.test.html#module-agentscope.test">module</a>
 </li>
       </ul></li>
       <li>
@@ -1452,10 +1460,14 @@
         <li><a href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.config_name">(agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper attribute)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.content">content (agentscope.message.Msg attribute)</a>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.content">content (agentscope.message.Msg property)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.content">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.content">(agentscope.message.msg.Msg property)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.content">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.content">(agentscope.message.PlaceholderMessage property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.content_hint">content_hint (agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
@@ -1672,12 +1684,8 @@
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcMsg.DESCRIPTOR">DESCRIPTOR (agentscope.rpc.RpcMsg attribute)</a>
 </li>
-      <li><a href="agentscope.message.html#agentscope.message.deserialize">deserialize() (in module agentscope.message)</a>
-
-      <ul>
-        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.deserialize">(in module agentscope.message.placeholder)</a>
+      <li><a href="agentscope.serialize.html#agentscope.serialize.deserialize">deserialize() (in module agentscope.serialize)</a>
 </li>
-      </ul></li>
       <li><a href="agentscope.agents.html#agentscope.agents.DialogAgent">DialogAgent (class in agentscope.agents)</a>
 
       <ul>
@@ -1756,14 +1764,14 @@
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.ASDiGraph.exec_node">exec_node() (agentscope.web.workstation.workflow_dag.ASDiGraph method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.service.html#agentscope.service.execute_python_code">execute_python_code() (in module agentscope.service)</a>
 
       <ul>
         <li><a href="agentscope.service.execute_code.exec_python.html#agentscope.service.execute_code.exec_python.execute_python_code">(in module agentscope.service.execute_code.exec_python)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.service.html#agentscope.service.execute_shell_command">execute_shell_command() (in module agentscope.service)</a>
 
       <ul>
@@ -1778,12 +1786,6 @@
         <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.export">(agentscope.memory.temporary_memory.TemporaryMemory method)</a>
 </li>
         <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.export">(agentscope.memory.TemporaryMemory method)</a>
-</li>
-      </ul></li>
-      <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.export_config">export_config() (agentscope.agents.agent.AgentBase method)</a>
-
-      <ul>
-        <li><a href="agentscope.agents.html#agentscope.agents.AgentBase.export_config">(agentscope.agents.AgentBase method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1920,6 +1922,16 @@
 
       <ul>
         <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.formatted_str">(agentscope.message.msg.Msg method)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.from_dict">from_dict() (agentscope.message.Msg class method)</a>
+
+      <ul>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.from_dict">(agentscope.message.msg.Msg class method)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.from_dict">(agentscope.message.placeholder.PlaceholderMessage class method)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.from_dict">(agentscope.message.PlaceholderMessage class method)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.exception.html#agentscope.exception.FunctionCallError">FunctionCallError</a>
@@ -2144,10 +2156,14 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.id">id (agentscope.message.Msg attribute)</a>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.id">id (agentscope.message.Msg property)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.id">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.id">(agentscope.message.msg.Msg property)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.id">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.id">(agentscope.message.PlaceholderMessage property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline">IfElsePipeline (class in agentscope.pipelines)</a>
@@ -2212,6 +2228,8 @@
 </li>
       <li><a href="agentscope.manager.html#agentscope.manager.FileManager.is_initialized">is_initialized() (agentscope.manager.FileManager class method)</a>
 </li>
+      <li><a href="agentscope.serialize.html#agentscope.serialize.is_serializable">is_serializable() (in module agentscope.serialize)</a>
+</li>
       <li><a href="agentscope.models.html#agentscope.models.ModelResponse.is_stream_exhausted">is_stream_exhausted (agentscope.models.ModelResponse property)</a>
 
       <ul>
@@ -2219,8 +2237,6 @@
 </li>
       </ul></li>
       <li><a href="agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.is_valid_url">is_valid_url() (in module agentscope.service.web.web_digest)</a>
-</li>
-      <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.is_web_accessible">is_web_accessible() (in module agentscope.utils.tools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2340,10 +2356,10 @@
         <li><a href="agentscope.memory.html#agentscope.memory.TemporaryMemory.load">(agentscope.memory.TemporaryMemory method)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.load_agents_from_dir">load_agents_from_dir() (in module agentscope.server.launcher)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.load_agents_from_dir">load_agents_from_dir() (in module agentscope.server.launcher)</a>
+</li>
       <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.load_agents_from_file">load_agents_from_file() (in module agentscope.server.launcher)</a>
 </li>
       <li><a href="agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.load_config">load_config() (in module agentscope.web.workstation.workflow)</a>
@@ -2358,18 +2374,6 @@
         <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.load_dict">(agentscope.manager.MonitorManager method)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.load_from_config">load_from_config() (agentscope.agents.agent.AgentBase method)</a>
-
-      <ul>
-        <li><a href="agentscope.agents.html#agentscope.agents.AgentBase.load_from_config">(agentscope.agents.AgentBase method)</a>
-</li>
-      </ul></li>
-      <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.load_memory">load_memory() (agentscope.agents.agent.AgentBase method)</a>
-
-      <ul>
-        <li><a href="agentscope.agents.html#agentscope.agents.AgentBase.load_memory">(agentscope.agents.AgentBase method)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.manager.html#agentscope.manager.ModelManager.load_model_configs">load_model_configs() (agentscope.manager.ModelManager method)</a>
 </li>
       <li><a href="agentscope.service.html#agentscope.service.load_web">load_web() (in module agentscope.service)</a>
@@ -2378,8 +2382,6 @@
         <li><a href="agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.load_web">(in module agentscope.service.web.web_digest)</a>
 </li>
       </ul></li>
-      <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.LOCAL_ATTRS">LOCAL_ATTRS (agentscope.message.placeholder.PlaceholderMessage attribute)</a>
-</li>
       <li><a href="agentscope.logging.html#agentscope.logging.log_gradio">log_gradio() (in module agentscope.logging)</a>
 </li>
       <li><a href="agentscope.logging.html#agentscope.logging.log_msg">log_msg() (in module agentscope.logging)</a>
@@ -2422,16 +2424,14 @@
 </li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.MESSAGE">MESSAGE (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
 </li>
-      <li><a href="agentscope.message.html#agentscope.message.MessageBase">MessageBase (class in agentscope.message)</a>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.metadata">metadata (agentscope.message.Msg property)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.MessageBase">(class in agentscope.message.msg)</a>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.metadata">(agentscope.message.msg.Msg property)</a>
 </li>
-      </ul></li>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.metadata">metadata (agentscope.message.Msg attribute)</a>
-
-      <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.metadata">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.metadata">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.metadata">(agentscope.message.PlaceholderMessage property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_begin_tag">missing_begin_tag (agentscope.exception.TagNotFoundError attribute)</a>
@@ -2692,6 +2692,8 @@
 </li>
         <li><a href="agentscope.rpc.rpc_agent_pb2_grpc.html#module-agentscope.rpc.rpc_agent_pb2_grpc">agentscope.rpc.rpc_agent_pb2_grpc</a>
 </li>
+        <li><a href="agentscope.serialize.html#module-agentscope.serialize">agentscope.serialize</a>
+</li>
         <li><a href="agentscope.server.html#module-agentscope.server">agentscope.server</a>
 </li>
         <li><a href="agentscope.server.launcher.html#module-agentscope.server.launcher">agentscope.server.launcher</a>
@@ -2768,6 +2770,8 @@
 </li>
         <li><a href="agentscope.studio.utils.html#module-agentscope.studio.utils">agentscope.studio.utils</a>
 </li>
+        <li><a href="agentscope.test.html#module-agentscope.test">agentscope.test</a>
+</li>
         <li><a href="agentscope.utils.html#module-agentscope.utils">agentscope.utils</a>
 </li>
         <li><a href="agentscope.utils.common.html#module-agentscope.utils.common">agentscope.utils.common</a>
@@ -2843,10 +2847,14 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.name">name (agentscope.message.Msg attribute)</a>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.name">name (agentscope.message.Msg property)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.name">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.name">(agentscope.message.msg.Msg property)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.name">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.name">(agentscope.message.PlaceholderMessage property)</a>
 </li>
         <li><a href="agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.name">(agentscope.parsers.code_block_parser.MarkdownCodeBlockParser attribute)</a>
 </li>
@@ -3111,10 +3119,12 @@
       </ul></li>
       <li><a href="agentscope.pipelines.functional.html#agentscope.pipelines.functional.placeholder">placeholder() (in module agentscope.pipelines.functional)</a>
 </li>
-      <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.PLACEHOLDER_ATTRS">PLACEHOLDER_ATTRS (agentscope.message.placeholder.PlaceholderMessage attribute)</a>
+      <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage">PlaceholderMessage (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage">(class in agentscope.message.placeholder)</a>
 </li>
-      <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage">PlaceholderMessage (class in agentscope.message.placeholder)</a>
-</li>
+      </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode">PlaceHolderNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
       <li><a href="agentscope.exception.html#agentscope.exception.AgentServerError.port">port (agentscope.exception.AgentServerError attribute)</a>
@@ -3335,10 +3345,14 @@
       </ul></li>
       <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.rm_database">rm_database() (agentscope.manager.MonitorManager method)</a>
 </li>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.role">role (agentscope.message.Msg attribute)</a>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.role">role (agentscope.message.Msg property)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.role">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.role">(agentscope.message.msg.Msg property)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.role">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.role">(agentscope.message.PlaceholderMessage property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.agents.html#agentscope.agents.RpcAgent">RpcAgent (class in agentscope.agents)</a>
@@ -3429,22 +3443,8 @@
       </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SequentialPipelineNode">SequentialPipelineNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
-      <li><a href="agentscope.message.html#agentscope.message.MessageBase.serialize">serialize() (agentscope.message.MessageBase method)</a>
-
-      <ul>
-        <li><a href="agentscope.message.html#agentscope.message.Msg.serialize">(agentscope.message.Msg method)</a>
+      <li><a href="agentscope.serialize.html#agentscope.serialize.serialize">serialize() (in module agentscope.serialize)</a>
 </li>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.MessageBase.serialize">(agentscope.message.msg.MessageBase method)</a>
-</li>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.serialize">(agentscope.message.msg.Msg method)</a>
-</li>
-        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.serialize">(agentscope.message.placeholder.PlaceholderMessage method)</a>
-</li>
-        <li><a href="agentscope.message.html#agentscope.message.serialize">(in module agentscope.message)</a>
-</li>
-        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.serialize">(in module agentscope.message.placeholder)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.SERVICE">SERVICE (agentscope.web.workstation.workflow_node.WorkflowNodeType attribute)</a>
 </li>
       <li><a href="agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.service_funcs">service_funcs (agentscope.service.service_toolkit.ServiceToolkit attribute)</a>
@@ -3511,8 +3511,6 @@
 </li>
       <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.show_image_tokens">show_image_tokens() (agentscope.manager.MonitorManager method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.show_text_and_embedding_tokens">show_text_and_embedding_tokens() (agentscope.manager.MonitorManager method)</a>
 </li>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy">ShrinkPolicy (class in agentscope.constants)</a>
@@ -3523,6 +3521,8 @@
         <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.shutdown">(agentscope.server.RpcAgentServerLauncher method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.size">size() (agentscope.memory.memory.MemoryBase method)</a>
 
       <ul>
@@ -3691,14 +3691,14 @@
         <li><a href="agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory">(class in agentscope.memory.temporary_memory)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.html#agentscope.models.ModelResponse.text">text (agentscope.models.ModelResponse property)</a>
 
       <ul>
         <li><a href="agentscope.models.response.html#agentscope.models.response.ModelResponse.text">(agentscope.models.response.ModelResponse property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.agents.html#agentscope.agents.TextToImageAgent">TextToImageAgent (class in agentscope.agents)</a>
 
       <ul>
@@ -3709,16 +3709,30 @@
 </li>
       <li><a href="agentscope.utils.common.html#agentscope.utils.common.timer">timer() (in module agentscope.utils.common)</a>
 </li>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.timestamp">timestamp (agentscope.message.Msg attribute)</a>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.timestamp">timestamp (agentscope.message.Msg property)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.timestamp">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.timestamp">(agentscope.message.msg.Msg property)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.timestamp">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.timestamp">(agentscope.message.PlaceholderMessage property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.to_content">to_content() (agentscope.parsers.parser_base.DictFilterMixin method)</a>
 </li>
       <li><a href="agentscope.utils.tools.html#agentscope.utils.tools.to_dialog_str">to_dialog_str() (in module agentscope.utils.tools)</a>
 </li>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.to_dict">to_dict() (agentscope.message.Msg method)</a>
+
+      <ul>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.to_dict">(agentscope.message.msg.Msg method)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.to_dict">(agentscope.message.placeholder.PlaceholderMessage method)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.to_dict">(agentscope.message.PlaceholderMessage method)</a>
+</li>
+      </ul></li>
       <li><a href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.to_dist">to_dist() (agentscope.agents.agent.AgentBase method)</a>
 
       <ul>
@@ -3751,12 +3765,6 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.update_config">update_config() (agentscope.memory.memory.MemoryBase method)</a>
-
-      <ul>
-        <li><a href="agentscope.memory.html#agentscope.memory.MemoryBase.update_config">(agentscope.memory.MemoryBase method)</a>
-</li>
-      </ul></li>
       <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.update_image_tokens">update_image_tokens() (agentscope.manager.MonitorManager method)</a>
 </li>
       <li><a href="agentscope.rpc.rpc_agent_client.html#agentscope.rpc.rpc_agent_client.RpcAgentClient.update_placeholder">update_placeholder() (agentscope.rpc.rpc_agent_client.RpcAgentClient method)</a>
@@ -3775,16 +3783,24 @@
         <li><a href="agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.update_placeholder">(agentscope.server.servicer.AgentServerServicer method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.update_text_and_embedding_tokens">update_text_and_embedding_tokens() (agentscope.manager.MonitorManager method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.update_value">update_value() (agentscope.message.placeholder.PlaceholderMessage method)</a>
-</li>
-      <li><a href="agentscope.message.html#agentscope.message.Msg.url">url (agentscope.message.Msg attribute)</a>
 
       <ul>
-        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.url">(agentscope.message.msg.Msg attribute)</a>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.update_value">(agentscope.message.PlaceholderMessage method)</a>
+</li>
+      </ul></li>
+      <li><a href="agentscope.message.html#agentscope.message.Msg.url">url (agentscope.message.Msg property)</a>
+
+      <ul>
+        <li><a href="agentscope.message.msg.html#agentscope.message.msg.Msg.url">(agentscope.message.msg.Msg property)</a>
+</li>
+        <li><a href="agentscope.message.placeholder.html#agentscope.message.placeholder.PlaceholderMessage.url">(agentscope.message.placeholder.PlaceholderMessage property)</a>
+</li>
+        <li><a href="agentscope.message.html#agentscope.message.PlaceholderMessage.url">(agentscope.message.PlaceholderMessage property)</a>
 </li>
       </ul></li>
       <li><a href="agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.user_input">user_input() (in module agentscope.web.gradio.utils)</a>
