@@ -75,8 +75,15 @@ private:
     const string _worker_avail_sem_prefix;
     const string _func_ready_sem_prefix;
     const string _set_result_sem_prefix;
-    const string _get_result_sem_prefix;
+    const string _small_obj_pool_shm_name;
+    const string _small_obj_pool_sem_name;
+    int _small_obj_pool_shm_fd;
+    void *_small_obj_pool_shm;
+    sem_t *_small_obj_pool_sem;
     const unsigned int _call_shm_size;
+    const unsigned int _small_obj_max_num;
+    const unsigned int _small_obj_size;
+    const unsigned int _small_obj_shm_size;
 
     bool _use_logger;
     mutex _logger_mutex;
