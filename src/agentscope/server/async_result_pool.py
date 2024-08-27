@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """A pool used to store the async result."""
 import threading
-import time
 from abc import ABC, abstractmethod
 
 try:
@@ -87,6 +86,9 @@ class LocalPool(AsyncResultPool):
 class RedisPool(AsyncResultPool):
     """Redis pool for storing results."""
 
+    INCR_KEY = "as_obj_id"
+    TASK_QUEUE_PREFIX = "as_task_"
+
     def __init__(
         self,
         host: str,
@@ -106,20 +108,28 @@ class RedisPool(AsyncResultPool):
         self.max_timeout = max_timeout
 
     def _get_object_id(self) -> int:
-        return self.pool.incr("global_object_id")
+        return self.pool.incr(RedisPool.INCR_KEY)
 
     def prepare(self) -> int:
         return self._get_object_id()
 
     def set(self, key: int, value: bytes) -> None:
         self.pool.set(key, value, ex=self.max_timeout)
+        self.pool.rpush(RedisPool.TASK_QUEUE_PREFIX + str(key), key)
 
     def get(self, key: int) -> bytes:
-        while True:
-            result = self.pool.get(key)
-            if result:
-                return result
-            time.sleep(0.01)
+        result = self.pool.get(key)
+        if result:
+            return result
+        else:
+            keys = self.pool.blpop(
+                keys=RedisPool.TASK_QUEUE_PREFIX + str(key),
+                timeout=self.max_timeout,
+            )
+            if int(keys[1]) == key:
+                return self.pool.get(key)
+            else:
+                raise ValueError(f"Async Result [{key}] not found.")
 
 
 def get_pool(
