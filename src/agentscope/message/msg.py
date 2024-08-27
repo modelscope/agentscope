@@ -13,7 +13,7 @@ from uuid import uuid4
 from loguru import logger
 
 from ..serialize import is_serializable
-from ..utils.tools import (
+from ..utils.common import (
     _map_string_to_color_mark,
     _get_timestamp,
 )

@@ -9,7 +9,7 @@ from ._monitor import MonitorManager
 from ._file import FileManager
 from ._model import ModelManager
 from ..logging import LOG_LEVEL, setup_logger
-from ..utils.tools import (
+from ..utils.common import (
     _generate_random_code,
     _get_process_creation_time,
     _get_timestamp,

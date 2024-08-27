@@ -8,11 +8,11 @@ from typing import Any, Union, Optional, List, Literal, Generator
 import numpy as np
 from PIL import Image
 
-from agentscope.utils.tools import _download_file
-from agentscope.utils.tools import _hash_string
-from agentscope.utils.tools import _get_timestamp
-from agentscope.utils.tools import _generate_random_code
-from agentscope.constants import (
+from ..utils.common import _download_file
+from ..utils.common import _hash_string
+from ..utils.common import _get_timestamp
+from ..utils.common import _generate_random_code
+from ..constants import (
     _DEFAULT_SUBDIR_CODE,
     _DEFAULT_SUBDIR_FILE,
     _DEFAULT_SUBDIR_INVOKE,
@@ -32,7 +32,13 @@ def _get_text_embedding_record_hash(
     if isinstance(embedding_model, dict):
         # Format the dict to avoid duplicate keys
         embedding_model = json.dumps(embedding_model, sort_keys=True)
-    embedding_model_hash = _hash_string(embedding_model, hash_method)
+    elif isinstance(embedding_model, str):
+        embedding_model_hash = _hash_string(embedding_model, hash_method)
+    else:
+        raise RuntimeError(
+            f"The embedding model must be a string or a dict, got "
+            f"{type(embedding_model)}.",
+        )
 
     # Calculate the embedding id by hashing the hash codes of the
     # original data and the embedding model
