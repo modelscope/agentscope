@@ -90,14 +90,14 @@ class ProblemSolver:
         # Update relevant self.cost_metrics
         self.cost_metrics["llm_calls"] += 1
         self.cost_metrics["prefilling_length_total"] += len(
-            x_request["content"],
+            x_request.content,
         ) + len(dialog_agent.sys_prompt)
-        self.cost_metrics["decoding_length_total"] += len(x["content"])
+        self.cost_metrics["decoding_length_total"] += len(x.content)
         self.cost_metrics["prefilling_tokens_total"] += num_tokens_from_string(
-            x_request["content"],
+            x_request.content,
         ) + num_tokens_from_string(dialog_agent.sys_prompt)
         self.cost_metrics["decoding_tokens_total"] += num_tokens_from_string(
-            x["content"],
+            x.content,
         )
 
         return x
