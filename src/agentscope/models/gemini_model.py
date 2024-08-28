@@ -7,9 +7,9 @@ from typing import Sequence, Union, Any, List, Optional, Generator
 
 from loguru import logger
 
-from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils.tools import _convert_to_str
+from ..message import Msg
+from ..models import ModelWrapperBase, ModelResponse
+from ..utils.common import _convert_to_str
 
 try:
     import google.generativeai as genai
@@ -44,7 +44,7 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
                 The api_key for the model. If it is not provided, it will be
                 loaded from environment variable.
         """
-        super().__init__(config_name=config_name)
+        super().__init__(config_name=config_name, model_name=model_name)
 
         # Test if the required package is installed
         if genai is None:
@@ -65,14 +65,6 @@ class GeminiWrapperBase(ModelWrapperBase, ABC):
         genai.configure(api_key=api_key, **kwargs)
 
         self.model_name = model_name
-
-        self._register_default_metrics()
-
-    def _register_default_metrics(self) -> None:
-        """Register the default metrics for the model."""
-        raise NotImplementedError(
-            "The method `_register_default_metrics` must be implemented.",
-        )
 
     def list_models(self) -> Sequence:
         """List all available models for this API calling."""
@@ -242,11 +234,10 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 response.text,
             ).total_tokens
 
-        self.update_monitor(
-            call_counter=1,
-            completion_tokens=token_response,
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
             prompt_tokens=token_prompt,
-            total_tokens=token_prompt + token_response,
+            completion_tokens=token_response,
         )
 
     def _extract_text_content_from_response(
@@ -313,27 +304,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
         return response.text
 
-    def _register_default_metrics(self) -> None:
-        """Register the default metrics for the model."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
-        )
-        self.monitor.register(
-            self._metric("prompt_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("completion_tokens"),
-            metric_unit="token",
-        )
-        self.monitor.register(
-            self._metric("total_tokens"),
-            metric_unit="token",
-        )
-
+    @staticmethod
     def format(
-        self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """This function provide a basic prompting strategy for Gemini Chat
@@ -372,6 +344,12 @@ class GeminiChatWrapper(GeminiWrapperBase):
             `List[dict]`:
                 A list with one user message.
         """
+        if len(args) == 0:
+            raise ValueError(
+                "At least one message should be provided. An empty message "
+                "list is not allowed.",
+            )
+
         input_msgs = []
         for _ in args:
             if _ is None:
@@ -394,31 +372,27 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 # system prompt
                 sys_prompt = _convert_to_str(unit.content)
             else:
-                # Merge all messages into a dialogue history prompt
+                # Merge all messages into a conversation history prompt
                 dialogue.append(
                     f"{unit.name}: {_convert_to_str(unit.content)}",
                 )
 
-        dialogue_history = "\n".join(dialogue)
+        prompt_components = []
+        if sys_prompt is not None:
+            if not sys_prompt.endswith("\n"):
+                sys_prompt += "\n"
+            prompt_components.append(sys_prompt)
 
-        if sys_prompt is None:
-            user_content_template = "## Dialogue History\n{dialogue_history}"
-        else:
-            user_content_template = (
-                "{sys_prompt}\n"
-                "\n"
-                "## Dialogue History\n"
-                "{dialogue_history}"
-            )
+        if len(dialogue) > 0:
+            prompt_components.extend(["## Conversation History"] + dialogue)
+
+        user_prompt = "\n".join(prompt_components)
 
         messages = [
             {
                 "role": "user",
                 "parts": [
-                    user_content_template.format(
-                        sys_prompt=sys_prompt,
-                        dialogue_history=dialogue_history,
-                    ),
+                    user_prompt,
                 ],
             },
         ]
@@ -428,7 +402,21 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):
     """The wrapper for Google Gemini embedding model,
-    e.g. models/embedding-001"""
+    e.g. models/embedding-001
+
+    Response:
+        - Refer to https://ai.google.dev/api/embeddings?hl=zh-cn#response-body
+
+        ```json
+        {
+            "embeddings": [
+                {
+                    object (ContentEmbedding)
+                }
+            ]
+        }
+        ```
+    """
 
     model_type: str = "gemini_embedding"
     """The type of the model, which is used in model configuration."""
@@ -483,19 +471,14 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
             response=response,
         )
 
-        # TODO: Up to 2023/03/11, the embedding model doesn't support to
+        # TODO: Up to 2024/07/26, the embedding model doesn't support to
         #  count tokens.
         # step3: update monitor accordingly
-        self.update_monitor(call_counter=1)
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+        )
 
         return ModelResponse(
             raw=response,
             embedding=response["embedding"],
-        )
-
-    def _register_default_metrics(self) -> None:
-        """Register the default metrics for the model."""
-        self.monitor.register(
-            self._metric("call_counter"),
-            metric_unit="times",
         )

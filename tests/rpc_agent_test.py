@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=W0212
 """
 Unit tests for rpc agent classes
 """
@@ -7,20 +8,22 @@ import os
 import time
 import shutil
 from typing import Optional, Union, Sequence
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from loguru import logger
 
 import agentscope
 from agentscope.agents import AgentBase, DistConf, DialogAgent
+from agentscope.manager import MonitorManager, ASManager
+from agentscope.serialize import deserialize, serialize
 from agentscope.server import RpcAgentServerLauncher
 from agentscope.message import Msg
 from agentscope.message import PlaceholderMessage
-from agentscope.message import deserialize
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
-from agentscope.utils import MonitorFactory, QuotaExceededError
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
-from agentscope.exception import AgentCallError
+from agentscope.agents import RpcAgent
+from agentscope.exception import AgentCallError, QuotaExceededError
 
 
 class DemoRpcAgent(AgentBase):
@@ -77,7 +80,7 @@ class DemoRpcAgentWithMonitor(AgentBase):
     """A demo Rpc agent that use monitor"""
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
-        monitor = MonitorFactory.get_monitor()
+        monitor = MonitorManager.get_instance()
         try:
             monitor.update({"msg_num": 1})
         except QuotaExceededError:
@@ -153,7 +156,7 @@ class DemoErrorAgent(AgentBase):
 class FileAgent(AgentBase):
     """An agent returns a file"""
 
-    def reply(self, x: dict = None) -> dict:
+    def reply(self, x: Msg = None) -> Msg:
         image_path = os.path.abspath(
             os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
@@ -170,7 +173,7 @@ class FileAgent(AgentBase):
 
 
 class BasicRpcAgentTest(unittest.TestCase):
-    "Test cases for Rpc Agent"
+    """Test cases for Rpc Agent"""
 
     def setUp(self) -> None:
         """Init for Rpc Agent Test"""
@@ -183,8 +186,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(os.path.exists("./.unittest_runs"))
 
     def tearDown(self) -> None:
-        MonitorFactory._instance = None  # pylint: disable=W0212
-        logger.remove()
+        """Tear down the test environment."""
+        ASManager.get_instance().flush()
         shutil.rmtree("./.unittest_runs")
 
     def test_single_rpc_agent_server(self) -> None:
@@ -200,35 +203,34 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         result = agent_a(msg)
-        # get name without waiting for the server
-        self.assertEqual(result.name, "a")
-        self.assertEqual(result["name"], "a")
-        js_placeholder_result = result.serialize()
-        self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
+
+        # The deserialization without accessing the attributes will generate
+        # a PlaceholderMessage instance.
+        js_placeholder_result = serialize(result)
         placeholder_result = deserialize(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
-        self.assertEqual(placeholder_result.name, "a")
-        self.assertEqual(
-            placeholder_result["name"],  # type: ignore[call-overload]
-            "a",
-        )
-        self.assertTrue(
-            placeholder_result._is_placeholder,  # pylint: disable=W0212
-        )
+
+        # Fetch the attribute from distributed agent
+        self.assertTrue(result._is_placeholder)
+        self.assertEqual(result.name, "System")
+        self.assertFalse(result._is_placeholder)
+
         # wait to get content
         self.assertEqual(result.content, msg.content)
-        self.assertFalse(result._is_placeholder)  # pylint: disable=W0212
         self.assertEqual(result.id, 0)
+
+        # The second time to fetch the attributes from the distributed agent
         self.assertTrue(
-            placeholder_result._is_placeholder,  # pylint: disable=W0212
+            placeholder_result._is_placeholder,
         )
         self.assertEqual(placeholder_result.content, msg.content)
         self.assertFalse(
-            placeholder_result._is_placeholder,  # pylint: disable=W0212
+            placeholder_result._is_placeholder,
         )
         self.assertEqual(placeholder_result.id, 0)
+
         # check msg
-        js_msg_result = result.serialize()
+        js_msg_result = serialize(result)
         msg_result = deserialize(js_msg_result)
         self.assertTrue(isinstance(msg_result, Msg))
         self.assertEqual(msg_result.content, msg.content)
@@ -248,7 +250,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         launcher.launch()
         client = RpcAgentClient(host=launcher.host, port=launcher.port)
-        self.assertTrue(client.is_alive())  # pylint: disable=W0212
+        self.assertTrue(client.is_alive())
         agent_a = DemoRpcAgent(
             name="a",
         ).to_dist(
@@ -262,7 +264,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         result = agent_a(msg)
         # get name without waiting for the server
-        self.assertEqual(result.name, "a")
+        self.assertEqual(result.name, "System")
         # waiting for server
         self.assertEqual(result.content, msg.content)
         # test dict usage
@@ -273,9 +275,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         result = agent_a(msg)
         # get name without waiting for the server
-        self.assertEqual(result["name"], "a")
+        self.assertEqual(result.name, "System")
         # waiting for server
-        self.assertEqual(result["content"], msg.content)
+        self.assertEqual(result.content, msg.content)
         # test to_str
         msg = Msg(
             name="System",
@@ -283,26 +285,20 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         result = agent_a(msg)
-        self.assertEqual(result.formatted_str(), "a: {'text': 'test'}")
+        self.assertEqual(result.formatted_str(), "System: {'text': 'test'}")
         launcher.shutdown()
 
     def test_multi_rpc_agent(self) -> None:
         """test setup multi rpc agent"""
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         agent_b = DemoRpcAgentAdd(
             name="b",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         agent_c = DemoRpcAgentAdd(
             name="c",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
 
         # test sequential
         msg = Msg(
@@ -346,9 +342,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """test to use local and rpc agent simultaneously"""
         agent_a = DemoRpcAgentAdd(
             name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
+        ).to_dist()
         # local agent b
         agent_b = DemoLocalAgentAdd(
             name="b",
@@ -356,9 +350,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # rpc agent c
         agent_c = DemoRpcAgentAdd(  # pylint: disable=E1123
             name="c",
-            to_dist=DistConf(
-                lazy_launch=False,
-            ),
+            to_dist=True,
         )
         msg = Msg(
             name="System",
@@ -408,42 +400,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             x_c = sequentialpipeline(participants, x_c)
             self.assertEqual(x_c.content["mem_size"], 10)
 
-    def test_standalone_multiprocess_init(self) -> None:
-        """test compatibility with agentscope.init"""
-        monitor = MonitorFactory.get_monitor()
-        monitor.register("msg_num", quota=10)
-        # rpc agent a
-        agent_a = DemoRpcAgentWithMonitor(
-            name="a",
-        ).to_dist(
-            lazy_launch=False,
-        )
-        # local agent b
-        agent_b = DemoRpcAgentWithMonitor(
-            name="b",
-        ).to_dist(
-            lazy_launch=False,
-        )
-        msg = Msg(name="System", content={"msg_num": 0}, role="system")
-        j = 0
-        for _ in range(5):
-            msg = agent_a(msg)
-            self.assertEqual(msg["content"]["msg_num"], j + 1)
-            msg = agent_b(msg)
-            self.assertEqual(msg["content"]["msg_num"], j + 2)
-            j += 2
-        msg = agent_a(msg)
-        logger.chat(msg)
-        self.assertTrue(msg["content"]["quota_exceeded"])
-        msg = agent_b(msg)
-        logger.chat(msg)
-        self.assertTrue(msg["content"]["quota_exceeded"])
-
     def test_multi_agent_in_same_server(self) -> None:
-        """test agent server with multi agent"""
+        """test agent server with multi-agent"""
         launcher = RpcAgentServerLauncher(
             host="127.0.0.1",
-            port=12010,
+            port=-1,
             local_mode=False,
             custom_agent_classes=[DemoRpcAgentWithMemory],
         )
@@ -475,25 +436,45 @@ class BasicRpcAgentTest(unittest.TestCase):
             host="127.0.0.1",
             port=launcher.port,
         )
-        agent3._agent_id = agent1.agent_id  # pylint: disable=W0212
+        agent3._agent_id = agent1.agent_id
         agent3.client.agent_id = agent1.client.agent_id
-        msg1 = Msg(name="System", content="First Msg for agent1")
+        msg1 = Msg(
+            name="System",
+            content="First Msg for agent1",
+            role="system",
+        )
         res1 = agent1(msg1)
         self.assertEqual(res1.content["mem_size"], 1)
-        msg2 = Msg(name="System", content="First Msg for agent2")
+        msg2 = Msg(
+            name="System",
+            content="First Msg for agent2",
+            role="system",
+        )
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
-        msg3 = Msg(name="System", content="First Msg for agent3")
+        msg3 = Msg(
+            name="System",
+            content="First Msg for agent3",
+            role="system",
+        )
         res3 = agent3(msg3)
         self.assertEqual(res3.content["mem_size"], 3)
-        msg4 = Msg(name="System", content="Second Msg for agent2")
+        msg4 = Msg(
+            name="System",
+            content="Second Msg for agent2",
+            role="system",
+        )
         res4 = agent2(msg4)
         self.assertEqual(res4.content["mem_size"], 3)
         # delete existing agent
         agent2.client.delete_agent(agent2.agent_id)
-        msg2 = Msg(name="System", content="First Msg for agent2")
+        msg2 = Msg(
+            name="System",
+            content="First Msg for agent2",
+            role="system",
+        )
         res2 = agent2(msg2)
-        self.assertRaises(ValueError, res2.__getattr__, "content")
+        self.assertRaises(ValueError, res2.update_value)
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(
@@ -502,7 +483,11 @@ class BasicRpcAgentTest(unittest.TestCase):
             host="127.0.0.1",
             port=launcher.port,
         )
-        msg5 = Msg(name="System", content="Second Msg for agent4")
+        msg5 = Msg(
+            name="System",
+            content="Second Msg for agent4",
+            role="system",
+        )
         res5 = agent4(msg5)
         self.assertEqual(res5.name, "b")
         self.assertEqual(res5.content["mem_size"], 1)
@@ -512,7 +497,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test the clone_instances method of RpcAgent"""
         agent = DemoRpcAgentWithMemory(
             name="a",
-        ).to_dist()
+        ).to_dist(lazy_launch=True)
         # lazy launch will not init client
         self.assertIsNone(agent.client)
         # generate two agents (the first is it self)
@@ -530,10 +515,18 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertIsNotNone(agent.server_launcher)
         self.assertIsNotNone(agent1.server_launcher)
         self.assertIsNone(agent2.server_launcher)
-        msg1 = Msg(name="System", content="First Msg for agent1")
+        msg1 = Msg(
+            name="System",
+            content="First Msg for agent1",
+            role="system",
+        )
         res1 = agent1(msg1)
         self.assertEqual(res1.content["mem_size"], 1)
-        msg2 = Msg(name="System", content="First Msg for agent2")
+        msg2 = Msg(
+            name="System",
+            content="First Msg for agent2",
+            role="system",
+        )
         res2 = agent2(msg2)
         self.assertEqual(res2.content["mem_size"], 1)
         new_agents = agent.clone_instances(2, including_self=False)
@@ -544,10 +537,18 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertNotEqual(agent4.agent_id, agent.agent_id)
         self.assertIsNone(agent3.server_launcher)
         self.assertIsNone(agent4.server_launcher)
-        msg3 = Msg(name="System", content="First Msg for agent3")
+        msg3 = Msg(
+            name="System",
+            content="First Msg for agent3",
+            role="system",
+        )
         res3 = agent3(msg3)
         self.assertEqual(res1.content["mem_size"], 1)
-        msg4 = Msg(name="System", content="First Msg for agent4")
+        msg4 = Msg(
+            name="System",
+            content="First Msg for agent4",
+            role="system",
+        )
         res4 = agent4(msg4)
         self.assertEqual(res3.content["mem_size"], 1)
         self.assertEqual(res4.content["mem_size"], 1)
@@ -556,7 +557,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test error handling"""
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
-        self.assertRaises(AgentCallError, x.__getattr__, "content")
+        self.assertRaises(AgentCallError, x.update_value)
 
     def test_agent_nesting(self) -> None:
         """Test agent nesting"""
@@ -641,8 +642,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         resp.update_value()
         memory = client.get_agent_memory(memory_agent.agent_id)
         self.assertEqual(len(memory), 2)
-        self.assertEqual(memory[0]["content"], "first msg")
-        self.assertEqual(memory[1]["content"]["mem_size"], 1)
+        self.assertEqual(memory[0].content, "first msg")
+        self.assertEqual(memory[1].content["mem_size"], 1)
         agent_lists = client.get_agent_list()
         self.assertEqual(len(agent_lists), 1)
         self.assertEqual(agent_lists[0]["agent_id"], memory_agent.agent_id)
@@ -668,7 +669,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             ),
         )
         local_file_path = file.url
-        self.assertNotEqual(remote_file_path, local_file_path)
+        self.assertEqual(remote_file_path, local_file_path)
         with open(remote_file_path, "rb") as rf:
             remote_content = rf.read()
         with open(local_file_path, "rb") as lf:
@@ -725,4 +726,79 @@ class BasicRpcAgentTest(unittest.TestCase):
         # client.stop()
         # time.sleep(1)
         # self.assertFalse(client.is_alive())
+        launcher.shutdown()
+
+    @patch("agentscope.studio._client.StudioClient.alloc_server")
+    @patch(
+        "agentscope.studio._client.StudioClient.active",
+        new_callable=PropertyMock,
+    )
+    def test_server_auto_alloc(
+        self,
+        mock_active: PropertyMock,
+        mock_alloc: MagicMock,
+    ) -> None:
+        """Test the auto allocation of server"""
+        mock_active.return_value = True
+        host = "localhost"
+        launcher = RpcAgentServerLauncher(
+            # choose port automatically
+            host=host,
+            local_mode=False,
+            custom_agent_classes=[DemoRpcAgentWithMemory],
+            agent_dir=os.path.abspath(
+                os.path.join(
+                    os.path.abspath(os.path.dirname(__file__)),
+                    "custom",
+                ),
+            ),
+        )
+        launcher.launch()
+        port = launcher.port
+        mock_alloc.return_value = {"host": host, "port": port}
+
+        # test auto allocation
+        a1 = DemoRpcAgentWithMemory(name="Auto1", to_dist=True)
+        a2 = DemoRpcAgentWithMemory(name="Auto2").to_dist()
+        self.assertEqual(a1.host, host)
+        self.assertEqual(a1.port, port)
+        self.assertEqual(a2.host, host)
+        self.assertEqual(a2.port, port)
+        client = RpcAgentClient(host=host, port=port)
+        al = client.get_agent_list()
+        self.assertEqual(len(al), 2)
+
+        # test not alive server
+        mock_alloc.return_value = {"host": "not_exist", "port": 1234}
+        a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
+        self.assertEqual(a3.host, "localhost")
+        nclient = RpcAgentClient(host=a3.host, port=a3.port)
+        nal = nclient.get_agent_list()
+        self.assertEqual(len(nal), 1)
+
+        # test agent dir loading
+        custom_agent_id = "custom_test"
+        self.assertTrue(
+            client.create_agent(
+                agent_configs={
+                    "args": (),
+                    "kwargs": {"name": "custom"},
+                    "class_name": "CustomAgent",
+                },
+                agent_id=custom_agent_id,
+            ),
+        )
+        ra = RpcAgent(
+            name="custom",
+            host=launcher.host,
+            port=launcher.port,
+            agent_id=custom_agent_id,
+            connect_existing=True,
+        )
+        resp = ra(Msg(name="sys", role="user", content="Hello"))
+        self.assertEqual(resp.name, "custom")
+        self.assertEqual(resp.content, "Hello world")
+        al = client.get_agent_list()
+        self.assertEqual(len(al), 3)
+
         launcher.shutdown()

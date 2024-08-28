@@ -4,6 +4,7 @@ from loguru import logger
 
 from .execute_code.exec_python import execute_python_code
 from .execute_code.exec_shell import execute_shell_command
+from .execute_code.exec_notebook import NoteBookExecutor
 from .file.common import (
     create_file,
     delete_file,
@@ -21,6 +22,11 @@ from .sql_query.sqlite import query_sqlite
 from .sql_query.mongodb import query_mongodb
 from .web.search import bing_search, google_search
 from .web.arxiv import arxiv_search
+from .web.tripadvisor import (
+    tripadvisor_search_location_photos,
+    tripadvisor_search,
+    tripadvisor_search_location_details,
+)
 from .web.dblp import (
     dblp_search_publications,
     dblp_search_authors,
@@ -49,6 +55,11 @@ from .retrieval.retrieval_from_list import retrieve_from_list
 from .service_status import ServiceExecStatus
 from .web.web_digest import digest_webpage, load_web, parse_html_to_text
 from .web.download import download_from_url
+
+from .web.wikipedia import (
+    wikipedia_search,
+    wikipedia_search_categories,
+)
 
 
 def get_help() -> None:
@@ -79,6 +90,8 @@ __all__ = [
     "bing_search",
     "google_search",
     "arxiv_search",
+    "wikipedia_search",
+    "wikipedia_search_categories",
     "query_mysql",
     "query_sqlite",
     "query_mongodb",
@@ -92,6 +105,7 @@ __all__ = [
     "dblp_search_publications",
     "dblp_search_authors",
     "dblp_search_venues",
+    "NoteBookExecutor",
     "dashscope_image_to_text",
     "dashscope_text_to_image",
     "dashscope_text_to_audio",
@@ -101,6 +115,9 @@ __all__ = [
     "openai_image_to_text",
     "openai_edit_image",
     "openai_create_image_variation",
+    "tripadvisor_search",
+    "tripadvisor_search_location_photos",
+    "tripadvisor_search_location_details",
     # to be deprecated
     "ServiceFactory",
 ]

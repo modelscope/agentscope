@@ -42,7 +42,7 @@ except ImportError:
     Document = None
     TransformComponent = None
 
-from agentscope.file_manager import file_manager
+from agentscope.manager import FileManager
 from agentscope.models import ModelWrapperBase
 from agentscope.constants import (
     DEFAULT_TOP_K,
@@ -203,7 +203,7 @@ class LlamaIndexKnowledge(Knowledge):
             )
 
         if persist_root is None:
-            persist_root = file_manager.dir
+            persist_root = FileManager.get_instance().run_dir or "./"
         self.persist_dir = os.path.join(persist_root, knowledge_id)
         self.emb_model = emb_model
         self.overwrite_index = overwrite_index

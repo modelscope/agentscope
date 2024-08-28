@@ -10,11 +10,13 @@ import traceback
 from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
+from random import choice
 
 from flask import (
     Flask,
     request,
     jsonify,
+    session,
     render_template,
     Response,
     abort,
@@ -24,11 +26,20 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
-from .._runtime import _runtime
-from ..constants import _DEFAULT_SUBDIR_CODE, _DEFAULT_SUBDIR_INVOKE
+from ..constants import (
+    _DEFAULT_SUBDIR_CODE,
+    _DEFAULT_SUBDIR_INVOKE,
+    FILE_SIZE_LIMIT,
+    FILE_COUNT_LIMIT,
+)
 from ._studio_utils import _check_and_convert_id_type
-from ..utils.tools import _is_process_alive, _is_windows
+from ..utils.common import (
+    _is_process_alive,
+    _is_windows,
+    _generate_new_runtime_id,
+)
 from ..rpc.rpc_agent_client import RpcAgentClient
+
 
 _app = Flask(__name__)
 
@@ -257,11 +268,7 @@ def _register_server() -> Response:
         abort(400, f"run_id [{server_id}] already exists")
 
     _db.session.add(
-        _ServerTable(
-            id=server_id,
-            host=host,
-            port=port,
-        ),
+        _ServerTable(id=server_id, host=host, port=port),
     )
     _db.session.commit()
 
@@ -304,6 +311,7 @@ def _get_server_status(server_id: str) -> Response:
                 "status": "running",
                 "cpu": status["cpu"],
                 "mem": status["mem"],
+                "size": status["size"],
             },
         )
 
@@ -360,6 +368,23 @@ def _agent_memory() -> Response:
     if isinstance(mem, dict):
         mem = [mem]
     return jsonify(mem)
+
+
+@_app.route("/api/servers/alloc", methods=["GET"])
+def _alloc_server() -> Response:
+    # TODO: check the server is still running
+    # TODO: support to alloc multiple servers in one call
+    # TODO: use hints to decide which server to allocate
+    # TODO: allocate based on server's cpu and memory usage
+    # currently random select a server
+    servers = _ServerTable.query.all()
+    server = choice(servers)
+    return jsonify(
+        {
+            "host": server.host,
+            "port": server.port,
+        },
+    )
 
 
 @_app.route("/api/messages/push", methods=["POST"])
@@ -593,7 +618,7 @@ def _convert_config_to_py_and_run() -> Response:
     """
     content = request.json.get("data")
     studio_url = request.url_root.rstrip("/")
-    run_id = _runtime.generate_new_runtime_id()
+    run_id = _generate_new_runtime_id()
     status, py_code = _convert_to_py(
         content,
         runtime_id=run_id,
@@ -650,6 +675,134 @@ def _read_examples() -> Response:
     ) as jf:
         data = json.load(jf)
     return jsonify(json=data)
+
+
+@_app.route("/save-workflow", methods=["POST"])
+def _save_workflow() -> Response:
+    """
+    Save the workflow JSON data to the local user folder.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    data = request.json
+    overwrite = data.get("overwrite", False)
+    filename = data.get("filename")
+    workflow_str = data.get("workflow")
+    if not filename:
+        return jsonify({"message": "Filename is required"})
+
+    filepath = os.path.join(user_dir, f"{filename}.json")
+
+    try:
+        workflow = json.loads(workflow_str)
+        if not isinstance(workflow, dict):
+            raise ValueError
+    except (json.JSONDecodeError, ValueError):
+        return jsonify({"message": "Invalid workflow data"})
+
+    workflow_json = json.dumps(workflow, ensure_ascii=False, indent=4)
+    if len(workflow_json.encode("utf-8")) > FILE_SIZE_LIMIT:
+        return jsonify(
+            {
+                "message": f"The workflow file size exceeds "
+                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+            },
+        )
+
+    user_files = [
+        f
+        for f in os.listdir(user_dir)
+        if os.path.isfile(os.path.join(user_dir, f))
+    ]
+
+    if len(user_files) >= FILE_COUNT_LIMIT and not os.path.exists(filepath):
+        return jsonify(
+            {
+                "message": f"You have reached the limit of "
+                f"{FILE_COUNT_LIMIT} workflow files, please "
+                f"delete some files.",
+            },
+        )
+
+    if overwrite:
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(workflow, f, ensure_ascii=False, indent=4)
+    else:
+        if os.path.exists(filepath):
+            return jsonify({"message": "Workflow file exists!"})
+        else:
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump(workflow, f, ensure_ascii=False, indent=4)
+
+    return jsonify({"message": "Workflow file saved successfully"})
+
+
+@_app.route("/delete-workflow", methods=["POST"])
+def _delete_workflow() -> Response:
+    """
+    Deletes a workflow JSON file from the user folder.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    data = request.json
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"})
+
+    filepath = os.path.join(user_dir, filename)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"})
+
+    try:
+        os.remove(filepath)
+        return jsonify({"message": "Workflow file deleted successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@_app.route("/list-workflows", methods=["POST"])
+def _list_workflows() -> Response:
+    """
+    Get all workflow JSON files in the user folder.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    files = [file for file in os.listdir(user_dir) if file.endswith(".json")]
+    return jsonify(files=files)
+
+
+@_app.route("/load-workflow", methods=["POST"])
+def _load_workflow() -> Response:
+    """
+    Reads and returns workflow data from the specified JSON file.
+    """
+    user_login = session.get("user_login", "local_user")
+    user_dir = os.path.join(_cache_dir, user_login)
+    if not os.path.exists(user_dir):
+        os.makedirs(user_dir)
+
+    data = request.json
+    filename = data.get("filename")
+    if not filename:
+        return jsonify({"error": "Filename is required"}), 400
+
+    filepath = os.path.join(user_dir, filename)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        json_data = json.load(f)
+
+    return jsonify(json_data)
 
 
 @_app.route("/")

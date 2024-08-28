@@ -95,7 +95,7 @@ class ReActAgent(AgentBase):
         self.parser = RegexTaggedContentParser(
             format_instruction="""Respond with specific tags as outlined below:
 
-- When calling tool functions, note the "arg_name" should be replaced with the actual argument name:
+- When calling tool functions (note the "arg_name" should be replaced with the actual argument name):
 <thought>what you thought</thought>
 <function>the function name you want to call</function>
 <arg_name>the value of the argument</arg_name>
@@ -176,7 +176,8 @@ class ReActAgent(AgentBase):
             except ResponseParsingError as e:
                 # Print out raw response from models for developers to debug
                 response_msg = Msg(self.name, e.raw_response, "assistant")
-                self.speak(response_msg)
+                if not self.verbose:
+                    self.speak(response_msg)
 
                 # Re-correct by model itself
                 error_msg = Msg("system", str(e), "system")

@@ -26,9 +26,6 @@ class TestAgent(AgentBase):
             use_memory=(
                 kwargs["use_memory"] if "use_memory" in kwargs else None
             ),
-            memory_config=(
-                kwargs["memory_config"] if "memory_config" in kwargs else None
-            ),
         )
 
 
@@ -40,7 +37,7 @@ class BasicAgentTest(unittest.TestCase):
     """Test cases for basic agents"""
 
     def test_agent_init(self) -> None:
-        """Test the init of agentbase sub-class."""
+        """Test the init of AgentBase subclass."""
         a1 = TestAgent(
             "a",
             "Hi",

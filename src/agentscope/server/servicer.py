@@ -18,7 +18,7 @@ try:
     from google.protobuf.empty_pb2 import Empty
     from expiringdict import ExpiringDict
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     dill = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")
@@ -31,17 +31,14 @@ except ImportError as import_error:
     ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
+from agentscope.serialize import deserialize, serialize
 from agentscope.agents.agent import AgentBase
-from agentscope.models import read_model_configs
+from agentscope.manager import ModelManager
+from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
-from agentscope._runtime import _runtime
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.message import (
-    Msg,
-    PlaceholderMessage,
-    deserialize,
-)
+from agentscope.message import Msg, PlaceholderMessage
 
 
 def _register_server_to_studio(
@@ -54,7 +51,11 @@ def _register_server_to_studio(
     url = f"{studio_url}/api/servers/register"
     resp = requests.post(
         url,
-        json={"server_id": server_id, "host": host, "port": port},
+        json={
+            "server_id": server_id,
+            "host": host,
+            "port": port,
+        },
         timeout=10,  # todo: configurable timeout
     )
     if resp.status_code != 200:
@@ -84,7 +85,7 @@ class AgentServerServicer(RpcAgentServicer):
         server_id: str = None,
         studio_url: str = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
     ):
         """Init the AgentServerServicer.
 
@@ -102,7 +103,7 @@ class AgentServerServicer(RpcAgentServicer):
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Maximum time for reply messages to be cached in the server.
                 Note that expired messages will be deleted.
         """
@@ -117,7 +118,8 @@ class AgentServerServicer(RpcAgentServicer):
                 host=host,
                 port=port,
             )
-            _studio_client.initialize(_runtime.runtime_id, studio_url)
+            run_id = ASManager.get_instance().run_id
+            _studio_client.initialize(run_id, studio_url)
 
         self.result_pool = ExpiringDict(
             max_len=max_pool_size,
@@ -342,7 +344,7 @@ class AgentServerServicer(RpcAgentServicer):
         else:
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=result.serialize(),
+                message=serialize(result),
             )
 
     def get_agent_list(
@@ -357,7 +359,8 @@ class AgentServerServicer(RpcAgentServicer):
                 summaries.append(str(agent))
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=json.dumps(summaries),
+                # TODO: unified into serialize function to avoid error.
+                message=serialize(summaries),
             )
 
     def get_server_info(
@@ -372,7 +375,8 @@ class AgentServerServicer(RpcAgentServicer):
         process = psutil.Process(self.pid)
         status["cpu"] = process.cpu_percent(interval=1)
         status["mem"] = process.memory_info().rss / (1024**2)
-        return agent_pb2.GeneralResponse(ok=True, message=json.dumps(status))
+        status["size"] = len(self.agent_pool)
+        return agent_pb2.GeneralResponse(ok=True, message=serialize(status))
 
     def set_model_configs(
         self,
@@ -382,7 +386,7 @@ class AgentServerServicer(RpcAgentServicer):
         """Set the model configs of the agent server."""
         model_configs = json.loads(request.value)
         try:
-            read_model_configs(model_configs)
+            ModelManager.get_instance().load_model_configs(model_configs)
         except Exception as e:
             return agent_pb2.GeneralResponse(
                 ok=False,
@@ -410,7 +414,7 @@ class AgentServerServicer(RpcAgentServicer):
             )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=json.dumps(agent.memory.get_memory()),
+            message=serialize(agent.memory.get_memory()),
         )
 
     def download_file(
@@ -459,11 +463,7 @@ class AgentServerServicer(RpcAgentServicer):
         )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=Msg(  # type: ignore[arg-type]
-                name=self.get_agent(request.agent_id).name,
-                content=None,
-                task_id=task_id,
-            ).serialize(),
+            message=str(task_id),
         )
 
     def _observe(self, request: agent_pb2.RpcMsg) -> agent_pb2.GeneralResponse:
@@ -477,9 +477,13 @@ class AgentServerServicer(RpcAgentServicer):
             `RpcMsg`: Empty RpcMsg.
         """
         msgs = deserialize(request.value)
-        for msg in msgs:
-            if isinstance(msg, PlaceholderMessage):
-                msg.update_value()
+        if isinstance(msgs, list):
+            for msg in msgs:
+                if isinstance(msg, PlaceholderMessage):
+                    msg.update_value()
+        elif isinstance(msgs, PlaceholderMessage):
+            msgs.update_value()
+
         self.agent_pool[request.agent_id].observe(msgs)
         return agent_pb2.GeneralResponse(ok=True)
 
@@ -487,14 +491,14 @@ class AgentServerServicer(RpcAgentServicer):
         self,
         task_id: int,
         agent_id: str,
-        task_msg: dict = None,
+        task_msg: Msg = None,
     ) -> None:
         """Processing an input message and generate its reply message.
 
         Args:
-            task_id (`int`): task id of the input message, .
+            task_id (`int`): task id of the input message.
             agent_id (`str`): the id of the agent that accepted the message.
-            task_msg (`dict`): the input message.
+            task_msg (`Msg`): the input message.
         """
         if isinstance(task_msg, PlaceholderMessage):
             task_msg.update_value()

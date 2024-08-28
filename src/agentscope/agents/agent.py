@@ -15,8 +15,8 @@ from loguru import logger
 
 from agentscope.agents.operator import Operator
 from agentscope.logging import log_stream_msg, log_msg
+from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.models import load_model_by_config_name
 from agentscope.memory import TemporaryMemory
 
 
@@ -64,7 +64,7 @@ class _AgentMeta(ABCMeta):
                     ),
                     max_timeout_seconds=to_dist.pop(  # type: ignore[arg-type]
                         "max_timeout_seconds",
-                        1800,
+                        7200,
                     ),
                     local_mode=to_dist.pop(  # type: ignore[arg-type]
                         "local_mode",
@@ -100,9 +100,9 @@ class DistConf(dict):
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        lazy_launch: bool = True,
+        lazy_launch: bool = False,
     ):
         """Init the distributed configuration.
 
@@ -113,12 +113,12 @@ class DistConf(dict):
                 Port of the rpc agent server.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Timeout for task results.
             local_mode (`bool`, defaults to `True`):
                 Whether the started rpc server only listens to local
                 requests.
-            lazy_launch (`bool`, defaults to `True`):
+            lazy_launch (`bool`, defaults to `False`):
                 Only launch the server when the agent is called.
         """
         self["host"] = host
@@ -144,7 +144,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         sys_prompt: Optional[str] = None,
         model_config_name: str = None,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
         to_dist: Optional[Union[DistConf, bool]] = False,
     ) -> None:
         r"""Initialize an agent from the given arguments.
@@ -160,8 +159,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
             to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):
                 The configurations passed to :py:meth:`to_dist` method. Used in
                 :py:class:`_AgentMeta`, when this parameter is provided,
@@ -189,15 +186,17 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 See :doc:`Tutorial<tutorial/208-distribute>` for detail.
         """
         self.name = name
-        self.memory_config = memory_config
         self.sys_prompt = sys_prompt
 
         # TODO: support to receive a ModelWrapper instance
         if model_config_name is not None:
-            self.model = load_model_by_config_name(model_config_name)
+            model_manager = ModelManager.get_instance()
+            self.model = model_manager.get_model_by_config_name(
+                model_config_name,
+            )
 
         if use_memory:
-            self.memory = TemporaryMemory(memory_config)
+            self.memory = TemporaryMemory()
         else:
             self.memory = None
 
@@ -273,25 +272,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             f'"reply" function.',
         )
 
-    def load_from_config(self, config: dict) -> None:
-        """Load configuration for this agent.
-
-        Args:
-            config (`dict`): model configuration
-        """
-
-    def export_config(self) -> dict:
-        """Return configuration of this agent.
-
-        Returns:
-            The configuration of current agent.
-        """
-        return {}
-
-    def load_memory(self, memory: Sequence[dict]) -> None:
-        r"""Load input memory."""
-
-    def __call__(self, *args: Any, **kwargs: Any) -> dict:
+    def __call__(self, *args: Any, **kwargs: Any) -> Msg:
         """Calling the reply function, and broadcast the generated
         response to all audiences if needed."""
         res = self.reply(*args, **kwargs)
@@ -342,11 +323,11 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 f"object, got {type(content)} instead.",
             )
 
-    def observe(self, x: Union[dict, Sequence[dict]]) -> None:
+    def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
         """Observe the input, store it in memory without response to it.
 
         Args:
-            x (`Union[dict, Sequence[dict]]`):
+            x (`Union[Msg, Sequence[Msg]]`):
                 The input message to be recorded in memory.
         """
         if self.memory:
@@ -421,9 +402,9 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 1800,
+        max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        lazy_launch: bool = True,
+        lazy_launch: bool = False,
         launch_server: bool = None,
     ) -> AgentBase:
         """Convert current agent instance into a distributed version.
@@ -438,7 +419,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 The max number of agent reply messages that the started agent
                 server can accommodate. Note that the oldest message will be
                 deleted after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `1800`):
+            max_timeout_seconds (`int`, defaults to `7200`):
                 Only takes effect when `host` and `port` are not filled in.
                 Maximum time for reply messages to be cached in the launched
                 agent server. Note that expired messages will be deleted.
@@ -446,7 +427,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 Only takes effect when `host` and `port` are not filled in.
                 Whether the started agent server only listens to local
                 requests.
-            lazy_launch (`bool`, defaults to `True`):
+            lazy_launch (`bool`, defaults to `False`):
                 Only takes effect when `host` and `port` are not filled in.
                 If `True`, launch the agent server when the agent is called,
                 otherwise, launch the agent server immediately.

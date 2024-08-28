@@ -16,7 +16,7 @@ function initializeDashboardDetailPageByUrl(pageUrl) {
 }
 
 // The dashboard detail page supports three tabs:
-// 1. dialogue tab: the dialogue history of the runtime instance
+// 1. dialogue tab: the conversation history of the runtime instance
 // 2. code tab: the code files
 // 3. invocation tab: the model invocation records
 function loadDashboardDetailContent(pageUrl, javascriptUrl) {

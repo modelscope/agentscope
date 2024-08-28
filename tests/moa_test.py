@@ -36,7 +36,7 @@ class TestMixtureOfAgents(unittest.TestCase):
         self.models = [self.mock_ref_model_1, "load_mock_ref_model2"]
         self.rounds = 2
 
-    @patch("agentscope.strategy.mixture_of_agent.load_model_by_config_name")
+    @patch("agentscope.manager.ModelManager.get_model_by_config_name")
     def test_mixture_of_agents_call(self, mock_load_model: MagicMock) -> None:
         """
         Test the call method of MixtureOfAgents.
