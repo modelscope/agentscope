@@ -68,7 +68,7 @@ from ..exception import ResponseParsingError
 from ..manager import FileManager
 from ..manager import MonitorManager
 from ..message import Msg
-from ..utils.tools import _get_timestamp, _convert_to_str
+from ..utils.common import _get_timestamp, _convert_to_str
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 

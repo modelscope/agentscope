@@ -7,7 +7,7 @@ from agentscope.service.service_response import (
     ServiceResponse,
     ServiceExecStatus,
 )
-from agentscope.utils.common import requests_get
+from ...utils.common import _requests_get
 
 
 def dblp_search_publications(
@@ -92,7 +92,7 @@ def dblp_search_publications(
         "f": start,
         "c": num_completion,
     }
-    search_results = requests_get(url, params)
+    search_results = _requests_get(url, params)
 
     if isinstance(search_results, str):
         return ServiceResponse(ServiceExecStatus.ERROR, search_results)
@@ -204,7 +204,7 @@ def dblp_search_authors(
         "f": start,
         "c": num_completion,
     }
-    search_results = requests_get(url, params)
+    search_results = _requests_get(url, params)
     if isinstance(search_results, str):
         return ServiceResponse(ServiceExecStatus.ERROR, search_results)
     hits = search_results.get("result", {}).get("hits", {}).get("hit", [])
@@ -297,7 +297,7 @@ def dblp_search_venues(
         "f": start,
         "c": num_completion,
     }
-    search_results = requests_get(url, params)
+    search_results = _requests_get(url, params)
     if isinstance(search_results, str):
         return ServiceResponse(ServiceExecStatus.ERROR, search_results)
 

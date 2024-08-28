@@ -80,8 +80,8 @@ class AgentWithChatRoom(AgentBase):
         return room.join(self)
 
     def reply(self, x: Msg = None) -> Msg:
-        if "event" in x:
-            event = x["event"]
+        if "event" in x.content:
+            event = x.content["event"]
             self.event_list.append(event)
             return Msg(name=self.name, content="", role="assistant")
         else:
@@ -349,7 +349,13 @@ class EnvTest(unittest.TestCase):
                 self.agent = agent
 
             def __call__(self, env: Env, event: Event) -> None:
-                self.agent(Msg(name="system", content="", event=event))
+                self.agent(
+                    Msg(
+                        name="system",
+                        role="system",
+                        content={"event": event},
+                    ),
+                )
 
         ann = Msg(name="system", content="announce", role="system")
         r = ChatRoom(name="chat", announcement=ann)
@@ -474,7 +480,7 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(cnt1.get(), 3)
         self.assertEqual(cnt2.get(), -1)
 
-    def test_chat_room(self) -> None:  # pylint: disable=R0915
+    def test_chatroom(self) -> None:  # pylint: disable=R0915
         """Test chat room."""
 
         class Listener(EventListener):
@@ -485,7 +491,13 @@ class RpcEnvTest(unittest.TestCase):
                 self.agent = agent
 
             def __call__(self, env: Env, event: Event) -> None:
-                msg = self.agent(Msg(name="system", content="", event=event))
+                msg = self.agent(
+                    Msg(
+                        name="system",
+                        role="system",
+                        content={"event": event},
+                    ),
+                )
                 msg.update_value()
 
         ann = Msg(name="system", content="announce", role="system")

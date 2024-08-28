@@ -21,7 +21,7 @@ from ._model_utils import (
 from .model import ModelWrapperBase, ModelResponse
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.tools import _convert_to_str, _to_openai_image_url
+from ..utils.common import _convert_to_str, _to_openai_image_url
 
 from ..utils.token_utils import get_openai_max_length
 
@@ -188,7 +188,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def __call__(
         self,
-        messages: list,
+        messages: list[dict],
         stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
@@ -331,7 +331,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             response=response,
         )
 
-        usage = response.get("usage")
+        usage = response.get("usage", None)
         if usage is not None:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=W0212
 """
 Unit tests for rpc agent classes
 """
@@ -255,32 +256,30 @@ class BasicRpcAgentTest(unittest.TestCase):
         result = agent_a(msg)
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         # get name without waiting for the server
-        self.assertEqual(result.name, "a")
-        self.assertEqual(result["name"], "a")
         js_placeholder_result = pickle.dumps(result)
         self.assertTrue(result._is_placeholder)  # pylint: disable=W0212
         placeholder_result = pickle.loads(js_placeholder_result)
         self.assertTrue(isinstance(placeholder_result, PlaceholderMessage))
-        self.assertEqual(placeholder_result.name, "a")
-        self.assertEqual(
-            placeholder_result["name"],  # type: ignore[call-overload]
-            "a",
-        )
-        self.assertTrue(
-            placeholder_result._is_placeholder,  # pylint: disable=W0212
-        )
+
+        # Fetch the attribute from distributed agent
+        self.assertTrue(result._is_placeholder)
+        self.assertEqual(result.name, "System")
+        self.assertFalse(result._is_placeholder)
+
         # wait to get content
         self.assertEqual(result.content, msg.content)
-        self.assertFalse(result._is_placeholder)  # pylint: disable=W0212
         self.assertEqual(result.id, 0)
+
+        # The second time to fetch the attributes from the distributed agent
         self.assertTrue(
-            placeholder_result._is_placeholder,  # pylint: disable=W0212
+            placeholder_result._is_placeholder,
         )
         self.assertEqual(placeholder_result.content, msg.content)
         self.assertFalse(
-            placeholder_result._is_placeholder,  # pylint: disable=W0212
+            placeholder_result._is_placeholder,
         )
         self.assertEqual(placeholder_result.id, 0)
+
         # check msg
         js_msg_result = pickle.dumps(result)
         msg_result = pickle.loads(js_msg_result)
@@ -293,9 +292,9 @@ class BasicRpcAgentTest(unittest.TestCase):
 
     def test_connect_to_an_existing_rpc_server(self) -> None:
         """test connecting to an existing server"""
-        from agentscope.utils.tools import find_available_port
+        from agentscope.utils.common import _find_available_port
 
-        port = find_available_port()
+        port = _find_available_port()
         launcher = RpcAgentServerLauncher(
             # choose port automatically
             host="127.0.0.1",
@@ -306,7 +305,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         launcher.launch()
         self.assertEqual(port, launcher.port)
         client = RpcAgentClient(host=launcher.host, port=launcher.port)
-        self.assertTrue(client.is_alive())  # pylint: disable=W0212
+        self.assertTrue(client.is_alive())
         agent_a = DemoRpcAgent(
             name="a",
         ).to_dist(
@@ -320,7 +319,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         result = agent_a(msg)
         # get name without waiting for the server
-        self.assertEqual(result.name, "a")
+        self.assertEqual(result.name, "System")
         # waiting for server
         self.assertEqual(result.content, msg.content)
         # test dict usage
@@ -331,9 +330,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         result = agent_a(msg)
         # get name without waiting for the server
-        self.assertEqual(result["name"], "a")
+        self.assertEqual(result.name, "System")
         # waiting for server
-        self.assertEqual(result["content"], msg.content)
+        self.assertEqual(result.content, msg.content)
         # test to_str
         msg = Msg(
             name="System",
@@ -341,7 +340,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         result = agent_a(msg)
-        self.assertEqual(result.formatted_str(), "a: {'text': 'test'}")
+        self.assertEqual(result.formatted_str(), "System: {'text': 'test'}")
         launcher.shutdown()
 
     def test_multi_rpc_agent(self) -> None:
@@ -528,7 +527,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         res2 = agent2(msg2)
-        self.assertRaises(Exception, res2.__getattr__, "content")
+        self.assertRaises(Exception, res2.__getattribute__, "content")
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(
@@ -607,7 +606,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         """Test error handling"""
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
-        self.assertRaises(AgentCallError, x.__getattr__, "content")
+        self.assertRaises(AgentCallError, x.update_value)
 
     def test_agent_nesting(self) -> None:
         """Test agent nesting"""
@@ -692,8 +691,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         resp.update_value()
         memory = client.get_agent_memory(memory_agent.agent_id)
         self.assertEqual(len(memory), 2)
-        self.assertEqual(memory[0]["content"], "first msg")
-        self.assertEqual(memory[1]["content"]["mem_size"], 1)
+        self.assertEqual(memory[0].content, "first msg")
+        self.assertEqual(memory[1].content["mem_size"], 1)
         agent_lists = client.get_agent_list()
         self.assertEqual(len(agent_lists), 1)
         self.assertEqual(agent_lists[0]["agent_id"], memory_agent.agent_id)

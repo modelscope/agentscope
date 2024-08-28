@@ -2,7 +2,6 @@
 """ Operators for txt file and directory. """
 import os
 
-from agentscope.utils.common import write_file
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
@@ -59,4 +58,17 @@ def write_text_file(
             status=ServiceExecStatus.ERROR,
             content="FileExistsError: The file already exists.",
         )
-    return write_file(content, file_path)
+
+    try:
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(content)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Success",
+        )
+    except Exception as e:
+        error_message = f"{e.__class__.__name__}: {e}"
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=error_message,
+        )

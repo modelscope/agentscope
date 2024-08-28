@@ -9,7 +9,7 @@ from types import FunctionType
 try:
     import cloudpickle as pickle
 except ImportError as e:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     pickle = ImportErrorReporter(e, "distribute")
 

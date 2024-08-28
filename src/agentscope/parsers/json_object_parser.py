@@ -8,16 +8,16 @@ from typing import Optional, Any, List, Sequence, Union
 from loguru import logger
 from pydantic import BaseModel
 
-from agentscope.exception import (
+from ..exception import (
     TagNotFoundError,
     JsonParsingError,
     JsonTypeError,
     RequiredFieldNotFoundError,
 )
-from agentscope.models import ModelResponse
-from agentscope.parsers import ParserBase
-from agentscope.parsers.parser_base import DictFilterMixin
-from agentscope.utils.tools import _join_str_with_comma_and
+from ..models import ModelResponse
+from ..parsers import ParserBase
+from ..parsers.parser_base import DictFilterMixin
+from ..utils.common import _join_str_with_comma_and
 
 
 class MarkdownJsonObjectParser(ParserBase):
@@ -166,9 +166,9 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
         self,
         content_hint: Optional[Any] = None,
         required_keys: List[str] = None,
-        keys_to_memory: Optional[Union[str, bool, Sequence[str]]] = True,
-        keys_to_content: Optional[Union[str, bool, Sequence[str]]] = True,
-        keys_to_metadata: Optional[Union[str, bool, Sequence[str]]] = False,
+        keys_to_memory: Union[str, bool, Sequence[str]] = True,
+        keys_to_content: Union[str, bool, Sequence[str]] = True,
+        keys_to_metadata: Union[str, bool, Sequence[str]] = False,
     ) -> None:
         """Initialize the parser with the content hint.
 

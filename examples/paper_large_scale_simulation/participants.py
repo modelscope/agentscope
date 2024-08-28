@@ -18,7 +18,7 @@ from agentscope.message import Msg
 from agentscope.agents import AgentBase
 from agentscope.environment import BasicEnv
 from agentscope.exception import ResponseParsingError
-from agentscope.utils.tools import _get_timestamp
+from agentscope.utils.common import _get_timestamp
 from agentscope.logging import log_msg
 
 SAVE_DIR = f"./runs/{os.uname().nodename}"
