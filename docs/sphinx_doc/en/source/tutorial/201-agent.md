@@ -35,7 +35,6 @@ class AgentBase(Operator):
             sys_prompt: Optional[str] = None,
             model_config_name: str = None,
             use_memory: bool = True,
-            memory_config: Optional[dict] = None,
     ) -> None:
 
     # ... [code omitted for brevity]
@@ -71,7 +70,6 @@ Below is a table summarizing the functionality of some of the key agents availab
 | `DialogAgent`      | Manages dialogues by understanding context and generating coherent responses.                                                       | Customer service bots, virtual assistants.    |
 | `DictDialogAgent`  | Manages dialogues by understanding context and generating coherent responses, and the responses are in json format.                 | Customer service bots, virtual assistants.    |
 | `UserAgent`        | Interacts with the user to collect input, generating messages that may include URLs or additional specifics based on required keys. | Collecting user input for agents              |
-| `TextToImageAgent` | An agent that convert user input text to image.                                                                                     | Converting text to image                      |
 | `ReActAgent`       | An agent class that implements the ReAct algorithm.                                                                                 | Solving complex tasks                         |
 | *More to Come*     | AgentScope is continuously expanding its pool with more specialized agents for diverse applications.                                |                                               |
 

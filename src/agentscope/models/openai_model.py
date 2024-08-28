@@ -21,7 +21,7 @@ from ._model_utils import (
 from .model import ModelWrapperBase, ModelResponse
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.tools import _convert_to_str, _to_openai_image_url
+from ..utils.common import _convert_to_str, _to_openai_image_url
 
 from ..utils.token_utils import get_openai_max_length
 
