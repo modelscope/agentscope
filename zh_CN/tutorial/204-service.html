@@ -145,10 +145,10 @@
 <tbody>
 <tr class="row-even"><td><p>代码</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">execute_python_code</span></code></p></td>
-<td><p>执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。</p></td>
+<td><p>执行一段 Python 代码，可选择在 Docker 容器内部执行。</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">NoteBookExecutor.run_code_on_notebook</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NoteBookExecutor</span></code></p></td>
 <td><p>在 NoteBookExecutor 的 IPython 环境中执行一段 Python 代码，遵循 IPython 交互式计算风格。</p></td>
 </tr>
 <tr class="row-even"><td><p>检索</p></td>
@@ -197,7 +197,7 @@
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">digest_webpage</span></code></p></td>
-<td><p>对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面</p></td>
+<td><p>对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面）</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dblp_search_publications</span></code></p></td>
@@ -211,83 +211,95 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">dblp_search_venues</span></code></p></td>
 <td><p>在dblp数据库里搜索期刊，会议及研讨会。</p></td>
 </tr>
-<tr class="row-odd"><td><p>文件处理</p></td>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tripadvisor_search</span></code></p></td>
+<td><p>使用 TripAdvisor API 搜索位置。</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tripadvisor_search_location_photos</span></code></p></td>
+<td><p>使用 TripAdvisor API 检索特定位置的照片。</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tripadvisor_search_location_details</span></code></p></td>
+<td><p>使用 TripAdvisor API 获取特定位置的详细信息。</p></td>
+</tr>
+<tr class="row-even"><td><p>文件处理</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">create_file</span></code></p></td>
 <td><p>在指定路径创建一个新文件，并可选择添加初始内容。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">delete_file</span></code></p></td>
 <td><p>删除由文件路径指定的文件。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">move_file</span></code></p></td>
 <td><p>将文件从一个路径移动或重命名到另一个路径。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">create_directory</span></code></p></td>
 <td><p>在指定路径创建一个新的目录。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">delete_directory</span></code></p></td>
 <td><p>删除一个目录及其所有内容。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">move_directory</span></code></p></td>
 <td><p>将目录从一个路径移动或重命名到另一个路径。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">read_text_file</span></code></p></td>
 <td><p>读取并返回文本文件的内容。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">write_text_file</span></code></p></td>
 <td><p>向指定路径的文件写入文本内容。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">read_json_file</span></code></p></td>
 <td><p>读取并解析 JSON 文件的内容。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">write_json_file</span></code></p></td>
 <td><p>将 Python 对象序列化为 JSON 并写入到文件。</p></td>
 </tr>
-<tr class="row-odd"><td><p>多模态</p></td>
+<tr class="row-even"><td><p>多模态</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_image</span></code></p></td>
 <td><p>使用 DashScope API 将文本生成图片。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dashscope_image_to_text</span></code></p></td>
 <td><p>使用 DashScope API 根据图片生成文字。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_audio</span></code></p></td>
 <td><p>使用 DashScope API 根据文本生成音频。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_text_to_image</span></code></p></td>
 <td><p>使用 OpenAI API根据文本生成图片。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_edit_image</span></code></p></td>
 <td><p>使用 OpenAI API 根据提供的遮罩和提示编辑图像。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_create_image_variation</span></code></p></td>
 <td><p>使用 OpenAI API 创建图像的变体。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_image_to_text</span></code></p></td>
 <td><p>使用 OpenAI API 根据图片生成文字。</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_text_to_audio</span></code></p></td>
 <td><p>使用 OpenAI API 根据文本生成音频。</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_audio_to_text</span></code></p></td>
 <td><p>使用OpenAI API将音频转换为文本。</p></td>
 </tr>
-<tr class="row-even"><td><p><em>更多服务即将推出</em></p></td>
+<tr class="row-odd"><td><p><em>更多服务即将推出</em></p></td>
 <td><p></p></td>
 <td><p>正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。</p></td>
 </tr>

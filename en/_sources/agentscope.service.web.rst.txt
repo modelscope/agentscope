@@ -11,6 +11,7 @@ Submodules
    agentscope.service.web.dblp
    agentscope.service.web.download
    agentscope.service.web.search
+   agentscope.service.web.tripadvisor
    agentscope.service.web.web_digest
    agentscope.service.web.wikipedia
 

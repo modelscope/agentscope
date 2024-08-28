@@ -1,0 +1,694 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.web.tripadvisor &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/web/tripadvisor.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/web/tripadvisor.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/102-installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/103-example.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/203-stream.html">Streaming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/205-memory.html">Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/203-parser.html">Response Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/209-prompt_opt.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/204-service.html">Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/208-distribute.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/210-rag.html">A Quick Introduction to RAG in AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/105-logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/207-monitor.html">Monitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/104-usecase.html">Example: Werewolf Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.web.tripadvisor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.service.web.tripadvisor</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;TripAdvisor APIs for searching and retrieving location information.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+
+
+<div class="viewcode-block" id="tripadvisor_search_location_photos">
+<a class="viewcode-back" href="../../../../agentscope.service.web.tripadvisor.html#agentscope.service.tripadvisor_search_location_photos">[docs]</a>
+<span class="k">def</span> <span class="nf">tripadvisor_search_location_photos</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">location_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve photos for a specific location using the TripAdvisor API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            Your TripAdvisor API key.</span>
+<span class="sd">        location_id (`str`, optional):</span>
+<span class="sd">            The unique identifier for a location on Tripadvisor. The location</span>
+<span class="sd">            ID can be obtained using the tripadvisor_search function</span>
+<span class="sd">        query (`str`, optional):</span>
+<span class="sd">            The search query to find a location. Required if</span>
+<span class="sd">            location_id is not provided.</span>
+<span class="sd">        language (`str`, optional):</span>
+<span class="sd">            The language for the response. Defaults to &#39;en&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary with two variables: `status` and</span>
+<span class="sd">        `content`. The `status` variable is from the ServiceExecStatus enum,</span>
+<span class="sd">        and `content` is the JSON response from TripAdvisor API or error</span>
+<span class="sd">        information, which depends on the `status` variable.</span>
+
+<span class="sd">        If successful, the `content` will be a dictionary</span>
+<span class="sd">        with the following structure:</span>
+
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &#39;photo_data&#39;: {</span>
+<span class="sd">                    &#39;data&#39;: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &#39;id&#39;: int,</span>
+<span class="sd">                            &#39;is_blessed&#39;: bool,</span>
+<span class="sd">                            &#39;caption&#39;: str,</span>
+<span class="sd">                            &#39;published_date&#39;: str,</span>
+<span class="sd">                            &#39;images&#39;: {</span>
+<span class="sd">                                &#39;thumbnail&#39;: {</span>
+<span class="sd">                                    &#39;height&#39;: int,</span>
+<span class="sd">                                    &#39;width&#39;: int,</span>
+<span class="sd">                                    &#39;url&#39;: str</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &#39;small&#39;: {</span>
+<span class="sd">                                    &#39;height&#39;: int,</span>
+<span class="sd">                                    &#39;width&#39;: int,</span>
+<span class="sd">                                    &#39;url&#39;: str</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &#39;medium&#39;: {</span>
+<span class="sd">                                    &#39;height&#39;: int,</span>
+<span class="sd">                                    &#39;width&#39;: int,</span>
+<span class="sd">                                    &#39;url&#39;: str</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &#39;large&#39;: {</span>
+<span class="sd">                                    &#39;height&#39;: int,</span>
+<span class="sd">                                    &#39;width&#39;: int,</span>
+<span class="sd">                                    &#39;url&#39;: str</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &#39;original&#39;: {</span>
+<span class="sd">                                    &#39;height&#39;: int,</span>
+<span class="sd">                                    &#39;width&#39;: int,</span>
+<span class="sd">                                    &#39;url&#39;: str</span>
+<span class="sd">                                }</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &#39;album&#39;: str,</span>
+<span class="sd">                            &#39;source&#39;: {&#39;name&#39;: str, &#39;localized_name&#39;: str},</span>
+<span class="sd">                            &#39;user&#39;: {&#39;username&#39;: str}</span>
+<span class="sd">                        },</span>
+<span class="sd">                        ...</span>
+<span class="sd">                    ]</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+
+<span class="sd">        Each item in the &#39;data&#39; list represents a photo associated with the</span>
+<span class="sd">        location.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Either `location_id` or `query` must be provided. If both are provided,</span>
+<span class="sd">        `location_id` takes precedence.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Using location_id</span>
+<span class="sd">            result = tripadvisor_search_location_photos(</span>
+<span class="sd">                &quot;your_api_key&quot;, location_id=&quot;123456&quot;, language=&quot;en&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">            if result.status == ServiceExecStatus.SUCCESS:</span>
+<span class="sd">                print(result.content)</span>
+
+<span class="sd">            # Or using a query</span>
+<span class="sd">            result = tripadvisor_search_location_photos(</span>
+<span class="sd">                &quot;your_api_key&quot;, query=&quot;Eiffel Tower&quot;, language=&quot;en&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">            if result.status == ServiceExecStatus.SUCCESS:</span>
+<span class="sd">                print(result.content)</span>
+
+<span class="sd">    Example of successful `content`:</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;photo_data&#39;: {</span>
+<span class="sd">                &#39;data&#39;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;id&#39;: 215321638,</span>
+<span class="sd">                        &#39;is_blessed&#39;: False,</span>
+<span class="sd">                        &#39;caption&#39;: &#39;&#39;,</span>
+<span class="sd">                        &#39;published_date&#39;: &#39;2016-09-04T20:40:14.284Z&#39;,</span>
+<span class="sd">                        &#39;images&#39;: {</span>
+<span class="sd">                            &#39;thumbnail&#39;: {&#39;height&#39;: 50, &#39;width&#39;: 50,</span>
+<span class="sd">                            &#39;url&#39;: &#39;https://media-cdn.../photo0.jpg&#39;},</span>
+<span class="sd">                            &#39;small&#39;: {&#39;height&#39;: 150, &#39;width&#39;: 150,</span>
+<span class="sd">                            &#39;url&#39;: &#39;https://media-cdn.../photo0.jpg&#39;},</span>
+<span class="sd">                            &#39;medium&#39;: {&#39;height&#39;: 188, &#39;width&#39;: 250,</span>
+<span class="sd">                            &#39;url&#39;: &#39;https://media-cdn.../photo0.jpg&#39;},</span>
+<span class="sd">                            &#39;large&#39;: {&#39;height&#39;: 413, &#39;width&#39;: 550,</span>
+<span class="sd">                            &#39;url&#39;: &#39;https://media-cdn.../photo0.jpg&#39;},</span>
+<span class="sd">                            &#39;original&#39;: {&#39;height&#39;: 1920, &#39;width&#39;: 2560,</span>
+<span class="sd">                            &#39;url&#39;: &#39;https://media-cdn.../photo0.jpg&#39;}</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &#39;album&#39;: &#39;Other&#39;,</span>
+<span class="sd">                        &#39;source&#39;: {</span>
+<span class="sd">                            &#39;name&#39;: &#39;Traveler&#39;,</span>
+<span class="sd">                            &#39;localized_name&#39;: &#39;Traveler&#39;</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &#39;user&#39;: {&#39;username&#39;: &#39;EvaFalleth&#39;}</span>
+<span class="sd">                    },</span>
+<span class="sd">                    # ... more photo entries ...</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If neither location_id nor query is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">location_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either location_id or query must be provided.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">location_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use search_tripadvisor to get the location_id</span>
+        <span class="n">search_result</span> <span class="o">=</span> <span class="n">tripadvisor_search</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">search_result</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">search_result</span>
+
+        <span class="c1"># Get the first location_id from the search results</span>
+        <span class="n">locations</span> <span class="o">=</span> <span class="n">search_result</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">locations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No locations found for the given query.&quot;</span><span class="p">},</span>
+            <span class="p">)</span>
+
+        <span class="n">location_id</span> <span class="o">=</span> <span class="n">locations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;location_id&quot;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using location_id </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2"> from search results.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Warning message if there are multiple locations</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Multiple locations found for query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Using the first result. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Other </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> results are ignored.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Now proceed with the original function logic using the location_id</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;https://api.content.tripadvisor.com/api/v1/location/</span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">/&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;photos?language=</span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">&amp;key=</span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Requesting photos for location ID </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Received response with status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully retrieved the photo&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="n">error_detail</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;HTTP Error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in response: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">error_detail</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Exception occurred while requesting location photos&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)},</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="tripadvisor_search">
+<a class="viewcode-back" href="../../../../agentscope.service.web.tripadvisor.html#agentscope.service.tripadvisor_search">[docs]</a>
+<span class="k">def</span> <span class="nf">tripadvisor_search</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for locations using the TripAdvisor API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            Your TripAdvisor API key.</span>
+<span class="sd">        query (`str`):</span>
+<span class="sd">            The search query.</span>
+<span class="sd">        language (`str`, optional):</span>
+<span class="sd">            The language for the response. Defaults to &#39;en&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary with two variables: `status` and</span>
+<span class="sd">        `content`. The `status` variable is from the ServiceExecStatus enum,</span>
+<span class="sd">        and `content` is the JSON response from TripAdvisor API or error</span>
+<span class="sd">        information, which depends on the `status` variable.</span>
+
+<span class="sd">        If successful, the `content` will be a</span>
+<span class="sd">        dictionary with the following structure:</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;data&#39;: [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;location_id&#39;: str,</span>
+<span class="sd">                    &#39;name&#39;: str,</span>
+<span class="sd">                    &#39;address_obj&#39;: {</span>
+<span class="sd">                        &#39;street1&#39;: str,</span>
+<span class="sd">                        &#39;street2&#39;: str,</span>
+<span class="sd">                        &#39;city&#39;: str,</span>
+<span class="sd">                        &#39;state&#39;: str,</span>
+<span class="sd">                        &#39;country&#39;: str,</span>
+<span class="sd">                        &#39;postalcode&#39;: str,</span>
+<span class="sd">                        &#39;address_string&#39;: str</span>
+<span class="sd">                    }</span>
+<span class="sd">                },</span>
+<span class="sd">                ...</span>
+<span class="sd">            ]</span>
+<span class="sd">        }</span>
+<span class="sd">        Each item in the &#39;data&#39; list represents</span>
+<span class="sd">        a location matching the search query.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            result = search_tripadvisor(&quot;your_api_key&quot;, &quot;Socotra&quot;, &quot;en&quot;)</span>
+<span class="sd">            if result.status == ServiceExecStatus.SUCCESS:</span>
+<span class="sd">                print(result.content)</span>
+
+<span class="sd">    Example of successful `content`:</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;data&#39;: [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;location_id&#39;: &#39;574818&#39;,</span>
+<span class="sd">                    &#39;name&#39;: &#39;Socotra Island&#39;,</span>
+<span class="sd">                    &#39;address_obj&#39;: {</span>
+<span class="sd">                        &#39;street2&#39;: &#39;&#39;,</span>
+<span class="sd">                        &#39;city&#39;: &#39;Aden&#39;,</span>
+<span class="sd">                        &#39;country&#39;: &#39;Yemen&#39;,</span>
+<span class="sd">                        &#39;postalcode&#39;: &#39;&#39;,</span>
+<span class="sd">                        &#39;address_string&#39;: &#39;Aden Yemen&#39;</span>
+<span class="sd">                    }</span>
+<span class="sd">                },</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;location_id&#39;: &#39;25395815&#39;,</span>
+<span class="sd">                    &#39;name&#39;: &#39;Tour Socotra&#39;,</span>
+<span class="sd">                    &#39;address_obj&#39;: {</span>
+<span class="sd">                        &#39;street1&#39;: &#39;20th Street&#39;,</span>
+<span class="sd">                        &#39;city&#39;: &#39;Socotra Island&#39;,</span>
+<span class="sd">                        &#39;state&#39;: &#39;Socotra Island&#39;,</span>
+<span class="sd">                        &#39;country&#39;: &#39;Yemen&#39;,</span>
+<span class="sd">                        &#39;postalcode&#39;: &#39;111&#39;,</span>
+<span class="sd">                        &#39;address_string&#39;:</span>
+<span class="sd">                        &#39;20th Street, Socotra Island 111 Yemen&#39;</span>
+<span class="sd">                    }</span>
+<span class="sd">                },</span>
+<span class="sd">                # ... more results ...</span>
+<span class="sd">            ]</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;https://api.content.tripadvisor.com/api/v1/location/search?&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;searchQuery=</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&amp;language=</span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">&amp;key=</span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Searching for locations with query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Received response with status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully retrieved search results&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="n">error_detail</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;HTTP Error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in response: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">error_detail</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Exception occurred while searching for locations&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)},</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="tripadvisor_search_location_details">
+<a class="viewcode-back" href="../../../../agentscope.service.web.tripadvisor.html#agentscope.service.tripadvisor_search_location_details">[docs]</a>
+<span class="k">def</span> <span class="nf">tripadvisor_search_location_details</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">location_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">currency</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get detailed information about a specific location using the TripAdvisor API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        api_key (`str`):</span>
+<span class="sd">            Your TripAdvisor API key.</span>
+<span class="sd">        location_id (`str`, optional):</span>
+<span class="sd">            The unique identifier for the location. Required if</span>
+<span class="sd">            query is not provided.</span>
+<span class="sd">        query (`str`, optional):</span>
+<span class="sd">            The search query to find a location. Required if</span>
+<span class="sd">            location_id is not provided.</span>
+<span class="sd">        language (`str`, optional):</span>
+<span class="sd">            The language for the response. Defaults to &#39;en&#39;, &#39;zh&#39; for Chinese.</span>
+<span class="sd">        currency (`str`, optional):</span>
+<span class="sd">            The currency code to use for request and response</span>
+<span class="sd">            (should follow ISO 4217). Defaults to &#39;USD&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `ServiceResponse`: A dictionary with two variables: `status` and</span>
+<span class="sd">        `content`. The `status` variable is from the ServiceExecStatus enum,</span>
+<span class="sd">        and `content` is the JSON response from TripAdvisor API or error</span>
+<span class="sd">        information, which depends on the `status` variable.</span>
+
+<span class="sd">        If successful, the `content` will be a dictionary with</span>
+<span class="sd">        detailed information about the location, including</span>
+<span class="sd">        name, address, ratings, reviews, and more.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Either `location_id` or `query` must be provided. If both are provided,</span>
+<span class="sd">        `location_id` takes precedence.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Using location_id</span>
+<span class="sd">            result = get_tripadvisor_location_details(</span>
+<span class="sd">                &quot;your_api_key&quot;,</span>
+<span class="sd">                location_id=&quot;574818&quot;,</span>
+<span class="sd">                language=&quot;en&quot;,</span>
+<span class="sd">                currency=&quot;USD&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">            if result.status == ServiceExecStatus.SUCCESS:</span>
+<span class="sd">                print(result.content)</span>
+
+<span class="sd">            # Or using a query</span>
+<span class="sd">            result = get_tripadvisor_location_details(</span>
+<span class="sd">                &quot;your_api_key&quot;,</span>
+<span class="sd">                query=&quot;Socotra Island&quot;,</span>
+<span class="sd">                language=&quot;en&quot;,</span>
+<span class="sd">                currency=&quot;USD&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">            if result.status == ServiceExecStatus.SUCCESS:</span>
+<span class="sd">                print(result.content)</span>
+
+<span class="sd">    Example of successful `content`:</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;location_id&#39;: &#39;574818&#39;,</span>
+<span class="sd">            &#39;name&#39;: &#39;Socotra Island&#39;,</span>
+<span class="sd">            &#39;web_url&#39;: &#39;https://www.tripadvisor.com/Attraction_Review...&#39;,</span>
+<span class="sd">            &#39;address_obj&#39;: {</span>
+<span class="sd">                &#39;street2&#39;: &#39;&#39;,</span>
+<span class="sd">                &#39;city&#39;: &#39;Aden&#39;,</span>
+<span class="sd">                &#39;country&#39;: &#39;Yemen&#39;,</span>
+<span class="sd">                &#39;postalcode&#39;: &#39;&#39;,</span>
+<span class="sd">                &#39;address_string&#39;: &#39;Aden Yemen&#39;</span>
+<span class="sd">            },</span>
+<span class="sd">            &#39;ancestors&#39;: [</span>
+<span class="sd">                {&#39;level&#39;: &#39;City&#39;, &#39;name&#39;: &#39;Aden&#39;, &#39;location_id&#39;: &#39;298087&#39;},</span>
+<span class="sd">                {&#39;level&#39;: &#39;Country&#39;, &#39;name&#39;: &#39;Yemen&#39;, &#39;location_id&#39;: &#39;294014&#39;}</span>
+<span class="sd">            ],</span>
+<span class="sd">            &#39;latitude&#39;: &#39;12.46342&#39;,</span>
+<span class="sd">            &#39;longitude&#39;: &#39;53.82374&#39;,</span>
+<span class="sd">            &#39;timezone&#39;: &#39;Asia/Aden&#39;,</span>
+<span class="sd">            &#39;write_review&#39;: &#39;https://www.tripadvisor.com/UserReview...&#39;,</span>
+<span class="sd">            &#39;ranking_data&#39;: {</span>
+<span class="sd">                &#39;geo_location_id&#39;: &#39;298087&#39;,</span>
+<span class="sd">                &#39;ranking_string&#39;: &#39;#1 of 7 things to do in Aden&#39;,</span>
+<span class="sd">                &#39;geo_location_name&#39;: &#39;Aden&#39;,</span>
+<span class="sd">                &#39;ranking_out_of&#39;: &#39;7&#39;,</span>
+<span class="sd">                &#39;ranking&#39;: &#39;1&#39;</span>
+<span class="sd">            },</span>
+<span class="sd">            &#39;rating&#39;: &#39;5.0&#39;,</span>
+<span class="sd">            &#39;rating_image_url&#39;: &#39;https://www.tripadvisor.com/.../5.svg&#39;,</span>
+<span class="sd">            &#39;num_reviews&#39;: &#39;62&#39;,</span>
+<span class="sd">            &#39;review_rating_count&#39;: {</span>
+<span class="sd">                &#39;1&#39;: &#39;1&#39;,</span>
+<span class="sd">                &#39;2&#39;: &#39;0&#39;,</span>
+<span class="sd">                &#39;3&#39;: &#39;1&#39;,</span>
+<span class="sd">                &#39;4&#39;: &#39;1&#39;,</span>
+<span class="sd">                &#39;5&#39;: &#39;59&#39;,</span>
+<span class="sd">            },</span>
+<span class="sd">            &#39;photo_count&#39;: &#39;342&#39;,</span>
+<span class="sd">            &#39;see_all_photos&#39;: &#39;https://www.tripadvisor.com/Attraction...&#39;,</span>
+<span class="sd">            &#39;category&#39;: {&#39;name&#39;: &#39;attraction&#39;, &#39;localized_name&#39;: &#39;Attraction&#39;},</span>
+<span class="sd">            &#39;subcategory&#39;: [</span>
+<span class="sd">                {&#39;name&#39;: &#39;nature_parks&#39;, &#39;localized_name&#39;: &#39;Nature &amp; Parks&#39;},</span>
+<span class="sd">                {&#39;name&#39;: &#39;attractions&#39;, &#39;localized_name&#39;: &#39;Attractions&#39;}</span>
+<span class="sd">            ],</span>
+<span class="sd">            &#39;groups&#39;: [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;name&#39;: &#39;Nature &amp; Parks&#39;,</span>
+<span class="sd">                    &#39;localized_name&#39;: &#39;Nature &amp; Parks&#39;,</span>
+<span class="sd">                    &#39;categories&#39;: [{&#39;name&#39;: &#39;Islands&#39;,</span>
+<span class="sd">                    &#39;localized_name&#39;: &#39;Islands&#39;}]</span>
+<span class="sd">                }</span>
+<span class="sd">            ],</span>
+<span class="sd">            &#39;neighborhood_info&#39;: [],</span>
+<span class="sd">            &#39;trip_types&#39;: [</span>
+<span class="sd">                {&#39;name&#39;: &#39;business&#39;, &#39;localized_name&#39;:</span>
+<span class="sd">                &#39;Business&#39;, &#39;value&#39;: &#39;2&#39;},</span>
+<span class="sd">                {&#39;name&#39;: &#39;couples&#39;, &#39;localized_name&#39;:</span>
+<span class="sd">                &#39;Couples&#39;, &#39;value&#39;: &#39;10&#39;},</span>
+<span class="sd">                {&#39;name&#39;: &#39;solo&#39;, &#39;localized_name&#39;:</span>
+<span class="sd">                &#39;Solo travel&#39;, &#39;value&#39;: &#39;11&#39;},</span>
+<span class="sd">                {&#39;name&#39;: &#39;family&#39;, &#39;localized_name&#39;:</span>
+<span class="sd">                &#39;Family&#39;, &#39;value&#39;: &#39;2&#39;},</span>
+<span class="sd">                {&#39;name&#39;: &#39;friends&#39;, &#39;localized_name&#39;:</span>
+<span class="sd">                &#39;Friends getaway&#39;, &#39;value&#39;: &#39;22&#39;}</span>
+<span class="sd">            ],</span>
+<span class="sd">            &#39;awards&#39;: []</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If neither location_id nor query is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+    <span class="k">if</span> <span class="n">location_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either location_id or query must be provided.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">location_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use search_tripadvisor to get the location_id</span>
+        <span class="n">search_result</span> <span class="o">=</span> <span class="n">tripadvisor_search</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">search_result</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">search_result</span>
+
+        <span class="c1"># Get the first location_id from the search results</span>
+        <span class="n">locations</span> <span class="o">=</span> <span class="n">search_result</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">locations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No locations found for the given query.&quot;</span><span class="p">},</span>
+            <span class="p">)</span>
+
+        <span class="n">location_id</span> <span class="o">=</span> <span class="n">locations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;location_id&quot;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using location_id </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2"> from search results.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Warning message if there are multiple locations</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Multiple locations found for query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Using the first result. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Other </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> results are ignored.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;https://api.content.tripadvisor.com/api/v1/location/</span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">/&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;details?language=</span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s2">&amp;currency=</span><span class="si">{</span><span class="n">currency</span><span class="si">}</span><span class="s2">&amp;key=</span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Requesting details for location ID </span><span class="si">{</span><span class="n">location_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Received response with status code </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully retrieved location details&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="n">error_detail</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;HTTP Error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in response: </span><span class="si">{</span><span class="n">error_detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">error_detail</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+            <span class="s2">&quot;Exception occurred while requesting location details&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)},</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.web.tripadvisor module &mdash; AgentScope  文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7d86a446"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/translations.js?v=beaddf03"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="agentscope.service.web.web_digest module" href="agentscope.service.web.web_digest.html" />
+    <link rel="prev" title="agentscope.service.web.search module" href="agentscope.service.web.search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../en/agentscope.service.web.tripadvisor.html">English</a></li> |
+    <a href="../zh_CN/agentscope.service.web.tripadvisor.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope 教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/101-agentscope.html">关于AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/102-installation.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/103-example.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-model.html">模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-stream.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/206-prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/205-memory.html">记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/203-parser.html">结果解析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-prompt_opt.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/204-service.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/202-pipeline.html">Pipeline和MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/208-distribute.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/210-rag.html">简要介绍AgentScope中的RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/105-logging.html">日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/207-monitor.html">监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/104-usecase.html">样例：狼人杀游戏</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/contribute.html">参与贡献</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API 文档</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.service.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.execute_code.html">agentscope.service.execute_code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.file.html">agentscope.service.file package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.multi_modality.html">agentscope.service.multi_modality package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.retrieval.html">agentscope.service.retrieval package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.sql_query.html">agentscope.service.sql_query package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.text_processing.html">agentscope.service.text_processing package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="agentscope.service.web.html">agentscope.service.web package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="agentscope.service.web.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.service.web.html#module-agentscope.service.web">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#module-agentscope.service">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.html">agentscope.service package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.web.html">agentscope.service.web package</a></li>
+      <li class="breadcrumb-item active">agentscope.service.web.tripadvisor module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/agentscope.service.web.tripadvisor.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.service.web.tripadvisor">
+<span id="agentscope-service-web-tripadvisor-module"></span><h1>agentscope.service.web.tripadvisor module<a class="headerlink" href="#module-agentscope.service.web.tripadvisor" title="Link to this heading"></a></h1>
+<p>TripAdvisor APIs for searching and retrieving location information.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.tripadvisor.tripadvisor_search_location_photos">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.tripadvisor.</span></span><span class="sig-name descname"><span class="pre">tripadvisor_search_location_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'en'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/tripadvisor.html#tripadvisor_search_location_photos"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.web.tripadvisor.tripadvisor_search_location_photos" title="Link to this definition"></a></dt>
+<dd><p>Retrieve photos for a specific location using the TripAdvisor API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<cite>str</cite>) – Your TripAdvisor API key.</p></li>
+<li><p><strong>location_id</strong> (<cite>str</cite>, optional) – The unique identifier for a location on Tripadvisor. The location
+ID can be obtained using the tripadvisor_search function</p></li>
+<li><p><strong>query</strong> (<cite>str</cite>, optional) – The search query to find a location. Required if
+location_id is not provided.</p></li>
+<li><p><strong>language</strong> (<cite>str</cite>, optional) – The language for the response. Defaults to ‘en’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary with two variables: <cite>status</cite> and
+<cite>content</cite>. The <cite>status</cite> variable is from the ServiceExecStatus enum,
+and <cite>content</cite> is the JSON response from TripAdvisor API or error
+information, which depends on the <cite>status</cite> variable.</p>
+<p>If successful, the <cite>content</cite> will be a dictionary
+with the following structure:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="err">&#39;pho</span><span class="kc">t</span><span class="err">o_da</span><span class="kc">ta</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="err">&#39;da</span><span class="kc">ta</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="err">&#39;id&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                </span><span class="err">&#39;is_blessed&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">bool</span><span class="p">,</span>
+<span class="w">                </span><span class="err">&#39;cap</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span>
+<span class="w">                </span><span class="err">&#39;published_da</span><span class="kc">te</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span>
+<span class="w">                </span><span class="err">&#39;images&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="err">&#39;</span><span class="kc">t</span><span class="err">humb</span><span class="kc">na</span><span class="err">il&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="err">&#39;heigh</span><span class="kc">t</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;wid</span><span class="kc">t</span><span class="err">h&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;url&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="err">&#39;small&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="err">&#39;heigh</span><span class="kc">t</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;wid</span><span class="kc">t</span><span class="err">h&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;url&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="err">&#39;medium&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="err">&#39;heigh</span><span class="kc">t</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;wid</span><span class="kc">t</span><span class="err">h&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;url&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="err">&#39;large&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="err">&#39;heigh</span><span class="kc">t</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;wid</span><span class="kc">t</span><span class="err">h&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;url&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="err">&#39;origi</span><span class="kc">nal</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="err">&#39;heigh</span><span class="kc">t</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;wid</span><span class="kc">t</span><span class="err">h&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span>
+<span class="w">                        </span><span class="err">&#39;url&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="err">&#39;album&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span>
+<span class="w">                </span><span class="err">&#39;source&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">&#39;</span><span class="kc">na</span><span class="err">me&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;localized_</span><span class="kc">na</span><span class="err">me&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">},</span>
+<span class="w">                </span><span class="err">&#39;user&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">&#39;user</span><span class="kc">na</span><span class="err">me&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="err">...</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Each item in the ‘data’ list represents a photo associated with the
+location.</p>
+</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>Either <cite>location_id</cite> or <cite>query</cite> must be provided. If both are provided,
+<cite>location_id</cite> takes precedence.</p>
+</div>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using location_id</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">tripadvisor_search_location_photos</span><span class="p">(</span>
+    <span class="s2">&quot;your_api_key&quot;</span><span class="p">,</span> <span class="n">location_id</span><span class="o">=</span><span class="s2">&quot;123456&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># Or using a query</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">tripadvisor_search_location_photos</span><span class="p">(</span>
+    <span class="s2">&quot;your_api_key&quot;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s2">&quot;Eiffel Tower&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl>
+<dt>Example of successful <cite>content</cite>:</dt><dd><dl>
+<dt>{</dt><dd><dl>
+<dt>‘photo_data’: {</dt><dd><dl>
+<dt>‘data’: [</dt><dd><dl>
+<dt>{</dt><dd><p>‘id’: 215321638,
+‘is_blessed’: False,
+‘caption’: ‘’,
+‘published_date’: ‘2016-09-04T20:40:14.284Z’,
+‘images’: {</p>
+<blockquote>
+<div><p>‘thumbnail’: {‘height’: 50, ‘width’: 50,
+‘url’: ‘<a class="reference external" href="https://media-cdn.../photo0.jpg">https://media-cdn…/photo0.jpg</a>’},
+‘small’: {‘height’: 150, ‘width’: 150,
+‘url’: ‘<a class="reference external" href="https://media-cdn.../photo0.jpg">https://media-cdn…/photo0.jpg</a>’},
+‘medium’: {‘height’: 188, ‘width’: 250,
+‘url’: ‘<a class="reference external" href="https://media-cdn.../photo0.jpg">https://media-cdn…/photo0.jpg</a>’},
+‘large’: {‘height’: 413, ‘width’: 550,
+‘url’: ‘<a class="reference external" href="https://media-cdn.../photo0.jpg">https://media-cdn…/photo0.jpg</a>’},
+‘original’: {‘height’: 1920, ‘width’: 2560,
+‘url’: ‘<a class="reference external" href="https://media-cdn.../photo0.jpg">https://media-cdn…/photo0.jpg</a>’}</p>
+</div></blockquote>
+<p>},
+‘album’: ‘Other’,
+‘source’: {</p>
+<blockquote>
+<div><p>‘name’: ‘Traveler’,
+‘localized_name’: ‘Traveler’</p>
+</div></blockquote>
+<p>},
+‘user’: {‘username’: ‘EvaFalleth’}</p>
+</dd>
+</dl>
+<p>},
+# … more photo entries …</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">抛出<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If neither location_id nor query is provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.tripadvisor.tripadvisor_search">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.tripadvisor.</span></span><span class="sig-name descname"><span class="pre">tripadvisor_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'en'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/tripadvisor.html#tripadvisor_search"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.web.tripadvisor.tripadvisor_search" title="Link to this definition"></a></dt>
+<dd><p>Search for locations using the TripAdvisor API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<cite>str</cite>) – Your TripAdvisor API key.</p></li>
+<li><p><strong>query</strong> (<cite>str</cite>) – The search query.</p></li>
+<li><p><strong>language</strong> (<cite>str</cite>, optional) – The language for the response. Defaults to ‘en’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary with two variables: <cite>status</cite> and
+<cite>content</cite>. The <cite>status</cite> variable is from the ServiceExecStatus enum,
+and <cite>content</cite> is the JSON response from TripAdvisor API or error
+information, which depends on the <cite>status</cite> variable.</p>
+<p>If successful, the <cite>content</cite> will be a
+dictionary with the following structure:
+{</p>
+<blockquote>
+<div><dl>
+<dt>’data’: [</dt><dd><dl>
+<dt>{</dt><dd><p>‘location_id’: str,
+‘name’: str,
+‘address_obj’: {</p>
+<blockquote>
+<div><p>’street1’: str,
+‘street2’: str,
+‘city’: str,
+‘state’: str,
+‘country’: str,
+‘postalcode’: str,
+‘address_string’: str</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>]</p>
+</div></blockquote>
+<p>}
+Each item in the ‘data’ list represents
+a location matching the search query.</p>
+</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">search_tripadvisor</span><span class="p">(</span><span class="s2">&quot;your_api_key&quot;</span><span class="p">,</span> <span class="s2">&quot;Socotra&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl>
+<dt>Example of successful <cite>content</cite>:</dt><dd><dl>
+<dt>{</dt><dd><dl>
+<dt>‘data’: [</dt><dd><dl>
+<dt>{</dt><dd><p>‘location_id’: ‘574818’,
+‘name’: ‘Socotra Island’,
+‘address_obj’: {</p>
+<blockquote>
+<div><p>‘street2’: ‘’,
+‘city’: ‘Aden’,
+‘country’: ‘Yemen’,
+‘postalcode’: ‘’,
+‘address_string’: ‘Aden Yemen’</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>‘location_id’: ‘25395815’,
+‘name’: ‘Tour Socotra’,
+‘address_obj’: {</p>
+<blockquote>
+<div><p>‘street1’: ‘20th Street’,
+‘city’: ‘Socotra Island’,
+‘state’: ‘Socotra Island’,
+‘country’: ‘Yemen’,
+‘postalcode’: ‘111’,
+‘address_string’:
+‘20th Street, Socotra Island 111 Yemen’</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>},
+# … more results …</p>
+</dd>
+</dl>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.web.tripadvisor.tripadvisor_search_location_details">
+<span class="sig-prename descclassname"><span class="pre">agentscope.service.web.tripadvisor.</span></span><span class="sig-name descname"><span class="pre">tripadvisor_search_location_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">currency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'USD'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/service/web/tripadvisor.html#tripadvisor_search_location_details"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.web.tripadvisor.tripadvisor_search_location_details" title="Link to this definition"></a></dt>
+<dd><p>Get detailed information about a specific location using the TripAdvisor API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<cite>str</cite>) – Your TripAdvisor API key.</p></li>
+<li><p><strong>location_id</strong> (<cite>str</cite>, optional) – The unique identifier for the location. Required if
+query is not provided.</p></li>
+<li><p><strong>query</strong> (<cite>str</cite>, optional) – The search query to find a location. Required if
+location_id is not provided.</p></li>
+<li><p><strong>language</strong> (<cite>str</cite>, optional) – The language for the response. Defaults to ‘en’, ‘zh’ for Chinese.</p></li>
+<li><p><strong>currency</strong> (<cite>str</cite>, optional) – The currency code to use for request and response
+(should follow ISO 4217). Defaults to ‘USD’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary with two variables: <cite>status</cite> and
+<cite>content</cite>. The <cite>status</cite> variable is from the ServiceExecStatus enum,
+and <cite>content</cite> is the JSON response from TripAdvisor API or error
+information, which depends on the <cite>status</cite> variable.</p>
+<p>If successful, the <cite>content</cite> will be a dictionary with
+detailed information about the location, including
+name, address, ratings, reviews, and more.</p>
+</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>Either <cite>location_id</cite> or <cite>query</cite> must be provided. If both are provided,
+<cite>location_id</cite> takes precedence.</p>
+</div>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using location_id</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">get_tripadvisor_location_details</span><span class="p">(</span>
+    <span class="s2">&quot;your_api_key&quot;</span><span class="p">,</span>
+    <span class="n">location_id</span><span class="o">=</span><span class="s2">&quot;574818&quot;</span><span class="p">,</span>
+    <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">currency</span><span class="o">=</span><span class="s2">&quot;USD&quot;</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># Or using a query</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">get_tripadvisor_location_details</span><span class="p">(</span>
+    <span class="s2">&quot;your_api_key&quot;</span><span class="p">,</span>
+    <span class="n">query</span><span class="o">=</span><span class="s2">&quot;Socotra Island&quot;</span><span class="p">,</span>
+    <span class="n">language</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+    <span class="n">currency</span><span class="o">=</span><span class="s2">&quot;USD&quot;</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl>
+<dt>Example of successful <cite>content</cite>:</dt><dd><dl>
+<dt>{</dt><dd><p>‘location_id’: ‘574818’,
+‘name’: ‘Socotra Island’,
+‘web_url’: ‘<a class="reference external" href="https://www.tripadvisor.com/Attraction_Review">https://www.tripadvisor.com/Attraction_Review</a>…’,
+‘address_obj’: {</p>
+<blockquote>
+<div><p>‘street2’: ‘’,
+‘city’: ‘Aden’,
+‘country’: ‘Yemen’,
+‘postalcode’: ‘’,
+‘address_string’: ‘Aden Yemen’</p>
+</div></blockquote>
+<p>},
+‘ancestors’: [</p>
+<blockquote>
+<div><p>{‘level’: ‘City’, ‘name’: ‘Aden’, ‘location_id’: ‘298087’},
+{‘level’: ‘Country’, ‘name’: ‘Yemen’, ‘location_id’: ‘294014’}</p>
+</div></blockquote>
+<p>],
+‘latitude’: ‘12.46342’,
+‘longitude’: ‘53.82374’,
+‘timezone’: ‘Asia/Aden’,
+‘write_review’: ‘<a class="reference external" href="https://www.tripadvisor.com/UserReview">https://www.tripadvisor.com/UserReview</a>…’,
+‘ranking_data’: {</p>
+<blockquote>
+<div><p>‘geo_location_id’: ‘298087’,
+‘ranking_string’: ‘#1 of 7 things to do in Aden’,
+‘geo_location_name’: ‘Aden’,
+‘ranking_out_of’: ‘7’,
+‘ranking’: ‘1’</p>
+</div></blockquote>
+<p>},
+‘rating’: ‘5.0’,
+‘rating_image_url’: ‘<a class="reference external" href="https://www.tripadvisor.com/.../5.svg">https://www.tripadvisor.com/…/5.svg</a>’,
+‘num_reviews’: ‘62’,
+‘review_rating_count’: {</p>
+<blockquote>
+<div><p>‘1’: ‘1’,
+‘2’: ‘0’,
+‘3’: ‘1’,
+‘4’: ‘1’,
+‘5’: ‘59’,</p>
+</div></blockquote>
+<p>},
+‘photo_count’: ‘342’,
+‘see_all_photos’: ‘<a class="reference external" href="https://www.tripadvisor.com/Attraction">https://www.tripadvisor.com/Attraction</a>…’,
+‘category’: {‘name’: ‘attraction’, ‘localized_name’: ‘Attraction’},
+‘subcategory’: [</p>
+<blockquote>
+<div><p>{‘name’: ‘nature_parks’, ‘localized_name’: ‘Nature &amp; Parks’},
+{‘name’: ‘attractions’, ‘localized_name’: ‘Attractions’}</p>
+</div></blockquote>
+<p>],
+‘groups’: [</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>‘name’: ‘Nature &amp; Parks’,
+‘localized_name’: ‘Nature &amp; Parks’,
+‘categories’: [{‘name’: ‘Islands’,
+‘localized_name’: ‘Islands’}]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>],
+‘neighborhood_info’: [],
+‘trip_types’: [</p>
+<blockquote>
+<div><p>{‘name’: ‘business’, ‘localized_name’:
+‘Business’, ‘value’: ‘2’},
+{‘name’: ‘couples’, ‘localized_name’:
+‘Couples’, ‘value’: ‘10’},
+{‘name’: ‘solo’, ‘localized_name’:
+‘Solo travel’, ‘value’: ‘11’},
+{‘name’: ‘family’, ‘localized_name’:
+‘Family’, ‘value’: ‘2’},
+{‘name’: ‘friends’, ‘localized_name’:
+‘Friends getaway’, ‘value’: ‘22’}</p>
+</div></blockquote>
+<p>],
+‘awards’: []</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">抛出<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If neither location_id nor query is provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.service.web.search.html" class="btn btn-neutral float-left" title="agentscope.service.web.search module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.service.web.web_digest.html" class="btn btn-neutral float-right" title="agentscope.service.web.web_digest module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2024, Alibaba Tongyi Lab。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

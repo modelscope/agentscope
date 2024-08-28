@@ -142,7 +142,7 @@ AgentScope and how to use them to enhance the capabilities of your agents.</p>
 <td><p>Execute a piece of Python code, optionally inside a Docker container.</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">NoteBookExecutor.run_code_on_notebook</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NoteBookExecutor</span></code></p></td>
 <td><p>Compute Execute a segment of Python code in the IPython environment of the NoteBookExecutor, adhering to the IPython interactive computing style.</p></td>
 </tr>
 <tr class="row-even"><td><p>Retrieval</p></td>
@@ -205,85 +205,100 @@ AgentScope and how to use them to enhance the capabilities of your agents.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">dblp_search_venues</span></code></p></td>
 <td><p>Search for venue information in the DBLP database</p></td>
 </tr>
-<tr class="row-odd"><td><p>File</p></td>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tripadvisor_search</span></code></p></td>
+<td><p>Search for locations using the TripAdvisor API.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tripadvisor_search_location_photos</span></code></p></td>
+<td><p>Retrieve photos for a specific location using the TripAdvisor API.</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tripadvisor_search_location_details</span></code></p></td>
+<td><p>Get detailed information about a specific location using the TripAdvisor API.</p></td>
+</tr>
+<tr class="row-even"><td><p>File</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">create_file</span></code></p></td>
 <td><p>Create a new file at a specified path, optionally with initial content.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">delete_file</span></code></p></td>
 <td><p>Delete a file specified by a file path.</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">move_file</span></code></p></td>
 <td><p>Move or rename a file from one path to another.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">create_directory</span></code></p></td>
 <td><p>Create a new directory at a specified path.</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">delete_directory</span></code></p></td>
 <td><p>Delete a directory and all its contents.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">move_directory</span></code></p></td>
 <td><p>Move or rename a directory from one path to another.</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">read_text_file</span></code></p></td>
 <td><p>Read and return the content of a text file.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">write_text_file</span></code></p></td>
 <td><p>Write text content to a file at a specified path.</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">read_json_file</span></code></p></td>
 <td><p>Read and parse the content of a JSON file.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">write_json_file</span></code></p></td>
 <td><p>Serialize a Python object to JSON and write to a file.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Multi Modality</p></td>
+<tr class="row-even"><td><p>Multi Modality</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_image</span></code></p></td>
 <td><p>Convert text to image using Dashscope API.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dashscope_image_to_text</span></code></p></td>
 <td><p>Convert image to text using Dashscope API.</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dashscope_text_to_audio</span></code></p></td>
 <td><p>Convert text to audio using Dashscope API.</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_text_to_image</span></code></p></td>
 <td><p>Convert text to image using OpenAI API</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_edit_image</span></code></p></td>
 <td><p>Edit an image based on the provided mask and prompt using  OpenAI API</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_create_image_variation</span></code></p></td>
 <td><p>Create variations of an image using  OpenAI API</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_image_to_text</span></code></p></td>
 <td><p>Convert text to image using OpenAI API</p></td>
 </tr>
-<tr class="row-even"><td><p></p></td>
+<tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_text_to_audio</span></code></p></td>
 <td><p>Convert text to audio using OpenAI API</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
+<tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">openai_audio_to_text</span></code></p></td>
 <td><p>Convert audio to text using OpenAI API</p></td>
 </tr>
+<tr class="row-odd"><td><p><em>More services coming soon</em></p></td>
+<td><p></p></td>
+<td><p>More service functions are in development and will be added to AgentScope to further enhance its capabilities.</p></td>
+</tr>
 </tbody>
 </table>
-<p>| <em>More services coming soon</em> |                            | More service functions are in development and will be added to AgentScope to further enhance its capabilities. |</p>
 <p>About each service function, you can find detailed information in the
 <a class="reference external" href="https://modelscope.github.io/agentscope/">API document</a>.</p>
 </section>
