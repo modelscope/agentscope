@@ -23,9 +23,9 @@ from .sql_query.mongodb import query_mongodb
 from .web.search import bing_search, google_search
 from .web.arxiv import arxiv_search
 from .web.tripadvisor import (
-    tripadvisor_get_location_photos,
+    tripadvisor_search_location_photos,
     tripadvisor_search,
-    tripadvisor_get_location_details,
+    tripadvisor_search_location_details,
 )
 from .web.dblp import (
     dblp_search_publications,
@@ -116,8 +116,8 @@ __all__ = [
     "openai_edit_image",
     "openai_create_image_variation",
     "tripadvisor_search",
-    "tripadvisor_get_location_photos",
-    "tripadvisor_get_location_details",
+    "tripadvisor_search_location_photos",
+    "tripadvisor_search_location_details",
     # to be deprecated
     "ServiceFactory",
 ]

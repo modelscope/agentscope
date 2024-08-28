@@ -7,7 +7,7 @@ from ..service_response import ServiceResponse
 from ..service_status import ServiceExecStatus
 
 
-def tripadvisor_get_location_photos(
+def tripadvisor_search_location_photos(
     api_key: str,
     location_id: str = None,
     query: str = None,
@@ -94,14 +94,14 @@ def tripadvisor_get_location_photos(
         .. code-block:: python
 
             # Using location_id
-            result = tripadvisor_get_location_photos(
+            result = tripadvisor_search_location_photos(
                 "your_api_key", location_id="123456", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
             # Or using a query
-            result = tripadvisor_get_location_photos(
+            result = tripadvisor_search_location_photos(
                 "your_api_key", query="Eiffel Tower", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
@@ -335,7 +335,7 @@ def tripadvisor_search(
         )
 
 
-def tripadvisor_get_location_details(
+def tripadvisor_search_location_details(
     api_key: str,
     location_id: str = None,
     query: str = None,
