@@ -9,7 +9,7 @@ from loguru import logger
 from .msg import Msg
 from ..rpc import RpcAgentClient, ResponseStub, call_in_thread
 from ..serialize import deserialize, is_serializable, serialize
-from ..utils.tools import _is_web_url
+from ..utils.common import _is_web_url
 
 
 class PlaceholderMessage(Msg):
