@@ -156,7 +156,6 @@ class PlaceholderMessage(Msg):
             self.metadata = msg.metadata
             self.timestamp = msg.timestamp
             self.url = msg.url
-        return self
 
     def __reduce__(self) -> tuple:
         if self._is_placeholder:
