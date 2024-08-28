@@ -1954,6 +1954,47 @@ function showLoadWorkflowPopup() {
         });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const workflowName = urlParams.get('filename');
+
+    if (workflowName) {
+        loadAndProcessWorkflow(workflowName);
+    }
+});
+
+function loadAndProcessWorkflow(workflowName) {
+    fetch('/load-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: workflowName,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                try {
+                    addHtmlAndReplacePlaceHolderBeforeImport(data)
+                        .then(() => {
+                            editor.clear();
+                            editor.import(data);
+                            importSetupNodes(data);
+                            Swal.fire('Imported!', '', 'success');
+                        });
+                } catch (error) {
+                    Swal.showValidationMessage(`Import error: ${error}`);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
 
 function loadWorkflow(fileName) {
     fetch('/load-workflow', {

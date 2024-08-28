@@ -111,6 +111,8 @@ body {
     border-radius: 10px;
     margin: 0 5px;
     cursor: pointer;
+    position: relative;
+    /* display: inline-block; */
 }
 
 .menu-btn:hover {
@@ -839,4 +841,26 @@ pre[class*="language-"] {
     font-size: 16px;
     line-height: 1.2;
     resize: vertical;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.menu-btn:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
 }
