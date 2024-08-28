@@ -343,8 +343,7 @@ def tripadvisor_search_location_details(
     currency: str = "USD",
 ) -> ServiceResponse:
     """
-    Get detailed information about a specific location
-    using the TripAdvisor API.
+    Get detailed information about a specific location using the TripAdvisor API.
 
     Args:
         api_key (`str`):
@@ -468,7 +467,7 @@ def tripadvisor_search_location_details(
 
     Raises:
         ValueError: If neither location_id nor query is provided.
-    """
+    """  # noqa
     if location_id is None and query is None:
         raise ValueError("Either location_id or query must be provided.")
 
