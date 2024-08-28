@@ -13,21 +13,16 @@ from typing import Literal, Optional, Union, Sequence
 import requests
 
 
-from openai import OpenAI
-from openai.types import ImagesResponse
-from openai._types import NOT_GIVEN, NotGiven
-from agentscope.service.service_response import (
+from ..service_response import (
     ServiceResponse,
     ServiceExecStatus,
 )
-from agentscope.models.openai_model import (
+from ...models.openai_model import (
     OpenAIDALLEWrapper,
     OpenAIChatWrapper,
 )
-from agentscope.utils.tools import _download_file
-
-
-from agentscope.message import Msg
+from ...utils.common import _download_file
+from ...message import Msg
 
 
 def _url_to_filename(url: str) -> str:
@@ -52,11 +47,10 @@ def _url_to_filename(url: str) -> str:
 
 
 def _handle_openai_img_response(
-    response: ImagesResponse,
+    raw_response: dict,
     save_dir: Optional[str] = None,
 ) -> Union[str, Sequence[str]]:
     """Handle the response from OpenAI image generation API."""
-    raw_response = response.model_dump()
     if "data" not in raw_response:
         if "error" in raw_response:
             error_msg = raw_response["error"]["message"]
@@ -278,19 +272,32 @@ def openai_edit_image(
         'EDITED_IMAGE_URL2']}
         > }
     """
-    client = OpenAI(api_key=api_key)
+    try:
+        import openai
+    except ImportError as e:
+        raise ImportError(
+            "The `openai` library is not installed. Please install it by "
+            "running `pip install openai`.",
+        ) from e
+
+    client = openai.OpenAI(api_key=api_key)
     # _parse_url handles both local and web URLs and returns BytesIO
     image = _parse_url(image_url)
     try:
-        response = client.images.edit(
-            model="dall-e-2",
-            image=image,
-            mask=_parse_url(mask_url) if mask_url else NOT_GIVEN,
-            prompt=prompt,
-            n=n,
-            size=size,
-        )
-        urls = _handle_openai_img_response(response, save_dir)
+        kwargs = {
+            "model": "dall-e-2",
+            "image": image,
+            "prompt": prompt,
+            "n": n,
+            "size": size,
+        }
+
+        if mask_url:
+            kwargs["mask"] = _parse_url(mask_url)
+
+        response = client.images.edit(**kwargs)
+
+        urls = _handle_openai_img_response(response.model_dump(), save_dir)
         return ServiceResponse(
             ServiceExecStatus.SUCCESS,
             {"image_urls": urls},
@@ -352,7 +359,15 @@ def openai_create_image_variation(
         >     'content': {'image_urls': ['VARIATION_URL1', 'VARIATION_URL2']}
         > }
     """
-    client = OpenAI(api_key=api_key)
+    try:
+        import openai
+    except ImportError as e:
+        raise ImportError(
+            "The `openai` library is not installed. Please install it by "
+            "running `pip install openai`.",
+        ) from e
+
+    client = openai.OpenAI(api_key=api_key)
     # _parse_url handles both local and web URLs and returns BytesIO
     image = _parse_url(image_url)
     try:
@@ -362,7 +377,7 @@ def openai_create_image_variation(
             n=n,
             size=size,
         )
-        urls = _handle_openai_img_response(response, save_dir)
+        urls = _handle_openai_img_response(response.model_dump(), save_dir)
         return ServiceResponse(
             ServiceExecStatus.SUCCESS,
             {"image_urls": urls},
@@ -375,7 +390,7 @@ def openai_create_image_variation(
 
 
 def openai_image_to_text(
-    image_urls: Union[str, Sequence[str]],
+    image_urls: Union[str, list[str]],
     api_key: str,
     prompt: str = "Describe the image",
     model: Literal["gpt-4o", "gpt-4-turbo"] = "gpt-4o",
@@ -385,7 +400,7 @@ def openai_image_to_text(
     return the generated text.
 
     Args:
-        image_urls (`Union[str, Sequence[str]]`):
+        image_urls (`Union[str, list[str]]`):
             The URL or list of URLs pointing to the images that need to be
             described.
         api_key (`str`):
@@ -502,7 +517,15 @@ def openai_text_to_audio(
         >     'content': {'audio_path': './audio_files/Hello,_welco.mp3'}
         > }
     """
-    client = OpenAI(api_key=api_key)
+    try:
+        import openai
+    except ImportError as e:
+        raise ImportError(
+            "The `openai` library is not installed. Please install it by "
+            "running `pip install openai`.",
+        ) from e
+
+    client = openai.OpenAI(api_key=api_key)
     save_name = _audio_filename(text)
     if os.path.isabs(save_dir):
         save_path = os.path.join(save_dir, f"{save_name}.{res_format}")
@@ -535,7 +558,7 @@ def openai_text_to_audio(
 def openai_audio_to_text(
     audio_file_url: str,
     api_key: str,
-    language: Union[str, NotGiven] = NOT_GIVEN,
+    language: str = "en",
     temperature: float = 0.2,
 ) -> ServiceResponse:
     """
@@ -547,9 +570,10 @@ def openai_audio_to_text(
             transcribed.
         api_key (`str`):
             The API key for the OpenAI API.
-        language (`Union[str, NotGiven]`, defaults to `NotGiven()`):
-            The language of the audio. If not specified, the language will
-            be auto-detected.
+        language (`str`, defaults to `"en"`):
+            The language of the input audio. Supplying the input language in
+            [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+            format will improve accuracy and latency.
         temperature (`float`, defaults to `0.2`):
             The temperature for the transcription, which affects the
             randomness of the output.
@@ -575,7 +599,15 @@ def openai_audio_to_text(
         the audio file.'}
         > }
     """
-    client = OpenAI(api_key=api_key)
+    try:
+        import openai
+    except ImportError as e:
+        raise ImportError(
+            "The `openai` library is not installed. Please install it by "
+            "running `pip install openai`.",
+        ) from e
+
+    client = openai.OpenAI(api_key=api_key)
     audio_file_url = os.path.abspath(audio_file_url)
     with open(audio_file_url, "rb") as audio_file:
         try:

@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.orm import sessionmaker
 
 from ._file import FileManager
-from ..utils.tools import _is_windows
+from ..utils.common import _is_windows
 from ..constants import (
     _DEFAULT_SQLITE_DB_NAME,
     _DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING,

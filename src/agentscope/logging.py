@@ -6,10 +6,11 @@ from typing import Optional, Literal, Any
 
 from loguru import logger
 
-from .utils.tools import _guess_type_by_extension
+
 from .message import Msg
 from .serialize import serialize
 from .studio._client import _studio_client
+from .utils.common import _guess_type_by_extension
 from .web.gradio.utils import (
     generate_image_from_name,
     send_msg,
