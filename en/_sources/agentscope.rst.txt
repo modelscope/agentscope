@@ -32,11 +32,9 @@ Submodules
 
    agentscope.constants
    agentscope.exception
-   agentscope.file_manager
    agentscope.logging
    agentscope.msghub
    agentscope.serialize
-   agentscope.test
 
 Module contents
 ---------------

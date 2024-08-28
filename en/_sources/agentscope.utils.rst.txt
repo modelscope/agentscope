@@ -9,7 +9,6 @@ Submodules
 
    agentscope.utils.common
    agentscope.utils.token_utils
-   agentscope.utils.tools
 
 Module contents
 ---------------

@@ -126,7 +126,6 @@
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DialogAgent</span><span class="p">,</span>
     <span class="n">UserAgent</span><span class="p">,</span>
-    <span class="n">TextToImageAgent</span><span class="p">,</span>
     <span class="n">DictDialogAgent</span><span class="p">,</span>
     <span class="n">ReActAgent</span><span class="p">,</span>
 <span class="p">)</span>
@@ -377,45 +376,6 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import UserAgent&quot;</span><span class="p">,</span>
             <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = UserAgent(&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-        <span class="p">}</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="TextToImageAgentNode">
-<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode">[文档]</a>
-<span class="k">class</span> <span class="nc">TextToImageAgentNode</span><span class="p">(</span><span class="n">WorkflowNode</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A node representing a TextToImageAgent within a workflow.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">node_type</span> <span class="o">=</span> <span class="n">WorkflowNodeType</span><span class="o">.</span><span class="n">AGENT</span>
-
-<div class="viewcode-block" id="TextToImageAgentNode.__init__">
-<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">opt_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="n">source_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">TextToImageAgent</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span></div>
-
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-<div class="viewcode-block" id="TextToImageAgentNode.compile">
-<a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.TextToImageAgentNode.compile">[文档]</a>
-    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.agents import TextToImageAgent&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = TextToImageAgent(&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
             <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
@@ -1149,7 +1109,6 @@
     <span class="s2">&quot;Message&quot;</span><span class="p">:</span> <span class="n">MsgNode</span><span class="p">,</span>
     <span class="s2">&quot;DialogAgent&quot;</span><span class="p">:</span> <span class="n">DialogAgentNode</span><span class="p">,</span>
     <span class="s2">&quot;UserAgent&quot;</span><span class="p">:</span> <span class="n">UserAgentNode</span><span class="p">,</span>
-    <span class="s2">&quot;TextToImageAgent&quot;</span><span class="p">:</span> <span class="n">TextToImageAgentNode</span><span class="p">,</span>
     <span class="s2">&quot;DictDialogAgent&quot;</span><span class="p">:</span> <span class="n">DictDialogAgentNode</span><span class="p">,</span>
     <span class="s2">&quot;ReActAgent&quot;</span><span class="p">:</span> <span class="n">ReActAgentNode</span><span class="p">,</span>
     <span class="s2">&quot;Placeholder&quot;</span><span class="p">:</span> <span class="n">PlaceHolderNode</span><span class="p">,</span>

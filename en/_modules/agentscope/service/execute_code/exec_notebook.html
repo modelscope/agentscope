@@ -130,7 +130,7 @@
     <span class="kn">from</span> <span class="nn">nbclient.exceptions</span> <span class="kn">import</span> <span class="n">CellTimeoutError</span><span class="p">,</span> <span class="n">DeadKernelError</span>
     <span class="kn">import</span> <span class="nn">nbformat</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+    <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
     <span class="n">nbclient</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">)</span>
     <span class="n">nbformat</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">)</span>

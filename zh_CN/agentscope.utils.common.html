@@ -93,13 +93,11 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.utils.common module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.timer"><code class="docutils literal notranslate"><span class="pre">timer()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.create_tempdir"><code class="docutils literal notranslate"><span class="pre">create_tempdir()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.chdir"><code class="docutils literal notranslate"><span class="pre">chdir()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.write_file"><code class="docutils literal notranslate"><span class="pre">write_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.requests_get"><code class="docutils literal notranslate"><span class="pre">requests_get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.to_openai_dict"><code class="docutils literal notranslate"><span class="pre">to_openai_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.utils.common.ImportErrorReporter"><code class="docutils literal notranslate"><span class="pre">ImportErrorReporter</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.utils.token_utils.html">agentscope.utils.token_utils module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.utils.tools.html">agentscope.utils.tools module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.utils.html#module-agentscope.utils">Module contents</a></li>
@@ -160,72 +158,32 @@ The implementation of this contextmanager are borrowed from
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="agentscope.utils.common.chdir">
-<span class="sig-prename descclassname"><span class="pre">agentscope.utils.common.</span></span><span class="sig-name descname"><span class="pre">chdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span></span></span><a class="reference internal" href="_modules/agentscope/utils/common.html#chdir"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.common.chdir" title="Link to this definition"></a></dt>
-<dd><p>A context manager that changes the current working directory to the
-given path.
-The implementation of this contextmanager are borrowed from
-<a class="reference external" href="https://github.com/openai/human-eval/blob/master/human_eval/execution.py">https://github.com/openai/human-eval/blob/master/human_eval/execution.py</a></p>
+<dt class="sig sig-object py" id="agentscope.utils.common.to_openai_dict">
+<span class="sig-prename descclassname"><span class="pre">agentscope.utils.common.</span></span><span class="sig-name descname"><span class="pre">to_openai_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/agentscope/utils/common.html#to_openai_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.common.to_openai_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert <cite>Msg</cite> to <cite>dict</cite> for OpenAI API.</p>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.utils.common.write_file">
-<span class="sig-prename descclassname"><span class="pre">agentscope.utils.common.</span></span><span class="sig-name descname"><span class="pre">write_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="_modules/agentscope/utils/common.html#write_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.common.write_file" title="Link to this definition"></a></dt>
-<dd><p>Write content to a file.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.utils.common.ImportErrorReporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.utils.common.</span></span><span class="sig-name descname"><span class="pre">ImportErrorReporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ImportError</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extras_require</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/utils/common.html#ImportErrorReporter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.common.ImportErrorReporter" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Used as a placeholder for missing packages.
+When called, an ImportError will be raised, prompting the user to install
+the specified extras requirement.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.utils.common.ImportErrorReporter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ImportError</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extras_require</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/utils/common.html#ImportErrorReporter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.common.ImportErrorReporter.__init__" title="Link to this definition"></a></dt>
+<dd><p>Init the ImportErrorReporter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong> (<em>str</em>) – The content to be written to the file.</p></li>
-<li><p><strong>file_path</strong> (<em>str</em>) – The path to the file where the content will be
-written.</p></li>
+<li><p><strong>error</strong> (<cite>ImportError</cite>) – the original ImportError.</p></li>
+<li><p><strong>extras_require</strong> (<cite>str</cite>) – the extras requirement.</p></li>
 </ul>
 </dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>where the boolean indicates the success of the
-operation, and the str contains an empty string if successful or an
-error message if any, including the error type.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="agentscope.service.html#agentscope.service.ServiceResponse" title="agentscope.service.ServiceResponse">ServiceResponse</a></p>
-</dd>
 </dl>
-<p>This function attempts to open the file in write mode and write the
-provided content to it. If the file does not exist, it will be created.
-If the file exists, its content will be overwritten. If a
-PermissionError occurs, indicating a lack of necessary permissions,
-or an IOError occurs, signaling additional issues such as an invalid
-file path or hardware-related I/O error, the function will catch the
-exception and return <cite>False</cite> along with the error message.</p>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.utils.common.requests_get">
-<span class="sig-prename descclassname"><span class="pre">agentscope.utils.common.</span></span><span class="sig-name descname"><span class="pre">requests_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/agentscope/utils/common.html#requests_get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.utils.common.requests_get" title="Link to this definition"></a></dt>
-<dd><p>Sends a GET request to the specified URL with the provided query parameters
-and headers. Returns the JSON response as a dictionary.</p>
-<dl class="simple">
-<dt>This function handles the request, checks for errors, logs exceptions,</dt><dd><p>and parses the JSON response.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">参数<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>url</strong> (<em>str</em>) – The URL to which the GET request is sent.</p></li>
-<li><p><strong>params</strong> (<em>Dict</em>) – A dictionary containing query parameters to be included
-in the request.</p></li>
-<li><p><strong>headers</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>]</em>) – An optional dictionary of HTTP headers to
-send with the request.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回<span class="colon">:</span></dt>
-<dd class="field-even"><p>If the request is successful, returns a dictionary containing the
-parsed JSON data.
-If the request fails, returns the error string.</p>
-</dd>
-<dt class="field-odd">返回类型<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict or str</p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>

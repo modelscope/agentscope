@@ -116,19 +116,26 @@
   <h1>Source code for agentscope.utils.common</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Common utils.&quot;&quot;&quot;</span>
-
+<span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">secrets</span>
 <span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 
 
 <div class="viewcode-block" id="timer">
@@ -180,15 +187,13 @@
 <span class="sd">    https://github.com/openai/human-eval/blob/master/human_eval/execution.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">dirname</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">_chdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">dirname</span></div>
 
 
 
-<div class="viewcode-block" id="chdir">
-<a class="viewcode-back" href="../../../agentscope.utils.common.html#agentscope.utils.common.chdir">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-<span class="k">def</span> <span class="nf">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_chdir</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A context manager that changes the current working directory to the</span>
 <span class="sd">    given path.</span>
@@ -205,53 +210,10 @@
     <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">exc</span>
     <span class="k">finally</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>
 
 
-
-<div class="viewcode-block" id="write_file">
-<a class="viewcode-back" href="../../../agentscope.utils.common.html#agentscope.utils.common.write_file">[docs]</a>
-<span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Write content to a file.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        content (str): The content to be written to the file.</span>
-<span class="sd">        file_path (str): The path to the file where the content will be</span>
-<span class="sd">            written.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        ServiceResponse: where the boolean indicates the success of the</span>
-<span class="sd">        operation, and the str contains an empty string if successful or an</span>
-<span class="sd">        error message if any, including the error type.</span>
-
-<span class="sd">    This function attempts to open the file in write mode and write the</span>
-<span class="sd">    provided content to it. If the file does not exist, it will be created.</span>
-<span class="sd">    If the file exists, its content will be overwritten. If a</span>
-<span class="sd">    PermissionError occurs, indicating a lack of necessary permissions,</span>
-<span class="sd">    or an IOError occurs, signaling additional issues such as an invalid</span>
-<span class="sd">    file path or hardware-related I/O error, the function will catch the</span>
-<span class="sd">    exception and return `False` along with the error message.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
-            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Success&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">error_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
-            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
-            <span class="n">content</span><span class="o">=</span><span class="n">error_message</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="requests_get">
-<a class="viewcode-back" href="../../../agentscope.utils.common.html#agentscope.utils.common.requests_get">[docs]</a>
-<span class="k">def</span> <span class="nf">requests_get</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">_requests_get</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">headers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -289,8 +251,7 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
     <span class="c1"># Parse the JSON response</span>
     <span class="n">search_results</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">search_results</span></div>
-
+    <span class="k">return</span> <span class="n">search_results</span>
 
 
 <span class="k">def</span> <span class="nf">_if_change_database</span><span class="p">(</span><span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -309,6 +270,464 @@
     <span class="k">if</span> <span class="n">pattern_unsafe_sql</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">sql_query</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">_get_timestamp</span><span class="p">(</span>
+    <span class="n">format_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current timestamp.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="to_openai_dict">
+<a class="viewcode-back" href="../../../agentscope.utils.common.html#agentscope.utils.common.to_openai_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">to_openai_dict</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert `Msg` to `dict` for OpenAI API.&quot;&quot;&quot;</span>
+    <span class="n">clean_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+        <span class="n">clean_dict</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;role&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+        <span class="n">clean_dict</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clean_dict</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;assistant&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;content&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+        <span class="n">clean_dict</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The content of the message is missing.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">clean_dict</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_find_available_port</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an unoccupied socket port number.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_check_port</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the port is available.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        port (`int`):</span>
+<span class="sd">            the port number being checked.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `int`: the port number that passed the check. If the port is found</span>
+<span class="sd">        to be occupied, an available port number will be automatically</span>
+<span class="sd">        returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">new_port</span> <span class="o">=</span> <span class="n">_find_available_port</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_port</span>
+    <span class="k">with</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">connect_ex</span><span class="p">((</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Port is occupied.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">new_port</span> <span class="o">=</span> <span class="n">_find_available_port</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">new_port</span>
+    <span class="k">return</span> <span class="n">port</span>
+
+
+<span class="k">def</span> <span class="nf">_guess_type_by_extension</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Guess the type of the file by its extension.&quot;&quot;&quot;</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;bmp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dib&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;icns&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ico&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jfif&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpe&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;j2c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;j2k&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jp2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;jpx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;apng&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;png&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bw&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rgb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rgba&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sgi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tif&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tiff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;webp&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;image&quot;</span>
+    <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;amr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;wav&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;3gp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;3gpp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;aac&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mp3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;flac&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ogg&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;audio&quot;</span>
+    <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;mp4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;webm&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mkv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;flv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mov&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;wmv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rmvb&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;video&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;file&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_to_openai_image_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an image url to openai format. If the given url is a local</span>
+<span class="sd">    file, it will be converted to base64 format. Otherwise, it will be</span>
+<span class="sd">    returned directly.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (`str`):</span>
+<span class="sd">            The local or public url of the image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># See https://platform.openai.com/docs/guides/vision for details of</span>
+    <span class="c1"># support image extensions.</span>
+    <span class="n">support_image_extensions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;.png&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.jpg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.jpeg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.gif&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.webp&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parsed_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="n">lower_url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Web url</span>
+    <span class="k">if</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">lower_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">support_image_extensions</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">url</span>
+
+    <span class="c1"># Check if it is a local file</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">lower_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">support_image_extensions</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">image_file</span><span class="p">:</span>
+                <span class="n">base64_image</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">image_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+                    <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mime_type</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;image/</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;data:</span><span class="si">{</span><span class="n">mime_type</span><span class="si">}</span><span class="s2">;base64,</span><span class="si">{</span><span class="n">base64_image</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> should be end with </span><span class="si">{</span><span class="n">support_image_extensions</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download file from the given url and save it to the given path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (`str`):</span>
+<span class="sd">            The url of the file.</span>
+<span class="sd">        path_file (`str`):</span>
+<span class="sd">            The path to save the file.</span>
+<span class="sd">        max_retries (`int`, defaults to `3`)</span>
+<span class="sd">            The maximum number of retries when fail to download the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">n_retry</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_retries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">requests</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
+                    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to download file from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> (status code: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">). Retry </span><span class="si">{</span><span class="n">n_retry</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_generate_random_code</span><span class="p">(</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="n">uppercase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">lowercase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">digits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get random code.&quot;&quot;&quot;</span>
+    <span class="n">characters</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">uppercase</span><span class="p">:</span>
+        <span class="n">characters</span> <span class="o">+=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span>
+    <span class="k">if</span> <span class="n">lowercase</span><span class="p">:</span>
+        <span class="n">characters</span> <span class="o">+=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span>
+    <span class="k">if</span> <span class="n">digits</span><span class="p">:</span>
+        <span class="n">characters</span> <span class="o">+=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">characters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_generate_id_from_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate random id from seed str.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seed (`str`): seed string.</span>
+<span class="sd">        length (`int`): generated id length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">seed</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">hash_digest</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">hash_digest</span><span class="p">)</span>
+    <span class="n">id_chars</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">id_chars</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_web_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the url is accessible from the Web.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        url (`str`):</span>
+<span class="sd">            The url to check.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function is not perfect, it only checks if the URL starts with</span>
+<span class="sd">        common web protocols, e.g., http, https, ftp, oss.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">scheme</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;http&quot;</span><span class="p">,</span> <span class="s2">&quot;https&quot;</span><span class="p">,</span> <span class="s2">&quot;ftp&quot;</span><span class="p">,</span> <span class="s2">&quot;oss&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_is_json_serializable</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the given object is json serializable.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_convert_to_str</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the content to string.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        For prompt engineering, simply calling `str(content)` or</span>
+<span class="sd">        `json.dumps(content)` is not enough.</span>
+
+<span class="sd">        - For `str(content)`, if `content` is a dictionary, it will turn double</span>
+<span class="sd">        quotes to single quotes. When this string is fed into prompt, the LLMs</span>
+<span class="sd">        may learn to use single quotes instead of double quotes (which</span>
+<span class="sd">        cannot be loaded by `json.loads` API).</span>
+
+<span class="sd">        - For `json.dumps(content)`, if `content` is a string, it will add</span>
+<span class="sd">        double quotes to the string. LLMs may learn to use double quotes to</span>
+<span class="sd">        wrap strings, which leads to the same issue as `str(content)`.</span>
+
+<span class="sd">        To avoid these issues, we use this function to safely convert the</span>
+<span class="sd">        content to a string used in prompt.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        content (`Any`):</span>
+<span class="sd">            The content to be converted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `str`: The converted string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">content</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_join_str_with_comma_and</span><span class="p">(</span><span class="n">elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the JSON string with comma, and use &quot; and &quot; between the last two</span>
+<span class="sd">    elements.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot; and &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">elements</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;, and </span><span class="si">{</span><span class="n">elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<div class="viewcode-block" id="ImportErrorReporter">
+<a class="viewcode-back" href="../../../agentscope.utils.common.html#agentscope.utils.common.ImportErrorReporter">[docs]</a>
+<span class="k">class</span> <span class="nc">ImportErrorReporter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used as a placeholder for missing packages.</span>
+<span class="sd">    When called, an ImportError will be raised, prompting the user to install</span>
+<span class="sd">    the specified extras requirement.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ImportErrorReporter.__init__">
+<a class="viewcode-back" href="../../../agentscope.utils.common.html#agentscope.utils.common.ImportErrorReporter.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">ImportError</span><span class="p">,</span> <span class="n">extras_require</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init the ImportErrorReporter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            error (`ImportError`): the original ImportError.</span>
+<span class="sd">            extras_require (`str`): the extras requirement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extras_require</span> <span class="o">=</span> <span class="n">extras_require</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_import_error</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_import_error</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_import_error</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_raise_import_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise the ImportError&quot;&quot;&quot;</span>
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ImportError occorred: [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">msg</span><span class="si">}</span><span class="s2">].&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extras_require</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; Please install [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">extras_require</span><span class="si">}</span><span class="s2">] version&quot;</span>
+                <span class="s2">&quot; of agentscope.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_hash_string</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">hash_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="s2">&quot;md5&quot;</span><span class="p">,</span> <span class="s2">&quot;sha1&quot;</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hash the string data.&quot;&quot;&quot;</span>
+    <span class="n">hash_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hashlib</span><span class="p">,</span> <span class="n">hash_method</span><span class="p">)()</span>
+    <span class="n">hash_func</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">hash_func</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_process_creation_time</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the creation time of the process.&quot;&quot;&quot;</span>
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
+    <span class="c1"># Find the process by pid</span>
+    <span class="n">current_process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+    <span class="c1"># Obtain the process creation time</span>
+    <span class="n">create_time</span> <span class="o">=</span> <span class="n">current_process</span><span class="o">.</span><span class="n">create_time</span><span class="p">()</span>
+    <span class="c1"># Change the timestamp to a readable format</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">create_time</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_process_alive</span><span class="p">(</span>
+    <span class="n">pid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">create_time_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">create_time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+    <span class="n">tolerance_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the process is alive by comparing the actual creation time of</span>
+<span class="sd">    the process with the given creation time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pid (`int`):</span>
+<span class="sd">            The process id.</span>
+<span class="sd">        create_time_str (`str`):</span>
+<span class="sd">            The given creation time string.</span>
+<span class="sd">        create_time_format (`str`, defaults to `&quot;%Y-%m-%d %H:%M:%S&quot;`):</span>
+<span class="sd">            The format of the given creation time string.</span>
+<span class="sd">        tolerance_seconds (`int`, defaults to `10`):</span>
+<span class="sd">            The tolerance seconds for comparing the actual creation time with</span>
+<span class="sd">            the given creation time.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `bool`: True if the process is alive, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Try to create a process object by pid</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+        <span class="c1"># Obtain the actual creation time of the process</span>
+        <span class="n">actual_create_time_timestamp</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">create_time</span><span class="p">()</span>
+
+        <span class="c1"># Convert the given creation time string to a datetime object</span>
+        <span class="n">given_create_time_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">create_time_str</span><span class="p">,</span>
+            <span class="n">create_time_format</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Calculate the time difference between the actual creation time and</span>
+        <span class="n">time_difference</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+            <span class="n">actual_create_time_timestamp</span>
+            <span class="o">-</span> <span class="n">given_create_time_datetime</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Compare the actual creation time with the given creation time</span>
+        <span class="k">if</span> <span class="n">time_difference</span> <span class="o">&lt;=</span> <span class="n">tolerance_seconds</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">except</span> <span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">,</span> <span class="n">psutil</span><span class="o">.</span><span class="n">AccessDenied</span><span class="p">,</span> <span class="n">psutil</span><span class="o">.</span><span class="n">ZombieProcess</span><span class="p">):</span>
+        <span class="c1"># If the process is not found, access is denied, or the process is a</span>
+        <span class="c1"># zombie process, return False</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_is_windows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the system is Windows.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_map_string_to_color_mark</span><span class="p">(</span>
+    <span class="n">target_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map a string into an index within a given length.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target_str (`str`):</span>
+<span class="sd">            The string to be mapped.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `Tuple[str, str]`: A color marker tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">color_marks</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[90m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[92m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[95m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[96m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[97m&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">hash_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">target_str</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">hash_value</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_marks</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">color_marks</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_generate_new_runtime_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a new random runtime id.&quot;&quot;&quot;</span>
+    <span class="n">_RUNTIME_ID_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;run_%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S_</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">_get_timestamp</span><span class="p">(</span><span class="n">_RUNTIME_ID_FORMAT</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">_generate_random_code</span><span class="p">(</span><span class="n">uppercase</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="p">)</span>
 </pre></div>
 
            </div>

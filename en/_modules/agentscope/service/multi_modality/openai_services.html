@@ -130,21 +130,16 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 
 
-<span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
-<span class="kn">from</span> <span class="nn">openai.types</span> <span class="kn">import</span> <span class="n">ImagesResponse</span>
-<span class="kn">from</span> <span class="nn">openai._types</span> <span class="kn">import</span> <span class="n">NOT_GIVEN</span><span class="p">,</span> <span class="n">NotGiven</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ServiceResponse</span><span class="p">,</span>
     <span class="n">ServiceExecStatus</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">agentscope.models.openai_model</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">...models.openai_model</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">OpenAIDALLEWrapper</span><span class="p">,</span>
     <span class="n">OpenAIChatWrapper</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">_download_file</span>
-
-
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">_download_file</span>
+<span class="kn">from</span> <span class="nn">...message</span> <span class="kn">import</span> <span class="n">Msg</span>
 
 
 <span class="k">def</span> <span class="nf">_url_to_filename</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -169,11 +164,10 @@
 
 
 <span class="k">def</span> <span class="nf">_handle_openai_img_response</span><span class="p">(</span>
-    <span class="n">response</span><span class="p">:</span> <span class="n">ImagesResponse</span><span class="p">,</span>
+    <span class="n">raw_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle the response from OpenAI image generation API.&quot;&quot;&quot;</span>
-    <span class="n">raw_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
     <span class="k">if</span> <span class="s2">&quot;data&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">raw_response</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;error&quot;</span> <span class="ow">in</span> <span class="n">raw_response</span><span class="p">:</span>
             <span class="n">error_msg</span> <span class="o">=</span> <span class="n">raw_response</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
@@ -400,19 +394,32 @@
 <span class="sd">        &#39;EDITED_IMAGE_URL2&#39;]}</span>
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">openai</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="c1"># _parse_url handles both local and web URLs and returns BytesIO</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">_parse_url</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span>
-            <span class="n">model</span><span class="o">=</span><span class="s2">&quot;dall-e-2&quot;</span><span class="p">,</span>
-            <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span>
-            <span class="n">mask</span><span class="o">=</span><span class="n">_parse_url</span><span class="p">(</span><span class="n">mask_url</span><span class="p">)</span> <span class="k">if</span> <span class="n">mask_url</span> <span class="k">else</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
-            <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
-            <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
-            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">urls</span> <span class="o">=</span> <span class="n">_handle_openai_img_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;dall-e-2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">image</span><span class="p">,</span>
+            <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">mask_url</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_url</span><span class="p">(</span><span class="n">mask_url</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">urls</span> <span class="o">=</span> <span class="n">_handle_openai_img_response</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">save_dir</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
             <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
             <span class="p">{</span><span class="s2">&quot;image_urls&quot;</span><span class="p">:</span> <span class="n">urls</span><span class="p">},</span>
@@ -477,7 +484,15 @@
 <span class="sd">        &gt;     &#39;content&#39;: {&#39;image_urls&#39;: [&#39;VARIATION_URL1&#39;, &#39;VARIATION_URL2&#39;]}</span>
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">openai</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="c1"># _parse_url handles both local and web URLs and returns BytesIO</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">_parse_url</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -487,7 +502,7 @@
             <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
             <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">urls</span> <span class="o">=</span> <span class="n">_handle_openai_img_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">)</span>
+        <span class="n">urls</span> <span class="o">=</span> <span class="n">_handle_openai_img_response</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">save_dir</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
             <span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
             <span class="p">{</span><span class="s2">&quot;image_urls&quot;</span><span class="p">:</span> <span class="n">urls</span><span class="p">},</span>
@@ -503,7 +518,7 @@
 <div class="viewcode-block" id="openai_image_to_text">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_image_to_text">[docs]</a>
 <span class="k">def</span> <span class="nf">openai_image_to_text</span><span class="p">(</span>
-    <span class="n">image_urls</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">image_urls</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Describe the image&quot;</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4-turbo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
@@ -513,7 +528,7 @@
 <span class="sd">    return the generated text.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image_urls (`Union[str, Sequence[str]]`):</span>
+<span class="sd">        image_urls (`Union[str, list[str]]`):</span>
 <span class="sd">            The URL or list of URLs pointing to the images that need to be</span>
 <span class="sd">            described.</span>
 <span class="sd">        api_key (`str`):</span>
@@ -633,7 +648,15 @@
 <span class="sd">        &gt;     &#39;content&#39;: {&#39;audio_path&#39;: &#39;./audio_files/Hello,_welco.mp3&#39;}</span>
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">openai</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="n">save_name</span> <span class="o">=</span> <span class="n">_audio_filename</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
         <span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">res_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -669,7 +692,7 @@
 <span class="k">def</span> <span class="nf">openai_audio_to_text</span><span class="p">(</span>
     <span class="n">audio_file_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">language</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NotGiven</span><span class="p">]</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+    <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
     <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -681,9 +704,10 @@
 <span class="sd">            transcribed.</span>
 <span class="sd">        api_key (`str`):</span>
 <span class="sd">            The API key for the OpenAI API.</span>
-<span class="sd">        language (`Union[str, NotGiven]`, defaults to `NotGiven()`):</span>
-<span class="sd">            The language of the audio. If not specified, the language will</span>
-<span class="sd">            be auto-detected.</span>
+<span class="sd">        language (`str`, defaults to `&quot;en&quot;`):</span>
+<span class="sd">            The language of the input audio. Supplying the input language in</span>
+<span class="sd">            [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)</span>
+<span class="sd">            format will improve accuracy and latency.</span>
 <span class="sd">        temperature (`float`, defaults to `0.2`):</span>
 <span class="sd">            The temperature for the transcription, which affects the</span>
 <span class="sd">            randomness of the output.</span>
@@ -709,7 +733,15 @@
 <span class="sd">        the audio file.&#39;}</span>
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">openai</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="n">audio_file_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">audio_file_url</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">audio_file_url</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">audio_file</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>

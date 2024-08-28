@@ -134,7 +134,7 @@
     <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentStub</span>
     <span class="kn">import</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="k">as</span> <span class="nn">agent_pb2</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">agentscope.utils.tools</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+    <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
     <span class="n">dill</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">grpc</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
@@ -142,7 +142,7 @@
     <span class="n">RpcAgentStub</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">RpcError</span> <span class="o">=</span> <span class="ne">ImportError</span>
 
-<span class="kn">from</span> <span class="nn">..utils.tools</span> <span class="kn">import</span> <span class="n">generate_id_from_seed</span>
+<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_generate_id_from_seed</span>
 <span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">AgentServerNotAliveError</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
 <span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">AgentCallError</span>
@@ -492,7 +492,7 @@
         <span class="n">file_manager</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
 
         <span class="n">local_filename</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">generate_id_from_seed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_generate_id_from_seed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">_generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>

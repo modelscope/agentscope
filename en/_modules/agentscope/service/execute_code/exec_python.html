@@ -144,10 +144,10 @@
 <span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
     <span class="n">resource</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">create_tempdir</span><span class="p">,</span> <span class="n">timer</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">create_tempdir</span><span class="p">,</span> <span class="n">timer</span>
+<span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span> <span class="nn">...constants</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">_DEFAULT_PYPI_MIRROR</span><span class="p">,</span>
     <span class="n">_DEFAULT_TRUSTED_HOST</span><span class="p">,</span>
 <span class="p">)</span>

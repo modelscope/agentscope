@@ -124,7 +124,7 @@
     <span class="n">ServiceResponse</span><span class="p">,</span>
     <span class="n">ServiceExecStatus</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">requests_get</span>
+<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">_requests_get</span>
 
 
 <div class="viewcode-block" id="dblp_search_publications">
@@ -211,7 +211,7 @@
         <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
         <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">num_completion</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="n">_requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">search_results</span><span class="p">)</span>
@@ -326,7 +326,7 @@
         <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
         <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">num_completion</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="n">_requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">search_results</span><span class="p">)</span>
     <span class="n">hits</span> <span class="o">=</span> <span class="n">search_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hits&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hit&quot;</span><span class="p">,</span> <span class="p">[])</span>
@@ -422,7 +422,7 @@
         <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">start</span><span class="p">,</span>
         <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">num_completion</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">search_results</span> <span class="o">=</span> <span class="n">requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">search_results</span> <span class="o">=</span> <span class="n">_requests_get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">search_results</span><span class="p">)</span>
 

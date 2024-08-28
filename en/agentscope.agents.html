@@ -195,14 +195,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html">agentscope.agents.text_to_image_agent module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent.__init__"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent.__init__()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.text_to_image_agent.html#agentscope.agents.text_to_image_agent.TextToImageAgent.reply"><code class="docutils literal notranslate"><span class="pre">TextToImageAgent.reply()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.agents.user_agent.html">agentscope.agents.user_agent module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent"><code class="docutils literal notranslate"><span class="pre">UserAgent</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.__init__"><code class="docutils literal notranslate"><span class="pre">UserAgent.__init__()</span></code></a></li>
@@ -579,53 +571,6 @@ the agent doesn’t need any input.</p>
     it defaults to treating the response as plain text.</p>
 </dd>
 </dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="agentscope.agents.TextToImageAgent">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.agents.</span></span><span class="sig-name descname"><span class="pre">TextToImageAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/agents/text_to_image_agent.html#TextToImageAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.TextToImageAgent" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.agents.agent.html#agentscope.agents.agent.AgentBase" title="agentscope.agents.agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
-<p>A agent used to perform text to image tasks.</p>
-<p>TODO: change the agent into a service.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.TextToImageAgent.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/agents/text_to_image_agent.html#TextToImageAgent.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.TextToImageAgent.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the text to image agent.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<cite>str</cite>) – The name of the agent.</p></li>
-<li><p><strong>model_config_name</strong> (<cite>str</cite>, defaults to None) – The name of the model config, which is used to load model from
-configuration.</p></li>
-<li><p><strong>use_memory</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Whether the agent has memory.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.TextToImageAgent.reply">
-<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></span><a class="reference internal" href="_modules/agentscope/agents/text_to_image_agent.html#TextToImageAgent.reply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.TextToImageAgent.reply" title="Link to this definition"></a></dt>
-<dd><p>Define the actions taken by this agent.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<cite>Optional[Union[Msg, Sequence[Msg]]]</cite>, defaults to <cite>None</cite>) – The input message(s) to the agent, which also can be omitted if
-the agent doesn’t need any input.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The output message generated by the agent.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>Msg</cite></p>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Given that some agents are in an adversarial environment,
-their input doesn’t include the thoughts of other agents.</p>
-</div>
 </dd></dl>
 
 </dd></dl>

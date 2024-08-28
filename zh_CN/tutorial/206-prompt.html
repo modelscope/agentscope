@@ -95,17 +95,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#promptengine">关于<code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>类 （将会在未来版本弃用）</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id13">提示工程的关键特性</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id14">初始化</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">合并提示组件</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id16">输出字符串类型提示</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id17">输出列表类型提示</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id18">动态格式化提示</a></li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="201-agent.html">Agent</a></li>
@@ -637,62 +626,6 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 <span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;system&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="o">}</span>,
 <span class="w">  </span><span class="o">{</span><span class="s2">&quot;role&quot;</span>:<span class="w"> </span><span class="s2">&quot;user&quot;</span>,<span class="w"> </span><span class="s2">&quot;content&quot;</span>:<span class="w"> </span><span class="s2">&quot;## Conversation History\nBob: Hi!\nAlice: Nice to meet you!&quot;</span><span class="o">}</span>,
 <span class="o">]</span>
-</pre></div>
-</div>
-</section>
-</section>
-</section>
-<section id="promptengine">
-<h2>关于<code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>类 （将会在未来版本弃用）<a class="headerlink" href="#promptengine" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code>类提供了一种结构化的方式来合并不同的提示组件，比如指令、提示、对话历史和用户输入，以适合底层语言模型的格式。</p>
-<section id="id13">
-<h3>提示工程的关键特性<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p><strong>模型兼容性</strong>：可以与任何 <code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code> 的子类一起工作。</p></li>
-<li><p><strong>提示类型</strong>：支持字符串和列表风格的提示，与模型首选的输入格式保持一致。</p></li>
-</ul>
-</section>
-<section id="id14">
-<h3>初始化<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
-<p>当创建 <code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 的实例时，您可以指定目标模型，以及（可选的）缩减原则、提示的最大长度、提示类型和总结模型（可以与目标模型相同）。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">engine</span> <span class="o">=</span> <span class="n">PromptEngine</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="id15">
-<h3>合并提示组件<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 的 <code class="docutils literal notranslate"><span class="pre">join</span></code> 方法提供了一个统一的接口来处理任意数量的组件，以构建最终的提示。</p>
-<section id="id16">
-<h4>输出字符串类型提示<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
-<p>如果模型期望的是字符串类型的提示，组件会通过换行符连接：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span>
-<span class="n">memory</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># 可以是字典、列表或字符串</span>
-<span class="n">hint_prompt</span> <span class="o">=</span> <span class="s2">&quot;Please respond in JSON format.&quot;</span>
-
-<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">hint_prompt</span><span class="p">)</span>
-<span class="c1"># 结果将会是 [&quot;You&#39;re a helpful assistant.&quot;, {&quot;name&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#39;s the weather like today?&quot;}]</span>
-</pre></div>
-</div>
-</section>
-<section id="id17">
-<h4>输出列表类型提示<a class="headerlink" href="#id17" title="Link to this heading"></a></h4>
-<p>对于使用列表类型提示的模型，比如 OpenAI 和 Huggingface 聊天模型，组件可以转换为 <code class="docutils literal notranslate"><span class="pre">Message</span></code> 对象，其类型是字典列表：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_prompt</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span>
-<span class="n">user_messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;What&#39;s the weather like today?&quot;</span><span class="p">}]</span>
-
-<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">user_messages</span><span class="p">)</span>
-<span class="c1"># 结果将会是: [{&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;You&#39;re a helpful assistant.&quot;}, {&quot;name&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What&#39;s the weather like today?&quot;}]</span>
-</pre></div>
-</div>
-</section>
-<section id="id18">
-<h4>动态格式化提示<a class="headerlink" href="#id18" title="Link to this heading"></a></h4>
-<p><code class="docutils literal notranslate"><span class="pre">PromptEngine</span></code> 支持使用 <code class="docutils literal notranslate"><span class="pre">format_map</span></code> 参数动态提示，允许您灵活地将各种变量注入到不同场景的提示组件中：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;London&quot;</span><span class="p">}</span>
-<span class="n">hint_prompt</span> <span class="o">=</span> <span class="s2">&quot;Find the weather in </span><span class="si">{location}</span><span class="s2">.&quot;</span>
-
-<span class="n">prompt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">user_input</span><span class="p">,</span> <span class="n">hint_prompt</span><span class="p">,</span> <span class="n">format_map</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#prompt-zh">[返回顶端]</a></p>

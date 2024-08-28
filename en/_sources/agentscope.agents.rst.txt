@@ -14,7 +14,6 @@ Submodules
    agentscope.agents.rag_agent
    agentscope.agents.react_agent
    agentscope.agents.rpc_agent
-   agentscope.agents.text_to_image_agent
    agentscope.agents.user_agent
 
 Module contents
