@@ -322,6 +322,17 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.yi_model.html">agentscope.models.yi_model module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper"><code class="docutils literal notranslate"><span class="pre">YiChatWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">YiChatWrapper.model_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">YiChatWrapper.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">YiChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper.config_name"><code class="docutils literal notranslate"><span class="pre">YiChatWrapper.config_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper.model_name"><code class="docutils literal notranslate"><span class="pre">YiChatWrapper.model_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.zhipu_model.html">agentscope.models.zhipu_model module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase"><code class="docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">ZhipuAIWrapperBase.__init__()</span></code></a></li>
@@ -1953,6 +1964,122 @@ engineering strategies.</p>
     <span class="p">{</span>
         <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
         <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Bob: Hi, how can I help you?</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;user: What&#39;s the date today?&quot;</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
+In distribution, placeholder is also allowed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted messages.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>List[dict]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.models.YiChatWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.models.</span></span><span class="sig-name descname"><span class="pre">YiChatWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/models/yi_model.html#YiChatWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.YiChatWrapper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code></a></p>
+<p>The model wrapper for Yi Chat API.</p>
+<dl>
+<dt>Response:</dt><dd><ul class="simple">
+<li><p>From <a class="reference external" href="https://platform.lingyiwanwu.com/docs">https://platform.lingyiwanwu.com/docs</a></p></li>
+</ul>
+<p><a href="#id58"><span class="problematic" id="id59">``</span></a><a href="#id60"><span class="problematic" id="id61">`</span></a>json
+{</p>
+<blockquote>
+<div><p>“id”: “cmpl-ea89ae83”,
+“object”: “chat.completion”,
+“created”: 5785971,
+“model”: “yi-large-rag”,
+“usage”: {</p>
+<blockquote>
+<div><p>“completion_tokens”: 113,
+“prompt_tokens”: 896,
+“total_tokens”: 1009</p>
+</div></blockquote>
+<p>},
+“choices”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><p>“index”: 0,
+“message”: {</p>
+<blockquote>
+<div><p>“role”: “assistant”,
+“content”: “Today in Los Angeles, the weather …”,</p>
+</div></blockquote>
+<p>},
+“finish_reason”: “stop”</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.YiChatWrapper.model_type">
+<span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'yi_chat'</span></em><a class="headerlink" href="#agentscope.models.YiChatWrapper.model_type" title="Link to this definition"></a></dt>
+<dd><p>The type of the model wrapper, which is to identify the model wrapper
+class in model configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.YiChatWrapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/models/yi_model.html#YiChatWrapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.YiChatWrapper.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the Yi chat model wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_name</strong> (<cite>str</cite>) – The name of the configuration to use.</p></li>
+<li><p><strong>model_name</strong> (<cite>str</cite>) – The name of the model to use, e.g. yi-large, yi-medium, etc.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) – The API key for the Yi API.</p></li>
+<li><p><strong>max_tokens</strong> (<cite>Optional[int]</cite>, defaults to <cite>None</cite>) – The maximum number of tokens to generate, defaults to <cite>None</cite>.</p></li>
+<li><p><strong>top_p</strong> (<cite>float</cite>, defaults to <cite>0.9</cite>) – The randomness parameters in the range [0, 1].</p></li>
+<li><p><strong>temperature</strong> (<cite>float</cite>, defaults to <cite>0.3</cite>) – The temperature parameter in the range [0, 2].</p></li>
+<li><p><strong>stream</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to stream the response or not.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.YiChatWrapper.format">
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/agentscope/models/yi_model.html#YiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.YiChatWrapper.format" title="Link to this definition"></a></dt>
+<dd><p>Format the messages into the required format of Yi Chat API.</p>
+<p>Note this strategy maybe not suitable for all scenarios,
+and developers are encouraged to implement their own prompt
+engineering strategies.</p>
+<p>The following is an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi, how can I help you?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;What&#39;s the date today?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The prompt will be as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># prompt1</span>
+<span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;You&#39;re a helpful assistant</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Bob: Hi, how can I help you?</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;user: What&#39;s the date today?&quot;</span>

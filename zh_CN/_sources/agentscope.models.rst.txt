@@ -15,6 +15,7 @@ Submodules
    agentscope.models.openai_model
    agentscope.models.post_model
    agentscope.models.response
+   agentscope.models.yi_model
    agentscope.models.zhipu_model
 
 Module contents
