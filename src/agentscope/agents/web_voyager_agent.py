@@ -81,8 +81,8 @@ OBS_MSG_PROMPT = """Observation:{warn_obs} please analyze the attached screensho
 
 class WebVoyagerAgent(AgentBase):
     """
-    A simple agent use screen shot browser to browse web pages.
-    Referanced from the project: web voyager.
+    A simple agent use screenshot browser to browse web pages.
+    Referenced from the project: web voyager.
     """
 
     def __init__(
@@ -257,7 +257,7 @@ class WebVoyagerAgent(AgentBase):
                     logger.error(e)
                     break
 
-                # get screen shot
+                # get screenshot
                 img_path = os.path.join(
                     self.task_dir,
                     f"screenshot_{it}.png",
