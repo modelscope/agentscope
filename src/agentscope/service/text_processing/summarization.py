@@ -77,7 +77,7 @@ def summarization(
             Msg(name="user", role="user", content=text),
         ]
         msgs = model.format(msgs)
-        model_output = model(messages=msgs)
+        model_output = model(msgs)
         summary = model_output.text
         return ServiceResponse(
             ServiceExecStatus.SUCCESS,

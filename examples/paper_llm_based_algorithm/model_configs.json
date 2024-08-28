@@ -1,0 +1,50 @@
+[
+    {
+        "config_name": "gpt-3.5-turbo",
+        "model_type": "post_api_chat",
+        "api_url": "xxx",
+        "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "xxx"
+        },
+        "json_args": {
+            "model": "gpt-3.5-turbo"
+        },
+        "messages_key": "messages"
+    },
+    {
+        "config_name": "gpt-4-turbo",
+        "model_type": "post_api_chat",
+        "api_url": "xxx",
+        "headers": {
+            "Content-Type": "application/json",
+            "Authorization": "xxx"
+        },
+        "json_args": {
+            "model": "gpt-4-turbo"
+        },
+        "messages_key": "messages"
+    },
+    {
+        "config_name": "ollama_llama3_8b",
+        "model_type": "ollama_chat",
+        "model_name": "llama3",
+        "options": {
+            "temperature": 0.0,
+            "seed": 123
+        },
+        "keep_alive": "5m"
+    },
+    {
+        "config_name": "vllm_llama3_70b",
+        "model_type": "openai_chat",
+        "model_name": "meta-llama/Meta-Llama-3-70B-Instruct",
+        "api_key": "xxx",
+        "client_args": {
+            "base_url": "http://xxx"
+        },
+        "generate_args": {
+            "temperature": 0.0
+        }
+    }
+]

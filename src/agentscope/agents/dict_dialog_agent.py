@@ -23,7 +23,6 @@ class DictDialogAgent(AgentBase):
         sys_prompt: str,
         model_config_name: str,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
         max_retries: Optional[int] = 3,
     ) -> None:
         """Initialize the dict dialog agent.
@@ -39,8 +38,6 @@ class DictDialogAgent(AgentBase):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`, defaults to `None`):
-                The config of memory.
             max_retries (`Optional[int]`, defaults to `None`):
                 The maximum number of retries when failed to parse the model
                 output.
@@ -50,7 +47,6 @@ class DictDialogAgent(AgentBase):
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             use_memory=use_memory,
-            memory_config=memory_config,
         )
 
         self.parser = None
@@ -99,18 +95,20 @@ class DictDialogAgent(AgentBase):
         )
 
         # call llm
-        res = self.model(
-            prompt,
-            parse_func=self.parser.parse,
-            max_retries=self.max_retries,
-        )
+        raw_response = self.model(prompt)
+
+        self.speak(raw_response.stream or raw_response.text)
+
+        # Parsing the raw response
+        res = self.parser.parse(raw_response)
 
         # Filter the parsed response by keys for storing in memory, returning
         # in the reply function, and feeding into the metadata field in the
         # returned message object.
-        self.memory.add(
-            Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
-        )
+        if self.memory:
+            self.memory.add(
+                Msg(self.name, self.parser.to_memory(res.parsed), "assistant"),
+            )
 
         msg = Msg(
             self.name,
@@ -118,6 +116,5 @@ class DictDialogAgent(AgentBase):
             role="assistant",
             metadata=self.parser.to_metadata(res.parsed),
         )
-        self.speak(msg)
 
         return msg

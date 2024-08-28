@@ -20,11 +20,11 @@ from agentscope.models import (
 # SpeechSynthesizerWrapper is current not available
 
 
-from agentscope.service.service_response import (
+from ..service_response import (
     ServiceResponse,
     ServiceExecStatus,
 )
-from agentscope.utils.tools import _download_file
+from ...utils.common import _download_file
 
 
 def dashscope_text_to_image(

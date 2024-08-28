@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import patch, MagicMock
 
+import agentscope
+from agentscope.manager import ASManager
 from agentscope.models import (
     ModelResponse,
     DashScopeChatWrapper,
@@ -16,6 +18,8 @@ class TestDashScopeChatWrapper(unittest.TestCase):
     """Test DashScope Chat Wrapper"""
 
     def setUp(self) -> None:
+        agentscope.init(disable_saving=True)
+
         self.config_name = "test_config"
         self.model_name = "test_model"
         self.api_key = "test_api_key"
@@ -62,6 +66,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             model=self.model_name,
             messages=messages,
             result_format="message",
+            stream=False,
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
@@ -96,13 +101,20 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             model=self.model_name,
             messages=messages,
             result_format="message",
+            stream=False,
         )
+
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
 
 
 class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
     """Test DashScope Image Synthesis Wrapper"""
 
     def setUp(self) -> None:
+        agentscope.init(disable_saving=True)
+
         self.config_name = "config_name"
         self.model_name = "test_model"
         self.api_key = "test_api_key"
@@ -113,7 +125,7 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
         )
 
     @patch(
-        "agentscope.file_manager.file_manager.save_image",
+        "agentscope.manager.FileManager.save_image",
         side_effect=lambda x: f'/local/path/{x.split("/")[-1]}',
     )
     @patch("agentscope.models.dashscope_model.dashscope.ImageSynthesis.call")
@@ -129,6 +141,7 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
         mock_response.output = {
             "results": [{"url": "http://example.com/image.jpg"}],
         }
+        mock_response.usage.image_count = 1
         mock_call.return_value = mock_response
         # Call the wrapper with prompt
         prompt = "Generate an image of a sunset"
@@ -183,11 +196,16 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
             n=1,  # Assuming this is a default value used to call the API
         )
 
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
+
 
 class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
     """Test DashScope Text Embedding Wrapper"""
 
     def setUp(self) -> None:
+        agentscope.init(disable_saving=True)
         # Initialize DashScopeTextEmbeddingWrapper instance
         self.wrapper = DashScopeTextEmbeddingWrapper(
             config_name="test_config",
@@ -252,11 +270,16 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
             **self.wrapper.generate_args,
         )
 
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
+
 
 class TestDashScopeMultiModalWrapper(unittest.TestCase):
     """Test DashScope MultiModal Wrapper"""
 
     def setUp(self) -> None:
+        agentscope.init(disable_saving=True)
         # Initialize DashScopeMultiModalWrapper instance
         self.wrapper = DashScopeMultiModalWrapper(
             config_name="test_config",
@@ -344,6 +367,10 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
             model=self.wrapper.model_name,
             messages=messages,
         )
+
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
 
 
 if __name__ == "__main__":

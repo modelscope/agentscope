@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """Logging utilities."""
-import json
 import os
 import sys
 from typing import Optional, Literal, Any
 
 from loguru import logger
 
-from agentscope.studio._client import _studio_client
-from agentscope.web.gradio.utils import (
+
+from .message import Msg
+from .serialize import serialize
+from .studio._client import _studio_client
+from .utils.common import _guess_type_by_extension
+from .web.gradio.utils import (
     generate_image_from_name,
     send_msg,
     get_reset_msg,
@@ -27,179 +30,139 @@ LOG_LEVEL = Literal[
 
 LEVEL_SAVE_LOG = "SAVE_LOG"
 LEVEL_SAVE_MSG = "SAVE_MSG"
-LEVEL_DISPLAY_MSG = "DISPLAY_MSG"
 
-_SPEAKER_COLORS = [
-    ("\033[90m", "\033[0m"),
-    ("\033[91m", "\033[0m"),
-    ("\033[92m", "\033[0m"),
-    ("\033[93m", "\033[0m"),
-    ("\033[94m", "\033[0m"),
-    ("\033[95m", "\033[0m"),
-    ("\033[96m", "\033[0m"),
-    ("\033[97m", "\033[0m"),
-]
+_DEFAULT_LOG_FORMAT = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{"
+    "level: <8}</level> | <cyan>{name}</cyan>:<cyan>{"
+    "function}</cyan>:<cyan>{line}</cyan> - <level>{"
+    "message}</level>"
+)
 
-_SPEAKER_TO_COLORS = {}
+_PREFIX_DICT = {}
 
 
-def _get_speaker_color(speaker: str) -> tuple[str, str]:
-    """Get the color markers for a speaker. If the speaker is new, assign a
-    new color. Otherwise, return the color that was assigned to the speaker.
+def log_stream_msg(msg: Msg, last: bool = True) -> None:
+    """Print the message in different streams, including terminal, studio, and
+    gradio if it is active.
 
     Args:
-        speaker (`str`):
-            The speaker to be assigned a color.
-
-    Returns:
-        `tuple[str, str]`: A color marker tuple, e.g. ("<blue>", "</blue>").
+        msg (`Msg`):
+            The message object to be printed.
+        last (`bool`, defaults to `True`):
+            True if this is the last message in the stream or a single message.
+            Otherwise, False.
     """
-    global _SPEAKER_COLORS, _SPEAKER_TO_COLORS
-    if speaker in _SPEAKER_TO_COLORS:
-        return _SPEAKER_TO_COLORS[speaker]
+    global _PREFIX_DICT
+
+    # Print msg to terminal
+    formatted_str = msg.formatted_str(colored=True)
+
+    print_str = formatted_str[_PREFIX_DICT.get(msg.id, 0) :]
+
+    if last:
+        # Remove the prefix from the dictionary
+        del _PREFIX_DICT[msg.id]
+
+        print(print_str)
     else:
-        markers = _SPEAKER_COLORS[
-            (len(_SPEAKER_TO_COLORS) + 1)
-            % len(
-                _SPEAKER_COLORS,
-            )
-        ]
-        # Record the color for this speaker
-        _SPEAKER_TO_COLORS[speaker] = markers
-        return markers
+        # Update the prefix in the dictionary
+        _PREFIX_DICT[msg.id] = len(formatted_str)
+
+        print(print_str, end="")
+
+    # Push msg to studio if it is active
+    if _studio_client.active:
+        _studio_client.push_message(msg)
+
+    # Print to gradio if it is active
+    if last and hasattr(thread_local_data, "uid"):
+        log_gradio(msg, thread_local_data.uid)
+
+    if last:
+        # Save msg into chat file
+        _save_msg(msg)
 
 
-# add chat function for logger
-def _chat(
-    message: dict,
-    *args: Any,
-    disable_gradio: bool = False,
-    **kwargs: Any,
-) -> None:
-    """
-    Log a chat message with the format of"<speaker>: <content>". If the
-    running instance is registered in the studio, the message will be sent
-    and display in the studio.
+def _save_msg(msg: Msg) -> None:
+    """Save the message into `logging.chat` and `logging.log` files.
 
     Args:
-        message (`dict`):
-            The message to be logged as "<name/role>: <content>", which must
-            be an object of Msg class.
+        msg (`Msg`):
+            The message object to be saved.
     """
-    # Push message to studio if it is active
+    # TODO: Unified into a manager rather than an indicated attribute here
+    if hasattr(logger, "chat"):
+        # Not initialize yet
+        logger.log(
+            LEVEL_SAVE_LOG,
+            msg.formatted_str(colored=False),
+        )
+
+        logger.log(
+            LEVEL_SAVE_MSG,
+            serialize(msg),
+        )
+
+
+def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
+    """Print the message and save it into files. Note the message should be a
+    Msg object."""
+
+    if not isinstance(msg, Msg):
+        raise TypeError(f"Get type {type(msg)}, expect Msg object.")
+
+    print(msg.formatted_str(colored=True))
+
+    # Push msg to studio if it is active
     if _studio_client.active:
-        _studio_client.push_message(message)
+        _studio_client.push_message(msg)
 
-    # Save message into chat file, add default to ignore not serializable
-    # objects
-    logger.log(
-        LEVEL_SAVE_MSG,
-        json.dumps(message, ensure_ascii=False, default=lambda _: None),
-        *args,
-        **kwargs,
-    )
+    # Print to gradio if it is active
+    if hasattr(thread_local_data, "uid") and not disable_gradio:
+        log_gradio(msg, thread_local_data.uid)
 
-    # Print message in terminal with specific format
-    if isinstance(message, dict):
-        contain_name_or_role = "name" in message or "role" in message
-        contain_content = "content" in message
-        contain_url = message.get("url", None) is not None
-
-        # print content if contain name or role and contain content
-        if contain_name_or_role:
-            speaker = message.get("name", None) or message.get("role", None)
-            (m1, m2) = _get_speaker_color(speaker)
-
-            print_str = []
-            print_str_without_markers = []
-            if contain_content:
-                print_str.append(
-                    f"{m1}\033[1m{speaker}\033[0m{m2}: {message['content']}",
-                )
-                print_str_without_markers.append(
-                    f"{speaker}: {message['content']}",
-                )
-
-            if contain_url:
-                print_str.append(
-                    f"{m1}\033[1m{speaker}\033[0m{m2}: {message['url']}",
-                )
-                print_str_without_markers.append(
-                    f"{speaker}: {message['url']}",
-                )
-
-            if len(print_str) > 0:
-                print_str = "\n".join(print_str)
-                print_str_without_markers = "\n".join(
-                    print_str_without_markers,
-                )
-
-                logger.log(LEVEL_DISPLAY_MSG, print_str, *args, **kwargs)
-                logger.log(
-                    LEVEL_SAVE_LOG,
-                    print_str_without_markers,
-                    *args,
-                    **kwargs,
-                )
-
-                if hasattr(thread_local_data, "uid") and not disable_gradio:
-                    log_gradio(message, thread_local_data.uid, **kwargs)
-                return
-
-    logger.log(LEVEL_DISPLAY_MSG, message, *args, **kwargs)
-    logger.log(LEVEL_SAVE_LOG, message, *args, **kwargs)
+    # Save msg into chat file
+    _save_msg(msg)
 
 
-def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
+def log_gradio(msg: Msg, uid: str, **kwargs: Any) -> None:
     """Send chat message to studio.
 
     Args:
-        message (`dict`):
-            The message to be logged. It should have "name"(or "role") and
-            "content" keys, and the message will be logged as "<name/role>:
-            <content>".
+        msg (`Msg`):
+            The message to be logged.
         uid (`str`):
             The local value 'uid' of the thread.
     """
     if uid:
         get_reset_msg(uid=uid)
-        name = message.get("name", "default") or message.get("role", "default")
         avatar = kwargs.get("avatar", None) or generate_image_from_name(
-            message["name"],
+            msg.name,
         )
 
-        msg = message["content"]
+        content = msg.content
         flushing = True
-        if "url" in message and message["url"]:
+        if msg.url is not None:
             flushing = False
-            if isinstance(message["url"], str):
-                message["url"] = [message["url"]]
-            for i in range(len(message["url"])):
-                msg += "\n" + f"""<img src="{message['url'][i]}"/>"""
-        if "audio_path" in message and message["audio_path"]:
-            flushing = False
-            if isinstance(message["audio_path"], str):
-                message["audio_path"] = [message["audio_path"]]
-            for i in range(len(message["audio_path"])):
-                msg += (
-                    "\n"
-                    + f"""<audio src="{message['audio_path'][i]}"
-                controls/></audio>"""
-                )
-        if "video_path" in message and message["video_path"]:
-            flushing = False
-            if isinstance(message["video_path"], str):
-                message["video_path"] = [message["video_path"]]
-            for i in range(len(message["video_path"])):
-                msg += (
-                    "\n"
-                    + f"""<video src="{message['video_path'][i]}"
-                controls/></video>"""
-                )
+            if isinstance(msg.url, str):
+                urls = [msg.url]
+            else:
+                urls = msg.url
+
+            for url in urls:
+                typ = _guess_type_by_extension(url)
+                if typ == "image":
+                    content += f"\n<img src='{url}'/>"
+                elif typ == "audio":
+                    content += f"\n<audio src='{url}' controls/></audio>"
+                elif typ == "video":
+                    content += f"\n<video src='{url}' controls/></video>"
+                else:
+                    content += f"\n<a href='{url}'>{url}</a>"
 
         send_msg(
-            msg,
-            role=name,
+            content,
+            role=msg.name,
             uid=uid,
             flushing=flushing,
             avatar=avatar,
@@ -209,15 +172,10 @@ def log_gradio(message: dict, uid: str, **kwargs: Any) -> None:
 def _level_format(record: dict) -> str:
     """Format the log record."""
     # Display the chat message
-    if record["level"].name in [LEVEL_DISPLAY_MSG, LEVEL_SAVE_LOG]:
+    if record["level"].name == LEVEL_SAVE_LOG:
         return "{message}\n"
     else:
-        return (
-            "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{"
-            "level: <8}</level> | <cyan>{name}</cyan>:<cyan>{"
-            "function}</cyan>:<cyan>{line}</cyan> - <level>{"
-            "message}</level>\n"
-        )
+        return _DEFAULT_LOG_FORMAT
 
 
 def setup_logger(
@@ -238,11 +196,10 @@ def setup_logger(
     if not hasattr(logger, "chat"):
         # add chat function for logger
         logger.level(LEVEL_SAVE_LOG, no=51)
-        logger.level(LEVEL_DISPLAY_MSG, no=52)
 
         # save chat message into file
         logger.level(LEVEL_SAVE_MSG, no=53)
-        logger.chat = _chat
+        logger.chat = log_msg
 
         # set logging level
         logger.remove()
@@ -251,7 +208,7 @@ def setup_logger(
             sys.stdout,
             filter=lambda record: record["level"].name
             not in [LEVEL_SAVE_LOG, LEVEL_SAVE_MSG],
-            format=_level_format,
+            format=_DEFAULT_LOG_FORMAT,
             enqueue=True,
             level=level,
         )
@@ -264,19 +221,20 @@ def setup_logger(
             "logging.chat",
         )
 
-        # save all logging into file
+        # save all logging except LEVEL_SAVE_MSG into logging.log
         logger.add(
             path_log_file,
-            filter=lambda record: record["level"].name
-            not in [LEVEL_SAVE_MSG, LEVEL_DISPLAY_MSG],
+            filter=lambda record: record["level"].name != LEVEL_SAVE_MSG,
             format=_level_format,
             enqueue=True,
             level=level,
         )
 
+        # save chat message into logging.chat
         logger.add(
             path_chat_file,
             format="{message}",
             enqueue=True,
-            level=LEVEL_SAVE_MSG,
+            level=LEVEL_SAVE_MSG,  # The highest level to filter out all
+            # other logs
         )
