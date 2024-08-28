@@ -18,7 +18,7 @@ try:
     from google.protobuf.empty_pb2 import Empty
     from expiringdict import ExpiringDict
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     dill = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")

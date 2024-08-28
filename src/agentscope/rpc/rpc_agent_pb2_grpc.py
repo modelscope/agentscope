@@ -5,7 +5,7 @@ try:
     import grpc
     from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     grpc = ImportErrorReporter(import_error, "distribute")
     google_dot_protobuf_dot_empty__pb2 = ImportErrorReporter(

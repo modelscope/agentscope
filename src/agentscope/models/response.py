@@ -3,7 +3,7 @@
 import json
 from typing import Optional, Sequence, Any, Generator, Union, Tuple
 
-from agentscope.utils.tools import _is_json_serializable
+from ..utils.common import _is_json_serializable
 
 
 class ModelResponse:
@@ -55,6 +55,11 @@ class ModelResponse:
                 for chunk in self.stream:
                     self._text += chunk
         return self._text
+
+    @text.setter
+    def text(self, value: str) -> None:
+        """Set the text field."""
+        self._text = value
 
     @property
     def stream(self) -> Union[None, Generator[Tuple[bool, str], None, None]]:

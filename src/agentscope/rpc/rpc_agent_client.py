@@ -18,7 +18,7 @@ try:
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
     import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     dill = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
@@ -26,7 +26,7 @@ except ImportError as import_error:
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     RpcError = ImportError
 
-from ..utils.tools import generate_id_from_seed
+from ..utils.common import _generate_id_from_seed
 from ..exception import AgentServerNotAliveError
 from ..constants import _DEFAULT_RPC_OPTIONS
 from ..exception import AgentCallError
@@ -333,7 +333,7 @@ class RpcAgentClient:
         file_manager = FileManager.get_instance()
 
         local_filename = (
-            f"{generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
+            f"{_generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
         )
 
         def _generator() -> Generator[bytes, None, None]:
