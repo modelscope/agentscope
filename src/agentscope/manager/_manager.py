@@ -2,6 +2,7 @@
 """A manager for AgentScope."""
 import os
 from typing import Union, Any
+from copy import deepcopy
 
 from loguru import logger
 
@@ -166,7 +167,7 @@ class ASManager:
         serialized_data["studio"] = _studio_client.state_dict()
         serialized_data["monitor"] = self.monitor.state_dict()
 
-        return serialized_data
+        return deepcopy(serialized_data)
 
     def load_dict(self, data: dict) -> None:
         """Load the runtime information from a dictionary"""
