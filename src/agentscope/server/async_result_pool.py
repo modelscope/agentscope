@@ -7,7 +7,7 @@ try:
     import redis
     import expiringdict
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     redis = ImportErrorReporter(import_error, "distribute")
     expiringdict = ImportErrorReporter(import_error, "distribute")
@@ -91,20 +91,18 @@ class RedisPool(AsyncResultPool):
 
     def __init__(
         self,
-        host: str,
-        port: int,
+        url: str,
         max_timeout: int,
     ) -> None:
         """
         Init redis pool.
 
         Args:
-            host (`str`): The host of the redis server.
-            port (`int`): The port of the redis server.
+            url (`str`): The url of the redis server.
             max_timeout (`int`): The max timeout of the result in the pool,
             when it is reached, the oldest item will be removed.
         """
-        self.pool = redis.Redis(host=host, port=port, db=0)
+        self.pool = redis.from_url(url)
         self.max_timeout = max_timeout
 
     def _get_object_id(self) -> int:
@@ -136,8 +134,7 @@ def get_pool(
     pool_type: str = "local",
     max_timeout: int = 7200,
     max_len: int = 8192,
-    host: str = "localhost",
-    port: int = 6379,
+    redis_url: str = "redis://localhost:6379",
 ) -> AsyncResultPool:
     """Get the pool according to the type.
 
@@ -147,10 +144,9 @@ def get_pool(
         max_timeout (`int`): The max timeout of the result in the pool,
             when it is reached, the oldest item will be removed.
         max_len (`int`): The max length of the pool.
-        host (`str`): The host of the redis server.
-        port (`int`): The port of the redis server.
+        redis_url (`str`): The address of the redis server.
     """
     if pool_type == "redis":
-        return RedisPool(host=host, port=port, max_timeout=max_timeout)
+        return RedisPool(url=redis_url, max_timeout=max_timeout)
     else:
         return LocalPool(max_len=max_len, max_timeout=max_timeout)

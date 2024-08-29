@@ -18,7 +18,7 @@ try:
         add_RpcAgentServicer_to_server,
     )
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     grpc = ImportErrorReporter(import_error, "distribute")
     add_RpcAgentServicer_to_server = ImportErrorReporter(
@@ -28,7 +28,7 @@ except ImportError as import_error:
 import agentscope
 from ..server.servicer import AgentServerServicer
 from ..manager import ASManager
-from ..utils.tools import check_port, generate_id_from_seed
+from ..utils.common import _check_port, _generate_id_from_seed
 from ..constants import _DEFAULT_RPC_OPTIONS
 
 
@@ -41,6 +41,8 @@ def _setup_agent_server(
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
+    pool_type: str = "local",
+    redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
@@ -68,6 +70,12 @@ def _setup_agent_server(
             A pipe instance used to pass the actual port of the server.
         local_mode (`bool`, defaults to `True`):
             Only listen to local requests.
+        pool-type (`str`, defaults to `"local"`): The type of the async
+            message pool, which can be `local` or `redis`. If `redis` is
+            specified, you need to start a redis server before launching
+            the server.
+        redis-url (`str`, defaults to `"redis://localhost:6379"`): The
+            url of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
         max_timeout_seconds (`int`, defaults to `7200`):
@@ -91,6 +99,8 @@ def _setup_agent_server(
             stop_event=stop_event,
             pipe=pipe,
             local_mode=local_mode,
+            pool_type=pool_type,
+            redis_url=redis_url,
             max_pool_size=max_pool_size,
             max_timeout_seconds=max_timeout_seconds,
             studio_url=studio_url,
@@ -109,6 +119,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
+    pool_type: str = "local",
+    redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
@@ -134,6 +146,12 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         local_mode (`bool`, defaults to `True`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
+        pool-type (`str`, defaults to `"local"`): The type of the async
+            message pool, which can be `local` or `redis`. If `redis` is
+            specified, you need to start a redis server before launching
+            the server.
+        redis-url (`str`, defaults to `"redis://localhost:6379"`): The url
+            of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             The max number of agent reply messages that the server can
             accommodate. Note that the oldest message will be deleted
@@ -160,6 +178,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         port=port,
         server_id=server_id,
         studio_url=studio_url,
+        pool_type=pool_type,
+        redis_url=redis_url,
         max_pool_size=max_pool_size,
         max_timeout_seconds=max_timeout_seconds,
     )
@@ -198,7 +218,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             )
     while True:
         try:
-            port = check_port(port)
+            port = _check_port(port)
             servicer.port = port
             server = grpc.aio.server(
                 futures.ThreadPoolExecutor(max_workers=None),
@@ -306,6 +326,8 @@ class RpcAgentServerLauncher:
         self,
         host: str = "localhost",
         port: int = None,
+        pool_type: str = "local",
+        redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
         local_mode: bool = False,
@@ -321,6 +343,12 @@ class RpcAgentServerLauncher:
                 Hostname of the agent server.
             port (`int`, defaults to `None`):
                 Socket port of the agent server.
+            pool-type (`str`, defaults to `"local"`): The type of the async
+                message pool, which can be `local` or `redis`. If `redis` is
+                specified, you need to start a redis server before launching
+                the server.
+            redis-url (`str`, defaults to `"redis://localhost:6379"`): The
+                address of the redis server.
             max_pool_size (`int`, defaults to `8192`):
                 The max number of agent reply messages that the server can
                 accommodate. Note that the oldest message will be deleted
@@ -343,7 +371,9 @@ class RpcAgentServerLauncher:
                 The url of the agentscope studio.
         """
         self.host = host
-        self.port = check_port(port)
+        self.port = _check_port(port)
+        self.pool_type = pool_type
+        self.redis_url = redis_url
         self.max_pool_size = max_pool_size
         self.max_timeout_seconds = max_timeout_seconds
         self.local_mode = local_mode
@@ -364,7 +394,7 @@ class RpcAgentServerLauncher:
     @classmethod
     def generate_server_id(cls, host: str, port: int) -> str:
         """Generate server id"""
-        return generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
+        return _generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
 
     def _launch_in_main(self) -> None:
         """Launch agent server in main-process"""
@@ -377,6 +407,8 @@ class RpcAgentServerLauncher:
                 port=self.port,
                 stop_event=self.stop_event,
                 server_id=self.server_id,
+                pool_type=self.pool_type,
+                redis_url=self.redis_url,
                 max_pool_size=self.max_pool_size,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
@@ -402,6 +434,8 @@ class RpcAgentServerLauncher:
                 "start_event": start_event,
                 "stop_event": self.stop_event,
                 "pipe": child_con,
+                "pool_type": self.pool_type,
+                "redis_url": self.redis_url,
                 "max_pool_size": self.max_pool_size,
                 "max_timeout_seconds": self.max_timeout_seconds,
                 "local_mode": self.local_mode,
@@ -460,6 +494,11 @@ def as_server() -> None:
 
         * `--host`: the hostname of the server.
         * `--port`: the socket port of the server.
+        * `--pool-type`: the type of the async message pool, which can be
+          `local` or `redis`. If `redis` is specified, you need to start a
+          redis server before launching the server. Defaults to `local`.
+        * `--redis-url`: the url of the redis server, defaults to
+          `redis://localhost:6379`.
         * `--max-pool-size`: max number of agent reply messages that the server
           can accommodate. Note that the oldest message will be deleted
           after exceeding the pool size.
@@ -494,6 +533,19 @@ def as_server() -> None:
         type=int,
         default=12310,
         help="socket port of the server",
+    )
+    parser.add_argument(
+        "--pool-type",
+        type=str,
+        choices=["local", "redis"],
+        default="local",
+        help="the url of agentscope studio",
+    )
+    parser.add_argument(
+        "--redis-url",
+        type=str,
+        default="redis://localhost:6379",
+        help="the url of redis server",
     )
     parser.add_argument(
         "--max-pool-size",

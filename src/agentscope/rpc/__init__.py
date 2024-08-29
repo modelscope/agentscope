@@ -12,7 +12,7 @@ try:
     from .rpc_agent_pb2_grpc import RpcAgentServicer
     from .rpc_agent_pb2_grpc import RpcAgentStub
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     CallFuncRequest = ImportErrorReporter(import_error, "distribute")  # type: ignore[misc]
     RpcAgentServicer = ImportErrorReporter(import_error, "distribute")

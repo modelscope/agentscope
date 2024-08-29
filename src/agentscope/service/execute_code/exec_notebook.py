@@ -13,7 +13,7 @@ try:
     from nbclient.exceptions import CellTimeoutError, DeadKernelError
     import nbformat
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     nbclient = ImportErrorReporter(import_error)
     nbformat = ImportErrorReporter(import_error)

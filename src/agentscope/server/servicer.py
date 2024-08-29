@@ -17,7 +17,7 @@ try:
     from grpc import ServicerContext
     from google.protobuf.empty_pb2 import Empty
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     pickle = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")
@@ -37,6 +37,7 @@ from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
 from agentscope.message import PlaceholderMessage
 from agentscope.server.async_result_pool import get_pool
+from agentscope.serialize import serialize
 
 
 def _register_server_to_studio(
@@ -75,6 +76,8 @@ class AgentServerServicer(RpcAgentServicer):
         port: int = None,
         server_id: str = None,
         studio_url: str = None,
+        pool_type: str = "local",
+        redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
     ):
@@ -113,6 +116,8 @@ class AgentServerServicer(RpcAgentServicer):
             _studio_client.initialize(run_id, studio_url)
 
         self.result_pool = get_pool(
+            pool_type=pool_type,
+            redis_url=redis_url,
             max_len=max_pool_size,
             max_timeout=max_timeout_seconds,
         )
@@ -197,9 +202,8 @@ class AgentServerServicer(RpcAgentServicer):
                 **agent_configs["kwargs"],
             )
         except Exception as e:
-            err_msg = (
-                f"Failed to create agent instance <{cls_name}>: {str(e)}",
-            )
+            err_msg = f"Failed to create agent instance <{cls_name}>: {str(e)}"
+
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
 
@@ -412,7 +416,8 @@ class AgentServerServicer(RpcAgentServicer):
                 summaries.append(str(agent))
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=json.dumps(summaries),
+                # TODO: unified into serialize function to avoid error.
+                message=serialize(summaries),
             )
 
     def get_server_info(
@@ -428,7 +433,7 @@ class AgentServerServicer(RpcAgentServicer):
         status["cpu"] = process.cpu_percent(interval=1)
         status["mem"] = process.memory_info().rss / (1024**2)
         status["size"] = len(self.agent_pool)
-        return agent_pb2.GeneralResponse(ok=True, message=json.dumps(status))
+        return agent_pb2.GeneralResponse(ok=True, message=serialize(status))
 
     def set_model_configs(
         self,
@@ -466,7 +471,7 @@ class AgentServerServicer(RpcAgentServicer):
             )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=json.dumps(agent.memory.get_memory()),
+            message=serialize(agent.memory.get_memory()),
         )
 
     def download_file(
@@ -551,7 +556,7 @@ class AgentServerServicer(RpcAgentServicer):
         """Processing an input message and generate its reply message.
 
         Args:
-            task_id (`int`): task id of the input message, .
+            task_id (`int`): task id of the input message.
             agent_id (`str`): the id of the agent that accepted the message.
             target_func (`str`): the name of the function that will be called.
             raw_msg (`bytes`): the input serialized message.

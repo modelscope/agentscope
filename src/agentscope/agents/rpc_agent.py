@@ -7,7 +7,7 @@ from loguru import logger
 try:
     import cloudpickle as pickle
 except ImportError as e:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     pickle = ImportErrorReporter(e, "distribute")
 
@@ -87,7 +87,6 @@ class RpcAgent(AgentBase, RpcObject):
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         self._check_created()
         return PlaceholderMessage(
-            name=self.name,
             async_result=AsyncResult(
                 self.host,
                 self.port,

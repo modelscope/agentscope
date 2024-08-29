@@ -7,12 +7,12 @@ from loguru import logger
 try:
     import cloudpickle as pickle
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     pickle = ImportErrorReporter(import_error, "distribtue")
 
 from .rpc_agent_client import RpcAgentClient
-from ..utils.tools import is_web_accessible
+from ..utils.common import _is_web_url
 
 
 def async_func(func: Callable) -> Callable:
@@ -74,7 +74,7 @@ class AsyncResult:
         from rpc server."""
         checked_urls = []
         for url in urls:
-            if not is_web_accessible(url):
+            if not _is_web_url(url):
                 # TODO: download in sub-threads
                 client = RpcAgentClient(self.host, self.port)
                 checked_urls.append(client.download_file(path=url))

@@ -36,7 +36,7 @@ from ..constants import (
     FILE_COUNT_LIMIT,
 )
 from ._studio_utils import _check_and_convert_id_type
-from ..utils.tools import (
+from ..utils.common import (
     _is_process_alive,
     _is_windows,
     _generate_new_runtime_id,
