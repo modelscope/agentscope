@@ -39,15 +39,18 @@ class BasicResultPoolTest(unittest.TestCase):
             oid = pool.prepare()
             get_stubs.append(
                 call_func_in_thread(
-                    functools.partial(test_get_func, oid=oid, pool=pool)
-                )
+                    functools.partial(test_get_func, oid=oid, pool=pool),
+                ),
             )
             set_stubs.append(
                 call_func_in_thread(
                     functools.partial(
-                        test_set_func, oid=oid, value=target_value, pool=pool
-                    )
-                )
+                        test_set_func,
+                        oid=oid,
+                        value=target_value,
+                        pool=pool,
+                    ),
+                ),
             )
         et = time.time()
         self.assertTrue((et - st) < 0.5)
@@ -69,7 +72,7 @@ class BasicResultPoolTest(unittest.TestCase):
         pool = get_pool(pool_type="local", max_len=100, max_timeout=3600)
         self._test_result_pool(pool)
 
-    @unittest.skip
+    @unittest.skip(reason="redis is not installed")
     def test_redis_pool(self) -> None:
         """Test Redis pool"""
         pool = get_pool(
