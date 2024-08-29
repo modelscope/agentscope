@@ -102,7 +102,13 @@ class RedisPool(AsyncResultPool):
             max_timeout (`int`): The max timeout of the result in the pool,
             when it is reached, the oldest item will be removed.
         """
-        self.pool = redis.from_url(url)
+        try:
+            self.pool = redis.from_url(url)
+            self.pool.ping()
+        except Exception as e:
+            raise ConnectionError(
+                f"Redis server at [{url}] is not available."
+            ) from e
         self.max_timeout = max_timeout
 
     def _get_object_id(self) -> int:
