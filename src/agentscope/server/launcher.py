@@ -26,8 +26,8 @@ except ImportError as import_error:
         "distribute",
     )
 import agentscope
+from ..rpc.rpc_meta import RpcMeta
 from ..server.servicer import AgentServerServicer
-from ..manager import ASManager
 from ..utils.common import _check_port, _generate_id_from_seed
 from ..constants import _DEFAULT_RPC_OPTIONS
 
@@ -104,7 +104,7 @@ def _setup_agent_server(
             max_pool_size=max_pool_size,
             max_timeout_seconds=max_timeout_seconds,
             studio_url=studio_url,
-            custom_agent_classes=custom_agent_classes,
+            custom_classes=custom_agent_classes,
             agent_dir=agent_dir,
         ),
     )
@@ -124,7 +124,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     max_pool_size: int = 8192,
     max_timeout_seconds: int = 7200,
     studio_url: str = None,
-    custom_agent_classes: list = None,
+    custom_classes: list = None,
     agent_dir: str = None,
 ) -> None:
     """Setup agent server in an async way.
@@ -170,6 +170,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     """
 
     if init_settings is not None:
+        from agentscope.manager import ASManager
+
         ASManager.get_instance().load_dict(init_settings)
 
     servicer = AgentServerServicer(
@@ -183,21 +185,13 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         max_pool_size=max_pool_size,
         max_timeout_seconds=max_timeout_seconds,
     )
-    if custom_agent_classes is None:
-        custom_agent_classes = []
+    if custom_classes is None:
+        custom_classes = []
     if agent_dir is not None:
-        custom_agent_classes.extend(load_agents_from_dir(agent_dir))
+        custom_classes.extend(load_agents_from_dir(agent_dir))
     # update agent registry
-    for agent_class in custom_agent_classes:
-        from ..agents.agent import AgentBase
-        from ..environment import Env
-
-        if issubclass(agent_class, AgentBase):
-            AgentBase.register_agent_class(agent_class=agent_class)
-        elif issubclass(agent_class, Env):
-            Env.register_env_class(env_class=agent_class)
-        else:
-            logger.warning(f"Class [{agent_class}] is not an agent or env")
+    for cls in custom_classes:
+        RpcMeta.register_class(cls)
 
     async def shutdown_signal_handler() -> None:
         logger.info(
@@ -254,7 +248,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     )
 
 
-def load_agents_from_file(agent_file: str) -> list:
+def load_custom_class_from_file(agent_file: str) -> list:
     """Load AgentBase sub classes from a python file.
 
     Args:
@@ -271,19 +265,13 @@ def load_agents_from_file(agent_file: str) -> list:
     )
     module = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
     spec.loader.exec_module(module)
-    custom_agent_classes = []
-    from ..agents.agent import AgentBase
-    from ..environment import Env
+    custom_classes = []
 
     for attr_name in dir(module):
         attr = getattr(module, attr_name)
-        if (
-            isinstance(attr, type)
-            and (issubclass(attr, AgentBase) or issubclass(attr, Env))
-            and (attr is not AgentBase and attr is not Env)
-        ):
-            custom_agent_classes.append(attr)
-    return custom_agent_classes
+        if isinstance(attr, type):
+            custom_classes.append(attr)
+    return custom_classes
 
 
 def load_agents_from_dir(agent_dir: str) -> list:
@@ -308,7 +296,7 @@ def load_agents_from_dir(agent_dir: str) -> list:
                     try:
                         module_path = os.path.join(root, file)
                         custom_agent_classes.extend(
-                            load_agents_from_file(module_path),
+                            load_custom_class_from_file(module_path),
                         )
                     except Exception as e:
                         logger.error(
@@ -412,7 +400,7 @@ class RpcAgentServerLauncher:
                 max_pool_size=self.max_pool_size,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
-                custom_agent_classes=self.custom_agent_classes,
+                custom_classes=self.custom_agent_classes,
                 agent_dir=self.agent_dir,
                 studio_url=self.studio_url,
             ),
@@ -420,6 +408,8 @@ class RpcAgentServerLauncher:
 
     def _launch_in_sub(self) -> None:
         """Launch an agent server in sub-process."""
+        from agentscope.manager import ASManager
+
         init_settings = ASManager.get_instance().state_dict()
 
         self.parent_con, child_con = Pipe()

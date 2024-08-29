@@ -221,27 +221,6 @@ class RpcAgentClient:
             logger.error(f"Error when delete all agents: {status.message}")
         return status.ok
 
-    def clone_agent(self, agent_id: str) -> Optional[str]:
-        """Clone a new agent instance from the origin instance.
-
-        Args:
-            agent_id (`str`): The agent_id of the agent to be cloned.
-
-        Returns:
-            str: The `agent_id` of the generated agent.
-        """
-        stub = RpcAgentStub(self.channel)
-        resp = stub.clone_agent(
-            agent_pb2.StringMsg(value=agent_id),
-        )
-        if not resp.ok:
-            logger.error(
-                f"Error when clone agent [{agent_id}]: {resp.message}",
-            )
-            return None
-        else:
-            return resp.message
-
     def update_placeholder(self, task_id: int) -> str:
         """Update the placeholder value.
 

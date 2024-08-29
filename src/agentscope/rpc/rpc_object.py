@@ -14,9 +14,7 @@ except ImportError as e:
     pickle = ImportErrorReporter(e, "distribute")
 
 from ..rpc import RpcAgentClient, call_func_in_thread
-from ..exception import AgentServerUnsupportedMethodError, AgentCreationError
-from ..studio._client import _studio_client
-from ..server import RpcAgentServerLauncher
+from ..exception import AgentCreationError
 
 
 def get_public_methods(cls: type) -> list[str]:
@@ -37,10 +35,10 @@ class RpcObject(ABC):
         oid: str,
         host: str,
         port: int,
+        connect_existing: bool = False,
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
         local_mode: bool = True,
-        connect_existing: bool = False,
         configs: dict = None,
     ) -> None:
         """Initialize the rpc object.
@@ -63,10 +61,12 @@ class RpcObject(ABC):
         """
         self.host = host
         self.port = port
-        self._agent_id = oid
+        self._oid = oid
         self._cls = cls
-        self._supported_attributes = get_public_methods(cls)
+        self._public_methods = get_public_methods(cls)
         self.connect_existing = connect_existing
+
+        from ..studio._client import _studio_client
 
         if self.port is None and _studio_client.active:
             server = _studio_client.alloc_server()
@@ -80,6 +80,8 @@ class RpcObject(ABC):
         launch_server = self.port is None
         self.server_launcher = None
         if launch_server:
+            from ..server import RpcAgentServerLauncher
+
             # check studio first
             self.host = "localhost"
             studio_url = None
@@ -107,8 +109,20 @@ class RpcObject(ABC):
             partial(
                 self.client.create_agent,
                 configs,
-                self._agent_id,
+                self._oid,
             ),
+        )
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self._call_rpc_func(
+            "__call__",
+            args={"args": args, "kwargs": kwds},
+        )
+
+    def __getitem__(self, item: str) -> Any:
+        return self._call_rpc_func(
+            "__getitem__",
+            args={"args": (item,)},
         )
 
     def _launch_server(self) -> None:
@@ -140,28 +154,27 @@ class RpcObject(ABC):
         self._check_created()
         return pickle.loads(
             self.client.call_agent_func(
-                agent_id=self._agent_id,
+                agent_id=self._oid,
                 func_name=func_name,
                 value=pickle.dumps(args),
             ),
         )
 
     def __getattr__(self, name: str) -> Callable:
-        if name not in self._supported_attributes:
-            raise AttributeError from AgentServerUnsupportedMethodError(
-                host=self.host,
-                port=self.port,
-                oid=self._agent_id,
-                func_name=name,
-            )
+        if name in self._public_methods:
 
-        def wrapper(*args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
+            def method_wrapper(*args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
+                return self._call_rpc_func(
+                    func_name=name,
+                    args={"args": args, "kwargs": kwargs},
+                )
+
+            return method_wrapper
+        else:
             return self._call_rpc_func(
                 func_name=name,
-                args={"args": args, "kwargs": kwargs},
+                args={},
             )
-
-        return wrapper
 
     def __getstate__(self) -> dict:
         """For serialization."""
@@ -184,7 +197,7 @@ class RpcObject(ABC):
 
         clone = RpcObject(
             cls=self._cls,
-            oid=self._agent_id,
+            oid=self._oid,
             host=self.host,
             port=self.port,
             connect_existing=True,
@@ -192,3 +205,16 @@ class RpcObject(ABC):
         memo[id(self)] = clone
 
         return clone
+
+    def __reduce__(self) -> tuple:
+        self._check_created()
+        return (
+            RpcObject,
+            (
+                self._cls,
+                self._oid,
+                self.host,
+                self.port,
+                True,
+            ),
+        )

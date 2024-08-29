@@ -28,14 +28,13 @@ except ImportError as import_error:
         "distribute",
     )
 
+from agentscope.rpc.rpc_object import RpcObject
+from agentscope.rpc.rpc_meta import RpcMeta
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-from agentscope.manager import ModelManager
-from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.message import PlaceholderMessage
 from agentscope.server.async_result_pool import get_pool
 from agentscope.serialize import serialize
 
@@ -106,6 +105,8 @@ class AgentServerServicer(RpcAgentServicer):
         self.server_id = server_id
         self.studio_url = studio_url
         if studio_url is not None:
+            from agentscope.manager import ASManager
+
             _register_server_to_studio(
                 studio_url=studio_url,
                 server_id=server_id,
@@ -177,21 +178,9 @@ class AgentServerServicer(RpcAgentServicer):
         """Create a new agent on the server."""
         agent_id = request.agent_id
         agent_configs = pickle.loads(request.agent_init_args)
-        type_name = agent_configs["type"]
         cls_name = agent_configs["class_name"]
         try:
-            if type_name == "agent":
-                from agentscope.agents import AgentBase, RpcAgent
-
-                cls = AgentBase.get_agent_class(cls_name)
-                rpc_cls = RpcAgent
-            elif type_name == "env":
-                from agentscope.environment import Env, RpcEnv
-
-                cls = Env.get_env_class(cls_name)
-                rpc_cls = RpcEnv
-            else:
-                raise ValueError("Unknown type: {type_name}")
+            cls = RpcMeta.get_class(cls_name)
         except ValueError as e:
             err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
             logger.error(err_msg)
@@ -211,28 +200,26 @@ class AgentServerServicer(RpcAgentServicer):
         # With this method, all objects stored in agent_pool will be serialized
         # into their Rpc version
         rpc_init_cfg = (
-            instance.name,
             cls,
+            agent_id,
             self.host,
             self.port,
-            agent_id,
             True,
         )
         instance._dist_config = {  # pylint: disable=W0212
-            "cls": rpc_cls,
             "args": rpc_init_cfg,
         }
 
         def to_rpc(obj, _) -> tuple:  # type: ignore[no-untyped-def]
             return (
-                obj._dist_config["cls"],  # pylint: disable=W0212
+                RpcObject,
                 obj._dist_config["args"],  # pylint: disable=W0212
             )
 
         instance.__reduce_ex__ = to_rpc.__get__(  # pylint: disable=E1120
             instance,
         )
-        instance._agent_id = agent_id  # pylint: disable=W0212
+        instance._oid = agent_id  # pylint: disable=W0212
 
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
@@ -272,40 +259,6 @@ class AgentServerServicer(RpcAgentServicer):
                     ok=False,
                     message=f"try to delete a non-existent agent [{aid}].",
                 )
-
-    def clone_agent(
-        self,
-        request: agent_pb2.StringMsg,
-        context: ServicerContext,
-    ) -> agent_pb2.GeneralResponse:
-        """Clone a new agent instance from the origin instance.
-
-        Args:
-            request (`StringMsg`): The `value` field is the agent_id of the
-            agent to be cloned.
-
-        Returns:
-            `GeneralResponse`: The agent_id of generated agent.
-            Empty if clone failed.
-        """
-        agent_id = request.value
-        with self.agent_id_lock:
-            if agent_id not in self.agent_pool:
-                logger.error(
-                    f"Try to clone a non-existent agent [{agent_id}].",
-                )
-                return agent_pb2.GeneralResponse(
-                    ok=False,
-                    message=f"Try to clone a non-existent agent [{agent_id}].",
-                )
-            ori_agent = self.agent_pool[agent_id]
-        new_agent = ori_agent.__class__(
-            *ori_agent._init_settings["args"],  # pylint: disable=W0212
-            **ori_agent._init_settings["kwargs"],  # pylint: disable=W0212
-        )
-        with self.agent_id_lock:
-            self.agent_pool[new_agent.agent_id] = new_agent
-        return agent_pb2.GeneralResponse(ok=True, message=new_agent.agent_id)
 
     def delete_all_agents(
         self,
@@ -375,11 +328,15 @@ class AgentServerServicer(RpcAgentServicer):
                     ),
                 ),
             )
-        args = pickle.loads(raw_value)
-        res = getattr(agent, func_name)(
-            *args.get("args", ()),
-            **args.get("kwargs", {}),
-        )
+        attr = getattr(agent, func_name)
+        if callable(attr):
+            args = pickle.loads(raw_value)
+            res = getattr(agent, func_name)(
+                *args.get("args", ()),
+                **args.get("kwargs", {}),
+            )
+        else:
+            res = attr
         return agent_pb2.CallFuncResponse(
             ok=True,
             value=pickle.dumps(res),
@@ -441,6 +398,8 @@ class AgentServerServicer(RpcAgentServicer):
         context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Set the model configs of the agent server."""
+        from agentscope.manager import ModelManager
+
         model_configs = json.loads(request.value)
         try:
             ModelManager.get_instance().load_model_configs(model_configs)
@@ -541,8 +500,8 @@ class AgentServerServicer(RpcAgentServicer):
         if not isinstance(msgs, list):
             msgs = [msgs]
         for msg in msgs:
-            if isinstance(msg, PlaceholderMessage):
-                msg.update_value()
+            if isinstance(msg, AsyncResult):
+                msg._fetch_result()  # pylint: disable=W0212
         self.agent_pool[request.agent_id].observe(msgs)
         return agent_pb2.CallFuncResponse(ok=True)
 
@@ -566,8 +525,8 @@ class AgentServerServicer(RpcAgentServicer):
         else:
             msg = None
         agent = self.get_agent(agent_id)
-        if isinstance(msg, PlaceholderMessage):
-            msg.update_value()
+        if isinstance(msg, AsyncResult):
+            msg._fetch_result()  # pylint: disable=W0212
         try:
             if target_func == "reply":
                 result = getattr(agent, target_func)(msg)

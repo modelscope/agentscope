@@ -5,7 +5,9 @@ from .rpc_agent_client import (
     call_func_in_thread,
 )
 
-from .rpc_config import DistConf, async_func, AsyncResult
+from .rpc_config import DistConf
+from .rpc_async import async_func, AsyncResult
+from .rpc_object import RpcObject
 
 try:
     from .rpc_agent_pb2 import CallFuncRequest  # pylint: disable=E0611
@@ -24,6 +26,7 @@ __all__ = [
     "CallFuncRequest",
     "RpcAgentServicer",
     "RpcAgentStub",
+    "RpcObject",
     "DistConf",
     "async_func",
     "AsyncResult",
