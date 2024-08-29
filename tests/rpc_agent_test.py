@@ -229,6 +229,13 @@ class BasicRpcAgentTest(unittest.TestCase):
         agentscope.init(
             project="test",
             name="rpc_agent",
+            model_configs=os.path.abspath(
+                os.path.join(
+                    os.path.abspath(os.path.dirname(__file__)),
+                    "custom",
+                    "test_model_config.json",
+                ),
+            ),
             save_dir="./.unittest_runs",
             save_log=True,
         )
@@ -668,6 +675,16 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(remote_content, local_content)
         agent_lists = client.get_agent_list()
         self.assertEqual(len(agent_lists), 2)
+        # test existing model config
+        DialogAgent(
+            name="dialogue",
+            sys_prompt="You are a helful assistant.",
+            model_config_name="qwen",
+            to_dist={
+                "host": "localhost",
+                "port": launcher.port,
+            },
+        )
         # model not exists error
         dialog = DialogAgent(  # pylint: disable=E1123
             name="dialogue",
