@@ -76,10 +76,10 @@ private:
     const string _func_ready_sem_prefix;
     const string _set_result_sem_prefix;
     const string _small_obj_pool_shm_name;
-    const string _small_obj_pool_sem_name;
+    const string _small_obj_pool_filename;
     int _small_obj_pool_shm_fd;
+    int _small_obj_pool_fd;
     void *_small_obj_pool_shm;
-    sem_t *_small_obj_pool_sem;
     const unsigned int _call_shm_size;
     const unsigned int _small_obj_max_num;
     const unsigned int _small_obj_size;
