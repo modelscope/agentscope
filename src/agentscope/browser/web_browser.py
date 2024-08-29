@@ -12,7 +12,7 @@ try:
     import markdownify
     from playwright.sync_api import sync_playwright
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     markdownify = ImportErrorReporter(
         import_error,
@@ -28,55 +28,175 @@ from agentscope.service import ServiceResponse, ServiceExecStatus
 
 
 class WebBrowser:
-    """
-    Web browser interface using playwright + built-in browser.
+    """The web browser for agent, which is implemented with playwright. This
+    module allows agent to interact with web pages, such as visiting a web
+    page, clicking on elements, typing text, scrolling web page, etc.
 
-    This class serve as an interface between agentscope's agent and
-    the web browser to control. The interface is still under update, and more
-    interactive actions, better webpage format presentation will be added
-    in the future.
+    Note:
+        This module is still under development, and changes will be made in the
+        future.
 
-    You have to run `pip install playwright` to install python env
-    and `playwright install` to install the browser before using it.
+    Install:
+        Execute the following code to install the required packages:
+
+        .. code-block:: bash
+
+            pip install playwright
+            playwright install
+
     """
 
     def __init__(
         self,
-        headless: bool = False,
         timeout: int = 60000,
-        default_width: int = 1280,
-        default_height: int = 1080,
+        browser_visible: bool = True,
+        browser_width: int = 1280,
+        browser_height: int = 1080,
     ) -> None:
-        """
-        Init the playwright process and web browser.
+        """Initialize the web browser module.
 
         Args:
-            headless (bool, optional):
-                Whether to run the browser in headless mode. Defaults to False.
-                When set to False, the browser will be visible to user.
-            timeout (int, optional):
+            timeout (`int`, defaults to `60000`):
                 The timeout for the browser to wait for the page to load.
                 Defaults to 60000.
-            default_width (int, optional):
-                The default width of the browser. Defaults to 1280.
-            default_height (int, optional):
-                The default height of the browser. Defaults to 1080.
+            browser_visible (`bool`, defaults to `True`):
+                Whether the browser is visible.
+            browser_width (`int`, defaults to `1280`):
+                The width of the browser. Defaults to 1280.
+            browser_height (`int`, defaults to `1080`):
+                The height of the browser. Defaults to 1080.
         """
-        self.headless = headless
-        self.current_step = 0
 
-        self.playwright_process = sync_playwright().start()
-        self.browser = self.playwright_process.chromium.launch(
-            headless=headless,
+        # Init a web page
+        playwright_process = sync_playwright().start()
+        self.browser = playwright_process.chromium.launch(
+            headless=not browser_visible,
         )
-        self.page = self.browser.new_page()
-        self.page.set_default_timeout(timeout)
-        self.page.set_viewport_size(
-            {"width": default_width, "height": default_height},
+
+        self._page = self.browser.new_page()
+        self._page.set_default_timeout(timeout)
+        self._page.set_viewport_size(
+            {
+                "width": browser_width,
+                "height": browser_height,
+            },
         )
-        self.client = self.page.context.new_cdp_session(self.page)
+
         self.page_elements = []
         self._read_crawlpage_js()
+
+    @property
+    def url(self) -> str:
+        """The url of current page."""
+        return self._page.url
+
+    @property
+    def page_html(self) -> str:
+        """The html content of current page."""
+        return self._page.content()
+
+    @property
+    def page_title(self) -> str:
+        """The title of current page."""
+        return self._page.title()
+
+    @property
+    def page_markdown(self) -> str:
+        """The content of current page in Markdown format."""
+        return markdownify.markdownify(self.page_html)
+
+    @property
+    def page_screenshot(self) -> bytes:
+        """The screenshot of the current page."""
+        return self._page.screenshot()
+
+    # ----- Actions which are performed within a web page ---------------------
+    def action_click(self, element_id: int) -> ServiceResponse:
+        """Click on the element with the given id.
+
+        Args:
+            element_id (`int`):
+                The id of the element to click.
+
+        Returns:
+            `ServiceResponse`:
+                The response of the click action.
+        """
+        pass
+
+    def action_type(self, element_id: int, text: str) -> ServiceResponse:
+        """Type text into the element with the given id.
+
+        Args:
+            element_id (`int`):
+                The id of the element to type text into.
+            text (`str`):
+                The text to type into the element.
+
+        Returns:
+            `ServiceResponse`:
+                The response of the type action.
+        """
+        pass
+
+    def action_scroll_up(self) -> ServiceResponse:
+        """Scroll up the current web page."""
+        pass
+
+    def action_scroll_down(self) -> ServiceResponse:
+        """Scroll down the current web page."""
+        pass
+
+    def action_press_key(self, key: str) -> ServiceResponse:
+        """Press down a key in the current web page.
+
+        Args:
+            key (`str`):
+                Chosen from `F1` - `F12`, `Digit0`- `Digit9`, `KeyA`- `KeyZ`,
+                `Backquote`, `Minus`, `Equal`, `Backslash`, `Backspace`,
+                `Tab`, `Delete`, `Escape`, `ArrowDown`, `End`, `Enter`,
+                `Home`, `Insert`, `PageDown`, `PageUp`, `ArrowRight`, `ArrowUp`
+                , etc.
+        """
+        pass
+
+    # ------ Actions which are performed to change the web page ---------------
+    def action_visit_url(self, url: str) -> ServiceResponse:
+        """Visit the given url.
+
+        Args:
+            url (`str`):
+                The url to visit in browser.
+        """
+        pass
+
+    def get_action_functions(self) -> list:
+        """Return a list of the available action functions."""
+        return [
+            self.action_click,
+            self.action_type,
+            self.action_scroll_up,
+            self.action_scroll_down,
+            self.action_press_key,
+            self.action_visit_url,
+        ]
+
+    def _get_jina_page(self) -> str:
+        """Return the formatted current page text, using api from jina"""
+        jina_url = "https://r.jina.ai/" + self.url
+        try:
+            page_text = requests.get(jina_url).text
+            return page_text
+        except Exception as e:
+            return (
+                f"Encounter exception {str(e)}"
+                f"The page in {self.url} might not be loaded yet"
+                "you might want to check the request connection or api quota."
+            )
+
+    def close(self) -> None:
+        """Close the browser"""
+        self.browser.close()
 
     def _read_crawlpage_js(self) -> None:
         """
@@ -100,13 +220,13 @@ class WebBrowser:
         """
         if "://" not in url:
             url = f"https://{url}"
-        self.page.goto(url)
-        self.client = self.page.context.new_cdp_session(self.page)
+        self._page.goto(url)
+        self.client = self._page.context.new_cdp_session(self._page)
         self.page_elements = []
         time.sleep(3)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
-            content=self.page.url,
+            content=self._page.url,
         )
 
     def scroll(self, direction: str) -> ServiceResponse:
@@ -134,9 +254,9 @@ class WebBrowser:
         """
         Scroll up the current browser window.
         """
-        self.page.keyboard.down("Alt")
-        self.page.keyboard.press("ArrowUp")
-        self.page.keyboard.up("Alt")
+        self._page.keyboard.down("Alt")
+        self._page.keyboard.press("ArrowUp")
+        self._page.keyboard.up("Alt")
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Scroll up done",
@@ -146,86 +266,60 @@ class WebBrowser:
         """
         Scroll down the current browser window.
         """
-        self.page.keyboard.down("Alt")
-        self.page.keyboard.press("ArrowDown")
-        self.page.keyboard.up("Alt")
+        self._page.keyboard.down("Alt")
+        self._page.keyboard.press("ArrowDown")
+        self._page.keyboard.up("Alt")
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Scroll down done",
         )
 
-    def click(self, click_id: int) -> ServiceResponse:
-        """
-        Click on the element with the given id
+    def click(self, element_id: int) -> ServiceResponse:
+        """Click on the element with the given id
+
         Args:
-            click_id (int): The id of the element to click.
-        Note: The id should start from 0
+            element_id (int): The id of the element to click.
+
+        Returns:
+            `ServiceResponse`: The response of the click action.
         """
         # TODO enable both logic for text-based and vision-based
-        element_handle = self.page_elements[click_id]
+        element_handle = self.page_elements[element_id]
         element_handle.evaluate(
             "element => element.setAttribute('target', '_self')",
         )
-        ele_info = element_handle.evaluate(
-            "element => element.getBoundingClientRect()",
-        )
-        ele_info = self.page.evaluate("getElementInfo", element_handle)
+        ele_info = self._page.evaluate("getElementInfo", element_handle)
         if ele_info["tag_name"] == "button" and ele_info["type"] == "submit":
             time.sleep(5)
         element_handle.click()
         time.sleep(5)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
-            content=f"Click on element {click_id} done",
-        )
-
-    def find_on_page(self, query: str) -> ServiceResponse:
-        """
-        Find the query in the current page, make it center of the page,
-        behave like control_f
-
-        Returns:
-            bool : whether the query is found
-        """
-        # TODO the function is not yet implement
-        # TODO whether to implement this in javascript or find other methods
-        logger.info(f"Searching on {query}")
-        return ServiceResponse(
-            status=ServiceExecStatus.SUCCESS,
-            content=f"Search on {query} done, found xxx",
-        )
-
-    def find_next(self) -> ServiceResponse:
-        """
-        Goto the next position of the previous ctrl-f query
-        """
-        # TODO the function is not yet implement
-        return ServiceResponse(
-            status=ServiceExecStatus.SUCCESS,
-            content="Find next done",
+            content=f"Click on element {element_id} done",
         )
 
     def enter(self) -> ServiceResponse:
         """
         Press enter.
         """
-        self.page.keyboard.press("Enter")
+        self._page.keyboard.press("Enter")
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Enter pressed",
         )
 
     def press_key(self, key: str) -> ServiceResponse:
-        """
-        Press down a key in the current page
+        """Press down a key in the current page.
+
         Args:
-            key(`str`) : `F1` - `F12`, `Digit0`- `Digit9`, `KeyA`- `KeyZ`,
-            `Backquote`, `Minus`, `Equal`, `Backslash`, `Backspace`, `Tab`,
-            `Delete`, `Escape`, `ArrowDown`, `End`, `Enter`, `Home`, `Insert`,
-            `PageDown`, `PageUp`, `ArrowRight`, `ArrowUp`,
-        etc.
+            key (`str`):
+                Chosen from `F1` - `F12`, `Digit0`- `Digit9`, `KeyA`- `KeyZ`,
+                `Backquote`, `Minus`, `Equal`, `Backslash`, `Backspace`,
+                `Tab`, `Delete`, `Escape`, `ArrowDown`, `End`, `Enter`,
+                `Home`, `Insert`, `PageDown`, `PageUp`, `ArrowRight`, `ArrowUp`
+                , etc.
         """
-        self.page.keyboard.press(key)
+        self._page.keyboard.press(key)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content=f"Press key: {key} done",
@@ -233,31 +327,38 @@ class WebBrowser:
 
     def type(
         self,
-        click_id: int,
+        element_id: int,
         text: str,
         submit: bool = False,
     ) -> ServiceResponse:
-        """
-        Type text in the given elements
+        """Type text into the element with the given id.
+
         Args:
-            click_id(`int`) : the id of the element to type into
-            text(`str`) : text to type
-            submit(`bool`) : whether to submit the type result after typing
+            element_id (`int`):
+                The id of the element to type text into.
+            text (`str`):
+                The text to type into the element.
+            submit (`bool`, defaults to `False`):
+                Whether to submit the type result after typing.
+
+        Returns:
+            `ServiceResponse`:
+                The response of the type action.
         """
-        self.click(click_id)
-        web_ele = self.page_elements[click_id]
+        self.click(element_id)
+        web_ele = self.page_elements[element_id]
 
         # try to clear the text within the given elements
         try:
-            self.page.evaluate('element => element.value = ""', web_ele)
+            self._page.evaluate('element => element.value = ""', web_ele)
         except Exception as e:
             logger.info(
-                f"Expection {str(e)}, "
+                f"Exception {str(e)}, "
                 "unable to clear the value within the given elements.",
             )
 
         # focus on the element to type
-        self.page.evaluate("element => element.focus()", web_ele)
+        self._page.evaluate("element => element.focus()", web_ele)
 
         web_ele.type(text)
         time.sleep(2)
@@ -271,37 +372,39 @@ class WebBrowser:
 
     def go_back(self) -> ServiceResponse:
         """Go back to the previous page"""
-        self.page.go_back()
+        self._page.go_back()
         time.sleep(2)
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content="Go back done",
         )
 
-    def focus_element(self, ele_id: int) -> ServiceResponse:
-        """
-        Scroll to focus on the element with given id.
+    def focus_element(self, element_id: int) -> ServiceResponse:
+        """Scroll the browser window to focus on the element with the given id.
 
         Args:
-            ele_id(`int`) : the id of the element to focus on
+            element_id (`int`) :
+                The id of the element to focus on.
+
+        Returns:
+            `ServiceResponse`:
+                The response of the focus action.
         """
-        web_ele = self.page_elements[ele_id]
+        web_ele = self.page_elements[element_id]
         web_ele.evaluate("element => element.focus()")
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
-            content=f"Focus on element {ele_id} done",
+            content=f"Focus on element {element_id} done",
         )
 
     # from webvoyager
     def try_click_body(self) -> None:
-        """
-        Try to click the main body of webpage.
-        """
+        """Try to click the main body of webpage."""
         try:
-            self.page.locator("body").click()
+            self._page.locator("body").click()
         except Exception as e:
             logger.info(
-                f"Unable to locat and click 'body' in webpage, {str(e)}",
+                f"Unable to locate and click 'body' in webpage, {str(e)}",
             )
 
     def _remove_labels_by_handle(self, labels_handle: object) -> None:
@@ -319,8 +422,7 @@ class WebBrowser:
         with_meta: bool = False,
         with_select: bool = False,
     ) -> tuple:
-        """
-        Process the current page, return the interactive elements and
+        """Process the current page, return the interactive elements and
         corresponding infos.
 
         Args:
@@ -352,8 +454,8 @@ class WebBrowser:
         """
         js_script = self._crawlpage_js
 
-        self.page.evaluate(js_script)
-        result_handle = self.page.evaluate_handle(
+        self._page.evaluate(js_script)
+        result_handle = self._page.evaluate_handle(
             f"crawlPage({str(vision).lower()})",
         )
 
@@ -375,7 +477,7 @@ class WebBrowser:
 
         items_raw = items_handle.json_value()
         web_ele_infos = [
-            self.page.evaluate("getElementInfo", ele) for ele in elements
+            self._page.evaluate("getElementInfo", ele) for ele in elements
         ]
 
         format_ele_text = []
@@ -426,53 +528,9 @@ class WebBrowser:
         screenshot_bytes = None
 
         if vision:
-            screenshot_bytes = self.page_screenshot()
+            screenshot_bytes = self.page_screenshot
             self._remove_labels_by_handle(labels_handle)
 
         time.sleep(3)
 
         return elements, format_ele_text, screenshot_bytes, web_ele_infos
-
-    @property
-    def url(self) -> str:
-        """return the url of current page"""
-        return self.page.url
-
-    @property
-    def page_html(self) -> str:
-        """return the html content of current page"""
-        return self.page.content()
-
-    @property
-    def page_title(self) -> str:
-        """return the title of current page"""
-        return self.page.title()
-
-    @property
-    def page_markdown(self) -> str:
-        """return the content of current page, in markdown format"""
-        return markdownify.markdownify(self.page_html)
-
-    def _get_jina_page(self) -> str:
-        """return the formattted current page text, using api from jina"""
-        jina_url = "https://r.jina.ai/" + self.url
-        try:
-            page_text = requests.get(jina_url).text
-            return page_text
-        except Exception as e:
-            return (
-                f"Enconter exception {str(e)}"
-                f"The page in {self.url} might not be loaded yet"
-                "you might want to check the request connection or api qutoa."
-            )
-
-    def page_screenshot(self) -> bytes:
-        # TODO whether to keep this or intergrate into crawlpage.
-        """
-        Get the screen shot of the current page
-        """
-        return self.page.screenshot()
-
-    def close(self) -> None:
-        """close the browser"""
-        self.browser.close()

@@ -19,8 +19,9 @@ model_config = {
     },
 }
 
+
 agentscope.init(
-    model_configs="gpt-4o_config",
+    model_configs=model_config,
     project="Conversation with WebVoyagerAgent",
 )
 
@@ -28,7 +29,7 @@ agentscope.init(
 browser = WebBrowser()
 agent = WebVoyagerAgent(
     browser=browser,
-    model_config_name="gpt-4o",
+    model_config_name="gpt-4o_config",
     name="Browser Agent",
 )
 

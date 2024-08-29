@@ -14,9 +14,9 @@ from loguru import logger
 
 
 from agentscope.agents import AgentBase
+from agentscope.manager import FileManager
 from agentscope.message import Msg
 from agentscope.browser import WebBrowser
-from agentscope.file_manager import file_manager
 from agentscope.parsers import RegexTaggedContentParser
 from agentscope.exception import TagNotFoundError
 
@@ -93,7 +93,7 @@ class WebVoyagerAgent(AgentBase):
         sys_prompt: str = DEFAULT_SYSTEM_PROMPT,
         max_iter: int = 15,
         max_attached_imgs: int = 2,
-        default_homepage: str = "https://www.google.com",
+        default_homepage: str = "https://www.bing.com",
     ) -> None:
         """Initialize the WebVoyager agent.
 
@@ -141,7 +141,7 @@ class WebVoyagerAgent(AgentBase):
 
     def _clip_message_and_obs(self, msg_list: list) -> list:
         """
-        Avoid to much image contents so the model won't confuse.
+        Avoid too much image contents so the model won't confuse.
         """
         max_img_num = self.max_attached_imgs
         clipped_msg = []
@@ -219,7 +219,7 @@ class WebVoyagerAgent(AgentBase):
         # init task
         if isinstance(x.content, str):
             self.task_question = x.content
-            self.task_dir = file_manager.dir_file
+            self.task_dir = FileManager.get_instance().file_dir
         else:
             self.task_question = x.content["question"]
             self.task_dir = x.content["dir"]
@@ -229,7 +229,7 @@ class WebVoyagerAgent(AgentBase):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        time.sleep(5)
+        # time.sleep(5)
 
         fail_obs = ""  # When error execute the action
         warn_obs = ""  # Type warning
@@ -262,8 +262,11 @@ class WebVoyagerAgent(AgentBase):
                     self.task_dir,
                     f"screenshot_{it}.png",
                 )
-
-                file_manager.save_image(screenshot_bytes, img_path)
+                # 保存现在的截图
+                FileManager.get_instance().save_image(
+                    screenshot_bytes,
+                    img_path,
+                )
 
                 curr_msg = self._get_step_msg(
                     it,
@@ -393,7 +396,7 @@ class WebVoyagerAgent(AgentBase):
 
     def _extract_action(self, text: str) -> Tuple[Any, Any]:
         """
-        Extract action from responsed action text
+        Extract action from response action text
         """
         patterns = {
             "click": r"Click \[?(\d+)\]?",
