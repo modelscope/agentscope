@@ -278,32 +278,14 @@ class AgentServerServicer(RpcAgentServicer):
         context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Call the specific servicer function."""
-        if not self.agent_exists(request.agent_id):
+        agent_id = request.agent_id
+        func_name = request.target_func
+        raw_value = request.value
+        agent = self.get_agent(request.agent_id)
+        if agent is None:
             return context.abort(
                 grpc.StatusCode.INVALID_ARGUMENT,
                 f"Agent [{request.agent_id}] not exists.",
-            )
-        if hasattr(self, request.target_func):
-            return getattr(self, request.target_func)(request)
-        else:
-            return self.call_custom_func(
-                request.agent_id,
-                request.target_func,
-                request.value,
-            )
-
-    def call_custom_func(
-        self,
-        agent_id: str,
-        func_name: str,
-        raw_value: bytes,
-    ) -> agent_pb2.GeneralResponse:
-        """Call a custom function"""
-        agent = self.get_agent(agent_id)
-        if not agent:
-            return agent_pb2.GeneralResponse(
-                success=False,
-                message=f"Agent [{agent_id}] not exists.",
             )
         func = getattr(agent, func_name)
         if (
@@ -452,58 +434,6 @@ class AgentServerServicer(RpcAgentServicer):
                 if not piece:
                     break
                 yield agent_pb2.ByteMsg(data=piece)
-
-    def _reply(
-        self,
-        request: agent_pb2.CallFuncRequest,
-    ) -> agent_pb2.CallFuncResponse:
-        """Call function of RpcAgentService
-
-        Args:
-            request (`CallFuncRequest`):
-                Message containing input parameters or input parameter
-                placeholders.
-
-        Returns:
-            `CallFuncRequest`: A serialized Msg instance with attributes name,
-            host, port and task_id
-        """
-        task_id = self.result_pool.prepare()
-        self.executor.submit(
-            self._process_messages,
-            task_id,
-            request.agent_id,
-            "reply",
-            request.value,
-        )
-        return agent_pb2.CallFuncResponse(
-            ok=True,
-            value=pickle.dumps(
-                task_id,
-            ),
-        )
-
-    def _observe(
-        self,
-        request: agent_pb2.CallFuncRequest,
-    ) -> agent_pb2.CallFuncResponse:
-        """Observe function of the original agent.
-
-        Args:
-            request (`CallFuncRequest`):
-                The serialized input to be observed.
-
-        Returns:
-            `CallFuncRequest`: Empty CallFuncRequest.
-        """
-        msgs = pickle.loads(request.value)
-        if not isinstance(msgs, list):
-            msgs = [msgs]
-        for msg in msgs:
-            if isinstance(msg, AsyncResult):
-                msg._fetch_result()  # pylint: disable=W0212
-        self.agent_pool[request.agent_id].observe(msgs)
-        return agent_pb2.CallFuncResponse(ok=True)
 
     def _process_messages(
         self,
