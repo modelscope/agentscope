@@ -288,3 +288,8 @@ class AgentBase(Operator, metaclass=RpcMeta):
             str: agent_id
         """
         return self._oid
+
+    @agent_id.setter
+    def agent_id(self, agent_id: str) -> None:
+        """Set the unique id of this agent."""
+        self._oid = agent_id
