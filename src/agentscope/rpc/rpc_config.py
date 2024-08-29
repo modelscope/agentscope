@@ -17,7 +17,7 @@ from ..utils.common import _is_web_url
 
 def async_func(func: Callable) -> Callable:
     """A decorator for async function.
-    In distributed mode, async functions will return a placeholder message
+    In distributed mode, async functions will return a `AsyncResult`
     immediately.
 
     Args:
@@ -26,6 +26,9 @@ def async_func(func: Callable) -> Callable:
 
     func._is_async = True  # pylint: disable=W0212
     return func
+
+
+# TODO: support stream functions with `stream_func`
 
 
 class AsyncResult:
