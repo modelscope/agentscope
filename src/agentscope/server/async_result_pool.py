@@ -107,7 +107,7 @@ class RedisPool(AsyncResultPool):
             self.pool.ping()
         except Exception as e:
             raise ConnectionError(
-                f"Redis server at [{url}] is not available."
+                f"Redis server at [{url}] is not available.",
             ) from e
         self.max_timeout = max_timeout
 
