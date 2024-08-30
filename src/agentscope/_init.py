@@ -2,7 +2,6 @@
 """The init function for the package."""
 import json
 from typing import Optional, Union, Sequence
-import multiprocessing
 from agentscope import agents
 from .agents import AgentBase
 from .logging import LOG_LEVEL
@@ -93,10 +92,6 @@ def init(
         run_id=runtime_id,
         studio_url=studio_url,
     )
-    # set the multiprocessing start method
-    start_method = multiprocessing.get_start_method()
-    if start_method != "spawn":
-        multiprocessing.set_start_method("spawn", force=True)
 
     # Load config and init agent by configs
     if agent_configs is not None:
