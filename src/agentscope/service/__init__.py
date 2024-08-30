@@ -106,8 +106,8 @@ __all__ = [
     "openai_image_to_text",
     "openai_edit_image",
     "openai_create_image_variation",
-    "tripadvisor_search_location_photos",
     "tripadvisor_search",
+    "tripadvisor_search_location_photos",
     "tripadvisor_search_location_details",
     # to be deprecated
     "ServiceFactory",
