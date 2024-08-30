@@ -15,10 +15,10 @@ import cloudpickle as pickle
 
 
 import agentscope
-from agentscope.agents import AgentBase, DistConf, DialogAgent
+from agentscope.agents import AgentBase, DialogAgent
 from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
-from agentscope.rpc import AsyncResult, RpcObject
+from agentscope.rpc import AsyncResult, RpcObject, DistConf
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline

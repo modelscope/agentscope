@@ -64,6 +64,10 @@ class AsyncResult:
         self._check_and_download_files()
         self._ready = True
 
+    def update_value(self) -> None:
+        """Update the value. For compatibility with old version."""
+        self._fetch_result()
+
     def _get_task_id(self) -> str:
         """get the task_id."""
         try:
