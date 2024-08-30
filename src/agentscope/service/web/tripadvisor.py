@@ -7,7 +7,7 @@ from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
 
-def get_tripadvisor_location_photos(
+def tripadvisor_search_location_photos(
     api_key: str,
     location_id: str = None,
     query: str = None,
@@ -82,14 +82,14 @@ def get_tripadvisor_location_photos(
         .. code-block:: python
 
             # Using location_id
-            result = get_tripadvisor_location_photos(
+            result = tripadvisor_search_location_photos(
                 "your_api_key", location_id="123456", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
             # Or using a query
-            result = get_tripadvisor_location_photos(
+            result = tripadvisor_search_location_photos(
                 "your_api_key", query="Eiffel Tower", language="en"
             )
             if result.status == ServiceExecStatus.SUCCESS:
@@ -135,8 +135,8 @@ def get_tripadvisor_location_photos(
         raise ValueError("Either location_id or query must be provided.")
 
     if location_id is None:
-        # Use search_tripadvisor to get the location_id
-        search_result = search_tripadvisor(api_key, query, language)
+        # Use tripadvisor_search to get the location_id
+        search_result = tripadvisor_search(api_key, query, language)
         if search_result.status != ServiceExecStatus.SUCCESS:
             return search_result
 
@@ -200,7 +200,7 @@ def get_tripadvisor_location_photos(
         )
 
 
-def search_tripadvisor(
+def tripadvisor_search(
     api_key: str,
     query: str,
     language: str = "en",
@@ -248,7 +248,7 @@ def search_tripadvisor(
     Example:
         .. code-block:: python
 
-            result = search_tripadvisor("your_api_key", "Socotra", "en")
+            result = tripadvisor_search("your_api_key", "Socotra", "en")
             if result.status == ServiceExecStatus.SUCCESS:
                 print(result.content)
 
@@ -323,7 +323,7 @@ def search_tripadvisor(
         )
 
 
-def get_tripadvisor_location_details(
+def tripadvisor_search_location_details(
     api_key: str,
     location_id: str = None,
     query: str = None,
@@ -366,7 +366,7 @@ def get_tripadvisor_location_details(
         .. code-block:: python
 
             # Using location_id
-            result = get_tripadvisor_location_details(
+            result = tripadvisor_search_location_details(
                 "your_api_key",
                 location_id="574818",
                 language="en",
@@ -376,7 +376,7 @@ def get_tripadvisor_location_details(
                 print(result.content)
 
             # Or using a query
-            result = get_tripadvisor_location_details(
+            result = tripadvisor_search_location_details(
                 "your_api_key",
                 query="Socotra Island",
                 language="en",
@@ -460,8 +460,8 @@ def get_tripadvisor_location_details(
         raise ValueError("Either location_id or query must be provided.")
 
     if location_id is None:
-        # Use search_tripadvisor to get the location_id
-        search_result = search_tripadvisor(api_key, query, language)
+        # Use tripadvisor_search to get the location_id
+        search_result = tripadvisor_search(api_key, query, language)
         if search_result.status != ServiceExecStatus.SUCCESS:
             return search_result
 

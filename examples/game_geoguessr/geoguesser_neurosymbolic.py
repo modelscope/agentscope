@@ -14,9 +14,9 @@ import agentscope
 from agentscope.message import Msg
 from agentscope.agents import DialogAgent
 from agentscope.service import (
-    get_tripadvisor_location_photos,
-    search_tripadvisor,
-    get_tripadvisor_location_details,
+    tripadvisor_search_location_photos,
+    tripadvisor_search,
+    tripadvisor_search_location_details,
 )
 from agentscope.service.service_toolkit import ServiceToolkit
 
@@ -32,15 +32,15 @@ agentscope.init(
 # Initialize the ServiceToolkit and register the TripAdvisor API functions
 service_toolkit = ServiceToolkit()
 service_toolkit.add(
-    search_tripadvisor,
+    tripadvisor_search,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
 service_toolkit.add(
-    get_tripadvisor_location_details,
+    tripadvisor_search_location_details,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
 service_toolkit.add(
-    get_tripadvisor_location_photos,
+    tripadvisor_search_location_photos,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
 

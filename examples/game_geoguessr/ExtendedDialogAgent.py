@@ -167,7 +167,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
         response_str = self.service_toolkit.parse_and_call_func(
             [
                 {
-                    "name": "search_tripadvisor",
+                    "name": "tripadvisor_search",
                     "arguments": {"query": proposed_location},
                 },
             ],
@@ -247,7 +247,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
         response_str = self.service_toolkit.parse_and_call_func(
             [
                 {
-                    "name": "get_tripadvisor_location_details",
+                    "name": "tripadvisor_search_location_details",
                     "arguments": {"location_id": location_id},
                 },
             ],
@@ -275,7 +275,7 @@ class ExtendedDialogAgent(BaseDialogAgent):
         response_str = self.service_toolkit.parse_and_call_func(
             [
                 {
-                    "name": "get_tripadvisor_location_photos",
+                    "name": "tripadvisor_search_location_photos",
                     "arguments": {"location_id": location_id},
                 },
             ],

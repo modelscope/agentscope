@@ -14,9 +14,9 @@ import agentscope
 from agentscope.message import Msg
 from agentscope.agents import ReActAgent
 from agentscope.service import (
-    get_tripadvisor_location_photos,
-    search_tripadvisor,
-    get_tripadvisor_location_details,
+    tripadvisor_search_location_photos,
+    tripadvisor_search,
+    tripadvisor_search_location_details,
 )
 
 agentscope.init(
@@ -156,15 +156,15 @@ def save_image_from_url(
 # Initialize the ServiceToolkit and register the TripAdvisor API functions
 service_toolkit = ServiceToolkit()
 service_toolkit.add(
-    search_tripadvisor,
+    tripadvisor_search,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
 service_toolkit.add(
-    get_tripadvisor_location_details,
+    tripadvisor_search_location_details,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
 service_toolkit.add(
-    get_tripadvisor_location_photos,
+    tripadvisor_search_location_photos,
     api_key="",
 )  # Replace with your actual TripAdvisor API key
 service_toolkit.add(
@@ -183,10 +183,10 @@ gamemaster_agent = ReActAgent(
         You interacts with the player following the procedures below:
         1. You propose a location (anywhere on earth, the mroe random
         and low-profile the better, diversify your proposal), then
-        uses the tool `search_tripadvisor` to get its `location_id`;
+        uses the tool `tripadvisor_search` to get its `location_id`;
         if multiple places are returned, you choose the one that matches
         what you proposed the most.
-        2. You use the method `get_tripadvisor_location_photos` to get
+        2. You use the method `tripadvisor_search_location_photos` to get
         the url of the image about this location, save the image with
         the method `save_image_from_url` (do not tell the url directly
         to the player; the player will be able to see the saved image),
@@ -194,7 +194,7 @@ gamemaster_agent = ReActAgent(
         country/state/region/city/municipality this location is in.
         If the url is not available for this particular location,
         repeat step 1 and 2 until a valid image url is found.
-        3. You use the tool `get_tripadvisor_location_details`
+        3. You use the tool `tripadvisor_search_location_details`
         to get this location's details.
         4. If the player's answer matches exactly the locaiton name
         correspond to the most precise `level` in `ancestors` in the
