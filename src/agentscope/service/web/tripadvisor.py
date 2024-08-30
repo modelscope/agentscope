@@ -3,8 +3,8 @@
 
 from loguru import logger
 import requests
-from agentscope.service.service_response import ServiceResponse
-from agentscope.service.service_status import ServiceExecStatus
+from ..service_response import ServiceResponse
+from ..service_status import ServiceExecStatus
 
 
 def tripadvisor_search_location_photos(
@@ -20,8 +20,8 @@ def tripadvisor_search_location_photos(
         api_key (`str`):
             Your TripAdvisor API key.
         location_id (`str`, optional):
-            The ID of the location for which to retrieve photos.
-            Required if query is not provided.
+            The unique identifier for a location on Tripadvisor. The location
+            ID can be obtained using the tripadvisor_search function
         query (`str`, optional):
             The search query to find a location. Required if
             location_id is not provided.
@@ -36,43 +36,55 @@ def tripadvisor_search_location_photos(
 
         If successful, the `content` will be a dictionary
         with the following structure:
-        {
-            'photo_data': {
-                'data': [
-                    {
-                        'id': int,
-                        'is_blessed': bool,
-                        'caption': str,
-                        'published_date': str,
-                        'images': {
-                            'thumbnail': {
-                                'height': int,
-                                'width': int,
-                                'url': str
+
+        .. code-block:: json
+
+            {
+                'photo_data': {
+                    'data': [
+                        {
+                            'id': int,
+                            'is_blessed': bool,
+                            'caption': str,
+                            'published_date': str,
+                            'images': {
+                                'thumbnail': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'small': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'medium': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'large': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                },
+                                'original': {
+                                    'height': int,
+                                    'width': int,
+                                    'url': str
+                                }
                             },
-                            'small': {'height': int, 'width': int, 'url': str},
-                            'medium': {
-                                'height': int,
-                                'width': int,
-                                'url': str
-                            },
-                            'large': {'height': int, 'width': int, 'url': str},
-                            'original': {
-                                'height': int,
-                                'width': int,
-                                'url': str
-                            }
+                            'album': str,
+                            'source': {'name': str, 'localized_name': str},
+                            'user': {'username': str}
                         },
-                        'album': str,
-                        'source': {'name': str, 'localized_name': str},
-                        'user': {'username': str}
-                    },
-                    ...
-                ]
+                        ...
+                    ]
+                }
             }
-        }
-        Each item in the 'data' list represents
-        a photo associated with the location.
+
+        Each item in the 'data' list represents a photo associated with the
+        location.
 
     Note:
         Either `location_id` or `query` must be provided. If both are provided,
@@ -171,7 +183,7 @@ def tripadvisor_search_location_photos(
     logger.info(f"Requesting photos for location ID {location_id}")
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)
         logger.info(
             f"Received response with status code {response.status_code}",
         )
@@ -294,7 +306,7 @@ def tripadvisor_search(
     logger.info(f"Searching for locations with query '{query}'")
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)
         logger.info(
             f"Received response with status code {response.status_code}",
         )
@@ -331,8 +343,7 @@ def tripadvisor_search_location_details(
     currency: str = "USD",
 ) -> ServiceResponse:
     """
-    Get detailed information about a specific location
-    using the TripAdvisor API.
+    Get detailed information about a specific location using the TripAdvisor API.
 
     Args:
         api_key (`str`):
@@ -344,9 +355,10 @@ def tripadvisor_search_location_details(
             The search query to find a location. Required if
             location_id is not provided.
         language (`str`, optional):
-            The language for the response. Defaults to 'en'.
+            The language for the response. Defaults to 'en', 'zh' for Chinese.
         currency (`str`, optional):
-            The currency for pricing information. Defaults to 'USD'.
+            The currency code to use for request and response
+            (should follow ISO 4217). Defaults to 'USD'.
 
     Returns:
         `ServiceResponse`: A dictionary with two variables: `status` and
@@ -366,7 +378,7 @@ def tripadvisor_search_location_details(
         .. code-block:: python
 
             # Using location_id
-            result = tripadvisor_search_location_details(
+            result = get_tripadvisor_location_details(
                 "your_api_key",
                 location_id="574818",
                 language="en",
@@ -376,7 +388,7 @@ def tripadvisor_search_location_details(
                 print(result.content)
 
             # Or using a query
-            result = tripadvisor_search_location_details(
+            result = get_tripadvisor_location_details(
                 "your_api_key",
                 query="Socotra Island",
                 language="en",
@@ -455,7 +467,7 @@ def tripadvisor_search_location_details(
 
     Raises:
         ValueError: If neither location_id nor query is provided.
-    """
+    """  # noqa
     if location_id is None and query is None:
         raise ValueError("Either location_id or query must be provided.")
 
@@ -495,7 +507,7 @@ def tripadvisor_search_location_details(
     logger.info(f"Requesting details for location ID {location_id}")
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)
         logger.info(
             f"Received response with status code {response.status_code}",
         )
