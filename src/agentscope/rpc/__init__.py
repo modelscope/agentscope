@@ -4,9 +4,9 @@ from .rpc_agent_client import (
     RpcAgentClient,
     call_func_in_thread,
 )
-
+from .rpc_meta import async_func, sync_func, RpcMeta
 from .rpc_config import DistConf
-from .rpc_async import async_func, AsyncResult
+from .rpc_async import AsyncResult
 from .rpc_object import RpcObject
 
 try:
@@ -22,13 +22,15 @@ except ImportError as import_error:
 
 
 __all__ = [
+    "RpcMeta",
+    "async_func",
+    "sync_func",
     "RpcAgentClient",
     "CallFuncRequest",
     "RpcAgentServicer",
     "RpcAgentStub",
     "RpcObject",
     "DistConf",
-    "async_func",
     "AsyncResult",
     "call_func_in_thread",
 ]

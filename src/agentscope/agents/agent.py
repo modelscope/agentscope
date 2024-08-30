@@ -14,8 +14,7 @@ from loguru import logger
 
 from agentscope.agents.operator import Operator
 from agentscope.rpc.rpc_config import DistConf
-from agentscope.rpc.rpc_async import async_func
-from agentscope.rpc.rpc_meta import RpcMeta
+from agentscope.rpc.rpc_meta import RpcMeta, async_func, sync_func
 from agentscope.logging import log_stream_msg, log_msg
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
@@ -266,6 +265,7 @@ class AgentBase(Operator, metaclass=RpcMeta):
         for agent in self._audience:
             agent.observe(x)
 
+    @sync_func
     def __str__(self) -> str:
         serialized_fields = {
             "name": self.name,

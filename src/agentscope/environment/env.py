@@ -10,7 +10,7 @@ from ..exception import (
     EnvAlreadyExistError,
 )
 from .event import Event
-from ..rpc.rpc_meta import RpcMeta
+from ..rpc.rpc_meta import RpcMeta, sync_func
 
 
 def trigger_listener(env: "Env", event: Event) -> None:
@@ -196,6 +196,7 @@ class Env(ABC, metaclass=RpcMeta):
             `List[EventListener]`: The listeners of the specific event.
         """
 
+    @sync_func
     @abstractmethod
     def __getitem__(self, env_name: str) -> Env:
         """Get a child env."""

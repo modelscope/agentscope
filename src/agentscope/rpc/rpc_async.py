@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Async related modules."""
-from typing import Callable, Any
+from typing import Any
 from concurrent.futures import Future
 from loguru import logger
 
@@ -14,19 +14,6 @@ except ImportError as import_error:
 from ..message import Msg
 from .rpc_agent_client import RpcAgentClient
 from ..utils.common import _is_web_url
-
-
-def async_func(func: Callable) -> Callable:
-    """A decorator for async function.
-    In distributed mode, async functions will return a `AsyncResult`
-    immediately.
-
-    Args:
-        func (`Callable`): The function to decorate.
-    """
-
-    func._is_async = True  # pylint: disable=W0212
-    return func
 
 
 class AsyncResult:
@@ -71,7 +58,7 @@ class AsyncResult:
     def _get_task_id(self) -> str:
         """get the task_id."""
         try:
-            return pickle.loads(self._stub.result())
+            return self._stub.result()
         except Exception as e:
             logger.error(
                 f"Failed to get task_id: {self._stub.result()}",

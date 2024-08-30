@@ -13,7 +13,8 @@ except ImportError as e:
 
     pickle = ImportErrorReporter(e, "distribute")
 
-from ..rpc import RpcAgentClient, call_func_in_thread
+from .rpc_agent_client import RpcAgentClient, call_func_in_thread
+from .rpc_async import AsyncResult
 from ..exception import AgentCreationError
 
 
@@ -63,7 +64,6 @@ class RpcObject(ABC):
         self.port = port
         self._oid = oid
         self._cls = cls
-        self._public_methods = get_public_methods(cls)
         self.connect_existing = connect_existing
 
         from ..studio._client import _studio_client
@@ -113,17 +113,20 @@ class RpcObject(ABC):
             ),
         )
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        return self._call_rpc_func(
-            "__call__",
-            args={"args": args, "kwargs": kwds},
-        )
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        if "__call__" in self._cls._async_func:
+            return self._async_func("__call__")(*args, **kwargs)
+        else:
+            return self._call_func(
+                "__call__",
+                args={
+                    "args": args,
+                    "kwargs": kwargs,
+                },
+            )
 
     def __getitem__(self, item: str) -> Any:
-        return self._call_rpc_func(
-            "__getitem__",
-            args={"args": (item,)},
-        )
+        return self._call_func("__getitem__", {"args": (item,)})
 
     def _launch_server(self) -> None:
         """Launch a rpc server and update the port and the client"""
@@ -149,7 +152,7 @@ class RpcObject(ABC):
                 raise AgentCreationError(self.host, self.port)
             self._creating_stub = None
 
-    def _call_rpc_func(self, func_name: str, args: dict) -> Any:
+    def _call_func(self, func_name: str, args: dict) -> Any:
         """Call a function in rpc server."""
         self._check_created()
         return pickle.loads(
@@ -160,32 +163,46 @@ class RpcObject(ABC):
             ),
         )
 
+    def _async_func(self, name: str) -> Callable:
+        def async_wrapper(*args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
+            return AsyncResult(
+                host=self.host,
+                port=self.port,
+                stub=call_func_in_thread(
+                    partial(
+                        self._call_func,
+                        func_name=name,
+                        args={"args": args, "kwargs": kwargs},
+                    ),
+                ),
+            )
+
+        return async_wrapper
+
+    def _sync_func(self, name: str) -> Callable:
+        def sync_wrapper(*args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
+            return self._call_func(
+                func_name=name,
+                args={"args": args, "kwargs": kwargs},
+            )
+
+        return sync_wrapper
+
     def __getattr__(self, name: str) -> Callable:
-        if name in self._public_methods:
+        if name in self._cls._async_func:
+            # for async functions
+            return self._async_func(name)
 
-            def method_wrapper(*args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
-                return self._call_rpc_func(
-                    func_name=name,
-                    args={"args": args, "kwargs": kwargs},
-                )
+        elif name in self._cls._sync_func:
+            # for sync functions
+            return self._sync_func(name)
 
-            return method_wrapper
         else:
-            return self._call_rpc_func(
+            # for attributes
+            return self._call_func(
                 func_name=name,
                 args={},
             )
-
-    def __getstate__(self) -> dict:
-        """For serialization."""
-        state = self.__dict__.copy()
-        del state["server_launcher"]
-        return state
-
-    def __setstate__(self, state: dict) -> None:
-        """For deserialization."""
-        self.__dict__.update(state)
-        self.server_launcher = None
 
     def __del__(self) -> None:
         self.stop()

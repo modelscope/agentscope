@@ -287,11 +287,7 @@ class AgentServerServicer(RpcAgentServicer):
                 grpc.StatusCode.INVALID_ARGUMENT,
                 f"Agent [{request.agent_id}] not exists.",
             )
-        func = getattr(agent, func_name)
-        if (
-            hasattr(func, "_is_async")
-            and func._is_async  # pylint: disable=W0212
-        ):  # pylint: disable=W0212
+        if func_name in agent.__class__._async_func:  # pylint: disable=W0212
             task_id = self.result_pool.prepare()
             self.executor.submit(
                 self._process_messages,
@@ -302,23 +298,16 @@ class AgentServerServicer(RpcAgentServicer):
             )
             return agent_pb2.CallFuncResponse(
                 ok=True,
-                value=pickle.dumps(
-                    AsyncResult(
-                        host=self.host,
-                        port=self.port,
-                        task_id=task_id,
-                    ),
-                ),
+                value=pickle.dumps(task_id),
             )
-        attr = getattr(agent, func_name)
-        if callable(attr):
+        elif func_name in agent.__class__._sync_func:  # pylint: disable=W0212
             args = pickle.loads(raw_value)
             res = getattr(agent, func_name)(
                 *args.get("args", ()),
                 **args.get("kwargs", {}),
             )
         else:
-            res = attr
+            res = getattr(agent, func_name)
         return agent_pb2.CallFuncResponse(
             ok=True,
             value=pickle.dumps(res),

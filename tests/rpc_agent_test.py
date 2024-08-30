@@ -532,7 +532,8 @@ class BasicRpcAgentTest(unittest.TestCase):
             content="First Msg for agent2",
             role="system",
         )
-        self.assertRaises(Exception, agent2.__call__, msg2)
+        res = agent2(msg2)
+        self.assertRaises(Exception, res.update_value)
 
         # should override remote default parameter(e.g. name field)
         agent4 = DemoRpcAgentWithMemory(

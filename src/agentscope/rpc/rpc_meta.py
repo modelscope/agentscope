@@ -2,11 +2,49 @@
 """ Meta class for all classes that can run on rpc server."""
 
 from abc import ABCMeta
-from typing import Any
+from typing import Any, Callable
 import uuid
 from loguru import logger
 
 from .rpc_object import RpcObject
+
+
+# Decorator for async and sync functions
+
+
+def async_func(func: Callable) -> Callable:
+    """A decorator for async function.
+
+    In distributed mode, async functions will return a `AsyncResult`
+    immediately.
+
+    Args:
+        func (`Callable`): The function to decorate.
+    """
+
+    func._is_async = True  # pylint: disable=W0212
+    return func
+
+
+def sync_func(func: Callable) -> Callable:
+    """A decorator for sync function.
+
+    In distributed mode, sync functions will block the current thread until
+    the result is ready.
+
+    In most cases, you don't need to use this decorator. `RpcMeta` will
+    treat all public functions without `async_func` as `sync_func`.
+    However, for magic methods (e.g. `__str__` and `__getitem__`, which are
+    started with `__`), you can use `sync_func` to mark them as sync.
+
+    Args:
+        func (`Callable`): The function to decorate.
+    """
+    func._is_sync = True  # pylint: disable=W0212
+    return func
+
+
+# TODO: add stream function decorator `stream_func`
 
 
 def generate_oid() -> str:
@@ -25,9 +63,26 @@ class RpcMeta(ABCMeta):
         else:
             RpcMeta._REGISTRY[name] = cls
         super().__init__(name, bases, attrs)
+        for base in bases:
+            if hasattr(base, "_async_func"):
+                cls._async_func.update(base._async_func)
+            if hasattr(base, "_sync_func"):
+                cls._sync_func.update(base._sync_func)
+        for key, value in attrs.items():
+            if callable(value):
+                if getattr(value, "_is_async", False):
+                    # add all functions with @async_func to the async_func set
+                    cls._async_func.add(key)
+                elif getattr(value, "_is_sync", False) or not key.startswith(
+                    "_",
+                ):
+                    # add all other public functions to the sync_func set
+                    cls._sync_func.add(key)
 
     def __new__(mcs: type, name: Any, bases: Any, attrs: Any) -> Any:
         attrs["to_dist"] = RpcMeta.to_dist
+        attrs["_async_func"] = set()
+        attrs["_sync_func"] = set()
         return super().__new__(mcs, name, bases, attrs)  # type: ignore[misc]
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
