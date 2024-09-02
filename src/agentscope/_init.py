@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """The init function for the package."""
 import json
-import multiprocessing
 from typing import Optional, Union, Sequence
 from agentscope import agents
 from .agents import AgentBase
@@ -77,10 +76,6 @@ def init(
         studio_url (`Optional[str]`, defaults to `None`):
             The url of the agentscope studio.
     """
-    # set the multiprocessing start method
-    start_method = multiprocessing.get_start_method()
-    if start_method != "spawn":
-        multiprocessing.set_start_method("spawn", force=True)
     # Init the runtime
     ASManager.get_instance().initialize(
         model_configs=model_configs,
