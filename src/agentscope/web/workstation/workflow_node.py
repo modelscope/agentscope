@@ -9,7 +9,6 @@ from agentscope import msghub
 from agentscope.agents import (
     DialogAgent,
     UserAgent,
-    TextToImageAgent,
     DictDialogAgent,
     ReActAgent,
 )
@@ -214,36 +213,6 @@ class UserAgentNode(WorkflowNode):
         return {
             "imports": "from agentscope.agents import UserAgent",
             "inits": f"{self.var_name} = UserAgent("
-            f"{kwarg_converter(self.opt_kwargs)})",
-            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
-            f"({DEFAULT_FLOW_VAR})",
-        }
-
-
-class TextToImageAgentNode(WorkflowNode):
-    """
-    A node representing a TextToImageAgent within a workflow.
-    """
-
-    node_type = WorkflowNodeType.AGENT
-
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-    ) -> None:
-        super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.pipeline = TextToImageAgent(**self.opt_kwargs)
-
-    def __call__(self, x: dict = None) -> dict:
-        return self.pipeline(x)
-
-    def compile(self) -> dict:
-        return {
-            "imports": "from agentscope.agents import TextToImageAgent",
-            "inits": f"{self.var_name} = TextToImageAgent("
             f"{kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
@@ -717,7 +686,7 @@ class BingSearchServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from functools import partial\n"
             "from agentscope.service import bing_search",
             "inits": f"{self.var_name} = partial(bing_search,"
@@ -745,7 +714,7 @@ class GoogleSearchServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from functools import partial\n"
             "from agentscope.service import google_search",
             "inits": f"{self.var_name} = partial(google_search,"
@@ -773,7 +742,7 @@ class PythonServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import execute_python_code",
             "inits": f"{self.var_name} = execute_python_code",
             "execs": "",
@@ -799,7 +768,7 @@ class ReadTextServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import read_text_file",
             "inits": f"{self.var_name} = read_text_file",
             "execs": "",
@@ -825,7 +794,7 @@ class WriteTextServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import write_text_file",
             "inits": f"{self.var_name} = write_text_file",
             "execs": "",
@@ -840,7 +809,6 @@ NODE_NAME_MAPPING = {
     "Message": MsgNode,
     "DialogAgent": DialogAgentNode,
     "UserAgent": UserAgentNode,
-    "TextToImageAgent": TextToImageAgentNode,
     "DictDialogAgent": DictDialogAgentNode,
     "ReActAgent": ReActAgentNode,
     "Placeholder": PlaceHolderNode,

@@ -49,7 +49,7 @@ class SortingSolver(ProblemSolver):
         content = self.prompt_sorting(request_string)
         x_request = request_agent(x=None, content=content)
         x = self.invoke_llm_call(x_request, dialog_agent)
-        solution = self.parse_llm_response_sorting(x["content"])
+        solution = self.parse_llm_response_sorting(x.content)
         return solution
 
     def merge_two_sorted_lists(
@@ -90,7 +90,7 @@ class SortingSolver(ProblemSolver):
             content = self.prompt_merging(request_string)
             x_request = request_agent(x=None, content=content)
             x = self.invoke_llm_call(x_request, dialog_agent)
-            solution = self.parse_llm_response_sorting(x["content"])
+            solution = self.parse_llm_response_sorting(x.content)
 
         return solution
 

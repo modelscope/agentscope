@@ -23,6 +23,7 @@ rpc_requires = [
     "protobuf==4.25.0",
     "expiringdict",
     "cloudpickle==3.0.0",
+    "redis",
     "psutil",
 ]
 

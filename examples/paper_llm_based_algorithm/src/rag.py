@@ -134,7 +134,7 @@ class RAGSolver(ProblemSolver):
             #         )
             #     x_request = request_agent(x=None, content=content)
             #     lst_x[i] = self.invoke_llm_call(x_request, dialog_agents[i])
-            # sub_contents = [x["content"] for x in lst_x]
+            # sub_contents = [x.content for x in lst_x]
             # sub_solutions = ["" for _ in range(len(sub_requests))]
             # for i in range(len(sub_solutions)):
             #     ss = self.parse_llm_response_retrieve_relevant_sentences(
@@ -158,7 +158,7 @@ class RAGSolver(ProblemSolver):
             x_request = request_agent(x=None, content=content)
             x = self.invoke_llm_call(x_request, dialog_agent)
             ss = self.parse_llm_response_retrieve_relevant_sentences(
-                x["content"],
+                x.content,
             )
             sub_solutions[i] = ss
             sub_latencies[i] = time.time() - time_start
@@ -183,7 +183,7 @@ class RAGSolver(ProblemSolver):
         content = self.prompt_generate_final_answer(context, question)
         x_request = request_agent(x=None, content=content)
         x = self.invoke_llm_call(x_request, dialog_agent)
-        solution = self.parse_llm_response_generate_final_answer(x["content"])
+        solution = self.parse_llm_response_generate_final_answer(x.content)
         final_step_latency = time.time() - time_start
 
         result = {

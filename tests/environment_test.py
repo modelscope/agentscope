@@ -5,9 +5,10 @@ import sys
 import unittest
 from typing import Any
 
+from agentscope.rpc import RpcObject
+
 from agentscope.environment import (
     Env,
-    RpcEnv,
     Event,
     EventListener,
 )
@@ -17,7 +18,7 @@ from agentscope.exception import (
     EnvTypeError,
 )
 
-from agentscope.agents import AgentBase, RpcAgent
+from agentscope.agents import AgentBase
 from agentscope.message import Msg
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -80,8 +81,8 @@ class AgentWithChatRoom(AgentBase):
         return room.join(self)
 
     def reply(self, x: Msg = None) -> Msg:
-        if "event" in x:
-            event = x["event"]
+        if "event" in x.content:
+            event = x.content["event"]
             self.event_list.append(event)
             return Msg(name=self.name, content="", role="assistant")
         else:
@@ -349,7 +350,13 @@ class EnvTest(unittest.TestCase):
                 self.agent = agent
 
             def __call__(self, env: Env, event: Event) -> None:
-                self.agent(Msg(name="system", content="", event=event))
+                self.agent(
+                    Msg(
+                        name="system",
+                        role="system",
+                        content={"event": event},
+                    ),
+                )
 
         ann = Msg(name="system", content="announce", role="system")
         r = ChatRoom(name="chat", announcement=ann)
@@ -445,7 +452,7 @@ class RpcEnvTest(unittest.TestCase):
                 "count": 0,
             },
         ).to_dist()
-        self.assertTrue(isinstance(cnt1, RpcEnv))
+        self.assertTrue(isinstance(cnt1, RpcObject))
         cnt2 = MutableEnv(  # pylint: disable=E1123
             name="cnt2",
             value={
@@ -454,7 +461,7 @@ class RpcEnvTest(unittest.TestCase):
             children=[cnt1],
             to_dist=True,
         )
-        self.assertTrue(isinstance(cnt2, RpcEnv))
+        self.assertTrue(isinstance(cnt2, RpcObject))
         child = cnt2["cnt1"]
         self.assertEqual(child.get(), cnt1.get())
         agent1 = AgentWithMutableEnv(name="local_agent", cnt=cnt1)
@@ -462,7 +469,7 @@ class RpcEnvTest(unittest.TestCase):
             name="remote_agent",
             cnt=cnt2,
         ).to_dist()
-        self.assertTrue(isinstance(cnt2, RpcEnv))
+        self.assertTrue(isinstance(cnt2, RpcObject))
         self.assertTrue(cnt1.set(1))
         self.assertTrue(cnt2.set(2))
         self.assertEqual(cnt1.get(), 1)
@@ -474,7 +481,7 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(cnt1.get(), 3)
         self.assertEqual(cnt2.get(), -1)
 
-    def test_chat_room(self) -> None:  # pylint: disable=R0915
+    def test_chatroom(self) -> None:  # pylint: disable=R0915
         """Test chat room."""
 
         class Listener(EventListener):
@@ -485,8 +492,14 @@ class RpcEnvTest(unittest.TestCase):
                 self.agent = agent
 
             def __call__(self, env: Env, event: Event) -> None:
-                msg = self.agent(Msg(name="system", content="", event=event))
-                msg.update_value()
+                msg = self.agent(
+                    Msg(
+                        name="system",
+                        role="system",
+                        content={"event": event},
+                    ),
+                )
+                msg._fetch_result()
 
         ann = Msg(name="system", content="announce", role="system")
         r = ChatRoom(  # pylint: disable=E1123
@@ -525,7 +538,8 @@ class RpcEnvTest(unittest.TestCase):
         a1 = AgentWithChatRoom("a1", to_dist=True)
         a1.join(r)
         self.assertEqual(master.get_event(-1).name, "join")
-        self.assertEqual(master.get_event(-1).args["agent"].name, a1.name)
+        event_agent_name = master.get_event(-1).args["agent"].name
+        self.assertEqual(event_agent_name, a1.name)
         self.assertEqual(
             master.get_event(-1).args["agent"].agent_id,
             a1.agent_id,
@@ -566,11 +580,11 @@ class RpcEnvTest(unittest.TestCase):
 
         # test rpc type
         ra1 = r[a1.agent_id].agent
-        self.assertTrue(isinstance(ra1, RpcAgent))
+        self.assertTrue(isinstance(ra1, RpcObject))
         self.assertEqual(ra1.agent_id, a1.agent_id)
         rr = a1.chatroom()
-        self.assertTrue(isinstance(rr, RpcEnv))
-        self.assertEqual(r._agent_id, rr._agent_id)  # pylint: disable=W0212
+        self.assertTrue(isinstance(rr, RpcObject))
+        self.assertEqual(r._oid, rr._oid)  # pylint: disable=W0212
 
         # test history_idx
         self.assertEqual(r[a1.agent_id].history_idx, 0)

@@ -16,9 +16,8 @@ try:
     import grpc
     from grpc import ServicerContext
     from google.protobuf.empty_pb2 import Empty
-    from expiringdict import ExpiringDict
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     pickle = ImportErrorReporter(import_error, "distribute")
     psutil = ImportErrorReporter(import_error, "distribute")
@@ -28,18 +27,16 @@ except ImportError as import_error:
         import_error,
         "distribute",
     )
-    ExpiringDict = ImportErrorReporter(import_error, "distribute")
 
+from agentscope.rpc.rpc_object import RpcObject
+from agentscope.rpc.rpc_meta import RpcMeta
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-from agentscope.manager import ModelManager
-from agentscope.manager import ASManager
 from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
-from agentscope.message import (
-    PlaceholderMessage,
-)
+from agentscope.server.async_result_pool import get_pool
+from agentscope.serialize import serialize
 
 
 def _register_server_to_studio(
@@ -64,15 +61,8 @@ def _register_server_to_studio(
         raise StudioRegisterError(f"Failed to register server: {resp.text}")
 
 
-class _AgentError:
-    """Use this class to represent an error when calling agent funcs."""
-
-    def __init__(self, agent_id: str, err_msg: str) -> None:
-        self.agent_id = agent_id
-        self.err_msg = err_msg
-
-    def __repr__(self) -> str:
-        return f"Agent[{self.agent_id}] error: {self.err_msg}"
+# todo: opt this
+MAGIC_PREFIX = b"$$AS$$"
 
 
 class AgentServerServicer(RpcAgentServicer):
@@ -85,6 +75,8 @@ class AgentServerServicer(RpcAgentServicer):
         port: int = None,
         server_id: str = None,
         studio_url: str = None,
+        pool_type: str = "local",
+        redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
         max_timeout_seconds: int = 7200,
     ):
@@ -113,6 +105,8 @@ class AgentServerServicer(RpcAgentServicer):
         self.server_id = server_id
         self.studio_url = studio_url
         if studio_url is not None:
+            from agentscope.manager import ASManager
+
             _register_server_to_studio(
                 studio_url=studio_url,
                 server_id=server_id,
@@ -122,9 +116,11 @@ class AgentServerServicer(RpcAgentServicer):
             run_id = ASManager.get_instance().run_id
             _studio_client.initialize(run_id, studio_url)
 
-        self.result_pool = ExpiringDict(
+        self.result_pool = get_pool(
+            pool_type=pool_type,
+            redis_url=redis_url,
             max_len=max_pool_size,
-            max_age_seconds=max_timeout_seconds,
+            max_timeout=max_timeout_seconds,
         )
         self.executor = futures.ThreadPoolExecutor(max_workers=None)
         self.task_id_lock = threading.Lock()
@@ -133,13 +129,6 @@ class AgentServerServicer(RpcAgentServicer):
         self.agent_pool: dict[str, Any] = {}
         self.pid = os.getpid()
         self.stop_event = stop_event
-
-    def get_task_id(self) -> int:
-        """Get the auto-increment task id.
-        Each reply call will get a unique task id."""
-        with self.task_id_lock:
-            self.task_id_counter += 1
-            return self.task_id_counter
 
     def agent_exists(self, agent_id: str) -> bool:
         """Check whether the agent exists.
@@ -189,21 +178,9 @@ class AgentServerServicer(RpcAgentServicer):
         """Create a new agent on the server."""
         agent_id = request.agent_id
         agent_configs = pickle.loads(request.agent_init_args)
-        type_name = agent_configs["type"]
         cls_name = agent_configs["class_name"]
         try:
-            if type_name == "agent":
-                from agentscope.agents import AgentBase, RpcAgent
-
-                cls = AgentBase.get_agent_class(cls_name)
-                rpc_cls = RpcAgent
-            elif type_name == "env":
-                from agentscope.environment import Env, RpcEnv
-
-                cls = Env.get_env_class(cls_name)
-                rpc_cls = RpcEnv
-            else:
-                raise ValueError("Unknown type: {type_name}")
+            cls = RpcMeta.get_class(cls_name)
         except ValueError as e:
             err_msg = (f"Class [{cls_name}] not found: {str(e)}",)
             logger.error(err_msg)
@@ -214,9 +191,8 @@ class AgentServerServicer(RpcAgentServicer):
                 **agent_configs["kwargs"],
             )
         except Exception as e:
-            err_msg = (
-                f"Failed to create agent instance <{cls_name}>: {str(e)}",
-            )
+            err_msg = f"Failed to create agent instance <{cls_name}>: {str(e)}"
+
             logger.error(err_msg)
             return agent_pb2.GeneralResponse(ok=False, message=err_msg)
 
@@ -224,28 +200,26 @@ class AgentServerServicer(RpcAgentServicer):
         # With this method, all objects stored in agent_pool will be serialized
         # into their Rpc version
         rpc_init_cfg = (
-            instance.name,
             cls,
+            agent_id,
             self.host,
             self.port,
-            agent_id,
             True,
         )
         instance._dist_config = {  # pylint: disable=W0212
-            "cls": rpc_cls,
             "args": rpc_init_cfg,
         }
 
         def to_rpc(obj, _) -> tuple:  # type: ignore[no-untyped-def]
             return (
-                obj._dist_config["cls"],  # pylint: disable=W0212
+                RpcObject,
                 obj._dist_config["args"],  # pylint: disable=W0212
             )
 
         instance.__reduce_ex__ = to_rpc.__get__(  # pylint: disable=E1120
             instance,
         )
-        instance._agent_id = agent_id  # pylint: disable=W0212
+        instance._oid = agent_id  # pylint: disable=W0212
 
         with self.agent_id_lock:
             if agent_id in self.agent_pool:
@@ -286,40 +260,6 @@ class AgentServerServicer(RpcAgentServicer):
                     message=f"try to delete a non-existent agent [{aid}].",
                 )
 
-    def clone_agent(
-        self,
-        request: agent_pb2.StringMsg,
-        context: ServicerContext,
-    ) -> agent_pb2.GeneralResponse:
-        """Clone a new agent instance from the origin instance.
-
-        Args:
-            request (`StringMsg`): The `value` field is the agent_id of the
-            agent to be cloned.
-
-        Returns:
-            `GeneralResponse`: The agent_id of generated agent.
-            Empty if clone failed.
-        """
-        agent_id = request.value
-        with self.agent_id_lock:
-            if agent_id not in self.agent_pool:
-                logger.error(
-                    f"Try to clone a non-existent agent [{agent_id}].",
-                )
-                return agent_pb2.GeneralResponse(
-                    ok=False,
-                    message=f"Try to clone a non-existent agent [{agent_id}].",
-                )
-            ori_agent = self.agent_pool[agent_id]
-        new_agent = ori_agent.__class__(
-            *ori_agent._init_settings["args"],  # pylint: disable=W0212
-            **ori_agent._init_settings["kwargs"],  # pylint: disable=W0212
-        )
-        with self.agent_id_lock:
-            self.agent_pool[new_agent.agent_id] = new_agent
-        return agent_pb2.GeneralResponse(ok=True, message=new_agent.agent_id)
-
     def delete_all_agents(
         self,
         request: Empty,
@@ -338,42 +278,19 @@ class AgentServerServicer(RpcAgentServicer):
         context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Call the specific servicer function."""
-        if not self.agent_exists(request.agent_id):
+        agent_id = request.agent_id
+        func_name = request.target_func
+        raw_value = request.value
+        agent = self.get_agent(request.agent_id)
+        if agent is None:
             return context.abort(
                 grpc.StatusCode.INVALID_ARGUMENT,
                 f"Agent [{request.agent_id}] not exists.",
             )
-        if hasattr(self, request.target_func):
-            return getattr(self, request.target_func)(request)
-        else:
-            return self.call_custom_func(
-                request.agent_id,
-                request.target_func,
-                request.value,
-            )
-
-    def call_custom_func(
-        self,
-        agent_id: str,
-        func_name: str,
-        raw_value: bytes,
-    ) -> agent_pb2.GeneralResponse:
-        """Call a custom function"""
-        agent = self.get_agent(agent_id)
-        if not agent:
-            return agent_pb2.GeneralResponse(
-                success=False,
-                message=f"Agent [{agent_id}] not exists.",
-            )
-        func = getattr(agent, func_name)
-        if (
-            hasattr(func, "_is_async")
-            and func._is_async  # pylint: disable=W0212
-        ):  # pylint: disable=W0212
-            task_id = self.get_task_id()
-            self.result_pool[task_id] = threading.Condition()
+        if func_name in agent.__class__._async_func:  # pylint: disable=W0212
+            task_id = self.result_pool.prepare()
             self.executor.submit(
-                self._process_messages,
+                self._process_task,
                 task_id,
                 agent_id,
                 func_name,
@@ -381,19 +298,16 @@ class AgentServerServicer(RpcAgentServicer):
             )
             return agent_pb2.CallFuncResponse(
                 ok=True,
-                value=pickle.dumps(
-                    AsyncResult(
-                        host=self.host,
-                        port=self.port,
-                        task_id=task_id,
-                    ),
-                ),
+                value=pickle.dumps(task_id),
             )
-        args = pickle.loads(raw_value)
-        res = getattr(agent, func_name)(
-            *args.get("args", ()),
-            **args.get("kwargs", {}),
-        )
+        elif func_name in agent.__class__._sync_func:  # pylint: disable=W0212
+            args = pickle.loads(raw_value)
+            res = getattr(agent, func_name)(
+                *args.get("args", ()),
+                **args.get("kwargs", {}),
+            )
+        else:
+            res = getattr(agent, func_name)
         return agent_pb2.CallFuncResponse(
             ok=True,
             value=pickle.dumps(res),
@@ -406,22 +320,16 @@ class AgentServerServicer(RpcAgentServicer):
     ) -> agent_pb2.CallFuncResponse:
         """Update the value of a placeholder."""
         task_id = request.task_id
-        while True:
-            result = self.result_pool.get(task_id)
-            if isinstance(result, threading.Condition):
-                with result:
-                    result.wait(timeout=1)
-            else:
-                break
-        if isinstance(result, _AgentError):
+        result = self.result_pool.get(task_id)
+        if result[:6] == MAGIC_PREFIX:
             return agent_pb2.CallFuncResponse(
                 ok=False,
-                message=result.err_msg,
+                message=result[6:].decode("utf-8"),
             )
         else:
             return agent_pb2.CallFuncResponse(
                 ok=True,
-                value=pickle.dumps(result),
+                value=result,
             )
 
     def get_agent_list(
@@ -436,7 +344,8 @@ class AgentServerServicer(RpcAgentServicer):
                 summaries.append(str(agent))
             return agent_pb2.GeneralResponse(
                 ok=True,
-                message=json.dumps(summaries),
+                # TODO: unified into serialize function to avoid error.
+                message=serialize(summaries),
             )
 
     def get_server_info(
@@ -452,7 +361,7 @@ class AgentServerServicer(RpcAgentServicer):
         status["cpu"] = process.cpu_percent(interval=1)
         status["mem"] = process.memory_info().rss / (1024**2)
         status["size"] = len(self.agent_pool)
-        return agent_pb2.GeneralResponse(ok=True, message=json.dumps(status))
+        return agent_pb2.GeneralResponse(ok=True, message=serialize(status))
 
     def set_model_configs(
         self,
@@ -460,6 +369,8 @@ class AgentServerServicer(RpcAgentServicer):
         context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Set the model configs of the agent server."""
+        from agentscope.manager import ModelManager
+
         model_configs = json.loads(request.value)
         try:
             ModelManager.get_instance().load_model_configs(model_configs)
@@ -490,7 +401,7 @@ class AgentServerServicer(RpcAgentServicer):
             )
         return agent_pb2.GeneralResponse(
             ok=True,
-            message=json.dumps(agent.memory.get_memory()),
+            message=serialize(agent.memory.get_memory()),
         )
 
     def download_file(
@@ -513,94 +424,42 @@ class AgentServerServicer(RpcAgentServicer):
                     break
                 yield agent_pb2.ByteMsg(data=piece)
 
-    def _reply(
-        self,
-        request: agent_pb2.CallFuncRequest,
-    ) -> agent_pb2.CallFuncResponse:
-        """Call function of RpcAgentService
-
-        Args:
-            request (`CallFuncRequest`):
-                Message containing input parameters or input parameter
-                placeholders.
-
-        Returns:
-            `CallFuncRequest`: A serialized Msg instance with attributes name,
-            host, port and task_id
-        """
-        task_id = self.get_task_id()
-        self.result_pool[task_id] = threading.Condition()
-        self.executor.submit(
-            self._process_messages,
-            task_id,
-            request.agent_id,
-            "reply",
-            request.value,
-        )
-        return agent_pb2.CallFuncResponse(
-            ok=True,
-            value=pickle.dumps(
-                task_id,
-            ),
-        )
-
-    def _observe(
-        self,
-        request: agent_pb2.CallFuncRequest,
-    ) -> agent_pb2.CallFuncResponse:
-        """Observe function of the original agent.
-
-        Args:
-            request (`CallFuncRequest`):
-                The serialized input to be observed.
-
-        Returns:
-            `CallFuncRequest`: Empty CallFuncRequest.
-        """
-        msgs = pickle.loads(request.value)
-        if not isinstance(msgs, list):
-            msgs = [msgs]
-        for msg in msgs:
-            if isinstance(msg, PlaceholderMessage):
-                msg.update_value()
-        self.agent_pool[request.agent_id].observe(msgs)
-        return agent_pb2.CallFuncResponse(ok=True)
-
-    def _process_messages(
+    def _process_task(
         self,
         task_id: int,
         agent_id: str,
         target_func: str,
-        raw_msg: bytes,
+        raw_args: bytes,
     ) -> None:
-        """Processing an input message and generate its reply message.
+        """Processing the submitted task.
 
         Args:
-            task_id (`int`): task id of the input message, .
-            agent_id (`str`): the id of the agent that accepted the message.
+            task_id (`int`): the id of the task.
+            agent_id (`str`): the id of the agent that will be called.
             target_func (`str`): the name of the function that will be called.
-            raw_msg (`bytes`): the input serialized message.
+            raw_args (`bytes`): the serialized input args.
         """
-        if raw_msg is not None:
-            msg = pickle.loads(raw_msg)
+        if raw_args is not None:
+            args = pickle.loads(raw_args)
         else:
-            msg = None
-        cond = self.result_pool[task_id]
+            args = None
         agent = self.get_agent(agent_id)
-        if isinstance(msg, PlaceholderMessage):
-            msg.update_value()
+        if isinstance(args, AsyncResult):
+            args = args.result()  # pylint: disable=W0212
         try:
             if target_func == "reply":
-                result = getattr(agent, target_func)(msg)
+                result = getattr(agent, target_func)(args)
             else:
                 result = getattr(agent, target_func)(
-                    *msg.get("args", ()),
-                    **msg.get("kwargs", {}),
+                    *args.get("args", ()),
+                    **args.get("kwargs", {}),
                 )
-            self.result_pool[task_id] = result
+            self.result_pool.set(task_id, pickle.dumps(result))
         except Exception:
-            error_msg = traceback.format_exc()
-            logger.error(f"Error in agent [{agent_id}]:\n{error_msg}")
-            self.result_pool[task_id] = _AgentError(agent_id, error_msg)
-        with cond:
-            cond.notify_all()
+            trace = traceback.format_exc()
+            error_msg = f"Agent[{agent_id}] error: {trace}"
+            logger.error(error_msg)
+            self.result_pool.set(
+                task_id,
+                MAGIC_PREFIX + error_msg.encode("utf-8"),
+            )

@@ -2,7 +2,6 @@
 """ Base class for Agent """
 
 from __future__ import annotations
-from abc import ABCMeta
 from types import GeneratorType
 from typing import Optional, Generator, Tuple
 from typing import Sequence
@@ -15,83 +14,14 @@ from loguru import logger
 
 from agentscope.agents.operator import Operator
 from agentscope.rpc.rpc_config import DistConf
+from agentscope.rpc.rpc_meta import RpcMeta, async_func, sync_func
 from agentscope.logging import log_stream_msg, log_msg
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
 from agentscope.memory import TemporaryMemory
 
 
-class _AgentMeta(ABCMeta):
-    """The metaclass for agent.
-
-    1. record the init args into `_init_settings` field.
-    2. register class name into `registry` field.
-    """
-
-    def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
-        if not hasattr(cls, "_registry"):
-            cls._registry = {}
-        else:
-            if name in cls._registry:
-                logger.warning(
-                    f"Agent class with name [{name}] already exists.",
-                )
-            else:
-                cls._registry[name] = cls
-        super().__init__(name, bases, attrs)
-
-    def __call__(cls, *args: tuple, **kwargs: dict) -> Any:
-        to_dist = kwargs.pop("to_dist", False)
-        if to_dist is True:
-            to_dist = DistConf()
-        if to_dist is not False and to_dist is not None:
-            from .rpc_agent import RpcAgent
-
-            if cls is not RpcAgent and not issubclass(cls, RpcAgent):
-                return RpcAgent(
-                    name=(
-                        args[0]
-                        if len(args) > 0
-                        else kwargs["name"]  # type: ignore[arg-type]
-                    ),
-                    host=to_dist.pop(  # type: ignore[arg-type]
-                        "host",
-                        "localhost",
-                    ),
-                    port=to_dist.pop("port", None),  # type: ignore[arg-type]
-                    max_pool_size=kwargs.pop(  # type: ignore[arg-type]
-                        "max_pool_size",
-                        8192,
-                    ),
-                    max_timeout_seconds=to_dist.pop(  # type: ignore[arg-type]
-                        "max_timeout_seconds",
-                        7200,
-                    ),
-                    local_mode=to_dist.pop(  # type: ignore[arg-type]
-                        "local_mode",
-                        True,
-                    ),
-                    agent_id=cls.generate_agent_id(),
-                    connect_existing=False,
-                    agent_class=cls,
-                    agent_configs={
-                        "args": args,
-                        "kwargs": kwargs,
-                        "class_name": cls.__name__,
-                        "type": "agent",
-                    },
-                )
-        instance = super().__call__(*args, **kwargs)
-        instance._init_settings = {
-            "args": args,
-            "kwargs": kwargs,
-            "class_name": cls.__name__,
-            "type": "agent",
-        }
-        return instance
-
-
-class AgentBase(Operator, metaclass=_AgentMeta):
+class AgentBase(Operator, metaclass=RpcMeta):
     """Base class for all agents.
 
     All agents should inherit from this class and implement the `reply`
@@ -106,7 +36,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         sys_prompt: Optional[str] = None,
         model_config_name: str = None,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
         to_dist: Optional[Union[DistConf, bool]] = False,
     ) -> None:
         r"""Initialize an agent from the given arguments.
@@ -122,8 +51,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
             to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):
                 The configurations passed to :py:meth:`to_dist` method. Used in
                 :py:class:`_AgentMeta`, when this parameter is provided,
@@ -151,7 +78,6 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 See :doc:`Tutorial<tutorial/208-distribute>` for detail.
         """
         self.name = name
-        self.memory_config = memory_config
         self.sys_prompt = sys_prompt
 
         # TODO: support to receive a ModelWrapper instance
@@ -162,12 +88,9 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             )
 
         if use_memory:
-            self.memory = TemporaryMemory(memory_config)
+            self.memory = TemporaryMemory()
         else:
             self.memory = None
-
-        # The global unique id of this agent
-        self._agent_id = self.__class__.generate_agent_id()
 
         # The audience of this agent, which means if this agent generates a
         # response, it will be passed to all agents in the audience.
@@ -218,6 +141,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         else:
             cls._registry[agent_class_name] = agent_class
 
+    @async_func
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Define the actions taken by this agent.
 
@@ -238,25 +162,8 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             f'"reply" function.',
         )
 
-    def load_from_config(self, config: dict) -> None:
-        """Load configuration for this agent.
-
-        Args:
-            config (`dict`): model configuration
-        """
-
-    def export_config(self) -> dict:
-        """Return configuration of this agent.
-
-        Returns:
-            The configuration of current agent.
-        """
-        return {}
-
-    def load_memory(self, memory: Sequence[dict]) -> None:
-        r"""Load input memory."""
-
-    def __call__(self, *args: Any, **kwargs: Any) -> dict:
+    @async_func
+    def __call__(self, *args: Any, **kwargs: Any) -> Msg:
         """Calling the reply function, and broadcast the generated
         response to all audiences if needed."""
         res = self.reply(*args, **kwargs)
@@ -358,6 +265,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         for agent in self._audience:
             agent.observe(x)
 
+    @sync_func
     def __str__(self) -> str:
         serialized_fields = {
             "name": self.name,
@@ -379,70 +287,9 @@ class AgentBase(Operator, metaclass=_AgentMeta):
         Returns:
             str: agent_id
         """
-        return self._agent_id
+        return self._oid
 
-    # def __reduce__(self) -> Tuple[Any]:
-    #     if hasattr(self, "_dist_config"):
-    #         return (
-    #             self._dist_config["cls"],
-    #             self._dist_config["args"],
-    #         )
-    #     else:
-    #         return super().__reduce__()
-
-    def to_dist(
-        self,
-        host: str = "localhost",
-        port: int = None,
-        max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
-        local_mode: bool = True,
-        lazy_launch: bool = False,
-    ) -> AgentBase:
-        """Convert current agent instance into a distributed version.
-
-        Args:
-            host (`str`, defaults to `"localhost"`):
-                Hostname of the rpc agent server.
-            port (`int`, defaults to `None`):
-                Port of the rpc agent server.
-            max_pool_size (`int`, defaults to `8192`):
-                Only takes effect when `host` and `port` are not filled in.
-                The max number of agent reply messages that the started agent
-                server can accommodate. Note that the oldest message will be
-                deleted after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `7200`):
-                Only takes effect when `host` and `port` are not filled in.
-                Maximum time for reply messages to be cached in the launched
-                agent server. Note that expired messages will be deleted.
-            local_mode (`bool`, defaults to `True`):
-                Only takes effect when `host` and `port` are not filled in.
-                Whether the started agent server only listens to local
-                requests.
-            lazy_launch (`bool`, defaults to `False`):
-                Deprecated.
-
-        Returns:
-            `AgentBase`: the wrapped agent instance with distributed
-            functionality
-        """
-        from .rpc_agent import RpcAgent
-
-        if issubclass(self.__class__, RpcAgent):
-            return self
-        if lazy_launch:
-            logger.warning(
-                "`lazy_launch` has been deprecated and will be removed in "
-                "future releases.",
-            )
-        return RpcAgent(
-            name=self.name,
-            agent_class=self.__class__,
-            agent_configs=self._init_settings,
-            host=host,
-            port=port,
-            max_pool_size=max_pool_size,
-            max_timeout_seconds=max_timeout_seconds,
-            local_mode=local_mode,
-            agent_id=self.agent_id,
-        )
+    @agent_id.setter
+    def agent_id(self, agent_id: str) -> None:
+        """Set the unique id of this agent."""
+        self._oid = agent_id
