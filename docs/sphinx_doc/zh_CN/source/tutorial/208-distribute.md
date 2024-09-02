@@ -152,18 +152,22 @@ if __name__ == "__main__":
 
 ```python
 # 请不要使用 jupyter notebook 运行该代码
-# 请将代码拷贝到 `dist_server.py` 文件后使用 `python dist_server.py` 命令运行该代码
+# 请将代码拷贝到 `dist_server.py` 文件后使用 `python dist_server.py` 命令运行该代码, 目录结构如下：
+# your_project_dir
+# ├── dist_main.py
+# └── dist_server.py
 # 运行该代码前请先安装 agentscope 的分布式版本
 # pip install agentscope[distribute]
 
 import agentscope
 from agentscope.server import RpcAgentServerLauncher
-
 from dist_main import WebAgent
 
 
 if __name__ == "__main__":
-    agentscope.init()
+    agentscope.init(
+        # model_configs=...  # 模型配置，如果不需要模型，可以不设置该参数
+    )
     assistant_server_launcher = RpcAgentServerLauncher(
         host="localhost",
         port=12345,
@@ -173,13 +177,7 @@ if __name__ == "__main__":
     assistant_server_launcher.wait_until_terminate()
 ```
 
-注意将 `dist_main.py` 与 `dist_server.py` 放在相同目录下(这里假设为`your_project_dir`)。
-
-```text
-your_project_dir
-├── dist_main.py
-└── dist_server.py
-```
+上述代码中，我们通过 `RpcAgentServerLauncher` 启动了一个智能体服务器进程，需要注意的是由于 `WebAgent` 不是 AgentScope 自带的 Agent 实现，需要将 `WebAgent` 添加到 `custom_agent_classes` ，才能在智能体服务器进程中创建该类型的 Agent。另外如果智能体服务器进程中需要使用模型 API，则需要在 `agentscope.init` 中配置对应的模型参数。
 
 同时还需要将 `dist_main.py` 中的 `init_with_dist` 更新为下面的代码：
 
@@ -231,22 +229,48 @@ def init_with_dist():
         return [WebAgent(f"W{i}", to_dist={"host": "localhost", "port": "12345"}) for i in range(len(URLS))]
     ```
 
-> Note：
-> 一些 IDE 的自动补全功能可能提示 `to_dist` 参数不存在，但实际运行时并不会报错。
-> 另外，如果已经在初始化参数中传入了 `to_dist`，则不能再调用 `to_dist` 方法。
+```{note}
+一些 IDE 的自动补全功能可能提示 `to_dist` 参数不存在，但实际运行时并不会报错。
+另外，如果已经在初始化参数中传入了 `to_dist`，则不能再调用 `to_dist` 方法。
+```
 
 ## 高级开发者指南
 
-本节主要面向基于 AgentScope 分布式模式进行开发的开发者，需要开发者对进程、线程、同步、异步、RPC、Python 元类以及GIL等概念有一定的理解，如果只是常规使用 AgentScope，则无需阅读本节内容。
-本节将会介绍 AgentScope 分布式模式的原理，如何基于现有的分布式模式实现自定义功能，以及如何优化分布式模式的性能。
+```{note}
+本节主要面向基于 AgentScope 分布式模式开发新功能的开发者，需要开发者有一定的分布式编程基础，对进程、线程、同步、异步、gRPC、Python 元类以及GIL等概念有一定的理解。但即使没有上述基础，通过阅读本节也能学到 AgentScope 分布式模式的基本原理以及一些高级用法。
+```
 
-AgentScope 分布式模式的本质是:
+AgentScope 分布式模式的主要逻辑是:
 
-**将原本运行在某个 Python 进程 (即主进程) 中的对象通过 `to_dist` 函数或是初始化参数转移到另一个 RPC 服务器进程 (即智能体服务器进程) 中，并在原 Python 进程中保留一个 `RpcObject` 作为代理，任何 `RpcObject` 上的函数调用或是属性访问都会转发到 RPC 服务器中的原始对象上，并且开发者可以自行决定是使用同步调用还是异步调用。**
+**将原本运行在任意 Python 进程中的对象通过 `to_dist` 函数或是初始化参数转移到 RPC 服务器中运行，并在原进程中保留一个 `RpcObject` 作为代理，任何 `RpcObject` 上的函数调用或是属性访问都会转发到 RPC 服务器中的对象上，并且在调用函数时可以自行决定是使用同步调用还是异步调用。**
 
-接下来将具体介绍用于实现分布式模式的关键组件 `RpcMeta` 以及 `RpcObject`。
+```{mermaid}
+sequenceDiagram
+    User -->> Process: initialize
+    Process -->> RPC Server: to_dist
+    User -->> Process: sync function call
+    Process -->> RPC Server: sync function call
+    RPC Server -->> RPC Server: calculate result
+    RPC Server -->> Process: sync result
+    Process -->> User: sync result
+    User -->> Process: async function call
+    Process -->> RPC Server: async function call
+    RPC Server -->> RPC Server: calculate result
+    User -->> Process: get async result
+    Process -->> RPC Server: get async result
+    RPC Server -->> Process: async result
+    Process -->> User: async result
+```
 
-### `RpcMeta`
+从上述介绍中可以发现 AgentScope 分布式模式本质是一个 Client-Server 架构，Client 端主要负责将本地对象发送到 Server 端运行，并将本地的函数调用以及属性访问转发到 Server 端，而Server 端则负责接收 Client 端发送的对象，并接收 Client 端发来的各种调用请求。
+
+接下来将分别介绍 Client 端以及 Server 端的实现。
+
+### Client 端
+
+Client 主要包含 `RpcMeta`、`RpcObject` 两个主要类，其中 `RpcMeta` 负责将本地对象发送到 Server 端运行，而 `RpcObject` 则负责后续的各种请求调用的转发。
+
+#### `RpcMeta`
 
 {class}`RpcMeta<agentscope.rpc.RpcMeta>` 类是一个元类(Meta class)，会自动向继承自己的子类添加 `to_dist` 方法以及 `to_dist` 初始化参数 (因此 IDE 可能会提示 `to_dist` 参数不存在，但实际运行时并不会报错)，其实现位于 `src/agentscope/rpc/rpc_meta.py`。
 
@@ -258,9 +282,13 @@ AgentScope 分布式模式的本质是:
 
 `RpcMeta` 除了提供 `to_dist` 方法外还会记录原对象上能够被调用的方法以及属性，以方便在 `RpcObject` 中调用。默认情况下只会记录原对象上的公有方法，并且使用同步调用 (调用时会阻塞调用发起方，直到原对象上的方法执行完毕)。如果需要使用异步调用需要在方法声明上添加 `async_func` 装饰器。
 
-{func}`async_func<agentscope.rpc.async_func>` 装饰器的实现位于 `src/agentscope/rpc/rpc_meta.py`，与之相对的还有一个 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器。用于标识同步方法，但由于默认是同步方法，因此一般不使用。`AgentBase` 及其所有子类的 `__call__` 以及 `reply` 方法都被标记为了 `async_func` 以避免阻塞。
+#### `async_func` 和 `AsyncResult`
 
-如下是一个简单的示例，这里声明了一个 `Example` 类，其中 `sync_method` 是同步方法，`async_method` 被标记为了异步方法，`_protected_method` 是私有方法。
+{func}`async_func<agentscope.rpc.async_func>` 装饰器的实现位于 `src/agentscope/rpc/rpc_meta.py``AgentBase` 及其所有子类的 `__call__` 以及 `reply` 方法都被标记为了 `async_func` 以避免阻塞。
+
+与 `async_func` 相对的还有 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不使用。
+
+如下是一个简单的示例，这里声明了一个 `Example` 类，其中 `sync_method` 是同步方法，`async_method_basic` 以及 `async_method_complex` 被标记为了异步方法，`_protected_method` 是私有方法。
 
 ```python
 import time
@@ -276,41 +304,45 @@ class Example(metaclass=RpcMeta):
         return "sync"
 
     @async_func
-    def async_method(self) -> str:
+    def async_method_basic(self) -> str:
         # 异步方法，调用者不会被阻塞，可以继续执行直到尝试获取结果
         time.sleep(1)
+        # 返回一个基本类型
         return "async"
+
+    @async_func
+    def async_method_composite(self) -> dict:
+        # 异步方法
+        time.sleep(1)
+        # 返回一个字典
+        return {"a": 1, "b": 2, "c": "hello world",}
 
     def _protected_method(self) -> str:
         # 不是公有方法，rpc object 无法调用该方法
         time.sleep(1)
         return "protected"
 
-    @async_func
-    def complex_result(self) -> dict:
-        time.sleep(1)
-        return {"a": 1, "b": 2, "c": "hello world",}
-
 
 if __name__ == "__main__":
     example = Example(to_dist=True)
+    # 访问 protected 方法会引发未定义行为，请避免使用
+    # protected_result = example._protected_method()
     t1 = time.time()
     sync_result = example.sync_method()
     assert sync_result == "sync"
     t2 = time.time()
     print(f"Sync func cost: {t2 - t1} s")
     t3 = time.time()
-    async_result = example.async_method()
+    async_basic = example.async_method_basic()
+    async_composite = example.async_method_composite()
     t4 = time.time()
     print(f"Async func cost: {t4 - t3} s")
-    # 需要在返回值上调用 result 方法获取异步执行结果
-    assert async_result.result() == "async"
-    # 访问 protected 方法会引发未定义行为，请避免使用
-    # protected_result = example._protected_method()
-    complex_result = example.complex_result()
-    assert complex_result["a"] == 1
-    assert complex_result["b"] == 2
-    assert complex_result["c"] == "hello world"
+    # 基本类型需要在返回值上调用 result 方法获取异步执行结果
+    assert async_basic.result() == "async"
+    # 复合类型在访问所需要的域时自动更新异步执行结果
+    assert async_composite["a"] == 1
+    assert async_composite["b"] == 2
+    assert async_composite["c"] == "hello world"
 ```
 
 上述代码的运行结果样例如下，可以观察到调用 `async_method` 的耗时比 `sync_method` 短很多，这是因为 `async_method` 是异步方法，不会阻塞调用发起方，而 `sync_method` 是同步方法，因此会阻塞调用发起方。
@@ -320,14 +352,97 @@ Sync func cost: 1.0073761940002441 s
 Async func cost: 0.0003597736358642578 s
 ```
 
-### `RpcObject`
+上述代码中 `async_method_basic` 以及 `async_method_complex` 返回的是 {class}`AsyncResult<agentscope.rpc.AsyncResult>` 对象，该对象可以通过 `result` 方法获取异步执行结果。为了让异步与同步调用的接口尽可能统一，如果 `AsyncResult` 所代表的结果是复合类型，就不再需要手动调用 `result` 方法，在访问内部属性时会自动调用 `result` 更新执行结果 (如上述代码中 `async_composite` 所示)。
+
+#### `RpcObject`
 
 {class}`RpcObject<agentscope.rpc.RpcObject>` 的实现位于 `src/agentscope/rpc/rpc_object.py` 中。
-`RpcObject` 是一个代理，其内部并不包含原对象的任何属性值或是方法，只记录了原对象所在的智能体服务器的地址以及该对象的 `id`。
+`RpcObject` 是一个代理，其内部并不包含原对象的任何属性值或是方法，只记录了原对象所在的智能体服务器的地址以及该对象的 `id`，通过这些参数，`RpcObject` 可以通过网络连接原对象，从而实现对原对象的调用。
 
+当用户调用 `RpcObject` 上的方法或访问属性时，`RpcObject` 会通过 `__getattr__` 方法将请求转发到位于智能体服务器进程的原对象上。对于调用同步方法 (`@sync_func`) 或是访问属性值的情况，`RpcObject` 会阻塞调用发起方，直到原对象上的方法执行完毕，并返回执行结果。而异步方法 (`@async_func`) 则会立即返回一个 {class}`AsyncResult<agentscope.rpc.AsyncResult>` 对象，如果主进程不去访问该对象的具体值就可以无阻塞地继续运行，而如果需要获取执行结果，则需要调用 `AsyncResult` 对象上的 `result` 方法，如果此时结果还没有返回，`result` 方法会阻塞调用发起方，直到结果返回。
+
+```{note}
 `RpcObject` 在初始化时如果发现没有提供 `host` 和 `port` 参数 (即子进程模式)，就会去启动一个新的智能体服务器进程，并在该进程上重新创建原对象，而启动新的智能体服务器进程相对缓慢，这也是导致子进程模式初始化时间较长的主要原因。
 而如果提供了 `host` 和 `port` 参数 (即独立进程模式)，`RpcObject` 就会直接连接该服务器并重新创建原对象，避免了启动新进程的开销。
+```
 
-当尝试访问 `RpcObject` 上不存在的方法或属性时，`RpcObject` 会通过 `__getattr__` 将请求转发到智能体服务器进程上。对于同步方法 (`@sync_func`)，`RpcObject` 会阻塞调用发起方，直到原对象上的方法执行完毕，并返回执行结果。而异步方法 (`@async_func`) 则会立即返回一个 {class}`AsyncResult<agentscope.rpc.AsyncResult>` 对象，如果主进程不去访问该对象的具体值就可以无阻塞地继续运行，而如果需要获取执行结果，则需要调用 `AsyncResult` 对象上的 `result` 方法，这时如果结果还没有返回，`result` 方法会阻塞调用发起方，直到结果返回。
+### Server 端
 
-为了进一步简化使用，`AsyncResult` 在返回的结果不是 `bool`，`int`，`float`，`string` 这些基本数据类型时，可以直接充当真实结果使用，可以直接在 `AsyncResult` 上获取属性，例如上述 `complex_result` 示例中的 `complex_result["a"]`，其内部的值会在访问时自动更新。
+Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `RpcAgentServerLauncher` 这两个类。
+
+#### `AgentServerLauncher`
+
+`AgentServerLauncher` 的实现位于 `src/agentscope/server/launcher.py`，用于启动 gRPC Server 进程。
+具体来说
+为了保证启动的 Server 进程中能够正确地重新初始化 Client 端发来的对象并正确调用模型API服务，需要在启动 Server 时注册在运行中可能用到的所有 `RpcMeta` 的子类，并且正确设置模型配置。具体来说有两种启动方法，分别是通过代码启动，和通过命令行指令启动。
+
+- 通过代码启动的具体方法如下，需要指定 `host` 和 `port`，以及 `custom_agent_classes`，并且需要在调用 `agentscope.init` 时传入需要使用的模型配置。这里假设有 `AgentA`，`AgentB`，`AgentC` 这三个自定义类需要被注册，并且 `AgentA`，`AgentB`，`AgentC` 这三个类都位于 `myagents.py` 文件中且都是 `AgentBase` 的子类。
+
+    ```python
+    import agentscope
+    from agentscope.server import RpcAgentServerLauncher
+    from myagents import AgentA, AgentB, AgentC
+
+
+    MODEL_CONFIGS = {}
+
+    HOST = "localhost"
+    PORT = 12345
+    CUSTOM_CLASSES = [AgentA, AgentB, AgentC]
+
+    if __name__ == "__main__":
+        agentscope.init(
+            model_configs=MODEL_CONFIGS,
+        )
+        launcher = RpcAgentServerLauncher(
+            host=HOST,
+            port=PORT,
+            custom_agent_classes=CUSTOM_CLASSES,
+        )
+        launcher.launch(in_subprocess=False)
+        launcher.wait_until_terminate()
+    ```
+
+- 通过命令行启动的具体方法如下，除了需要指定 `host` 和 `port` 外，还需要指定 `model_config_path` 和 `agent_dir`，分别对应模型配置文件路径和自定义 Agent 类所在的目录。在安装 `agentscope` 时默认会安装 `as_server` 指令，所以可以直接在命令行中使用该指令。
+
+    ```shell
+    as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents.py
+    ```
+
+```{warning}
+`AgentServerLauncher` 会加载并执行自定义的 Python 对象，在使用前请仔细检查被加载的对象，如果其中包含恶意代码可能会对系统造成严重损害。
+`AgentServerLauncer` 类还存在一个 `local_mode` 参数用于表示是否只允许本地访问，默认为 `True`，如果需要允许其他机器访问，则需要设置为 `False`。为了避免网络攻击，建议仅在可信的网络环境下使用。
+```
+
+#### `AgentServerServicer`
+
+`AgentServerServicer` 的实现位于 `src/agentscope/server/servicer.py`，是 gRPC 服务的实现类，负责具体接收并处理 Client 端发来的各种请求。
+
+其中的 `create_agent` 方法会在 Client 端对某个 `RpcMeta` 的子类对象使用 `to_dist` 时被调用，并在 server 内部重新创建原对象，并以 `id` 为键将对象保存在 `agent_pool` 域中。
+
+而 `call_agent_func` 方法会在 Client 端调用 `RpcObject` 对象上的方法或属性时被调用，输入参数中包含了被调用对象的 `id` 以及被调用方法的名称，具体的调用流程有一定差异。对于同步方法以及属性访问，`call_agent_func` 会直接从 `agent_pool` 取出对象并调用对应方法或属性，并在返回结果前阻塞调用发起方。对于异步方法，`call_agent_func` 会将输入参数打包放入任务队列中，并立即返回该任务的 `task_id` 从而避免阻塞调用发起方。
+
+AgentServerServicer 内部包含了一个执行器池 (`executor`) 用于自动执行任务队列中提交的任务 (`_process_task`)，并执行将结果放入 `result_pool` 中,
+由于异步方法本身并没有返回执行结果，因此 Client 端需要通过调用 `result` 方法从 Server 端获取执行结果，对应的函数是 `update_result`，该函数会尝试从 `result_pool` 中提取对应任务的结果，如果任务结果不存在则会阻塞调用发起方，直到结果返回。
+
+#### `ResultPool`
+
+`ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_timeout`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_timeout`)。
+在启动 `AgentServerLauncher` 时可以通过传入 `pool_type` 来指定使用哪种实现，默认为`local`。
+如果指定为 `redis` 则还必须传入 `redis_url`，如下是代码以及命令行的使用案例。
+
+```python
+# ...
+launcher = RpcAgentServerLauncher(
+    host="localhost",
+    port=12345,
+    custom_agent_classes=[],
+    pool_type="redis",
+    redis_url="redis://localhost:6379",
+    max_timeout=7200, # 2 hours
+)
+```
+
+```shell
+as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-timeout 7200
+```

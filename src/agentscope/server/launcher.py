@@ -617,6 +617,8 @@ def as_server() -> None:
         host=args.host,
         port=args.port,
         server_id=args.server_id,
+        pool_type=args.pool_type,
+        redis_url=args.redis_url,
         max_pool_size=args.max_pool_size,
         max_timeout_seconds=args.max_timeout_seconds,
         local_mode=args.local_mode,

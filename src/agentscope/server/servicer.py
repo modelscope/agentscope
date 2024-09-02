@@ -290,7 +290,7 @@ class AgentServerServicer(RpcAgentServicer):
         if func_name in agent.__class__._async_func:  # pylint: disable=W0212
             task_id = self.result_pool.prepare()
             self.executor.submit(
-                self._process_messages,
+                self._process_task,
                 task_id,
                 agent_id,
                 func_name,
@@ -424,35 +424,35 @@ class AgentServerServicer(RpcAgentServicer):
                     break
                 yield agent_pb2.ByteMsg(data=piece)
 
-    def _process_messages(
+    def _process_task(
         self,
         task_id: int,
         agent_id: str,
         target_func: str,
-        raw_msg: bytes,
+        raw_args: bytes,
     ) -> None:
-        """Processing an input message and generate its reply message.
+        """Processing the submitted task.
 
         Args:
-            task_id (`int`): task id of the input message.
-            agent_id (`str`): the id of the agent that accepted the message.
+            task_id (`int`): the id of the task.
+            agent_id (`str`): the id of the agent that will be called.
             target_func (`str`): the name of the function that will be called.
-            raw_msg (`bytes`): the input serialized message.
+            raw_args (`bytes`): the serialized input args.
         """
-        if raw_msg is not None:
-            msg = pickle.loads(raw_msg)
+        if raw_args is not None:
+            args = pickle.loads(raw_args)
         else:
-            msg = None
+            args = None
         agent = self.get_agent(agent_id)
-        if isinstance(msg, AsyncResult):
-            msg._fetch_result()  # pylint: disable=W0212
+        if isinstance(args, AsyncResult):
+            args._fetch_result()  # pylint: disable=W0212
         try:
             if target_func == "reply":
-                result = getattr(agent, target_func)(msg)
+                result = getattr(agent, target_func)(args)
             else:
                 result = getattr(agent, target_func)(
-                    *msg.get("args", ()),
-                    **msg.get("kwargs", {}),
+                    *args.get("args", ()),
+                    **args.get("kwargs", {}),
                 )
             self.result_pool.set(task_id, pickle.dumps(result))
         except Exception:
