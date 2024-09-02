@@ -445,7 +445,7 @@ class AgentServerServicer(RpcAgentServicer):
             args = None
         agent = self.get_agent(agent_id)
         if isinstance(args, AsyncResult):
-            args._fetch_result()  # pylint: disable=W0212
+            args = args.result()  # pylint: disable=W0212
         try:
             if target_func == "reply":
                 result = getattr(agent, target_func)(args)

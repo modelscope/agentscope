@@ -15,7 +15,7 @@ except ImportError as e:
 
 from .rpc_agent_client import RpcAgentClient, call_func_in_thread
 from .rpc_async import AsyncResult
-from ..exception import AgentCreationError
+from ..exception import AgentCreationError, AgentServerNotAliveError
 
 
 def get_public_methods(cls: type) -> list[str]:
@@ -97,9 +97,12 @@ class RpcObject(ABC):
                 studio_url=studio_url,  # type: ignore[arg-type]
             )
             self._launch_server()
-        self.client = RpcAgentClient(self.host, self.port)
+        else:
+            self.client = RpcAgentClient(self.host, self.port)
         if not connect_existing:
             self.create(configs)
+            if launch_server:
+                self._check_created()
         else:
             self._creating_stub = None
 
@@ -136,6 +139,8 @@ class RpcObject(ABC):
             host=self.host,
             port=self.port,
         )
+        if not self.client.is_alive():
+            raise AgentServerNotAliveError(self.host, self.port)
 
     def stop(self) -> None:
         """Stop the RpcAgent and the rpc server."""

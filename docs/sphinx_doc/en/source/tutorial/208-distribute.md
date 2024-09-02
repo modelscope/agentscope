@@ -228,7 +228,7 @@ This process has a potential issue: the original agent is initialized twice, onc
     ```
 
 ```{note}
-Some IDEs might display a hint indicating that the `to_dist` parameter does not exist, but this will not cause an error at runtime. 
+Some IDEs might display a hint indicating that the `to_dist` parameter does not exist, but this will not cause an error at runtime.
 Additionally, if the `to_dist` parameter has already been passed in the initialization parameters, the `to_dist` method should not be called again.
 ```
 
