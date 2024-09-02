@@ -8,7 +8,7 @@
 - **自动并行化**: 基于 Actor 模式，每个 Agent都具有独立的状态，在编写应用时无需考虑调用顺序、资源竞争等问题，自动实现应用并行化。
 - **零迁移成本**: 代码与单机模式完全兼容，单机模式可运行的应用可以零成本直接迁移至并行/分布式模式。
 
-本节将详细介绍 AgentScope 分布式的使用方法并简述其原理。
+本节将详细介绍 AgentScope 分布式的使用方法并阐述其原理。
 
 (basic_usage-zh)=
 
@@ -234,7 +234,7 @@ def init_with_dist():
 另外，如果已经在初始化参数中传入了 `to_dist`，则不能再调用 `to_dist` 方法。
 ```
 
-## 高级开发者指南
+## 开发者指南
 
 ```{note}
 本节主要面向基于 AgentScope 分布式模式开发新功能的开发者，需要开发者有一定的分布式编程基础，对进程、线程、同步、异步、gRPC、Python 元类以及GIL等概念有一定的理解。但即使没有上述基础，通过阅读本节也能学到 AgentScope 分布式模式的基本原理以及一些高级用法。
@@ -373,8 +373,7 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 #### `AgentServerLauncher`
 
 `AgentServerLauncher` 的实现位于 `src/agentscope/server/launcher.py`，用于启动 gRPC Server 进程。
-具体来说
-为了保证启动的 Server 进程中能够正确地重新初始化 Client 端发来的对象并正确调用模型API服务，需要在启动 Server 时注册在运行中可能用到的所有 `RpcMeta` 的子类，并且正确设置模型配置。具体来说有两种启动方法，分别是通过代码启动，和通过命令行指令启动。
+具体来说，为了保证启动的 Server 进程中能够正确地重新初始化 Client 端发来的对象并正确调用模型API服务，需要在启动 Server 时注册在运行中可能用到的所有 `RpcMeta` 的子类，并且正确设置模型配置。具体来说有两种启动方法，分别是通过代码启动，和通过命令行指令启动。
 
 - 通过代码启动的具体方法如下，需要指定 `host` 和 `port`，以及 `custom_agent_classes`，并且需要在调用 `agentscope.init` 时传入需要使用的模型配置。这里假设有 `AgentA`，`AgentB`，`AgentC` 这三个自定义类需要被注册，并且 `AgentA`，`AgentB`，`AgentC` 这三个类都位于 `myagents.py` 文件中且都是 `AgentBase` 的子类。
 
@@ -422,7 +421,7 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 
 而 `call_agent_func` 方法会在 Client 端调用 `RpcObject` 对象上的方法或属性时被调用，输入参数中包含了被调用对象的 `id` 以及被调用方法的名称，具体的调用流程有一定差异。对于同步方法以及属性访问，`call_agent_func` 会直接从 `agent_pool` 取出对象并调用对应方法或属性，并在返回结果前阻塞调用发起方。对于异步方法，`call_agent_func` 会将输入参数打包放入任务队列中，并立即返回该任务的 `task_id` 从而避免阻塞调用发起方。
 
-AgentServerServicer 内部包含了一个执行器池 (`executor`) 用于自动执行任务队列中提交的任务 (`_process_task`)，并执行将结果放入 `result_pool` 中,
+`AgentServerServicer` 内部包含了一个执行器池 (`executor`) 用于自动执行任务队列中提交的任务 (`_process_task`)，并执行将结果放入 `result_pool` 中,
 由于异步方法本身并没有返回执行结果，因此 Client 端需要通过调用 `result` 方法从 Server 端获取执行结果，对应的函数是 `update_result`，该函数会尝试从 `result_pool` 中提取对应任务的结果，如果任务结果不存在则会阻塞调用发起方，直到结果返回。
 
 #### `ResultPool`
@@ -446,3 +445,5 @@ launcher = RpcAgentServerLauncher(
 ```shell
 as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-timeout 7200
 ```
+
+[[回到顶部]](#208-distribute-zh)
