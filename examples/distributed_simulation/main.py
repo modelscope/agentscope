@@ -102,6 +102,7 @@ def run_main_process(
     agent_type: str = "random",
     max_value: int = 100,
     sleep_time: float = 1.0,
+    cpp_server: bool = False,
 ) -> None:
     """Run main process"""
     agentscope.init(
@@ -127,7 +128,7 @@ def run_main_process(
         port_id = idx % server_per_host
         model_id = i % model_per_host
         host = hosts[host_id]
-        port = base_port + port_id
+        port = base_port + port_id if not cpp_server else base_port
         config_name = f"model_{model_id + 1}"
         if agent_type == "random":
             configs.append(
@@ -166,7 +167,7 @@ def run_main_process(
                         * participant_per_moderator
                     ],
                     host=hosts[i // moderator_per_host],
-                    port=base_port + server_per_host + i % moderator_per_host,
+                    port=base_port + server_per_host + i % moderator_per_host if not cpp_server else base_port,
                     agent_type=agent_type,
                     max_value=max_value,
                     sleep_time=sleep_time,

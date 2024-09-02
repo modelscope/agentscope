@@ -11,8 +11,10 @@
 #include <shared_mutex>
 #include <thread>
 #include <deque>
+#include <queue>
 #include <condition_variable>
 #include <semaphore.h>
+#include <sys/ipc.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -21,6 +23,7 @@
 #include "worker_args.pb.h"
 
 using std::deque;
+using std::queue;
 using std::make_pair;
 using std::pair;
 using std::string;
@@ -60,32 +63,35 @@ private:
     const string _host;
     const string _port;
     const string _server_id;
+    const int _main_worker_pid;
     const unsigned int _num_workers;
-    int _pid;
     int _worker_id;
-    int _num_calls;
-    mutex _mutex;
     vector<pid_t> _worker_pids;
-    vector<int> _worker_shm_fds;
-    vector<char *> _worker_shms;
-    vector<pair<sem_t *, sem_t *>> _worker_semaphores;
-    const string _func_call_shm_prefix;
+
+    const int _sem_num_per_sem_id;
+    const unsigned int _call_shm_size;
+    const unsigned int _max_call_id;
+    const unsigned int _small_obj_size;
+    const unsigned int _small_obj_shm_size;
+
+    const string _call_worker_shm_name;
     const string _func_args_shm_prefix;
     const string _func_result_shm_prefix;
     const string _worker_avail_sem_prefix;
     const string _func_ready_sem_prefix;
-    const string _set_result_sem_prefix;
     const string _small_obj_pool_shm_name;
-    const string _small_obj_pool_filename;
-    int _small_obj_pool_shm_fd;
-    int _small_obj_pool_fd;
-    void *_small_obj_pool_shm;
-    const unsigned int _call_shm_size;
-    const unsigned int _small_obj_max_num;
-    const unsigned int _small_obj_size;
-    const unsigned int _small_obj_shm_size;
 
-    bool _use_logger;
+    vector<int> _call_sem_ids;
+    int _call_worker_shm_fd;
+    char *_call_worker_shm;
+    vector<pair<sem_t *, sem_t *>> _worker_semaphores;
+    int _small_obj_pool_shm_fd;
+    void *_small_obj_pool_shm;
+    mutex _call_id_mutex;
+    condition_variable _call_id_cv;
+    queue<int> _call_id_pool;
+
+    const bool _use_logger;
     mutex _logger_mutex;
 
     unordered_map<string, int> _agent_id_map; // map agent id to worker id
@@ -123,6 +129,38 @@ private:
     string get_result(const int call_id);
     void set_result(const int call_id, const string &result);
     int get_worker_id_by_agent_id(const string &agent_id);
+
+    static const unsigned int _default_max_call_id = 10000;
+    static unsigned int calc_max_call_id()
+    {
+        char *max_call_id = getenv("AGENTSCOPE_MAX_CALL_ID");
+        if (max_call_id != nullptr)
+        {
+            try {
+                return std::stoi(max_call_id);
+            } catch (const std::invalid_argument&) {
+                return _default_max_call_id;
+            } catch (const std::out_of_range&) {
+                return _default_max_call_id;
+            }
+        }
+        else
+        {
+            return _default_max_call_id;
+        }
+    }
+    static bool calc_use_logger()
+    {
+        char *use_logger = getenv("AGENTSCOPE_USE_CPP_LOGGER");
+        if (use_logger != nullptr && std::string(use_logger) == "True")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     inline long long get_current_timestamp()
     {

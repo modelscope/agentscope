@@ -4,6 +4,7 @@ import random
 import time
 import re
 from typing import Optional, Union, Sequence
+import concurrent.futures
 
 from loguru import logger
 
@@ -111,9 +112,8 @@ class Moderator(AgentBase):
     ) -> None:
         super().__init__(name)
         self.max_value = max_value
-        if agent_type == "llm":
-            self.participants = [
-                LLMParticipant(
+        def create_llm_participant(config):
+            return LLMParticipant(
                     name=config["name"],
                     model_config_name=config["model_config_name"],
                     max_value=max_value,
@@ -121,36 +121,35 @@ class Moderator(AgentBase):
                     host=config["host"],
                     port=config["port"],
                 )
-                for config in part_configs
-            ]
-        else:
-            self.participants = [
-                RandomParticipant(
-                    name=config["name"],
-                    max_value=max_value,
-                    sleep_time=sleep_time,
-                ).to_dist(
-                    host=config["host"],
-                    port=config["port"],
-                )
-                for config in part_configs
-            ]
+
+        def create_random_participant(config):
+            return RandomParticipant(
+                name=config["name"],
+                max_value=max_value,
+                sleep_time=sleep_time,
+            ).to_dist(
+                host=config["host"],
+                port=config["port"],
+            )
+        create_participant = {"random": create_random_participant, "llm": create_llm_participant}[agent_type]
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = {executor.submit(create_participant, config) for config in part_configs}
+
+            self.participants = []
+            for future in concurrent.futures.as_completed(futures):
+                result = future.result()
+                self.participants.append(result)
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
-        results = []
         msg = Msg(
             name="moderator",
             role="user",
             content=f"Now give a number between 0 and {self.max_value}.",
         )
-        for p in self.participants:
-            results.append(p(msg))
-        summ = 0
-        for r in results:
-            try:
-                summ += int(r["content"])
-            except Exception as e:
-                print(e)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = {executor.submit(lambda p: p(msg), p) for p in self.participants}
+            futures_2 = {executor.submit(lambda r: int(r["content"]), future.result()) for future in concurrent.futures.as_completed(futures)}
+            summ = sum(future.result() for future in concurrent.futures.as_completed(futures_2))
         return Msg(
             name=self.name,
             role="assistant",
