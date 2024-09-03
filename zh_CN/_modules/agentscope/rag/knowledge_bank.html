@@ -124,8 +124,8 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">.llama_index_knowledge</span> <span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
 <span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span> <span class="nn">.knowledge</span> <span class="kn">import</span> <span class="n">Knowledge</span>
 
 <span class="n">DEFAULT_INDEX_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;knowledge_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -164,13 +164,14 @@
         <span class="n">configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;initialize the knowledge bank&quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading configs from </span><span class="si">{</span><span class="n">configs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">configs</span> <span class="o">=</span> <span class="n">configs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LlamaIndexKnowledge</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Knowledge</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_knowledge</span><span class="p">()</span></div>
 
 
@@ -228,6 +229,8 @@
 <span class="sd">                )</span>
 <span class="sd">            &#39;&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.llama_index_knowledge</span> <span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
+
         <span class="k">if</span> <span class="n">knowledge_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;knowledge_id </span><span class="si">{</span><span class="n">knowledge_id</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
 
@@ -249,9 +252,11 @@
             <span class="n">knowledge_id</span><span class="o">=</span><span class="n">knowledge_id</span><span class="p">,</span>
             <span class="n">emb_model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">emb_model_name</span><span class="p">),</span>
             <span class="n">knowledge_config</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">model_name</span>
-            <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">model_name</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
         <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data loaded for knowledge_id = </span><span class="si">{</span><span class="n">knowledge_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 
@@ -262,7 +267,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">duplicate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LlamaIndexKnowledge</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Knowledge</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a Knowledge object from the knowledge bank.</span>
 <span class="sd">        Args:</span>
@@ -271,7 +276,7 @@
 <span class="sd">            duplicate (bool):</span>
 <span class="sd">                whether return a copy of the Knowledge object.</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            LlamaIndexKnowledge:</span>
+<span class="sd">            Knowledge:</span>
 <span class="sd">                the Knowledge object defined with Llama-index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">knowledge_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span>
