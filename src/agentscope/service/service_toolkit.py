@@ -34,12 +34,12 @@ except ImportError:
 
 
 class RpcService(metaclass=RpcMeta):
+    """The RPC service class."""
     def __init__(self, service_func: Callable[..., Any]) -> None:
         self.service_func = service_func
 
     @sync_func
     def __call__(self, *args: tuple, **kwargs: dict) -> Any:
-        print('remote call', '-' * 80)
         return self.service_func(*args, **kwargs)
 
 
