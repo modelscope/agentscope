@@ -35,8 +35,8 @@ except ImportError:
 
 class RpcService(metaclass=RpcMeta):
     """The RPC service class."""
-    def __init__(self, service_func: Callable[..., Any]) -> None:
-        self.service_func = service_func
+    def __init__(self, service_func: Callable[..., Any], **kwargs) -> None:
+        self.service_func = partial(service_func, **kwargs)
 
     @sync_func
     def __call__(self, *args: tuple, **kwargs: dict) -> Any:
@@ -496,10 +496,7 @@ class ServiceToolkit:
 
         """
         # Get the function for agent to use
-        to_dist = kwargs.pop("to_dist", False)
-        tool_func = partial(service_func, **kwargs)
-        if to_dist:
-            tool_func = RpcService(tool_func, to_dist=True)
+        tool_func = RpcService(service_func, **kwargs)
 
         # Obtain all arguments of the service function
         argsspec = inspect.getfullargspec(service_func)
@@ -657,10 +654,7 @@ class ServiceFactory:
         )
 
         # Get the function for agent to use
-        to_dist = kwargs.pop("to_dist", False)
-        tool_func = partial(service_func, **kwargs)
-        if to_dist:
-            tool_func = RpcService(tool_func, to_dist=True)
+        tool_func = RpcService(service_func, **kwargs)
 
         # Obtain all arguments of the service function
         argsspec = inspect.getfullargspec(service_func)
