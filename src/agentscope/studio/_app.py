@@ -677,6 +677,30 @@ def _read_examples() -> Response:
     return jsonify(json=data)
 
 
+@_app.route("/fetch-gallery", methods=["POST"])
+def _fetch_gallery() -> Response:
+    """
+    Get all workflows JSON files in gallery folder.
+    """
+    gallery_path = os.path.join(_app.root_path, "..", "..", "..", "gallery")
+
+    if not os.path.exists(gallery_path):
+        return jsonify(json=[])
+
+    gallery_items = []
+    for filename in os.listdir(gallery_path):
+        if filename.endswith(".json"):
+            file_path = os.path.join(gallery_path, filename)
+            try:
+                with open(file_path, "r", encoding="utf-8") as json_file:
+                    data = json.load(json_file)
+                    gallery_items.append(data)
+            except (IOError, json.JSONDecodeError) as e:
+                print(f"Error reading {file_path}: {e}")
+
+    return jsonify(json=gallery_items)
+
+
 @_app.route("/save-workflow", methods=["POST"])
 def _save_workflow() -> Response:
     """

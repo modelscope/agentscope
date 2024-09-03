@@ -34,6 +34,7 @@ from agentscope.studio._app import (
     _delete_workflow,
     _list_workflows,
     _load_workflow,
+    _fetch_gallery,
 )
 
 _app = Flask(__name__)
@@ -195,6 +196,15 @@ def _home() -> str:
     return render_template("login.html", client_id=CLIENT_ID, ip=IP, port=PORT)
 
 
+@_app.route("/logout")
+def logout() -> str:
+    """
+    Logout the user by clearing the session and redirecting to the login page.
+    """
+    session.clear()  # Clear the session
+    return redirect(url_for("_home"))  # Redirect to the login page
+
+
 @_app.route("/oauth/callback")
 def oauth_callback() -> str:
     """
@@ -321,6 +331,16 @@ def _read_examples_online(**kwargs: Any) -> Response:
     Read tutorial examples from local file.
     """
     return _read_examples()
+
+
+@_app.route("/fetch-gallery", methods=["POST"])
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+def _fetch_gallery_online(**kwargs: Any) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Get all workflows JSON files in gallery folder.
+    """
+    return _fetch_gallery()
 
 
 @_app.route("/save-workflow", methods=["POST"])
