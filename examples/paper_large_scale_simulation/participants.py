@@ -13,7 +13,7 @@ from typing import Union, List
 
 from loguru import logger
 
-from agentscope.rpc import async_func, RpcAgentClient
+from agentscope.rpc import async_func, RpcClient
 from agentscope.message import Msg
 from agentscope.agents import AgentBase
 from agentscope.environment import BasicEnv
@@ -482,7 +482,7 @@ def check_server_alive(
     max_retry = 10
     for host in hosts:
         for port in range(base_port, base_port + agent_server_per_host):
-            client = RpcAgentClient(host, port)
+            client = RpcClient(host, port)
             i = 0
             while not client.is_alive() and i < max_retry:
                 logger.warning(

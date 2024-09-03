@@ -12,7 +12,7 @@ except ImportError as import_error:
     pickle = ImportErrorReporter(import_error, "distribtue")
 
 from ..message import Msg
-from .rpc_agent_client import RpcAgentClient
+from .rpc_client import RpcClient
 from ..utils.common import _is_web_url
 
 
@@ -42,7 +42,7 @@ class AsyncResult:
         if self._task_id is None:
             self._task_id = self._get_task_id()
         self._data = pickle.loads(
-            RpcAgentClient(self._host, self._port).update_placeholder(
+            RpcClient(self._host, self._port).update_placeholder(
                 self._task_id,
             ),
         )
@@ -69,7 +69,7 @@ class AsyncResult:
 
     def _download(self, url: str) -> str:
         if not _is_web_url(url):
-            client = RpcAgentClient(self._host, self._port)
+            client = RpcClient(self._host, self._port)
             return client.download_file(path=url)
         else:
             return url

@@ -22,7 +22,7 @@ from agentscope.rpc import AsyncResult, RpcObject, DistConf
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
-from agentscope.rpc import RpcAgentClient, async_func
+from agentscope.rpc import RpcClient, async_func
 from agentscope.exception import (
     AgentCallError,
     QuotaExceededError,
@@ -309,7 +309,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         launcher.launch()
         self.assertEqual(port, launcher.port)
-        client = RpcAgentClient(host=launcher.host, port=launcher.port)
+        client = RpcClient(host=launcher.host, port=launcher.port)
         self.assertTrue(client.is_alive())
         agent_a = DemoRpcAgent(
             name="a",
@@ -627,7 +627,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             custom_agent_classes=[DemoRpcAgentWithMemory, FileAgent],
         )
         launcher.launch()
-        client = RpcAgentClient(host="localhost", port=launcher.port)
+        client = RpcClient(host="localhost", port=launcher.port)
         agent_lists = client.get_agent_list()
         self.assertEqual(len(agent_lists), 0)
         memory_agent = DemoRpcAgentWithMemory(
@@ -774,7 +774,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(a1.port, port)
         self.assertEqual(a2.host, host)
         self.assertEqual(a2.port, port)
-        client = RpcAgentClient(host=host, port=port)
+        client = RpcClient(host=host, port=port)
         al = client.get_agent_list()
         self.assertEqual(len(al), 2)
 
@@ -782,7 +782,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         mock_alloc.return_value = {"host": "not_exist", "port": 1234}
         a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
         self.assertEqual(a3.host, "localhost")
-        nclient = RpcAgentClient(host=a3.host, port=a3.port)
+        nclient = RpcClient(host=a3.host, port=a3.port)
         a3._check_created()  # pylint: disable=W0212
         nal = nclient.get_agent_list()
         self.assertEqual(len(nal), 1)
