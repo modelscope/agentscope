@@ -32,7 +32,7 @@ def start_workflow(config: dict) -> None:
     """
     logger.info("Launching...")
 
-    dag = build_dag(config)
+    dag = build_dag(config, only_compile=False)
     dag.run()
 
     logger.info("Finished.")
@@ -48,7 +48,7 @@ def compile_workflow(config: dict, compiled_filename: str = "main.py") -> None:
     """
     logger.info("Compiling...")
 
-    dag = build_dag(config)
+    dag = build_dag(config, only_compile=True)
     dag.compile(compiled_filename)
 
     logger.info("Finished.")

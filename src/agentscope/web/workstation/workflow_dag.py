@@ -49,11 +49,17 @@ class ASDiGraph(nx.DiGraph):
         the computation graph.
     """
 
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(
+        self,
+        only_compile: bool = True,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
         """
         Initialize the ASDiGraph instance.
         """
         super().__init__(*args, **kwargs)
+        self.only_compile = only_compile
         self.nodes_not_in_graph = set()
 
         # Prepare the header of the file with necessary imports and any
@@ -77,6 +83,9 @@ class ASDiGraph(nx.DiGraph):
         the nodes, and then runs each node's computation sequentially using
         the outputs from its predecessors as inputs.
         """
+        if self.only_compile:
+            raise ValueError("Workflow cannot run on compile mode!")
+
         agentscope.init(logger_level="DEBUG")
         sorted_nodes = list(nx.topological_sort(self))
         sorted_nodes = [
@@ -164,6 +173,7 @@ class ASDiGraph(nx.DiGraph):
         node_id: str,
         node_info: dict,
         config: dict,
+        only_compile: bool = True,
     ) -> Any:
         """
         Add a node to the graph based on provided node information and
@@ -203,7 +213,12 @@ class ASDiGraph(nx.DiGraph):
         for dep_node_id in deps:
             if not self.has_node(dep_node_id):
                 dep_node_info = config[dep_node_id]
-                self.add_as_node(dep_node_id, dep_node_info, config)
+                self.add_as_node(
+                    node_id=dep_node_id,
+                    node_info=dep_node_info,
+                    config=config,
+                    only_compile=only_compile,
+                )
             dep_opts.append(self.nodes[dep_node_id]["opt"])
 
         node_opt = node_cls(
@@ -211,6 +226,7 @@ class ASDiGraph(nx.DiGraph):
             opt_kwargs=node_info["data"].get("args", {}),
             source_kwargs=node_info["data"].get("source", {}),
             dep_opts=dep_opts,
+            only_compile=only_compile,
         )
 
         # Add build compiled python code
@@ -286,7 +302,7 @@ def sanitize_node_data(raw_info: dict) -> dict:
     return raw_info
 
 
-def build_dag(config: dict) -> ASDiGraph:
+def build_dag(config: dict, only_compile: bool = True) -> ASDiGraph:
     """
     Construct a Directed Acyclic Graph (DAG) from the provided configuration.
 
@@ -303,7 +319,7 @@ def build_dag(config: dict) -> ASDiGraph:
     Raises:
         ValueError: If the resulting graph is not acyclic.
     """
-    dag = ASDiGraph()
+    dag = ASDiGraph(only_compile=only_compile)
 
     for node_id, node_info in config.items():
         config[node_id] = sanitize_node_data(node_info)
@@ -314,7 +330,12 @@ def build_dag(config: dict) -> ASDiGraph:
             NODE_NAME_MAPPING[node_info["name"]].node_type
             == WorkflowNodeType.MODEL
         ):
-            dag.add_as_node(node_id, node_info, config)
+            dag.add_as_node(
+                node_id,
+                node_info,
+                config,
+                only_compile=only_compile,
+            )
 
     # Add and init non-model nodes
     for node_id, node_info in config.items():
@@ -322,7 +343,12 @@ def build_dag(config: dict) -> ASDiGraph:
             NODE_NAME_MAPPING[node_info["name"]].node_type
             != WorkflowNodeType.MODEL
         ):
-            dag.add_as_node(node_id, node_info, config)
+            dag.add_as_node(
+                node_id,
+                node_info,
+                config,
+                only_compile=only_compile,
+            )
 
     # Add edges
     for node_id, node_info in config.items():
