@@ -409,8 +409,17 @@ class RpcAgentServerLauncher:
     def _launch_in_sub(self) -> None:
         """Launch an agent server in sub-process."""
         from agentscope.manager import ASManager
+        from agentscope.rpc import RpcAgentClient
 
         init_settings = ASManager.get_instance().state_dict()
+        # gRPC channel should be closed before forking new process
+        # ref: https://github.com/grpc/grpc/blob/master/doc/fork_support.md
+        for (
+            _,
+            channel,
+        ) in RpcAgentClient._CHANNEL_POOL.items():  # pylint: disable=W0212
+            channel.close()
+        RpcAgentClient._CHANNEL_POOL.clear()  # pylint: disable=W0212
 
         self.parent_con, child_con = Pipe()
         start_event = Event()
