@@ -151,6 +151,7 @@ the following libraries.
 - Multi Modality
 - Wikipedia Search and Retrieval
 - TripAdvisor Search
+- Web Browser Control
 
 **Example Applications**
 

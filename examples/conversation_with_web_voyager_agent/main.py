@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Example of using web browsing agent"""
-import agentscope
+""" Example of using web browser module. """
 
-from agentscope.browser.web_browser import WebBrowser
-from agentscope.agents import WebVoyagerAgent
+from webact_agent import WebActAgent
 from agentscope.agents import UserAgent
 
-# Fill in your OpenAI API key
+import agentscope
+
+# Fill in your OpenAI API key or create your own vision model configuration
 YOUR_OPENAI_API_KEY = "xxx"
 
 model_config = {
@@ -22,22 +22,22 @@ model_config = {
 
 agentscope.init(
     model_configs=model_config,
-    project="Conversation with WebVoyagerAgent",
+    project="Conversation with Web Browser",
 )
 
-
-browser = WebBrowser()
-agent = WebVoyagerAgent(
-    browser=browser,
+agent = WebActAgent(
+    name="assistant",
     model_config_name="gpt-4o_config",
-    name="Browser Agent",
 )
 
-user = UserAgent("user")
+user = UserAgent(
+    "user",
+    input_hint="User Input (type 'exit' to break): ",
+)
 
-x = user(None)
+x = None
 while x is not None:
-    x = agent.reply(x)
     x = user(x)
-    if x.content == "exit":  # type exit to break
+    if x.content == "exit":
         break
+    x = agent(x)

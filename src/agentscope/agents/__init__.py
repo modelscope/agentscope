@@ -8,7 +8,6 @@ from .user_agent import UserAgent
 from .rpc_agent import RpcAgent
 from .react_agent import ReActAgent
 from .rag_agent import LlamaIndexAgent
-from .web_voyager_agent import WebVoyagerAgent
 
 
 __all__ = [
@@ -21,5 +20,4 @@ __all__ = [
     "DistConf",
     "RpcAgent",
     "LlamaIndexAgent",
-    "WebVoyagerAgent",
 ]
