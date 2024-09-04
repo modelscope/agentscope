@@ -27,7 +27,7 @@ These models are tested in this example. For other models, some modifications ma
 ```bash
 git clone https://github.com/modelscope/agentscope
 cd agentscope
-pip install -e .
+pip install -e .\[distribute\]
 ```
 
 - Prepare an OpenAI API key or Dashscope API key

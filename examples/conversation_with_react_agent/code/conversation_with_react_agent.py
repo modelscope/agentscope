@@ -64,11 +64,11 @@ def main():
     # Prepare the tools for the agent
     service_toolkit = ServiceToolkit()
 
-    service_toolkit.add(bing_search, api_key=BING_API_KEY, num_results=3, to_dist=True)
-    # service_toolkit.add(google_search, api_key=GOOGLE_API_KEY, cse_id=GOOGLE_CSE_ID, num_results=3, to_dist=True)
-    service_toolkit.add(execute_python_code, to_dist=True)
-    service_toolkit.add(read_text_file, to_dist=True)
-    service_toolkit.add(write_text_file, to_dist=True)
+    service_toolkit.add(bing_search, api_key=BING_API_KEY, num_results=3)
+    # service_toolkit.add(google_search, api_key=GOOGLE_API_KEY, cse_id=GOOGLE_CSE_ID, num_results=3)
+    service_toolkit.add(execute_python_code)
+    service_toolkit.add(read_text_file)
+    service_toolkit.add(write_text_file)
 
     agentscope.init(
         model_configs=YOUR_MODEL_CONFIGURATION,

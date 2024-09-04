@@ -24,23 +24,11 @@ from ..exception import (
 )
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
-from ..rpc import call_func_in_thread
-from ..rpc.rpc_meta import RpcMeta, sync_func
 
 try:
     from docstring_parser import parse
 except ImportError:
     parse = None
-
-
-class RpcService(metaclass=RpcMeta):
-    """The RPC service class."""
-    def __init__(self, service_func: Callable[..., Any], **kwargs) -> None:
-        self.service_func = partial(service_func, **kwargs)
-
-    @sync_func
-    def __call__(self, *args: tuple, **kwargs: dict) -> Any:
-        return self.service_func(*args, **kwargs)
 
 
 def _get_type_str(cls: Any) -> Optional[Union[str, list]]:
@@ -388,7 +376,8 @@ class ServiceToolkit:
             `str`: The prompt of the execution results.
         """
 
-        def execute_cmd(i: int, cmd: dict) -> str:
+        execute_results = []
+        for i, cmd in enumerate(cmds):
             service_func = self.service_funcs[cmd["name"]]
             kwargs = cmd.get("arguments", {})
 
@@ -418,13 +407,8 @@ class ServiceToolkit:
                     "result": func_res.content,
                 },
             )
-            return execute_res
 
-        execute_list = [
-            call_func_in_thread(partial(execute_cmd, i=i, cmd=cmd))
-            for i, cmd in enumerate(cmds)
-        ]
-        execute_results = [exe.result() for exe in execute_list]
+            execute_results.append(execute_res)
 
         execute_results_prompt = "\n".join(execute_results)
 
@@ -496,7 +480,7 @@ class ServiceToolkit:
 
         """
         # Get the function for agent to use
-        tool_func = RpcService(service_func, **kwargs)
+        tool_func = partial(service_func, **kwargs)
 
         # Obtain all arguments of the service function
         argsspec = inspect.getfullargspec(service_func)
@@ -654,7 +638,7 @@ class ServiceFactory:
         )
 
         # Get the function for agent to use
-        tool_func = RpcService(service_func, **kwargs)
+        tool_func = partial(service_func, **kwargs)
 
         # Obtain all arguments of the service function
         argsspec = inspect.getfullargspec(service_func)
