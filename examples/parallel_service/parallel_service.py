@@ -15,7 +15,7 @@ from agentscope.service.service_response import ServiceResponse, ServiceExecStat
 from agentscope.agents import UserAgent
 from agentscope.manager import ModelManager
 from agentscope.rpc import call_func_in_thread
-from agentscope.rpc.rpc_meta import RpcMeta, sync_func
+from agentscope.rpc.rpc_meta import RpcMeta, sync_func, async_func
 
 
 class RpcService(metaclass=RpcMeta):
@@ -28,9 +28,16 @@ class RpcService(metaclass=RpcMeta):
             kwargs['model'] = model
         self.service_func = partial(service_func, **kwargs)
 
-    @sync_func
+    @async_func
     def __call__(self, *args: tuple, **kwargs: dict) -> Any:
-        return self.service_func(*args, **kwargs)
+        try:
+            result = self.service_func(*args, **kwargs)
+        except Exception as e:
+            result = ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=str(e),
+            )
+        return result
 
 
 def parse_args():
@@ -67,7 +74,7 @@ def main():
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
 
     # Initialize the search result
-    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level, studio_url=args.studio_url)
+    agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level)
     if args.search_engine == "google":
         response = google_search("Journey to the West", args.api_key, args.cse_id).content
     else:
@@ -84,25 +91,14 @@ def main():
         kwargs = cmd.get("arguments", {})
 
         # Execute the function
-        try:
-            func_res = service_func(**kwargs)
-        except Exception as e:
-            func_res = ServiceResponse(
-                status=ServiceExecStatus.ERROR,
-                content=str(e),
-            )
+        func_res = service_func(**kwargs)
         return func_res
 
     # Execute the commands
     start_time = time.time()
+    execute_results = [execute_cmd(cmd=cmd) for cmd in cmds]
     if args.use_dist:
-        execute_list = [
-            call_func_in_thread(partial(execute_cmd, cmd=cmd))
-            for cmd in cmds
-        ]
-        execute_results = [exe.result() for exe in execute_list]
-    else:
-        execute_results = [execute_cmd(cmd=cmd) for cmd in cmds]
+        execute_results = [exe.result() for exe in execute_results]
     end_time = time.time()
     print(f'len(execute_results) = {len(execute_results)}, duration = {end_time - start_time:.2f} s')
 
