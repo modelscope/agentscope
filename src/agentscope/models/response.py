@@ -52,7 +52,7 @@ class ModelResponse:
         field will be updated accordingly."""
         if self._text is None:
             if self.stream is not None:
-                for chunk in self.stream:
+                for _, chunk in self.stream:
                     self._text += chunk
         return self._text
 
