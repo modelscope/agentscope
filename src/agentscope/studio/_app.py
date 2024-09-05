@@ -381,13 +381,18 @@ def _alloc_server() -> Response:
     # TODO: allocate based on server's cpu and memory usage
     # currently random select a server
     servers = _ServerTable.query.all()
+    if len(servers) == 0:
+        return jsonify({"status": "fail"})
     server = choice(servers)
-    return jsonify(
-        {
-            "host": server.host,
-            "port": server.port,
-        },
-    )
+    if RpcClient(host=server.host, port=server.port).is_alive():
+        return jsonify(
+            {
+                "host": server.host,
+                "port": server.port,
+            },
+        )
+    else:
+        return jsonify({"status": "fail"})
 
 
 @_app.route("/api/messages/push", methods=["POST"])
