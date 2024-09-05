@@ -9,45 +9,48 @@
 
 下面的表格按照类型概述了各种Service函数。以下函数可以通过`agentscope.service.{函数名}`进行调用。
 
-| Service场景  | Service函数名称           | 描述                                      |
-|------------|-----------------------|-----------------------------------------|
-| 代码         | `execute_python_code` | 执行一段 Python 代码，可选择在 Docker <br/>容器内部执行。 |
-|            | `NoteBookExecutor.run_code_on_notebook`             | 在 NoteBookExecutor 的 IPython 环境中执行一段 Python 代码，遵循 IPython 交互式计算风格。                |
-| 检索         | `retrieve_from_list`  | 根据给定的标准从列表中检索特定项目。                      |
-|            | `cos_sim`             | 计算2个embedding的余弦相似度。                    |
-| SQL查询      | `query_mysql`         | 在 MySQL 数据库上执行 SQL 查询并返回结果。             |
-|            | `query_sqlite`        | 在 SQLite 数据库上执行 SQL 查询并返回结果。            |
-|            | `query_mongodb`       | 对 MongoDB 集合执行查询或操作。                    |
-| 文本处理       | `summarization`       | 使用大型语言模型总结一段文字以突出其主要要点。                 |
-| 网络         | `bing_search`         | 使用bing搜索。                               |
-|            | `google_search`       | 使用google搜索。                             |
-|            | `arxiv_search`        | 使用arxiv搜索。                              |
-|            | `download_from_url`   | 从指定的 URL 下载文件。                          |
-|            | `load_web`            | 爬取并解析指定的网页链接 （目前仅支持爬取 HTML 页面）          |
-|            | `digest_webpage`      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面
-|            | `dblp_search_publications`      | 在dblp数据库里搜索文献。
-|            | `dblp_search_authors`      | 在dblp数据库里搜索作者。                          |
-|            | `dblp_search_venues`      | 在dblp数据库里搜索期刊，会议及研讨会。                   |
-| 文件处理       | `create_file`         | 在指定路径创建一个新文件，并可选择添加初始内容。                |
-|            | `delete_file`         | 删除由文件路径指定的文件。                           |
-|            | `move_file`           | 将文件从一个路径移动或重命名到另一个路径。                   |
-|            | `create_directory`    | 在指定路径创建一个新的目录。                          |
-|            | `delete_directory`    | 删除一个目录及其所有内容。                           |
-|            | `move_directory`      | 将目录从一个路径移动或重命名到另一个路径。                   |
-|            | `read_text_file`      | 读取并返回文本文件的内容。                           |
-|            | `write_text_file`     | 向指定路径的文件写入文本内容。                         |
-|            | `read_json_file`      | 读取并解析 JSON 文件的内容。                       |
-|            | `write_json_file`     | 将 Python 对象序列化为 JSON 并写入到文件。            |
-| 多模态        | `dashscope_text_to_image`  | 使用 DashScope API 将文本生成图片。               |
-|            | `dashscope_image_to_text`  | 使用 DashScope API 根据图片生成文字。              |
-|            | `dashscope_text_to_audio`  | 使用 DashScope API 根据文本生成音频。             |
-|                             | `openai_text_to_image`     | 使用 OpenAI API根据文本生成图片。
-|                             | `openai_edit_image`        | 使用 OpenAI API 根据提供的遮罩和提示编辑图像。
-|                             | `openai_create_image_variation`        | 使用 OpenAI API 创建图像的变体。
-|                             | `openai_image_to_text` | 使用 OpenAI API 根据图片生成文字。
-|                             | `openai_text_to_audio` | 使用 OpenAI API 根据文本生成音频。
-|                             | `openai_audio_to_text` | 使用OpenAI API将音频转换为文本。
-| *更多服务即将推出* |                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。  |
+| Service场景  | Service函数名称                           | 描述                                                                 |
+|------------|---------------------------------------|--------------------------------------------------------------------|
+| 代码         | `execute_python_code`                 | 执行一段 Python 代码，可选择在 Docker 容器内部执行。                            |
+|            | `NoteBookExecutor`                    | 在 NoteBookExecutor 的 IPython 环境中执行一段 Python 代码，遵循 IPython 交互式计算风格。 |
+| 检索         | `retrieve_from_list`                  | 根据给定的标准从列表中检索特定项目。                                                 |
+|            | `cos_sim`                             | 计算2个embedding的余弦相似度。                                               |
+| SQL查询      | `query_mysql`                         | 在 MySQL 数据库上执行 SQL 查询并返回结果。                                        |
+|            | `query_sqlite`                        | 在 SQLite 数据库上执行 SQL 查询并返回结果。                                       |
+|            | `query_mongodb`                       | 对 MongoDB 集合执行查询或操作。                                               |
+| 文本处理       | `summarization`                       | 使用大型语言模型总结一段文字以突出其主要要点。                                            |
+| 网络         | `bing_search`                         | 使用bing搜索。                                                          |
+|            | `google_search`                       | 使用google搜索。                                                        |
+|            | `arxiv_search`                        | 使用arxiv搜索。                                                         |
+|            | `download_from_url`                   | 从指定的 URL 下载文件。                                                     |
+|            | `load_web`                            | 爬取并解析指定的网页链接 （目前仅支持爬取 HTML 页面）                                     |
+|            | `digest_webpage`                      | 对已经爬取好的网页生成摘要信息（目前仅支持 HTML 页面）                                     |
+|            | `dblp_search_publications`            | 在dblp数据库里搜索文献。                                                     |
+|            | `dblp_search_authors`                 | 在dblp数据库里搜索作者。                                                     |
+|            | `dblp_search_venues`                  | 在dblp数据库里搜索期刊，会议及研讨会。                                              |
+|            | `tripadvisor_search`                  | 使用 TripAdvisor API 搜索位置。                                           |
+|            | `tripadvisor_search_location_photos`  | 使用 TripAdvisor API 检索特定位置的照片。                                      |
+|            | `tripadvisor_search_location_details` | 使用 TripAdvisor API 获取特定位置的详细信息。                                    |
+| 文件处理       | `create_file`                         | 在指定路径创建一个新文件，并可选择添加初始内容。                                           |
+|            | `delete_file`                         | 删除由文件路径指定的文件。                                                      |
+|            | `move_file`                           | 将文件从一个路径移动或重命名到另一个路径。                                              |
+|            | `create_directory`                    | 在指定路径创建一个新的目录。                                                     |
+|            | `delete_directory`                    | 删除一个目录及其所有内容。                                                      |
+|            | `move_directory`                      | 将目录从一个路径移动或重命名到另一个路径。                                              |
+|            | `read_text_file`                      | 读取并返回文本文件的内容。                                                      |
+|            | `write_text_file`                     | 向指定路径的文件写入文本内容。                                                    |
+|            | `read_json_file`                      | 读取并解析 JSON 文件的内容。                                                  |
+|            | `write_json_file`                     | 将 Python 对象序列化为 JSON 并写入到文件。                                       |
+| 多模态        | `dashscope_text_to_image`             | 使用 DashScope API 将文本生成图片。                                          |
+|            | `dashscope_image_to_text`             | 使用 DashScope API 根据图片生成文字。                                         |
+|            | `dashscope_text_to_audio`             | 使用 DashScope API 根据文本生成音频。                                         |
+|            | `openai_text_to_image`                | 使用 OpenAI API根据文本生成图片。                                             |
+|            | `openai_edit_image`                   | 使用 OpenAI API 根据提供的遮罩和提示编辑图像。                                      |
+|            | `openai_create_image_variation`       | 使用 OpenAI API 创建图像的变体。                                             |
+|            | `openai_image_to_text`                | 使用 OpenAI API 根据图片生成文字。                                            |
+|            | `openai_text_to_audio`                | 使用 OpenAI API 根据文本生成音频。                                            |
+|            | `openai_audio_to_text`                | 使用OpenAI API将音频转换为文本。                                              |
+| *更多服务即将推出* |                                       | 正在开发更多服务功能，并将添加到 AgentScope 以进一步增强其能力。                             |
 
 关于详细的参数、预期输入格式、返回类型，请参阅[API文档](https://modelscope.github.io/agentscope/)。
 

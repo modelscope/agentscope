@@ -197,7 +197,7 @@ class SWEAgent(AgentBase):
         # parse and execute action
         action = res.parsed.get("action")
 
-        obs = self.prase_command(res.parsed["action"])
+        obs = self.parse_command(res.parsed["action"])
         self.speak(
             Msg(self.name, "\n====Observation====\n" + obs, role="assistant"),
         )
@@ -214,7 +214,7 @@ class SWEAgent(AgentBase):
             action_name = msg.content["action"]["name"]
         return msg
 
-    def prase_command(self, command_call: dict) -> str:
+    def parse_command(self, command_call: dict) -> str:
         command_name = command_call["name"]
         command_args = command_call["arguments"]
         if command_name == "exit":

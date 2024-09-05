@@ -76,7 +76,6 @@ class UserAgent(AgentBase):
                 required_keys=required_keys,
             )
 
-            print("Python: receive ", raw_input)
             content = raw_input["content"]
             url = raw_input["url"]
             kwargs = {}

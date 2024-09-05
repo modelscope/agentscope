@@ -10,7 +10,7 @@ from loguru import logger
 
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.tools import _convert_to_str, _guess_type_by_extension
+from ..utils.common import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope

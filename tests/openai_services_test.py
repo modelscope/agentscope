@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import patch, MagicMock, mock_open
 import os
 import shutil
-from openai._types import NOT_GIVEN
 
 from agentscope.manager import ASManager
 from agentscope.service.multi_modality.openai_services import (
@@ -177,7 +176,7 @@ class TestOpenAIServices(unittest.TestCase):
         # Ensure _download_file is not called in case of service error
         mock_download_file.assert_not_called()
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     @patch(
         "builtins.open",
         new_callable=mock_open,
@@ -212,7 +211,7 @@ class TestOpenAIServices(unittest.TestCase):
             {"transcription": "This is a test transcription."},
         )
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     @patch("builtins.open", new_callable=mock_open)
     def test_openai_audio_to_text_error(
         self,
@@ -238,7 +237,7 @@ class TestOpenAIServices(unittest.TestCase):
             result.content,
         )
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     def test_successful_audio_generation(self, mock_openai: MagicMock) -> None:
         """Test the openai_text_to_audio function with a valid text."""
         # Mocking the OpenAI API response
@@ -264,7 +263,7 @@ class TestOpenAIServices(unittest.TestCase):
             expected_audio_path,
         )  # Check file save
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     def test_api_error_text_to_audio(self, mock_openai: MagicMock) -> None:
         """Test the openai_text_to_audio function with an API error."""
         # Mocking an OpenAI API error
@@ -352,7 +351,7 @@ class TestOpenAIServices(unittest.TestCase):
         self.assertEqual(result.status, ServiceExecStatus.ERROR)
         self.assertEqual(result.content, "API Error")
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     @patch("agentscope.service.multi_modality.openai_services._parse_url")
     @patch(
         (
@@ -411,9 +410,12 @@ class TestOpenAIServices(unittest.TestCase):
         )
 
         # Check if _handle_openai_img_response was called
-        mock_handle_response.assert_called_once_with(mock_response, None)
+        mock_handle_response.assert_called_once_with(
+            mock_response.model_dump(),
+            None,
+        )
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     @patch("agentscope.service.multi_modality.openai_services._parse_url")
     def test_openai_edit_image_error(
         self,
@@ -444,13 +446,12 @@ class TestOpenAIServices(unittest.TestCase):
         mock_client.images.edit.assert_called_once_with(
             model="dall-e-2",
             image="parsed_original_image.png",
-            mask=NOT_GIVEN,
             prompt="Add a sun to the sky",
             n=1,
             size="256x256",
         )
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     @patch("agentscope.service.multi_modality.openai_services._parse_url")
     @patch(
         (
@@ -464,7 +465,7 @@ class TestOpenAIServices(unittest.TestCase):
         mock_parse_url: MagicMock,
         mock_openai: MagicMock,
     ) -> None:
-        """Test the openai_create_image_variation swith a valid image URL."""
+        """Test the openai_create_image_variation with a valid image URL."""
         # Mock OpenAI client
         mock_client = MagicMock()
         mock_openai.return_value = mock_client
@@ -505,9 +506,12 @@ class TestOpenAIServices(unittest.TestCase):
         )
 
         # Check if _handle_openai_img_response was called
-        mock_handle_response.assert_called_once_with(mock_response, None)
+        mock_handle_response.assert_called_once_with(
+            mock_response.model_dump(),
+            None,
+        )
 
-    @patch("agentscope.service.multi_modality.openai_services.OpenAI")
+    @patch("openai.OpenAI")
     @patch("agentscope.service.multi_modality.openai_services._parse_url")
     def test_openai_create_image_variation_error(
         self,

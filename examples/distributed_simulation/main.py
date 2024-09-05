@@ -188,10 +188,10 @@ def run_main_process(
     cnt = 0
     for r in results:
         try:
-            summ += int(r["content"]["sum"])
-            cnt += int(r["content"]["cnt"])
+            summ += int(r.content["sum"])
+            cnt += int(r.content["cnt"])
         except Exception:
-            logger.error(r["content"])
+            logger.error(r.content)
     et = time.time()
     logger.chat(
         Msg(

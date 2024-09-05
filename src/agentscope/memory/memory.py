@@ -20,26 +20,6 @@ class MemoryBase(ABC):
 
     _version: int = 1
 
-    def __init__(
-        self,
-        config: Optional[dict] = None,
-    ) -> None:
-        """MemoryBase is a base class for memory of agents.
-
-        Args:
-            config (`Optional[dict]`, defaults to `None`):
-                Configuration of this memory.
-        """
-        self.config = {} if config is None else config
-
-    def update_config(self, config: dict) -> None:
-        """
-        Configure memory as specified in config
-        Args:
-            config (`dict`): Configuration of resetting this memory
-        """
-        self.config = config
-
     @abstractmethod
     def get_memory(
         self,

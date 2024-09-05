@@ -20,7 +20,6 @@ let nameToHtmlFile = {
     'Message': 'message-msg.html',
     'DialogAgent': 'agent-dialogagent.html',
     'UserAgent': 'agent-useragent.html',
-    'TextToImageAgent': 'agent-texttoimageagent.html',
     'DictDialogAgent': 'agent-dictdialogagent.html',
     'ReActAgent': 'agent-reactagent.html',
     'Placeholder': 'pipeline-placeholder.html',
@@ -569,6 +568,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                     "args":
                         {
                             "name": '',
+                            "role": '',
                             "content": '',
                             "url": ''
                         }
@@ -601,22 +601,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             var nodeElement = document.querySelector(`#node-${UserAgentID} .node-id`);
             if (nodeElement) {
                 nodeElement.textContent = UserAgentID;
-            }
-            break;
-
-        case 'TextToImageAgent':
-            const TextToImageAgentID =
-                editor.addNode('TextToImageAgent', 1,
-                    1, pos_x, pos_y,
-                    'TextToImageAgent', {
-                        "args": {
-                            "name": '',
-                            "model_config_name": ''
-                        }
-                    }, htmlSourceCode);
-            var nodeElement = document.querySelector(`#node-${TextToImageAgentID} .node-id`);
-            if (nodeElement) {
-                nodeElement.textContent = TextToImageAgentID;
             }
             break;
 
@@ -773,10 +757,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
 function setupTextInputListeners(nodeId) {
     const newNode = document.getElementById(`node-${nodeId}`);
     if (newNode) {
-        const stopPropagation = function(event) {
+        const stopPropagation = function (event) {
             event.stopPropagation();
         };
-        newNode.addEventListener('mousedown', function(event) {
+        newNode.addEventListener('mousedown', function (event) {
             const target = event.target;
             if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
                 stopPropagation(event);
@@ -1029,7 +1013,7 @@ function setupNodeListeners(nodeId) {
             function doDragSE(e) {
                 newNode.style.width = 'auto';
 
-                const newWidth = (startWidth + e.clientX - startX) ;
+                const newWidth = (startWidth + e.clientX - startX);
                 if (newWidth > 200) {
                     contentBox.style.width = newWidth + 'px';
                     titleBox.style.width = newWidth + 'px';
@@ -1326,6 +1310,21 @@ function checkConditions() {
                 isApiKeyEmpty = isApiKeyEmpty || true;
             }
         }
+
+        if (node.name === "Message") {
+            const validRoles = ["system", "assistant", "user"];
+            if (!validRoles.includes(node.data.args.role)) {
+                Swal.fire({
+                        title: 'Invalid Role for Message',
+                        html:
+                            `Invalid role ${node.data.args.role}. <br>The role must be in ['system', 'user', 'assistant']`,
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    });
+                return false;
+            }
+        }
+
         if (node.name.includes('Agent') && "model_config_name" in node.data.args) {
             hasAgentError = false;
             if (node.data && node.data.args) {
@@ -1476,7 +1475,7 @@ function showExportPyPopup() {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1512,7 +1511,7 @@ function showExportPyPopup() {
                         showCancelButton: true,
                         confirmButtonText: 'Copy',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1534,7 +1533,7 @@ function showExportPyPopup() {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1551,7 +1550,16 @@ function showExportPyPopup() {
 }
 
 
-function showExportRunPopup() {
+function showExportRunPopup(version) {
+    if (version === "local") {
+        showExportRunLocalPopup();
+    } else {
+        showExportRunMSPopup();
+    }
+}
+
+
+function showExportRunLocalPopup() {
     if (checkConditions()) {
         const rawData = editor.export();
         const hasError = sortElementsByPosition(rawData);
@@ -1564,7 +1572,7 @@ function showExportRunPopup() {
             title: 'Processing...',
             text: 'Please wait.',
             allowOutsideClick: false,
-            onBeforeOpen: () => {
+            willOpen: () => {
                 Swal.showLoading()
             }
         });
@@ -1600,7 +1608,7 @@ function showExportRunPopup() {
                         showCancelButton: true,
                         confirmButtonText: 'Copy Code',
                         cancelButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                             const copyButton = Swal.getConfirmButton();
@@ -1622,7 +1630,7 @@ function showExportRunPopup() {
                             popup: 'error-popup'
                         },
                         confirmButtonText: 'Close',
-                        onBeforeOpen: (element) => {
+                        willOpen: (element) => {
                             const codeElement = element.querySelector('code');
                             Prism.highlightElement(codeElement);
                         }
@@ -1640,11 +1648,86 @@ function showExportRunPopup() {
 }
 
 
+function filterOutApiKey(obj) {
+    for (let key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            filterOutApiKey(obj[key]);
+        }
+        if (key === 'api_key') {
+            delete obj[key];
+        }
+    }
+}
+
+
+function showExportRunMSPopup() {
+    if (checkConditions()) {
+        Swal.fire({
+            title: 'Are you sure to run the workflow in ModelScope Studio?',
+            text:
+                "You are about to navigate to another page. " +
+                "Please make sure all the configurations are set " +
+                "besides your api-key " +
+                "(your api-key should be set in ModelScope Studio page).",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, create it!',
+            cancelButtonText: 'Close'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const rawData = editor.export();
+                const hasError = sortElementsByPosition(rawData);
+                if (hasError) {
+                    return;
+                }
+                const filteredData = reorganizeAndFilterConfigForAgentScope(rawData);
+                filterOutApiKey(filteredData)
+
+                Swal.fire({
+                    title: 'Processing...',
+                    text: 'Please wait.',
+                    allowOutsideClick: false,
+                    willOpen: () => {
+                        Swal.showLoading()
+                    }
+                });
+                fetch('/upload-to-oss', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: JSON.stringify(filteredData, null, 4),
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const params = {'CONFIG_URL': data.config_url};
+                        const paramsStr = encodeURIComponent(JSON.stringify(params));
+                        const org = "agentscope";
+                        const fork_repo = "agentscope_workstation";
+                        const url = `https://www.modelscope.cn/studios/fork?target=${org}/${fork_repo}&overwriteEnv=${paramsStr}`;
+                        window.open(url, '_blank');
+                        Swal.fire('Success!', '', 'success');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Failed', data.message || 'An error occurred while uploading to oss', 'error');
+                    });
+            }
+        })
+    }
+}
+
+
 function showExportHTMLPopup() {
     const rawData = editor.export();
 
     // Remove the html attribute from the nodes to avoid inconsistencies in html
     removeHtmlFromUsers(rawData);
+    sortElementsByPosition(rawData);
 
     const exportData = JSON.stringify(rawData, null, 4);
 
@@ -1663,7 +1746,7 @@ function showExportHTMLPopup() {
         showCancelButton: true,
         confirmButtonText: 'Copy',
         cancelButtonText: 'Close',
-        onBeforeOpen: (element) => {
+        willOpen: (element) => {
             // Find the code element inside the Swal content
             const codeElement = element.querySelector('code');
 
@@ -1763,6 +1846,177 @@ function showImportHTMLPopup() {
 }
 
 
+function showSaveWorkflowPopup() {
+    Swal.fire({
+        title: 'Save Workflow',
+        input: 'text',
+        inputPlaceholder: 'Enter filename',
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+        cancelButtonText: 'Cancel'
+    }).then(result => {
+        if (result.isConfirmed) {
+            const filename = result.value;
+            saveWorkflow(filename);
+        }
+    });
+}
+
+function saveWorkflow(fileName) {
+    const rawData = editor.export();
+    filterOutApiKey(rawData)
+
+    // Remove the html attribute from the nodes to avoid inconsistencies in html
+    removeHtmlFromUsers(rawData);
+
+    const exportData = JSON.stringify(rawData, null, 4);
+    fetch('/save-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: fileName,
+            workflow: exportData,
+            overwrite: false,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.message === "Workflow file saved successfully") {
+                Swal.fire('Success', data.message, 'success');
+            } else {
+                Swal.fire('Error', data.message || 'An error occurred while saving the workflow.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while saving the workflow.', 'error');
+        });
+}
+
+function showLoadWorkflowPopup() {
+    fetch('/list-workflows', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (!Array.isArray(data.files)) {
+                throw new TypeError('The return data is not an array');
+            }
+            const inputOptions = data.files.reduce((options, file) => {
+                options[file] = file;
+                return options;
+            }, {});
+            Swal.fire({
+                title: 'Loading Workflow from Disks',
+                input: 'select',
+                inputOptions: inputOptions,
+                inputPlaceholder: 'Select',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Load',
+                cancelButtonText: 'Cancel',
+                denyButtonText: 'Delete',
+                didOpen: () => {
+                    const selectElement = Swal.getInput();
+                    selectElement.addEventListener('change', (event) => {
+                        selectedFilename = event.target.value;
+                    });
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    loadWorkflow(selectedFilename);
+                } else if (result.isDenied) {
+                    Swal.fire({
+                        title: `Are you sure to delete ${selectedFilename}?`,
+                        text: "This operation cannot be undone!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    }).then((deleteResult) => {
+                        if (deleteResult.isConfirmed) {
+                            deleteWorkflow(selectedFilename);
+                        }
+                    });
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
+
+
+function loadWorkflow(fileName) {
+    fetch('/load-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: fileName,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                console.log(data)
+                try {
+                    // Add html source code to the nodes data
+                    addHtmlAndReplacePlaceHolderBeforeImport(data)
+                        .then(() => {
+                            console.log(data)
+                            editor.clear();
+                            editor.import(data);
+                            importSetupNodes(data);
+                            Swal.fire('Imported!', '', 'success');
+                        });
+
+                } catch (error) {
+                    Swal.showValidationMessage(`Import error: ${error}`);
+                }
+                Swal.fire('Success', 'Workflow loaded successfully', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while loading the workflow.', 'error');
+        });
+}
+
+function deleteWorkflow(fileName) {
+    fetch('/delete-workflow', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: fileName,
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+            } else {
+                Swal.fire('Deleted!', 'Workflow has been deleted.', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'An error occurred while deleting the workflow.', 'error');
+        });
+}
+
+
 function removeHtmlFromUsers(data) {
     Object.keys(data.drawflow.Home.data).forEach((nodeId) => {
         const node = data.drawflow.Home.data[nodeId];
@@ -1789,8 +2043,13 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
     const idPlaceholderRegex = /ID_PLACEHOLDER/g;
     for (const nodeId of Object.keys(data.drawflow.Home.data)) {
         const node = data.drawflow.Home.data[nodeId];
-
         if (!node.html) {
+            if (node.name === "readme") {
+                // Remove the node if its name is "readme"
+                delete data.drawflow.Home.data[nodeId];
+                continue; // Skip to the next iteration
+            }
+            console.log(node.name)
             const sourceCode = await fetchHtmlSourceCodeByName(node.name);
 
             // Add new html attribute to the node
@@ -1845,7 +2104,7 @@ function fetchExample(index, processData) {
         },
         body: JSON.stringify({
             data: index,
-            lang: getCookie('locale') || 'en'
+            lang: getCookie('locale') || 'en',
         })
     }).then(response => {
         if (!response.ok) {

@@ -37,7 +37,7 @@ class RandomParticipant(AgentBase):
         """Generate a random value"""
         # generate a response in content
         response = self.generate_random_response()
-        msg = Msg(self.name, content=response)
+        msg = Msg(self.name, content=response, role="assistant")
         return msg
 
 
@@ -148,7 +148,7 @@ class Moderator(AgentBase):
         )
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = {executor.submit(lambda p: p(msg), p) for p in self.participants}
-            futures_2 = {executor.submit(lambda r: int(r["content"]), future.result()) for future in concurrent.futures.as_completed(futures)}
+            futures_2 = {executor.submit(lambda r: int(r.content), future.result()) for future in concurrent.futures.as_completed(futures)}
             summ = sum(future.result() for future in concurrent.futures.as_completed(futures_2))
         return Msg(
             name=self.name,

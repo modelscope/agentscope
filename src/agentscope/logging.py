@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """Logging utilities."""
-import json
 import os
 import sys
 from typing import Optional, Literal, Any
 
 from loguru import logger
 
-from .utils.tools import _guess_type_by_extension
+
 from .message import Msg
+from .serialize import serialize
 from .studio._client import _studio_client
+from .utils.common import _guess_type_by_extension
 from .web.gradio.utils import (
     generate_image_from_name,
     send_msg,
@@ -89,15 +90,18 @@ def _save_msg(msg: Msg) -> None:
         msg (`Msg`):
             The message object to be saved.
     """
-    logger.log(
-        LEVEL_SAVE_LOG,
-        msg.formatted_str(colored=False),
-    )
+    # TODO: Unified into a manager rather than an indicated attribute here
+    if hasattr(logger, "chat"):
+        # Not initialize yet
+        logger.log(
+            LEVEL_SAVE_LOG,
+            msg.formatted_str(colored=False),
+        )
 
-    logger.log(
-        LEVEL_SAVE_MSG,
-        json.dumps(msg, ensure_ascii=False, default=lambda _: None),
-    )
+        logger.log(
+            LEVEL_SAVE_MSG,
+            serialize(msg),
+        )
 
 
 def log_msg(msg: Msg, disable_gradio: bool = False) -> None:

@@ -114,6 +114,13 @@ full_requires = (
     + studio_requires
 )
 
+online_requires = full_requires + [
+    "oss2",
+    "flask_babel",
+    "babel==2.15.0",
+    "gunicorn",
+]
+
 with open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
@@ -182,6 +189,7 @@ setuptools.setup(
         "cpp_distribute": cpp_distribute_requires,
         "dev": dev_requires,
         "full": full_requires,
+        "online": online_requires,
     },
     ext_modules=[CMakeExtension('agentscope.cpp_server.cpp_server')],
     cmdclass=dict(build_ext=CMakeBuild),
