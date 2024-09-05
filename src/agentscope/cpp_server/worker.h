@@ -106,6 +106,9 @@ private:
     const unsigned int _max_tasks;
     const unsigned int _max_timeout_seconds;
 
+    // common used functions
+    py::object _serialize, _deserialize;
+
     enum function_ids
     {
         create_agent = 0,
