@@ -384,7 +384,7 @@ def _alloc_server() -> Response:
     if len(servers) == 0:
         return jsonify({"status": "fail"})
     server = choice(servers)
-    if not RpcClient(host=server.host, port=server.port).is_alive():
+    if RpcClient(host=server.host, port=server.port).is_alive():
         return jsonify(
             {
                 "host": server.host,
