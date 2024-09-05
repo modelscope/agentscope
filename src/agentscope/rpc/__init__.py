@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Import all rpc related modules in the package."""
-from .rpc_agent_client import (
-    RpcAgentClient,
+from .rpc_client import (
+    RpcClient,
     call_func_in_thread,
 )
 from .rpc_meta import async_func, sync_func, RpcMeta
@@ -9,28 +9,14 @@ from .rpc_config import DistConf
 from .rpc_async import AsyncResult
 from .rpc_object import RpcObject
 
-try:
-    from .rpc_agent_pb2 import CallFuncRequest  # pylint: disable=E0611
-    from .rpc_agent_pb2_grpc import RpcAgentServicer
-    from .rpc_agent_pb2_grpc import RpcAgentStub
-except ImportError as import_error:
-    from agentscope.utils.common import ImportErrorReporter
-
-    CallFuncRequest = ImportErrorReporter(import_error, "distribute")  # type: ignore[misc]
-    RpcAgentServicer = ImportErrorReporter(import_error, "distribute")
-    RpcAgentStub = ImportErrorReporter(import_error, "distribute")
-
 
 __all__ = [
     "RpcMeta",
+    "RpcClient",
+    "RpcObject",
     "async_func",
     "sync_func",
-    "RpcAgentClient",
-    "CallFuncRequest",
-    "RpcAgentServicer",
-    "RpcAgentStub",
-    "RpcObject",
-    "DistConf",
     "AsyncResult",
+    "DistConf",
     "call_func_in_thread",
 ]

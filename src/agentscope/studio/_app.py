@@ -41,7 +41,7 @@ from ..utils.common import (
     _is_windows,
     _generate_new_runtime_id,
 )
-from ..rpc.rpc_agent_client import RpcAgentClient
+from ..rpc.rpc_client import RpcClient
 
 
 _app = Flask(__name__)
@@ -302,7 +302,7 @@ def _get_all_servers() -> Response:
 @_app.route("/api/servers/status/<server_id>", methods=["GET"])
 def _get_server_status(server_id: str) -> Response:
     server = _ServerTable.query.filter_by(id=server_id).first()
-    status = RpcAgentClient(
+    status = RpcClient(
         host=server.host,
         port=server.port,
     ).get_server_info()
@@ -325,7 +325,7 @@ def _delete_server() -> Response:
     stop_server = request.json.get("stop", False)
     server = _ServerTable.query.filter_by(id=server_id).first()
     if stop_server:
-        RpcAgentClient(host=server.host, port=server.port).stop()
+        RpcClient(host=server.host, port=server.port).stop()
     _ServerTable.query.filter_by(id=server_id).delete()
     _db.session.commit()
     return jsonify({"status": "ok"})
@@ -335,7 +335,7 @@ def _delete_server() -> Response:
 def _get_server_agent_info(server_id: str) -> Response:
     _app.logger.info(f"Get info of server [{server_id}]")
     server = _ServerTable.query.filter_by(id=server_id).first()
-    agents = RpcAgentClient(
+    agents = RpcClient(
         host=server.host,
         port=server.port,
     ).get_agent_list()
@@ -349,11 +349,11 @@ def _delete_agent() -> Response:
     server = _ServerTable.query.filter_by(id=server_id).first()
     # delete all agents if agent_id is None
     if agent_id is not None:
-        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+        ok = RpcClient(host=server.host, port=server.port).delete_agent(
             agent_id,
         )
     else:
-        ok = RpcAgentClient(
+        ok = RpcClient(
             host=server.host,
             port=server.port,
         ).delete_all_agent()
@@ -365,7 +365,7 @@ def _agent_memory() -> Response:
     server_id = request.json.get("server_id")
     agent_id = request.json.get("agent_id")
     server = _ServerTable.query.filter_by(id=server_id).first()
-    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+    mem = RpcClient(host=server.host, port=server.port).get_agent_memory(
         agent_id,
     )
     if isinstance(mem, dict):

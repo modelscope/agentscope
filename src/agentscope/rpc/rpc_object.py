@@ -13,7 +13,7 @@ except ImportError as e:
 
     pickle = ImportErrorReporter(e, "distribute")
 
-from .rpc_agent_client import RpcAgentClient, call_func_in_thread
+from .rpc_client import RpcClient, call_func_in_thread
 from .rpc_async import AsyncResult
 from ..exception import AgentCreationError, AgentServerNotAliveError
 
@@ -71,7 +71,7 @@ class RpcObject(ABC):
         if self.port is None and _studio_client.active:
             server = _studio_client.alloc_server()
             if "host" in server:
-                if RpcAgentClient(
+                if RpcClient(
                     host=server["host"],
                     port=server["port"],
                 ).is_alive():
@@ -98,7 +98,7 @@ class RpcObject(ABC):
             )
             self._launch_server()
         else:
-            self.client = RpcAgentClient(self.host, self.port)
+            self.client = RpcClient(self.host, self.port)
         if not connect_existing:
             self.create(configs)
             if launch_server:
@@ -135,7 +135,7 @@ class RpcObject(ABC):
         """Launch a rpc server and update the port and the client"""
         self.server_launcher.launch()
         self.port = self.server_launcher.port
-        self.client = RpcAgentClient(
+        self.client = RpcClient(
             host=self.host,
             port=self.port,
         )

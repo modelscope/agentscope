@@ -32,8 +32,7 @@ from ..exception import AgentCallError, AgentCreationError
 from ..manager import FileManager
 
 
-# TODO: rename to RpcClient
-class RpcAgentClient:
+class RpcClient:
     """A client of Rpc agent server"""
 
     _CHANNEL_POOL = {}
@@ -58,12 +57,12 @@ class RpcAgentClient:
     @classmethod
     def _get_channel(cls, url: str) -> Any:
         """Get a channel from channel pool."""
-        if url not in RpcAgentClient._CHANNEL_POOL:
-            RpcAgentClient._CHANNEL_POOL[url] = grpc.insecure_channel(
+        if url not in RpcClient._CHANNEL_POOL:
+            RpcClient._CHANNEL_POOL[url] = grpc.insecure_channel(
                 url,
                 options=_DEFAULT_RPC_OPTIONS,
             )
-        return RpcAgentClient._CHANNEL_POOL[url]
+        return RpcClient._CHANNEL_POOL[url]
 
     def call_agent_func(
         self,
@@ -85,7 +84,7 @@ class RpcAgentClient:
             bytes: serialized return data.
         """
         try:
-            stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+            stub = RpcAgentStub(RpcClient._get_channel(self.url))
             result_msg = stub.call_agent_func(
                 agent_pb2.CallFuncRequest(
                     target_func=func_name,
@@ -113,7 +112,7 @@ class RpcAgentClient:
         """
 
         try:
-            stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+            stub = RpcAgentStub(RpcClient._get_channel(self.url))
             status = stub.is_alive(Empty(), timeout=5)
             if not status.ok:
                 raise AgentServerNotAliveError(
@@ -130,7 +129,7 @@ class RpcAgentClient:
     def stop(self) -> None:
         """Stop the agent server."""
         try:
-            stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+            stub = RpcAgentStub(RpcClient._get_channel(self.url))
             logger.info(
                 f"Stopping agent server at [{self.host}:{self.port}].",
             )
@@ -164,7 +163,7 @@ class RpcAgentClient:
             bool: Indicate whether the creation is successful
         """
         try:
-            stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+            stub = RpcAgentStub(RpcClient._get_channel(self.url))
             status = stub.create_agent(
                 agent_pb2.CreateAgentRequest(
                     agent_id=agent_id,
@@ -199,7 +198,7 @@ class RpcAgentClient:
         Returns:
             bool: Indicate whether the deletion is successful
         """
-        stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+        stub = RpcAgentStub(RpcClient._get_channel(self.url))
         status = stub.delete_agent(
             agent_pb2.StringMsg(value=agent_id),
         )
@@ -209,7 +208,7 @@ class RpcAgentClient:
 
     def delete_all_agent(self) -> bool:
         """Delete all agents on the server."""
-        stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+        stub = RpcAgentStub(RpcClient._get_channel(self.url))
         status = stub.delete_all_agents(Empty())
         if not status.ok:
             logger.error(f"Error when delete all agents: {status.message}")
@@ -224,7 +223,7 @@ class RpcAgentClient:
         Returns:
             bytes: Serialized message value.
         """
-        stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+        stub = RpcAgentStub(RpcClient._get_channel(self.url))
         resp = stub.update_placeholder(
             agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
         )
@@ -243,7 +242,7 @@ class RpcAgentClient:
         Returns:
             Sequence[str]: list of agent summary information.
         """
-        stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+        stub = RpcAgentStub(RpcClient._get_channel(self.url))
         resp = stub.get_agent_list(Empty())
         if not resp.ok:
             logger.error(f"Error when get agent list: {resp.message}")
@@ -255,7 +254,7 @@ class RpcAgentClient:
     def get_server_info(self) -> dict:
         """Get the agent server resource usage information."""
         try:
-            stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+            stub = RpcAgentStub(RpcClient._get_channel(self.url))
             resp = stub.get_server_info(Empty())
             if not resp.ok:
                 logger.error(f"Error in get_server_info: {resp.message}")
@@ -270,7 +269,7 @@ class RpcAgentClient:
         model_configs: Union[dict, list[dict]],
     ) -> bool:
         """Set the model configs of the server."""
-        stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+        stub = RpcAgentStub(RpcClient._get_channel(self.url))
         resp = stub.set_model_configs(
             agent_pb2.StringMsg(value=json.dumps(model_configs)),
         )
@@ -281,7 +280,7 @@ class RpcAgentClient:
 
     def get_agent_memory(self, agent_id: str) -> Union[list[Msg], Msg]:
         """Get the memory usage of the specific agent."""
-        stub = RpcAgentStub(RpcAgentClient._get_channel(self.url))
+        stub = RpcAgentStub(RpcClient._get_channel(self.url))
         resp = stub.get_agent_memory(
             agent_pb2.StringMsg(value=agent_id),
         )
@@ -309,7 +308,7 @@ class RpcAgentClient:
 
         def _generator() -> Generator[bytes, None, None]:
             for resp in RpcAgentStub(
-                RpcAgentClient._get_channel(self.url),
+                RpcClient._get_channel(self.url),
             ).download_file(
                 agent_pb2.StringMsg(value=path),
             ):
@@ -319,7 +318,7 @@ class RpcAgentClient:
 
     def __reduce__(self) -> tuple:
         return (
-            RpcAgentClient,
+            RpcClient,
             (self.host, self.port),
         )
 
@@ -346,3 +345,16 @@ def call_func_in_thread(func: Callable) -> Future:
     thread.start()
 
     return future
+
+
+class RpcAgentClient(RpcClient):
+    """`RpcAgentClient` has renamed to `RpcClient`.
+    This class is kept for backward compatibility, please use `RpcClient`
+    instead.
+    """
+
+    def __init__(self, host: str, port: int) -> None:
+        logger.warning(
+            "`RpcAgentClient` is deprecated, please use `RpcClient` instead.",
+        )
+        super().__init__(host, port)

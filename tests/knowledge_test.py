@@ -10,7 +10,6 @@ import shutil
 
 import agentscope
 from agentscope.manager import ASManager
-from agentscope.rag import LlamaIndexKnowledge
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
 
 
@@ -59,6 +58,8 @@ class KnowledgeTest(unittest.TestCase):
 
     def test_llamaindexknowledge(self) -> None:
         """test llamaindexknowledge"""
+        from agentscope.rag.llama_index_knowledge import LlamaIndexKnowledge
+
         dummy_model = DummyModel()
 
         knowledge_config = {
