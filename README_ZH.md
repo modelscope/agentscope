@@ -220,6 +220,24 @@ pip install agentscope
 
 为了支持不同的部署场景，AgentScope提供了若干个可选的依赖项。
 完整的可选依赖项列表请参考[tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
+以分布式模式为例，可以使用以下命令安装AgentScope：
+
+#### On Windows
+
+```bash
+# From source
+pip install -e .[distribute]
+# From pypi
+pip install agentscope[distribute]
+```
+
+#### On Mac & Linux
+```bash
+# From source
+pip install -e .\[distribute\]
+# From pypi
+pip install agentscope\[distribute\]
+```
 
 ## 快速开始
 

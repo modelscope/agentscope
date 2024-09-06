@@ -233,17 +233,20 @@ pip install agentscope
 To support different deployment scenarios, AgentScope provides several
 optional dependencies. Full list of optional dependencies refers to
 [tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
+Taking distribution mode as an example, you can install its dependencies
+as follows:
+
 
 #### On Windows
 
 ```bash
 # From source
-pip install -e .[distribute]  # For windows
+pip install -e .[distribute]
 # From pypi
 pip install agentscope[distribute]
 ```
 
-#### On Mac
+#### On Mac & Linux
 ```bash
 # From source
 pip install -e .\[distribute\]
