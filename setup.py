@@ -67,7 +67,7 @@ extra_dev_requires = [
     # unit test
     "pytest",
     "pytest-cov",
-    "pre-commit"
+    "pre-commit",
     # doc
     "sphinx",
     "sphinx-autobuild",
