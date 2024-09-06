@@ -1,23 +1,19 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0301
 """Service for executing jupyter notebooks interactively
-Partially referenced the implementation of https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py
-"""  # noqa
+Partially referenced the implementation of
+https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py
+"""
 import base64
 import asyncio
 from loguru import logger
 
-
 try:
-    from nbclient import NotebookClient
-    from nbclient.exceptions import CellTimeoutError, DeadKernelError
+    import nbclient
     import nbformat
-except ImportError as import_error:
-    from agentscope.utils.common import ImportErrorReporter
-
-    nbclient = ImportErrorReporter(import_error)
-    nbformat = ImportErrorReporter(import_error)
-    NotebookClient = ImportErrorReporter(import_error)
+except ImportError:
+    nbclient = None
+    nbformat = None
 
 from ...manager import FileManager
 from ..service_status import ServiceExecStatus
@@ -66,8 +62,15 @@ class NoteBookExecutor:
                 The timeout for each cell execution.
                 Default to 300.
         """
+
+        if nbclient is None or nbformat is None:
+            raise ImportError(
+                "The package nbclient or nbformat is not found. Please "
+                "install it by `pip install notebook nbclient nbformat`",
+            )
+
         self.nb = nbformat.v4.new_notebook()
-        self.nb_client = NotebookClient(nb=self.nb)
+        self.nb_client = nbclient.NotebookClient(nb=self.nb)
         self.timeout = timeout
 
         asyncio.run(self._start_client())
@@ -113,7 +116,7 @@ class NoteBookExecutor:
     async def _restart_client(self) -> None:
         """Restart the notebook client"""
         await self._kill_client()
-        self.nb_client = NotebookClient(self.nb, timeout=self.timeout)
+        self.nb_client = nbclient.NotebookClient(self.nb, timeout=self.timeout)
         await self._start_client()
 
     async def _run_cell(self, cell_index: int) -> ServiceResponse:
@@ -127,13 +130,13 @@ class NoteBookExecutor:
                     for output in self.nb.cells[cell_index].outputs
                 ],
             )
-        except DeadKernelError:
+        except nbclient.exceptions.DeadKernelError:
             await self.reset()
             return ServiceResponse(
                 status=ServiceExecStatus.ERROR,
                 content="DeadKernelError when executing cell, reset kernel",
             )
-        except CellTimeoutError:
+        except nbclient.exceptions.CellTimeoutError:
             assert self.nb_client.km is not None
             await self.nb_client.km.interrupt_kernel()
             return ServiceResponse(
