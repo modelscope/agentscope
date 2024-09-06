@@ -38,6 +38,7 @@ from agentscope.service import (
     execute_python_code,
     ServiceToolkit,
 )
+from agentscope.studio.tools.image_composition import stitch_images_with_grid
 
 DEFAULT_FLOW_VAR = "flow"
 
@@ -51,6 +52,7 @@ class WorkflowNodeType(IntEnum):
     SERVICE = 3
     MESSAGE = 4
     COPY = 5
+    TOOL = 6
 
 
 class WorkflowNode(ABC):
@@ -184,9 +186,9 @@ class MsgNode(WorkflowNode):
     def compile(self) -> dict:
         return {
             "imports": "from agentscope.message import Msg",
-            "inits": f"{DEFAULT_FLOW_VAR} = Msg"
+            "inits": "",
+            "execs": f"{DEFAULT_FLOW_VAR} = Msg"
             f"({kwarg_converter(self.opt_kwargs)})",
-            "execs": "",
         }
 
 
@@ -988,6 +990,45 @@ class WriteTextServiceNode(WorkflowNode):
         }
 
 
+class ImageCompositionNode(WorkflowNode):
+    """
+    Image Composition Node
+    """
+
+    node_type = WorkflowNodeType.TOOL
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+        only_compile: bool = True,
+    ) -> None:
+        super().__init__(
+            node_id,
+            opt_kwargs,
+            source_kwargs,
+            dep_opts,
+            only_compile,
+        )
+        self.pipeline = partial(stitch_images_with_grid, **self.opt_kwargs)
+
+    def __call__(self, x: dict = None) -> dict:
+        return self.pipeline(x)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.studio.tools.image_composition import "
+            "stitch_images_with_grid\n"
+            "from functools import partial\n",
+            "inits": f"{self.var_name} = partial(stitch_images_with_grid"
+            f", {kwarg_converter(self.opt_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"([{DEFAULT_FLOW_VAR}])",
+        }
+
+
 NODE_NAME_MAPPING = {
     "dashscope_chat": ModelNode,
     "openai_chat": ModelNode,
@@ -1013,6 +1054,7 @@ NODE_NAME_MAPPING = {
     "PythonService": PythonServiceNode,
     "ReadTextService": ReadTextServiceNode,
     "WriteTextService": WriteTextServiceNode,
+    "ImageComposition": ImageCompositionNode,
 }
 
 

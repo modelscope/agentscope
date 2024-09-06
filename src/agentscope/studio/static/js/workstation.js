@@ -36,6 +36,7 @@ let nameToHtmlFile = {
     'PythonService': 'service-execute-python.html',
     'ReadTextService': 'service-read-text.html',
     'WriteTextService': 'service-write-text.html',
+    'ImageComposition': 'tool-image-composition.html'
 }
 
 // Cache the loaded html files
@@ -789,6 +790,22 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                 pos_x, pos_y, 'WriteTextService', {}, htmlSourceCode);
             break;
 
+        case 'ImageComposition':
+            editor.addNode('ImageComposition', 1, 1,
+                pos_x, pos_y, 'ImageComposition', {
+                    "args": {
+                        "image_urls": [],
+                        "titles": "",
+                        "output_path": "",
+                        "row": 1,
+                        "column": 1,
+                        "spacing": 10,
+                        "title_height": 100,
+                        "font_name": "PingFang",
+                    }
+                }, htmlSourceCode);
+            break;
+
         default:
     }
 }
@@ -1304,7 +1321,8 @@ function checkConditions() {
 
         if (node.inputs) {
             for (let inputKey in node.inputs) {
-                if (node.inputs[inputKey].connections &&
+                if (node.class !== "ImageComposition" &&
+                    node.inputs[inputKey].connections &&
                     node.inputs[inputKey].connections.length > 1) {
                     Swal.fire({
                         title: 'Invalid Connections',

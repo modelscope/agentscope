@@ -7,7 +7,7 @@ a computational DAG. Each node represents a step in the DAG and
 can perform certain actions when called.
 """
 import copy
-from typing import Any
+from typing import Any, Optional
 from loguru import logger
 
 import agentscope
@@ -16,7 +16,10 @@ from agentscope.web.workstation.workflow_node import (
     WorkflowNodeType,
     DEFAULT_FLOW_VAR,
 )
-from agentscope.web.workstation.workflow_utils import kwarg_converter
+from agentscope.web.workstation.workflow_utils import (
+    kwarg_converter,
+    replace_flow_name,
+)
 
 try:
     import networkx as nx
@@ -133,6 +136,8 @@ class ASDiGraph(nx.DiGraph):
             0
         ] = f'agentscope.init(logger_level="DEBUG", {kwarg_converter(kwargs)})'
 
+        self.update_flow_name(place="execs")
+
         sorted_nodes = list(nx.topological_sort(self))
         sorted_nodes = [
             node_id
@@ -196,6 +201,7 @@ class ASDiGraph(nx.DiGraph):
             WorkflowNodeType.PIPELINE,
             WorkflowNodeType.COPY,
             WorkflowNodeType.SERVICE,
+            WorkflowNodeType.TOOL,
         ]:
             raise NotImplementedError(node_cls)
 
@@ -269,6 +275,116 @@ class ASDiGraph(nx.DiGraph):
             f"\nnode_id: {node_id}\nout_values:{out_values}",
         )
         return out_values
+
+    def update_flow_name(self, place: str = "") -> None:
+        """update flow name"""
+        node_mapping = self.sort_parents_in_node_mapping()
+
+        if place:
+            for node_id in list(nx.topological_sort(self)):
+                node = self.nodes[node_id]
+                node["compile_dict"][place] = replace_flow_name(
+                    node["compile_dict"][place],
+                    node_mapping[node_id][1],
+                    node_mapping[node_id][0],
+                )
+
+    def get_labels_for_node(self) -> dict:
+        """get input and output labels for each node"""
+        roots = [node for node in self.nodes() if self.in_degree(node) == 0]
+
+        # Initialize labels dict with empty sets for parent labels
+        labels = {node: (set(), "") for node in self.nodes()}
+
+        for idx, root in enumerate(roots):
+            # Each root node gets a label starting with its index
+            self.label_nodes(root, f"{idx}", labels)
+
+        # Convert parent label sets to sorted lists
+        labels = {
+            node: (set(sorted(parents)), label)
+            for node, (parents, label) in labels.items()
+        }
+        return labels
+
+    def label_nodes(
+        self,
+        current: str,
+        label: str,
+        labels: dict,
+        parent: Optional[str] = None,
+    ) -> None:
+        """recursively label nodes allowing for multiple parents"""
+        if parent:
+            # Add the parent label to the current node
+            labels[current][0].add(parent)
+
+        # If the current node already has a label, it's from a shorter
+        # path, so we don't overwrite it
+        if not labels[current][1]:
+            labels[current] = (labels[current][0], label)
+
+        # Iterate over successors and recursively assign labels
+        for i, successor in enumerate(self.successors(current)):
+            # Append the index of the successor to the label for branching
+            succ_label = f"{label}_{i}"
+            self.label_nodes(successor, succ_label, labels, parent=label)
+
+    def predecessor_with_edge_info(self, node_id: str) -> list[str]:
+        """
+        Get a sorted list of predecessor node IDs for a given node,
+            based on edge information.
+
+        Parameters:
+        - node_id (str): The ID of the node for which predecessors are to
+            be found and sorted.
+
+        Returns:
+        - List[str]: A list of predecessor node IDs sorted based on the
+            custom sort key derived from the 'input_key' attribute in the edge
+            data.
+        """
+
+        def sort_key(x: tuple) -> tuple[int, int]:
+            input_key_num = int(x[2]["input_key"].split("_")[1])
+            node_id_parts = x[0].split("_")
+            main_id = int(node_id_parts[0])
+            return input_key_num, main_id
+
+        # Get all predecessor inputs via edges with order
+        in_edges = self.in_edges(node_id, data=True)
+        sorted_in_edge_list = sorted(in_edges, key=sort_key)
+        return [x[0] for x in sorted_in_edge_list]
+
+    def sort_parents_in_node_mapping(self) -> dict[str, tuple[list[str], str]]:
+        """
+        Updates the node mapping with sorted parent labels for each node.
+
+        Returns:
+        - Dict[str, Tuple[List[str], str]]:  An updated node mapping where
+            each node ID is associated with a tuple of a sorted list of parent
+            labels and the node's own label.
+        """
+        updated_node_mapping = {}
+
+        for node_id in self.nodes():
+            sorted_parents_ids = self.predecessor_with_edge_info(node_id)
+            _, current_label = self.get_labels_for_node().get(
+                node_id,
+                (set(), ""),
+            )
+
+            sorted_parents_labels = []
+            for parent_id in sorted_parents_ids:
+                if parent_id in self.get_labels_for_node():
+                    parent_label = self.get_labels_for_node()[parent_id][1]
+                    sorted_parents_labels.append(parent_label)
+            updated_node_mapping[node_id] = (
+                sorted_parents_labels,
+                current_label,
+            )
+
+        return updated_node_mapping
 
 
 def sanitize_node_data(raw_info: dict) -> dict:
@@ -352,15 +468,12 @@ def build_dag(config: dict, only_compile: bool = True) -> ASDiGraph:
 
     # Add edges
     for node_id, node_info in config.items():
-        outputs = node_info.get("outputs", {})
-        for output_key, output_val in outputs.items():
-            connections = output_val.get("connections", [])
+        inputs = node_info.get("inputs", {})
+        for input_key, input_val in inputs.items():
+            connections = input_val.get("connections", [])
             for conn in connections:
                 target_node_id = conn.get("node")
-                # Here it is assumed that the output of the connection is
-                # only connected to one of the inputs. If there are more
-                # complex connections, modify the logic accordingly
-                dag.add_edge(node_id, target_node_id, output_key=output_key)
+                dag.add_edge(target_node_id, node_id, input_key=input_key)
 
     # Check if the graph is a DAG
     if not nx.is_directed_acyclic_graph(dag):

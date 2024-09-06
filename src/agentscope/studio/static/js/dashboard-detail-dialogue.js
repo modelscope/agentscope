@@ -133,11 +133,16 @@ function _determineFileType(url) {
     // Audio
     let audio_suffix = [".mp3", ".wav", ".wma", ".ogg", ".aac", ".flac"];
 
-    if (img_suffix.some((suffix) => url.endsWith(suffix))) {
+    const parsed_url = new URL(url);
+    const path = parsed_url.pathname;
+
+    const extension = path.split('.').pop().toLowerCase();
+
+    if (img_suffix.includes('.' + extension)) {
         return "image";
-    } else if (video_suffix.some((suffix) => url.endsWith(suffix))) {
+    } else if (video_suffix.includes('.' + extension)) {
         return "video";
-    } else if (audio_suffix.some((suffix) => url.endsWith(suffix))) {
+    } else if (audio_suffix.includes('.' + extension)) {
         return "audio";
     }
     return "file";
