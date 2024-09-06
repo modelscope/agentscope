@@ -716,7 +716,7 @@ def _save_workflow() -> Response:
         return jsonify(
             {
                 "message": f"The workflow file size exceeds "
-                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+                f"{FILE_SIZE_LIMIT / (1024 * 1024)} MB limit",
             },
         )
 

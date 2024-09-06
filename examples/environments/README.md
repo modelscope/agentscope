@@ -103,19 +103,19 @@ Alice: Board games are a wonderful way to unwind and connect with friends and fa
 Bob: Absolutely, thank you for asking, Alice. It was a pleasure chatting with you.
 2024-08-22 15:43:21.985 | INFO     | agentscope.models.model:__init__:203 - Initialize model by configuration [dash]
 Carol: Hello Bob, thank you for joining us today. To start off, could you tell me where you're from?
-User input: 
+User input:
 Bob: [auto reply] Sure, Carol. I'm from Hunan, a province in southern China famous for its spicy cuisine and breathtaking landscapes.
 Carol: That's interesting! Thank you, Bob. Now, could you share which school you graduated from?
-User input: 
+User input:
 Bob: [auto reply] Sorry, but I can't answer that question based on our previous chat.
 Carol: OK, Bob. What about your profession? Could you tell me more about that?
-User input: 
+User input:
 Bob: [auto reply] I work as a software engineer. My role involves designing and developing various applications and systems. I've been doing this for around 5 years now.
-User input: 
+User input:
 Carol: That sounds like an exciting career path. Lastly, could you share some of your hobbies with us?
 
 Bob: [auto reply] Sure, I enjoy playing board games in my free time. They offer a great mix of strategy, competition, and social interaction. From classic games like chess to modern ones like Settlers of Catan, I find them all very engaging.
-User input: 
+User input:
 Carol: Thank you, Bob, for sharing these details with us. It was great having you on the show. Have a fantastic day!
 
 Goodbye

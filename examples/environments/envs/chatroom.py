@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """An env used as a chatroom."""
-from typing import List, Any, Union, Mapping
+from typing import List, Any, Union, Mapping, Generator, Tuple, Optional
 from copy import deepcopy
 import re
 import random
-from loguru import logger
-import time
 import threading
+import time
+from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -53,12 +53,12 @@ class ChatRoomMember(BasicEnv):
         """Get the agent of the member."""
         return self._agent
 
-    def chatting(self, delay: int = 1):
+    def chatting(self, delay: int = 1) -> None:
         """Make the agent chatting in the chatroom."""
         time.sleep(delay)
         while True:
             msg = self._agent()
-            if 'goodbye' in msg.content.lower():
+            if "goodbye" in msg.content.lower():
                 break
             sleep_time = random.randint(1, 5)
             time.sleep(sleep_time)
@@ -73,6 +73,7 @@ class ChatRoom(BasicEnv):
         announcement: Msg = None,
         participants: List[AgentBase] = None,
         all_history: bool = False,
+        **kwargs: Any,
     ) -> None:
         """Init a ChatRoom instance.
 
@@ -86,9 +87,10 @@ class ChatRoom(BasicEnv):
         """
         super().__init__(
             name=name,
+            **kwargs,
         )
         self.children = {}
-        for p in (participants if participants else []):
+        for p in participants if participants else []:
             self.join(p)
         self.event_listeners = {}
         self.all_history = all_history
@@ -196,16 +198,23 @@ class ChatRoom(BasicEnv):
         logger.debug(texts)
         return ModelResponse(text=texts[0])
 
-    def chatting(self, delay: Union[int, Mapping[str, int]] = 1):
+    def chatting(self, delay: Union[int, Mapping[str, int]] = 1) -> None:
         """Make all agents chatting in the chatroom."""
         tasks = []
         for agent_id, child in self.children.items():
             if isinstance(delay, int):
-                tasks.append(threading.Thread(target=child.chatting, args=(delay,)))
+                tasks.append(
+                    threading.Thread(target=child.chatting, args=(delay,)),
+                )
             else:
                 if agent_id not in delay:
                     continue
-                tasks.append(threading.Thread(target=child.chatting, args=(delay[agent_id],)))
+                tasks.append(
+                    threading.Thread(
+                        target=child.chatting,
+                        args=(delay[agent_id],),
+                    ),
+                )
         for task in tasks:
             task.start()
         for task in tasks:
@@ -214,18 +223,21 @@ class ChatRoom(BasicEnv):
 
 class Mentioned(EventListener):
     """A listener that will be called when a message is mentioned the agent"""
+
     def __init__(
         self,
         agent: AgentBase,
     ) -> None:
-        super().__init__(name=f'mentioned_agent_{agent.name}')
+        super().__init__(name=f"mentioned_agent_{agent.name}")
         self.agent = agent
         self.pattern = re.compile(r"""(?<=@)\w*""", re.DOTALL)
 
     def __call__(self, env: Env, event: Event) -> None:
         find_result = self.pattern.findall(event.args["message"].content)
         if self.agent.name in find_result:
-            logger.info(f"{event.args['message'].name} mentioned {self.agent.name}.")
+            logger.info(
+                f"{event.args['message'].name} mentioned {self.agent.name}.",
+            )
             self.agent.add_mentioned_message(event.args["message"])
 
 
@@ -242,7 +254,8 @@ class ChatRoomAgent(AgentBase):
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
-            model_config_name=model_config_name)
+            model_config_name=model_config_name,
+        )
         self.room = None
         self.mentioned_messages = []
         self.mentioned_messages_lock = threading.Lock()
@@ -260,7 +273,11 @@ class ChatRoomAgent(AgentBase):
     def generate_hint(self) -> Msg:
         """Generate a hint for the agent"""
         if self.mentioned_messages:
-            hint = self.sys_prompt + r"""\n\nYou have be mentioned in the following message, please generate an appropriate response."""
+            hint = (
+                self.sys_prompt
+                + r"""\n\nYou have be mentioned in the following message, """
+                r"""please generate an appropriate response."""
+            )
             for message in self.mentioned_messages:
                 hint += f"\n{message.name}: " + message.content
             self.mentioned_messages = []
@@ -268,15 +285,24 @@ class ChatRoomAgent(AgentBase):
         else:
             return Msg("system", self.sys_prompt, role="system")
 
-    def speak(self, content) -> None:
-        """Speak to room"""
+    def speak(
+        self,
+        content: Union[str, Msg, Generator[Tuple[bool, str], None, None]],
+    ) -> None:
+        """Speak to room.
+
+        Args:
+            content
+            (`Union[str, Msg, Generator[Tuple[bool, str], None, None]]`):
+                The content of the message to be spoken in chatroom.
+        """
         super().speak(content)
         self.room.speak(content)
 
     def reply(self, x: Msg = None) -> Msg:
         """Generate reply to chat room"""
         msg_hint = self.generate_hint()
-        self_msg = Msg(name=self.name, content=f"", role="assistant")
+        self_msg = Msg(name=self.name, content="", role="assistant")
 
         history = self.room.get_history(self.agent_id)
         prompt = self.model.format(
@@ -298,11 +324,12 @@ class ChatRoomAgent(AgentBase):
 
 class ChatRoomAgentWithAssistant(ChatRoomAgent):
     """A ChatRoomAgent with assistant"""
+
     def __init__(
         self,
-        timeout: float | None = None,
-        **kwargs,
-    ):
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
         self.timeout = timeout
 
@@ -336,7 +363,7 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
             response = content
         else:  # assistant reply
             msg_hint = self.generate_hint()
-            self_msg = Msg(name=self.name, content=f"", role="assistant")
+            self_msg = Msg(name=self.name, content="", role="assistant")
 
             history = self.room.get_history(self.agent_id)
             prompt = self.model.format(
@@ -350,8 +377,8 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
                 parse_func=self.room.chatting_parse_func,
                 max_retries=3,
             ).text
-            if not response.startswith('[auto reply]'):
-                response = '[auto reply] ' + response
+            if not response.startswith("[auto reply]"):
+                response = "[auto reply] " + response
         msg = Msg(name=self.name, content=response, role="user")
         self.speak(msg)
         return msg
