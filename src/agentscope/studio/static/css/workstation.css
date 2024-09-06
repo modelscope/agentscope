@@ -840,3 +840,156 @@ pre[class*="language-"] {
     line-height: 1.2;
     resize: vertical;
 }
+
+.tour-guide {
+    display: none;
+    z-index: 3;
+}
+
+.tour-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.tour-arrow {
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #ccc transparent transparent;
+    transform: translateY(-50%);
+}
+
+.tour-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+    background-color: #fff;
+}
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    display: none;
+}
+
+.guide-Example{
+    background: #fff;
+    height: fit-content;
+    border-radius: 4px;
+    border: 1px solid #fff;
+    color: #000;
+    z-index: 2;
+}
+
+.guide-skip{
+    padding: 8px 12px;
+    margin: 4px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--main-color);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+.notification {
+    position: fixed;
+    flex-direction: column;
+    padding: 10px 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    line-height: 1.5;
+    z-index: 1000;
+    overflow: hidden;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    transition: right 0.5s ease-out, left 0.5s ease-out;
+}
+
+.notification-arrow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    transform: rotate(45deg);
+}
+
+.notification-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.notification-content {
+    margin-bottom: 5px;
+}
+
+.notification-close {
+    cursor: pointer;
+    color: #ccc;
+    font-size: 12px;
+    font-weight: bold;
+    transition: transform 0.5s, color 0.5s;
+}
+.notification-close:hover {
+    color: #000;
+    transform: rotate(180deg);
+}
+.notification-close:mouseout {
+    color: #ccc;
+    transform: rotate(0deg);
+}
+.notification-clickBotton-box{
+    align-self: end;
+    display: flex;
+    gap: 5px;
+}
+.notification-btn{
+    padding: 8px 12px;
+    margin: 4px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.notification-btn:hover{
+    transform: translateY(-2px);
+}
+.notification-btn.confirmBotton{
+    background-color: var(--main-color);
+    color: white;
+}
+.notification-btn.cancelBotton{
+    background-color:#ccc;
+}
+.notification-progress{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #4CAF50;
+    transition: width 0.1s linear;
+}
