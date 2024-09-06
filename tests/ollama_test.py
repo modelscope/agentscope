@@ -80,13 +80,13 @@ class OllamaModelWrapperTest(unittest.TestCase):
             "eval_duration": 223689000,
         }
 
-    @patch("agentscope.models.ollama_model.ollama")
-    def test_ollama_chat(self, mock_ollama: MagicMock) -> None:
+    @patch("ollama.Client")
+    def test_ollama_chat(self, mock_ollama_client: MagicMock) -> None:
         """Unit test for ollama chat API."""
         # prepare the mock
-        mock_ollama_client = MagicMock()
-        mock_ollama.Client.return_value = mock_ollama_client
-        mock_ollama_client.chat.return_value = self.dummy_response
+        mock_client_instance = MagicMock()
+        mock_ollama_client.return_value = mock_client_instance
+        mock_client_instance.chat.return_value = self.dummy_response
 
         # run test
         agentscope.init(
@@ -109,13 +109,13 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
         self.assertEqual(response.raw, self.dummy_response)
 
-    @patch("agentscope.models.ollama_model.ollama")
-    def test_ollama_embedding(self, mock_ollama: MagicMock) -> None:
+    @patch("ollama.Client")
+    def test_ollama_embedding(self, mock_ollama_client: MagicMock) -> None:
         """Unit test for ollama embeddings API."""
         # prepare the mock
-        mock_ollama_client = MagicMock()
-        mock_ollama.Client.return_value = mock_ollama_client
-        mock_ollama_client.embeddings.return_value = self.dummy_embedding
+        mock_client_instance = MagicMock()
+        mock_ollama_client.return_value = mock_client_instance
+        mock_client_instance.embeddings.return_value = self.dummy_embedding
 
         # run test
         agentscope.init(
@@ -138,13 +138,13 @@ class OllamaModelWrapperTest(unittest.TestCase):
 
         self.assertEqual(response.raw, self.dummy_embedding)
 
-    @patch("agentscope.models.ollama_model.ollama")
-    def test_ollama_generate(self, mock_ollama: MagicMock) -> None:
+    @patch("ollama.Client")
+    def test_ollama_generate(self, mock_ollama_client: MagicMock) -> None:
         """Unit test for ollama generate API."""
         # prepare the mock
-        mock_ollama_client = MagicMock()
-        mock_ollama.Client.return_value = mock_ollama_client
-        mock_ollama_client.generate.return_value = self.dummy_generate
+        mock_client_instance = MagicMock()
+        mock_ollama_client.return_value = mock_client_instance
+        mock_client_instance.generate.return_value = self.dummy_generate
 
         # run test
         agentscope.init(
