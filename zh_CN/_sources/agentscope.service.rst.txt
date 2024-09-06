@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   agentscope.service.browser
    agentscope.service.execute_code
    agentscope.service.file
    agentscope.service.multi_modality

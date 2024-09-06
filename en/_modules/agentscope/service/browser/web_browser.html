@@ -1,0 +1,662 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.browser.web_browser &mdash; AgentScope  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" > 
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            AgentScope
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div> <!-- language_selector.html -->
+<div class="language-selector">
+    <a href="../../../../../en/_modules/agentscope/service/browser/web_browser.html">English</a></li> |
+    <a href="../../../../../zh_CN/_modules/agentscope/service/browser/web_browser.html">中文</a></li>
+</div> 
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">AgentScope Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/101-agentscope.html">About AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/102-installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/103-example.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/203-model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/203-stream.html">Streaming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/206-prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/201-agent.html">Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/205-memory.html">Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/203-parser.html">Response Parser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/209-prompt_opt.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/204-service.html">Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/202-pipeline.html">Pipeline and MsgHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/208-distribute.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/209-gui.html">AgentScope Studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/210-rag.html">A Quick Introduction to RAG in AgentScope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/211-web.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/105-logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/207-monitor.html">Monitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/104-usecase.html">Example: Werewolf Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial/contribute.html">Get Involved</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AgentScope API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.pipelines.html">agentscope.pipelines package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.rpc.html">agentscope.rpc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.web.html">agentscope.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../agentscope.utils.html">agentscope.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">AgentScope</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../service.html">agentscope.service</a></li>
+      <li class="breadcrumb-item active">agentscope.service.browser.web_browser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.service.browser.web_browser</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># pylint: disable=C0301</span>
+<span class="sd">&quot;&quot;&quot;The web browser module for agent to interact with web pages.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
+
+
+<div class="viewcode-block" id="WebElementInfo">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebElementInfo">[docs]</a>
+<span class="k">class</span> <span class="nc">WebElementInfo</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The information of a web interactive element.&quot;&quot;&quot;</span>
+
+    <span class="n">html</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The html content of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">tag_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The tage name of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The node name of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">node_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The node value of the element.&quot;&quot;&quot;</span>
+
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">aria_label</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The aria label of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">is_clickable</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the element is clickable. If clickable, the value is the</span>
+<span class="sd">    link of the element, otherwise, the value is False.&quot;&quot;&quot;</span>
+
+    <span class="n">meta_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The meta data of the elements, e.g. attributes&quot;&quot;&quot;</span>
+
+    <span class="n">inner_text</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The text content of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">origin_x</span><span class="p">:</span> <span class="nb">float</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The x coordinate of the origin of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">origin_y</span><span class="p">:</span> <span class="nb">float</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The y coordinate of the origin of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">width</span><span class="p">:</span> <span class="nb">float</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The width of the element.&quot;&quot;&quot;</span>
+
+    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The height of the element.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="WebBrowser">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser">[docs]</a>
+<span class="k">class</span> <span class="nc">WebBrowser</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The web browser for agent, which is implemented with playwright. This</span>
+<span class="sd">    module allows agent to interact with web pages, such as visiting a web</span>
+<span class="sd">    page, clicking on elements, typing text, scrolling web page, etc.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        1. This module is still under development, and changes will be made in</span>
+<span class="sd">        the future.</span>
+<span class="sd">        2. In Playwright, because of its asynchronous operations, it is</span>
+<span class="sd">        essential to use `if __name__ == &quot;__main__&quot;:` to designate the main</span>
+<span class="sd">        entry point of the program. This practice ensures that asynchronous</span>
+<span class="sd">        functions are executed correctly within the appropriate context.</span>
+
+<span class="sd">    Install:</span>
+<span class="sd">        Execute the following code to install the required packages:</span>
+
+<span class="sd">        .. code-block:: bash</span>
+
+<span class="sd">            pip install playwright</span>
+<span class="sd">            playwright install</span>
+
+
+<span class="sd">    Details:</span>
+<span class="sd">        1. The actions that the agent can take in the web browser includes:</span>
+<span class="sd">        &quot;action_click&quot;, &quot;action_type&quot;, &quot;action_scroll_up&quot;,</span>
+<span class="sd">        &quot;action_scroll_down&quot;, &quot;action_press_key&quot;, and &quot;action_visit_url&quot;.</span>
+<span class="sd">        2. You can extract the html content, title, url, screenshot of the</span>
+<span class="sd">        current web page by calling the corresponding properties, e.g.</span>
+<span class="sd">        `page_url`, `page_html`, `page_title`, `page_screenshot`.</span>
+<span class="sd">        3. You can set or remove the interactive marks on the web page by</span>
+<span class="sd">        calling the `set_interactive_marks` and `remove_interactive_marks`</span>
+<span class="sd">        methods.</span>
+
+
+<span class="sd">    Examples:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from agentscope.service import WebBrowser</span>
+<span class="sd">            import time</span>
+
+<span class="sd">            if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">                browser = WebBrowser()</span>
+<span class="sd">                # Visit the specific web page</span>
+<span class="sd">                browser.action_visit_url(&quot;https://www.bing.com&quot;)</span>
+<span class="sd">                # Set the interactive marks on the web page</span>
+<span class="sd">                browser.set_interactive_marks()</span>
+
+<span class="sd">                time.sleep(5)</span>
+
+<span class="sd">                browser.close()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_actions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;action_click&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_scroll_up&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_scroll_down&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_press_key&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;action_visit_url&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The available actions for the web browser that agent can takes.&quot;&quot;&quot;</span>
+
+    <span class="n">_interactive_elements</span><span class="p">:</span> <span class="nb">list</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;To record the interactive elements on the current page, which will be</span>
+<span class="sd">    set after calling the `set_interactive_marks` method, and cleared after</span>
+<span class="sd">    calling the `remove_interactive_marks` method.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WebBrowser.__init__">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">browser_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">browser_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1280</span><span class="p">,</span>
+        <span class="n">browser_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the web browser module.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timeout (`int`, defaults to `30`):</span>
+<span class="sd">                The timeout (in seconds) for the browser to wait for the</span>
+<span class="sd">                page to load, defaults to 60s.</span>
+<span class="sd">            browser_visible (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the browser is visible.</span>
+<span class="sd">            browser_width (`int`, defaults to `1280`):</span>
+<span class="sd">                The width of the browser. Defaults to 1280.</span>
+<span class="sd">            browser_height (`int`, defaults to `1080`):</span>
+<span class="sd">                The height of the browser. Defaults to 1080.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">playwright.sync_api</span> <span class="kn">import</span> <span class="n">sync_playwright</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Please install the `playwright` package by running `pip &quot;</span>
+                <span class="s2">&quot;install playwright; playwright install` to use the web &quot;</span>
+                <span class="s2">&quot;browser. </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;More details refer to &quot;</span>
+                <span class="s2">&quot;https://playwright.dev/python/docs/intro.&quot;</span><span class="p">,</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="c1"># Init a web page</span>
+        <span class="n">playwright_process</span> <span class="o">=</span> <span class="n">sync_playwright</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">browser</span> <span class="o">=</span> <span class="n">playwright_process</span><span class="o">.</span><span class="n">chromium</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span>
+            <span class="n">headless</span><span class="o">=</span><span class="ow">not</span> <span class="n">browser_visible</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">browser</span><span class="o">.</span><span class="n">new_page</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">set_default_timeout</span><span class="p">(</span><span class="n">timeout</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">set_viewport_size</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">browser_width</span><span class="p">,</span>
+                <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">browser_height</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Init a dictionary to store the interactive elements on the page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Load the external JavaScript to crawl the page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_external_js</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The url of current page.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">url</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">page_html</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The html content of current page.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">content</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">page_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The title of current page.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">page_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The content of current page in Markdown format.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">markdownify</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;Please install the `markdownify` package to convert the page&quot;</span>
+                <span class="s2">&quot;content to markdown format.&quot;</span><span class="p">,</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">markdownify</span><span class="o">.</span><span class="n">markdownify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_html</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">page_screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The screenshot of the current page.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">screenshot</span><span class="p">()</span>
+
+    <span class="c1"># ----- Actions which are performed within a web page ---------------------</span>
+<div class="viewcode-block" id="WebBrowser.action_click">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_click">[docs]</a>
+    <span class="k">def</span> <span class="nf">action_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Click on the element with the given id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element_id (`int`):</span>
+<span class="sd">                The id of the element to click.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ServiceResponse`:</span>
+<span class="sd">                The response of the click action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify_element_id</span><span class="p">(</span><span class="n">element_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ElementIDError: The element id must be in the range &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">], but &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">element_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">element_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="p">[</span><span class="n">element_id</span><span class="p">]</span>
+        <span class="n">element_handle</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="s2">&quot;element =&gt; element.setAttribute(&#39;target&#39;, &#39;_self&#39;)&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">element_handle</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_load</span><span class="p">(</span>
+            <span class="s2">&quot;Wait for click event&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Finished&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Click on element </span><span class="si">{</span><span class="n">element_id</span><span class="si">}</span><span class="s2"> done&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.action_type">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">action_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">submit</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Type text into the element with the given id.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element_id (`int`):</span>
+<span class="sd">                The id of the element to type text into.</span>
+<span class="sd">            text (`str`):</span>
+<span class="sd">                The text to type into the element.</span>
+<span class="sd">            submit (`bool`):</span>
+<span class="sd">                If press the &quot;Enter&quot; after typing text.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ServiceResponse`:</span>
+<span class="sd">                The response of the type action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify_element_id</span><span class="p">(</span><span class="n">element_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ElementIDError: The element id must be in the range &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[0, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">], but &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">element_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_click</span><span class="p">(</span><span class="n">element_id</span><span class="p">)</span>
+        <span class="n">web_ele</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="p">[</span><span class="n">element_id</span><span class="p">]</span>
+
+        <span class="c1"># Try to clear the text within the given elements</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;element =&gt; element.value = &quot;&quot;&#39;</span><span class="p">,</span> <span class="n">web_ele</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Exception </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="s2">&quot;unable to clear the value within the given elements.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Focus on the element to type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;element =&gt; element.focus()&quot;</span><span class="p">,</span> <span class="n">web_ele</span><span class="p">)</span>
+
+        <span class="c1"># Type in the text</span>
+        <span class="n">web_ele</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_load</span><span class="p">(</span>
+            <span class="s2">&quot;Wait for finish typing&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Finished&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">submit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_press_key</span><span class="p">(</span><span class="s2">&quot;Enter&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Typing done&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.action_scroll_up">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_scroll_up">[docs]</a>
+    <span class="k">def</span> <span class="nf">action_scroll_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scroll up the current web page.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">down</span><span class="p">(</span><span class="s2">&quot;Alt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">&quot;ArrowUp&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">up</span><span class="p">(</span><span class="s2">&quot;Alt&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Scroll up done&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.action_scroll_down">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_scroll_down">[docs]</a>
+    <span class="k">def</span> <span class="nf">action_scroll_down</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scroll down the current web page.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">down</span><span class="p">(</span><span class="s2">&quot;Alt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">&quot;ArrowDown&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">up</span><span class="p">(</span><span class="s2">&quot;Alt&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Scroll down done&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.action_press_key">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_press_key">[docs]</a>
+    <span class="k">def</span> <span class="nf">action_press_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Press down a key in the current web page.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (`str`):</span>
+<span class="sd">                Chosen from `F1` - `F12`, `Digit0`- `Digit9`, `KeyA`- `KeyZ`, `Backquote`, `Minus`, `Equal`, `Backslash`, `Backspace`, `Tab`, `Delete`, `Escape`, `ArrowDown`, `End`, `Enter`, `Home`, `Insert`, `PageDown`, `PageUp`, `ArrowRight`, `ArrowUp`, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="c1"># TODO: in a more elegant way to wait for the page to be loaded rather</span>
+        <span class="c1">#  then using time.sleep</span>
+        <span class="c1"># Wait for the page to be loaded</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_load</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Wait for press key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Finished&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Press key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> done&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+    <span class="c1"># ------ Actions which are performed to change the web page ---------------</span>
+<div class="viewcode-block" id="WebBrowser.action_visit_url">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_visit_url">[docs]</a>
+    <span class="k">def</span> <span class="nf">action_visit_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visit the given url.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (`str`):</span>
+<span class="sd">                The url to visit in browser.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_load</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Wait for page </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> to load.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Load web page successfully.&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.get_action_functions">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.get_action_functions">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_action_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary of the action functions, where the key is the</span>
+<span class="sd">        action name and the value is the corresponding function.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">action_name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">action_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actions</span>
+        <span class="p">}</span></div>
+
+
+    <span class="c1"># ------ Set or remove marks of interactive elements on the web page ------</span>
+<div class="viewcode-block" id="WebBrowser.set_interactive_marks">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.set_interactive_marks">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_interactive_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WebElementInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mark the interactive elements on the current web page.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Remove the existing interactive elements on the current web page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_interactive_marks</span><span class="p">()</span>
+
+        <span class="c1"># Load the javascript to crawl the page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mark_page_js</span><span class="p">)</span>
+
+        <span class="c1"># Mark the interactive elements on the web page by calling the</span>
+        <span class="c1"># JavaScript function `crawlPage`</span>
+        <span class="n">result_handle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate_handle</span><span class="p">(</span><span class="s2">&quot;setInteractiveMarks()&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Record the interactive elements on the current page</span>
+        <span class="n">interactive_items_handle</span> <span class="o">=</span> <span class="n">result_handle</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;items&quot;</span><span class="p">)</span>
+        <span class="n">items_info_handle</span> <span class="o">=</span> <span class="n">result_handle</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;itemsInfo&quot;</span><span class="p">)</span>
+
+        <span class="n">js_handles</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">interactive_items_handle</span><span class="o">.</span><span class="n">evaluate_handle</span><span class="p">(</span><span class="s2">&quot;items =&gt; items&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">get_properties</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;element&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_element</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">js_handles</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Get the interactive items</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">WebElementInfo</span><span class="p">(</span><span class="o">**</span><span class="n">info</span><span class="p">)</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">items_info_handle</span><span class="o">.</span><span class="n">json_value</span><span class="p">()</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.remove_interactive_marks">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.remove_interactive_marks">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_interactive_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the interactive elements on the current web page.&quot;&quot;&quot;</span>
+        <span class="c1"># Load the javascript to crawl the page</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mark_page_js</span><span class="p">)</span>
+
+        <span class="c1"># Remove the interactive elements on the web page by calling the</span>
+        <span class="c1"># JavaScript function `rmInteractiveMarks`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;removeInteractiveMarks()&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="WebBrowser.close">
+<a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the browser&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_wait_for_load</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hint_s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hint_e</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Page loaded.&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait to ensure the page is loaded after certain actions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hint_s (`str`):</span>
+<span class="sd">                   The hint message before waiting.</span>
+<span class="sd">                hint_e (`str`):</span>
+<span class="sd">                    The hint message after waiting.</span>
+<span class="sd">                timeout (`Optional[int]`, defaults to `None`)</span>
+<span class="sd">                    The timeout for the page to load (in seconds)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">hint_s</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span> <span class="o">*</span> <span class="mi">1000</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">wait_for_load_state</span><span class="p">(</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">hint_e</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_verify_element_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Verify the given element id is valid or not.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">element_id</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_load_external_js</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the JavaScript from local file. The JavaScript written in</span>
+<span class="sd">        markpage.js will crawl all the interactive elements on the page,</span>
+<span class="sd">        and mark them on with square marks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">js_file_path</span> <span class="o">=</span> <span class="n">current_file_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;markpage.js&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">js_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mark_page_js</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_jina_page</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the formatted current page text, using api from jina&quot;&quot;&quot;</span>
+        <span class="n">jina_url</span> <span class="o">=</span> <span class="s2">&quot;https://r.jina.ai/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">page_text</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">jina_url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">return</span> <span class="n">page_text</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Encounter exception </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The page in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2"> might not be loaded yet&quot;</span>
+                <span class="s2">&quot;you might want to check the request connection or api quota.&quot;</span>
+            <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Alibaba Tongyi Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
