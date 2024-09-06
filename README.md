@@ -220,22 +220,37 @@ cd agentscope
 pip install -e .
 ```
 
-- To build distributed multi-agent applications:
-
-```bash
-# On windows
-pip install -e .[distribute]
-# On mac
-pip install -e .\[distribute\]
-```
-
 ### Using pip
 
 - Install AgentScope from pip:
 
 ```bash
-pip install agentscope --pre
+pip install agentscope
 ```
+
+### Extra Dependencies
+
+To support different deployment scenarios, AgentScope provides several
+optional dependencies. Full list of optional dependencies refers to
+[tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
+
+#### On Windows
+
+```bash
+# From source
+pip install -e .[distribute]  # For windows
+# From pypi
+pip install agentscope[distribute]
+```
+
+#### On Mac
+```bash
+# From source
+pip install -e .\[distribute\]
+# From pypi
+pip install agentscope\[distribute\]
+```
+
 
 ## Quick Start
 

@@ -17,50 +17,6 @@ with open("src/agentscope/_version.py", encoding="UTF-8") as f:
 NAME = "agentscope"
 URL = "https://github.com/modelscope/agentscope"
 
-rpc_requires = [
-    "grpcio==1.60.0",
-    "grpcio-tools==1.60.0",
-    "protobuf==4.25.0",
-    "expiringdict",
-    "dill",
-    "psutil",
-]
-
-service_requires = [
-    "docker",
-    "pymongo",
-    "pymysql",
-    "bs4",
-    "beautifulsoup4",
-    "feedparser",
-]
-
-doc_requires = [
-    "sphinx",
-    "sphinx-autobuild",
-    "sphinx_rtd_theme",
-    "myst-parser",
-    "sphinxcontrib-mermaid",
-]
-
-test_requires = ["pytest", "pytest-cov", "pre-commit"]
-
-gradio_requires = [
-    "gradio==4.19.1",
-    "modelscope_studio==0.0.5",
-]
-
-rag_requires = [
-    "llama-index==0.10.30",
-]
-
-studio_requires = []
-
-web_requires = [
-    "playwright",
-    "markdownify",
-]
-
 # released requires
 minimal_requires = [
     "networkx",
@@ -71,47 +27,85 @@ minimal_requires = [
     "tiktoken",
     "Pillow",
     "requests",
-    "chardet",
     "inputimeout",
-    "openai>=1.3.0",
     "numpy",
     "Flask==3.0.0",
     "Flask-Cors==4.0.0",
     "Flask-SocketIO==5.3.6",
     "flask_sqlalchemy",
     "flake8",
-    # TODO: move into other requires
-    "dashscope==1.14.1",
+    "psutil",
+    "scipy",
+    # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
-    "ollama>=0.1.7",
-    "google-generativeai>=0.4.0",
-    "zhipuai",
-    "litellm",
+    "dashscope==1.14.1",
+]
+
+extra_service_requires = [
+    "docker",
+    "pymongo",
+    "pymysql",
+    "bs4",
+    "beautifulsoup4",
+    "feedparser",
     "notebook",
     "nbclient",
     "nbformat",
-    "psutil",
-    "scipy",
-    "pillow",
+    "playwright",
+    "markdownify",
 ]
 
-distribute_requires = minimal_requires + rpc_requires
+extra_distribute_requires = [
+    "grpcio==1.60.0",
+    "grpcio-tools==1.60.0",
+    "protobuf==4.25.0",
+    "expiringdict",
+    "dill",
+]
 
-dev_requires = minimal_requires + test_requires
+extra_dev_requires = [
+    # unit test
+    "pytest",
+    "pytest-cov",
+    "pre-commit"
+    # doc
+    "sphinx",
+    "sphinx-autobuild",
+    "sphinx_rtd_theme",
+    "myst-parser",
+    "sphinxcontrib-mermaid",
+]
 
-full_requires = (
-    minimal_requires
-    + rpc_requires
-    + service_requires
-    + doc_requires
-    + test_requires
-    + gradio_requires
-    + rag_requires
-    + studio_requires
-    + web_requires
+extra_gradio_requires = [
+    "gradio==4.19.1",
+    "modelscope_studio==0.0.5",
+]
+
+extra_rag_requires = [
+    "llama-index==0.10.30",
+]
+
+# API requires
+extra_gemini_requires = ["google-generativeai>=0.4.0"]
+extra_litellm_requires = ["litellm"]
+extra_zhipuai_requires = ["zhipuai"]
+extra_ollama_requires = ["ollama>=0.1.7"]
+
+# Full requires
+extra_full_requires = (
+    extra_distribute_requires
+    + extra_service_requires
+    + extra_dev_requires
+    + extra_gradio_requires
+    + extra_rag_requires
+    + extra_gemini_requires
+    + extra_litellm_requires
+    + extra_zhipuai_requires
+    + extra_ollama_requires
 )
 
-online_requires = full_requires + [
+# For online workstation
+extra_online_requires = extra_full_requires + [
     "oss2",
     "flask_babel",
     "babel==2.15.0",
@@ -141,10 +135,21 @@ setuptools.setup(
     },
     install_requires=minimal_requires,
     extras_require={
-        "distribute": distribute_requires,
-        "dev": dev_requires,
-        "full": full_requires,
-        "online": online_requires,
+        # For specific LLM API
+        "ollama": extra_ollama_requires,
+        "litellm": extra_litellm_requires,
+        "zhipuai": extra_zhipuai_requires,
+        "gemini": extra_gemini_requires,
+        # For service functions
+        "service": extra_service_requires,
+        # For distribution mode
+        "distribute": extra_distribute_requires,
+        # With unit test requires
+        "dev": extra_dev_requires,
+        # With full requires
+        "full": extra_full_requires,
+        # With online workstation requires
+        "online": extra_online_requires,
     },
     license="Apache License 2.0",
     classifiers=[

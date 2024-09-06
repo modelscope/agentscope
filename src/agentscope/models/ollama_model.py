@@ -7,11 +7,6 @@ from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
 from ..utils.common import _convert_to_str
 
-try:
-    import ollama
-except ImportError:
-    ollama = None
-
 
 class OllamaWrapperBase(ModelWrapperBase, ABC):
     """The base class for Ollama model wrappers.
@@ -67,6 +62,15 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
 
         self.options = options
         self.keep_alive = keep_alive
+
+        try:
+            import ollama
+        except ImportError as e:
+            raise ImportError(
+                "The package ollama is not found. Please install it by "
+                'running command `pip install "ollama>=0.1.7"`',
+            ) from e
+
         self.client = ollama.Client(host=host, **kwargs)
 
 

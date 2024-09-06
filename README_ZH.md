@@ -208,22 +208,18 @@ cd agentscope
 pip install -e .
 ```
 
-- 构建分布式多智能体应用需要按照以下方式安装：
-
-```bash
-# 在windows上
-pip install -e .[distribute]
-# 在mac上
-pip install -e .\[distribute\]
-```
-
 ### 使用pip
 
 - 从pip安装的AgentScope
 
 ```bash
-pip install agentscope --pre
+pip install agentscope
 ```
+
+### 额外依赖
+
+为了支持不同的部署场景，AgentScope提供了若干个可选的依赖项。
+完整的可选依赖项列表请参考[tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
 
 ## 快速开始
 
