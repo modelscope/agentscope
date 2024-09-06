@@ -57,7 +57,7 @@ class _WebSocketClient:
         self,
         require_url: bool,
         required_keys: list[str],
-        timeout: float | None = None,
+        timeout: Optional[float] = None,
     ) -> Optional[dict]:
         """Get user input from studio in real-time.
 
@@ -174,7 +174,7 @@ class StudioClient:
         name: str,
         require_url: bool,
         required_keys: Optional[Union[list[str], str]] = None,
-        timeout: float | None = None,
+        timeout: Optional[float] = None,
     ) -> dict:
         """Get user input from the studio.
 
