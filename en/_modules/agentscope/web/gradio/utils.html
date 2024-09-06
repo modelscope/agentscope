@@ -127,8 +127,6 @@
 
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 
-<span class="kn">from</span> <span class="nn">dashscope.audio.asr</span> <span class="kn">import</span> <span class="n">RecognitionCallback</span><span class="p">,</span> <span class="n">Recognition</span>
-
 <span class="n">SYS_MSG_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;【SYSTEM】&quot;</span>
 
 <span class="n">thread_local_data</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
@@ -319,7 +317,15 @@
 <a class="viewcode-back" href="../../../../agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.audio2text">[docs]</a>
 <span class="k">def</span> <span class="nf">audio2text</span><span class="p">(</span><span class="n">audio_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts audio file at the given path to text using ASR.&quot;&quot;&quot;</span>
-    <span class="c1"># dashscope.api_key = &quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">dashscope.audio.asr</span> <span class="kn">import</span> <span class="n">RecognitionCallback</span><span class="p">,</span> <span class="n">Recognition</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The package dashscope is not found. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install dashscope==1.14.1`&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
     <span class="n">callback</span> <span class="o">=</span> <span class="n">RecognitionCallback</span><span class="p">()</span>
     <span class="n">rec</span> <span class="o">=</span> <span class="n">Recognition</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="s2">&quot;paraformer-realtime-v1&quot;</span><span class="p">,</span>

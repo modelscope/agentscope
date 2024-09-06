@@ -122,23 +122,19 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1"># pylint: disable=C0301</span>
 <span class="sd">&quot;&quot;&quot;Service for executing jupyter notebooks interactively</span>
-<span class="sd">Partially referenced the implementation of https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py</span>
-<span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+<span class="sd">Partially referenced the implementation of</span>
+<span class="sd">https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">nbclient</span> <span class="kn">import</span> <span class="n">NotebookClient</span>
-    <span class="kn">from</span> <span class="nn">nbclient.exceptions</span> <span class="kn">import</span> <span class="n">CellTimeoutError</span><span class="p">,</span> <span class="n">DeadKernelError</span>
+    <span class="kn">import</span> <span class="nn">nbclient</span>
     <span class="kn">import</span> <span class="nn">nbformat</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
-
-    <span class="n">nbclient</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">)</span>
-    <span class="n">nbformat</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">)</span>
-    <span class="n">NotebookClient</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">nbclient</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nbformat</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">...manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
 <span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
@@ -191,8 +187,15 @@
 <span class="sd">                The timeout for each cell execution.</span>
 <span class="sd">                Default to 300.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">nbclient</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">nbformat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;The package nbclient or nbformat is not found. Please &quot;</span>
+                <span class="s2">&quot;install it by `pip install notebook nbclient nbformat`&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">v4</span><span class="o">.</span><span class="n">new_notebook</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span> <span class="o">=</span> <span class="n">NotebookClient</span><span class="p">(</span><span class="n">nb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span> <span class="o">=</span> <span class="n">nbclient</span><span class="o">.</span><span class="n">NotebookClient</span><span class="p">(</span><span class="n">nb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
 
         <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_client</span><span class="p">())</span></div>
@@ -239,7 +242,7 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_restart_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Restart the notebook client&quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kill_client</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span> <span class="o">=</span> <span class="n">NotebookClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span> <span class="o">=</span> <span class="n">nbclient</span><span class="o">.</span><span class="n">NotebookClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_client</span><span class="p">()</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_run_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
@@ -253,13 +256,13 @@
                     <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">cell_index</span><span class="p">]</span><span class="o">.</span><span class="n">outputs</span>
                 <span class="p">],</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="n">DeadKernelError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">nbclient</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DeadKernelError</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
                 <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
                 <span class="n">content</span><span class="o">=</span><span class="s2">&quot;DeadKernelError when executing cell, reset kernel&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="n">CellTimeoutError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">nbclient</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">CellTimeoutError</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">km</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">km</span><span class="o">.</span><span class="n">interrupt_kernel</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>

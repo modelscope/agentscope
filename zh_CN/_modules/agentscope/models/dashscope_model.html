@@ -125,7 +125,6 @@
 <span class="kn">from</span> <span class="nn">http</span> <span class="kn">import</span> <span class="n">HTTPStatus</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
 
-<span class="kn">from</span> <span class="nn">dashscope.api_entities.dashscope_response</span> <span class="kn">import</span> <span class="n">GenerationResponse</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
@@ -134,8 +133,10 @@
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">dashscope</span>
+    <span class="kn">from</span> <span class="nn">dashscope.api_entities.dashscope_response</span> <span class="kn">import</span> <span class="n">GenerationResponse</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">dashscope</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">GenerationResponse</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 
@@ -176,7 +177,8 @@
 
         <span class="k">if</span> <span class="n">dashscope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot find dashscope package in current python environment.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;The package &#39;dashscope&#39; is not installed. Please install it &quot;</span>
+                <span class="s2">&quot;by running `pip install dashscope==1.14.1`&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -871,7 +873,7 @@
             <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># Unhandle code path here</span>
+        <span class="c1"># Unhandled code path here</span>
         <span class="c1"># response could be a generator , if stream is yes</span>
         <span class="c1"># suggest add a check here</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>

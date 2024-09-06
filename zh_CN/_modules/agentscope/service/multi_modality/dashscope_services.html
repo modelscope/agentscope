@@ -130,16 +130,10 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">dashscope</span>
-<span class="kn">from</span> <span class="nn">dashscope.audio.tts</span> <span class="kn">import</span> <span class="n">SpeechSynthesizer</span>
-
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">...models</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DashScopeImageSynthesisWrapper</span><span class="p">,</span>
     <span class="n">DashScopeMultiModalWrapper</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="c1"># SpeechSynthesizerWrapper is current not available</span>
-
 
 <span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ServiceResponse</span><span class="p">,</span>
@@ -388,9 +382,17 @@
 <span class="sd">    &gt; {&#39;status&#39;: &#39;SUCCESS&#39;, &#39;content&#39;: {&quot;audio_path&quot;: &quot;AUDIO_PATH&quot;}}</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">dashscope</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The package &#39;dashscope&#39; is not installed. Please install it by &quot;</span>
+            <span class="s2">&quot;running `pip install dashscope==1.14.1`&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
     <span class="n">dashscope</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="n">SpeechSynthesizer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">audio</span><span class="o">.</span><span class="n">tts</span><span class="o">.</span><span class="n">SpeechSynthesizer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
         <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
         <span class="n">sample_rate</span><span class="o">=</span><span class="n">sample_rate</span><span class="p">,</span>

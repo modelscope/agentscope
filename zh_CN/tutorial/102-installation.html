@@ -63,6 +63,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope">安装AgentScope</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id3">从源码安装</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pip">使用Pip安装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">额外依赖</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#windows">Windows</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mac-linux">Mac &amp; Linux</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -173,23 +178,47 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/model
 
 <span class="c1"># 针对本地化的multi-agent应用</span>
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-<span class="c1"># 为分布式multi-agent应用</span>
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>distribute<span class="o">]</span><span class="w">  </span><span class="c1"># 在Mac上使用`pip install -e .\[distribute\]`</span>
 </pre></div>
 </div>
-<p><strong>注意</strong>：<code class="docutils literal notranslate"><span class="pre">[distribute]</span></code>选项安装了分布式应用程序所需的额外依赖项。在运行这些命令之前，请激活您的虚拟环境。</p>
 </section>
 <section id="pip">
 <h3>使用Pip安装<a class="headerlink" href="#pip" title="Link to this heading"></a></h3>
 <p>如果您选择从Pypi安装AgentScope，可以使用<code class="docutils literal notranslate"><span class="pre">pip</span></code>轻松地完成：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 针对本地化的multi-agent应用</span>
-pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="w"> </span>--pre
-
-<span class="c1"># 为分布式multi-agent应用</span>
-pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>distribute<span class="o">]</span><span class="w"> </span>--pre<span class="w">  </span><span class="c1"># 在Mac上使用`pip install agentscope\[distribute\] --pre`</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>额外依赖<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>AgentScope 支持可选依赖如下，用户可以根据自己的需求选择安装：</p>
+<ul class="simple">
+<li><p>ollama: Ollama API</p></li>
+<li><p>litellm: Litellm API</p></li>
+<li><p>zhipuai: Zhipuai API</p></li>
+<li><p>gemini: Gemini API</p></li>
+<li><p>service: 不同工具函数的依赖</p></li>
+<li><p>distribute: 分布式模式的依赖</p></li>
+<li><p>full: 一次性安装上述所有的依赖，可能耗时较长</p></li>
+</ul>
+<p>可以通过将它们添加到安装命令中来安装这些依赖。</p>
+<section id="windows">
+<h4>Windows<a class="headerlink" href="#windows" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>gemini<span class="o">]</span>
+<span class="c1"># or</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>ollama,distribute<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="mac-linux">
+<h4>Mac &amp; Linux<a class="headerlink" href="#mac-linux" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="se">\[</span>gemini<span class="se">\]</span>
+<span class="c1"># or</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="se">\[</span>ollama,distribute<span class="se">\]</span>
 </pre></div>
 </div>
 <p><a class="reference internal" href="#installation-zh">[返回顶端]</a></p>
+</section>
 </section>
 </section>
 </section>
