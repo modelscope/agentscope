@@ -23,7 +23,6 @@ class DictDialogAgent(AgentBase):
         sys_prompt: str,
         model_config_name: str,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
         max_retries: Optional[int] = 3,
     ) -> None:
         """Initialize the dict dialog agent.
@@ -39,8 +38,6 @@ class DictDialogAgent(AgentBase):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`, defaults to `None`):
-                The config of memory.
             max_retries (`Optional[int]`, defaults to `None`):
                 The maximum number of retries when failed to parse the model
                 output.
@@ -50,7 +47,6 @@ class DictDialogAgent(AgentBase):
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             use_memory=use_memory,
-            memory_config=memory_config,
         )
 
         self.parser = None

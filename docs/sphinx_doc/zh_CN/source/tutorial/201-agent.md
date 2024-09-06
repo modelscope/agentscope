@@ -36,7 +36,6 @@ class AgentBase(Operator):
             sys_prompt: Optional[str] = None,
             model_config_name: str = None,
             use_memory: bool = True,
-            memory_config: Optional[dict] = None,
     ) -> None:
 
     # ... [code omitted for brevity]
@@ -72,7 +71,6 @@ class AgentBase(Operator):
 | `DialogAgent`      | 通过理解上下文和生成连贯的响应来管理对话。                                  | 客户服务机器人，虚拟助手。  |
 | `DictDialogAgent`  | 通过理解上下文和生成连贯的响应来管理对话，返回的消息为 Json 格式。          | 客户服务机器人，虚拟助手。  |
 | `UserAgent`        | 与用户互动以收集输入，生成可能包括URL或基于所需键的额外具体信息的消息。     | 为agent收集用户输入         |
-| `TextToImageAgent` | 将用户输入的文本转化为图片                                                  | 提供文生图功能              |
 | `ReActAgent`       | 实现了 ReAct 算法的 Agent，能够自动调用工具处理较为复杂的任务。             | 借助工具解决复杂任务        |
 | *更多agent*        | AgentScope 正在不断扩大agent池，加入更多专门化的agent，以适应多样化的应用。 |                             |
 

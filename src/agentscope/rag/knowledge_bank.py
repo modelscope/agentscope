@@ -7,8 +7,8 @@ import json
 from typing import Optional, Union
 from loguru import logger
 from agentscope.agents import AgentBase
-from .llama_index_knowledge import LlamaIndexKnowledge
 from ..manager import ModelManager
+from .knowledge import Knowledge
 
 DEFAULT_INDEX_CONFIG = {
     "knowledge_id": "",
@@ -43,13 +43,14 @@ class KnowledgeBank:
         configs: Union[dict, str],
     ) -> None:
         """initialize the knowledge bank"""
+
         if isinstance(configs, str):
             logger.info(f"Loading configs from {configs}")
             with open(configs, "r", encoding="utf-8") as fp:
                 self.configs = json.loads(fp.read())
         else:
             self.configs = configs
-        self.stored_knowledge: dict[str, LlamaIndexKnowledge] = {}
+        self.stored_knowledge: dict[str, Knowledge] = {}
         self._init_knowledge()
 
     def _init_knowledge(self) -> None:
@@ -104,6 +105,8 @@ class KnowledgeBank:
                 )
             ''
         """
+        from .llama_index_knowledge import LlamaIndexKnowledge
+
         if knowledge_id in self.stored_knowledge:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
 
@@ -125,9 +128,11 @@ class KnowledgeBank:
             knowledge_id=knowledge_id,
             emb_model=model_manager.get_model_by_config_name(emb_model_name),
             knowledge_config=knowledge_config,
-            model=model_manager.get_model_by_config_name(model_name)
-            if model_name
-            else None,
+            model=(
+                model_manager.get_model_by_config_name(model_name)
+                if model_name
+                else None
+            ),
         )
         logger.info(f"data loaded for knowledge_id = {knowledge_id}.")
 
@@ -135,7 +140,7 @@ class KnowledgeBank:
         self,
         knowledge_id: str,
         duplicate: bool = False,
-    ) -> LlamaIndexKnowledge:
+    ) -> Knowledge:
         """
         Get a Knowledge object from the knowledge bank.
         Args:
@@ -144,7 +149,7 @@ class KnowledgeBank:
             duplicate (bool):
                 whether return a copy of the Knowledge object.
         Returns:
-            LlamaIndexKnowledge:
+            Knowledge:
                 the Knowledge object defined with Llama-index
         """
         if knowledge_id not in self.stored_knowledge:
