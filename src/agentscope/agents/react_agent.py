@@ -29,22 +29,6 @@ INSTRUCTION_PROMPT = """## What You Should Do:
 """  # noqa
 
 
-def finish(response: str) -> ServiceResponse:
-    """Finish reasoning and generate a response to the user.
-
-    Note:
-        The function won't be executed, actually.
-
-    Args:
-        response (`str`):
-            The response to the user.
-    """
-    return ServiceResponse(
-        status=ServiceExecStatus.SUCCESS,
-        content=response,
-    )
-
-
 class ReActAgent(AgentBase):
     """An agent class that implements the ReAct algorithm. More details refer
     to https://arxiv.org/abs/2210.03629.
@@ -101,7 +85,7 @@ class ReActAgent(AgentBase):
 
         # Add `finish` function to the toolkit to allow agent to end
         # the reasoning-acting loop
-        self.service_toolkit.add(finish)
+        self.service_toolkit.add(self.finish)
 
         self.verbose = verbose
         self.max_iters = max_iters
@@ -244,3 +228,19 @@ class ReActAgent(AgentBase):
         if self.verbose:
             self.speak(msg_execution)
         self.memory.add(msg_execution)
+
+    @staticmethod
+    def finish(response: str) -> ServiceResponse:
+        """Finish reasoning and generate a response to the user.
+
+        Note:
+            The function won't be executed, actually.
+
+        Args:
+            response (`str`):
+                The response to the user.
+        """
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=response,
+        )

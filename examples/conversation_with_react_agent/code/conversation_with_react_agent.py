@@ -20,9 +20,9 @@ BING_API_KEY = "{YOUR_BING_API_KEY}"
 
 YOUR_MODEL_CONFIGURATION_NAME = "{YOUR_MODEL_CONFIGURATION_NAME}"
 YOUR_MODEL_CONFIGURATION = {
-    "model_type": "ollama_chat",
+    "model_type": "xxx",
     "config_name": YOUR_MODEL_CONFIGURATION_NAME,
-    "model_name": "llama3",
+    # ...
 }
 
 
