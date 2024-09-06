@@ -171,10 +171,6 @@ and <code class="docutils literal notranslate"><span class="pre">action_click</s
 <span class="nb">print</span><span class="p">(</span><span class="n">browser</span><span class="o">.</span><span class="n">page_html</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Besides, to help vision models to understand the webpage better, we provide <code class="docutils literal notranslate"><span class="pre">set_interactive_marks</span></code> function,
-which will mark all the interactive elements on the current webpage with index labels.
-After calling <code class="docutils literal notranslate"><span class="pre">set_interactive_marks</span></code> function, more actions can be performed on the webpage.
-For example, clicking a button, typing in a text box, etc.</p>
 <p>此外，为了帮助视觉模型更好地理解网页，我们提供了 <code class="docutils literal notranslate"><span class="pre">set_interactive_marks</span></code> 函数，该函数会把当前网页上所有的可交互元素标记出来，并用序号标签进行标注（从0开始）。
 调用 <code class="docutils literal notranslate"><span class="pre">set_interactive_marks</span></code> 函数标记网页后，我们就可以在网页上执行更多的操作，例如点击指定序号的按钮、在指定序号的文本框中进行输入等。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 为网页上的交互元素添加序号标签</span>
@@ -188,9 +184,6 @@ For example, clicking a button, typing in a text box, etc.</p>
 <section id="id2">
 <h1>与智能体结合<a class="headerlink" href="#id2" title="Link to this heading"></a></h1>
 <p>上述的所有函数为交互式的 Web 浏览器控制提供了基本操作接口。开发者可以使用这些接口来构建自己的 Web 浏览代理。</p>
-<p>In AgentScope, the web browser is also some kind of tool functions, so you can use it together with the service toolkit module to build your own agent.
-We also provide a <a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent">web browser agent</a>) in our example.
-You can refer to it for more details.</p>
 <p>在 AgentScope 中，Web 浏览器也是一种工具函数，因此可以使用 <code class="docutils literal notranslate"><span class="pre">agentscope.service.ServiceToolkit</span></code> 来处理 <code class="docutils literal notranslate"><span class="pre">WebBrowser</span></code> 模块提供的函数，并构建自己的智能体。
 我们在示例中提供了一个<a class="reference external" href="https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent">Web 浏览器智能体</a>的样例。
 可以参考该样例了解更多细节。</p>
