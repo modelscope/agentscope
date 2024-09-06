@@ -7,7 +7,6 @@ from agentscope.agents import UserAgent
 from agentscope.agents.react_agent import ReActAgent
 from agentscope.service import (
     bing_search,  # or google_search,
-    google_search,
     read_text_file,
     write_text_file,
     ServiceToolkit,
@@ -60,39 +59,33 @@ def execute_python_code(code: str) -> ServiceResponse:  # pylint: disable=C0301
     return ServiceResponse(status, output)
 
 
-def main():
-    # Prepare the tools for the agent
-    service_toolkit = ServiceToolkit()
+# Prepare the tools for the agent
+service_toolkit = ServiceToolkit()
 
-    service_toolkit.add(bing_search, api_key=BING_API_KEY, num_results=3)
-    # service_toolkit.add(google_search, api_key=GOOGLE_API_KEY, cse_id=GOOGLE_CSE_ID, num_results=3)
-    service_toolkit.add(execute_python_code)
-    service_toolkit.add(read_text_file)
-    service_toolkit.add(write_text_file)
+service_toolkit.add(bing_search, api_key=BING_API_KEY, num_results=3)
+service_toolkit.add(execute_python_code)
+service_toolkit.add(read_text_file)
+service_toolkit.add(write_text_file)
 
-    agentscope.init(
-        model_configs=YOUR_MODEL_CONFIGURATION,
-        project="Conversation with ReActAgent",
-        save_api_invoke=True,
-    )
+agentscope.init(
+    model_configs=YOUR_MODEL_CONFIGURATION,
+    project="Conversation with ReActAgent",
+    save_api_invoke=True,
+)
 
-    # Create agents
-    agent = ReActAgent(
-        name="assistant",
-        model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
-        verbose=True,
-        service_toolkit=service_toolkit,
-    )
-    user = UserAgent(name="User")
+# Create agents
+agent = ReActAgent(
+    name="assistant",
+    model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
+    verbose=True,
+    service_toolkit=service_toolkit,
+)
+user = UserAgent(name="User")
 
-    # Build
-    x = None
-    while True:
-        x = user(x)
-        if x.content == "exit":
-            break
-        x = agent(x)
-
-
-if __name__ == '__main__':
-    main()
+# Build
+x = None
+while True:
+    x = user(x)
+    if x.content == "exit":
+        break
+    x = agent(x)
