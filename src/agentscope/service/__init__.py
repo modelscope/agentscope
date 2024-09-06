@@ -61,6 +61,8 @@ from .web.wikipedia import (
     wikipedia_search_categories,
 )
 
+from .browser.web_browser import WebBrowser, WebElementInfo
+
 
 def get_help() -> None:
     """Get help message."""
@@ -118,6 +120,8 @@ __all__ = [
     "tripadvisor_search",
     "tripadvisor_search_location_photos",
     "tripadvisor_search_location_details",
+    "WebBrowser",
+    "WebElementInfo",
     # to be deprecated
     "ServiceFactory",
 ]

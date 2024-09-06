@@ -41,12 +41,21 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-06]** AgentScope v0.1.0 版本已上线
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-03]** AgentScope 已更新浏览器控制模块，利用 vision 模型实现智能体对浏览器的控制。请参考[**样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent)
+
+<h5 align="left">
+<video src="https://github.com/user-attachments/assets/6d03caab-6193-4ac6-8b1c-36f152ec02ec" width="45%" alt="web browser control" controls></video>
+</h5>
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-18]** AgentScope 已支持模型流式输出。请参考我们的 [**教程**](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-stream.html) 和 [**流式对话样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode)！
 
 <h5 align="left">
 <img src="https://github.com/user-attachments/assets/b14d9b2f-ce02-4f40-8c1a-950f4022c0cc" width="45%" alt="agentscope-logo">
 <img src="https://github.com/user-attachments/assets/dfffbd1e-1fe7-49ee-ac11-902415b2b0d6" width="45%" alt="agentscope-logo">
 </h5>
+
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
 
@@ -55,6 +64,9 @@
 - **[2024-06-11]** RAG功能现在已经整合进 **AgentScope** 中! 大家可以根据 [**简要介绍AgentScope中的RAG**](https://modelscope.github.io/agentscope/en/tutorial/210-rag.html) ，让自己的agent用上外部知识!
 
 - **[2024-06-09]** AgentScope v0.0.5 已经更新！在这个新版本中，我们开源了 [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) (在线版本的网址是[agentscope.io](https://agentscope.io))！
+
+<details>
+<summary>完整新闻</summary>
 
 - **[2024-05-24]** 我们很高兴地宣布 **AgentScope Workstation** 相关功能即将开源。我们的网站服务暂时下线。在线服务会很快升级重新上线，敬请期待...
 
@@ -83,6 +95,8 @@
 - **[2024-02-27]** 我们现在发布了**AgentScope** v0.0.1版本！现在，AgentScope也可以在[PyPI](https://pypi.org/project/agentscope/)上下载
 
 - **[2024-02-14]** 我们在arXiv上发布了论文“[AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)”!
+
+</details>
 
 ---
 
@@ -141,6 +155,7 @@ AgentScope支持使用以下库快速部署本地模型服务。
 - 多模态生成
 - 维基百科搜索
 - TripAdvisor搜索
+- 浏览器控制
 
 **样例应用**
 

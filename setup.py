@@ -56,6 +56,11 @@ rag_requires = [
 
 studio_requires = []
 
+web_requires = [
+    "playwright",
+    "markdownify",
+]
+
 # released requires
 minimal_requires = [
     "networkx",
@@ -103,6 +108,7 @@ full_requires = (
     + gradio_requires
     + rag_requires
     + studio_requires
+    + web_requires
 )
 
 online_requires = full_requires + [
@@ -131,6 +137,7 @@ setuptools.setup(
     package_data={
         "agentscope.studio": ["static/**/*", "templates/**/*"],
         "agentscope.prompt": ["_prompt_examples.json"],
+        "agentscope.service.browser": ["markpage.js"],
     },
     install_requires=minimal_requires,
     extras_require={
