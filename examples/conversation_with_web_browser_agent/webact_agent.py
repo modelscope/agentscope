@@ -68,7 +68,7 @@ class WebActAgent(AgentBase):
         # Init the browser
         self.browser = WebBrowser()
 
-        self.browser.action_visit_url("https://www.google.com")
+        self.browser.action_visit_url("https://www.bing.com")
 
         # Init the service toolkit with the browser commands. Since they don't
         # require developers to specify parameters, we directly place them into
@@ -165,7 +165,7 @@ class WebActAgent(AgentBase):
         """
 
         # Mark the current interactive elements in the web page
-        self.browser.mark_interactive_elements()
+        self.browser.set_interactive_marks()
 
         # After marking, take a screenshot and save it locally
         path_img = FileManager.get_instance().save_image(
@@ -185,7 +185,7 @@ class WebActAgent(AgentBase):
                 ),
                 role="user",
                 url=path_img,
-                echo=True,
+                echo=self.verbose,
             ),
         )
 
@@ -221,11 +221,9 @@ class WebActAgent(AgentBase):
             },
         ]
 
-        execute_results = self.toolkit.parse_and_call_func(
+        msg_res = self.toolkit.parse_and_call_func(
             formatted_function_call,
         )
-
-        msg_res = Msg("system", execute_results, "system")
         self.speak(msg_res)
         self.memory.add(msg_res)
 

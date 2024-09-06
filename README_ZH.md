@@ -41,6 +41,8 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-03]** AgentScope 已更新浏览器控制模块，利用 vision 模型实现智能体对浏览器的控制。请参考[**样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent)
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-18]** AgentScope 已支持模型流式输出。请参考我们的 [**教程**](https://modelscope.github.io/agentscope/zh_CN/tutorial/203-stream.html) 和 [**流式对话样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode)！
 
 <h5 align="left">

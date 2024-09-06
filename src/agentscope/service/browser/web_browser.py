@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0301
 """The web browser module for agent to interact with web pages."""
+import time
 from pathlib import Path
-from typing import Union, Callable
+from typing import Union, Callable, Optional
 
 import requests
 from loguru import logger
@@ -125,7 +126,7 @@ class WebBrowser:
 
     def __init__(
         self,
-        timeout: int = 60000,
+        timeout: int = 30,
         browser_visible: bool = True,
         browser_width: int = 1280,
         browser_height: int = 1080,
@@ -133,8 +134,8 @@ class WebBrowser:
         """Initialize the web browser module.
 
         Args:
-            timeout (`int`, defaults to `60000`):
-                The timeout (in milliseconds) for the browser to wait for the
+            timeout (`int`, defaults to `30`):
+                The timeout (in seconds) for the browser to wait for the
                 page to load, defaults to 60s.
             browser_visible (`bool`, defaults to `True`):
                 Whether the browser is visible.
@@ -162,7 +163,7 @@ class WebBrowser:
         )
 
         self._page = self.browser.new_page()
-        self._page.set_default_timeout(timeout)
+        self._page.set_default_timeout(timeout * 1000)
         self._page.set_viewport_size(
             {
                 "width": browser_width,
@@ -239,7 +240,6 @@ class WebBrowser:
         self._wait_for_load(
             "Wait for click event",
             "Finished",
-            5,
         )
 
         return ServiceResponse(
@@ -247,7 +247,12 @@ class WebBrowser:
             content=f"Click on element {element_id} done",
         )
 
-    def action_type(self, element_id: int, text: str) -> ServiceResponse:
+    def action_type(
+        self,
+        element_id: int,
+        text: str,
+        submit: bool,
+    ) -> ServiceResponse:
         """Type text into the element with the given id.
 
         Args:
@@ -255,6 +260,8 @@ class WebBrowser:
                 The id of the element to type text into.
             text (`str`):
                 The text to type into the element.
+            submit (`bool`):
+                If press the "Enter" after typing text.
 
         Returns:
             `ServiceResponse`:
@@ -288,8 +295,10 @@ class WebBrowser:
         self._wait_for_load(
             "Wait for finish typing",
             "Finished",
-            1,
         )
+
+        if submit:
+            self.action_press_key("Enter")
 
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
@@ -324,15 +333,21 @@ class WebBrowser:
                 Chosen from `F1` - `F12`, `Digit0`- `Digit9`, `KeyA`- `KeyZ`, `Backquote`, `Minus`, `Equal`, `Backslash`, `Backspace`, `Tab`, `Delete`, `Escape`, `ArrowDown`, `End`, `Enter`, `Home`, `Insert`, `PageDown`, `PageUp`, `ArrowRight`, `ArrowUp`, etc.
         """  # noqa
         self._page.keyboard.press(key)
+
+        # TODO: in a more elegant way to wait for the page to be loaded rather
+        #  then using time.sleep
+        # Wait for the page to be loaded
+        time.sleep(2)
+
         self._wait_for_load(
             f"Wait for press key: {key}",
             "Finished",
-            5,
         )
-        return ServiceResponse(
+        response = ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
             content=f"Press key: {key} done",
         )
+        return response
 
     # ------ Actions which are performed to change the web page ---------------
     def action_visit_url(self, url: str) -> ServiceResponse:
@@ -345,7 +360,6 @@ class WebBrowser:
         self._page.goto(url)
         self._wait_for_load(
             f"Wait for page {url} to load.",
-            timeout=10,
         )
 
         return ServiceResponse(
@@ -385,7 +399,7 @@ class WebBrowser:
             .values()
         )
         self._interactive_elements = [
-            item.get_property("element").as_element for item in js_handles
+            item.get_property("element").as_element() for item in js_handles
         ]
 
         # Get the interactive items
@@ -412,7 +426,7 @@ class WebBrowser:
         self,
         hint_s: str,
         hint_e: str = "Page loaded.",
-        timeout: int = 10,
+        timeout: Optional[int] = None,
     ) -> None:
         """Wait to ensure the page is loaded after certain actions.
 
@@ -421,12 +435,16 @@ class WebBrowser:
                    The hint message before waiting.
                 hint_e (`str`):
                     The hint message after waiting.
-                timeout (`int`):
-                    The timeout for the page to load.
+                timeout (`Optional[int]`, defaults to `None`)
+                    The timeout for the page to load (in seconds)
         """
-        logger.info(hint_s)
+        logger.debug(hint_s)
+
+        if timeout is not None:
+            timeout = timeout * 1000
+
         self._page.wait_for_load_state("load", timeout=timeout)
-        logger.info(hint_e)
+        logger.debug(hint_e)
 
     def _verify_element_id(self, element_id: int) -> bool:
         """Verify the given element id is valid or not."""

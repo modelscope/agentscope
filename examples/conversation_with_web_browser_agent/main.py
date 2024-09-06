@@ -28,6 +28,7 @@ agentscope.init(
 agent = WebActAgent(
     name="assistant",
     model_config_name="gpt-4o_config",
+    verbose=True,
 )
 
 user = UserAgent(
@@ -36,7 +37,7 @@ user = UserAgent(
 )
 
 x = None
-while x is not None:
+while True:
     x = user(x)
     if x.content == "exit":
         break
