@@ -22,7 +22,7 @@ from agentscope.message import PlaceholderMessage
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequentialpipeline
 from agentscope.rpc.rpc_agent_client import RpcAgentClient
-from agentscope.agents import RpcAgent
+from agentscope.agents.rpc_agent import RpcAgent
 from agentscope.exception import AgentCallError, QuotaExceededError
 
 
