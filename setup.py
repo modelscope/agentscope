@@ -137,6 +137,7 @@ setuptools.setup(
     package_data={
         "agentscope.studio": ["static/**/*", "templates/**/*"],
         "agentscope.prompt": ["_prompt_examples.json"],
+        "agentscope.service.browser": ["markpage.js"],
     },
     install_requires=minimal_requires,
     extras_require={

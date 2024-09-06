@@ -7,6 +7,7 @@ from unittest import TestCase
 import agentscope
 from agentscope.manager import ASManager
 from agentscope.constants import _DEFAULT_CACHE_DIR
+from agentscope._version import __version__
 
 
 class ManagerTest(TestCase):
@@ -33,6 +34,7 @@ class ManagerTest(TestCase):
         self.assertDictEqual(
             data,
             {
+                "agentscope_version": __version__,
                 "project": "project",
                 "name": "name",
                 "disable_saving": True,
@@ -67,9 +69,11 @@ class ManagerTest(TestCase):
 
         # Flush the manager
         manager.flush()
+        state_dict = manager.state_dict()
         self.assertDictEqual(
-            manager.state_dict(),
+            state_dict,
             {
+                "agentscope_version": __version__,
                 "project": "",
                 "name": "",
                 "disable_saving": True,
