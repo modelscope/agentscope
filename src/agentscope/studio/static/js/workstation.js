@@ -36,8 +36,22 @@ let nameToHtmlFile = {
     'PythonService': 'service-execute-python.html',
     'ReadTextService': 'service-read-text.html',
     'WriteTextService': 'service-write-text.html',
+    'TextToAudioService': 'service-text-to-audio.html',
+    'TextToImageService': 'service-text-to-image.html',
     'ImageComposition': 'tool-image-composition.html'
 }
+
+const ModelNames48k = [
+    'sambert-zhinan-v1',
+    "sambert-zhiqi-v1",
+    "sambert-zhichu-v1",
+    "sambert-zhide-v1",
+    "sambert-zhijia-v1",
+    "sambert-zhiru-v1",
+    "sambert-zhiqian-v1",
+    "sambert-zhixiang-v1",
+    "sambert-zhiwei-v1",
+]
 
 // Cache the loaded html files
 let htmlCache = {};
@@ -485,8 +499,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "api_key": '',
                             "temperature": 0.0,
                             "seed": 0,
-                            "model_type": 'dashscope_chat',
-                            "messages_key": 'input'
+                            "model_type": 'dashscope_chat'
                         }
                 },
                 htmlSourceCode);
@@ -504,8 +517,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "api_key": '',
                             "temperature": 0.0,
                             "seed": 0,
-                            "model_type": 'openai_chat',
-                            "messages_key": 'messages'
+                            "model_type": 'openai_chat'
                         }
                 },
                 htmlSourceCode);
@@ -579,8 +591,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                                 "temperature": 0.0,
                                 "seed": 0,
                             },
-                            "model_type": 'dashscope_image_synthesis',
-                            "messages_key": 'prompt'
+                            "model_type": 'dashscope_image_synthesis'
                         }
                 }, htmlSourceCode);
             addEventListenersToNumberInputs(dashscope_image_synthesisId);
@@ -790,6 +801,28 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                 pos_x, pos_y, 'WriteTextService', {}, htmlSourceCode);
             break;
 
+        case 'TextToAudioService':
+            const TextToAudioServiceID = editor.addNode('TextToAudioService', 0, 0,
+                pos_x, pos_y, 'TextToAudioService', {
+                    "args": {
+                        "model": "",
+                        "api_key": "",
+                        "sample_rate": ""
+                    }
+                }, htmlSourceCode);
+                updateSampleRate(TextToAudioServiceID)
+            break;
+        case 'TextToImageService':
+            editor.addNode('TextToImageService', 0, 0,
+                pos_x, pos_y, 'TextToImageService', {
+                    "args": {
+                        "model": "",
+                        "api_key": "",
+                        "n": 1,
+                        "size":""
+                    }
+                }, htmlSourceCode);
+            break;
         case 'ImageComposition':
             editor.addNode('ImageComposition', 1, 1,
                 pos_x, pos_y, 'ImageComposition', {
@@ -807,6 +840,43 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         default:
+    }
+}
+
+function updateSampleRate(nodeId) {
+    const newNode = document.getElementById(`node-${nodeId}`);
+    if (!newNode) {
+        console.error(`Node with ID node-${nodeId} not found.`);
+        return;
+    }
+
+    const modelNameInput = newNode.querySelector('#model_name');
+    function updateSampleRateValue() {
+        const modelName = modelNameInput ? modelNameInput.value : '';
+
+        if (ModelNames48k.includes(modelName)) {
+            sampleRate = 48000
+        } else {
+            sampleRate = 16000
+        }
+
+        const sampleRateInput = newNode.querySelector('#sample_rate');
+
+        if (sampleRateInput) {
+            sampleRateInput.value = sampleRate;
+            var nodeData = editor.getNodeFromId(nodeId).data;
+            nodeData.args.sample_rate = sampleRate
+            nodeData.args.model = modelName
+            editor.updateNodeDataFromId(nodeId, nodeData);
+
+            console.log(`${modelName} sample rate updated to: ${sampleRate}`);
+        } else {
+            console.log(`Sample Rate input not found.`);
+        }
+    }
+
+    if (modelNameInput) {
+        modelNameInput.addEventListener('input', updateSampleRateValue);
     }
 }
 

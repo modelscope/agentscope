@@ -36,6 +36,8 @@ from agentscope.service import (
     read_text_file,
     write_text_file,
     execute_python_code,
+    dashscope_text_to_audio,
+    dashscope_text_to_image,
     ServiceToolkit,
 )
 from agentscope.studio.tools.image_composition import stitch_images_with_grid
@@ -808,6 +810,7 @@ class CopyNode(WorkflowNode):
         )
         assert len(self.dep_opts) == 1, "CopyNode can only have one parent!"
         self.pipeline = self.dep_opts[0]
+        self.var_name = self.pipeline.var_name
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
@@ -847,7 +850,7 @@ class BingSearchServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from functools import partial\n"
             "from agentscope.service import bing_search",
             "inits": f"{self.var_name} = partial(bing_search,"
@@ -882,7 +885,7 @@ class GoogleSearchServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from functools import partial\n"
             "from agentscope.service import google_search",
             "inits": f"{self.var_name} = partial(google_search,"
@@ -917,7 +920,7 @@ class PythonServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import execute_python_code",
             "inits": f"{self.var_name} = execute_python_code",
             "execs": "",
@@ -950,7 +953,7 @@ class ReadTextServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import read_text_file",
             "inits": f"{self.var_name} = read_text_file",
             "execs": "",
@@ -983,9 +986,79 @@ class WriteTextServiceNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.service import ServiceFactory\n"
+            "imports": "from agentscope.service import ServiceToolkit\n"
             "from agentscope.service import write_text_file",
             "inits": f"{self.var_name} = write_text_file",
+            "execs": "",
+        }
+
+
+class TextToAudioServiceNode(WorkflowNode):
+    """
+    Text to Audio Service Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+        only_compile: bool = True,
+    ) -> None:
+        super().__init__(
+            node_id,
+            opt_kwargs,
+            source_kwargs,
+            dep_opts,
+            only_compile,
+        )
+        self.service_func = partial(dashscope_text_to_audio, **self.opt_kwargs)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceToolkit\n"
+            "from functools import partial\n"
+            "from agentscope.service import dashscope_text_to_audio",
+            "inits": f"{self.var_name} = partial(dashscope_text_to_audio,"
+            f" {kwarg_converter(self.opt_kwargs)})",
+            "execs": "",
+        }
+
+
+class TextToImageServiceNode(WorkflowNode):
+    """
+    Text to Image Service Node
+    """
+
+    node_type = WorkflowNodeType.SERVICE
+
+    def __init__(
+        self,
+        node_id: str,
+        opt_kwargs: dict,
+        source_kwargs: dict,
+        dep_opts: list,
+        only_compile: bool = True,
+    ) -> None:
+        super().__init__(
+            node_id,
+            opt_kwargs,
+            source_kwargs,
+            dep_opts,
+            only_compile,
+        )
+        self.service_func = partial(dashscope_text_to_image, **self.opt_kwargs)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.service import ServiceToolkit\n"
+            "from functools import partial\n"
+            "from agentscope.service import dashscope_text_to_image",
+            "inits": f"{self.var_name} = partial(dashscope_text_to_image,"
+            f" {kwarg_converter(self.opt_kwargs)})",
             "execs": "",
         }
 
@@ -1054,6 +1127,8 @@ NODE_NAME_MAPPING = {
     "PythonService": PythonServiceNode,
     "ReadTextService": ReadTextServiceNode,
     "WriteTextService": WriteTextServiceNode,
+    "TextToAudioService": TextToAudioServiceNode,
+    "TextToImageService": TextToImageServiceNode,
     "ImageComposition": ImageCompositionNode,
 }
 
@@ -1083,8 +1158,11 @@ def get_all_agents(
     all_agents = []
 
     for participant in node.pipeline.participants:
+        if participant.node_type == WorkflowNodeType.COPY:
+            participant = participant.pipeline
+
         if participant.node_type == WorkflowNodeType.AGENT:
-            if participant not in seen_agents:
+            if participant.pipeline not in seen_agents:
                 if return_var:
                     all_agents.append(participant.var_name)
                 else:

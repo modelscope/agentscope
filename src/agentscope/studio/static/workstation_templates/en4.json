@@ -67,9 +67,9 @@
           "name": "SequentialPipeline",
           "data": {
             "elements": [
+              "7",
               "8",
               "9",
-              "7",
               "10"
             ]
           },
