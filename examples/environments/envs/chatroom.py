@@ -233,7 +233,7 @@ class Mentioned(EventListener):
         self.pattern = re.compile(r"""(?<=@)\w*""", re.DOTALL)
 
     def __call__(self, env: Env, event: Event) -> None:
-        find_result = self.pattern.findall(event.args["message"].content)
+        find_result = self.pattern.findall(str(event.args["message"].content))
         if self.agent.name in find_result:
             logger.info(
                 f"{event.args['message'].name} mentioned {self.agent.name}.",
