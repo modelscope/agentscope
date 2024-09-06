@@ -12,7 +12,7 @@ from functools import partial
 import agentscope
 from agentscope.service import google_search, bing_search, load_web, digest_webpage, ServiceToolkit
 from agentscope.service.service_response import ServiceResponse, ServiceExecStatus
-from agentscope.agents import UserAgent, AgentBase
+from agentscope.agents import UserAgent, AgentBase, ReActAgent
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
 from agentscope.rpc import call_func_in_thread
@@ -41,118 +41,86 @@ class RpcService(metaclass=RpcMeta):
         return result
 
 
-class WebSearchAgent(AgentBase):
-    """An agent with search tool."""
+def search_and_digest_webpage(
+    query: str,
+    search_engine_type: str = "google",
+    num_results: int = 10,
+    api_key: str = None,
+    cse_id: str = None,
+    model_config_name: str = None,
+    html_selected_tags: list = ["p", "div", "h1", "li"],
+    dist_search: bool = False
+):
+    """
+    Search question with search engine and digest the website in search result.
 
-    def __init__(
-        self,
-        name: str,
-        model_config_name: str = None,
-        result_num: int = 10,
-        search_engine_type: str = "google",
-        api_key: str = None,
-        cse_id: str = None,
-        dist_search: bool = False
-    ) -> None:
-        """Init a SearcherAgent.
-
-        Args:
-            name (`str`): the name of this agent.
-            model_config_name (`str`, optional): The name of model
-            configuration for this agent. Defaults to None.
-            result_num (`int`, optional): The number of return results.
-            Defaults to 10.
-            search_engine_type (`str`, optional): the search engine to use.
+    Args:
+        query (`str`):
+            The search query string.
+        search_engine_type (`str`, optional): the search engine to use.
             Defaults to "google".
-            api_key (`str`, optional): api key for the search engine. Defaults
+        num_results (`int`, defaults to `10`):
+            The number of search results to return.
+        api_key (`str`, optional): api key for the search engine. Defaults
             to None.
-            cse_id (`str`, optional): cse_id for the search engine. Defaults to
+        cse_id (`str`, optional): cse_id for the search engine. Defaults to
             None.
-        """
-        super().__init__(
-            name=name,
-            sys_prompt="You are an AI assistant who optimizes search"
-            " keywords. You need to transform users' questions into a series "
-            "of efficient search keywords.",
-            model_config_name=model_config_name,
-            use_memory=False,
-        )
-        self.result_num = result_num
-        if search_engine_type == "google":
-            assert (api_key is not None) and (
-                cse_id is not None
-            ), "google search requires 'api_key' and 'cse_id'"
-            self.search = partial(
-                google_search,
-                api_key=api_key,
-                cse_id=cse_id,
-            )
-        elif search_engine_type == "bing":
-            assert api_key is not None, "bing search requires 'api_key'"
-            self.search = partial(bing_search, api_key=api_key)
-        self.dist_search = dist_search
-        logger.info(self.dist_search)
-        self.digest_webpage = RpcService(digest_webpage, model_config_name=model_config_name, to_dist=dist_search)
-        logger.info(self.digest_webpage)
+        model_config_name (`str`, optional): The name of model
+            configuration for this tool. Defaults to None.
+        html_selected_tags (Sequence[str]):
+            the text in elements of `html_selected_tags` will
+            be extracted and feed to the model.
+        dist_search (`bool`, optional): whether to use distributed web digest.
 
-    def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
-        prompt = self.model.format(
-            Msg(name="system", role="system", content=self.sys_prompt),
-            x,
-            Msg(
-                name="user",
-                role="user",
-                content="Please convert the question into keywords. The return"
-                " format is:\nKeyword1 Keyword2...",
-            ),
+    Returns:
+        `ServiceResponse`: A dictionary with two variables: `status` and
+        `content`. The `status` variable is from the ServiceExecStatus enum,
+        and `content` is a list of search results or error information,
+        which depends on the `status` variable.
+        For each searching result, it is a dictionary with keys 'title',
+        'link', 'snippet' and 'model_summary'.
+    """
+    if search_engine_type == "google":
+        assert (api_key is not None) and (
+            cse_id is not None
+        ), "google search requires 'api_key' and 'cse_id'"
+        search = partial(
+            google_search,
+            api_key=api_key,
+            cse_id=cse_id,
         )
-        query = self.model(prompt).text
-        results = self.search(
-            question=query,
-            num_results=self.result_num,
-        ).content
+    elif search_engine_type == "bing":
+        assert api_key is not None, "bing search requires 'api_key'"
+        search = partial(bing_search, api_key=api_key)
+    results = search(
+        question=query,
+        num_results=num_results,
+    ).content
 
-        cmds = [
-            {'func': self.digest_webpage, 'arguments': {'web_text_or_url': page['link'], 'html_selected_tags' : ["p", "div", "h1", "li"]}}
-            for page in results
-        ]
-        def execute_cmd(cmd: dict) -> str:
-            service_func = cmd["func"]
-            kwargs = cmd.get("arguments", {})
+    digest = RpcService(digest_webpage, model_config_name=model_config_name, to_dist=dist_search)
+    cmds = [
+        {'func': digest, 'arguments': {'web_text_or_url': page['link'], 'html_selected_tags' : html_selected_tags}}
+        for page in results
+    ]
+    def execute_cmd(cmd: dict) -> str:
+        service_func = cmd["func"]
+        kwargs = cmd.get("arguments", {})
 
-            # Execute the function
-            func_res = service_func(**kwargs)
-            return func_res
+        # Execute the function
+        func_res = service_func(**kwargs)
+        return func_res
 
-        # Execute the commands
-        start_time = time.time()
-        execute_results = [execute_cmd(cmd=cmd) for cmd in cmds]
-        if self.dist_search:
-            execute_results = [exe.result() for exe in execute_results]
-        end_time = time.time()
-        msg = Msg(
-            self.name,
-            content=[
-                Msg(
-                    name=self.name,
-                    content=result,
-                    role="assistant",
-                    url=result["link"],
-                    metadata=x.content,
-                )
-                for result in results
-            ],
-            role="assistant",
-        )
-        self.speak(
-            Msg(
-                name=self.name,
-                role="assistant",
-                content="Search results:\n"
-                f"{[result['link'] for result in results]}",
-            ),
-        )
-        return msg
+    # Execute the commands
+    execute_results = [execute_cmd(cmd=cmd) for cmd in cmds]
+    if dist_search:
+        execute_results = [exe.result() for exe in execute_results]
+    for result, exe_result in zip(results, execute_results):
+        result['model_summary'] = exe_result['content']
+    # return results
+    return ServiceResponse(
+        ServiceExecStatus.SUCCESS,
+        result,
+    )
 
 
 def parse_args():
@@ -193,12 +161,25 @@ def main():
     YOUR_MODEL_CONFIGURATION_NAME = "dash"
     YOUR_MODEL_CONFIGURATION = [{"model_type": "dashscope_chat", "config_name": "dash", "model_name": "qwen-turbo", "api_key": os.environ.get('DASH_API_KEY', '')}]
 
-    # Initialize the search result
+    # Initialize the agentscope
     agentscope.init(model_configs=YOUR_MODEL_CONFIGURATION, use_monitor=False, logger_level=args.logger_level, studio_url=args.studio_url)
     user_agent = UserAgent()
-    web_search_agent = WebSearchAgent('WebSearch', model_config_name=YOUR_MODEL_CONFIGURATION_NAME, search_engine_type=args.search_engine, api_key=args.api_key, cse_id=args.cse_id, dist_search=args.use_dist)
-    x = user_agent() # .content
-    web_search_agent(x)
+    service_toolkit = ServiceToolkit()
+
+    service_toolkit.add(search_and_digest_webpage, search_engine_type=args.search_engine, api_key=args.api_key, cse_id=args.cse_id, model_config_name=YOUR_MODEL_CONFIGURATION_NAME, dist_search=args.use_dist)
+    agent = ReActAgent(
+        name="assistant",
+        model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
+        verbose=True,
+        service_toolkit=service_toolkit,
+    )
+
+    # User input and ReActAgent reply
+    x = user_agent()
+    start_time = time.time()
+    agent(x)
+    end_time = time.time()
+    logger.info(f"Time taken: {end_time - start_time} seconds")
 
 
 if __name__ == '__main__':

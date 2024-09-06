@@ -62,41 +62,27 @@ python parallel_service.py --api-key [google-api-key] --cse-id [google-cse-id] -
 Here is an example output of `python parallel_service.py --api-key [google-api-key] --cse-id [google-cse-id]`:
 
 ```
-2024-09-04 17:53:11.758 | INFO     | agentscope.manager._model:load_model_configs:115 - Load configs for model wrapper: dash
-2024-09-04 17:53:12.227 | INFO     | agentscope.models.model:__init__:203 - Initialize model by configuration [dash]
-2024-09-04 17:53:22.262 | WARNING  | agentscope.service.web.web_digest:load_web:149 - HTTPSConnectionPool(host='en.wikipedia.org', port=443): Max retries exceeded with url: /wiki/Journey_to_the_West (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x312feadb0>, 'Connection to en.wikipedia.org timed out. (connect timeout=5)'))
-2024-09-04 17:53:22.895 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:53:39.086 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:53:49.254 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:53:50.603 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:53:59.729 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:54:00.785 | WARNING  | agentscope.service.web.web_digest:load_web:149 - HTTPSConnectionPool(host='x.com', port=443): Max retries exceeded with url: /mcclanjr81 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x16d348a70>: Failed to establish a new connection: [Errno 9] Bad file descriptor'))
-2024-09-04 17:54:00.978 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:54:07.338 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-len(execute_results) = 10, duration = 55.64 s
-2024-09-04 17:54:07.872 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
+2024-09-06 11:25:10.435 | INFO     | agentscope.manager._model:load_model_configs:115 - Load configs for model wrapper: dash
+2024-09-06 11:25:10.436 | INFO     | agentscope.models.model:__init__:203 - Initialize model by configuration [dash]
+User input: Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?
+User: Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?
+...
+system: You have failed to generate a response in the maximum iterations. Now generate a reply by summarizing the current situation.
+assistant: Based on the search results, the iOS Remote Control for Apple TV is an alternative to the Apple Remote for interacting with devices like Apple TV. However, it has received mixed reviews, with some users suggesting adjustments to the touchpad sensitivity or using specific navigation techniques to improve the experience. If Zwift users are unsatisfied with the current remote functionality, they might consider exploring other platforms or hardware.
+2024-09-06 11:27:24.135 | INFO     | __main__:main:184 - Time taken: 115.18411183357239 seconds
 ```
 
 Another example output of `python parallel_service.py --api-key [google-api-key] --cse-id [google-cse-id] --use-dist`:
 
 ```
-2024-09-04 17:54:22.810 | INFO     | agentscope.manager._model:load_model_configs:115 - Load configs for model wrapper: dash
-2024-09-04 17:54:26.427 | INFO     | agentscope.rpc.rpc_meta:register_class:160 - Class with name [RpcService] already exists.
-2024-09-04 17:54:26.436 | INFO     | agentscope.server.launcher:_setup_agent_server_async:234 - agent server [Y74mXkmO] at localhost:50369 started successfully
-2024-09-04 17:54:26.436 | INFO     | agentscope.server.launcher:_launch_in_sub:450 - Launch agent server at [localhost:50369] success
-2024-09-04 17:54:26.449 | INFO     | agentscope.models.model:__init__:203 - Initialize model by configuration [dash]
-2024-09-04 17:54:26.450 | INFO     | agentscope.server.servicer:create_agent:231 - create agent instance <RpcService>[f4632be278874121a79fe8b6671f265c]
-2024-09-04 17:54:26.460 | WARNING  | agentscope.service.web.web_digest:load_web:149 - HTTPSConnectionPool(host='x.com', port=443): Max retries exceeded with url: /mcclanjr81 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x312592f90>: Failed to establish a new connection: [Errno 9] Bad file descriptor'))
-2024-09-04 17:54:26.746 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:54:26.766 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:54:26.791 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:54:26.791 | WARNING  | agentscope.service.web.web_digest:load_web:140 - Fail to load web page, status code 403
-2024-09-04 17:54:27.221 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:54:27.414 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:54:28.099 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:54:30.540 | INFO     | agentscope.service.web.web_digest:parse_html_to_text:172 - extracting text information from tags: ['p', 'div', 'h1', 'li']
-2024-09-04 17:54:36.492 | WARNING  | agentscope.service.web.web_digest:load_web:149 - HTTPSConnectionPool(host='en.wikipedia.org', port=443): Max retries exceeded with url: /wiki/Journey_to_the_West (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x311c5af60>, 'Connection to en.wikipedia.org timed out. (connect timeout=5)'))
-len(execute_results) = 10, duration = 13.80 s
-2024-09-04 17:54:40.452 | INFO     | agentscope.server.launcher:_setup_agent_server_async:242 - Stopping agent server at [localhost:50369]
-2024-09-04 17:54:41.448 | INFO     | agentscope.server.launcher:_setup_agent_server_async:246 - agent server [Y74mXkmO] at localhost:50369 stopped successfully
+2024-09-06 11:36:55.235 | INFO     | agentscope.manager._model:load_model_configs:115 - Load configs for model wrapper: dash
+2024-09-06 11:36:55.237 | INFO     | agentscope.models.model:__init__:203 - Initialize model by configuration [dash]
+User input: Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?
+User: Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?
+...
+system: You have failed to generate a response in the maximum iterations. Now generate a reply by summarizing the current situation.
+assistant: Thought: The search has been conducted, but there seems to be an issue with retrieving the relevant tags. Despite this, I have found an affordable alternative to the Apple Remote called the aarooGo Remote Control, which can control Apple TV. This device is compatible with all Apple TV models and offers basic controls like power, volume, and mute without a touchpad, making it a cost-effective solution for controlling Apple TV.
+
+Response: After conducting a search, I found an affordable alternative to the Apple Remote called the aarooGo Remote Control. This device can control Apple TV and is compatible with all Apple TV models. It offers basic controls like power, volume, and mute without a touchpad, making it a cost-effective solution for controlling your Apple TV.
+2024-09-06 11:38:05.459 | INFO     | __main__:main:182 - Time taken: 63.02961325645447 seconds
 ```
