@@ -209,14 +209,6 @@ class RpcObject(ABC):
                 args={},
             )
 
-    def __setattr__(self, name: str, value: Any) -> None:
-        return self._call_func(
-            func_name="__setattr__",
-            args={
-                "args": (name, value),
-            },
-        )
-
     def __del__(self) -> None:
         self.stop()
 
