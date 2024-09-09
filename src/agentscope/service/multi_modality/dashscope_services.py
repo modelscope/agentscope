@@ -9,16 +9,10 @@ from typing import Union, Optional, Literal, Sequence
 
 import os
 
-import dashscope
-from dashscope.audio.tts import SpeechSynthesizer
-
-from agentscope.models import (
+from ...models import (
     DashScopeImageSynthesisWrapper,
     DashScopeMultiModalWrapper,
 )
-
-# SpeechSynthesizerWrapper is current not available
-
 
 from ..service_response import (
     ServiceResponse,
@@ -259,9 +253,17 @@ def dashscope_text_to_audio(
     > {'status': 'SUCCESS', 'content': {"audio_path": "AUDIO_PATH"}}
 
     """
+    try:
+        import dashscope
+    except ImportError as e:
+        raise ImportError(
+            "The package 'dashscope' is not installed. Please install it by "
+            "running `pip install dashscope==1.14.1`",
+        ) from e
+
     dashscope.api_key = api_key
 
-    res = SpeechSynthesizer.call(
+    res = dashscope.audio.tts.SpeechSynthesizer.call(
         model=model,
         text=text,
         sample_rate=sample_rate,

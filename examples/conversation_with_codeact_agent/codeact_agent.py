@@ -2,7 +2,7 @@
 # pylint: disable=C0301
 """An agent class that implements the CodeAct agent.
 This agent can execute code interactively as actions.
-More details can be found at the paper of codeact agent
+More details can be found at the paper of CodeAct agent
 https://arxiv.org/abs/2402.01030
 and the original repo of codeact https://github.com/xingyaoww/code-act
 """

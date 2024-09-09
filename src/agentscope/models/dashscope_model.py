@@ -5,7 +5,6 @@ from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Sequence, Optional, Generator
 
-from dashscope.api_entities.dashscope_response import GenerationResponse
 from loguru import logger
 
 from ..manager import FileManager
@@ -14,8 +13,10 @@ from ..utils.common import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
+    from dashscope.api_entities.dashscope_response import GenerationResponse
 except ImportError:
     dashscope = None
+    GenerationResponse = None
 
 from .model import ModelWrapperBase, ModelResponse
 
@@ -52,7 +53,8 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
         if dashscope is None:
             raise ImportError(
-                "Cannot find dashscope package in current python environment.",
+                "The package 'dashscope' is not installed. Please install it "
+                "by running `pip install dashscope==1.14.1`",
             )
 
         self.generate_args = generate_args or {}
@@ -725,7 +727,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             messages=messages,
             **kwargs,
         )
-        # Unhandle code path here
+        # Unhandled code path here
         # response could be a generator , if stream is yes
         # suggest add a check here
         if response.status_code != HTTPStatus.OK:

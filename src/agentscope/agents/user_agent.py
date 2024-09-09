@@ -14,12 +14,19 @@ from agentscope.web.gradio.utils import user_input
 class UserAgent(AgentBase):
     """User agent class"""
 
-    def __init__(self, name: str = "User", require_url: bool = False) -> None:
+    def __init__(
+        self,
+        name: str = "User",
+        input_hint: str = "User Input: ",
+        require_url: bool = False,
+    ) -> None:
         """Initialize a UserAgent object.
 
         Arguments:
             name (`str`, defaults to `"User"`):
                 The name of the agent. Defaults to "User".
+            input_hint (`str`, defaults to `"User Input: "`):
+                The hint of the input. Defaults to "User Input: ".
             require_url (`bool`, defaults to `False`):
                 Whether the agent requires user to input a URL. Defaults to
                 False. The URL can lead to a website, a file,
@@ -29,6 +36,7 @@ class UserAgent(AgentBase):
         super().__init__(name=name)
 
         self.name = name
+        self.input_hint = input_hint
         self.require_url = require_url
 
     def reply(
@@ -64,6 +72,7 @@ class UserAgent(AgentBase):
         if self.memory:
             self.memory.add(x)
 
+        # When AgentScope Studio is active
         if _studio_client.active:
             logger.info(
                 f"Waiting for input from:\n\n"
@@ -83,7 +92,7 @@ class UserAgent(AgentBase):
             # TODO: To avoid order confusion, because `input` print much
             #  quicker than logger.chat
             time.sleep(0.5)
-            content = user_input(timeout=timeout)
+            content = user_input(timeout=timeout, prefix=self.input_hint)
             kwargs = {}
             if required_keys is not None:
                 if isinstance(required_keys, str):

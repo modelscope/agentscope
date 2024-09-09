@@ -10,7 +10,7 @@ Start building LLM-empowered multi-agent applications in an easier way.
 
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/pypi-v0.0.6a2-blue?logo=pypi)](https://pypi.org/project/agentscope/)
+[![](https://img.shields.io/badge/pypi-v0.1.0-blue?logo=pypi)](https://pypi.org/project/agentscope/)
 [![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
 [![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
 [![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=agentscope&page=1&sort=latest)
@@ -40,6 +40,14 @@ Start building LLM-empowered multi-agent applications in an easier way.
 
 ## News
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-06]** AgentScope version 0.1.0 is released now.
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-03]** AgentScope supports **Web Browser Control** now! Refer to our [example](https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent) for more details.
+
+<h5 align="left">
+<video src="https://github.com/user-attachments/assets/6d03caab-6193-4ac6-8b1c-36f152ec02ec" width="45%" alt="web browser control" controls></video>
+</h5>
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-18]** AgentScope supports streaming mode now! Refer to our [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-stream.html) and example [conversation in stream mode](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode) for more details.
 
 <h5 align="left">
@@ -54,6 +62,9 @@ Start building LLM-empowered multi-agent applications in an easier way.
 - **[2024-06-11]** The RAG functionality is available for agents in **AgentScope** now! [**A quick introduction to RAG in AgentScope**](https://modelscope.github.io/agentscope/en/tutorial/210-rag.html) can help you equip your agent with external knowledge!
 
 - **[2024-06-09]** We release **AgentScope** v0.0.5 now! In this new version, [**AgentScope Workstation**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html) (the online version is running on [agentscope.io](https://agentscope.io)) is open-sourced with the refactored [**AgentScope Studio**](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html)!
+
+<details>
+<summary>Full News</summary>
 
 - **[2024-05-24]** We are pleased to announce that features related to the **AgentScope Workstation** will soon be open-sourced! The online website services are temporarily offline. The online website service will be upgraded and back online shortly. Stay tuned...
 
@@ -86,6 +97,8 @@ AgentScope supports [ollama](https://modelscope.github.io/agentscope/en/tutorial
 available in [PyPI](https://pypi.org/project/agentscope/)!
 - **[2024-02-14]** We release our paper "AgentScope: A Flexible yet Robust
 Multi-Agent Platform" in [arXiv](https://arxiv.org/abs/2402.14034) now!
+
+</details>
 
 ---
 
@@ -151,6 +164,7 @@ the following libraries.
 - Multi Modality
 - Wikipedia Search and Retrieval
 - TripAdvisor Search
+- Web Browser Control
 
 **Example Applications**
 
@@ -206,22 +220,40 @@ cd agentscope
 pip install -e .
 ```
 
-- To build distributed multi-agent applications:
-
-```bash
-# On windows
-pip install -e .[distribute]
-# On mac
-pip install -e .\[distribute\]
-```
-
 ### Using pip
 
 - Install AgentScope from pip:
 
 ```bash
-pip install agentscope --pre
+pip install agentscope
 ```
+
+### Extra Dependencies
+
+To support different deployment scenarios, AgentScope provides several
+optional dependencies. Full list of optional dependencies refers to
+[tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
+Taking distribution mode as an example, you can install its dependencies
+as follows:
+
+
+#### On Windows
+
+```bash
+# From source
+pip install -e .[distribute]
+# From pypi
+pip install agentscope[distribute]
+```
+
+#### On Mac & Linux
+```bash
+# From source
+pip install -e .\[distribute\]
+# From pypi
+pip install agentscope\[distribute\]
+```
+
 
 ## Quick Start
 
