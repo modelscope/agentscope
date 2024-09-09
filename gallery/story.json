@@ -432,7 +432,6 @@
                     "name": "ImageComposition",
                     "data": {
                         "args": {
-                            "image_urls": [],
                             "titles": "[\"第一幕\", \"第二幕\", \"第三幕\", \"第四幕\"]",
                             "output_path": "test.png",
                             "row": 2,

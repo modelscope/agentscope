@@ -831,7 +831,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             editor.addNode('ImageComposition', 1, 1,
                 pos_x, pos_y, 'ImageComposition', {
                     "args": {
-                        "image_urls": [],
                         "titles": "",
                         "output_path": "",
                         "row": 1,

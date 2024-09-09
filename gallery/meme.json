@@ -262,7 +262,6 @@
           "name": "ImageComposition",
           "data": {
             "args": {
-              "image_urls": [],
               "titles": "['我的朋友认为我...', '我的父母认为我...', '实际上我...']",
               "output_path": "meme.jpg",
               "row": 1,
