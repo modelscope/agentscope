@@ -130,10 +130,17 @@ class RedisPool(AsyncResultPool):
                 keys=RedisPool.TASK_QUEUE_PREFIX + str(key),
                 timeout=self.max_timeout,
             )
+            if keys is None:
+                raise ValueError(
+                    f"Waiting timeout for async result of task[{key}]",
+                )
             if int(keys[1]) == key:
-                return self.pool.get(key)
+                res = self.pool.get(key)
+                if res is None:
+                    raise ValueError(f"Async Result of task[{key}] not found.")
+                return res
             else:
-                raise ValueError(f"Async Result [{key}] not found.")
+                raise ValueError(f"Async Result of task[{key}] not found.")
 
 
 def get_pool(

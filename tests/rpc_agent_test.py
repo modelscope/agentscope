@@ -156,6 +156,10 @@ class DemoErrorAgent(AgentBase):
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         raise RuntimeError("Demo Error")
 
+    def raise_error(self) -> Msg:
+        """Raise an error"""
+        raise RuntimeError("Demo Error")
+
 
 class FileAgent(AgentBase):
     """An agent returns a file"""
@@ -557,6 +561,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent = DemoErrorAgent(name="a").to_dist()
         x = agent()
         self.assertRaises(AgentCallError, x._fetch_result)
+        self.assertRaises(AgentCallError, agent.raise_error)
 
     def test_agent_nesting(self) -> None:
         """Test agent nesting"""

@@ -23,7 +23,6 @@ except ImportError as import_error:
     grpc = ImportErrorReporter(import_error, "distribute")
     agent_pb2 = ImportErrorReporter(import_error, "distribute")
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
-    RpcError = ImportError
 
 from ..utils.common import _generate_id_from_seed
 from ..exception import AgentServerNotAliveError
@@ -95,14 +94,17 @@ class RpcClient:
             )
             return result_msg.value
         except Exception as e:
-            # check the server and raise a more reasonable error
             if not self.is_alive():
                 raise AgentServerNotAliveError(
                     host=self.host,
                     port=self.port,
                     message=str(e),
                 ) from e
-            raise e
+            raise AgentCallError(
+                host=self.host,
+                port=self.port,
+                message=str(e),
+            ) from e
 
     def is_alive(self) -> bool:
         """Check if the agent server is alive.
@@ -115,14 +117,16 @@ class RpcClient:
             stub = RpcAgentStub(RpcClient._get_channel(self.url))
             status = stub.is_alive(Empty(), timeout=5)
             if not status.ok:
-                raise AgentServerNotAliveError(
-                    host=self.host,
-                    port=self.port,
+                logger.info(
+                    f"Agent Server [{self.host}:{self.port}] not alive.",
                 )
             return status.ok
-        except Exception:
+        except grpc.RpcError as e:
+            logger.error(f"Agent Server Error: {str(e)}")
+            return False
+        except Exception as e:
             logger.info(
-                f"Agent server [{self.host}:{self.port}] not alive.",
+                f"Error when calling is_alive: {str(e)}",
             )
             return False
 

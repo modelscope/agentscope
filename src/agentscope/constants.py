@@ -57,6 +57,7 @@ Embedding = list[Number]
 _DEFAULT_RPC_OPTIONS = [
     ("grpc.max_send_message_length", 32 * 1024 * 1024),
     ("grpc.max_receive_message_length", 32 * 1024 * 1024),
+    ("grpc.max_metadata_size", 64 * 1024),
 ]
 
 

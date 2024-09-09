@@ -287,31 +287,45 @@ class AgentServerServicer(RpcAgentServicer):
                 grpc.StatusCode.INVALID_ARGUMENT,
                 f"Agent [{request.agent_id}] not exists.",
             )
-        if func_name in agent.__class__._async_func:  # pylint: disable=W0212
-            task_id = self.result_pool.prepare()
-            self.executor.submit(
-                self._process_task,
-                task_id,
-                agent_id,
-                func_name,
-                raw_value,
-            )
+        try:
+            if (
+                func_name
+                in agent.__class__._async_func  # pylint: disable=W0212
+            ):
+                # async function
+                task_id = self.result_pool.prepare()
+                self.executor.submit(
+                    self._process_task,
+                    task_id,
+                    agent_id,
+                    func_name,
+                    raw_value,
+                )
+                return agent_pb2.CallFuncResponse(
+                    ok=True,
+                    value=pickle.dumps(task_id),
+                )
+            elif (
+                func_name
+                in agent.__class__._sync_func  # pylint: disable=W0212
+            ):
+                # sync function
+                args = pickle.loads(raw_value)
+                res = getattr(agent, func_name)(
+                    *args.get("args", ()),
+                    **args.get("kwargs", {}),
+                )
+            else:
+                res = getattr(agent, func_name)
             return agent_pb2.CallFuncResponse(
                 ok=True,
-                value=pickle.dumps(task_id),
+                value=pickle.dumps(res),
             )
-        elif func_name in agent.__class__._sync_func:  # pylint: disable=W0212
-            args = pickle.loads(raw_value)
-            res = getattr(agent, func_name)(
-                *args.get("args", ()),
-                **args.get("kwargs", {}),
-            )
-        else:
-            res = getattr(agent, func_name)
-        return agent_pb2.CallFuncResponse(
-            ok=True,
-            value=pickle.dumps(res),
-        )
+        except Exception:
+            trace = traceback.format_exc()
+            error_msg = f"Agent[{agent_id}] error: {trace}"
+            logger.error(error_msg)
+            return context.abort(grpc.StatusCode.INVALID_ARGUMENT, error_msg)
 
     def update_placeholder(
         self,
