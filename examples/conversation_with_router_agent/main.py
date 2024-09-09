@@ -43,7 +43,7 @@ SYS_PROMPT_ROUTER = """You're a router assistant named {name}.
 3. If no agent is suitable to answer user's question, then respond directly.
 
 ## Agents You Can Use
-The agents are listed in the format of "{index}. {agent_name}: {agent_description}"
+The agents are listed in the format of "index. agent_name: agent_description"
 1. math: An agent who is good at math.
 2. history: An agent who is good at history.
 """  # noqa
