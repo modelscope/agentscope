@@ -118,8 +118,10 @@ class RedisPool(AsyncResultPool):
         return self._get_object_id()
 
     def set(self, key: int, value: bytes) -> None:
+        qkey = RedisPool.TASK_QUEUE_PREFIX + str(key)
         self.pool.set(key, value, ex=self.max_timeout)
-        self.pool.rpush(RedisPool.TASK_QUEUE_PREFIX + str(key), key)
+        self.pool.rpush(qkey, key)
+        self.pool.expire(qkey, self.max_timeout)
 
     def get(self, key: int) -> bytes:
         result = self.pool.get(key)

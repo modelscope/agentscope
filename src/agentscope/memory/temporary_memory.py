@@ -73,13 +73,12 @@ class TemporaryMemory(MemoryBase):
         else:
             record_memories = memories
 
+        # FIXME: a single message may be inserted multiple times
         # Assert the message types
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
             # in case this is a PlaceholderMessage, try to update
             # the values first
-            # TODO: Unify PlaceholderMessage and Msg into one class to avoid
-            #  type error
             if isinstance(memory_unit, AsyncResult):
                 memory_unit = memory_unit.result()
 
