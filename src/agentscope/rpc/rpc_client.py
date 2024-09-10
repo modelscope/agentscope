@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """ Client of rpc agent server """
 
-import threading
 import json
 import os
 from typing import Optional, Sequence, Union, Generator, Callable, Any
-from concurrent.futures import Future
+from concurrent.futures import Future, ThreadPoolExecutor
 from loguru import logger
 
 from ..message import Msg
@@ -35,6 +34,7 @@ class RpcClient:
     """A client of Rpc agent server"""
 
     _CHANNEL_POOL = {}
+    _EXECUTOR = ThreadPoolExecutor()
 
     def __init__(
         self,
@@ -336,19 +336,7 @@ def call_func_in_thread(func: Callable) -> Future:
     Returns:
         `Future`: A stub to get the response.
     """
-    future = Future()
-
-    def wrapper() -> None:
-        try:
-            result = func()
-            future.set_result(result)
-        except Exception as e:
-            future.set_exception(e)
-
-    thread = threading.Thread(target=wrapper)
-    thread.start()
-
-    return future
+    return RpcClient._EXECUTOR.submit(func)  # pylint: disable=W0212
 
 
 class RpcAgentClient(RpcClient):
