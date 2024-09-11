@@ -49,6 +49,38 @@ body {
     cursor: not-allowed;
 }
 
+#loginGuestButton {
+    color: #a0a0a0;
+    font-size: 12px;
+    padding: 5px 8px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: transform 0.2s;
+    margin-top: 0.5rem;
+    display: inline-block;
+    width: auto;
+    background: none;
+    border: none;
+    text-decoration: underline;
+}
+
+#loginGuestButton:hover {
+    transform: scale(1.01);
+    text-decoration: underline;
+}
+
+#loginGuestButton:active {
+    transform: scale(1);
+    text-decoration: underline;
+}
+
+#loginGuestButton:disabled {
+    color: #d3d3d3;
+    cursor: not-allowed;
+    text-decoration: none;
+    transform: none;
+}
+
 .terms {
     background: #fff;
     padding: 20px;

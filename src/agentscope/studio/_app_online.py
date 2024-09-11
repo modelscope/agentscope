@@ -3,6 +3,8 @@
 import ipaddress
 import json
 import os
+import uuid
+import time
 import secrets
 import tempfile
 from typing import Tuple, Any
@@ -196,6 +198,22 @@ def _home() -> str:
     return render_template("login.html", client_id=CLIENT_ID, ip=IP, port=PORT)
 
 
+@_app.route("/login_as_guest")
+def login_as_guest() -> str:
+    """Render the workstation page without login."""
+    user_login = f"guest_{uuid.uuid4().hex}_{int(time.time())}"
+    session["verification_token"] = generate_verification_token()
+    session["user_login"] = user_login
+    session["jwt_token"] = generate_jwt(
+        user_login=user_login,
+        access_token="access_token",
+        verification_token=session["verification_token"],
+        secret_key=SECRET_KEY,
+        version="online",
+    )
+    return redirect(url_for("_workstation_online"))
+
+
 @_app.route("/logout")
 def logout() -> str:
     """
@@ -208,7 +226,7 @@ def logout() -> str:
 @_app.route("/oauth/callback")
 def oauth_callback() -> str:
     """
-    Github oauth callback.
+    GitHub oauth callback.
     """
     code = request.args.get("code")
     if not code:

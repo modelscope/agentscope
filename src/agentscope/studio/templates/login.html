@@ -72,6 +72,9 @@
     <button onclick="redirectToGitHub()" disabled
             id="loginButton">{{ _("Login with GitHub") }}
     </button>
+    <button onclick="loginAsGuest()" disabled
+            id="loginGuestButton">{{ _("Login as Guest") }}
+    </button>
     <br><br>
 
     <div id="loaderContainer" class="waiting" style="display: none;">
@@ -95,6 +98,8 @@
         const checkBox = document.getElementById('agreeTerms');
         const loginButton = document.getElementById('loginButton');
         loginButton.disabled = !checkBox.checked;
+        const loginGuestButton = document.getElementById('loginGuestButton');
+        loginGuestButton.disabled = !checkBox.checked;
     }
 
     function showLoader() {
@@ -125,6 +130,17 @@
                     encodeURIComponent(address);
                 window.location.href = `https://github.com/login/oauth/authorize?client_id={{ client_id }}&redirect_uri=${otherRedirectUri}&scope=${scope}`;
             }
+        }, 500);
+    }
+
+    function loginAsGuest() {
+        showLoader();
+        setTimeout(() => {
+            const ip = "{{ ip }}";
+            const port = "{{ port }}";
+            let address;
+            address = `http://${ip}:${port}/login_as_guest`
+            window.location.href = address;
         }, 500);
     }
 
