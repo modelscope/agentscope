@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "index": 2,
+    "title": "Background Remover",
+    "author": "AgentScopeTeam",
+    "keywords": [
+      "background",
+      "image"
+    ],
+    "category": "tool",
+    "time": "2024-09-04",
+    "thumbnail": ""
+  },
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_image_synthesis",
+          "data": {
+            "args": {
+              "config_name": "wanx",
+              "model_name": "wanx-v1",
+              "generate_args": {
+                "n": 1,
+                "size": "1024*1024",
+                "temperature": 0,
+                "seed": 0
+              },
+              "model_type": "dashscope_image_synthesis",
+              "messages_key": "prompt",
+              "api_key": ""
+            }
+          },
+          "class": "dashscope_image_synthesis",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 24.88888888888889,
+          "pos_y": -12
+        },
+        "3": {
+          "id": 3,
+          "name": "TextToImageAgent",
+          "data": {
+            "args": {
+              "name": "人物头像生成器",
+              "model_config_name": "wanx"
+            }
+          },
+          "class": "TextToImageAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "4",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "5",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 555,
+          "pos_y": 179
+        },
+        "4": {
+          "id": 4,
+          "name": "Message",
+          "data": {
+            "args": {
+              "name": "Host",
+              "content": "一个英俊帅气的男生，背景是森林",
+              "url": ""
+            }
+          },
+          "class": "Message",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 245.11111111111111,
+          "pos_y": 164
+        },
+        "5": {
+          "id": 5,
+          "name": "Post",
+          "data": {
+            "args": {
+              "url": "https://api.remove.bg/v1.0/removebg",
+              "image_path_or_url": "",
+              "headers": "{\"X-Api-Key\": \"\"}",
+              "data": "{\"size\": \"auto\"}",
+              "json": "{}",
+              "kwargs": "{}",
+              "output_path": "remove_bg.png"
+            }
+          },
+          "class": "Post",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 948,
+          "pos_y": -60
+        }
+      }
+    }
+  }
+}

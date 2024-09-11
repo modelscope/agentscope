@@ -1,44 +1,15 @@
 # -*- coding: utf-8 -*-
 """Image composition"""
-import os
 import textwrap
 
 from typing import List, Optional, Union, Tuple, Sequence
 from io import BytesIO
-from urllib.parse import urlparse
 from PIL import Image, ImageDraw, ImageFont
 import requests
 import json5
 
-
-def is_url(path: str) -> bool:
-    """
-    Check if the provided path is a URL.
-
-    Parameters:
-    - path: The path to be checked.
-
-    Returns:
-    - bool: True if the path is a valid URL, False otherwise.
-    """
-    try:
-        result = urlparse(path)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
-
-
-def is_local_file(path: str) -> bool:
-    """
-    Check if the provided path is a local file.
-
-    Parameters:
-    - path: The path to be checked.
-
-    Returns:
-    - bool: True if the path exists and is a file, False otherwise.
-    """
-    return os.path.isfile(path)
+from agentscope.message import Msg
+from agentscope.studio.tools.utils import is_local_file, is_url
 
 
 def text_size(text: str, font: ImageFont) -> Tuple[int, int]:
@@ -235,7 +206,7 @@ def stitch_images_with_grid(
     spacing: int = 10,
     title_height: int = 100,
     font_name: Optional[str] = None,
-) -> str:
+) -> Msg:
     """
     Stitch multiple images and titles into a single image, supporting
     custom grid layouts.
@@ -307,4 +278,10 @@ def stitch_images_with_grid(
         combined.save(output_path)
     combined.show()
 
-    return output_path
+    return Msg(
+        name="ImageComposition",
+        role="assistant",
+        content=output_path,
+        url=output_path,
+        echo=True,
+    )

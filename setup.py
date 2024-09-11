@@ -110,6 +110,8 @@ online_requires = full_requires + [
     "flask_babel",
     "babel==2.15.0",
     "gunicorn",
+    "numpy",
+    "opencv-python-headless",
 ]
 
 with open("README.md", "r", encoding="UTF-8") as fh:

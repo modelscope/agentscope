@@ -81,9 +81,11 @@ def replace_flow_name(
 
     # Prepare the replacement values
     output_value_formatted = format_replace_value(output_value)
-    formatted_input_values = [
-        format_replace_value(value) for value in input_values
-    ]
+    formatted_input_values = (
+        [format_replace_value(value) for value in input_values]
+        if input_values
+        else ["flow"]
+    )
 
     # Split the string by the first equals sign, if present
     parts = string.split("=", 1)

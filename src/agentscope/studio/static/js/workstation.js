@@ -36,9 +36,12 @@ let nameToHtmlFile = {
     'PythonService': 'service-execute-python.html',
     'ReadTextService': 'service-read-text.html',
     'WriteTextService': 'service-write-text.html',
+    'Post': 'tool-post.html',
     'TextToAudioService': 'service-text-to-audio.html',
     'TextToImageService': 'service-text-to-image.html',
-    'ImageComposition': 'tool-image-composition.html'
+    'ImageComposition': 'tool-image-composition.html',
+    'ImageMotion': 'tool-image-motion.html',
+    'VideoComposition': 'tool-video-composition.html',
 }
 
 const ModelNames48k = [
@@ -493,7 +496,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
     switch (name) {
         // Workflow-Model
         case 'dashscope_chat':
-            const dashscope_chatId = editor.addNode('dashscope_chat', 0, 0, pos_x,
+            editor.addNode('dashscope_chat', 0, 0, pos_x,
                 pos_y,
                 'dashscope_chat', {
                     "args":
@@ -507,11 +510,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         }
                 },
                 htmlSourceCode);
-            addEventListenersToNumberInputs(dashscope_chatId);
             break;
 
         case 'openai_chat':
-            const openai_chatId = editor.addNode('openai_chat', 0, 0, pos_x,
+            editor.addNode('openai_chat', 0, 0, pos_x,
                 pos_y,
                 'openai_chat', {
                     "args":
@@ -525,11 +527,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         }
                 },
                 htmlSourceCode);
-            addEventListenersToNumberInputs(openai_chatId);
             break;
 
         case 'post_api_chat':
-            const post_api_chatId = editor.addNode('post_api_chat', 0, 0, pos_x, pos_y,
+            editor.addNode('post_api_chat', 0, 0, pos_x, pos_y,
                 'post_api_chat', {
                     "args":
                         {
@@ -549,11 +550,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         }
                 },
                 htmlSourceCode);
-            addEventListenersToNumberInputs(post_api_chatId);
             break;
 
         case 'post_api_dall_e':
-            const post_api_dall_eId = editor.addNode('post_api_dall_e', 0,
+            editor.addNode('post_api_dall_e', 0,
                 0,
                 pos_x, pos_y,
                 'post_api_dall_e', {
@@ -577,11 +577,10 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         }
                 },
                 htmlSourceCode);
-            addEventListenersToNumberInputs(post_api_dall_eId);
             break;
 
         case 'dashscope_image_synthesis':
-            const dashscope_image_synthesisId = editor.addNode('dashscope_image_synthesis', 0,
+            editor.addNode('dashscope_image_synthesis', 0,
                 0,
                 pos_x, pos_y,
                 'dashscope_image_synthesis', {
@@ -598,7 +597,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                             "model_type": 'dashscope_image_synthesis'
                         }
                 }, htmlSourceCode);
-            addEventListenersToNumberInputs(dashscope_image_synthesisId);
             break;
 
         // Message
@@ -721,16 +719,14 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
             break;
 
         case 'ForLoopPipeline':
-            const ForLoopPipelineID =
-                editor.addNode('ForLoopPipeline', 1, 1, pos_x, pos_y,
-                    'GROUP', {
-                        elements: [],
-                        "args": {
-                            "max_loop": 3,
-                            "break_func": ''
-                        }
-                    }, htmlSourceCode);
-            addEventListenersToNumberInputs(ForLoopPipelineID);
+            editor.addNode('ForLoopPipeline', 1, 1, pos_x, pos_y,
+                'GROUP', {
+                    elements: [],
+                    "args": {
+                        "max_loop": 3,
+                        "break_func": ''
+                    }
+                }, htmlSourceCode);
             break;
 
         case 'WhileLoopPipeline':
@@ -827,6 +823,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                     }
                 }, htmlSourceCode);
             break;
+
         case 'ImageComposition':
             editor.addNode('ImageComposition', 1, 1,
                 pos_x, pos_y, 'ImageComposition', {
@@ -838,6 +835,44 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "spacing": 10,
                         "title_height": 100,
                         "font_name": "PingFang",
+                    }
+                }, htmlSourceCode);
+            break;
+
+        case 'ImageMotion':
+            editor.addNode('ImageMotion', 1, 1,
+                pos_x, pos_y, 'ImageMotion', {
+                    "args": {
+                        "output_path": "",
+                        "output_format": "",
+                        "duration": "",
+                    }
+                }, htmlSourceCode);
+            break;
+
+        case 'VideoComposition':
+            editor.addNode('VideoComposition', 1, 1,
+                pos_x, pos_y, 'VideoComposition', {
+                    "args": {
+                        "output_path": "",
+                        "target_width": "",
+                        "target_height": "",
+                        "fps": "",
+                    }
+               }, htmlSourceCode);
+            break;
+
+        case 'Post':
+            editor.addNode('Post', 1, 1,
+                pos_x, pos_y, 'Post', {
+                    "args": {
+                        "url": "",
+                        "headers": '',
+                        "data": '',
+                        "json": '',
+                        "kwargs": '',
+                        "output_path": "",
+                        "output_type": "",
                     }
                 }, htmlSourceCode);
             break;
@@ -977,6 +1012,16 @@ function validateSeed(input) {
     input.reportValidity();
 }
 
+function validateDuration(input) {
+    const value = parseInt(input.value, 10); // Parse the value as an integer.
+    if (isNaN(value) || value < 0 || !Number.isInteger(parseFloat(input.value))) {
+        input.setCustomValidity('Duration must be a non-negative integer!');
+    } else {
+        input.setCustomValidity('');
+    }
+    input.reportValidity();
+}
+
 
 document.addEventListener('input', function (event) {
     const input = event.target;
@@ -989,6 +1034,10 @@ document.addEventListener('input', function (event) {
     if (input.getAttribute('df-args-seed') !== null ||
         input.getAttribute('df-args-json_args-seed') !== null) {
         validateSeed(input);
+    }
+
+    if (input.getAttribute('df-args-duration') !== null) {
+        validateDuration(input)
     }
 });
 
@@ -1380,8 +1429,8 @@ function sortElementsByPosition(inputData) {
 
 
 function checkConditions() {
-    let hasModelTypeError = true;
-    let hasAgentError = true;
+    let hasModelTypeError = false;
+    let hasAgentError = false;
     let agentModelConfigNames = new Set();
     let modelConfigNames = new Set();
     let isApiKeyEmpty = false;
@@ -1395,6 +1444,7 @@ function checkConditions() {
         if (node.inputs) {
             for (let inputKey in node.inputs) {
                 if (node.class !== "ImageComposition" &&
+                    node.class !== "VideoComposition" &&
                     node.inputs[inputKey].connections &&
                     node.inputs[inputKey].connections.length > 1) {
                     Swal.fire({
