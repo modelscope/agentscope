@@ -41,6 +41,9 @@ from .litellm_model import (
 from .yi_model import (
     YiChatWrapper,
 )
+from .stablediffusion_model import(
+    StableDiffusionTxt2imgWrapper
+)
 
 __all__ = [
     "ModelWrapperBase",
@@ -64,6 +67,7 @@ __all__ = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "YiChatWrapper",
+    "StableDiffusionTxt2imgWrapper",
 ]
 
 
