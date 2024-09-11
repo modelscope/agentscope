@@ -232,7 +232,7 @@ class DialogAgentNode(WorkflowNode):
             "inits": f"{self.var_name} = DialogAgent("
             f"{kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
-            f"({DEFAULT_FLOW_VAR})",
+            f"([{DEFAULT_FLOW_VAR}])",
         }
 
 
@@ -343,7 +343,7 @@ class DictDialogAgentNode(WorkflowNode):
             "inits": f"{self.var_name} = DictDialogAgent("
             f"{kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
-            f"({DEFAULT_FLOW_VAR})",
+            f"([{DEFAULT_FLOW_VAR}])",
         }
 
 
@@ -397,7 +397,7 @@ class ReActAgentNode(WorkflowNode):
             f"({kwarg_converter(self.opt_kwargs)}, service_toolkit"
             f"={self.var_name}_service_toolkit)",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
-            f"({DEFAULT_FLOW_VAR})",
+            f"([{DEFAULT_FLOW_VAR}])",
         }
 
 

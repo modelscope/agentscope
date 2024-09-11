@@ -1441,24 +1441,6 @@ function checkConditions() {
         console.log("node", node);
         console.log("node.inputs", node.inputs);
 
-        if (node.inputs) {
-            for (let inputKey in node.inputs) {
-                if (node.class !== "ImageComposition" &&
-                    node.class !== "VideoComposition" &&
-                    node.inputs[inputKey].connections &&
-                    node.inputs[inputKey].connections.length > 1) {
-                    Swal.fire({
-                        title: 'Invalid Connections',
-                        text:
-                            `${node.name} has more than one connection in inputs.`,
-                        icon: 'error',
-                        confirmButtonText: 'Ok'
-                    });
-                    return false;
-                }
-            }
-        }
-
         let nodeElement = document.getElementById('node-' + nodeId);
         const requiredInputs = nodeElement.querySelectorAll('input[data-required="true"]');
 
