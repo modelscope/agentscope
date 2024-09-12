@@ -225,15 +225,15 @@ class ReActAgent(AgentBase):
         msg_execution_str = self.service_toolkit.parse_and_call_func(
             formatted_function_call,
         )
-        
+
         # Convert the string to a Msg object
         msg_execution = Msg(
             name="system",
             content=msg_execution_str,
             role="system",
-            echo=self.verbose
+            echo=self.verbose,
         )
-        
+
         if self.verbose:
             self.speak(msg_execution.content)
         self.memory.add(msg_execution)
