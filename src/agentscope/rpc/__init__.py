@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """Import all rpc related modules in the package."""
-from .rpc_client import (
-    RpcClient,
-    call_func_in_thread,
-)
+from .rpc_client import RpcClient
 from .rpc_meta import async_func, sync_func, RpcMeta
 from .rpc_config import DistConf
 from .rpc_async import AsyncResult
@@ -18,5 +15,4 @@ __all__ = [
     "sync_func",
     "AsyncResult",
     "DistConf",
-    "call_func_in_thread",
 ]

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """A proxy object which represent a object located in a rpc server."""
 from typing import Any, Callable
-from functools import partial
 from abc import ABC
 from inspect import getmembers, isfunction
 from types import FunctionType
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
 try:
     import cloudpickle as pickle
@@ -13,7 +14,7 @@ except ImportError as e:
 
     pickle = ImportErrorReporter(e, "distribute")
 
-from .rpc_client import RpcClient, call_func_in_thread
+from .rpc_client import RpcClient
 from .rpc_async import AsyncResult
 from ..exception import AgentCreationError, AgentServerNotAliveError
 
@@ -25,6 +26,28 @@ def get_public_methods(cls: type) -> list[str]:
         for name, member in getmembers(cls, predicate=isfunction)
         if isinstance(member, FunctionType) and not name.startswith("_")
     ]
+
+
+class _RpcThreadPool:
+    """Executor for rpc object tasks."""
+
+    _executor = None
+    _lock = threading.Lock()
+
+    def __init__(self, max_workers: int = 32) -> None:
+        if _RpcThreadPool._executor is None:
+            with _RpcThreadPool._lock:
+                if _RpcThreadPool._executor is None:
+                    _RpcThreadPool._executor = ThreadPoolExecutor(
+                        max_workers=max_workers,
+                    )
+
+    @classmethod
+    def submit(cls, fn: Callable, *args: Any, **kwargs: Any) -> Any:
+        """Submit a task to the executor."""
+        if cls._executor is None:
+            cls()
+        return cls._executor.submit(fn, *args, **kwargs)
 
 
 class RpcObject(ABC):
@@ -65,6 +88,7 @@ class RpcObject(ABC):
         self._oid = oid
         self._cls = cls
         self.connect_existing = connect_existing
+        self.executor = ThreadPoolExecutor(max_workers=1)
 
         from ..studio._client import _studio_client
 
@@ -108,15 +132,14 @@ class RpcObject(ABC):
 
     def create(self, configs: dict) -> None:
         """create the object on the rpc server."""
-        self._creating_stub = call_func_in_thread(
-            partial(
-                self.client.create_agent,
-                configs,
-                self._oid,
-            ),
+        self._creating_stub = _RpcThreadPool.submit(
+            self.client.create_agent,
+            configs,
+            self._oid,
         )
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        self._check_created()
         if "__call__" in self._cls._async_func:
             return self._async_func("__call__")(*args, **kwargs)
         else:
@@ -159,7 +182,6 @@ class RpcObject(ABC):
 
     def _call_func(self, func_name: str, args: dict) -> Any:
         """Call a function in rpc server."""
-        self._check_created()
         return pickle.loads(
             self.client.call_agent_func(
                 agent_id=self._oid,
@@ -173,12 +195,10 @@ class RpcObject(ABC):
             return AsyncResult(
                 host=self.host,
                 port=self.port,
-                stub=call_func_in_thread(
-                    partial(
-                        self._call_func,
-                        func_name=name,
-                        args={"args": args, "kwargs": kwargs},
-                    ),
+                stub=_RpcThreadPool.submit(
+                    self._call_func,
+                    func_name=name,
+                    args={"args": args, "kwargs": kwargs},
                 ),
             )
 
@@ -194,6 +214,7 @@ class RpcObject(ABC):
         return sync_wrapper
 
     def __getattr__(self, name: str) -> Callable:
+        self._check_created()
         if name in self._cls._async_func:
             # for async functions
             return self._async_func(name)

@@ -2,12 +2,11 @@
 """Test the async result pool."""
 import unittest
 import time
-import functools
 import pickle
 
 from loguru import logger
 
-from agentscope.rpc import call_func_in_thread
+from agentscope.rpc.rpc_object import _RpcThreadPool
 from agentscope.server.async_result_pool import (
     AsyncResultPool,
     get_pool,
@@ -38,18 +37,18 @@ class BasicResultPoolTest(unittest.TestCase):
         for target_value in range(10):
             oid = pool.prepare()
             get_stubs.append(
-                call_func_in_thread(
-                    functools.partial(test_get_func, oid=oid, pool=pool),
+                _RpcThreadPool.submit(
+                    test_get_func,
+                    oid=oid,
+                    pool=pool,
                 ),
             )
             set_stubs.append(
-                call_func_in_thread(
-                    functools.partial(
-                        test_set_func,
-                        oid=oid,
-                        value=target_value,
-                        pool=pool,
-                    ),
+                _RpcThreadPool.submit(
+                    test_set_func,
+                    oid=oid,
+                    value=target_value,
+                    pool=pool,
                 ),
             )
         et = time.time()

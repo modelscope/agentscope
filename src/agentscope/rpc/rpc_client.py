@@ -3,8 +3,8 @@
 
 import json
 import os
-from typing import Optional, Sequence, Union, Generator, Callable, Any
-from concurrent.futures import Future, ThreadPoolExecutor
+from typing import Optional, Sequence, Union, Generator, Any
+from concurrent.futures import ThreadPoolExecutor
 from loguru import logger
 
 from ..message import Msg
@@ -325,18 +325,6 @@ class RpcClient:
             RpcClient,
             (self.host, self.port),
         )
-
-
-def call_func_in_thread(func: Callable) -> Future:
-    """Call a function in a sub-thread.
-
-    Args:
-        func (`Callable`): The function to be called in sub-thread.
-
-    Returns:
-        `Future`: A stub to get the response.
-    """
-    return RpcClient._EXECUTOR.submit(func)  # pylint: disable=W0212
 
 
 class RpcAgentClient(RpcClient):
