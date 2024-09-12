@@ -28,16 +28,16 @@ def get_public_methods(cls: type) -> list[str]:
     ]
 
 
-def _call_func_in_thread(func: Callable, *args, **kwargs) -> Any:
+def _call_func_in_thread(func: Callable, *args: Any, **kwargs: Any) -> Any:
     """Call a function in a sub-thread."""
     future = Future()
 
-    def wrapper(*args, **kwargs) -> None:
+    def wrapper(*args: Any, **kwargs: Any) -> None:
         try:
             result = func(*args, **kwargs)
             future.set_result(result)
-        except Exception as e:
-            future.set_exception(e)
+        except Exception as ex:
+            future.set_exception(ex)
 
     thread = threading.Thread(target=wrapper, args=args, kwargs=kwargs)
     thread.start()
