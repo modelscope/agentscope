@@ -4,7 +4,7 @@ from typing import Any, Callable
 from abc import ABC
 from inspect import getmembers, isfunction
 from types import FunctionType
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, Future
 import threading
 
 try:
@@ -28,26 +28,21 @@ def get_public_methods(cls: type) -> list[str]:
     ]
 
 
-class _RpcThreadPool:
-    """Executor for rpc object tasks."""
+def _call_func_in_thread(func: Callable, *args, **kwargs) -> Any:
+    """Call a function in a sub-thread."""
+    future = Future()
 
-    _executor = None
-    _lock = threading.Lock()
+    def wrapper(*args, **kwargs) -> None:
+        try:
+            result = func(*args, **kwargs)
+            future.set_result(result)
+        except Exception as e:
+            future.set_exception(e)
 
-    def __init__(self, max_workers: int = 32) -> None:
-        if _RpcThreadPool._executor is None:
-            with _RpcThreadPool._lock:
-                if _RpcThreadPool._executor is None:
-                    _RpcThreadPool._executor = ThreadPoolExecutor(
-                        max_workers=max_workers,
-                    )
+    thread = threading.Thread(target=wrapper, args=args, kwargs=kwargs)
+    thread.start()
 
-    @classmethod
-    def submit(cls, fn: Callable, *args: Any, **kwargs: Any) -> Any:
-        """Submit a task to the executor."""
-        if cls._executor is None:
-            cls()
-        return cls._executor.submit(fn, *args, **kwargs)
+    return future
 
 
 class RpcObject(ABC):
@@ -132,7 +127,7 @@ class RpcObject(ABC):
 
     def create(self, configs: dict) -> None:
         """create the object on the rpc server."""
-        self._creating_stub = _RpcThreadPool.submit(
+        self._creating_stub = _call_func_in_thread(
             self.client.create_agent,
             configs,
             self._oid,
@@ -195,7 +190,7 @@ class RpcObject(ABC):
             return AsyncResult(
                 host=self.host,
                 port=self.port,
-                stub=_RpcThreadPool.submit(
+                stub=_call_func_in_thread(
                     self._call_func,
                     func_name=name,
                     args={"args": args, "kwargs": kwargs},

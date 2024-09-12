@@ -6,7 +6,7 @@ import pickle
 
 from loguru import logger
 
-from agentscope.rpc.rpc_object import _RpcThreadPool
+from agentscope.rpc.rpc_object import _call_func_in_thread
 from agentscope.server.async_result_pool import (
     AsyncResultPool,
     get_pool,
@@ -37,14 +37,14 @@ class BasicResultPoolTest(unittest.TestCase):
         for target_value in range(10):
             oid = pool.prepare()
             get_stubs.append(
-                _RpcThreadPool.submit(
+                _call_func_in_thread(
                     test_get_func,
                     oid=oid,
                     pool=pool,
                 ),
             )
             set_stubs.append(
-                _RpcThreadPool.submit(
+                _call_func_in_thread(
                     test_set_func,
                     oid=oid,
                     value=target_value,
