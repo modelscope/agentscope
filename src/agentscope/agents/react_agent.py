@@ -222,11 +222,20 @@ class ReActAgent(AgentBase):
         ]
 
         # The execution message, may be execution output or error information
-        msg_execution = self.service_toolkit.parse_and_call_func(
+        msg_execution_str = self.service_toolkit.parse_and_call_func(
             formatted_function_call,
         )
+        
+        # Convert the string to a Msg object
+        msg_execution = Msg(
+            name="system",
+            content=msg_execution_str,
+            role="system",
+            echo=self.verbose
+        )
+        
         if self.verbose:
-            self.speak(msg_execution)
+            self.speak(msg_execution.content)
         self.memory.add(msg_execution)
 
     @staticmethod
