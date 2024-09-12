@@ -22,7 +22,7 @@ Llama3-70B (with vLLM).
 
 1. Install AgentScope from source with `pip`, according to the [official instruction](../../README.md).
 2. Install matplotlib: `pip install matplotlib`.
-3. Change directory: `cd examples/papaer_llm_based_algorithm`.
+3. Change directory: `cd examples/paper_llm_based_algorithm`.
 4. Set up LLM model configs in `model_configs.json`.
 
 ## Usage
