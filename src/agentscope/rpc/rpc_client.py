@@ -34,7 +34,7 @@ class RpcClient:
     """A client of Rpc agent server"""
 
     _CHANNEL_POOL = {}
-    _EXECUTOR = ThreadPoolExecutor()
+    _EXECUTOR = ThreadPoolExecutor(max_workers=32)
 
     def __init__(
         self,
