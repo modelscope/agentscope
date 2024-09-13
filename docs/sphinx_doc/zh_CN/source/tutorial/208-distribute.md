@@ -426,7 +426,7 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 
 #### `ResultPool`
 
-`ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_timeout`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_timeout`)。
+`ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_expire`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_expire`)。
 在启动 `AgentServerLauncher` 时可以通过传入 `pool_type` 来指定使用哪种实现，默认为`local`。
 如果指定为 `redis` 则还必须传入 `redis_url`，如下是代码以及命令行的使用案例。
 
@@ -438,12 +438,12 @@ launcher = RpcAgentServerLauncher(
     custom_agent_classes=[],
     pool_type="redis",
     redis_url="redis://localhost:6379",
-    max_timeout=7200, # 2 hours
+    max_expire=7200, # 2 hours
 )
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-timeout 7200
+as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire 7200
 ```
 
 [[回到顶部]](#208-distribute-zh)

@@ -248,7 +248,11 @@ class RpcClient:
                 )
             except grpc.RpcError:
                 # wait for a random time between retries
-                time.sleep((random.random() + 0.5) * retry_interval)
+                interval = (random.random() + 0.5) * retry_interval
+                logger.debug(
+                    f"Update placeholder timeout, retrying after {interval} s...",
+                )
+                time.sleep(interval)
                 retry_interval *= 2
                 continue
             break

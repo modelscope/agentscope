@@ -41,6 +41,7 @@ def _setup_agent_server(
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
+    capacity: int = 32,
     pool_type: str = "local",
     redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
@@ -71,6 +72,8 @@ def _setup_agent_server(
             A pipe instance used to pass the actual port of the server.
         local_mode (`bool`, defaults to `True`):
             Only listen to local requests.
+        capacity (`int`, default to `32`):
+            The number of concurrent agents in the server.
         pool-type (`str`, defaults to `"local"`): The type of the async
             message pool, which can be `local` or `redis`. If `redis` is
             specified, you need to start a redis server before launching
@@ -104,6 +107,7 @@ def _setup_agent_server(
             stop_event=stop_event,
             pipe=pipe,
             local_mode=local_mode,
+            capacity=capacity,
             pool_type=pool_type,
             redis_url=redis_url,
             max_pool_size=max_pool_size,
@@ -125,6 +129,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
+    capacity: int = 32,
     pool_type: str = "local",
     redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
@@ -153,6 +158,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         local_mode (`bool`, defaults to `True`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
+        capacity (`int`, default to `32`):
+            The number of concurrent agents in the server.
         pool-type (`str`, defaults to `"local"`): The type of the async
             message pool, which can be `local` or `redis`. If `redis` is
             specified, you need to start a redis server before launching
@@ -190,6 +197,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         port=port,
         server_id=server_id,
         studio_url=studio_url,
+        capacity=capacity,
         pool_type=pool_type,
         redis_url=redis_url,
         max_pool_size=max_pool_size,
@@ -226,7 +234,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             port = _check_port(port)
             servicer.port = port
             server = grpc.aio.server(
-                futures.ThreadPoolExecutor(max_workers=None),
+                futures.ThreadPoolExecutor(max_workers=capacity),
                 # set max message size to 32 MB
                 options=_DEFAULT_RPC_OPTIONS,
             )
@@ -325,6 +333,7 @@ class RpcAgentServerLauncher:
         self,
         host: str = "localhost",
         port: int = None,
+        capacity: int = 32,
         pool_type: str = "local",
         redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
@@ -343,6 +352,8 @@ class RpcAgentServerLauncher:
                 Hostname of the agent server.
             port (`int`, defaults to `None`):
                 Socket port of the agent server.
+            capacity (`int`, default to `32`):
+                The number of concurrent agents in the server.
             pool-type (`str`, defaults to `"local"`): The type of the async
                 message pool, which can be `local` or `redis`. If `redis` is
                 specified, you need to start a redis server before launching
@@ -374,6 +385,7 @@ class RpcAgentServerLauncher:
         """
         self.host = host
         self.port = _check_port(port)
+        self.capacity = capacity
         self.pool_type = pool_type
         self.redis_url = redis_url
         self.max_pool_size = max_pool_size
@@ -408,6 +420,7 @@ class RpcAgentServerLauncher:
             _setup_agent_server_async(
                 host=self.host,
                 port=self.port,
+                capacity=self.capacity,
                 stop_event=self.stop_event,
                 server_id=self.server_id,
                 pool_type=self.pool_type,
@@ -510,6 +523,7 @@ def as_server() -> None:
 
         * `--host`: the hostname of the server.
         * `--port`: the socket port of the server.
+        * `--capacity`: the number of concurrent agents in the server.
         * `--pool-type`: the type of the async message pool, which can be
           `local` or `redis`. If `redis` is specified, you need to start a
           redis server before launching the server. Defaults to `local`.
@@ -518,8 +532,8 @@ def as_server() -> None:
         * `--max-pool-size`: max number of agent reply messages that the server
           can accommodate. Note that the oldest message will be deleted
           after exceeding the pool size.
-        * `--max-timeout-seconds`: max time for reply messages to be cached
-          in the server. Note that expired messages will be deleted.
+        * `--max-expire`: max expire time for async function result.
+        * `--max-timeout-seconds`: max timeout for rpc call.
         * `--local-mode`: whether the started agent server only listens to
           local requests.
         * `--model-config-path`: the path to the model config json file
@@ -551,6 +565,15 @@ def as_server() -> None:
         help="socket port of the server",
     )
     parser.add_argument(
+        "--capacity",
+        type=int,
+        default=os.cpu_count(),
+        help=(
+            "the number of concurrent agents in the server, exceeding this "
+            "may cause severe performance degradation or even deadlock."
+        ),
+    )
+    parser.add_argument(
         "--pool-type",
         type=str,
         choices=["local", "redis"],
@@ -568,19 +591,22 @@ def as_server() -> None:
         type=int,
         default=8192,
         help=(
-            "max number of agent reply messages that the server "
-            "can accommodate. Note that the oldest message will be deleted "
+            "the max number of async result that the server "
+            "can accommodate. Note that the oldest result will be deleted "
             "after exceeding the pool size."
         ),
     )
     parser.add_argument(
-        "--max-timeout-seconds",
+        "--max-expire",
         type=int,
         default=7200,
-        help=(
-            "max time for agent reply messages to be cached"
-            "in the server. Note that expired messages will be deleted."
-        ),
+        help="max expire time in second for async results.",
+    )
+    parser.add_argument(
+        "--max-timeout-seconds",
+        type=int,
+        default=5,
+        help="max timeout for rpc call in seconds",
     )
     parser.add_argument(
         "--local-mode",
@@ -643,10 +669,12 @@ def as_server() -> None:
         host=args.host,
         port=args.port,
         server_id=args.server_id,
+        capacity=args.capacity,
         pool_type=args.pool_type,
         redis_url=args.redis_url,
         max_pool_size=args.max_pool_size,
         max_expire_time=args.max_expire_time,
+        max_timeout_seconds=args.max_timeout_seconds,
         local_mode=args.local_mode,
         studio_url=args.studio_url,
     )

@@ -75,6 +75,7 @@ class AgentServerServicer(RpcAgentServicer):
         port: int = None,
         server_id: str = None,
         studio_url: str = None,
+        capacity: int = 32,
         pool_type: str = "local",
         redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
@@ -93,6 +94,8 @@ class AgentServerServicer(RpcAgentServicer):
                 Server id of the rpc agent server.
             studio_url (`str`, defaults to `None`):
                 URL of the AgentScope Studio.
+            capacity (`int`, default to `32`):
+                The number of concurrent agents in the servicer.
             max_pool_size (`int`, defaults to `8192`):
                 The max number of async results that the server can
                 accommodate. Note that the oldest result will be deleted
@@ -126,7 +129,7 @@ class AgentServerServicer(RpcAgentServicer):
             max_len=max_pool_size,
             max_expire=max_expire_time,
         )
-        self.executor = futures.ThreadPoolExecutor(max_workers=None)
+        self.executor = futures.ThreadPoolExecutor(max_workers=capacity)
         self.task_id_lock = threading.Lock()
         self.agent_id_lock = threading.Lock()
         self.task_id_counter = 0

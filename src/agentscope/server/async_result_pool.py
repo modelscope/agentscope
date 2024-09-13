@@ -52,10 +52,10 @@ class AsyncResultPool(ABC):
 class LocalPool(AsyncResultPool):
     """Local pool for storing results."""
 
-    def __init__(self, max_len: int, max_timeout: int) -> None:
+    def __init__(self, max_len: int, max_expire: int) -> None:
         self.pool = expiringdict.ExpiringDict(
             max_len=max_len,
-            max_age_seconds=max_timeout,
+            max_age_seconds=max_expire,
         )
         self.object_id_cnt = 0
         self.object_id_lock = threading.Lock()
@@ -175,4 +175,4 @@ def get_pool(
     if pool_type == "redis":
         return RedisPool(url=redis_url, max_expire=max_expire)
     else:
-        return LocalPool(max_len=max_len, max_timeout=max_expire)
+        return LocalPool(max_len=max_len, max_expire=max_expire)

@@ -418,7 +418,7 @@ The `call_agent_func` method is called when the client calls methods or properti
 
 #### `ResultPool`
 
-The implementation of `ResultPool` is located at `src/agentscope/server/async_result_pool.py`. It manages the execution results of asynchronous methods, with two implementations: `local` and `redis`. The `local` implementation uses Python's dictionary type (`dict`), while the `redis` implementation is based on Redis. To avoid excessive memory usage by results, both implementations include an automatic expiration mechanism. The `local` can be set for timeout deletion (`max_timeout`) or deletion when exceeding a certain length (`max_len`), while `redis` only supports timeout deletion (`max_timeout`). When launching the `AgentServerLauncher`, you can specify which implementation to use by passing in `pool_type`, with `local` being the default. If specifying `redis`, you must also pass in `redis_url`. Below are examples of usage through code and command line.
+The implementation of `ResultPool` is located at `src/agentscope/server/async_result_pool.py`. It manages the execution results of asynchronous methods, with two implementations: `local` and `redis`. The `local` implementation uses Python's dictionary type (`dict`), while the `redis` implementation is based on Redis. To avoid excessive memory usage by results, both implementations include an automatic expiration mechanism. The `local` can be set for expire time deletion (`max_expire`) or deletion when exceeding a certain length (`max_len`), while `redis` only supports expire time deletion (`max_expire`). When launching the `AgentServerLauncher`, you can specify which implementation to use by passing in `pool_type`, with `local` being the default. If specifying `redis`, you must also pass in `redis_url`. Below are examples of usage through code and command line.
 
 ```python
 # ...
@@ -428,12 +428,12 @@ launcher = RpcAgentServerLauncher(
     custom_agent_classes=[],
     pool_type="redis",
     redis_url="redis://localhost:6379",
-    max_timeout=7200, # 2 hours
+    max_expire=7200, # 2 hours
 )
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-timeout 7200
+as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire 7200
 ```
 
 [[Back to the top]](#208-distribute-en)
