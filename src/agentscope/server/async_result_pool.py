@@ -34,14 +34,18 @@ class AsyncResultPool(ABC):
         """
 
     @abstractmethod
-    def get(self, key: int) -> bytes:
+    def get(self, key: int, timeout: int = 5) -> bytes:
         """Get a value from the pool.
 
         Args:
             key (`int`): The key of the value
+            timeout (`int`): The timeout seconds to wait for the value.
 
         Returns:
             `bytes`: The value
+
+        Raises:
+            `TimeoutError`: When the timeout is reached.
         """
 
 
@@ -72,14 +76,18 @@ class LocalPool(AsyncResultPool):
         with cond:
             cond.notify_all()
 
-    def get(self, key: int) -> bytes:
-        while True:
+    def get(self, key: int, timeout: int = 5) -> bytes:
+        """Get the value with timeout"""
+        value = self.pool.get(key)
+        if isinstance(value, threading.Condition):
+            with value:
+                value.wait(timeout=timeout)
             value = self.pool.get(key)
             if isinstance(value, threading.Condition):
-                with value:
-                    value.wait(timeout=1)
-            else:
-                break
+                raise TimeoutError(
+                    f"Waiting timeout for async result of task[{key}]",
+                )
+            return value
         return value
 
 
@@ -92,14 +100,14 @@ class RedisPool(AsyncResultPool):
     def __init__(
         self,
         url: str,
-        max_timeout: int,
+        max_expire: int,
     ) -> None:
         """
         Init redis pool.
 
         Args:
             url (`str`): The url of the redis server.
-            max_timeout (`int`): The max timeout of the result in the pool,
+            max_expire (`int`): The max timeout of the result in the pool,
             when it is reached, the oldest item will be removed.
         """
         try:
@@ -109,7 +117,7 @@ class RedisPool(AsyncResultPool):
             raise ConnectionError(
                 f"Redis server at [{url}] is not available.",
             ) from e
-        self.max_timeout = max_timeout
+        self.max_expire = max_expire
 
     def _get_object_id(self) -> int:
         return self.pool.incr(RedisPool.INCR_KEY)
@@ -119,36 +127,38 @@ class RedisPool(AsyncResultPool):
 
     def set(self, key: int, value: bytes) -> None:
         qkey = RedisPool.TASK_QUEUE_PREFIX + str(key)
-        self.pool.set(key, value, ex=self.max_timeout)
+        self.pool.set(key, value, ex=self.max_expire)
         self.pool.rpush(qkey, key)
-        self.pool.expire(qkey, self.max_timeout)
+        self.pool.expire(qkey, self.max_expire)
 
-    def get(self, key: int) -> bytes:
+    def get(self, key: int, timeout: int = 5) -> bytes:
         result = self.pool.get(key)
         if result:
             return result
         else:
             keys = self.pool.blpop(
                 keys=RedisPool.TASK_QUEUE_PREFIX + str(key),
-                timeout=self.max_timeout,
+                timeout=timeout,
             )
-            self.pool.rpush(RedisPool.TASK_QUEUE_PREFIX + str(key), key)
             if keys is None:
-                raise ValueError(
+                raise TimeoutError(
                     f"Waiting timeout for async result of task[{key}]",
                 )
+            self.pool.rpush(RedisPool.TASK_QUEUE_PREFIX + str(key), key)
             if int(keys[1]) == key:
                 res = self.pool.get(key)
                 if res is None:
-                    raise ValueError(f"Async Result of task[{key}] not found.")
+                    raise TimeoutError(
+                        f"Async Result of task[{key}] not found.",
+                    )
                 return res
             else:
-                raise ValueError(f"Async Result of task[{key}] not found.")
+                raise TimeoutError(f"Async Result of task[{key}] not found.")
 
 
 def get_pool(
     pool_type: str = "local",
-    max_timeout: int = 7200,
+    max_expire: int = 7200,
     max_len: int = 8192,
     redis_url: str = "redis://localhost:6379",
 ) -> AsyncResultPool:
@@ -157,12 +167,12 @@ def get_pool(
     Args:
         pool_type (`str`): The type of the pool, can be `local` or `redis`,
             default is `local`.
-        max_timeout (`int`): The max timeout of the result in the pool,
+        max_expire (`int`): The max expire time of the result in the pool,
             when it is reached, the oldest item will be removed.
         max_len (`int`): The max length of the pool.
         redis_url (`str`): The address of the redis server.
     """
     if pool_type == "redis":
-        return RedisPool(url=redis_url, max_timeout=max_timeout)
+        return RedisPool(url=redis_url, max_expire=max_expire)
     else:
-        return LocalPool(max_len=max_len, max_timeout=max_timeout)
+        return LocalPool(max_len=max_len, max_timeout=max_expire)

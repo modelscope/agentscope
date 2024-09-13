@@ -3,6 +3,8 @@
 
 import json
 import os
+import time
+import random
 from typing import Optional, Sequence, Union, Generator, Any
 from concurrent.futures import ThreadPoolExecutor
 from loguru import logger
@@ -218,19 +220,38 @@ class RpcClient:
             logger.error(f"Error when delete all agents: {status.message}")
         return status.ok
 
-    def update_placeholder(self, task_id: int) -> str:
+    def update_placeholder(
+        self,
+        task_id: int,
+        retry_times: int = 10,
+        retry_interval: float = 5,
+    ) -> str:
         """Update the placeholder value.
+
+        Note:
+            DON'T USE THIS FUNCTION IN `ThreadPoolExecutor`.
 
         Args:
             task_id (`int`): `task_id` of the PlaceholderMessage.
+            retry_times (`int`): Number of retries. Defaults to 10.
+            retry_interval (`float`): Base interval between retries in seconds.
+            Defaults to 5. Double the interval between retries for each retry.
 
         Returns:
             bytes: Serialized message value.
         """
         stub = RpcAgentStub(RpcClient._get_channel(self.url))
-        resp = stub.update_placeholder(
-            agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
-        )
+        for _ in range(retry_times):
+            try:
+                resp = stub.update_placeholder(
+                    agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
+                )
+            except grpc.RpcError:
+                # wait for a random time between retries
+                time.sleep((random.random() + 0.5) * retry_interval)
+                retry_interval *= 2
+                continue
+            break
         if not resp.ok:
             raise AgentCallError(
                 host=self.host,

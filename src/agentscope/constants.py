@@ -59,6 +59,8 @@ _DEFAULT_RPC_OPTIONS = [
     ("grpc.max_receive_message_length", 32 * 1024 * 1024),
     ("grpc.max_metadata_size", 64 * 1024),
 ]
+_DEFAULT_RPC_TIMEOUT = 5
+_DEFAULT_RPC_RETRY_TIMES = 10
 
 
 # enums

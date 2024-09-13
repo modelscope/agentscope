@@ -68,7 +68,7 @@ class BasicResultPoolTest(unittest.TestCase):
 
     def test_local_pool(self) -> None:
         """Test local pool"""
-        pool = get_pool(pool_type="local", max_len=100, max_timeout=3600)
+        pool = get_pool(pool_type="local", max_len=100, max_expire=3600)
         self._test_result_pool(pool)
 
     @unittest.skip(reason="redis is not installed")
@@ -77,7 +77,7 @@ class BasicResultPoolTest(unittest.TestCase):
         pool = get_pool(
             pool_type="redis",
             redis_url="redis://localhost:6379",
-            max_timeout=3600,
+            max_expire=3600,
         )
         self._test_result_pool(pool)
         self.assertRaises(

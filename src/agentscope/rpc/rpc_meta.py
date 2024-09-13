@@ -103,9 +103,13 @@ class RpcMeta(ABCMeta):
                         "max_pool_size",
                         8192,
                     ),
+                    max_expire_time=to_dist.pop(  # type: ignore[arg-type]
+                        "max_expire_time",
+                        7200,
+                    ),
                     max_timeout_seconds=to_dist.pop(  # type: ignore[arg-type]
                         "max_timeout_seconds",
-                        7200,
+                        5,
                     ),
                     local_mode=to_dist.pop(  # type: ignore[arg-type]
                         "local_mode",
@@ -171,7 +175,8 @@ class RpcMeta(ABCMeta):
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
+        max_expire_time: int = 7200,
+        max_timeout_seconds: int = 5,
         local_mode: bool = True,
     ) -> Any:
         """Convert current object into its distributed version.
@@ -186,10 +191,12 @@ class RpcMeta(ABCMeta):
                 The max number of agent reply messages that the started agent
                 server can accommodate. Note that the oldest message will be
                 deleted after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `7200`):
+            max_expire_time (`int`, defaults to `7200`):
                 Only takes effect when `host` and `port` are not filled in.
                 Maximum time for reply messages to be cached in the launched
                 agent server. Note that expired messages will be deleted.
+            max_timeout_seconds (`int`, defaults to `5`):
+                Max timeout seconds for the rpc call.
             local_mode (`bool`, defaults to `True`):
                 Only takes effect when `host` and `port` are not filled in.
                 Whether the started agent server only listens to local
@@ -209,6 +216,7 @@ class RpcMeta(ABCMeta):
             configs=self._init_settings,
             oid=self._oid,
             max_pool_size=max_pool_size,
+            max_expire_time=max_expire_time,
             max_timeout_seconds=max_timeout_seconds,
             local_mode=local_mode,
         )

@@ -56,7 +56,8 @@ class RpcObject(ABC):
         port: int,
         connect_existing: bool = False,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
+        max_expire_time: int = 7200,
+        max_timeout_seconds: int = 5,
         local_mode: bool = True,
         configs: dict = None,
     ) -> None:
@@ -69,8 +70,10 @@ class RpcObject(ABC):
             port (`int`): The port of the rpc server.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
-            max_timeout_seconds (`int`, defaults to `7200`):
-                Timeout for task results.
+            max_expire_time (`int`, defaults to `7200`):
+                Max expire time for task results.
+            max_timeout_seconds (`int`, defaults to `5`):
+                Max timeout seconds for the rpc call.
             local_mode (`bool`, defaults to `True`):
                 Whether the started gRPC server only listens to local
                 requests.
@@ -110,6 +113,7 @@ class RpcObject(ABC):
                 host=self.host,
                 port=self.port,
                 max_pool_size=max_pool_size,
+                max_expire_time=max_expire_time,
                 max_timeout_seconds=max_timeout_seconds,
                 local_mode=local_mode,
                 custom_agent_classes=[cls],

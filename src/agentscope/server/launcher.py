@@ -44,7 +44,8 @@ def _setup_agent_server(
     pool_type: str = "local",
     redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 7200,
+    max_expire_time: int = 7200,
+    max_timeout_seconds: int = 5,
     studio_url: str = None,
     custom_agent_classes: list = None,
     agent_dir: str = None,
@@ -78,8 +79,12 @@ def _setup_agent_server(
             url of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
-        max_timeout_seconds (`int`, defaults to `7200`):
-            Timeout for agent replies.
+        max_expire_time (`int`, defaults to `7200`):
+            Maximum time for async results to be cached in the server.
+            Note that expired messages will be deleted.
+        max_timeout_seconds (`int`, defaults to `5`):
+            The maximum time (in seconds) that the server will wait for
+            the result of an async call.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
         custom_agent_classes (`list`, defaults to `None`):
@@ -102,6 +107,7 @@ def _setup_agent_server(
             pool_type=pool_type,
             redis_url=redis_url,
             max_pool_size=max_pool_size,
+            max_expire_time=max_expire_time,
             max_timeout_seconds=max_timeout_seconds,
             studio_url=studio_url,
             custom_classes=custom_agent_classes,
@@ -122,7 +128,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     pool_type: str = "local",
     redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 7200,
+    max_expire_time: int = 7200,
+    max_timeout_seconds: int = 5,
     studio_url: str = None,
     custom_classes: list = None,
     agent_dir: str = None,
@@ -156,9 +163,12 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             The max number of agent reply messages that the server can
             accommodate. Note that the oldest message will be deleted
             after exceeding the pool size.
-        max_timeout_seconds (`int`, defaults to `7200`):
-            Maximum time for reply messages to be cached in the server.
+        max_expire_time (`int`, defaults to `7200`):
+            Maximum time for async results to be cached in the server.
             Note that expired messages will be deleted.
+        max_timeout_seconds (`int`, defaults to `5`):
+            The maximum time (in seconds) that the server will wait for
+            the result of an async call.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
         custom_agent_classes (`list`, defaults to `None`):
@@ -183,6 +193,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         pool_type=pool_type,
         redis_url=redis_url,
         max_pool_size=max_pool_size,
+        max_expire_time=max_expire_time,
         max_timeout_seconds=max_timeout_seconds,
     )
     if custom_classes is None:
@@ -317,7 +328,8 @@ class RpcAgentServerLauncher:
         pool_type: str = "local",
         redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
+        max_expire_time: int = 7200,
+        max_timeout_seconds: int = 5,
         local_mode: bool = False,
         agent_dir: str = None,
         custom_agent_classes: list = None,
@@ -338,12 +350,14 @@ class RpcAgentServerLauncher:
             redis-url (`str`, defaults to `"redis://localhost:6379"`): The
                 address of the redis server.
             max_pool_size (`int`, defaults to `8192`):
-                The max number of agent reply messages that the server can
-                accommodate. Note that the oldest message will be deleted
+                The max number of async results that the server can
+                accommodate. Note that the oldest result will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `7200`):
-                Maximum time for reply messages to be cached in the server.
+            max_expire_time (`int`, defaults to `7200`):
+                Maximum time for async results to be cached in the server.
                 Note that expired messages will be deleted.
+            max_timeout_seconds (`int`, defaults to `5`):
+                Max timeout seconds for rpc calls.
             local_mode (`bool`, defaults to `False`):
                 If `True`, only listen to requests from "localhost", otherwise,
                 listen to requests from all hosts.
@@ -363,6 +377,7 @@ class RpcAgentServerLauncher:
         self.pool_type = pool_type
         self.redis_url = redis_url
         self.max_pool_size = max_pool_size
+        self.max_expire_time = max_expire_time
         self.max_timeout_seconds = max_timeout_seconds
         self.local_mode = local_mode
         self.server = None
@@ -398,6 +413,7 @@ class RpcAgentServerLauncher:
                 pool_type=self.pool_type,
                 redis_url=self.redis_url,
                 max_pool_size=self.max_pool_size,
+                max_expire_time=self.max_expire_time,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
                 custom_classes=self.custom_agent_classes,
@@ -436,6 +452,7 @@ class RpcAgentServerLauncher:
                 "pool_type": self.pool_type,
                 "redis_url": self.redis_url,
                 "max_pool_size": self.max_pool_size,
+                "max_expire_time": self.max_expire_time,
                 "max_timeout_seconds": self.max_timeout_seconds,
                 "local_mode": self.local_mode,
                 "studio_url": self.studio_url,
@@ -629,7 +646,7 @@ def as_server() -> None:
         pool_type=args.pool_type,
         redis_url=args.redis_url,
         max_pool_size=args.max_pool_size,
-        max_timeout_seconds=args.max_timeout_seconds,
+        max_expire_time=args.max_expire_time,
         local_mode=args.local_mode,
         studio_url=args.studio_url,
     )

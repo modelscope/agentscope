@@ -224,6 +224,12 @@ class AgentWithCustomFunc(AgentBase):
         """A custom function that executes in sync"""
         return self.cnt
 
+    @async_func
+    def long_running_func(self) -> int:
+        """A custom function that executes in sync"""
+        time.sleep(5)
+        return 1
+
 
 class BasicRpcAgentTest(unittest.TestCase):
     """Test cases for Rpc Agent"""
@@ -825,7 +831,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         agent = AgentWithCustomFunc(
             name="custom",
             judge_func=lambda x: "$PASS$" in x,
-            to_dist=True,
+            to_dist={
+                "max_timeout_seconds": 1,
+            },
         )
 
         msg = agent.reply()
@@ -848,3 +856,5 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(r2.result() <= 2)
         r4 = agent.custom_sync_func()
         self.assertEqual(r4, 2)
+        r5 = agent.long_running_func()
+        self.assertEqual(r5.result(), 1)
