@@ -597,7 +597,7 @@ def as_server() -> None:
         ),
     )
     parser.add_argument(
-        "--max-expire",
+        "--max-expire-time",
         type=int,
         default=7200,
         help="max expire time in second for async results.",

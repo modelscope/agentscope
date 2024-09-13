@@ -414,11 +414,34 @@ The `create_agent` method is called when the client uses `to_dist` on an object 
 
 The `call_agent_func` method is called when the client calls methods or properties on `RpcObject` objects. The input parameters include the `id` of the object being called and the name of the method being called. The specific calling process varies slightly. For synchronous methods and property access, `call_agent_func` retrieves the object from `agent_pool`, calls the corresponding method or property, and blocks the caller until it returns the result. For asynchronous methods, `call_agent_func` packages the input parameters and places them in a task queue, immediately returning the task's `task_id` to avoid blocking the caller.
 
-`AgentServerServicer` internally includes an executor pool (`executor`) to automatically execute tasks submitted to the task queue (`_process_task`), placing the results into the `result_pool`. Since asynchronous methods do not return execution results themselves, the client needs to call the `result` method from the Client Side to get the execution results. The corresponding function is `update_result`, which attempts to extract the result of the corresponding task from the `result_pool`. If the task result does not exist, it blocks the caller until the result returns.
+The `AgentServerServicer` has an executor pool to automatically execute tasks (`_process_task`). The results of these tasks are then placed into a `result_pool`. The `result` method of `AsyncResult` attempts to fetch the corresponding task result from the `result_pool`. If the task result does not exist, it will block the caller until the result is available.
 
-#### `ResultPool`
+##### `executor`
 
-The implementation of `ResultPool` is located at `src/agentscope/server/async_result_pool.py`. It manages the execution results of asynchronous methods, with two implementations: `local` and `redis`. The `local` implementation uses Python's dictionary type (`dict`), while the `redis` implementation is based on Redis. To avoid excessive memory usage by results, both implementations include an automatic expiration mechanism. The `local` can be set for expire time deletion (`max_expire`) or deletion when exceeding a certain length (`max_len`), while `redis` only supports expire time deletion (`max_expire`). When launching the `AgentServerLauncher`, you can specify which implementation to use by passing in `pool_type`, with `local` being the default. If specifying `redis`, you must also pass in `redis_url`. Below are examples of usage through code and command line.
+The executor is a thread pool (`concurrent.futures.ThreadPoolExecutor`), with the number of threads determined by the `capacity` parameter. The setting of `capacity` greatly impacts performance and needs to be tailored based on specific tasks.
+To enable concurrent execution of various agents within the server, it is best to ensure that the `capacity` is greater than the number of agents running simultaneously in `AgentServerServicer`. Otherwise, this may lead to exponential increases in execution time, or even deadlocks in certain scenarios (such as recursive calls among multiple agents).
+
+The `capacity` parameter can be specified in the `as_server` command via `--capacity`, or directly during the initialization of `RpcAgentServerLauncher`.
+
+```python
+# ...
+launcher = RpcAgentServerLauncher(
+    host="localhost",
+    port=12345,
+    custom_agent_classes=[],
+    capacity=10,
+)
+```
+
+```shell
+as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --capacity 10
+```
+
+##### `result_pool`
+
+The `ResultPool` implementation is located in `src/agentscope/server/async_result_pool.py` and is used for managing the execution results of asynchronous methods. There are currently two implementations: `local` and `redis`. The `local` implementation is based on Python's dictionary type (`dict`), whereas the `redis` implementation is based on Redis. Both implementations include automatic deletion mechanisms to prevent results from consuming too much memory. The `local` implementation allows for timeout-based deletion (`max_expire`) or deletion when a certain number of items is exceeded (`max_len`), while the `redis` implementation only supports timeout-based deletion (`max_expire`).
+During the startup of `AgentServerLauncher`, you can specify which implementation to use by passing in the `pool_type` parameter, with the default being `local`.
+If `redis` is specified, you must also provide the `redis_url`. Below are examples of code and command-line usage.
 
 ```python
 # ...
@@ -428,12 +451,12 @@ launcher = RpcAgentServerLauncher(
     custom_agent_classes=[],
     pool_type="redis",
     redis_url="redis://localhost:6379",
-    max_expire=7200, # 2 hours
+    max_expire_time=7200, # 2 hours
 )
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire 7200
+as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
 ```
 
 [[Back to the top]](#208-distribute-en)

@@ -421,10 +421,30 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 
 而 `call_agent_func` 方法会在 Client 端调用 `RpcObject` 对象上的方法或属性时被调用，输入参数中包含了被调用对象的 `id` 以及被调用方法的名称，具体的调用流程有一定差异。对于同步方法以及属性访问，`call_agent_func` 会直接从 `agent_pool` 取出对象并调用对应方法或属性，并在返回结果前阻塞调用发起方。对于异步方法，`call_agent_func` 会将输入参数打包放入任务队列中，并立即返回该任务的 `task_id` 从而避免阻塞调用发起方。
 
-`AgentServerServicer` 内部包含了一个执行器池 (`executor`) 用于自动执行任务队列中提交的任务 (`_process_task`)，并执行将结果放入 `result_pool` 中,
-由于异步方法本身并没有返回执行结果，因此 Client 端需要通过调用 `result` 方法从 Server 端获取执行结果，对应的函数是 `update_result`，该函数会尝试从 `result_pool` 中提取对应任务的结果，如果任务结果不存在则会阻塞调用发起方，直到结果返回。
+`AgentServerServicer` 内部包含了一个执行器池 (`executor`) 用于自动执行任务队列中提交的任务 (`_process_task`)，并执行将结果放入 `result_pool` 中，`AsyncResult` 的 `result` 方法会尝试从 `result_pool` 中取出对应任务的结果，如果任务结果不存在则会阻塞调用发起方，直到结果返回。
 
-#### `ResultPool`
+##### `executor`
+
+executor 是一个线程池 (`concurrent.futures.ThreadPoolExecutor`)，其中的线程数量由 `capacity` 参数决定，`capacity` 的设置对运行效率的影响巨大，需要根据具体任务来针对性设置。
+为了让 Server 中的各个 Agent 能够并发执行，最好保证 `capacity` 大于 `AgentServerServicer` 中同时运行的 Agent 的数量，否则可能会导致运行时间成倍增加，甚至在一些特殊场景 (多个agent 之间进行递归调用) 中出现死锁现象。
+
+`capacity` 参数可以在 `as_server` 命令中通过 `--capacity` 指定，或是直接在 `RpcAgentServerLauncher` 初始化时指定。
+
+```python
+# ...
+launcher = RpcAgentServerLauncher(
+    host="localhost",
+    port=12345,
+    custom_agent_classes=[],
+    capacity=10,
+)
+```
+
+```shell
+as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --capacity 10
+```
+
+##### `result_pool`
 
 `ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_expire`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_expire`)。
 在启动 `AgentServerLauncher` 时可以通过传入 `pool_type` 来指定使用哪种实现，默认为`local`。
@@ -438,12 +458,12 @@ launcher = RpcAgentServerLauncher(
     custom_agent_classes=[],
     pool_type="redis",
     redis_url="redis://localhost:6379",
-    max_expire=7200, # 2 hours
+    max_expire_time=7200, # 2 hours
 )
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire 7200
+as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
 ```
 
 [[回到顶部]](#208-distribute-zh)
