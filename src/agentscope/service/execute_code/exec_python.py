@@ -246,7 +246,8 @@ def _execute_python_code_docker(
 
         # Construct the timer context manager code
         exec_code_with_timer = (
-            "import contextlib, signal\nfrom typing import Any, Generator, Optional, Union\n"
+            "import contextlib, signal\n"
+            "from typing import Any, Generator, Optional, Union\n"
             + timer_code
             + f"\nwith timer({timeout}):\n"
         )
