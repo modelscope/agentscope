@@ -112,6 +112,7 @@ class RpcObject(ABC):
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=self.port,
+                capacity=2,
                 max_pool_size=max_pool_size,
                 max_expire_time=max_expire_time,
                 max_timeout_seconds=max_timeout_seconds,
