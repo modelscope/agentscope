@@ -47,7 +47,7 @@ class AsyncResult:
         if self._task_id is None:
             self._task_id = self._get_task_id()
         self._data = pickle.loads(
-            RpcClient(self._host, self._port).update_placeholder(
+            RpcClient(self._host, self._port).update_result(
                 self._task_id,
                 retry_times=retry_times,
                 retry_interval=retry_interval,

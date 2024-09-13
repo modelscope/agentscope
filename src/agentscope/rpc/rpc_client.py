@@ -220,13 +220,13 @@ class RpcClient:
             logger.error(f"Error when delete all agents: {status.message}")
         return status.ok
 
-    def update_placeholder(
+    def update_result(
         self,
         task_id: int,
         retry_times: int = 10,
         retry_interval: float = 5,
     ) -> str:
-        """Update the placeholder value.
+        """Update the value of the async result.
 
         Note:
             DON'T USE THIS FUNCTION IN `ThreadPoolExecutor`.
@@ -238,7 +238,7 @@ class RpcClient:
             Defaults to 5. Double the interval between retries for each retry.
 
         Returns:
-            bytes: Serialized message value.
+            bytes: Serialized value.
         """
         stub = RpcAgentStub(RpcClient._get_channel(self.url))
         for _ in range(retry_times):
@@ -246,7 +246,13 @@ class RpcClient:
                 resp = stub.update_placeholder(
                     agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
                 )
-            except grpc.RpcError:
+            except grpc.RpcError as e:
+                if e.code() != grpc.StatusCode.DEADLINE_EXCEEDED:
+                    raise AgentCallError(
+                        host=self.host,
+                        port=self.port,
+                        message=f"Failed to update placeholder: {str(e)}",
+                    ) from e
                 # wait for a random time between retries
                 interval = (random.random() + 0.5) * retry_interval
                 logger.debug(
