@@ -10,7 +10,7 @@ Start building LLM-empowered multi-agent applications in an easier way.
 
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/pypi-v0.0.6a2-blue?logo=pypi)](https://pypi.org/project/agentscope/)
+[![](https://img.shields.io/badge/pypi-v0.1.0-blue?logo=pypi)](https://pypi.org/project/agentscope/)
 [![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
 [![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
 [![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=agentscope&page=1&sort=latest)
@@ -35,10 +35,11 @@ Start building LLM-empowered multi-agent applications in an easier way.
 |----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
-
 ----
 
 ## News
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-06]** AgentScope version 0.1.0 is released now.
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-03]** AgentScope supports **Web Browser Control** now! Refer to our [example](https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent) for more details.
 
@@ -185,7 +186,6 @@ the following libraries.
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with CodeAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_codeact_agent/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Router Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_router_agent/)
 
-
 - Game
   - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
   - [Werewolf](https://github.com/modelscope/agentscope/blob/main/examples/game_werewolf)
@@ -218,21 +218,38 @@ cd agentscope
 pip install -e .
 ```
 
-- To build distributed multi-agent applications:
-
-```bash
-# On windows
-pip install -e .[distribute]
-# On mac
-pip install -e .\[distribute\]
-```
-
 ### Using pip
 
 - Install AgentScope from pip:
 
 ```bash
-pip install agentscope --pre
+pip install agentscope
+```
+
+### Extra Dependencies
+
+To support different deployment scenarios, AgentScope provides several
+optional dependencies. Full list of optional dependencies refers to
+[tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
+Taking distribution mode as an example, you can install its dependencies
+as follows:
+
+#### On Windows
+
+```bash
+# From source
+pip install -e .[distribute]
+# From pypi
+pip install agentscope[distribute]
+```
+
+#### On Mac & Linux
+
+```bash
+# From source
+pip install -e .\[distribute\]
+# From pypi
+pip install agentscope\[distribute\]
 ```
 
 ## Quick Start
@@ -371,35 +388,70 @@ pre-commit install
 
 Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html) for more details.
 
-## References
+## Publications
 
-If you find our work helpful for your research or application, please
-cite [our paper](https://arxiv.org/abs/2402.14034):
+If you find our work helpful for your research or application, please cite our papers.
 
-```
-@article{agentscope,
-  author  = {Dawei Gao and
-             Zitao Li and
-             Xuchen Pan and
-             Weirui Kuang and
-             Zhijian Ma and
-             Bingchen Qian and
-             Fei Wei and
-             Wenhao Zhang and
-             Yuexiang Xie and
-             Daoyuan Chen and
-             Liuyi Yao and
-             Hongyi Peng and
-             Ze Yu Zhang and
-             Lin Zhu and
-             Chen Cheng and
-             Hongzhu Shi and
-             Yaliang Li and
-             Bolin Ding and
-             Jingren Zhou},
-  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
-  journal = {CoRR},
-  volume  = {abs/2402.14034},
-  year    = {2024},
-}
-```
+1. [AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)
+
+    ```
+    @article{agentscope,
+        author  = {Dawei Gao and
+                   Zitao Li and
+                   Xuchen Pan and
+                   Weirui Kuang and
+                   Zhijian Ma and
+                   Bingchen Qian and
+                   Fei Wei and
+                   Wenhao Zhang and
+                   Yuexiang Xie and
+                   Daoyuan Chen and
+                   Liuyi Yao and
+                   Hongyi Peng and
+                   Ze Yu Zhang and
+                   Lin Zhu and
+                   Chen Cheng and
+                   Hongzhu Shi and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Jingren Zhou}
+        title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+        journal = {CoRR},
+        volume  = {abs/2402.14034},
+        year    = {2024},
+    }
+    ```
+
+2. [On the Design and Analysis of LLM-Based Algorithms](https://arxiv.org/abs/2407.14788)
+
+    ```
+    @article{llm_based_algorithms,
+        author  = {Yanxi Chen and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Jingren Zhou},
+        title   = {On the Design and Analysis of LLM-Based Algorithms},
+        journal = {CoRR},
+        volume  = {abs/2407.14788},
+        year    = {2024},
+    }
+    ```
+
+3. [Very Large-Scale Multi-Agent Simulation in AgentScope](https://arxiv.org/abs/2407.17789)
+
+    ```
+    @article{agentscope_simulation,
+        author  = {Xuchen Pan and
+                   Dawei Gao and
+                   Yuexiang Xie and
+                   Zhewei Wei and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Ji{-}Rong Wen and
+                   Jingren Zhou},
+        title   = {Very Large-Scale Multi-Agent Simulation in AgentScope},
+        journal = {CoRR},
+        volume  = {abs/2407.17789},
+        year    = {2024},
+    }
+    ```

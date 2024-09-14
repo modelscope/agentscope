@@ -10,7 +10,7 @@
 
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/pypi-v0.0.6a2-blue?logo=pypi)](https://pypi.org/project/agentscope/)
+[![](https://img.shields.io/badge/pypi-v0.1.0-blue?logo=pypi)](https://pypi.org/project/agentscope/)
 [![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
 [![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
 [![](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=agentscope&page=1&sort=latest)
@@ -35,11 +35,11 @@
 |---------|----------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
-
-
 ----
 
 ## 新闻
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-06]** AgentScope v0.1.0 版本已上线
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-09-03]** AgentScope 已更新浏览器控制模块，利用 vision 模型实现智能体对浏览器的控制。请参考[**样例**](https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent)
 
@@ -53,7 +53,6 @@
 <img src="https://github.com/user-attachments/assets/b14d9b2f-ce02-4f40-8c1a-950f4022c0cc" width="45%" alt="agentscope-logo">
 <img src="https://github.com/user-attachments/assets/dfffbd1e-1fe7-49ee-ac11-902415b2b0d6" width="45%" alt="agentscope-logo">
 </h5>
-
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
 
@@ -206,21 +205,36 @@ cd agentscope
 pip install -e .
 ```
 
-- 构建分布式多智能体应用需要按照以下方式安装：
-
-```bash
-# 在windows上
-pip install -e .[distribute]
-# 在mac上
-pip install -e .\[distribute\]
-```
-
 ### 使用pip
 
 - 从pip安装的AgentScope
 
 ```bash
-pip install agentscope --pre
+pip install agentscope
+```
+
+### 额外依赖
+
+为了支持不同的部署场景，AgentScope提供了若干个可选的依赖项。
+完整的可选依赖项列表请参考[tutorial](https://doc.agentscope.io/en/tutorial/102-installation.html)
+以分布式模式为例，可以使用以下命令安装AgentScope：
+
+#### On Windows
+
+```bash
+# From source
+pip install -e .[distribute]
+# From pypi
+pip install agentscope[distribute]
+```
+
+#### On Mac & Linux
+
+```bash
+# From source
+pip install -e .\[distribute\]
+# From pypi
+pip install agentscope\[distribute\]
 ```
 
 ## 快速开始
@@ -346,34 +360,70 @@ pre-commit install
 
 请参阅我们的[贡献指南](https://modelscope.github.io/agentscope/zh_CN/tutorial/302-contribute.html)了解更多细节。
 
-## 引用
+## 发表
 
-如果您觉得我们的工作对您的研究或应用有帮助，请引用[我们的论文](https://arxiv.org/abs/2402.14034)。
+如果您觉得我们的工作对您的研究或应用有帮助，请引用如下论文
 
-```
-@article{agentscope,
-  author  = {Dawei Gao and
-             Zitao Li and
-             Xuchen Pan and
-             Weirui Kuang and
-             Zhijian Ma and
-             Bingchen Qian and
-             Fei Wei and
-             Wenhao Zhang and
-             Yuexiang Xie and
-             Daoyuan Chen and
-             Liuyi Yao and
-             Hongyi Peng and
-             Zeyu Zhang and
-             Lin Zhu and
-             Chen Cheng and
-             Hongzhu Shi and
-             Yaliang Li and
-             Bolin Ding and
-             Jingren Zhou},
-  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
-  journal = {CoRR},
-  volume  = {abs/2402.14034},
-  year    = {2024},
-}
-```
+1. [AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)
+
+    ```
+    @article{agentscope,
+        author  = {Dawei Gao and
+                   Zitao Li and
+                   Xuchen Pan and
+                   Weirui Kuang and
+                   Zhijian Ma and
+                   Bingchen Qian and
+                   Fei Wei and
+                   Wenhao Zhang and
+                   Yuexiang Xie and
+                   Daoyuan Chen and
+                   Liuyi Yao and
+                   Hongyi Peng and
+                   Ze Yu Zhang and
+                   Lin Zhu and
+                   Chen Cheng and
+                   Hongzhu Shi and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Jingren Zhou}
+        title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+        journal = {CoRR},
+        volume  = {abs/2402.14034},
+        year    = {2024},
+    }
+    ```
+
+2. [On the Design and Analysis of LLM-Based Algorithms](https://arxiv.org/abs/2407.14788)
+
+    ```
+    @article{llm_based_algorithms,
+        author  = {Yanxi Chen and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Jingren Zhou},
+        title   = {On the Design and Analysis of LLM-Based Algorithms},
+        journal = {CoRR},
+        volume  = {abs/2407.14788},
+        year    = {2024},
+    }
+    ```
+
+3. [Very Large-Scale Multi-Agent Simulation in AgentScope](https://arxiv.org/abs/2407.17789)
+
+    ```
+    @article{agentscope_simulation,
+        author  = {Xuchen Pan and
+                   Dawei Gao and
+                   Yuexiang Xie and
+                   Zhewei Wei and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Ji{-}Rong Wen and
+                   Jingren Zhou},
+        title   = {Very Large-Scale Multi-Agent Simulation in AgentScope},
+        journal = {CoRR},
+        volume  = {abs/2407.17789},
+        year    = {2024},
+    }
+    ```
