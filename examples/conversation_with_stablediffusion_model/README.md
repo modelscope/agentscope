@@ -12,7 +12,7 @@ You need to satisfy the following requirements to run this example:
 
 - Install Stable Diffusion Web UI by following the instructions at [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
 - Launching the Stable Diffusion Web UI with arguments: --api
-- Ensure that your host can successfully access `http://127.0.0.1:7860/`(default) any other specified host and port you choose.
+- Ensure that your host can successfully access `http://127.0.0.1:7860/`(default) or any other specified host and port you choose.
 - Install the latest version of AgentScope by
     ```bash
     git clone https://github.com/modelscope/agentscope.git
