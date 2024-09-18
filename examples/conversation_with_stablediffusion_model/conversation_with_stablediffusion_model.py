@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A simple example for conversation between user and stable-diffusion agent."""
+"""conversation between user and stable-diffusion agent."""
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.agents.user_agent import UserAgent
@@ -16,16 +16,10 @@ def main() -> None:
                 "options": {
                     "sd_model_checkpoint": "xxxxxx",
                     "CLIP_stop_at_last_layers": 2,
-                },  # global settings, for detailed parameters
-                # please refer to 127.0.0.1:7860/docs#/default/get_config_sdapi_v1_options_get
+                },
                 "generate_args": {
                     "steps": 50,
                     "n_iter": 1,
-                    "override_settings": {
-                        "CLIP_stop_at_last_layers": 3,
-                        # settings effective only for this conversation
-                        # The parameters are consistent with the global settings.
-                    },
                 },
             },
         ],
@@ -36,7 +30,7 @@ def main() -> None:
     # Init two agents
     dialog_agent = DialogAgent(
         name="Assistant",
-        sys_prompt="high definition,dreamy",  # replace by your desired image style prompts
+        sys_prompt="dreamy",  # replace by your image style prompts
         model_config_name="sd",  # replace by your model config name
     )
     user_agent = UserAgent()
