@@ -241,6 +241,7 @@ class RpcClient:
             bytes: Serialized value.
         """
         stub = RpcAgentStub(RpcClient._get_channel(self.url))
+        resp = None
         for _ in range(retry_times):
             try:
                 resp = stub.update_placeholder(
@@ -262,6 +263,12 @@ class RpcClient:
                 retry_interval *= 2
                 continue
             break
+        if resp is None:
+            raise AgentCallError(
+                host=self.host,
+                port=self.port,
+                message="Failed to update placeholder: timeout",
+            )
         if not resp.ok:
             raise AgentCallError(
                 host=self.host,
