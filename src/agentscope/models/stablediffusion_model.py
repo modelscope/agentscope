@@ -231,7 +231,7 @@ class StableDiffusionImageSynthesisWrapper(StableDiffusionWrapperBase):
         # step3: parse the response
         return self._parse_response(response)
 
-    def format(self, *args: Msg | Sequence[Msg]) -> List[dict] | str:
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List[dict] | str:
         # This is a temporary implementation to focus on the prompt
         # on single-turn image generation by preserving only the system prompt
         # and the last user message. This logic might change in the future
