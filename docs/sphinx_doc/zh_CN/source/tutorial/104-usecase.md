@@ -170,7 +170,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
     # Night phase: werewolves discuss
     hint = HostMsg(content=Prompts.to_wolves.format(n2s(wolves)))
     with msghub(wolves, announcement=hint) as hub:
-       set_parsers(wolves, Prompts.wolves_discuss_parser)
+        set_parsers(wolves, Prompts.wolves_discuss_parser)
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
             if x.metadata.get("finish_discussion", False):
