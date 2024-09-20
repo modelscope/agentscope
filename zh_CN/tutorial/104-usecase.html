@@ -285,7 +285,7 @@
     <span class="c1"># Night phase: werewolves discuss</span>
     <span class="n">hint</span> <span class="o">=</span> <span class="n">HostMsg</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">Prompts</span><span class="o">.</span><span class="n">to_wolves</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n2s</span><span class="p">(</span><span class="n">wolves</span><span class="p">)))</span>
     <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">announcement</span><span class="o">=</span><span class="n">hint</span><span class="p">)</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
-      	<span class="n">set_parsers</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">wolves_discuss_parser</span><span class="p">)</span>
+        <span class="n">set_parsers</span><span class="p">(</span><span class="n">wolves</span><span class="p">,</span> <span class="n">Prompts</span><span class="o">.</span><span class="n">wolves_discuss_parser</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_WEREWOLF_DISCUSSION_ROUND</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">wolves</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;finish_discussion&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
@@ -400,7 +400,7 @@
 <p>完成了以上游戏逻辑和agent的设置，您已经可以运行狼人游戏了。通过执行<code class="docutils literal notranslate"><span class="pre">pipeline</span></code>，游戏将按预定义的阶段进行，agents
 基于它们的角色和上述编码的策略进行互动：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/game_werewolf
-python<span class="w"> </span>main.py<span class="w">  </span><span class="c1"># Assuming the pipeline is implemented in main.py</span>
+python<span class="w"> </span>werewolf.py<span class="w">  </span><span class="c1"># Assuming the pipeline is implemented in werewolf.py</span>
 </pre></div>
 </div>
 <p>建议您在在 <a class="reference external" href="https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html">AgentScope Studio</a> 中启动游戏，在对应的链接中您将看到下面的内容输出。</p>

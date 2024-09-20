@@ -291,7 +291,7 @@ With the game logic and agents set up, you're ready to run the Werewolf game. By
 
 ```bash
 cd examples/game_werewolf
-python main.py  # Assuming the pipeline is implemented in main.py
+python werewolf.py  # Assuming the pipeline is implemented in werewolf.py
 ```
 
 It is recommended that you start the game in [AgentScope Studio](https://modelscope.github.io/agentscope/en/tutorial/209-gui.html), where you

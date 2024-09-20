@@ -125,7 +125,6 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">.gemini_model</span> <span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
 <span class="kn">from</span> <span class="nn">.openai_model</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_MAX_RETRIES</span>
@@ -348,6 +347,8 @@
 
         <span class="c1"># Gemini</span>
         <span class="k">elif</span> <span class="n">model_name</span> <span class="ow">and</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gemini&quot;</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.gemini_model</span> <span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
+
             <span class="k">return</span> <span class="n">GeminiChatWrapper</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Include DashScope, ZhipuAI, Ollama, the other models supported by</span>
