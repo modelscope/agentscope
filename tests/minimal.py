@@ -44,7 +44,7 @@ b = DialogAgent(
     model_config_name="qwen",
 )
 
-b = DialogAgent(
+c = DialogAgent(
     name="C",
     sys_prompt="You are a helpful assistant.",
     model_config_name="gpt-4",
