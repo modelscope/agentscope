@@ -4,7 +4,7 @@ from abc import ABC
 import base64
 import json
 import time
-from typing import Any, Optional, Union, List, Sequence
+from typing import Any, Optional, Union, Sequence
 
 import requests
 from loguru import logger
@@ -231,7 +231,7 @@ class StableDiffusionImageSynthesisWrapper(StableDiffusionWrapperBase):
         # step3: parse the response
         return self._parse_response(response)
 
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> List[dict] | str:
+    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
         # This is a temporary implementation to focus on the prompt
         # on single-turn image generation by preserving only the system prompt
         # and the last user message. This logic might change in the future
