@@ -105,3 +105,18 @@ If you've successfully enabled the Stable Diffusion Web UI API, you should be ab
 For this project, the "options" parameter will be posted to the /sdapi/v1/options API endpoint,
 and the "generate_args" parameter will be posted to the /sdapi/v1/txt2img API endpoint.
 You can refer to https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API for a more parameter reference guide.
+
+## A Running Example
+
+- Conversation history with Stable Diffusion Web UI.
+  ```bash
+  User input:Horses on Mars
+  User: Horses on Mars
+  Assistant: Image saved to path\agentscope\runs\run_20240920-142208_rqsvhh\file\image_20240920-142522_HTF38X.png
+  User input: boy eating ice-cream
+  User: boy eating ice-cream
+  Assistant: Image saved to path\agentscope\runs\run_20240920-142208_rqsvhh\file\image_20240920-142559_2xGtUs.png
+  ```
+- Image
+<img src="https://img.alicdn.com/imgextra/i3/O1CN01YoMRQP26ClOHM7Kh0_!!6000000007626-0-tps-512-512.jpg" alt="Horses on Mars" width="300" />
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01QTO8AU1HVxaQ2rFPx_!!6000000000764-0-tps-512-512.jpg" alt="boy eating ice-cream" width="300" />
