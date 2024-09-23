@@ -283,7 +283,7 @@ class FormatTest(unittest.TestCase):
         # correct format
         ground_truth = [
             {
-                "role": "system",
+                "role": "user",
                 "content": (
                     "You are a helpful assistant\n"
                     "\n"
