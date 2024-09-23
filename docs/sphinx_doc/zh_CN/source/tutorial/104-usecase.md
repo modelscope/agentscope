@@ -170,7 +170,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
     # Night phase: werewolves discuss
     hint = HostMsg(content=Prompts.to_wolves.format(n2s(wolves)))
     with msghub(wolves, announcement=hint) as hub:
-      	set_parsers(wolves, Prompts.wolves_discuss_parser)
+        set_parsers(wolves, Prompts.wolves_discuss_parser)
         for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
             x = sequentialpipeline(wolves)
             if x.metadata.get("finish_discussion", False):
@@ -295,7 +295,7 @@ for i in range(1, MAX_GAME_ROUND + 1):
 
 ```bash
 cd examples/game_werewolf
-python main.py  # Assuming the pipeline is implemented in main.py
+python werewolf.py  # Assuming the pipeline is implemented in werewolf.py
 ```
 
 建议您在在 [AgentScope Studio](https://modelscope.github.io/agentscope/zh_CN/tutorial/209-gui.html) 中启动游戏，在对应的链接中您将看到下面的内容输出。
