@@ -359,7 +359,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         system_content = "\n".join(system_content_template)
 
         system_message = {
-            "role": "system",
+            "role": "user",
             "content": system_content,
         }
 

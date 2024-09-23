@@ -8,7 +8,6 @@ from typing import Any, Union, Sequence, List
 import requests
 from loguru import logger
 
-from .gemini_model import GeminiChatWrapper
 from .openai_model import OpenAIChatWrapper
 from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
@@ -221,6 +220,8 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 
         # Gemini
         elif model_name and model_name.startswith("gemini"):
+            from .gemini_model import GeminiChatWrapper
+
             return GeminiChatWrapper.format(*args)
 
         # Include DashScope, ZhipuAI, Ollama, the other models supported by
