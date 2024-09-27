@@ -20,6 +20,7 @@ You can also set the following arguments:
 - `bidder-num`: the number of bidders who participate in the auction.
 - `agent-type`: `random` or `llm`, the agent type of bidders.
 - `waiting-time`: the waiting time for the auctioneer to decide the winner.
+- `use-dist`: whether to use the distributed version. (You have to shut down the simulation manually in the distributed version.)
 
 The following is sample output:
 

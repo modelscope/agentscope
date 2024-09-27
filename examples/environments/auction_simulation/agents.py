@@ -6,7 +6,7 @@ import threading
 import time
 from typing import Optional, Sequence, Union
 
-from env import Auction
+from env import Auction, Item
 
 from loguru import logger
 from agentscope.agents import AgentBase
@@ -74,7 +74,7 @@ class RandomBidder(AgentBase):
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Generate a random value"""
-        item = x.content
+        item = Item.from_dict(x.content["item"])
         # generate a random bid or not to bid
         response = self.generate_random_response(item.opening_price)
         msg = Msg(self.name, content=response, role="assistant")
@@ -131,15 +131,15 @@ class Bidder(AgentBase):
         if self.memory:
             self.memory.add(x)
 
-        item = x.content
-        bidder = x.get("bidder", None)
-        prev_bid = x.get("bid", None)
+        item = Item.from_dict(x.content["item"])
+        bidder_name = x.content.get("bidder_name", None)
+        prev_bid = x.content.get("bid", None)
         content = (
             f"The item is {item.name} and "
             f"the opening price is {item.opening_price}."
         )
-        if bidder and prev_bid:
-            content += f" Now {bidder.name} bid {prev_bid} for the item."
+        if bidder_name and prev_bid:
+            content += f" Now {bidder_name} bid {prev_bid} for the item."
         bid_info = Msg("assistant", content=content, role="assistant")
 
         # prepare prompt

@@ -23,6 +23,24 @@ class Item:
         self.opening_price = opening_price
         self.is_auctioned = is_auctioned
 
+    def to_dict(self) -> dict:
+        """Convert the item to a dict."""
+        return {
+            "name": self.name,
+            "opening_price": self.opening_price,
+            "is_auctioned": self.is_auctioned,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Item":
+        """Convert the item from a dict."""
+        assert "name" in data
+        return cls(
+            name=data["name"],
+            opening_price=data.get("opening_price", 5),
+            is_auctioned=data.get("is_auctioned", False),
+        )
+
 
 class Auction(BasicEnv):
     """The auction env."""

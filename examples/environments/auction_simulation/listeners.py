@@ -32,7 +32,11 @@ class StartListener(EventListener):
         item = event.args["item"]
         if not item.is_auctioned:
             bid = self.bidder(
-                Msg("auctioneer", content=item, role="assistant"),
+                Msg(
+                    "auctioneer",
+                    content={"item": item.to_dict()},
+                    role="assistant",
+                ),
             ).content
             if bid:
                 env.bid(self.bidder, item, bid)
@@ -70,12 +74,15 @@ class BidListener(EventListener):
             return
 
         if not item.is_auctioned:
+            msg_content = {
+                "item": item.to_dict(),
+                "bidder_name": bidder.name,
+                "bid": prev_bid,
+            }
             bid = self.bidder(
                 Msg(
                     "auctioneer",
-                    content=item,
-                    bidder=bidder,
-                    bid=prev_bid,
+                    content=msg_content,
                     role="assistant",
                 ),
             ).content
