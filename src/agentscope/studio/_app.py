@@ -36,12 +36,12 @@ from ..constants import (
     FILE_COUNT_LIMIT,
 )
 from ._studio_utils import _check_and_convert_id_type
-from ..utils.tools import (
+from ..utils.common import (
     _is_process_alive,
     _is_windows,
     _generate_new_runtime_id,
 )
-from ..rpc.rpc_agent_client import RpcAgentClient
+from ..rpc.rpc_client import RpcClient
 
 
 _app = Flask(__name__)
@@ -302,7 +302,7 @@ def _get_all_servers() -> Response:
 @_app.route("/api/servers/status/<server_id>", methods=["GET"])
 def _get_server_status(server_id: str) -> Response:
     server = _ServerTable.query.filter_by(id=server_id).first()
-    status = RpcAgentClient(
+    status = RpcClient(
         host=server.host,
         port=server.port,
     ).get_server_info()
@@ -325,7 +325,7 @@ def _delete_server() -> Response:
     stop_server = request.json.get("stop", False)
     server = _ServerTable.query.filter_by(id=server_id).first()
     if stop_server:
-        RpcAgentClient(host=server.host, port=server.port).stop()
+        RpcClient(host=server.host, port=server.port).stop()
     _ServerTable.query.filter_by(id=server_id).delete()
     _db.session.commit()
     return jsonify({"status": "ok"})
@@ -335,7 +335,7 @@ def _delete_server() -> Response:
 def _get_server_agent_info(server_id: str) -> Response:
     _app.logger.info(f"Get info of server [{server_id}]")
     server = _ServerTable.query.filter_by(id=server_id).first()
-    agents = RpcAgentClient(
+    agents = RpcClient(
         host=server.host,
         port=server.port,
     ).get_agent_list()
@@ -349,11 +349,11 @@ def _delete_agent() -> Response:
     server = _ServerTable.query.filter_by(id=server_id).first()
     # delete all agents if agent_id is None
     if agent_id is not None:
-        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+        ok = RpcClient(host=server.host, port=server.port).delete_agent(
             agent_id,
         )
     else:
-        ok = RpcAgentClient(
+        ok = RpcClient(
             host=server.host,
             port=server.port,
         ).delete_all_agent()
@@ -365,7 +365,7 @@ def _agent_memory() -> Response:
     server_id = request.json.get("server_id")
     agent_id = request.json.get("agent_id")
     server = _ServerTable.query.filter_by(id=server_id).first()
-    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+    mem = RpcClient(host=server.host, port=server.port).get_agent_memory(
         agent_id,
     )
     if isinstance(mem, dict):
@@ -381,13 +381,18 @@ def _alloc_server() -> Response:
     # TODO: allocate based on server's cpu and memory usage
     # currently random select a server
     servers = _ServerTable.query.all()
+    if len(servers) == 0:
+        return jsonify({"status": "fail"})
     server = choice(servers)
-    return jsonify(
-        {
-            "host": server.host,
-            "port": server.port,
-        },
-    )
+    if RpcClient(host=server.host, port=server.port).is_alive():
+        return jsonify(
+            {
+                "host": server.host,
+                "port": server.port,
+            },
+        )
+    else:
+        return jsonify({"status": "fail"})
 
 
 @_app.route("/api/messages/push", methods=["POST"])
@@ -711,7 +716,7 @@ def _save_workflow() -> Response:
         return jsonify(
             {
                 "message": f"The workflow file size exceeds "
-                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+                f"{FILE_SIZE_LIMIT / (1024 * 1024)} MB limit",
             },
         )
 

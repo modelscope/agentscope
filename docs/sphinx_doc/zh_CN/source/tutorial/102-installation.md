@@ -48,11 +48,7 @@ cd agentscope
 
 # 针对本地化的multi-agent应用
 pip install -e .
-# 为分布式multi-agent应用
-pip install -e .[distribute]  # 在Mac上使用`pip install -e .\[distribute\]`
 ```
-
-**注意**：`[distribute]`选项安装了分布式应用程序所需的额外依赖项。在运行这些命令之前，请激活您的虚拟环境。
 
 ### 使用Pip安装
 
@@ -60,10 +56,37 @@ pip install -e .[distribute]  # 在Mac上使用`pip install -e .\[distribute\]`
 
 ```bash
 # 针对本地化的multi-agent应用
-pip install agentscope --pre
+pip install agentscope
+```
 
-# 为分布式multi-agent应用
-pip install agentscope[distribute] --pre  # 在Mac上使用`pip install agentscope\[distribute\] --pre`
+### 额外依赖
+
+AgentScope 支持可选依赖如下，用户可以根据自己的需求选择安装：
+
+- ollama: Ollama API
+- litellm: Litellm API
+- zhipuai: Zhipuai API
+- gemini: Gemini API
+- service: 不同工具函数的依赖
+- distribute: 分布式模式的依赖
+- full: 一次性安装上述所有的依赖，可能耗时较长
+
+可以通过将它们添加到安装命令中来安装这些依赖。
+
+#### Windows
+
+```bash
+pip install agentscope[gemini]
+# or
+pip install agentscope[ollama,distribute]
+```
+
+#### Mac & Linux
+
+```bash
+pip install agentscope\[gemini\]
+# or
+pip install agentscope\[ollama,distribute\]
 ```
 
 [[返回顶端]](#102-installation-zh)

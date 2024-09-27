@@ -27,10 +27,10 @@ try:
 except (ModuleNotFoundError, ImportError):
     resource = None
 
-from agentscope.utils.common import create_tempdir, timer
-from agentscope.service.service_status import ServiceExecStatus
-from agentscope.service.service_response import ServiceResponse
-from agentscope.constants import (
+from ...utils.common import create_tempdir, timer
+from ..service_status import ServiceExecStatus
+from ..service_response import ServiceResponse
+from ...constants import (
     _DEFAULT_PYPI_MIRROR,
     _DEFAULT_TRUSTED_HOST,
 )

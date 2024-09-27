@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Search question in the web"""
 from typing import Any
-from agentscope.service.service_response import ServiceResponse
-from agentscope.utils.common import requests_get
-from agentscope.service.service_status import ServiceExecStatus
+from ..service_response import ServiceResponse
+from ...utils.common import _requests_get
+from ..service_status import ServiceExecStatus
 
 
 def bing_search(
@@ -85,7 +85,7 @@ def bing_search(
 
     headers = {"Ocp-Apim-Subscription-Key": api_key}
 
-    search_results = requests_get(
+    search_results = _requests_get(
         bing_search_url,
         params,
         headers,
@@ -173,7 +173,7 @@ def google_search(
     if kwargs:
         params.update(**kwargs)
 
-    search_results = requests_get(google_search_url, params)
+    search_results = _requests_get(google_search_url, params)
 
     if isinstance(search_results, str):
         return ServiceResponse(ServiceExecStatus.ERROR, search_results)
@@ -188,7 +188,7 @@ def google_search(
             {
                 "title": result["title"],
                 "link": result["link"],
-                "snippet": result["snippet"],
+                "snippet": result.get("snippet", ""),
             }
             for result in results
         ],

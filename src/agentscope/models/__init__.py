@@ -38,7 +38,9 @@ from .zhipu_model import (
 from .litellm_model import (
     LiteLLMChatWrapper,
 )
-
+from .yi_model import (
+    YiChatWrapper,
+)
 
 __all__ = [
     "ModelWrapperBase",
@@ -61,6 +63,7 @@ __all__ = [
     "ZhipuAIChatWrapper",
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
+    "YiChatWrapper",
 ]
 
 

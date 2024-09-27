@@ -1,101 +1,7 @@
 # -*- coding: utf-8 -*-
 """Configs for Distributed mode."""
-from typing import Callable, Any
+
 from loguru import logger
-
-try:
-    import cloudpickle as pickle
-except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
-
-    pickle = ImportErrorReporter(import_error, "distribtue")
-
-from .rpc_agent_client import RpcAgentClient, ResponseStub
-from ..utils.tools import is_web_accessible
-
-
-def async_func(func: Callable) -> Callable:
-    """A decorator for async function.
-    In distributed mode, async functions will return a placeholder message
-    immediately.
-
-    Args:
-        func (`Callable`): The function to decorate.
-    """
-
-    func._is_async = True  # pylint: disable=W0212
-    return func
-
-
-class AsyncResult:
-    """Use this class to get the the async result from rpc server."""
-
-    def __init__(
-        self,
-        host: str,
-        port: int,
-        task_id: int = None,
-        stub: ResponseStub = None,
-    ) -> None:
-        self.host = host
-        self.port = port
-        self.stub = None
-        self.task_id: int = None
-        if task_id is not None:
-            self.task_id = task_id
-        else:
-            self.stub = stub
-
-    def get_task_id(self) -> str:
-        """get the task_id."""
-        try:
-            return pickle.loads(self.stub.get_response())
-        except Exception as e:
-            logger.error(
-                f"Failed to get task_id: {self.stub.get_response()}",
-            )
-            raise ValueError(
-                f"Failed to get task_id: {self.stub.get_response()}",
-            ) from e
-
-    def get(self) -> Any:
-        """Get the value"""
-        if self.task_id is None:
-            self.task_id = self.get_task_id()
-        return pickle.loads(
-            RpcAgentClient(self.host, self.port).update_placeholder(
-                self.task_id,
-            ),
-        )
-
-    def check_and_download_files(self, urls: list[str]) -> list[str]:
-        """Check whether the urls are accessible. If not, download them
-        from rpc server."""
-        checked_urls = []
-        for url in urls:
-            if not is_web_accessible(url):
-                # TODO: download in sub-threads
-                client = RpcAgentClient(self.host, self.port)
-                checked_urls.append(client.download_file(path=url))
-            else:
-                checked_urls.append(url)
-        return checked_urls
-
-    def __getstate__(self) -> dict:
-        if self.task_id is None:
-            self.task_id = self.get_task_id()
-        return {
-            "host": self.host,
-            "port": self.port,
-            "task_id": self.task_id,
-            "stub": None,
-        }
-
-    def __setstate__(self, state: dict) -> None:
-        self.host = state["host"]
-        self.port = state["port"]
-        self.task_id = state["task_id"]
-        self.stub = None
 
 
 class DistConf(dict):
@@ -106,7 +12,8 @@ class DistConf(dict):
         host: str = "localhost",
         port: int = None,
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
+        max_expire_time: int = 7200,
+        max_timeout_seconds: int = 5,
         local_mode: bool = True,
         lazy_launch: bool = False,
     ):
@@ -119,8 +26,10 @@ class DistConf(dict):
                 Port of the rpc agent server.
             max_pool_size (`int`, defaults to `8192`):
                 Max number of task results that the server can accommodate.
-            max_timeout_seconds (`int`, defaults to `7200`):
-                Timeout for task results.
+            max_expire_time (`int`, defaults to `7200`):
+                Max expire time of task results in seconds.
+            max_timeout_seconds (`int`, defaults to `5`):
+                Max timeout seconds for rpc calls.
             local_mode (`bool`, defaults to `True`):
                 Whether the started rpc server only listens to local
                 requests.
@@ -130,6 +39,7 @@ class DistConf(dict):
         self["host"] = host
         self["port"] = port
         self["max_pool_size"] = max_pool_size
+        self["max_expire_time"] = max_expire_time
         self["max_timeout_seconds"] = max_timeout_seconds
         self["local_mode"] = local_mode
         if lazy_launch:

@@ -13,12 +13,12 @@ from typing import Union, List
 
 from loguru import logger
 
-from agentscope.rpc import async_func, RpcAgentClient
+from agentscope.rpc import async_func, RpcClient
 from agentscope.message import Msg
 from agentscope.agents import AgentBase
 from agentscope.environment import BasicEnv
 from agentscope.exception import ResponseParsingError
-from agentscope.utils.tools import _get_timestamp
+from agentscope.utils.common import _get_timestamp
 from agentscope.logging import log_msg
 
 SAVE_DIR = f"./runs/{os.uname().nodename}"
@@ -376,7 +376,7 @@ class Group(BasicEnv):
         self.max_value = max_value
 
     @async_func
-    def run(self, round: int, winner: float) -> tuple:
+    def run(self, round: int, winner: float) -> dict:
         """Play one round of game in this group."""
         if round != 0:
             content = f"The winner number of this round is {winner:.2f}. Let's move on to the next round.\n{self.usr_prompt}"
@@ -397,7 +397,7 @@ class Group(BasicEnv):
                     self.cnt += 1
             except Exception as e:
                 print(e)
-        return (self.sum, self.cnt)
+        return {"sum": self.sum, "cnt": self.cnt}
 
 
 def merge_result(results: list[dict]) -> list:
@@ -482,7 +482,7 @@ def check_server_alive(
     max_retry = 10
     for host in hosts:
         for port in range(base_port, base_port + agent_server_per_host):
-            client = RpcAgentClient(host, port)
+            client = RpcClient(host, port)
             i = 0
             while not client.is_alive() and i < max_retry:
                 logger.warning(
@@ -592,35 +592,30 @@ class GuessTwoThirdGame(BasicEnv):
         self.envs = []
         env_num = self.env_server_per_host * self.host_num
         participant_per_group = self.participant_num // env_num
-        tasks = []
         logger.info(f"init {env_num} envs...")
-        # init moderators
-        with futures.ThreadPoolExecutor(max_workers=None) as executor:
-            for i in range(env_num):
-                tasks.append(
-                    executor.submit(
-                        Group,
-                        name=f"group_{i}",
-                        agent_type=self.agent_type,
-                        ratio=self.ratio,
-                        participant_configs=configs[
-                            i
-                            * participant_per_group : (i + 1)
-                            * participant_per_group
-                        ],
-                        max_value=self.max_value,
-                        sleep_time=self.sleep_time,
-                        usr_id=self.usr_id,
-                        to_dist={
-                            "host": self.hosts[i // self.env_server_per_host],
-                            "port": self.base_port
-                            + self.agent_server_per_host
-                            + i % self.env_server_per_host,
-                        },
-                    ),
-                )
-            for task in tasks:
-                self.envs.append(task.result())
+        # init groups
+        for i in range(env_num):
+            self.envs.append(
+                Group(
+                    name=f"group_{i}",
+                    agent_type=self.agent_type,
+                    ratio=self.ratio,
+                    participant_configs=configs[
+                        i
+                        * participant_per_group : (i + 1)
+                        * participant_per_group
+                    ],
+                    max_value=self.max_value,
+                    sleep_time=self.sleep_time,
+                    usr_id=self.usr_id,
+                    to_dist={
+                        "host": self.hosts[i // self.env_server_per_host],
+                        "port": self.base_port
+                        + self.agent_server_per_host
+                        + i % self.env_server_per_host,
+                    },
+                ),
+            )
         iet = time.time()
         logger.info(f"[init takes {iet - ist} s]")
 
@@ -638,9 +633,8 @@ class GuessTwoThirdGame(BasicEnv):
                 ),
             )
         for t in tasks:
-            s, c = t.get()
-            summ += s
-            cnt += c
+            summ += t["sum"]
+            cnt += t["cnt"]
         self.winners.append(summ / cnt * RATIO_MAP[self.ratio])
         et = time.time()
         log_msg(

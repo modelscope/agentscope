@@ -18,7 +18,7 @@ try:
         add_RpcAgentServicer_to_server,
     )
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     grpc = ImportErrorReporter(import_error, "distribute")
     add_RpcAgentServicer_to_server = ImportErrorReporter(
@@ -26,9 +26,9 @@ except ImportError as import_error:
         "distribute",
     )
 import agentscope
+from ..rpc.rpc_meta import RpcMeta
 from ..server.servicer import AgentServerServicer
-from ..manager import ASManager
-from ..utils.tools import check_port, generate_id_from_seed
+from ..utils.common import _check_port, _generate_id_from_seed
 from ..constants import _DEFAULT_RPC_OPTIONS
 
 
@@ -41,8 +41,12 @@ def _setup_agent_server(
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
+    capacity: int = 32,
+    pool_type: str = "local",
+    redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 7200,
+    max_expire_time: int = 7200,
+    max_timeout_seconds: int = 5,
     studio_url: str = None,
     custom_agent_classes: list = None,
     agent_dir: str = None,
@@ -68,10 +72,22 @@ def _setup_agent_server(
             A pipe instance used to pass the actual port of the server.
         local_mode (`bool`, defaults to `True`):
             Only listen to local requests.
+        capacity (`int`, default to `32`):
+            The number of concurrent agents in the server.
+        pool-type (`str`, defaults to `"local"`): The type of the async
+            message pool, which can be `local` or `redis`. If `redis` is
+            specified, you need to start a redis server before launching
+            the server.
+        redis-url (`str`, defaults to `"redis://localhost:6379"`): The
+            url of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
-        max_timeout_seconds (`int`, defaults to `7200`):
-            Timeout for agent replies.
+        max_expire_time (`int`, defaults to `7200`):
+            Maximum time for async results to be cached in the server.
+            Note that expired messages will be deleted.
+        max_timeout_seconds (`int`, defaults to `5`):
+            The maximum time (in seconds) that the server will wait for
+            the result of an async call.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
         custom_agent_classes (`list`, defaults to `None`):
@@ -91,10 +107,14 @@ def _setup_agent_server(
             stop_event=stop_event,
             pipe=pipe,
             local_mode=local_mode,
+            capacity=capacity,
+            pool_type=pool_type,
+            redis_url=redis_url,
             max_pool_size=max_pool_size,
+            max_expire_time=max_expire_time,
             max_timeout_seconds=max_timeout_seconds,
             studio_url=studio_url,
-            custom_agent_classes=custom_agent_classes,
+            custom_classes=custom_agent_classes,
             agent_dir=agent_dir,
         ),
     )
@@ -109,10 +129,14 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     stop_event: EventClass = None,
     pipe: int = None,
     local_mode: bool = True,
+    capacity: int = 32,
+    pool_type: str = "local",
+    redis_url: str = "redis://localhost:6379",
     max_pool_size: int = 8192,
-    max_timeout_seconds: int = 7200,
+    max_expire_time: int = 7200,
+    max_timeout_seconds: int = 5,
     studio_url: str = None,
-    custom_agent_classes: list = None,
+    custom_classes: list = None,
     agent_dir: str = None,
 ) -> None:
     """Setup agent server in an async way.
@@ -134,13 +158,24 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         local_mode (`bool`, defaults to `True`):
             If `True`, only listen to requests from "localhost", otherwise,
             listen to requests from all hosts.
+        capacity (`int`, default to `32`):
+            The number of concurrent agents in the server.
+        pool-type (`str`, defaults to `"local"`): The type of the async
+            message pool, which can be `local` or `redis`. If `redis` is
+            specified, you need to start a redis server before launching
+            the server.
+        redis-url (`str`, defaults to `"redis://localhost:6379"`): The url
+            of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             The max number of agent reply messages that the server can
             accommodate. Note that the oldest message will be deleted
             after exceeding the pool size.
-        max_timeout_seconds (`int`, defaults to `7200`):
-            Maximum time for reply messages to be cached in the server.
+        max_expire_time (`int`, defaults to `7200`):
+            Maximum time for async results to be cached in the server.
             Note that expired messages will be deleted.
+        max_timeout_seconds (`int`, defaults to `5`):
+            The maximum time (in seconds) that the server will wait for
+            the result of an async call.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
         custom_agent_classes (`list`, defaults to `None`):
@@ -152,6 +187,8 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     """
 
     if init_settings is not None:
+        from agentscope.manager import ASManager
+
         ASManager.get_instance().load_dict(init_settings)
 
     servicer = AgentServerServicer(
@@ -160,24 +197,20 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
         port=port,
         server_id=server_id,
         studio_url=studio_url,
+        capacity=capacity,
+        pool_type=pool_type,
+        redis_url=redis_url,
         max_pool_size=max_pool_size,
+        max_expire_time=max_expire_time,
         max_timeout_seconds=max_timeout_seconds,
     )
-    if custom_agent_classes is None:
-        custom_agent_classes = []
+    if custom_classes is None:
+        custom_classes = []
     if agent_dir is not None:
-        custom_agent_classes.extend(load_agents_from_dir(agent_dir))
+        custom_classes.extend(load_agents_from_dir(agent_dir))
     # update agent registry
-    for agent_class in custom_agent_classes:
-        from ..agents.agent import AgentBase
-        from ..environment import Env
-
-        if issubclass(agent_class, AgentBase):
-            AgentBase.register_agent_class(agent_class=agent_class)
-        elif issubclass(agent_class, Env):
-            Env.register_env_class(env_class=agent_class)
-        else:
-            logger.warning(f"Class [{agent_class}] is not an agent or env")
+    for cls in custom_classes:
+        RpcMeta.register_class(cls)
 
     async def shutdown_signal_handler() -> None:
         logger.info(
@@ -198,10 +231,10 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             )
     while True:
         try:
-            port = check_port(port)
+            port = _check_port(port)
             servicer.port = port
             server = grpc.aio.server(
-                futures.ThreadPoolExecutor(max_workers=None),
+                futures.ThreadPoolExecutor(max_workers=capacity),
                 # set max message size to 32 MB
                 options=_DEFAULT_RPC_OPTIONS,
             )
@@ -234,7 +267,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
     )
 
 
-def load_agents_from_file(agent_file: str) -> list:
+def load_custom_class_from_file(agent_file: str) -> list:
     """Load AgentBase sub classes from a python file.
 
     Args:
@@ -251,19 +284,13 @@ def load_agents_from_file(agent_file: str) -> list:
     )
     module = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
     spec.loader.exec_module(module)
-    custom_agent_classes = []
-    from ..agents.agent import AgentBase
-    from ..environment import Env
+    custom_classes = []
 
     for attr_name in dir(module):
         attr = getattr(module, attr_name)
-        if (
-            isinstance(attr, type)
-            and (issubclass(attr, AgentBase) or issubclass(attr, Env))
-            and (attr is not AgentBase and attr is not Env)
-        ):
-            custom_agent_classes.append(attr)
-    return custom_agent_classes
+        if isinstance(attr, type):
+            custom_classes.append(attr)
+    return custom_classes
 
 
 def load_agents_from_dir(agent_dir: str) -> list:
@@ -288,7 +315,7 @@ def load_agents_from_dir(agent_dir: str) -> list:
                     try:
                         module_path = os.path.join(root, file)
                         custom_agent_classes.extend(
-                            load_agents_from_file(module_path),
+                            load_custom_class_from_file(module_path),
                         )
                     except Exception as e:
                         logger.error(
@@ -306,8 +333,12 @@ class RpcAgentServerLauncher:
         self,
         host: str = "localhost",
         port: int = None,
+        capacity: int = 32,
+        pool_type: str = "local",
+        redis_url: str = "redis://localhost:6379",
         max_pool_size: int = 8192,
-        max_timeout_seconds: int = 7200,
+        max_expire_time: int = 7200,
+        max_timeout_seconds: int = 5,
         local_mode: bool = False,
         agent_dir: str = None,
         custom_agent_classes: list = None,
@@ -321,13 +352,23 @@ class RpcAgentServerLauncher:
                 Hostname of the agent server.
             port (`int`, defaults to `None`):
                 Socket port of the agent server.
+            capacity (`int`, default to `32`):
+                The number of concurrent agents in the server.
+            pool-type (`str`, defaults to `"local"`): The type of the async
+                message pool, which can be `local` or `redis`. If `redis` is
+                specified, you need to start a redis server before launching
+                the server.
+            redis-url (`str`, defaults to `"redis://localhost:6379"`): The
+                address of the redis server.
             max_pool_size (`int`, defaults to `8192`):
-                The max number of agent reply messages that the server can
-                accommodate. Note that the oldest message will be deleted
+                The max number of async results that the server can
+                accommodate. Note that the oldest result will be deleted
                 after exceeding the pool size.
-            max_timeout_seconds (`int`, defaults to `7200`):
-                Maximum time for reply messages to be cached in the server.
+            max_expire_time (`int`, defaults to `7200`):
+                Maximum time for async results to be cached in the server.
                 Note that expired messages will be deleted.
+            max_timeout_seconds (`int`, defaults to `5`):
+                Max timeout seconds for rpc calls.
             local_mode (`bool`, defaults to `False`):
                 If `True`, only listen to requests from "localhost", otherwise,
                 listen to requests from all hosts.
@@ -343,8 +384,12 @@ class RpcAgentServerLauncher:
                 The url of the agentscope studio.
         """
         self.host = host
-        self.port = check_port(port)
+        self.port = _check_port(port)
+        self.capacity = capacity
+        self.pool_type = pool_type
+        self.redis_url = redis_url
         self.max_pool_size = max_pool_size
+        self.max_expire_time = max_expire_time
         self.max_timeout_seconds = max_timeout_seconds
         self.local_mode = local_mode
         self.server = None
@@ -364,7 +409,7 @@ class RpcAgentServerLauncher:
     @classmethod
     def generate_server_id(cls, host: str, port: int) -> str:
         """Generate server id"""
-        return generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
+        return _generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
 
     def _launch_in_main(self) -> None:
         """Launch agent server in main-process"""
@@ -375,12 +420,16 @@ class RpcAgentServerLauncher:
             _setup_agent_server_async(
                 host=self.host,
                 port=self.port,
+                capacity=self.capacity,
                 stop_event=self.stop_event,
                 server_id=self.server_id,
+                pool_type=self.pool_type,
+                redis_url=self.redis_url,
                 max_pool_size=self.max_pool_size,
+                max_expire_time=self.max_expire_time,
                 max_timeout_seconds=self.max_timeout_seconds,
                 local_mode=self.local_mode,
-                custom_agent_classes=self.custom_agent_classes,
+                custom_classes=self.custom_agent_classes,
                 agent_dir=self.agent_dir,
                 studio_url=self.studio_url,
             ),
@@ -388,7 +437,18 @@ class RpcAgentServerLauncher:
 
     def _launch_in_sub(self) -> None:
         """Launch an agent server in sub-process."""
+        from agentscope.manager import ASManager
+        from agentscope.rpc import RpcClient
+
         init_settings = ASManager.get_instance().state_dict()
+        # gRPC channel should be closed before forking new process
+        # ref: https://github.com/grpc/grpc/blob/master/doc/fork_support.md
+        for (
+            _,
+            channel,
+        ) in RpcClient._CHANNEL_POOL.items():  # pylint: disable=W0212
+            channel.close()
+        RpcClient._CHANNEL_POOL.clear()  # pylint: disable=W0212
 
         self.parent_con, child_con = Pipe()
         start_event = Event()
@@ -402,7 +462,10 @@ class RpcAgentServerLauncher:
                 "start_event": start_event,
                 "stop_event": self.stop_event,
                 "pipe": child_con,
+                "pool_type": self.pool_type,
+                "redis_url": self.redis_url,
                 "max_pool_size": self.max_pool_size,
+                "max_expire_time": self.max_expire_time,
                 "max_timeout_seconds": self.max_timeout_seconds,
                 "local_mode": self.local_mode,
                 "studio_url": self.studio_url,
@@ -460,11 +523,17 @@ def as_server() -> None:
 
         * `--host`: the hostname of the server.
         * `--port`: the socket port of the server.
+        * `--capacity`: the number of concurrent agents in the server.
+        * `--pool-type`: the type of the async message pool, which can be
+          `local` or `redis`. If `redis` is specified, you need to start a
+          redis server before launching the server. Defaults to `local`.
+        * `--redis-url`: the url of the redis server, defaults to
+          `redis://localhost:6379`.
         * `--max-pool-size`: max number of agent reply messages that the server
           can accommodate. Note that the oldest message will be deleted
           after exceeding the pool size.
-        * `--max-timeout-seconds`: max time for reply messages to be cached
-          in the server. Note that expired messages will be deleted.
+        * `--max-expire`: max expire time for async function result.
+        * `--max-timeout-seconds`: max timeout for rpc call.
         * `--local-mode`: whether the started agent server only listens to
           local requests.
         * `--model-config-path`: the path to the model config json file
@@ -496,23 +565,48 @@ def as_server() -> None:
         help="socket port of the server",
     )
     parser.add_argument(
+        "--capacity",
+        type=int,
+        default=os.cpu_count(),
+        help=(
+            "the number of concurrent agents in the server, exceeding this "
+            "may cause severe performance degradation or even deadlock."
+        ),
+    )
+    parser.add_argument(
+        "--pool-type",
+        type=str,
+        choices=["local", "redis"],
+        default="local",
+        help="the url of agentscope studio",
+    )
+    parser.add_argument(
+        "--redis-url",
+        type=str,
+        default="redis://localhost:6379",
+        help="the url of redis server",
+    )
+    parser.add_argument(
         "--max-pool-size",
         type=int,
         default=8192,
         help=(
-            "max number of agent reply messages that the server "
-            "can accommodate. Note that the oldest message will be deleted "
+            "the max number of async result that the server "
+            "can accommodate. Note that the oldest result will be deleted "
             "after exceeding the pool size."
         ),
     )
     parser.add_argument(
-        "--max-timeout-seconds",
+        "--max-expire-time",
         type=int,
         default=7200,
-        help=(
-            "max time for agent reply messages to be cached"
-            "in the server. Note that expired messages will be deleted."
-        ),
+        help="max expire time in second for async results.",
+    )
+    parser.add_argument(
+        "--max-timeout-seconds",
+        type=int,
+        default=5,
+        help="max timeout for rpc call in seconds",
     )
     parser.add_argument(
         "--local-mode",
@@ -575,7 +669,11 @@ def as_server() -> None:
         host=args.host,
         port=args.port,
         server_id=args.server_id,
+        capacity=args.capacity,
+        pool_type=args.pool_type,
+        redis_url=args.redis_url,
         max_pool_size=args.max_pool_size,
+        max_expire_time=args.max_expire_time,
         max_timeout_seconds=args.max_timeout_seconds,
         local_mode=args.local_mode,
         studio_url=args.studio_url,

@@ -14,15 +14,11 @@ from loguru import logger
 
 from .memory import MemoryBase
 from ..manager import ModelManager
+from ..serialize import serialize, deserialize
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
-from ..message import (
-    deserialize,
-    serialize,
-    MessageBase,
-    Msg,
-    PlaceholderMessage,
-)
+from ..message import Msg
+from ..rpc import AsyncResult
 
 
 class TemporaryMemory(MemoryBase):
@@ -32,20 +28,18 @@ class TemporaryMemory(MemoryBase):
 
     def __init__(
         self,
-        config: Optional[dict] = None,
         embedding_model: Union[str, Callable] = None,
     ) -> None:
         """
         Temporary memory module for conversation.
+
         Args:
-            config (dict):
-                configuration of the memory
             embedding_model (Union[str, Callable])
                 if the temporary memory needs to be embedded,
                 then either pass the name of embedding model or
                 the embedding model itself.
         """
-        super().__init__(config)
+        super().__init__()
 
         self._content = []
 
@@ -63,7 +57,6 @@ class TemporaryMemory(MemoryBase):
         memories: Union[Sequence[Msg], Msg, None],
         embed: bool = False,
     ) -> None:
-        # pylint: disable=too-many-branches
         """
         Adding new memory fragment, depending on how the memory are stored
         Args:
@@ -80,29 +73,23 @@ class TemporaryMemory(MemoryBase):
         else:
             record_memories = memories
 
-        # if memory doesn't have id attribute, we skip the checking
+        # FIXME: a single message may be inserted multiple times
+        # Assert the message types
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
-            if not issubclass(type(memory_unit), MessageBase):
-                try:
-                    memory_unit = Msg(**memory_unit)
-                except Exception as exc:
-                    raise ValueError(
-                        f"Cannot add {memory_unit} to memory, "
-                        f"must be with subclass of MessageBase",
-                    ) from exc
-
             # in case this is a PlaceholderMessage, try to update
             # the values first
-            if isinstance(memory_unit, PlaceholderMessage):
-                memory_unit.update_value()
-                memory_unit = Msg(**memory_unit)
+            if isinstance(memory_unit, AsyncResult):
+                memory_unit = memory_unit.result()
 
-            # add to memory if it's new
-            if (
-                not hasattr(memory_unit, "id")
-                or memory_unit.id not in memories_idx
-            ):
+            if not isinstance(memory_unit, Msg):
+                raise ValueError(
+                    f"Cannot add {type(memory_unit)} to memory, "
+                    f"must be a Msg object.",
+                )
+
+            # Add to memory if it's new
+            if memory_unit.id not in memories_idx:
                 if embed:
                     if self.embedding_model:
                         # TODO: embed only content or its string representation
@@ -220,8 +207,21 @@ class TemporaryMemory(MemoryBase):
                         e.doc,
                         e.pos,
                     )
-        else:
+        elif isinstance(memories, list):
+            for unit in memories:
+                if not isinstance(unit, Msg):
+                    raise TypeError(
+                        f"Expect a list of Msg objects, but get {type(unit)} "
+                        f"instead.",
+                    )
             load_memories = memories
+        elif isinstance(memories, Msg):
+            load_memories = [memories]
+        else:
+            raise TypeError(
+                f"The type of memories to be loaded is not supported. "
+                f"Expect str, list[Msg], or Msg, but get {type(memories)}.",
+            )
 
         # overwrite the original memories after loading the new ones
         if overwrite:

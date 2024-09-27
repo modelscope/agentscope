@@ -84,7 +84,7 @@ class RetrievalSolver(ProblemSolver):
         content = self.prompt_retrieval(request_string, question)
         x_request = request_agent(x=None, content=content)
         x = self.invoke_llm_call(x_request, dialog_agent)
-        solution = self.parse_llm_response_retrieval(x["content"])
+        solution = self.parse_llm_response_retrieval(x.content)
         return solution
 
     def solve_decomposition(self, request_string: str, question: str) -> dict:

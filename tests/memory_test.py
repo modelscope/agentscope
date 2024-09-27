@@ -9,6 +9,7 @@ from unittest.mock import patch, MagicMock
 
 from agentscope.message import Msg
 from agentscope.memory import TemporaryMemory
+from agentscope.serialize import serialize
 
 
 class TemporaryMemoryTest(unittest.TestCase):
@@ -80,7 +81,8 @@ class TemporaryMemoryTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             self.memory.add(self.invalid)
         self.assertTrue(
-            f"Cannot add {self.invalid} to memory" in str(context.exception),
+            f"Cannot add {type(self.invalid)} to memory, must be a Msg object."
+            in str(context.exception),
         )
 
     def test_load_export(self) -> None:
@@ -88,10 +90,11 @@ class TemporaryMemoryTest(unittest.TestCase):
         Test load and export function of TemporaryMemory
         """
         memory = TemporaryMemory()
-        user_input = Msg(name="user", content="Hello")
+        user_input = Msg(name="user", content="Hello", role="user")
         agent_input = Msg(
             name="agent",
             content="Hello! How can I help you?",
+            role="assistant",
         )
         memory.load([user_input, agent_input])
         retrieved_mem = memory.export(to_mem=True)
@@ -108,8 +111,8 @@ class TemporaryMemoryTest(unittest.TestCase):
         )
         memory.load(self.file_name_1)
         self.assertEqual(
-            memory.get_memory(),
-            [user_input, agent_input],
+            serialize(memory.get_memory()),
+            serialize([user_input, agent_input]),
         )
 
 
