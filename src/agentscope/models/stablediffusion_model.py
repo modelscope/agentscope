@@ -133,7 +133,7 @@ class StableDiffusionImageSynthesisWrapper(StableDiffusionWrapperBase):
             text = "Image saved to " + "\n".join(image_urls)
         else:
             image_urls = PIL_images
-            text = None
+            text = ""  # Just a placeholder
 
         return ModelResponse(
             text=text,
