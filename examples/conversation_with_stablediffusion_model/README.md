@@ -7,6 +7,13 @@ This example will show
 In this example, you can interact in a conversational format to generate images.
 Once the image is generated, the agent will respond with the local file path where the image is saved.
 
+## Minimum Hardware Requirements
+
+- **GPU**: NVIDIA GPU with at least 6.9GB of VRAM
+- **CPU**: Modern multi-core CPU (e.g., Intel i5 or AMD Ryzen 5)
+- **RAM**: Minimum 8GB
+- **Storage**: At least 10GB of available hard drive space
+
 ## How to Run
 
 You need to satisfy the following requirements to run this example:
@@ -37,7 +44,7 @@ Activate the virtual environment first, Then, run the following command in your 
 bash scripts/stable_diffusion_webui/sd_setup.sh -s YOUR-SD-WEBUI-PATH
 ```
 
-If you choose to start it on your own, you need to launch the Stable Diffusion Web UI with the following arguments: --api --port=7862. For more detailed instructions on starting the WebUI, refer to the [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
+If you choose to start it on your own, you need to launch the Stable Diffusion Web UI with the following arguments: `--api --port=7862`. For more detailed instructions on starting the WebUI, refer to the [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
 
 ### Step 3: Running the Example
 
