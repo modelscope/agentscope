@@ -41,9 +41,10 @@ class RetryFixedTimes(RetryBase):
     Retry a fixed number of times, and wait a fixed delay time between each attempt.
 
     Init dict format:
-        type: 'fixed'
-        max_retries (`int`): The max retry times
-        delay (`float`): The delay time between each attempt
+
+        - type: 'fixed'
+        - max_retries (`int`): The max retry times
+        - delay (`float`): The delay time between each attempt
 
     .. code-block:: python
 
@@ -89,11 +90,12 @@ class RetryExpential(RetryBase):
     Retry with exponential backoff, which means the delay time will increase exponentially.
 
     Init dict format:
-        type: 'expential'
-        max_retries (`int`): The max retry times
-        base_delay (`float`): The base delay time
-        max_delay (`float`): The max delay time, which will be used if the calculated delay time
-        exceeds it.
+
+        - type: 'expential'
+        - max_retries (`int`): The max retry times
+        - base_delay (`float`): The base delay time
+        - max_delay (`float`): The max delay time, which will be used if the calculated delay time
+        - exceeds it.
 
     .. code-block:: python
 
