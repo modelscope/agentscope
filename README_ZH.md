@@ -35,8 +35,6 @@
 |---------|----------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
-
-
 ----
 
 ## 新闻
@@ -55,7 +53,6 @@
 <img src="https://github.com/user-attachments/assets/b14d9b2f-ce02-4f40-8c1a-950f4022c0cc" width="45%" alt="agentscope-logo">
 <img src="https://github.com/user-attachments/assets/dfffbd1e-1fe7-49ee-ac11-902415b2b0d6" width="45%" alt="agentscope-logo">
 </h5>
-
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-07-15]** AgentScope 中添加了 Mixture of Agents 算法。使用样例请参考 [MoA 示例](https://github.com/modelscope/agentscope/blob/main/examples/conversation_mixture_of_agents)。
 
@@ -232,6 +229,7 @@ pip install agentscope[distribute]
 ```
 
 #### On Mac & Linux
+
 ```bash
 # From source
 pip install -e .\[distribute\]
@@ -362,34 +360,36 @@ pre-commit install
 
 请参阅我们的[贡献指南](https://modelscope.github.io/agentscope/zh_CN/tutorial/302-contribute.html)了解更多细节。
 
-## 引用
+## 发表
 
-如果您觉得我们的工作对您的研究或应用有帮助，请引用[我们的论文](https://arxiv.org/abs/2402.14034)。
+如果您觉得我们的工作对您的研究或应用有帮助，请引用如下论文
 
-```
-@article{agentscope,
-  author  = {Dawei Gao and
-             Zitao Li and
-             Xuchen Pan and
-             Weirui Kuang and
-             Zhijian Ma and
-             Bingchen Qian and
-             Fei Wei and
-             Wenhao Zhang and
-             Yuexiang Xie and
-             Daoyuan Chen and
-             Liuyi Yao and
-             Hongyi Peng and
-             Zeyu Zhang and
-             Lin Zhu and
-             Chen Cheng and
-             Hongzhu Shi and
-             Yaliang Li and
-             Bolin Ding and
-             Jingren Zhou},
-  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
-  journal = {CoRR},
-  volume  = {abs/2402.14034},
-  year    = {2024},
-}
-```
+1. [AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)
+
+    ```
+    @article{agentscope,
+        author  = {Dawei Gao and
+                   Zitao Li and
+                   Xuchen Pan and
+                   Weirui Kuang and
+                   Zhijian Ma and
+                   Bingchen Qian and
+                   Fei Wei and
+                   Wenhao Zhang and
+                   Yuexiang Xie and
+                   Daoyuan Chen and
+                   Liuyi Yao and
+                   Hongyi Peng and
+                   Ze Yu Zhang and
+                   Lin Zhu and
+                   Chen Cheng and
+                   Hongzhu Shi and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Jingren Zhou}
+        title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+        journal = {CoRR},
+        volume  = {abs/2402.14034},
+        year    = {2024},
+    }
+    ```

@@ -35,7 +35,6 @@ Start building LLM-empowered multi-agent applications in an easier way.
 |----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
 | <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
 
-
 ----
 
 ## News
@@ -187,7 +186,6 @@ the following libraries.
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with CodeAct Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_codeact_agent/)
   - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>[Conversation with Router Agent](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_router_agent/)
 
-
 - Game
   - [Gomoku](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)
   - [Werewolf](https://github.com/modelscope/agentscope/blob/main/examples/game_werewolf)
@@ -236,7 +234,6 @@ optional dependencies. Full list of optional dependencies refers to
 Taking distribution mode as an example, you can install its dependencies
 as follows:
 
-
 #### On Windows
 
 ```bash
@@ -247,13 +244,13 @@ pip install agentscope[distribute]
 ```
 
 #### On Mac & Linux
+
 ```bash
 # From source
 pip install -e .\[distribute\]
 # From pypi
 pip install agentscope\[distribute\]
 ```
-
 
 ## Quick Start
 
@@ -391,35 +388,36 @@ pre-commit install
 
 Please refer to our [Contribution Guide](https://modelscope.github.io/agentscope/en/tutorial/302-contribute.html) for more details.
 
-## References
+## Publications
 
-If you find our work helpful for your research or application, please
-cite [our paper](https://arxiv.org/abs/2402.14034):
+If you find our work helpful for your research or application, please cite our papers.
 
-```
-@article{agentscope,
-  author  = {Dawei Gao and
-             Zitao Li and
-             Xuchen Pan and
-             Weirui Kuang and
-             Zhijian Ma and
-             Bingchen Qian and
-             Fei Wei and
-             Wenhao Zhang and
-             Yuexiang Xie and
-             Daoyuan Chen and
-             Liuyi Yao and
-             Hongyi Peng and
-             Ze Yu Zhang and
-             Lin Zhu and
-             Chen Cheng and
-             Hongzhu Shi and
-             Yaliang Li and
-             Bolin Ding and
-             Jingren Zhou},
-  title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
-  journal = {CoRR},
-  volume  = {abs/2402.14034},
-  year    = {2024},
-}
-```
+1. [AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)
+
+    ```
+    @article{agentscope,
+        author  = {Dawei Gao and
+                   Zitao Li and
+                   Xuchen Pan and
+                   Weirui Kuang and
+                   Zhijian Ma and
+                   Bingchen Qian and
+                   Fei Wei and
+                   Wenhao Zhang and
+                   Yuexiang Xie and
+                   Daoyuan Chen and
+                   Liuyi Yao and
+                   Hongyi Peng and
+                   Ze Yu Zhang and
+                   Lin Zhu and
+                   Chen Cheng and
+                   Hongzhu Shi and
+                   Yaliang Li and
+                   Bolin Ding and
+                   Jingren Zhou}
+        title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+        journal = {CoRR},
+        volume  = {abs/2402.14034},
+        year    = {2024},
+    }
+    ```
