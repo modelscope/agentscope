@@ -1,4 +1,4 @@
-1#!/bin/bash
+#!/bin/bash
 
 if [ ! -f .vllm_pid ]; then
     echo "PID file not found. Are the servers running?"
