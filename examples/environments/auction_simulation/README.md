@@ -25,10 +25,31 @@ You can also set the following arguments:
 The following is sample output:
 
 ```log
-2024-08-13 14:52:26.056 | INFO     | listeners:__call__:43 - bidder_1 bid 20 for oil_painting
-2024-08-13 14:52:26.799 | INFO     | listeners:__call__:86 - bidder_0 bid 25 for oil_painting
-2024-08-13 14:52:27.744 | INFO     | listeners:__call__:86 - bidder_2 bid 30 for oil_painting
-2024-08-13 14:52:28.434 | INFO     | listeners:__call__:86 - bidder_0 bid 35 for oil_painting
-2024-08-13 14:52:28.863 | INFO     | listeners:__call__:86 - bidder_1 bid 100 for oil_painting
-2024-08-13 14:52:31.865 | INFO     | env:sold:87 - oil_painting is sold to bidder_1 for 100
+Auction: Auction starts!
+Listener: Notifying the bidder bidder_0...
+Listener: Notifying the bidder bidder_1...
+Listener: Notifying the bidder bidder_2...
+Listener: Notifying the bidder bidder_3...
+Listener: Notifying the bidder bidder_4...
+bidder_1: Bid 34 for oil_painting
+Listener: Bidder bidder_1 bids 34 for oil_painting. Notifying Bidder bidder_0
+Listener: Bidder bidder_1 bids 34 for oil_painting. Notifying Bidder bidder_2
+Listener: Bidder bidder_1 bids 34 for oil_painting. Notifying Bidder bidder_3
+Listener: Bidder bidder_1 bids 34 for oil_painting. Notifying Bidder bidder_4
+...
+bidder_1: Bid 88 for oil_painting
+Listener: Bidder bidder_1 bids 88 for oil_painting. Notifying Bidder bidder_0
+bidder_0: Bid 53 for oil_painting
+Listener: Bidder bidder_1 bids 88 for oil_painting. Notifying Bidder bidder_2
+Listener: Bidder bidder_1 bids 88 for oil_painting. Notifying Bidder bidder_3
+Listener: Bidder bidder_1 bids 88 for oil_painting. Notifying Bidder bidder_4
+bidder_3: Not bid for oil_painting
+bidder_0: Not bid for oil_painting
+bidder_3: Bid 35 for oil_painting
+bidder_4: Bid 21 for oil_painting
+bidder_0: Not bid for oil_painting
+bidder_1: Bid 26 for oil_painting
+bidder_2: Not bid for oil_painting
+Auction: Auction ends!
+Auction: oil_painting is sold to bidder_1 for 88
 ```

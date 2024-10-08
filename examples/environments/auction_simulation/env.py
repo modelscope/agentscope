@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """The envs used to simulate an auction."""
-from typing import Any, Dict, List, Optional
+import time
+from typing import Any, Dict, Optional
+from threading import Lock
 
 from loguru import logger
 
-from agentscope.agents import AgentBase
-from agentscope.environment import Event, BasicEnv, EventListener, event_func
-from agentscope.environment.env import trigger_listener
+from agentscope.environment import BasicEnv, event_func
+from agentscope.message import Msg
 
 
 class Item:
@@ -48,20 +49,22 @@ class Auction(BasicEnv):
     def __init__(
         self,
         name: str = None,
-        listeners: List[EventListener] = None,
+        waiting_time: float = 3.0,
     ) -> None:
         """Initialize the auction env.
 
         Args:
             name (`str`): The name of the Auction.
-            listeners (`List[EventListener]`): The listeners.
+            waiting_time (`float`): The waiting time between bids.
         """
         super().__init__(
             name=name,
-            listeners=listeners,
         )
+        self.waiting_time = waiting_time
+        self.end_time = 0
         self.cur_item = None
         self.cur_bid_info = None
+        self.bid_lock = Lock()
 
     def get_bid_info(self) -> Optional[Dict[str, Any]]:
         """Get the bid info.
@@ -78,46 +81,71 @@ class Auction(BasicEnv):
         """
         self.cur_item = item
         self.cur_bid_info = None
+        self.end_time = time.time() + self.waiting_time
+        logger.chat(
+            Msg(name="Auction", role="system", content="Auction starts!"),
+        )
 
-    def bid(self, bidder: AgentBase, item: Item, bid: int) -> bool:
+    def run(self, item: Item) -> None:
+        """Run bidding for an item.
+        Args:
+            item (`Item`): The item.
+        """
+        self.start(item)
+        while time.time() < self.end_time:
+            time.sleep(1)
+        logger.chat(
+            Msg(name="Auction", role="system", content="Auction ends!"),
+        )
+        if self.cur_bid_info is None:
+            self.fail()
+        else:
+            self.sold()
+
+    @event_func
+    def bid(self, bidder_name: str, item: Item, bid: int) -> bool:
         """Bid for the auction.
         Args:
-            bidder (`AgentBase`): The bidder agent.
+            bidder (`str`): The name of the bidder.
             item (`Item`): The item.
             bid (`int`): The bid of the bidder.
 
         Returns:
             `bool`: Whether the bid was successful.
         """
-        if (
-            self.cur_item.is_auctioned
-            or bid < item.opening_price
-            or (self.cur_bid_info and bid <= self.cur_bid_info["bid"])
-        ):
-            return False
-        self.cur_bid_info = {"bidder": bidder, "bid": bid}
-        logger.info(f"{bidder.name} bid {bid} for {item.name}")
-        trigger_listener(
-            self,
-            Event(
-                "bid",
-                args={"bidder": bidder, "item": self.cur_item, "bid": bid},
-            ),
-        )
-        return True
+        with self.bid_lock:
+            if (
+                self.cur_item.is_auctioned
+                or bid < item.opening_price
+                or (self.cur_bid_info and bid <= self.cur_bid_info["bid"])
+            ):
+                return False
+            self.cur_bid_info = {"bidder": bidder_name, "bid": bid}
+            self.end_time = time.time() + self.waiting_time
+            return True
 
-    @event_func
     def fail(self) -> None:
         """Pass the auction. (No bid for the item)"""
         self.cur_item.is_auctioned = True
-        logger.info(f"{self.cur_item.name} is not sold")
+        logger.chat(
+            Msg(
+                name="Auction",
+                role="system",
+                content=f"{self.cur_item.name} is not sold",
+            ),
+        )
 
-    @event_func
     def sold(self) -> None:
         """Sold the item."""
         self.cur_item.is_auctioned = True
-        logger.info(
-            f"{self.cur_item.name} is sold to "
-            f"{self.cur_bid_info['bidder'].name} "  # type: ignore[index]
-            f"for {self.cur_bid_info['bid']}",  # type: ignore[index]
+        logger.chat(
+            Msg(
+                name="Auction",
+                role="system",
+                content=(
+                    f"{self.cur_item.name} is sold to "
+                    f"{self.cur_bid_info['bidder']} "  # type: ignore[index]
+                    f"for {self.cur_bid_info['bid']}"  # type: ignore[index]
+                ),
+            ),
         )

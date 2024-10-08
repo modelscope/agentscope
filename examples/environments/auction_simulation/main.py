@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """An auction simulation."""
 import argparse
-from multiprocessing import Event
 
-from agents import Auctioneer, Bidder, RandomBidder
+from agents import Bidder, RandomBidder
 from env import Item, Auction
-from listeners import StartListener, BidListener, BidTimerListener
+from listeners import StartListener, BidListener
 
 import agentscope
-from agentscope.server import RpcAgentServerLauncher
 
 
 def parse_args() -> argparse.Namespace:
@@ -41,7 +39,7 @@ def main(
         use_monitor=False,
     )
 
-    auction = Auction("auction")
+    auction = Auction("auction", waiting_time=waiting_time)
 
     if agent_type == "random":
         bidders = [RandomBidder(f"bidder_{i}") for i in range(bidder_num)]
@@ -51,50 +49,28 @@ def main(
             for i in range(bidder_num)
         ]
 
+    # enable distributed mode
     if use_dist:
-        stop_event = Event()
-        env_server_launcher = RpcAgentServerLauncher()
-        env_server_launcher.stop_event = stop_event
-        env_server_launcher.launch()
-        auction = auction.to_dist(
-            host=env_server_launcher.host,
-            port=env_server_launcher.port,
-        )
-
+        auction = auction.to_dist()
         bidders = [bidder.to_dist() for bidder in bidders]
-        auctioneer = Auctioneer(
-            "auctioneer",
-            auction,
-            waiting_time=waiting_time,
-        ).to_dist()
-    else:
-        auctioneer = Auctioneer(
-            "auctioneer",
-            auction,
-            waiting_time=waiting_time,
-        )
 
     # Set up listeners
     start_listeners = [
         StartListener(f"start_{i}", bidders[i]) for i in range(bidder_num)
     ]
-    bid_timer_listener = [BidTimerListener("bid_timer", auctioneer)]
     bid_listeners = [
         BidListener(f"bid_{i}", bidders[i]) for i in range(bidder_num)
     ]
     listeners = {
         "start": start_listeners,
-        "bid": bid_timer_listener + bid_listeners,
+        "bid": bid_listeners,
     }
     for target_event, listeners in listeners.items():
         for listener in listeners:
             auction.add_listener(target_event, listener)
 
     item = Item("oil_painting", opening_price=10)
-    auction.start(item)
-
-    if use_dist:
-        stop_event.wait()  # need to manually shut down in dist mode
+    auction.run(item)
 
 
 if __name__ == "__main__":

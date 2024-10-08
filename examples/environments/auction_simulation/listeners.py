@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Listerners for the auction simulation."""
-from agents import Auctioneer, Bidder
+from agents import Bidder
 from env import Auction
 
+from loguru import logger
 from agentscope.environment import Event, EventListener
 from agentscope.message import Msg
 
@@ -31,6 +32,13 @@ class StartListener(EventListener):
         """
         item = event.args["item"]
         if not item.is_auctioned:
+            logger.chat(
+                Msg(
+                    name="Listener",
+                    role="system",
+                    content=f"Notifying the bidder {self.bidder.name}...",
+                ),
+            )
             bid = self.bidder(
                 Msg(
                     "auctioneer",
@@ -39,7 +47,7 @@ class StartListener(EventListener):
                 ),
             ).content
             if bid:
-                env.bid(self.bidder, item, bid)
+                env.bid(self.bidder.name, item, bid)
 
 
 class BidListener(EventListener):
@@ -67,18 +75,35 @@ class BidListener(EventListener):
             env (`Auction`): The auction env.
             event (`Event`): The bidding event.
         """
-        bidder = event.args["bidder"]
+        # skip failed biddings
+        if not event.returns:
+            return
+
+        bidder = event.args["bidder_name"]
         item = event.args["item"]
         prev_bid = event.args["bid"]
-        if bidder.agent_id == self.bidder.agent_id:
+
+        # skip the bidder itself to avoid infinite loop
+        name = self.bidder.name
+        if bidder == name:
             return
 
         if not item.is_auctioned:
             msg_content = {
                 "item": item.to_dict(),
-                "bidder_name": bidder.name,
+                "bidder_name": bidder,
                 "bid": prev_bid,
             }
+            logger.chat(
+                Msg(
+                    name="Listener",
+                    role="system",
+                    content=(
+                        f"Bidder {bidder} bids {prev_bid} for {item.name}."
+                        f" Notifying Bidder {name}"
+                    ),
+                ),
+            )
             bid = self.bidder(
                 Msg(
                     "auctioneer",
@@ -87,32 +112,4 @@ class BidListener(EventListener):
                 ),
             ).content
             if bid:
-                env.bid(self.bidder, item, bid)
-
-
-class BidTimerListener(EventListener):
-    """
-    A listener of bidding of an item for the auctioneer
-    to start the timer.
-    """
-
-    def __init__(self, name: str, auctioneer: Auctioneer) -> None:
-        """Initialize the listener.
-        Args:
-            name (`str`): The name of the listener.
-            auctioneer (`Auctioneer`): The auctioneer.
-        """
-        super().__init__(name=name)
-        self.auctioneer = auctioneer
-
-    def __call__(
-        self,
-        env: Auction,
-        event: Event,
-    ) -> None:
-        """Activate the listener.
-        Args:
-            env (`Auction`): The auction env.
-            event (`Event`): The bidding event.
-        """
-        self.auctioneer.start_timer()
+                env.bid(self.bidder.name, item, bid)

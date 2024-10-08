@@ -2,51 +2,14 @@
 """The agents used to simulate an auction."""
 import random
 import re
-import threading
 import time
 from typing import Optional, Sequence, Union
 
-from env import Auction, Item
+from env import Item
 
 from loguru import logger
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-
-
-class Auctioneer(AgentBase):
-    """The auctioneer agent."""
-
-    def __init__(
-        self,
-        name: str,
-        auction: Auction,
-        waiting_time: float = 3.0,
-    ) -> None:
-        """Initialize the auctioneer agent.
-        Args:
-            name: The name of the auctioneer.
-            auction: The auction.
-            waiting_time: The waiting time for the auctioneer
-                          to decide the winner.
-        """
-        super().__init__(name=name)
-        self.auction = auction
-        self.wating_time = waiting_time
-        self.timer = None
-
-    def start_timer(self) -> None:
-        """Start the timer for the auctioneer to decide the winner."""
-        if self.timer is not None:
-            self.timer.cancel()
-        self.timer = threading.Timer(self.wating_time, self.decide_winner)
-        self.timer.start()
-
-    def decide_winner(self) -> None:
-        """Decide the winner of the auction."""
-        if self.auction.get_bid_info() is None:
-            self.auction.fail()
-        else:
-            self.auction.sold()
 
 
 class RandomBidder(AgentBase):
@@ -77,6 +40,23 @@ class RandomBidder(AgentBase):
         item = Item.from_dict(x.content["item"])
         # generate a random bid or not to bid
         response = self.generate_random_response(item.opening_price)
+        if response is None:
+            self.speak(
+                Msg(
+                    self.name,
+                    content=f"Not bid for {item.name}",
+                    role="assistant",
+                ),
+            )
+            return Msg(self.name, content=None, role="assistant")
+        else:
+            self.speak(
+                Msg(
+                    self.name,
+                    content=f"Bid {response} for {item.name}",
+                    role="assistant",
+                ),
+            )
         msg = Msg(self.name, content=response, role="assistant")
         return msg
 
@@ -139,7 +119,7 @@ class Bidder(AgentBase):
             f"the opening price is {item.opening_price}."
         )
         if bidder_name and prev_bid:
-            content += f" Now {bidder_name} bid {prev_bid} for the item."
+            content += f"\n{bidder_name} bid {prev_bid} for the item."
         bid_info = Msg("assistant", content=content, role="assistant")
 
         # prepare prompt
@@ -153,7 +133,22 @@ class Bidder(AgentBase):
         response = self.model(prompt).text
         bid = self.parse_value(response)
         msg = Msg(self.name, bid, role="assistant")
-
+        if response is None:
+            self.speak(
+                Msg(
+                    self.name,
+                    content=f"Not bid for {item.name}",
+                    role="assistant",
+                ),
+            )
+        else:
+            self.speak(
+                Msg(
+                    self.name,
+                    content=f"Bid {response} for {item.name}",
+                    role="assistant",
+                ),
+            )
         # Record the message in memory
         if self.memory:
             self.memory.add(msg)
