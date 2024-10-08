@@ -121,7 +121,7 @@ def main(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", "-n", type=str, default="simulation")
-    parser.add_argument("--config", "-c", type=str, default="exp")
+    parser.add_argument("--config", "-c", type=str, default="experiment")
     parser.add_argument(
         "--hosts",
         type=str,

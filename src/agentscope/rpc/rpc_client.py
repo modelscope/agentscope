@@ -256,7 +256,7 @@ class RpcClient:
                     ) from e
                 # wait for a random time between retries
                 interval = (random.random() + 0.5) * retry_interval
-                logger.debug(
+                logger.info(
                     f"Update placeholder timeout, retrying after {interval} s...",
                 )
                 time.sleep(interval)
