@@ -132,6 +132,7 @@ class TestWebSearches(unittest.TestCase):
             id_list=["2402.14034"],
             max_results=1,
         )
+        print(res.content)
         self.assertEqual(
             res.content["entries"][0]["title"],
             "AgentScope: A Flexible yet Robust Multi-Agent Platform",
