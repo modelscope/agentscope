@@ -57,6 +57,7 @@ class _WebSocketClient:
         self,
         require_url: bool,
         required_keys: list[str],
+        timeout: Optional[float] = None,
     ) -> Optional[dict]:
         """Get user input from studio in real-time.
 
@@ -76,7 +77,7 @@ class _WebSocketClient:
                 "required_keys": required_keys,
             },
         )
-        self.input_event.wait()
+        self.input_event.wait(timeout=timeout)
         return self.user_input
 
     def close(self) -> None:
@@ -173,6 +174,7 @@ class StudioClient:
         name: str,
         require_url: bool,
         required_keys: Optional[Union[list[str], str]] = None,
+        timeout: Optional[float] = None,
     ) -> dict:
         """Get user input from the studio.
 
@@ -203,6 +205,7 @@ class StudioClient:
         return self.websocket_mapping[agent_id].get_user_input(
             require_url=require_url,
             required_keys=required_keys,
+            timeout=timeout,
         )
 
     def get_run_detail_page_url(self) -> str:

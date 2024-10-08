@@ -18,7 +18,7 @@ from ..serialize import serialize, deserialize
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
 from ..message import Msg
-from ..message import PlaceholderMessage
+from ..rpc import AsyncResult
 
 
 class TemporaryMemory(MemoryBase):
@@ -73,16 +73,14 @@ class TemporaryMemory(MemoryBase):
         else:
             record_memories = memories
 
+        # FIXME: a single message may be inserted multiple times
         # Assert the message types
         memories_idx = set(_.id for _ in self._content if hasattr(_, "id"))
         for memory_unit in record_memories:
             # in case this is a PlaceholderMessage, try to update
             # the values first
-            # TODO: Unify PlaceholderMessage and Msg into one class to avoid
-            #  type error
-            if isinstance(memory_unit, PlaceholderMessage):
-                memory_unit.update_value()
-                memory_unit = Msg.from_dict(memory_unit.to_dict())
+            if isinstance(memory_unit, AsyncResult):
+                memory_unit = memory_unit.result()
 
             if not isinstance(memory_unit, Msg):
                 raise ValueError(
