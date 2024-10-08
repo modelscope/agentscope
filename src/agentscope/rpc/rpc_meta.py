@@ -7,6 +7,7 @@ import uuid
 from loguru import logger
 
 from .rpc_object import RpcObject
+from .retry_strategy import RetryBase, _DEAFULT_RETRY_STRATEGY
 
 
 # Decorator for async and sync functions
@@ -115,6 +116,10 @@ class RpcMeta(ABCMeta):
                         "local_mode",
                         True,
                     ),
+                    retry_strategy=to_dist.pop(
+                        "retry_strategy",
+                        _DEAFULT_RETRY_STRATEGY,
+                    ),
                     connect_existing=False,
                     configs={
                         "args": args,
@@ -178,6 +183,7 @@ class RpcMeta(ABCMeta):
         max_expire_time: int = 7200,
         max_timeout_seconds: int = 5,
         local_mode: bool = True,
+        retry_strategy: RetryBase = _DEAFULT_RETRY_STRATEGY,
     ) -> Any:
         """Convert current object into its distributed version.
 
@@ -201,6 +207,8 @@ class RpcMeta(ABCMeta):
                 Only takes effect when `host` and `port` are not filled in.
                 Whether the started agent server only listens to local
                 requests.
+            retry_strategy (`RetryBase`, defaults to `_DEAFULT_RETRY_STRATEGY`):
+                The retry strategy for the async rpc call.
 
         Returns:
             `RpcObject`: the wrapped agent instance with distributed
@@ -219,4 +227,5 @@ class RpcMeta(ABCMeta):
             max_expire_time=max_expire_time,
             max_timeout_seconds=max_timeout_seconds,
             local_mode=local_mode,
+            retry_strategy=retry_strategy,
         )

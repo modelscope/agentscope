@@ -3,8 +3,6 @@
 
 import json
 import os
-import time
-import random
 from typing import Optional, Sequence, Union, Generator, Any
 from concurrent.futures import ThreadPoolExecutor
 from loguru import logger
@@ -25,9 +23,10 @@ except ImportError as import_error:
     agent_pb2 = ImportErrorReporter(import_error, "distribute")
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
 
+from .retry_strategy import RetryBase, _DEAFULT_RETRY_STRATEGY
 from ..utils.common import _generate_id_from_seed
 from ..exception import AgentServerNotAliveError
-from ..constants import _DEFAULT_RPC_OPTIONS
+from ..constants import _DEFAULT_RPC_OPTIONS, _DEFAULT_RPC_TIMEOUT
 from ..exception import AgentCallError, AgentCreationError
 from ..manager import FileManager
 
@@ -223,8 +222,7 @@ class RpcClient:
     def update_result(
         self,
         task_id: int,
-        retry_times: int = 10,
-        retry_interval: float = 5,
+        retry: RetryBase = _DEAFULT_RETRY_STRATEGY,
     ) -> str:
         """Update the value of the async result.
 
@@ -233,42 +231,24 @@ class RpcClient:
 
         Args:
             task_id (`int`): `task_id` of the PlaceholderMessage.
-            retry_times (`int`): Number of retries. Defaults to 10.
-            retry_interval (`float`): Base interval between retries in seconds.
-            Defaults to 5. Double the interval between retries for each retry.
+            retry (`RetryBase`): Retry strategy. Defaults to `RetryFixedTimes(10, 5)`.
 
         Returns:
             bytes: Serialized value.
         """
         stub = RpcAgentStub(RpcClient._get_channel(self.url))
-        resp = None
-        for _ in range(retry_times):
-            try:
-                resp = stub.update_placeholder(
-                    agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
-                )
-            except grpc.RpcError as e:
-                if e.code() != grpc.StatusCode.DEADLINE_EXCEEDED:
-                    raise AgentCallError(
-                        host=self.host,
-                        port=self.port,
-                        message=f"Failed to update placeholder: {str(e)}",
-                    ) from e
-                # wait for a random time between retries
-                interval = (random.random() + 0.5) * retry_interval
-                logger.info(
-                    f"Update placeholder timeout, retrying after {interval} s...",
-                )
-                time.sleep(interval)
-                retry_interval *= 2
-                continue
-            break
-        if resp is None:
+        try:
+            resp = retry.retry(
+                stub.update_placeholder,
+                agent_pb2.UpdatePlaceholderRequest(task_id=task_id),
+                timeout=_DEFAULT_RPC_TIMEOUT,
+            )
+        except Exception as e:
             raise AgentCallError(
                 host=self.host,
                 port=self.port,
                 message="Failed to update placeholder: timeout",
-            )
+            ) from e
         if not resp.ok:
             raise AgentCallError(
                 host=self.host,
