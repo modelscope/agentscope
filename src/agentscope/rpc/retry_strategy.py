@@ -138,12 +138,14 @@ class RetryExpential(RetryBase):
             except Exception as e:
                 if attempt == self.max_retries:
                     raise TimeoutError("Max timeout exceeded.") from e
-                delay = (random.random() + 0.5) * delay
-                delay = min(delay, self.max_delay)
-                logger.info(
-                    f"Attempt {attempt + 1} failed: {e}. Retrying in {delay} seconds...",
+                random_delay = min(
+                    (random.random() + 0.5) * delay,
+                    self.max_delay,
                 )
-                time.sleep(delay)
+                logger.info(
+                    f"Attempt {attempt + 1} failed: {e}. Retrying in {random_delay} seconds...",
+                )
+                time.sleep(random_delay)
                 delay *= 2
 
 
