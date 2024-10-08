@@ -837,6 +837,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             judge_func=lambda x: "$PASS$" in x,
             to_dist={
                 "max_timeout_seconds": 1,
+                "retry_strategy": RetryFixedTimes(max_retries=2, delay=5)
             },
         )
 
