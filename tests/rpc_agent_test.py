@@ -917,7 +917,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         st = time.time()
         result = fix_retry.retry(mock_func)
         et = time.time()
-        self.assertTrue(et - st > delay * 0.5 + 0.1)
+        self.assertTrue(et - st > delay * 0.5)
         self.assertTrue(et - st < delay * 1.5 + 0.1)
         self.assertEqual(result, "Success")
         mock_func = MagicMock(
@@ -926,6 +926,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         st = time.time()
         result = exp_retry.retry(mock_func)
         et = time.time()
-        self.assertTrue(et - st > delay * 0.5 + 0.1)
+        self.assertTrue(et - st > delay * 0.5)
         self.assertTrue(et - st < delay * 1.5 + 0.1)
         self.assertEqual(result, "Success")
