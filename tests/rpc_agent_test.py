@@ -837,7 +837,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             judge_func=lambda x: "$PASS$" in x,
             to_dist={
                 "max_timeout_seconds": 1,
-                "retry_strategy": RetryFixedTimes(max_retries=2, delay=5)
+                "retry_strategy": RetryFixedTimes(max_retries=2, delay=5),
             },
         )
 
@@ -912,7 +912,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertEqual(result, "Success")
         # Mix Exception and Success
         mock_func = MagicMock(
-            side_effect=[Exception("Test exception"), "Success"]
+            side_effect=[Exception("Test exception"), "Success"],
         )
         st = time.time()
         result = fix_retry.retry(mock_func)
@@ -921,7 +921,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertTrue(et - st < delay * 1.5 + 0.1)
         self.assertEqual(result, "Success")
         mock_func = MagicMock(
-            side_effect=[Exception("Test exception"), "Success"]
+            side_effect=[Exception("Test exception"), "Success"],
         )
         st = time.time()
         result = exp_retry.retry(mock_func)
