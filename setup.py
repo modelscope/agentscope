@@ -90,6 +90,7 @@ extra_gemini_requires = ["google-generativeai>=0.4.0"]
 extra_litellm_requires = ["litellm"]
 extra_zhipuai_requires = ["zhipuai"]
 extra_ollama_requires = ["ollama>=0.1.7"]
+extra_sd_webuiapi_requires = ["webuiapi"]
 
 # Full requires
 extra_full_requires = (
@@ -102,6 +103,7 @@ extra_full_requires = (
     + extra_litellm_requires
     + extra_zhipuai_requires
     + extra_ollama_requires
+    + extra_sd_webuiapi_requires
 )
 
 # For online workstation
@@ -140,6 +142,7 @@ setuptools.setup(
         "litellm": extra_litellm_requires,
         "zhipuai": extra_zhipuai_requires,
         "gemini": extra_gemini_requires,
+        "stablediffusion": extra_sd_webuiapi_requires,
         # For service functions
         "service": extra_service_requires,
         # For distribution mode
