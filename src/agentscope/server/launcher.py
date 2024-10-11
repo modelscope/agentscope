@@ -7,6 +7,7 @@ import signal
 import argparse
 import time
 import importlib
+import json
 from multiprocessing import Process, Event, Pipe
 from multiprocessing.synchronize import Event as EventClass
 from concurrent import futures
@@ -552,19 +553,29 @@ def as_server() -> None:
                 --agent-dir ./my_agents
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    subparsers = parser.add_subparsers(
+        dest="command",
+        help="sub-commands of as_server",
+    )
+    start_parser = subparsers.add_parser("start", help="start the server.")
+    stop_parser = subparsers.add_parser("stop", help="stop the server.")
+    status_parser = subparsers.add_parser(
+        "status",
+        help="check the status of the server.",
+    )
+    start_parser.add_argument(
         "--host",
         type=str,
         default="localhost",
         help="hostname of the server",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--port",
         type=int,
         default=12310,
         help="socket port of the server",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--capacity",
         type=int,
         default=os.cpu_count(),
@@ -573,20 +584,20 @@ def as_server() -> None:
             "may cause severe performance degradation or even deadlock."
         ),
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--pool-type",
         type=str,
         choices=["local", "redis"],
         default="local",
         help="the url of agentscope studio",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--redis-url",
         type=str,
         default="redis://localhost:6379",
         help="the url of redis server",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--max-pool-size",
         type=int,
         default=8192,
@@ -596,19 +607,19 @@ def as_server() -> None:
             "after exceeding the pool size."
         ),
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--max-expire-time",
         type=int,
         default=7200,
         help="max expire time in second for async results.",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--max-timeout-seconds",
         type=int,
         default=5,
         help="max timeout for rpc call in seconds",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--local-mode",
         type=bool,
         default=False,
@@ -617,66 +628,110 @@ def as_server() -> None:
             "listen to requests from all hosts."
         ),
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--model-config-path",
         type=str,
         help="path to the model config json file",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--server-id",
         type=str,
         default=None,
         help="id of the server, used to register to the studio, generated"
         " randomly if not specified.",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--studio-url",
         type=str,
         default=None,
         help="the url of agentscope studio",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--agent-dir",
         type=str,
         default=None,
         help="the directory containing customized agent python files",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--no-log",
         action="store_true",
         help="whether to disable log",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--save-api-invoke",
         action="store_true",
         help="whether to save api invoke",
     )
-    parser.add_argument(
+    start_parser.add_argument(
         "--use-monitor",
         action="store_true",
         help="whether to use monitor",
     )
+    stop_parser.add_argument(
+        "--host",
+        type=str,
+        help="host of the server to stop",
+    )
+    stop_parser.add_argument(
+        "--port",
+        type=int,
+        help="port of the server to stop",
+    )
+    status_parser.add_argument(
+        "--host",
+        type=str,
+        help="host of the server",
+    )
+    status_parser.add_argument(
+        "--port",
+        type=int,
+        help="port of the server",
+    )
     args = parser.parse_args()
-    agentscope.init(
-        project="agent_server",
-        name=f"server_{args.host}:{args.port}",
-        save_log=not args.no_log,
-        save_api_invoke=args.save_api_invoke,
-        model_configs=args.model_config_path,
-        use_monitor=args.use_monitor,
-    )
-    launcher = RpcAgentServerLauncher(
-        host=args.host,
-        port=args.port,
-        server_id=args.server_id,
-        capacity=args.capacity,
-        pool_type=args.pool_type,
-        redis_url=args.redis_url,
-        max_pool_size=args.max_pool_size,
-        max_expire_time=args.max_expire_time,
-        max_timeout_seconds=args.max_timeout_seconds,
-        local_mode=args.local_mode,
-        studio_url=args.studio_url,
-    )
-    launcher.launch(in_subprocess=False)
-    launcher.wait_until_terminate()
+    if args.command == "start":
+        agentscope.init(
+            project="agent_server",
+            name=f"server_{args.host}:{args.port}",
+            save_log=not args.no_log,
+            save_api_invoke=args.save_api_invoke,
+            model_configs=args.model_config_path,
+            use_monitor=args.use_monitor,
+        )
+        launcher = RpcAgentServerLauncher(
+            host=args.host,
+            port=args.port,
+            server_id=args.server_id,
+            capacity=args.capacity,
+            pool_type=args.pool_type,
+            redis_url=args.redis_url,
+            max_pool_size=args.max_pool_size,
+            max_expire_time=args.max_expire_time,
+            max_timeout_seconds=args.max_timeout_seconds,
+            local_mode=args.local_mode,
+            studio_url=args.studio_url,
+        )
+        launcher.launch(in_subprocess=False)
+        launcher.wait_until_terminate()
+    elif args.command == "stop":
+        from agentscope.rpc import RpcClient
+
+        client = RpcClient(host=args.host, port=args.port)
+        if not client.stop():
+            logger.info(f"Server at [{args.host}:{args.port}] stopped.")
+        else:
+            logger.error(f"Fail to stop server at [{args.host}:{args.port}].")
+    elif args.command == "status":
+        from agentscope.rpc import RpcClient
+
+        client = RpcClient(host=args.host, port=args.port)
+        if not client.is_alive():
+            logger.warning(
+                f"Server at [{args.host}:{args.port}] is not alive.",
+            )
+        agent_infos = client.get_agent_list()
+        if agent_infos is None or len(agent_infos) == 0:
+            logger.info(
+                f"No agents found on the server [{args.host}:{args.port}].",
+            )
+        for info in agent_infos:
+            logger.info(json.dumps(info, indent=4))

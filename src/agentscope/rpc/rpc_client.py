@@ -131,7 +131,7 @@ class RpcClient:
             )
             return False
 
-    def stop(self) -> None:
+    def stop(self) -> bool:
         """Stop the agent server."""
         try:
             stub = RpcAgentStub(RpcClient._get_channel(self.url))
@@ -143,14 +143,15 @@ class RpcClient:
                 logger.info(
                     f"Agent server at [{self.host}:{self.port}] stopped.",
                 )
-            else:
-                logger.error(
-                    f"Fail to stop the agent server: {resp.message}",
-                )
+                return True
+            logger.error(
+                f"Fail to stop the agent server: {resp.message}",
+            )
         except Exception as e:
             logger.error(
                 f"Fail to stop the agent server: {e}",
             )
+        return False
 
     def create_agent(
         self,
