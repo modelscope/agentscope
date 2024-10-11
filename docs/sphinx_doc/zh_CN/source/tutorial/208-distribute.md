@@ -1,6 +1,6 @@
 (208-distribute-zh)=
 
-# 并行/分布式
+# 分布式
 
 为了提供更好的性能以及支持更多的 Agent 同时运行，AgentScope 实现了基于 Actor 范式的 并行/分布式模式（后续简称为分布式模式）。该模式相比传统单进程模式具有以下特点：
 
@@ -244,6 +244,8 @@ AgentScope 分布式模式的主要逻辑是:
 
 **将原本运行在任意 Python 进程中的对象通过 `to_dist` 函数或是初始化参数转移到 RPC 服务器中运行，并在原进程中保留一个 `RpcObject` 作为代理，任何 `RpcObject` 上的函数调用或是属性访问都会转发到 RPC 服务器中的对象上，并且在调用函数时可以自行决定是使用同步调用还是异步调用。**
 
+下图展示了`to_dist`初始化、同步函数调用以及异步函数调用的交互流程：
+
 ```{mermaid}
 sequenceDiagram
     User -->> Process: initialize
@@ -262,7 +264,11 @@ sequenceDiagram
     Process -->> User: async result
 ```
 
-从上述介绍中可以发现 AgentScope 分布式模式本质是一个 Client-Server 架构，Client 端主要负责将本地对象发送到 Server 端运行，并将本地的函数调用以及属性访问转发到 Server 端，而Server 端则负责接收 Client 端发送的对象，并接收 Client 端发来的各种调用请求。
+从上图可以观察到 AgentScope 分布式模式本质是一个 Client-Server 架构，用户编写的智能体应用（Process）作为Client 端，而智能体服务器进程（RPC Server）作为 Server 端。分布式模式下 Client 端将本地的智能体发送到 Server 端运行，并将本地的函数调用以及属性访问转发到 Server 端，而 Server 端则负责接收 Client 端发送的对象，并接收 Client 端发来的各种调用请求。
+
+```{note}
+AgentScope 分布式模式中 Client 与 Server 通信基于 gRPC 实现，对发送消息的大小有严格的限制，默认情况下单条消息不能超过 32 MB。可以通过修改 `src/agentscope/constants.py` 中的 `_DEFAULT_RPC_OPTIONS` 参数来进一步扩大该值。
+```
 
 接下来将分别介绍 Client 端以及 Server 端的实现。
 

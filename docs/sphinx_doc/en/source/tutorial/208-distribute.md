@@ -242,6 +242,8 @@ The core logic of the AgentScope distributed model is:
 
 **By using the `to_dist` function or initialization parameters, objects that originally run in any Python process are transferred to an RPC server. In the original process, a `RpcObject` proxy is retained, and any function call or attribute access on this `RpcObject` will be forwarded to the object on the RPC server. When calling functions, you can decide whether to use synchronous or asynchronous invocation.**
 
+The following graph illustrate the workflow of `to_dist`, synchronous and asynchronous invocation.
+
 ```{mermaid}
 sequenceDiagram
     User -->> Process: initialize
@@ -260,7 +262,11 @@ sequenceDiagram
     Process -->> User: async result
 ```
 
-From the above description, it is evident that the AgentScope distributed mode is essentially a Client-Server architecture. The Client is primarily responsible for sending local objects to the Server for execution and forwarding local function calls and attribute accesses to the Server. The Server, on the other hand, receives objects sent by the Client and handles various invocation requests from the Client.
+As illustrated in the previous figure, the distributed mode of AgentScope essentially follows a Client-Server architecture. In this setup, the user-authored agent applications (Processes) act as the Client, while the agent server process (RPC Server) functions as the Server. In distributed mode, the Client side sends the local agents to the Server side for execution. The Client forwards local function calls and property accesses to the Server, which is responsible for receiving the agents and handling various invocation requests from the Client.
+
+```{note}
+Communication between the Client and Server in AgentScope's distributed mode is implemented using gRPC. There is a strict limitation on the size of messages send/recv; by default, a single message cannot exceed 32 MB. This value can be further increased by modifying the `_DEFAULT_RPC_OPTIONS` parameter in `src/agentscope/constants.py`.
+```
 
 Next, we'll introduce the implementation of the Client and Server respectively.
 
