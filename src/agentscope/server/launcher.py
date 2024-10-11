@@ -547,7 +547,7 @@ def as_server() -> None:
 
         .. code-block:: shell
 
-            as_server --host localhost \
+            as_server start --host localhost \
                 --port 12345 \
                 --model-config-path config.json \
                 --agent-dir ./my_agents

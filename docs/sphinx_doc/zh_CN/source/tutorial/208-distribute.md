@@ -411,7 +411,7 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 - 通过命令行启动的具体方法如下，除了需要指定 `host` 和 `port` 外，还需要指定 `model_config_path` 和 `agent_dir`，分别对应模型配置文件路径和自定义 Agent 类所在的目录。在安装 `agentscope` 时默认会安装 `as_server` 指令，所以可以直接在命令行中使用该指令。
 
     ```shell
-    as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents.py
+    as_server start --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents.py
     ```
 
 ```{warning}
@@ -447,7 +447,7 @@ launcher = RpcAgentServerLauncher(
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --capacity 10
+as_server start --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --capacity 10
 ```
 
 ##### `result_pool`
@@ -469,7 +469,7 @@ launcher = RpcAgentServerLauncher(
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
+as_server start --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
 ```
 
 [[回到顶部]](#208-distribute-zh)

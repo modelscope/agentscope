@@ -405,7 +405,7 @@ The implementation of `AgentServerLauncher` is located at `src/agentscope/server
 - The method to launch through command line is as follows. In addition to specifying `host` and `port`, you also need to specify `model_config_path` and `agent_dir`, which correspond to the model configuration file path and the directory where custom agent classes are located, respectively. When installing `agentscope`, the `as_server` command will be installed by default, so you can directly use this command in the command line.
 
     ```shell
-    as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents.py
+    as_server start --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents.py
     ```
 
 ```{warning}
@@ -440,7 +440,7 @@ launcher = RpcAgentServerLauncher(
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --capacity 10
+as_server start --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --capacity 10
 ```
 
 ##### `result_pool`
@@ -462,7 +462,7 @@ launcher = RpcAgentServerLauncher(
 ```
 
 ```shell
-as_server --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
+as_server start --host localhost --port 12345 --model-config-path model_config_path --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
 ```
 
 [[Back to the top]](#208-distribute-en)
