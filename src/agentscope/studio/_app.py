@@ -743,7 +743,7 @@ def _save_workflow() -> Response:
 @_app.route("/delete-workflow", methods=["POST"])
 def _delete_workflow() -> Response:
     """
-    Deletes a specific workflow JSON file from the user folder.
+    Deletes a workflow JSON file from the user folder.
     """
     user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
@@ -757,6 +757,8 @@ def _delete_workflow() -> Response:
 
     if not filename.endswith(".json"):
         return jsonify({"error": "Only JSON files can be deleted"})
+
+    filename = os.path.basename(filename)
 
     filepath = os.path.join(user_dir, filename)
     if not os.path.exists(filepath):
