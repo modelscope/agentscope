@@ -249,12 +249,20 @@ class ChatRoom(BasicEnv):
         max_round: int = 10,
     ) -> None:
         """Let all agents to chat freely without any preset order"""
+        tasks = []
         for agent_name in self.children.keys():
-            self.children[agent_name].chat_freely(
-                delay=delay,
-                interval=interval,
-                max_round=max_round,
+            task = threading.Thread(
+                target=self.children[agent_name].chat_freely,
+                kwargs={
+                    "delay": delay,
+                    "interval": interval,
+                    "max_round": max_round,
+                },
             )
+            tasks.append(task)
+            task.start()
+        for task in tasks:
+            task.join()
 
     def chat_in_sequence(self, agent_name_order: List[str] = None) -> None:
         """Let all agents to chat in a sequence
@@ -353,7 +361,9 @@ class ChatRoomAgent(AgentBase):
             prompt,
             max_retries=3,
         ).text
-        return "yes" in response.lower()
+        speak = "yes" in response.lower()
+        logger.debug(f"[SPEAK OR NOT] {self.name}: {response}")
+        return speak
 
     def speak(
         self,
@@ -408,7 +418,7 @@ class ChatRoomAgent(AgentBase):
                     ),
                 )
             else:
-                return None
+                return Msg(name="assistant", role="assistant", content="")
         logger.debug(prompt)
         response = self.model(
             prompt,
