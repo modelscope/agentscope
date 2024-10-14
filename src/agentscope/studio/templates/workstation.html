@@ -43,21 +43,23 @@
 <body>
 <div id="workstation-panel">
     <div id="workstation-titlebar unselectable-text" class="page-titlebar">
-        <span>Workstation</span>
+        <div id="navigation-bar-logo" onclick="location.reload()">
+            Workstation
+        </div>
         {% if token_dict %}
-        <div class="github-user-content">
-            <div class="user-detail">
-                <div class="user-option">
-                    <a href="https://github.com/{{ token_dict.user_login }}"
-                    target="_blank"
-                    >
-                        {{ token_dict.user_login }}
-                    </a>
-                    <div class="triangle-down">
+            <div class="github-user-content">
+                <div class="user-detail">
+                    <div class="user-option">
+                        <a href="https://github.com/{{ token_dict.user_login }}"
+                           target="_blank"
+                        >
+                            {{ token_dict.user_login }}
+                        </a>
+                        <div class="triangle-down">
+                        </div>
                     </div>
-                </div>
-                <div class="dropdown">
-                    <a onclick="createNotification({
+                    <div class="dropdown">
+                        <a onclick="createNotification({
                         title: 'Notification',
                         i18nTitle: '通知',
                         content: `You will be logged out`,
@@ -77,22 +79,30 @@
 
                         }
                     })">log out</a>
+                    </div>
+                </div>
+                <div>
+                    <svg aria-hidden="true" focusable="false"
+                         class="octicon octicon-mark-github"
+                         viewBox="0 0 24 24" width="32" height="32"
+                         fill="currentColor"
+                         style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+                        <path d="M12.5.75C6.146.75 1 5.896 1 12.25c0 5.089 3.292 9.387 7.863 10.91.575.101.79-.244.79-.546 0-.273-.014-1.178-.014-2.142-2.889.532-3.636-.704-3.866-1.35-.13-.331-.69-1.352-1.18-1.625-.402-.216-.977-.748-.014-.762.906-.014 1.553.834 1.769 1.179 1.035 1.74 2.688 1.25 3.349.948.1-.747.402-1.25.733-1.538-2.559-.287-5.232-1.279-5.232-5.678 0-1.25.445-2.285 1.178-3.09-.115-.288-.517-1.467.115-3.048 0 0 .963-.302 3.163 1.179.92-.259 1.897-.388 2.875-.388.977 0 1.955.13 2.875.388 2.2-1.495 3.162-1.179 3.162-1.179.633 1.581.23 2.76.115 3.048.733.805 1.179 1.825 1.179 3.09 0 4.413-2.688 5.39-5.247 5.678.417.36.776 1.05.776 2.128 0 1.538-.014 2.774-.014 3.162 0 .302.216.662.79.547C20.709 21.637 24 17.324 24 12.25 24 5.896 18.854.75 12.5.75Z"></path>
+                    </svg>
                 </div>
             </div>
-            <div>
-                <svg aria-hidden="true" focusable="false" class="octicon octicon-mark-github" viewBox="0 0 24 24" width="32" height="32" fill="currentColor" style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible"><path d="M12.5.75C6.146.75 1 5.896 1 12.25c0 5.089 3.292 9.387 7.863 10.91.575.101.79-.244.79-.546 0-.273-.014-1.178-.014-2.142-2.889.532-3.636-.704-3.866-1.35-.13-.331-.69-1.352-1.18-1.625-.402-.216-.977-.748-.014-.762.906-.014 1.553.834 1.769 1.179 1.035 1.74 2.688 1.25 3.349.948.1-.747.402-1.25.733-1.538-2.559-.287-5.232-1.279-5.232-5.678 0-1.25.445-2.285 1.178-3.09-.115-.288-.517-1.467.115-3.048 0 0 .963-.302 3.163 1.179.92-.259 1.897-.388 2.875-.388.977 0 1.955.13 2.875.388 2.2-1.495 3.162-1.179 3.162-1.179.633 1.581.23 2.76.115 3.048.733.805 1.179 1.825 1.179 3.09 0 4.413-2.688 5.39-5.247 5.678.417.36.776 1.05.776 2.128 0 1.538-.014 2.774-.014 3.162 0 .302.216.662.79.547C20.709 21.637 24 17.324 24 12.25 24 5.896 18.854.75 12.5.75Z"></path></svg>
-            </div>
-        </div>
         {% endif %}
     </div>
     <div class="wrapper">
         <div class="col">
             <li class="guide-Example">
-                <div class="workstation-sidebar-item" i18n="workstation-Example">Example</div>
+                <div class="workstation-sidebar-item"
+                     i18n="workstation-Example">Example
+                </div>
                 <ul>
                     <li class="workstation-sidebar-subitem unselectable-text"
                         onclick="importExample(1);"
-                        >
+                    >
                         <span i18n="workstation-sidebar-subitem-Agents">Two Agents</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
@@ -102,7 +112,7 @@
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
                         onclick="importExample(2);"
-                        >
+                    >
                         <span i18n="workstation-sidebar-subitem-Pipeline">Pipeline</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
@@ -112,7 +122,7 @@
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
                         onclick="importExample(3);"
-                        >
+                    >
                         <span i18n="workstation-sidebar-subitem-Conversation">Conversation</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
@@ -122,7 +132,7 @@
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
                         onclick="importExample(4);"
-                        >
+                    >
                         <span i18n="workstation-sidebar-subitem-GroupChat">Group Chat</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
@@ -136,7 +146,8 @@
                         <div class="tour-content">
                             Use examples Learn more
                             <button class="guide-skip" onclick="skipGuide()">
-                                <i class="fas fa-forward"></i> <span>Skip</span>
+                                <i class="fas fa-forward"></i>
+                                <span>Skip</span>
                             </button>
                         </div>
                     </div>
@@ -147,7 +158,7 @@
             <li>
                 <div class="workstation-sidebar-item unselectable-text"
                 >
-                <span i18n="workstation-sidebar-item-Workflow">Workflow</span>
+                    <span i18n="workstation-sidebar-item-Workflow">Workflow</span>
                 </div>
                 <ul>
                     <li>
@@ -175,7 +186,8 @@
                                 ondragstart="drag(event)">Post API Dall-E
                             </li>
                             <li class="workstation-sidebar-dragitem"
-                                data-node="dashscope_image_synthesis" draggable="true"
+                                data-node="dashscope_image_synthesis"
+                                draggable="true"
                                 ondragstart="drag(event)">Wanx
                             </li>
                         </ul>
@@ -184,7 +196,7 @@
                         <div class="workstation-sidebar-subitem unselectable-text"
                              onclick="onClickSidebarSubItem(this);"
                              i18n="workstation-sidebar-item-Message"
-                             >
+                        >
                             Message
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -198,7 +210,7 @@
                         <div class="workstation-sidebar-subitem unselectable-text"
                              onclick="onClickSidebarSubItem(this);"
                              i18n="workstation-sidebar-item-Agent"
-                             >
+                        >
                             Agent
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -233,7 +245,7 @@
                         <div class="workstation-sidebar-subitem unselectable-text"
                              onclick="onClickSidebarSubItem(this);"
                              i18n="workstation-sidebar-item-Pipeline"
-                             >
+                        >
                             Pipeline
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -278,7 +290,7 @@
                         <div class="workstation-sidebar-subitem unselectable-text"
                              onclick="onClickSidebarSubItem(this);"
                              i18n="workstation-sidebar-item-Service"
-                             >
+                        >
                             Service
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -323,7 +335,7 @@
                         <div class="workstation-sidebar-subitem unselectable-text"
                              onclick="onClickSidebarSubItem(this);"
                              i18n="workstation-sidebar-item-Tool"
-                             >
+                        >
                             Tool
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -350,7 +362,9 @@
                         </ul>
                     </li>
                 </ul>
-                <div class="workstation-sidebar-item" onclick="showGalleryTab()">Gallery</div>
+                <div class="workstation-sidebar-item"
+                     onclick="showGalleryTab()">Gallery
+                </div>
             </li>
         </div>
         <div class="col-right" id="col-right">
@@ -489,8 +503,13 @@
                     <div class="content">
                         <div class="tabs">
                             <ul>
-                                <button class="tab-button" onclick="showTab('tab1')">Gallery</button>
-                                <button class="tab-button" onclick="showTab('tab2')">Local Workflow</button>
+                                <button class="tab-button"
+                                        onclick="showTab('tab1')">Gallery
+                                </button>
+                                <button class="tab-button"
+                                        onclick="showTab('tab2')">Local
+                                    Workflow
+                                </button>
                             </ul>
                         </div>
                         <div id="tab1" class="tab active">
@@ -509,8 +528,10 @@
     <div id="surveyModal">
         <div id="surveyContent">
             <span id="surveyClose">&times;</span>
-            <h3 i18n="workstation-surveyContent">"We want to hear from you"</h3>
-            <button id="surveyButton" i18n="workstation-surveyContent-Button">Participation in questionnaire surveys
+            <h3 i18n="workstation-surveyContent">"We want to hear from
+                you"</h3>
+            <button id="surveyButton" i18n="workstation-surveyContent-Button">
+                Participation in questionnaire surveys
             </button>
         </div>
     </div>

@@ -357,7 +357,7 @@ async function initializeWorkstationPage() {
 
     setTimeout(showSurveyModal, 30000);
 
-    if(!localStorage.getItem('firstGuide')){
+    if (!localStorage.getItem('firstGuide')) {
         startGuide();
     }
     reloadi18n();
@@ -812,7 +812,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "sample_rate": ""
                     }
                 }, htmlSourceCode);
-                updateSampleRate(TextToAudioServiceID)
+            updateSampleRate(TextToAudioServiceID)
             break;
         case 'TextToImageService':
             editor.addNode('TextToImageService', 0, 0,
@@ -821,7 +821,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "model": "",
                         "api_key": "",
                         "n": 1,
-                        "size":""
+                        "size": ""
                     }
                 }, htmlSourceCode);
             break;
@@ -861,7 +861,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         "target_height": "",
                         "fps": "",
                     }
-               }, htmlSourceCode);
+                }, htmlSourceCode);
             break;
 
         case 'Post':
@@ -891,6 +891,7 @@ function updateSampleRate(nodeId) {
     }
 
     const modelNameInput = newNode.querySelector('#model_name');
+
     function updateSampleRateValue() {
         const modelName = modelNameInput ? modelNameInput.value : '';
 
@@ -2292,7 +2293,7 @@ function importExample(index) {
 
 
 function importExample_step(index) {
-    if(!localStorage.getItem('firstGuide')){
+    if (!localStorage.getItem('firstGuide')) {
         localStorage.setItem('firstGuide', 'true');
         skipGuide();
     }
@@ -2459,7 +2460,7 @@ function hideSurveyModal() {
     document.getElementById("surveyModal").style.display = "none";
 }
 
-function reloadi18n(){
+function reloadi18n() {
     let currentLang = getCookie('locale') || 'en';
     $("[i18n]").i18n({
         defaultLang: currentLang,
@@ -2467,18 +2468,18 @@ function reloadi18n(){
         filePrefix: "i18n_",
         fileSuffix: "",
         forever: true,
-        callback: function() {
+        callback: function () {
         }
     });
 }
 
-window.addEventListener('storage', function(event) {
+window.addEventListener('storage', function (event) {
     if (event.key === 'locale') {
         reloadi18n()
     }
 }, false);
 
-function startGuide(){
+function startGuide() {
     const targetElement = document.querySelector('.guide-Example');
     const element = document.querySelector('.tour-guide');
     positionElementRightOf(element, targetElement);
@@ -2488,20 +2489,20 @@ function getElementCoordinates(targetElement) {
     const style = window.getComputedStyle(targetElement);
     const rect = targetElement.getBoundingClientRect();
     return {
-      left: rect.left + (parseFloat(style.left) || 0),
-      top: rect.top + (parseFloat(style.top) || 0),
-      right: rect.right + (parseFloat(style.top) || 0),
-      bottom: rect.bottom + (parseFloat(style.top) || 0),
-      width: rect.width,
-      height: rect.height,
-      x: rect.x,
-      y: rect.y,
+        left: rect.left + (parseFloat(style.left) || 0),
+        top: rect.top + (parseFloat(style.top) || 0),
+        right: rect.right + (parseFloat(style.top) || 0),
+        bottom: rect.bottom + (parseFloat(style.top) || 0),
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y,
     };
 }
 
 function positionElementRightOf(element, targetElement) {
     const targetCoordinates = getElementCoordinates(targetElement);
-    const mask  = document.querySelector(".overlay");
+    const mask = document.querySelector(".overlay");
     mask.style.display = "block";
     element.style.position = 'absolute';
     element.style.display = 'block';
@@ -2509,24 +2510,27 @@ function positionElementRightOf(element, targetElement) {
     element.style.top = `${targetCoordinates.y}px`;
 }
 
-function skipGuide(){
+function skipGuide() {
     const element = document.querySelector(".tour-guide");
-    const mask  = document.querySelector(".overlay");
+    const mask = document.querySelector(".overlay");
     localStorage.setItem('firstGuide', 'true');
-    if(element){
+    if (element) {
         element.style.display = "none";
         element.remove();
         mask.style.display = "none";
         mask.remove();
     }
 }
+
 class Notification {
     static count = 0;
     static instances = [];
+
     static clearInstances() {
         Notification.count = 0;
         Notification.instances = [];
     }
+
     constructor(props) {
         Notification.count += 1;
         Notification.instances.push(this);
@@ -2544,47 +2548,51 @@ class Notification {
         this.reduceNumber = 0;
         this.init(props);
     }
-    init(props){
+
+    init(props) {
         this.setDefaultValues(props);
         this.element = document.createElement('div');
         // init notification-box css
         this.element.className = 'notification';
         // render title
-        this.title && this.renderTitle(getCookie("locale")=="zh" ? props.i18nTitle :this.title);
+        this.title && this.renderTitle(getCookie("locale") == "zh" ? props.i18nTitle : this.title);
         // render closeButtion
         this.closeBtn && this.renderCloseButton();
         // render content
-        this.content && this.renderContent(getCookie("locale")=="zh" ? props.i18nContent :this.content);
+        this.content && this.renderContent(getCookie("locale") == "zh" ? props.i18nContent : this.content);
         // render confirmBtn
         (this.confirmBtn || this.cancelBtn) && this.renderClickButton();
         this.progress && this.renderProgressBar();
         // set position
         this.setPosition(this.position);
         document.body.appendChild(this.element);
-        setTimeout(()=>{
+        setTimeout(() => {
             this.show();
-        },10)
+        }, 10)
     }
+
     // check if string is HTML
-    isHTMLString(string){
+    isHTMLString(string) {
         const doc = new DOMParser().parseFromString(string, 'text/html');
         return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
     }
+
     // render closeButtion
-    renderCloseButton(){
+    renderCloseButton() {
         this.closeBtn = document.createElement('span');
         this.closeBtn.className = 'notification-close';
         this.closeBtn.innerText = 'X';
         this.closeBtn.onclick = this.destroyAll.bind(this);
         this.title.appendChild(this.closeBtn);
     }
+
     // render title string or HTML
-    renderTitle(component){
-        if(this.isHTMLString(component)){
+    renderTitle(component) {
+        if (this.isHTMLString(component)) {
             this.title = document.createElement('div');
             this.title.className = 'notification-title';
             this.title.innerHTML = component;
-        }else{
+        } else {
             this.title = document.createElement('div');
             this.titleText = document.createElement('div');
             this.title.className = 'notification-title';
@@ -2594,59 +2602,63 @@ class Notification {
         }
         this.element.appendChild(this.title);
     }
+
     // render content string or HTML
-    renderContent(component){
-        if(this.isHTMLString(component)){
+    renderContent(component) {
+        if (this.isHTMLString(component)) {
             this.content = document.createElement('div');
             this.content.className = 'notification-content';
             this.content.innerHTML = component;
-        }else{
+        } else {
             this.content = document.createElement('div');
             this.content.className = 'notification-content';
             this.content.innerText = component;
         }
         this.element.appendChild(this.content);
     }
+
     // render clickbtn
-    renderClickButton(){
-        if(this.confirmBtn || this.cancelBtn){
+    renderClickButton() {
+        if (this.confirmBtn || this.cancelBtn) {
             this.clickBottonBox = document.createElement('div');
             this.clickBottonBox.className = 'notification-clickBotton-box';
         }
-        if(this.confirmBtn){
+        if (this.confirmBtn) {
             this.confirmBotton = document.createElement('button');
             this.confirmBotton.className = 'notification-btn confirmBotton';
-            this.confirmBotton.innerText =  getCookie("locale")=="zh" ? this.i18nConfirmBtn : this.confirmBtn;
+            this.confirmBotton.innerText = getCookie("locale") == "zh" ? this.i18nConfirmBtn : this.confirmBtn;
             this.confirmBotton.onclick = this.onConfirmCallback.bind(this);
             this.clickBottonBox.appendChild(this.confirmBotton);
         }
-        if(this.cancelBtn){
+        if (this.cancelBtn) {
             this.cancelBotton = document.createElement('button');
             this.cancelBotton.className = 'notification-btn cancelBotton';
-            this.cancelBotton.innerText =  getCookie("locale")=="zh" ? this.i18nCancelBtn : this.cancelBtn;
+            this.cancelBotton.innerText = getCookie("locale") == "zh" ? this.i18nCancelBtn : this.cancelBtn;
             this.cancelBotton.onclick = this.onCancelCallback.bind(this);
             this.clickBottonBox.appendChild(this.cancelBotton);
         }
         this.element.appendChild(this.clickBottonBox);
     }
+
     // render progress bar
-    renderProgressBar(){
+    renderProgressBar() {
         this.progressBar = document.createElement('div');
         this.progressBar.className = 'notification-progress';
         this.element.appendChild(this.progressBar);
     }
+
     // stepProgressBar
-    stepProgressBar(callback){
+    stepProgressBar(callback) {
         let startTime = performance.now();
         const step = (timestamp) => {
             const progress = Math.min((timestamp + this.reduceNumber - startTime) / this.intervalTime, 1);
-            this.progressBar.style.width = ( 1- progress ) * 100 + '%';
+            this.progressBar.style.width = (1 - progress) * 100 + '%';
             if (progress < 1 && this.pause == false) {
                 requestAnimationFrame(step)
-            }else{
-                this.reduceNumber  = timestamp + this.reduceNumber - startTime
+            } else {
+                this.reduceNumber = timestamp + this.reduceNumber - startTime
             }
-            if(progress == 1){
+            if (progress == 1) {
                 this.pause == true;
                 this.reduceNumber = 0;
                 callback();
@@ -2655,15 +2667,17 @@ class Notification {
         }
         requestAnimationFrame(step);
     }
+
     setDefaultValues(props) {
         for (const key in props) {
             if (props[key] === undefined) {
-               return ;
+                return;
             } else {
                 this[key] = props[key];
             }
         }
     }
+
     setPosition() {
         switch (this.position) {
             case 'top-left':
@@ -2684,6 +2698,7 @@ class Notification {
                 break;
         }
     }
+
     show() {
         this.element.style.display = 'flex';
         switch (this.position) {
@@ -2705,6 +2720,7 @@ class Notification {
                 break;
         }
     }
+
     // hide() {
     //     // this.element.style.display = 'none';
     // }
@@ -2714,6 +2730,7 @@ class Notification {
         }
         Notification.clearInstances();
     }
+
     removeChild() {
         let removeIndex;
         for (let i = 0; i < Notification.instances.length; i++) {
@@ -2727,6 +2744,7 @@ class Notification {
         }
         this.element.remove();
     }
+
     addCloseListener() {
         this.closeBtn.addEventListener('click', () => {
             this.removeChild();
@@ -2743,10 +2761,10 @@ class Notification {
     onConfirmCallback() {
         if (typeof this.onConfirm === 'function') {
             this.pause = !this.pause
-            if(!this.pause){
+            if (!this.pause) {
                 this.stepProgressBar(this.onConfirm);
-                this.confirmBotton.innerText =  getCookie("locale")=="zh" ? '暂停' : 'pause'
-            }else{
+                this.confirmBotton.innerText = getCookie("locale") == "zh" ? '暂停' : 'pause'
+            } else {
                 this.confirmBotton.innerText = this.confirmBtn
             }
         }
@@ -2767,7 +2785,7 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     showTab('tab1');
 });
 
@@ -2856,53 +2874,28 @@ function showTab(tabId) {
 function createGridItem(workflowName, container, thumbnail, author = '', time = '', showDeleteButton = false) {
     var gridItem = document.createElement('div');
     gridItem.className = 'grid-item';
-    gridItem.style.borderRadius = '15px';
-    gridItem.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
 
     var img = document.createElement('div');
     img.className = 'thumbnail';
     img.style.backgroundImage = `url('${thumbnail}')`;
-    img.style.backgroundSize = 'cover';
-    img.style.backgroundPosition = 'center';
     gridItem.appendChild(img);
 
     var caption = document.createElement('div');
     caption.className = 'caption';
-    caption.style.backgroundColor = 'white';
 
     var h6 = document.createElement('h6');
     h6.textContent = workflowName;
-    h6.style.margin = '1px 0';
 
     var pAuthor = document.createElement('p');
     pAuthor.textContent = `Author: ${author}`;
-    pAuthor.style.margin = '1px 0';
-    pAuthor.style.fontSize = '10px';
 
     var pTime = document.createElement('p');
     pTime.textContent = `Date: ${time}`;
-    pTime.style.margin = '1px 0';
-    pTime.style.fontSize = '10px';
 
     var button = document.createElement('button');
     button.textContent = ' Load ';
-    button.className = 'button';
-    button.style.backgroundColor = '#007aff';
-    button.style.color = 'white';
-    button.style.padding = '2px 7px';
-    button.style.border = 'none';
-    button.style.borderRadius = '8px';
-    button.style.fontSize = '12px';
-    button.style.cursor = 'pointer';
-    button.style.transition = 'background 0.3s';
+    button.className = 'button load-button';
 
-    button.addEventListener('mouseover', function () {
-        button.style.backgroundColor = '#005bb5';
-    });
-
-    button.addEventListener('mouseout', function () {
-        button.style.backgroundColor = '#007aff';
-    });
     button.onclick = function (e) {
         e.preventDefault();
         sendWorkflow(workflowName);
@@ -2916,22 +2909,7 @@ function createGridItem(workflowName, container, thumbnail, author = '', time = 
     if (showDeleteButton) {
         var deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.className = 'button';
-        deleteButton.style.backgroundColor = '#007aff';
-        deleteButton.style.color = 'white';
-        deleteButton.style.padding = '2px 3px';
-        deleteButton.style.border = 'none';
-        deleteButton.style.borderRadius = '8px';
-        deleteButton.style.fontSize = '12px';
-        deleteButton.style.cursor = 'pointer';
-        deleteButton.style.transition = 'background 0.3s';
-
-        deleteButton.addEventListener('mouseover', function () {
-            deleteButton.style.backgroundColor = '#005bb5';
-        });
-        deleteButton.addEventListener('mouseout', function () {
-            deleteButton.style.backgroundColor = '#007aff';
-        });
+        deleteButton.className = 'button delete-button';
 
         deleteButton.onclick = function (e) {
             e.preventDefault();
@@ -2945,7 +2923,6 @@ function createGridItem(workflowName, container, thumbnail, author = '', time = 
     container.appendChild(gridItem);
     console.log('Grid item appended:', gridItem);
 }
-
 
 
 function showGalleryWorkflowList(tabId) {
@@ -3009,7 +2986,7 @@ function showLoadWorkflowList(tabId) {
 
             data.files.forEach(workflowName => {
                 const title = workflowName.replace(/\.json$/, '');
-                const thumbnail = generateThumbnailFromContent({ title });
+                const thumbnail = generateThumbnailFromContent({title});
                 createGridItem(title, container, thumbnail, '', '', true);
             });
         })
