@@ -42,6 +42,7 @@ body {
 
 #navigation-bar {
     display: flex;
+    position: relative;
     flex-direction: column;
     width: var(--navigation-bar-width);
     height: 100%;
@@ -219,4 +220,96 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--main-color-light);
+}
+
+.navbar,.navbar ul{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+.navbar{
+    position: absolute;
+    /* padding: 10px; */
+    background-color: #fff;
+    border-radius: 50px;
+    background-color: var(--main-color);
+    top: 90%;
+    left: 2%;
+}
+.navbar input{
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+    cursor: pointer;
+}
+.navbar span{
+    position: absolute;
+    left:11px;
+    width: 25px;
+    height: 4px;
+    top: calc(50% - 10px);
+    border-radius: 15px;
+    background-color: #fff;
+    pointer-events: none;
+    transition: transform 0.3s ease-in-out,top 0.3s ease-in-out 0.3s;
+}
+.navbar span:nth-child(3){
+    top: calc(50% + 6px);
+}
+.navbar ul{
+    width: 0;
+    overflow: hidden;
+    transition: all 0.5s;
+    white-space: nowrap;
+}
+.navbar ul li{
+    list-style: none;
+    margin: 0px 15px;
+}
+.navbar ul li a{
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 700;
+    color:#fff;
+}
+.navbar ul li a:hover{
+    color:#000;
+}
+.navbar input:checked ~ ul{
+    width: 100px;
+}
+.navbar input:checked ~ span:nth-child(2){
+    top: calc(50% - 2px);
+    transform: rotate(-45deg);
+    background-color: #fff;
+    transition: top 0.3s ease-in-out,transform 0.3s ease-in-out 0.3s;
+}
+.navbar input:checked ~ span:nth-child(3){
+    top: calc(50% - 2px);
+    transform: rotate(45deg);
+    background-color: #fff;
+    transition: top 0.3s ease-in-out,transform 0.3s ease-in-out 0.3s;
+}
+.close{
+    position: absolute;
+    display: none;
+    top: -20%;
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #999;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: end;
+    background: #999;
+    color: #fff;
+    cursor: pointer;
+}
+.navbar:hover .close{
+    display: flex;
+}
+.navbar input:checked ~ .close{
+    display: none;
 }

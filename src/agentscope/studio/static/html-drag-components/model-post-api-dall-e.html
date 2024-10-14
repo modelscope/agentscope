@@ -9,15 +9,15 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">Post API Dall-E Configurations</div>
+    <div class="readme" i18n="model-post-api-dall-e-readme">Post API Dall-E Configurations</div>
     <br>
-    <label> Config Name </label>
+    <label i18n="model-post-api-dall-e-ConfigName"> Config Name </label>
     <input type="text" df-args-config_name placeholder="dall_e"
            data-required="true"><br>
-    <label> Model Name </label>
+    <label i18n="model-post-api-dall-e-ModelName"> Model Name </label>
     <input type="text" df-args-json_args-model placeholder="dall-e-3"
            data-required="true"><br>
-    <label> Number of Images </label>
+    <label i18n="model-post-api-dall-e-NumberofImages"> Number of Images </label>
     <input type="number" df-args-json_args-n placeholder=1
            data-required="true"><br>
     <label> size </label>
@@ -28,18 +28,22 @@
         <option value="1792x1024">
         <option value="1024x1792">
     </datalist>
-    <label> Temperature </label>
+    <label i18n="model-post-api-dall-e-Temperature"> Temperature </label>
     <input type="number" df-args-json_args-temperature placeholder=0
            min="0" max="2" step="0.1"><br>
-    <label> Seed </label>
+    <label i18n="model-post-api-dall-e-Seed"> Seed </label>
     <input type="number" df-args-json_args-seed placeholder=0 min="0">
-    <label> API url</label>
+    <label i18n="model-post-api-dall-e-API"> API url</label>
     <input type="text" df-args-api_url><br>
     <label> Content-Type </label>
     <input type="text" df-args-headers-content_type
            placeholder="application/json"><br>
-    <label> Authorization </label>
+    <label i18n="model-post-api-dall-e-Authorization"> Authorization </label>
     <input type="text" df-args-headers-authorization><br>
     <label> Messages Key </label>
-    <input type="text" df-args-messages_key placeholder="prompt"><br>
+    <input type="text" df-args-messages_key
+       placeholder="prompt"
+       i18n="model-post-api-dall-e-prompt-placeholder"
+       i18n-only="placeholder"
+    ><br>
 </div>

@@ -9,42 +9,46 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">Post API Chat Configuration</div>
+    <div class="readme" i18n="model-post-api-chat-readme">Post API Chat Configuration</div>
     <br>
 
-    <label>Config Name</label>
+    <label i18n="model-post-api-chat-ConfigName">Config Name</label>
     <input type="text" df-args-config_name placeholder="post_chat"
            data-required="true">
     <br>
 
-    <label>Model Name</label>
+    <label i18n="model-post-api-chat-ModelName">Model Name</label>
     <input type="text" df-args-json_args-model placeholder="gpt-4"
            data-required="true">
     <br>
 
-    <label>Temperature</label>
+    <label i18n="model-post-api-chat-Temperature">Temperature</label>
     <input type="number" df-args-json_args-temperature placeholder=0
            min="0" max="2" step="0.1">
     <br>
 
-    <label>Seed</label>
+    <label i18n="model-post-api-chat-Seed">Seed</label>
     <input type="number" df-args-json_args-seed placeholder=0 min="0">
     <br>
 
-    <label>API url</label>
+    <label i18n="model-post-api-chat-API">API url</label>
     <input type="text" df-args-api_url>
     <br>
 
-    <label>Content-Type</label>
+    <label i18n="model-post-api-chat-ContentType">Content-Type</label>
     <input type="text" df-args-headers-content_type
            placeholder="application/json">
     <br>
 
-    <label>Authorization</label>
+    <label i18n="model-post-api-chat-Authorization">Authorization</label>
     <input type="text" df-args-headers-authorization>
     <br>
 
-    <label>Messages Key</label>
-    <input type="text" df-args-messages_key placeholder="messages">
+    <label i18n="model-post-api-chat-MessagesKey">Messages Key</label>
+    <input type="text" df-args-messages_key
+       placeholder="messages"
+       i18n="model-post-api-chat-MessagesKey-placeholder"
+       i18n-only="placeholder"
+    >
     <br>
 </div>

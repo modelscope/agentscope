@@ -8,39 +8,44 @@
             </svg>
             <span>DictDialogAgent</span>
         </div>
-        <button class="button copy-button">Copy</button>
+        <button class="button copy-button" i18n="agent-dictdialogagent-Copy">Copy</button>
         <span class="toggle-arrow">&#x25B2;</span>
     </div>
     <div class="box">
         <div class="readme">
-            Agent that generates response in a dict format
+            <span i18n="agent-dictdialogagent-readme">Agent that generates response in a dict format</span>
             <div>Node ID: <span class="node-id">ID_PLACEHOLDER</span></div>
         </div>
 
-        <label>Name</label>
+        <label i18n="agent-dictdialogagent-labelName">Name</label>
         <input type="text" df-args-name placeholder="Assistant"
+               i18n="agent-dictdialogagent-labelName-placeholder"
+               i18n-only="placeholder"
                data-required="true">
         <br>
 
-        <label>System prompt</label>
+        <label i18n="agent-dictdialogagent-SystemPrompt">System prompt</label>
         <textarea type="text" df-args-sys_prompt  class="text-input"
-               placeholder="You're an assistant." data-required="true"></textarea>
+               i18n="agent-dictdialogagent-SystemPrompt-textarea"
+               placeholder="You're an assistant."
+               i18n-only="placeholder"
+               data-required="true"></textarea>
         <br>
 
-        <label>Model config name</label>
+        <label i18n="agent-dictdialogagent-ModelConfigName">Model config name</label>
         <input type="text" df-args-model_config_name placeholder="gpt-4"
                data-required="true">
         <br>
 
-        <label>Max retries</label>
+        <label i18n="agent-dictdialogagent-MaxRetries">Max retries</label>
         <input type="number" df-args-max_retries placeholder=3 min="1">
         <br>
 
-        <label>Parse function (Optional)</label>
+        <label i18n="agent-dictdialogagent-labelParse">Parse function (Optional)</label>
         <input type="text" df-args-parse_func>
         <br>
 
-        <label>Fault handler (Optional)</label>
+        <label i18n="agent-dictdialogagent-labelFault">Fault handler (Optional)</label>
         <input type="text" df-args-fault_handler>
     </div>
 </div>

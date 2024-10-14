@@ -3,7 +3,7 @@ const workstationTabBtn = document.getElementById("workstation-tab-btn");
 const marketTabBtn = document.getElementById("market-tab-btn");
 const serverTabBtn = document.getElementById("server-tab-btn");
 const navigationBar = document.getElementById("navigation-bar");
-
+const suspendedBallDom = document.querySelector('.navbar')
 let currentPageUrl = null;
 let inGuidePage = true;
 // When navigation bar collapsed, only when the mouse leaves the navigation bar, then navigation bar will be able to be expanded
@@ -68,6 +68,9 @@ function loadTabPage(pageUrl, javascriptUrl) {
             // Load the page content
             document.getElementById("content").innerHTML = html;
 
+            if(!localStorage.getItem('currentLanguage')){
+                localStorage.setItem('currentLanguage', 'en');
+            }
             // Load the javascript file
             if (javascriptUrl && !isScriptLoaded(javascriptUrl)) {
                 let script = document.createElement("script");
@@ -145,3 +148,173 @@ navigationBar.addEventListener("mouseleave", function () {
         activeExpanded = true;
     }
 });
+
+class SuspensionBall {
+    constructor(dom,callback = null) {
+      this.callback = callback;
+      this.startEvt = '';
+      this.moveEvt = '';
+      this.endEvt = '';
+      this.drag = dom;
+      this.isClick = true;
+      this.disX = 0;
+      this.disY = 0;
+      this.left = 0;
+      this.top = 0;
+      this.starX = 0;
+      this.starY = 0;
+    }
+
+    init() {
+      this.initEvent();
+    }
+
+    initEvent() {
+      if ('ontouchstart' in window) {
+        this.startEvt = 'touchstart';
+        this.moveEvt = 'touchmove';
+        this.endEvt = 'touchend';
+      } else {
+        this.startEvt = 'mousedown';
+        this.moveEvt = 'mousemove';
+        this.endEvt = 'mouseup';
+      }
+      this.drag.addEventListener(this.startEvt, this.startFun);
+    }
+
+    startFun = (e) => {
+      e.preventDefault();
+      e = e || window.event;
+      this.isClick = true;
+      this.starX = e.touches ? e.touches[0].clientX : e.clientX;
+      this.starY = e.touches ? e.touches[0].clientY : e.clientY;
+      this.disX = this.starX - this.drag?.offsetLeft;
+      this.disY = this.starY - this.drag?.offsetTop;
+      document.addEventListener(this.moveEvt, this.moveFun);
+      document.addEventListener(this.endEvt, this.endFun);
+    }
+
+    moveFun = (e) => {
+      e.preventDefault();
+      e = e || window.event;
+      if (
+        Math.abs(this.starX - (e.touches ? e.touches[0].clientX : e.clientX)) > 20 ||
+        Math.abs(this.starY - (e.touches ? e.touches[0].clientY : e.clientY)) > 20
+      ) {
+        this.isClick = false;
+      }
+      this.left = (e.touches ? e.touches[0].clientX : e.clientX) - this.disX;
+      this.top = (e.touches ? e.touches[0].clientY : e.clientY) - this.disY;
+      if (this.left < 0) {
+        this.left = 0;
+      } else if (this.left > document.documentElement.clientWidth - this.drag.offsetWidth) {
+        this.left = document.documentElement.clientWidth - this.drag.offsetWidth;
+      }
+      if (this.top < 0) {
+        this.top = 0;
+      } else if (this.top > document.documentElement.clientHeight - this.drag.offsetHeight) {
+        this.top = document.documentElement.clientHeight - this.drag.offsetHeight;
+      }
+      this.drag.style.left = this.left + 'px';
+      this.drag.style.top = this.top + 'px';
+    }
+
+    endFun = (e)=> {
+      document.removeEventListener(this.moveEvt, this.moveFun);
+      document.removeEventListener(this.endEvt, this.endFun);
+      if (this.isClick && this.callback) { // 点击
+        this.callback()
+      }
+    }
+    removeDrag = () => {
+        this.drag.remove();
+    }
+  }
+
+const suspensionBall = new SuspensionBall(suspendedBallDom);
+suspensionBall.init();
+
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+            debounceFun();
+        }
+    });
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+});
+
+const debounceFun = debounce(function refreshI18n() {
+    let currentLang = getCookie('locale') || 'en';
+    observer.disconnect();
+    $("[i18n]").i18n({
+        defaultLang: currentLang,
+        filePath: "../static/i18n/",
+        filePrefix: "i18n_",
+        fileSuffix: "",
+        forever: true,
+        callback: function() {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+            });
+        }
+    });
+},100)
+
+document.addEventListener('DOMContentLoaded', function() {
+    let currentLang = getCookie('locale') || 'en';
+    switch (currentLang){
+        case 'en':
+            document.getElementById('translate').innerText = 'en'
+            break;
+        case 'zh':
+            document.getElementById('translate').innerText = '中'
+            break;
+    }
+});
+
+function changeLanguage(){
+    let currentLang = getCookie('locale') || 'en';
+    switch (currentLang){
+        case 'en':
+            document.getElementById('translate').innerText = '中'
+            localStorage.setItem('locale', 'zh');
+            setCookie('locale', 'zh');
+            break;
+        case 'zh':
+            document.getElementById('translate').innerText = 'en'
+            localStorage.setItem('locale', 'en');
+            setCookie('locale', 'en');
+            break;
+    }
+}
+
+function debounce(func, delay) {
+    let timeout;
+
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+    };
+}
+
+function getCookie(name) {
+    var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}

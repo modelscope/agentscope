@@ -10,24 +10,24 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">Image Motion Configurations</div>
+    <div class="readme" i18n="tool-image-motion-readme">Image Motion Configurations</div>
     <br>
 
-    <label> Output path </label>
+    <label i18n="tool-image-motion-outputPath"> Output path </label>
     <textarea type="text" df-args-output_path class="text-input"
            placeholder="/Users/xxxx/Desktop/res.mp4"> </textarea><br>
 
-    <label for="output_format_select">Output Format</label>
+    <label for="output_format_select"  i18n="tool-image-motion-outputFormat">Output Format</label>
         <select id="output_format_select" df-args-output_format
                 data-required="true">
             <option value="mp4" selected>MP4</option>
             <option value="gif">GIF</option>
         </select>
 
-    <label> Duration </label>
+    <label i18n="tool-image-motion-labelDuration"> Duration </label>
     <input type="number" df-args-duration placeholder=5 min="1"><br>
 
-    <label for="motion_style_select">Motion direction</label>
+    <label for="motion_style_select" i18n="tool-image-motion-labelMotiondirection">Motion direction</label>
         <select id="motion_style_select" df-args-motion_style
                 data-required="true">
             <option value="random" selected>Random</option>

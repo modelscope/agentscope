@@ -11,17 +11,23 @@
 </div>
 
 <div class="box">
-    <label>Name</label>
-    <input type="text" df-args-name placeholder="Host"
+    <label i18n="message-msg-labelName">Name</label>
+    <input type="text" df-args-name
+           placeholder="Host"
+           i18n="message-msg-labelName-placeholder"
+           i18n-only="placeholder"
            data-required="true">
     <br>
 
-    <label>Content</label>
-    <input type="text" df-args-content placeholder="Hello"
+    <label i18n="message-msg-labelContent">Content</label>
+    <input type="text" df-args-content
+           placeholder="Hello"
+           i18n="message-msg-labelContent-placeholder"
+           i18n-only="placeholder"
            data-required="true">
     <br>
 
-    <label>URL (Optional)</label>
+    <label i18n="message-msg-labelURL">URL (Optional)</label>
     <input type="text" df-args-url placeholder="">
     <br>
 </div>

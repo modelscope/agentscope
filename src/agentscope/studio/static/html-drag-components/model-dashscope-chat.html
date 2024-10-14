@@ -9,18 +9,18 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">DashScope Chat Configurations (Your API key will
+    <div class="readme" i18n="model-dashscope-chat-readme">DashScope Chat Configurations (Your API key will
         NOT be stored and exposed to the website
         maintainer)
     </div>
     <br>
 
-    <label>Config Name </label>
+    <label i18n="model-dashscope-chat-labelConfigName">Config Name </label>
     <input type="text" df-args-config_name placeholder="qwen"
            data-required="true">
     <br>
 
-    <label>Model Name</label>
+    <label i18n="model-dashscope-chat-labelModelName">Model Name</label>
     <input type="text" list="dashscope_chat-model-names" df-args-model_name
            data-required="true"><br>
     <datalist id="dashscope_chat-model-names">
@@ -34,11 +34,11 @@
     <input type="text" df-args-api_key data-required="true">
     <br>
 
-    <label>Temperature </label>
+    <label i18n="model-dashscope-chat-labelTemperature">Temperature </label>
     <input type="number" df-args-temperature placeholder=0 min="0" max="2"
            step="0.1">
     <br>
 
-    <label> Seed </label>
+    <label i18n="model-dashscope-chat-labelSeed"> Seed </label>
     <input type="number" df-args-seed placeholder=0 min="0">
 </div>

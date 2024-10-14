@@ -10,7 +10,7 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">Post Configurations</div>
+    <div class="readme" i18n="tool-post-readme">Post Configurations</div>
     <br>
     <label> url </label>
     <input type="text" df-args-url placeholder=""
@@ -32,11 +32,11 @@
     <textarea type="text" df-args-kwargs class="text-input"
            placeholder='{"xx": "xxx"}'> </textarea><br>
 
-    <label> Output path </label>
+    <label i18n="tool-post-label-outputPath"> Output path </label>
     <textarea type="text" df-args-output_path class="text-input"
            placeholder="/Users/xxxx/Desktop/res.jpg"> </textarea><br>
 
-    <label for="output_type_select">Output type</label>
+    <label for="output_type_select" i18n="tool-post-label-outputtype">Output type</label>
         <select id="output_type_select" df-args-output_type
                 data-required="true">
             <option value="image" selected>Image</option>

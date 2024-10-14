@@ -9,20 +9,20 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">Wanx Configurations</div>
+    <div class="readme" i18n="model-wanx-readme">Wanx Configurations</div>
     <br>
-    <label> Config Name </label>
+    <label i18n="model-wanx-ConfigName"> Config Name </label>
     <input type="text" df-args-config_name placeholder="wanx"
            data-required="true"><br>
-    <label> Model Name </label>
+    <label i18n="model-wanx-ModelName"> Model Name </label>
     <input type="text" df-args-model_name placeholder="wanx-v1"
            data-required="true"><br>
     <label>API key</label>
     <input type="text" df-args-api_key data-required="true"><br>
-    <label> Number of Images </label>
+    <label i18n="model-wanx-NumberofImages"> Number of Images </label>
     <input type="number" df-args-generate_args-n placeholder=1
            data-required="true"><br>
-    <label> size </label>
+    <label i18n="model-wanx-size"> size </label>
     <input type="text" list="wanx-image-sizes" df-args-generate_args-size
            data-required="true"><br>
     <datalist id="wanx-image-sizes">
@@ -30,9 +30,15 @@
         <option value="720*1280">
         <option value="1280*720">
     </datalist>
-    <label> Temperature </label>
+    <label i18n="model-wanx-Temperature"> Temperature </label>
     <input type="number" df-args-generate_args-temperature placeholder=0
            min="0" max="2" step="0.1"><br>
-    <label> Seed </label>
+    <label i18n="model-wanx-Seed"> Seed </label>
     <input type="number" df-args-generate_args-seed placeholder=0 min="0" max="4">
+    <label> Messages Key </label>
+    <input type="text" df-args-messages_key
+        placeholder="prompt"
+        i18n="model-wanx-MessagesKey-placeholder"
+        i18n-only="placeholder"
+    ><br>
 </div>

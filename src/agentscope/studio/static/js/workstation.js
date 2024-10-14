@@ -152,6 +152,7 @@ async function initializeWorkstationPage() {
         setupNodeCopyListens(id);
         addEventListenersToNumberInputs(id);
         setupTextInputListeners(id);
+        reloadi18n();
     })
 
     editor.on('nodeRemoved', function (id) {
@@ -359,6 +360,7 @@ async function initializeWorkstationPage() {
     if(!localStorage.getItem('firstGuide')){
         startGuide();
     }
+    reloadi18n();
 }
 
 
@@ -2250,7 +2252,8 @@ function fetchExample(index, processData) {
         },
         body: JSON.stringify({
             data: index,
-            lang: getCookie('locale') || 'en',
+            // lang: getCookie('locale') || 'en',
+            lang: 'en',
         })
     }).then(response => {
         if (!response.ok) {
@@ -2281,6 +2284,7 @@ function importExample(index) {
                         }
                     }
                 });
+                reloadi18n();
             });
     })
 }
@@ -2308,6 +2312,7 @@ function updateImportButtons() {
         <= 1;
     document.getElementById('import-next').disabled = currentImportIndex >= importQueue.length;
     document.getElementById('import-skip').disabled = currentImportIndex >= importQueue.length;
+    reloadi18n()
 }
 
 
@@ -2340,21 +2345,22 @@ function initializeImport(data) {
     importQueue = Object.keys(dataToImportStep.drawflow.Home.data);
 
     const importButtonsDiv = document.getElementById('import-buttons');
+
     createElement('div', 'step-info', '', importButtonsDiv);
     createElement('button', 'import-prev',
-        '<i class="fas fa-arrow-left"></i> <span>Previous</span>',
+        '<i class="fas fa-arrow-left"></i> <span i18n="workstarionjs-import-prev">Previous</span>',
         importButtonsDiv).onclick = importPreviousComponent;
     createElement('button', 'import-next',
-        '<i class="fas fa-arrow-right"></i> <span>Next</span>',
+        '<i class="fas fa-arrow-right"></i> <span i18n="workstarionjs-import-next">Next</span>',
         importButtonsDiv).onclick = importNextComponent;
     createElement('button', 'import-skip',
-        '<i class="fas fa-forward"></i> <span>Skip</span>',
+        '<i class="fas fa-forward"></i> <span i18n="workstarionjs-import-skip">Skip</span>',
         importButtonsDiv).onclick = importSkipComponent;
     createElement('button', 'import-quit',
-        '<i class="fas fa-sign-out-alt"></i> <span>Quit</span>',
+        '<i class="fas fa-sign-out-alt"></i> <span i18n="workstarionjs-import-quit">Quit</span>',
         importButtonsDiv).onclick = importQuitComponent;
     createElement('div', 'step-warning',
-        'Caution: You are currently in the tutorial mode where modifications are restricted.<br>Please click <strong>Quit</strong> to exit and start creating your custom multi-agent applications.', document.body);
+        '<span i18n="workstarionjs-import-caution">Caution: You are currently in the tutorial mode where modifications are restricted.</span><br><span i18n="workstarionjs-import-Caution-click">Please click</span> <strong i18n="workstarionjs-import-Caution-quit">Quit</strong> <span  i18n="workstarionjs-import-Caution-exit"> to exit and start creating your custom multi-agent applications. </span>', document.body);
 
     accumulatedImportData = {};
     currentImportIndex = 0;
@@ -2452,6 +2458,25 @@ function hideSurveyModal() {
     document.getElementById("surveyModal").style.display = "none";
 }
 
+function reloadi18n(){
+    let currentLang = getCookie('locale') || 'en';
+    $("[i18n]").i18n({
+        defaultLang: currentLang,
+        filePath: "../static/i18n/",
+        filePrefix: "i18n_",
+        fileSuffix: "",
+        forever: true,
+        callback: function() {
+        }
+    });
+}
+
+window.addEventListener('storage', function(event) {
+    if (event.key === 'locale') {
+        reloadi18n()
+    }
+}, false);
+
 function startGuide(){
     const targetElement = document.querySelector('.guide-Example');
     const element = document.querySelector('.tour-guide');
@@ -2524,11 +2549,11 @@ class Notification {
         // init notification-box css
         this.element.className = 'notification';
         // render title
-        this.title && this.renderTitle(this.title);
+        this.title && this.renderTitle(getCookie("locale")=="zh" ? props.i18nTitle :this.title);
         // render closeButtion
         this.closeBtn && this.renderCloseButton();
         // render content
-        this.content && this.renderContent(this.content);
+        this.content && this.renderContent(getCookie("locale")=="zh" ? props.i18nContent :this.content);
         // render confirmBtn
         (this.confirmBtn || this.cancelBtn) && this.renderClickButton();
         this.progress && this.renderProgressBar();
@@ -2590,14 +2615,14 @@ class Notification {
         if(this.confirmBtn){
             this.confirmBotton = document.createElement('button');
             this.confirmBotton.className = 'notification-btn confirmBotton';
-            this.confirmBotton.innerText = this.confirmBtn;
+            this.confirmBotton.innerText =  getCookie("locale")=="zh" ? this.i18nConfirmBtn : this.confirmBtn;
             this.confirmBotton.onclick = this.onConfirmCallback.bind(this);
             this.clickBottonBox.appendChild(this.confirmBotton);
         }
         if(this.cancelBtn){
             this.cancelBotton = document.createElement('button');
             this.cancelBotton.className = 'notification-btn cancelBotton';
-            this.cancelBotton.innerText = this.cancelBtn;
+            this.cancelBotton.innerText =  getCookie("locale")=="zh" ? this.i18nCancelBtn : this.cancelBtn;
             this.cancelBotton.onclick = this.onCancelCallback.bind(this);
             this.clickBottonBox.appendChild(this.cancelBotton);
         }
@@ -2719,7 +2744,7 @@ class Notification {
             this.pause = !this.pause
             if(!this.pause){
                 this.stepProgressBar(this.onConfirm);
-                this.confirmBotton.innerText = 'pause'
+                this.confirmBotton.innerText =  getCookie("locale")=="zh" ? '暂停' : 'pause'
             }else{
                 this.confirmBotton.innerText = this.confirmBtn
             }
@@ -2727,31 +2752,16 @@ class Notification {
     }
 }
 
-function createNotification({
-    title = 'Notification',
-    content = 'Notification content',
-    position = 'top-right',
-    intervalTime = 3000,
-    progress = true,
-    confirmBtn = 'Yes',
-    cancelBtn = 'No',
-    closeBtn = true,
-    onConfirm = () => {
-    },
-    onCancel = () => {
+function createNotification(props) {
+    new Notification(props);
+}
 
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
     }
-}) {
-    const notice = new Notification({
-        title: title,
-        content: content,
-        position: position,
-        closeBtn: closeBtn,
-        intervalTime: intervalTime,
-        progress: progress,
-        confirmBtn: confirmBtn,
-        cancelBtn: cancelBtn,
-        onConfirm: onConfirm,
-        onCancel: onCancel
-    });
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
