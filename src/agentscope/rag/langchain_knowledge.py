@@ -321,7 +321,7 @@ class LangChainKnowledge(Knowledge):
                 **search_kwargs,
             }
         logger.info(
-            f"search_type: {search_type}\tsearch_kwargs: {search_kwargs}",
+            f"search_type: {search_type}; search_kwargs: {search_kwargs}",
         )
         retriever = VectorStoreRetriever(
             vectorstore=self.vectorstore,
@@ -354,7 +354,7 @@ class LangChainKnowledge(Knowledge):
             return results
         return retrieved
 
-    def refresh_index(self) -> list:
+    def refresh_index(self) -> None:
         """
         Refresh the index when needed.
         """
@@ -380,4 +380,5 @@ class LangChainKnowledge(Knowledge):
                 source_id_key="source",
             )
             clean_results.append(clean_result)
-        return clean_results
+
+        logger.info(f"Refresh result: {clean_results}")
