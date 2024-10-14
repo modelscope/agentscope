@@ -357,7 +357,7 @@ class Group(BasicEnv):
                             "type": "fixed",
                             "max_retries": 100,
                             "delay": 2,
-                        }
+                        },
                     },
                 )
                 for config in participant_configs
@@ -375,7 +375,7 @@ class Group(BasicEnv):
                             "type": "fixed",
                             "max_retries": 20,
                             "delay": 2,
-                        }
+                        },
                     },
                 )
                 for config in participant_configs
@@ -627,7 +627,7 @@ class GuessTwoThirdGame(BasicEnv):
                             "type": "fixed",
                             "max_retries": 100,
                             "delay": 1,
-                        }
+                        },
                     },
                 ),
             )
