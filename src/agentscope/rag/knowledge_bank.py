@@ -133,7 +133,6 @@ class KnowledgeBank:
                 "please check your knowledge config",
             )
 
-        CustomKnowledge = None
         if "llama_index" in backend_engine:
             CustomKnowledge = LlamaIndexKnowledge
             logger.info("Using llama_index backend engine")
