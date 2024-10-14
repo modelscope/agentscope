@@ -86,7 +86,7 @@ class AgentWithChatRoom(AgentBase):
             self.event_list.append(event)
             return Msg(name=self.name, content="", role="assistant")
         else:
-            history = self.room.get_history(self.agent_id)
+            history = self.room.get_history(self.name)
             msg = Msg(name=self.name, content=len(history), role="assistant")
             self.room.speak(msg)
             return msg
@@ -408,7 +408,7 @@ class EnvTest(unittest.TestCase):
         self.assertEqual(master.event_list[-1].name, "speak")
         self.assertEqual(master.event_list[-1].args["message"], r1)
         self.assertEqual(master.event_list[-2].name, "get_history")
-        self.assertEqual(master.event_list[-2].args["agent_id"], a1.agent_id)
+        self.assertEqual(master.event_list[-2].args["agent_name"], a1.name)
         self.assertEqual(r1.content, 0)
 
         a2 = AgentWithChatRoom("a2")
@@ -419,12 +419,12 @@ class EnvTest(unittest.TestCase):
         self.assertEqual(master.event_list[-1].name, "speak")
         self.assertEqual(master.event_list[-1].args["message"], r2)
         self.assertEqual(master.event_list[-2].name, "get_history")
-        self.assertEqual(master.event_list[-2].args["agent_id"], a2.agent_id)
+        self.assertEqual(master.event_list[-2].args["agent_name"], a2.name)
         self.assertEqual(r2.content, 0)
 
         # test history_idx
-        self.assertEqual(r[a1.agent_id].history_idx, 0)
-        self.assertEqual(r[a2.agent_id].history_idx, 1)
+        self.assertEqual(r[a1.name].history_idx, 0)
+        self.assertEqual(r[a2.name].history_idx, 1)
 
 
 class AgentWithMutableEnv(AgentBase):
@@ -564,14 +564,14 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(event.args["message"].content, r1.content)
         event = master.get_event(-2)
         self.assertEqual(event.name, "get_history")
-        self.assertEqual(event.args["agent_id"], a1.agent_id)
+        self.assertEqual(event.args["agent_name"], a1.name)
 
         # test mix of rpc agent and local agent
         a2 = AgentWithChatRoom("a2")
         a2.join(r)
         event = master.get_event(-1)
         self.assertEqual(event.name, "join")
-        self.assertEqual(event.args["agent"].agent_id, a2.agent_id)
+        self.assertEqual(event.args["agent"].name, a2.name)
         r2 = a2(Msg(name="user", role="user", content="hello"))
         self.assertEqual(r2.content, 0)
         self.assertEqual(master.get_event(-1).name, "speak")
@@ -579,7 +579,7 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(master.get_event(-2).name, "get_history")
 
         # test rpc type
-        ra1 = r[a1.agent_id].agent
+        ra1 = r[a1.name].agent
         self.assertTrue(isinstance(ra1, RpcObject))
         self.assertEqual(ra1.agent_id, a1.agent_id)
         rr = a1.chatroom()
@@ -587,5 +587,5 @@ class RpcEnvTest(unittest.TestCase):
         self.assertEqual(r._oid, rr._oid)  # pylint: disable=W0212
 
         # test history_idx
-        self.assertEqual(r[a1.agent_id].history_idx, 0)
-        self.assertEqual(r[a2.agent_id].history_idx, 1)
+        self.assertEqual(r[a1.name].history_idx, 0)
+        self.assertEqual(r[a2.name].history_idx, 1)
