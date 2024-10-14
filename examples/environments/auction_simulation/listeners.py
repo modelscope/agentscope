@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Listerners for the auction simulation."""
+"""Listeners for the auction simulation."""
 from agents import Bidder
 from env import Auction
 

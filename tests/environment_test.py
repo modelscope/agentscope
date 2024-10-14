@@ -23,7 +23,7 @@ from agentscope.message import Msg
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
-env_dir = os.path.join(parent_dir, "examples", "environments")
+env_dir = os.path.join(parent_dir, "examples", "environments", "chatroom")
 sys.path.append(env_dir)
 
 from envs import (  # pylint: disable=C0413,C0411 # noqa: E402

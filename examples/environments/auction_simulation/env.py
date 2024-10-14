@@ -106,7 +106,7 @@ class Auction(BasicEnv):
     def bid(self, bidder_name: str, item: Item, bid: int) -> bool:
         """Bid for the auction.
         Args:
-            bidder (`str`): The name of the bidder.
+            bidder_name (`str`): The name of the bidder.
             item (`Item`): The item.
             bid (`int`): The bid of the bidder.
 

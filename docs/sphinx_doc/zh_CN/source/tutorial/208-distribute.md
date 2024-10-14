@@ -63,6 +63,7 @@ class WebAgent(AgentBase):
     def reply(self, x: dict = None) -> dict:
         return Msg(
             name=self.name,
+            role="assistant",
             content=self.get_answer(x.content["url"], x.content["query"])
         )
 
@@ -215,14 +216,14 @@ def init_with_dist():
 
 这样的流程存在一个潜在问题，即原 Agent 被初始化了两次，一次是在主进程中，一次是在智能体服务器进程中，并且这两次初始化是依次执行的，无法通过并行加速。对于初始化成本比较低的 Agent，直接调用 `to_dist` 函数不会对性能产生明显影响，但是对于初始化成本较高的 Agent，则需要尽量避免重复初始化行为，为此 AgentScope 分布式模式提供了另一种分布式模式的初始化方法，即直接在任意 Agent 的初始化函数内部传入 `to_dist` 参数，例如下面的代码就是对 `dist_main.py` 的`init_with_dist` 函数的修改。
 
-- 对于独立进程模式，只需要在初始化函数中传入 `to_dist=True` 即可。
+- 对于子进程模式，只需要在初始化函数中传入 `to_dist=True` 即可。
 
     ```python
     def init_with_dist():
         return [WebAgent(f"W{i}", to_dist=True) for i in range(len(URLS))]
     ```
 
-- 对于子进程模式，则需要将原来传入`to_dist`函数的参数以字典的形式传入到 `to_dist` 域中。
+- 对于独立进程模式，则需要将原来传入`to_dist`函数的参数以字典的形式传入到 `to_dist` 域中。
 
     ```python
     def init_with_dist():

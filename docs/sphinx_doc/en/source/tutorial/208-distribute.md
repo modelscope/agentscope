@@ -62,6 +62,7 @@ class WebAgent(AgentBase):
     def reply(self, x: dict = None) -> dict:
         return Msg(
             name=self.name,
+            role="assistant",
             content=self.get_answer(x.content["url"], x.content["query"])
         )
 
@@ -213,14 +214,14 @@ The above code calls the `to_dist` function on an already initialized agent. `to
 
 This process has a potential issue: the original agent is initialized twice, once in the main process and once in the agent server process. These two initializations occur sequentially, lacking the ability to be parallelized. For agents with low initialization costs, directly calling the `to_dist` function will not significantly impact performance. However, for agents with high initialization costs, repeated initialization should be avoided. Therefore, AgentScope distributed mode provides another method for initializing in distributed mode, which entails passing the `to_dist` parameter directly within the initialization function of any agent. The following code modifies the `init_with_dist` function in `dist_main.py`.
 
-- For independent mode, simply pass `to_dist=True` in the initialization function.
+- For child mode, simply pass `to_dist=True` in the initialization function.
 
     ```python
     def init_with_dist():
         return [WebAgent(f"W{i}", to_dist=True) for i in range(len(URLS))]
     ```
 
-- For child mode, pass the parameters previously given to the `to_dist` function as a dictionary to the `to_dist` field.
+- For independent mode, pass the parameters previously given to the `to_dist` function as a dictionary to the `to_dist` field.
 
     ```python
     def init_with_dist():
