@@ -116,8 +116,10 @@ def main(args: argparse.Namespace) -> None:
     carol.join(r)
 
     # Start the chat
-    r.chatting(
-        delay={carol.agent_id: 0, alice.agent_id: 5, bob.agent_id: 7},
+    r.chat_freely(
+        delay=10,
+        interval=10,
+        max_round=3,
     )
 
 

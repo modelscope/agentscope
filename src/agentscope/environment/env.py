@@ -206,7 +206,7 @@ class Env(ABC, metaclass=RpcMeta):
         """Set a child env."""
 
     @abstractmethod
-    def describe(self) -> str:
+    def describe(self, **kwargs: Any) -> str:
         """Describe the current state of the environment."""
 
 
@@ -358,7 +358,7 @@ class BasicEnv(Env):
         else:
             return []
 
-    def describe(self) -> str:
+    def describe(self, **kwargs: Any) -> str:
         """Describe the current state of the environment."""
         raise NotImplementedError(
             "`describe` is not implemented in `BasicEnv`.",
