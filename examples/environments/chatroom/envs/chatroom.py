@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """An env used as a chatroom."""
-from typing import List, Any, Union, Mapping, Generator, Tuple, Optional
+from typing import List, Any, Union, Generator, Tuple, Optional
 from copy import deepcopy
 import re
 import random
@@ -66,10 +66,10 @@ class ChatRoomMember(BasicEnv):
         """Get the agent of the member."""
         return self._agent
 
-    def free_chat(
+    def chat_freely(
         self,
-        delay: int = 5,
-        interval: int = 3,
+        delay: float = 5,
+        interval: float = 3,
         max_round: int = 10,
     ) -> None:
         """Let the agent chat freely"""
@@ -82,6 +82,7 @@ class ChatRoomMember(BasicEnv):
             time.sleep(interval)
 
     def chat(self) -> None:
+        """call the agent to chat"""
         self._agent()
 
 
@@ -241,27 +242,19 @@ class ChatRoom(BasicEnv):
         logger.debug(texts)
         return ModelResponse(text=texts[0])
 
-    def free_chat(self, delay: Union[int, Mapping[str, int]] = 1) -> None:
+    def chat_freely(
+        self,
+        delay: float = 1,
+        interval: float = 5,
+        max_round: int = 10,
+    ) -> None:
         """Let all agents to chat freely without any preset order"""
-        tasks = []
-        for agent_id, child in self.children.items():
-            if isinstance(delay, int):
-                tasks.append(
-                    threading.Thread(target=child.chatting, args=(delay,)),
-                )
-            else:
-                if agent_id not in delay:
-                    continue
-                tasks.append(
-                    threading.Thread(
-                        target=child.chatting,
-                        args=(delay[agent_id],),
-                    ),
-                )
-        for task in tasks:
-            task.start()
-        for task in tasks:
-            task.join()
+        for agent_name in self.children.keys():
+            self.children[agent_name].chat_freely(
+                delay=delay,
+                interval=interval,
+                max_round=max_round,
+            )
 
     def chat_in_sequence(self, agent_name_order: List[str] = None) -> None:
         """Let all agents to chat in a sequence
@@ -316,28 +309,6 @@ class ChatRoomAgent(AgentBase):
         self.mentioned_messages = []
         self.mentioned_messages_lock = threading.Lock()
 
-    def _want_to_speak(self, room_info: str) -> bool:
-        """Check whether the agent want to speak currently"""
-        hint = (
-            f"{self.sys_prompt}\n\nYou are participating in a chatroom.\n"
-            f"\n{room_info}"
-        )
-        prompt = self.model.format(
-            Msg(name="system", role="system", content=hint),
-            Msg(
-                name="user",
-                role="user",
-                content="Do you want to speak in the chatroom now? "
-                "Speak yes or no.",
-            ),
-        )
-        response = self.model(
-            prompt,
-            parse_func=self.room.chatting_parse_func,
-            max_retries=3,
-        ).text
-        return "yes" in response.lower()
-
     def add_mentioned_message(self, msg: Msg) -> None:
         """Add mentioned messages"""
         with self.mentioned_messages_lock:
@@ -348,31 +319,41 @@ class ChatRoomAgent(AgentBase):
         self.room = room
         return room.join(self)
 
-    def is_mentioned(self) -> bool:
+    def _is_mentioned(self) -> bool:
         """Check whether the agent is mentioned"""
-            return bool(self.mentioned_messages)
+        return bool(self.mentioned_messages)
 
-    def _generate_mentioned_prompt(self, room_info: str) -> List[Msg]:
+    def _generate_mentioned_prompt(self) -> Tuple[bool, str]:
         """Generate a hint for the agent"""
-        hint = (
-            f"{self.sys_prompt}\n\nYou are participating in a chatroom.\n"
-            f"\n{room_info}"
-        )
+        with self.mentioned_messages_lock:
+            if len(self.mentioned_messages) > 0:
+                hint = "You have been mentioned in the following messages:\n"
+                hint += "\n".join(
+                    [
+                        f"{msg.name}: {msg.content}"
+                        for msg in self.mentioned_messages
+                    ],
+                )
+                return True, hint
+            return False, ""
+
+    def _want_to_speak(self, hint: str) -> bool:
+        """Check whether the agent want to speak currently"""
         prompt = self.model.format(
             Msg(name="system", role="system", content=hint),
             Msg(
                 name="user",
                 role="user",
-                content="You have be mentioned in the following message, "
-                        "please generate an appropriate response."
+                content="Based on the CHATROOM."
+                " Do you want to speak in the chatroom now?\n"
+                "Speak yes or no.",
             ),
         )
-
-        prompt = self.model.format()
-        for message in self.mentioned_messages:
-            hint += f"\n{message.name}: " + message.content
-        self.mentioned_messages = []
-        return Msg("system", hint, role="system")
+        response = self.model(
+            prompt,
+            max_retries=3,
+        ).text
+        return "yes" in response.lower()
 
     def speak(
         self,
@@ -391,25 +372,43 @@ class ChatRoomAgent(AgentBase):
     def reply(self, x: Msg = None) -> Msg:
         """Generate reply to chat room"""
         room_info = self.room.describe(self.name)
-        with self.mentioned_messages_lock:
-            if len(self.mentioned_messages) > 0:
-                prompt = self._generate_mentioned_prompt(room_info)
+        system_hint = (
+            f"{self.sys_prompt}\n\nYou are participating in a chatroom.\n"
+            f"\n{room_info}"
+        )
+        mentioned, mentioned_hint = self._generate_mentioned_prompt()
+        if mentioned:
+            # if mentioned, response directly
+            prompt = self.model.format(
+                Msg(
+                    name="system",
+                    role="system",
+                    content=system_hint,
+                ),
+                Msg(
+                    name="user",
+                    role="user",
+                    content=mentioned_hint,
+                ),
+            )
+        else:
+            # decide whether to speak
+            if self._want_to_speak(room_info):
+                prompt = self.model.format(
+                    Msg(
+                        name="system",
+                        role="system",
+                        content=system_hint,
+                    ),
+                    Msg(
+                        name="user",
+                        role="user",
+                        content="Please generate a response based on the "
+                        "CHATROOM.",
+                    ),
+                )
             else:
-                if self._want_to_speak(room_info):
-                    prompt = self.model.format(
-                        Msg(
-                            name="system",
-                            role="system",
-                            content=f"{self.sys_prompt}\n\nYou are participating in a chatroom.\n"
-                            f"\n{room_info}"
-                        ),
-                        Msg(
-                            name="user",
-                            role="user",
-                            content="Please generate a response.",
-                        ),
-                    )
-
+                return None
         logger.debug(prompt)
         response = self.model(
             prompt,
