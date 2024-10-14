@@ -15,6 +15,8 @@
           href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/server.css') }}">
+          <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/gallery.css') }}">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css_third_party/tabulator.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css_third_party/highlight.min.css') }}">
@@ -72,7 +74,7 @@
         </div>
         <div id="market-tab-btn"
              class="navigation-bar-item unselectable-text"
-             onclick="loadTabPage('static/html/market.html', null);return false;">
+             onclick="loadTabPage('static/html/gallery.html','static/js/gallery.js');return false;">
             <svg class="navigation-bar-item-icon" viewBox="0 0 1024 1024"
                  xmlns="http://www.w3.org/2000/svg">
                 <path d="M928 1024h-288a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160h-288a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96zM384 1024H96a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160H96a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96z"></path>
