@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """ Meta class for all classes that can run on rpc server."""
-
 from abc import ABCMeta
 from typing import Any, Callable
 import uuid
 from loguru import logger
 
-from .rpc_object import RpcObject
+from .rpc_object import RpcObject, _ClassInfo
 from .retry_strategy import RetryBase, _DEAFULT_RETRY_STRATEGY
 
 
@@ -65,25 +64,13 @@ class RpcMeta(ABCMeta):
             RpcMeta._REGISTRY[name] = cls
         super().__init__(name, bases, attrs)
         for base in bases:
-            if hasattr(base, "_async_func"):
-                cls._async_func.update(base._async_func)
-            if hasattr(base, "_sync_func"):
-                cls._sync_func.update(base._sync_func)
-        for key, value in attrs.items():
-            if callable(value):
-                if getattr(value, "_is_async", False):
-                    # add all functions with @async_func to the async_func set
-                    cls._async_func.add(key)
-                elif getattr(value, "_is_sync", False) or not key.startswith(
-                    "_",
-                ):
-                    # add all other public functions to the sync_func set
-                    cls._sync_func.add(key)
+            if hasattr(base, "_info"):
+                cls._info.update(base._info)
+        cls._info.detect(attrs)
 
     def __new__(mcs: type, name: Any, bases: Any, attrs: Any) -> Any:
         attrs["to_dist"] = RpcMeta.to_dist
-        attrs["_async_func"] = set()
-        attrs["_sync_func"] = set()
+        attrs["_info"] = _ClassInfo()
         return super().__new__(mcs, name, bases, attrs)  # type: ignore[misc]
 
     def __call__(cls, *args: tuple, **kwargs: dict) -> Any:

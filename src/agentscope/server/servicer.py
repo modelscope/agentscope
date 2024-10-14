@@ -298,7 +298,7 @@ class AgentServerServicer(RpcAgentServicer):
         try:
             if (
                 func_name
-                in agent.__class__._async_func  # pylint: disable=W0212
+                in agent.__class__._info.async_func  # pylint: disable=W0212
             ):
                 # async function
                 task_id = self.result_pool.prepare()
@@ -315,7 +315,7 @@ class AgentServerServicer(RpcAgentServicer):
                 )
             elif (
                 func_name
-                in agent.__class__._sync_func  # pylint: disable=W0212
+                in agent.__class__._info.sync_func  # pylint: disable=W0212
             ):
                 # sync function
                 args = pickle.loads(raw_value)
@@ -369,9 +369,13 @@ class AgentServerServicer(RpcAgentServicer):
         context: ServicerContext,
     ) -> agent_pb2.GeneralResponse:
         """Get id of all agents on the server as a list."""
+        from agentscope.agents import AgentBase
+
         with self.agent_id_lock:
             summaries = []
             for agent in self.agent_pool.values():
+                if not isinstance(agent, AgentBase):
+                    continue
                 summaries.append(str(agent))
             return agent_pb2.GeneralResponse(
                 ok=True,
