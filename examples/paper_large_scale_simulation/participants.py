@@ -353,6 +353,11 @@ class Group(BasicEnv):
                     to_dist={
                         "host": config["host"],
                         "port": config["port"],
+                        "retry_strategy": {
+                            "type": "fixed",
+                            "max_retries": 100,
+                            "delay": 2,
+                        }
                     },
                 )
                 for config in participant_configs
@@ -366,6 +371,11 @@ class Group(BasicEnv):
                     to_dist={
                         "host": config["host"],
                         "port": config["port"],
+                        "retry_strategy": {
+                            "type": "fixed",
+                            "max_retries": 20,
+                            "delay": 2,
+                        }
                     },
                 )
                 for config in participant_configs
@@ -613,6 +623,11 @@ class GuessTwoThirdGame(BasicEnv):
                         "port": self.base_port
                         + self.agent_server_per_host
                         + i % self.env_server_per_host,
+                        "retry_strategy": {
+                            "type": "fixed",
+                            "max_retries": 100,
+                            "delay": 1,
+                        }
                     },
                 ),
             )
