@@ -78,7 +78,7 @@ class RpcObject(ABC):
 
     def __init__(  # pylint: disable=R0912
         self,
-        cls: Union[type, _ClassInfo],
+        cls: type,
         oid: str,
         host: str,
         port: int,
@@ -117,10 +117,7 @@ class RpcObject(ABC):
         self.host = host
         self.port = port
         self._oid = oid
-        if isinstance(cls, _ClassInfo):
-            self._cls = cls
-        else:
-            self._cls = cls._info
+        self._cls = cls
         self.connect_existing = connect_existing
         self.executor = ThreadPoolExecutor(max_workers=1)
         if isinstance(retry_strategy, RetryBase):
@@ -149,10 +146,6 @@ class RpcObject(ABC):
             studio_url = None
             if _studio_client.active:
                 studio_url = _studio_client.studio_url
-            assert isinstance(
-                cls,
-                type,
-            ), "RpcAgentServer need a class as input"
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=self.port,
@@ -184,7 +177,7 @@ class RpcObject(ABC):
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         self._check_created()
-        if "__call__" in self._cls.async_func:
+        if "__call__" in self._cls._info.async_func:
             return self._async_func("__call__")(*args, **kwargs)
         else:
             return self._call_func(
@@ -260,11 +253,11 @@ class RpcObject(ABC):
 
     def __getattr__(self, name: str) -> Callable:
         self._check_created()
-        if name in self._cls.async_func:
+        if name in self._cls._info.async_func:
             # for async functions
             return self._async_func(name)
 
-        elif name in self._cls.sync_func:
+        elif name in self._cls._info.sync_func:
             # for sync functions
             return self._sync_func(name)
 
