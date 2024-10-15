@@ -1,4 +1,4 @@
-English | [**中文**](https://github.com/modelscope/agentscope/blob/main/README_ZH.md)
+English | [**中文**](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**日本語**](https://github.com/modelscope/agentscope/blob/main/README_JA.md)
 
 # AgentScope
 
