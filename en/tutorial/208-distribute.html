@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Distribution &mdash; AgentScope  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
   
@@ -18,8 +18,14 @@
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
-      <script>mermaid.initialize({startOnLoad:true});</script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -482,15 +488,15 @@ For agents whose initialization process is time-consuming, the <code class="docu
 <h3>Actor Model<a class="headerlink" href="#actor-model" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Actor_model">The Actor model</a> is a widely used programming paradigm in large-scale distributed systems, and it is also applied in the distributed design of the AgentScope platform.</p>
 <p>In the distributed mode of AgentScope, each Agent is an Actor and interacts with other Agents through messages. The flow of messages implies the execution order of the Agents. Each Agent has a <code class="docutils literal notranslate"><span class="pre">reply</span></code> method, which consumes a message and generates another message, and the generated message can be sent to other Agents. For example, the following chart shows the workflow of multiple Agents. <code class="docutils literal notranslate"><span class="pre">A</span></code>~<code class="docutils literal notranslate"><span class="pre">F</span></code> are all Agents, and the arrows represent messages.</p>
-<div class="mermaid">
-            graph LR;
+<pre  class="mermaid">
+        graph LR;
 A--&gt;B
 A--&gt;C
 B--&gt;D
 C--&gt;D
 E--&gt;F
 D--&gt;F
-        </div><p>Specifically, <code class="docutils literal notranslate"><span class="pre">B</span></code> and <code class="docutils literal notranslate"><span class="pre">C</span></code> can start execution simultaneously after receiving the message from <code class="docutils literal notranslate"><span class="pre">A</span></code>, and <code class="docutils literal notranslate"><span class="pre">E</span></code> can run immediately without waiting for <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, and <code class="docutils literal notranslate"><span class="pre">D</span></code>.
+    </pre><p>Specifically, <code class="docutils literal notranslate"><span class="pre">B</span></code> and <code class="docutils literal notranslate"><span class="pre">C</span></code> can start execution simultaneously after receiving the message from <code class="docutils literal notranslate"><span class="pre">A</span></code>, and <code class="docutils literal notranslate"><span class="pre">E</span></code> can run immediately without waiting for <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, and <code class="docutils literal notranslate"><span class="pre">D</span></code>.
 By implementing each Agent as an Actor, an Agent will automatically wait for its input <code class="docutils literal notranslate"><span class="pre">Msg</span></code> before starting to execute the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method, and multiple Agents can also automatically execute <code class="docutils literal notranslate"><span class="pre">reply</span></code> at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.</p>
 </section>
 <section id="placeholder">

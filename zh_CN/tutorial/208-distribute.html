@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>分布式 &mdash; AgentScope  文档</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=7ab3649f" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
   
@@ -19,8 +19,14 @@
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/translations.js?v=beaddf03"></script>
-      <script src="https://unpkg.com/mermaid@10.2.0/dist/mermaid.min.js"></script>
-      <script>mermaid.initialize({startOnLoad:true});</script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -503,15 +509,15 @@ AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Actor_model">Actor模式</a>是大规模分布式系统中广泛使用的编程范式，同时也被应用于AgentScope平台的分布式设计中。
 在Actor模型中，一个actor是一个实体，它封装了自己的状态，并且仅通过消息传递与其他actor通信。</p>
 <p>在AgentScope的分布式模式中，每个Agent都是一个Actor，并通过消息与其他Agent交互。消息的流转暗示了Agent的执行顺序。每个Agent都有一个<code class="docutils literal notranslate"><span class="pre">reply</span></code>方法，它消费一条消息并生成另一条消息，生成的消息可以发送给其他 Agent。例如，下面的图表显示了多个Agent的工作流程。<code class="docutils literal notranslate"><span class="pre">A</span></code>~<code class="docutils literal notranslate"><span class="pre">F</span></code>都是Agent，箭头代表消息。</p>
-<div class="mermaid">
-            graph LR;
+<pre  class="mermaid">
+        graph LR;
 A--&gt;B
 A--&gt;C
 B--&gt;D
 C--&gt;D
 E--&gt;F
 D--&gt;F
-        </div><p>其中，<code class="docutils literal notranslate"><span class="pre">B</span></code>和<code class="docutils literal notranslate"><span class="pre">C</span></code>可以在接收到来自<code class="docutils literal notranslate"><span class="pre">A</span></code>的消息后同时启动执行，而<code class="docutils literal notranslate"><span class="pre">E</span></code>可以立即运行，无需等待<code class="docutils literal notranslate"><span class="pre">A</span></code>、<code class="docutils literal notranslate"><span class="pre">B</span></code>、<code class="docutils literal notranslate"><span class="pre">C</span></code>和<code class="docutils literal notranslate"><span class="pre">D</span></code>。
+    </pre><p>其中，<code class="docutils literal notranslate"><span class="pre">B</span></code>和<code class="docutils literal notranslate"><span class="pre">C</span></code>可以在接收到来自<code class="docutils literal notranslate"><span class="pre">A</span></code>的消息后同时启动执行，而<code class="docutils literal notranslate"><span class="pre">E</span></code>可以立即运行，无需等待<code class="docutils literal notranslate"><span class="pre">A</span></code>、<code class="docutils literal notranslate"><span class="pre">B</span></code>、<code class="docutils literal notranslate"><span class="pre">C</span></code>和<code class="docutils literal notranslate"><span class="pre">D</span></code>。
 通过将每个Agent实现为一个Actor， Agent将自动等待其输入Msg准备好后开始执行<code class="docutils literal notranslate"><span class="pre">reply</span></code>方法，并且如果多个 Agent 的输入消息准备就绪，它们也可以同时自动执行<code class="docutils literal notranslate"><span class="pre">reply</span></code>，这避免了复杂的并行控制。</p>
 <section id="placeholder">
 <h4>Placeholder<a class="headerlink" href="#placeholder" title="Link to this heading"></a></h4>
