@@ -83,6 +83,7 @@ class RetryFixedTimes(RetryBase):
                     f"Attempt {attempt + 1} failed: {e}. Retrying in {random_delay} seconds...",
                 )
                 time.sleep(random_delay)
+        raise TimeoutError("Max retry exceeded.")
 
 
 class RetryExpential(RetryBase):
@@ -147,6 +148,7 @@ class RetryExpential(RetryBase):
                 )
                 time.sleep(random_delay)
                 delay *= 2
+        raise TimeoutError("Max retry exceeded.")
 
 
 _DEAFULT_RETRY_STRATEGY = RetryFixedTimes(max_retries=10, delay=5)
