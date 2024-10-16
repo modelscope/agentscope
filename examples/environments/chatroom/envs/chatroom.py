@@ -168,7 +168,9 @@ class ChatRoom(BasicEnv):
 
     def describe(self, agent_name: str, **kwargs: Any) -> str:
         """Get the description of the chatroom."""
-        ann = self.announcement if self.announcement else "EMPTY"
+        ann = (
+            self.announcement.content if self.announcement.content else "EMPTY"
+        )
         history = "\n\n".join(
             [
                 f"{msg.name}: {msg.content}"
@@ -265,10 +267,10 @@ class ChatRoom(BasicEnv):
             task.join()
 
     def chat_in_sequence(self, agent_name_order: List[str] = None) -> None:
-        """Let all agents to chat in a sequence
+        """Let all agents chat in sequence
 
         Args:
-            sequence (`List[str]`): Order of speakers' names.
+            agent_name_order (`List[str]`): Order of speakers' names.
         """
         for agent_name in agent_name_order:
             self.children[agent_name].chat()
@@ -361,9 +363,8 @@ class ChatRoomAgent(AgentBase):
             prompt,
             max_retries=3,
         ).text
-        speak = "yes" in response.lower()
-        logger.debug(f"[SPEAK OR NOT] {self.name}: {response}")
-        return speak
+        logger.info(f"[SPEAK OR NOT] {self.name}: {response}")
+        return "yes" in response.lower()
 
     def speak(
         self,
