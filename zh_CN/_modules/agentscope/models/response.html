@@ -182,7 +182,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">+=</span> <span class="n">chunk</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">chunk</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span>
 
     <span class="nd">@text</span><span class="o">.</span><span class="n">setter</span>
