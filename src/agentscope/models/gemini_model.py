@@ -7,9 +7,9 @@ from typing import Sequence, Union, Any, List, Optional, Generator
 
 from loguru import logger
 
-from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils.tools import _convert_to_str
+from ..message import Msg
+from ..models import ModelWrapperBase, ModelResponse
+from ..utils.common import _convert_to_str
 
 try:
     import google.generativeai as genai

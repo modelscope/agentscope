@@ -235,12 +235,7 @@ class TestDashScopeServices(unittest.TestCase):
         self.assertEqual(results.status, expected_result.status)
         self.assertEqual(results.content, expected_result.content)
 
-    @patch(
-        (
-            "agentscope.service.multi_modality.dashscope_services."
-            "SpeechSynthesizer"
-        ),
-    )
+    @patch("dashscope.audio.tts.SpeechSynthesizer")
     @patch("agentscope.service.multi_modality.dashscope_services.os.makedirs")
     @patch(
         "agentscope.service.multi_modality.dashscope_services.os.path.exists",

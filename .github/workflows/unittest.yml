@@ -24,9 +24,9 @@ jobs:
     - name: Install Minimal Dependencies
       run: |
         pip install -q -e .
-    - name: Run import tests
+    - name: Run minimal import tests
       run: |
-        python -c "import agentscope; print(agentscope.__version__)"
+        python tests/minimal.py
     - name: Install Full Dependencies
       run: |
         pip install -q -e .[full]

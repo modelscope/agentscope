@@ -18,7 +18,7 @@ try:
         add_RpcAgentServicer_to_server,
     )
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     grpc = ImportErrorReporter(import_error, "distribute")
     add_RpcAgentServicer_to_server = ImportErrorReporter(
@@ -29,7 +29,7 @@ import agentscope
 from ..server.servicer import AgentServerServicer
 from ..manager import ASManager
 from ..agents.agent import AgentBase
-from ..utils.tools import check_port, generate_id_from_seed
+from ..utils.common import _check_port, _generate_id_from_seed
 from ..constants import _DEFAULT_RPC_OPTIONS
 
 
@@ -191,7 +191,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             )
     while True:
         try:
-            port = check_port(port)
+            port = _check_port(port)
             servicer.port = port
             server = grpc.aio.server(
                 futures.ThreadPoolExecutor(max_workers=None),
@@ -333,7 +333,7 @@ class RpcAgentServerLauncher:
                 The url of the agentscope studio.
         """
         self.host = host
-        self.port = check_port(port)
+        self.port = _check_port(port)
         self.max_pool_size = max_pool_size
         self.max_timeout_seconds = max_timeout_seconds
         self.local_mode = local_mode
@@ -354,7 +354,7 @@ class RpcAgentServerLauncher:
     @classmethod
     def generate_server_id(cls, host: str, port: int) -> str:
         """Generate server id"""
-        return generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
+        return _generate_id_from_seed(f"{host}:{port}:{time.time()}", length=8)
 
     def _launch_in_main(self) -> None:
         """Launch agent server in main-process"""

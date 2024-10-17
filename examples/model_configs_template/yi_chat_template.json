@@ -1,0 +1,11 @@
+[
+  {
+    "config_name": "yi_yi-large",
+    "model_type": "yi_chat",
+    "model_name": "yi-large",
+    "api_key": "{your_api_key}",
+    "temperature": 0.3,
+    "top_p": 0.9,
+    "max_tokens": 1000
+  }
+]

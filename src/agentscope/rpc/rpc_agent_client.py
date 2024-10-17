@@ -7,6 +7,9 @@ import os
 from typing import Optional, Sequence, Union, Generator
 from loguru import logger
 
+from ..message import Msg
+from ..serialize import deserialize
+
 try:
     import dill
     import grpc
@@ -15,7 +18,7 @@ try:
     from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentStub
     import agentscope.rpc.rpc_agent_pb2 as agent_pb2
 except ImportError as import_error:
-    from agentscope.utils.tools import ImportErrorReporter
+    from agentscope.utils.common import ImportErrorReporter
 
     dill = ImportErrorReporter(import_error, "distribute")
     grpc = ImportErrorReporter(import_error, "distribute")
@@ -23,7 +26,7 @@ except ImportError as import_error:
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
     RpcError = ImportError
 
-from ..utils.tools import generate_id_from_seed
+from ..utils.common import _generate_id_from_seed
 from ..exception import AgentServerNotAliveError
 from ..constants import _DEFAULT_RPC_OPTIONS
 from ..exception import AgentCallError
@@ -304,7 +307,7 @@ class RpcAgentClient:
                 return False
             return True
 
-    def get_agent_memory(self, agent_id: str) -> Union[list, dict]:
+    def get_agent_memory(self, agent_id: str) -> Union[list[Msg], Msg]:
         """Get the memory usage of the specific agent."""
         with grpc.insecure_channel(f"{self.host}:{self.port}") as channel:
             stub = RpcAgentStub(channel)
@@ -313,7 +316,7 @@ class RpcAgentClient:
             )
             if not resp.ok:
                 logger.error(f"Error in get_agent_memory: {resp.message}")
-            return json.loads(resp.message)
+            return deserialize(resp.message)
 
     def download_file(self, path: str) -> str:
         """Download a file from a remote server to the local machine.
@@ -330,7 +333,7 @@ class RpcAgentClient:
         file_manager = FileManager.get_instance()
 
         local_filename = (
-            f"{generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
+            f"{_generate_id_from_seed(path, 5)}_{os.path.basename(path)}"
         )
 
         def _generator() -> Generator[bytes, None, None]:

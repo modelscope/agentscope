@@ -3,14 +3,9 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union, Generator
 
-from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils.tools import _convert_to_str
-
-try:
-    import ollama
-except ImportError:
-    ollama = None
+from ..message import Msg
+from ..models import ModelWrapperBase, ModelResponse
+from ..utils.common import _convert_to_str
 
 
 class OllamaWrapperBase(ModelWrapperBase, ABC):
@@ -67,6 +62,15 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
 
         self.options = options
         self.keep_alive = keep_alive
+
+        try:
+            import ollama
+        except ImportError as e:
+            raise ImportError(
+                "The package ollama is not found. Please install it by "
+                'running command `pip install "ollama>=0.1.7"`',
+            ) from e
+
         self.client = ollama.Client(host=host, **kwargs)
 
 
@@ -355,7 +359,7 @@ class OllamaChatWrapper(OllamaWrapperBase):
         system_content = "\n".join(system_content_template)
 
         system_message = {
-            "role": "system",
+            "role": "user",
             "content": system_content,
         }
 
