@@ -53,7 +53,7 @@ class ModelResponse:
         if self._text is None:
             if self.stream is not None:
                 for _, chunk in self.stream:
-                    self._text += chunk
+                    self._text = chunk
         return self._text
 
     @text.setter
