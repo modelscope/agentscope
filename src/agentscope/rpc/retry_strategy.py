@@ -5,6 +5,7 @@ Timeout retry strategies
 from __future__ import annotations
 import time
 import random
+import inspect
 from abc import ABC, abstractmethod
 from typing import Callable, Any
 from functools import partial
@@ -71,16 +72,23 @@ class RetryFixedTimes(RetryBase):
         *args: Any,
         **kwargs: Any,
     ) -> Any:
+        exception_type = kwargs.pop("expect_exception_type", Exception)
         func = partial(func, *args, **kwargs)
         for attempt in range(self.max_retries + 1):
             try:
                 return func()
-            except Exception as e:
+            except exception_type as e:
                 if attempt == self.max_retries:
                     raise TimeoutError("Max timeout exceeded.") from e
                 random_delay = (random.random() + 0.5) * self.delay
+                frame_info = inspect.getframeinfo(
+                    inspect.currentframe().f_back,  # type: ignore[arg-type]
+                )
+                file_name = frame_info.filename
+                line_number = frame_info.lineno
                 logger.info(
-                    f"Attempt {attempt + 1} failed: {e}. Retrying in {random_delay} seconds...",
+                    f"Attempt {attempt + 1} at [{file_name}:{line_number}] failed:"
+                    f"\n{e}.\nRetrying in {random_delay:.2f} seconds...",
                 )
                 time.sleep(random_delay)
         raise TimeoutError("Max retry exceeded.")
@@ -131,20 +139,27 @@ class RetryExpential(RetryBase):
         *args: Any,
         **kwargs: Any,
     ) -> Any:
+        exception_type = kwargs.pop("expect_exception_type", Exception)
         func = partial(func, *args, **kwargs)
         delay = self.base_delay
         for attempt in range(self.max_retries + 1):
             try:
                 return func()
-            except Exception as e:
+            except exception_type as e:
                 if attempt == self.max_retries:
                     raise TimeoutError("Max timeout exceeded.") from e
                 random_delay = min(
                     (random.random() + 0.5) * delay,
                     self.max_delay,
                 )
+                frame_info = inspect.getframeinfo(
+                    inspect.currentframe().f_back,  # type: ignore[arg-type]
+                )
+                file_name = frame_info.filename
+                line_number = frame_info.lineno
                 logger.info(
-                    f"Attempt {attempt + 1} failed: {e}. Retrying in {random_delay} seconds...",
+                    f"Attempt {attempt + 1} at [{file_name}:{line_number}] failed:"
+                    f"\n{e}.\nRetrying in {random_delay:.2f} seconds...",
                 )
                 time.sleep(random_delay)
                 delay *= 2
