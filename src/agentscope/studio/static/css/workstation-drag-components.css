@@ -46,6 +46,14 @@
     outline: 1px solid var(--main-color);
 }
 
+.drawflow-node .input:hover {
+    background: #43b993;
+}
+
+.drawflow-node .output:hover {
+    background: #43b993;
+}
+
 .drawflow > .drawflow-delete {
     border: 2px solid #43b993;
     background: white;
