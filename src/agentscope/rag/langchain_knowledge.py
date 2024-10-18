@@ -35,13 +35,13 @@ except Exception:
     Embeddings = None
     CharacterTextSplitter = None
 
+from agentscope.manager import FileManager
 from agentscope.models import ModelWrapperBase
 from agentscope.constants import (
     DEFAULT_TOP_K,
     DEFAULT_SCORE_THRESHOLD,
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
-    _DEFAULT_SAVE_DIR,
 )
 from agentscope.rag.knowledge import Knowledge
 
@@ -114,8 +114,7 @@ class LangChainKnowledge(Knowledge):
             )
 
         if persist_root is None:
-            # persist_root = FileManager.get_instance().run_dir or "./"
-            persist_root = os.path.join(_DEFAULT_SAVE_DIR, "langchain_index")
+            persist_root = FileManager.get_instance().cache_dir or "./"
         self.persist_dir = os.path.join(persist_root, knowledge_id)
         self.persist_store_file = os.path.join(
             self.persist_dir,
@@ -312,14 +311,20 @@ class LangChainKnowledge(Knowledge):
         search_kwargs: dict,
     ) -> BaseRetriever:
         # set the retriever
-        if search_type == "similarity":
-            search_kwargs = {"k": DEFAULT_TOP_K, **search_kwargs}
-        elif search_type == "similarity_score_threshold":
-            search_kwargs = {
-                "k": DEFAULT_TOP_K,
-                "score_threshold": DEFAULT_SCORE_THRESHOLD,
-                **search_kwargs,
-            }
+        default_kwargs = {
+            "k": DEFAULT_TOP_K,
+            "score_threshold": (
+                DEFAULT_SCORE_THRESHOLD
+                if search_type == "similarity_score_threshold"
+                else None
+            ),
+        }
+        default_kwargs = {
+            key: value
+            for key, value in default_kwargs.items()
+            if value is not None
+        }
+        search_kwargs = {**default_kwargs, **search_kwargs}
         logger.info(
             f"search_type: {search_type}; search_kwargs: {search_kwargs}",
         )
@@ -343,7 +348,7 @@ class LangChainKnowledge(Knowledge):
     ) -> list[Any]:
         search_kwargs = search_kwargs or {}
         if similarity_top_k:
-            search_kwargs = {**search_kwargs, "k": similarity_top_k}
+            search_kwargs.update({"k": similarity_top_k})
         if retriever is None:
             retriever = self._get_retriever(search_type, search_kwargs)
         retrieved = retriever.invoke(str(query))

@@ -145,14 +145,14 @@ class RAG_Agent(AgentBase):
                     search_type=self.search_type,
                     search_kwargs=self.search_kwargs,
                 )
-                if knowledge.__class__ == LlamaIndexKnowledge:
+                if isinstance(knowledge, LlamaIndexKnowledge):
                     retrieved_docs_to_strings += (
                         self._llama_index_parse_retrieved_nodes(
                             retrieved_nodes,
                             query,
                         )
                     )
-                elif knowledge.__class__ == LangChainKnowledge:
+                elif isinstance(knowledge, LangChainKnowledge):
                     retrieved_docs_to_strings += (
                         self._langchain_parse_retrieved_nodes(
                             retrieved_nodes,
@@ -259,3 +259,6 @@ class RAG_Agent(AgentBase):
                 + document.page_content
             )
         return retrieved_docs_to_string
+
+
+LlamaIndexAgent = RAG_Agent
