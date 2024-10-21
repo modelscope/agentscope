@@ -114,6 +114,7 @@ body {
     margin: 0 5px;
     cursor: pointer;
     position: relative;
+    position: relative;
 }
 
 .menu-btn:hover {

@@ -2785,7 +2785,7 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     showTab('tab1');
 });
 
@@ -2803,6 +2803,35 @@ function sendWorkflow(fileName) {
             window.location.href = workstationUrl;
         }
     });
+}
+
+
+function showEditorTab() {
+    document.getElementById('col-right').style.display = 'block';
+    document.getElementById('col-right2').style.display = 'none';
+    console.log('Show Editor');
+}
+function importGalleryWorkflow(data) {
+    try {
+        const parsedData = JSON.parse(data);
+        addHtmlAndReplacePlaceHolderBeforeImport(parsedData)
+            .then(() => {
+                editor.clear();
+                editor.import(parsedData);
+                importSetupNodes(parsedData);
+                Swal.fire({
+                    title: 'Imported!',
+                    icon: 'success',
+                    showConfirmButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        showEditorTab();
+                    }
+                });
+            });
+    } catch (error) {
+        Swal.showValidationMessage(`Import error: ${error}`);
+    }
 }
 
 function deleteWorkflow(fileName) {
@@ -2870,35 +2899,96 @@ function showTab(tabId) {
     }
 }
 
+let galleryWorkflows = [];
 
-function createGridItem(workflowName, container, thumbnail, author = '', time = '', showDeleteButton = false) {
+function showGalleryWorkflowList(tabId) {
+    const container = document.getElementById(tabId).querySelector('.grid-container');
+    container.innerHTML = '';
+    fetch('/fetch-gallery', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+    .then(data => {
+        galleryWorkflows = data.json || []; // 存储获取到的工作流数据
+        galleryWorkflows.forEach((workflow, index) => {
+            const meta = workflow.meta;
+            const title = meta.title;
+            const author = meta.author;
+            const time = meta.time;
+            const thumbnail = meta.thumbnail || generateThumbnailFromContent(meta);
+            createGridItem(title, container, thumbnail, author, time, false, index); // 将index传递给createGridItem
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching gallery workflows:', error);
+    });
+}
+
+function createGridItem(workflowName, container, thumbnail, author = '', time = '', showDeleteButton = false, index) {
     var gridItem = document.createElement('div');
     gridItem.className = 'grid-item';
+    gridItem.style.borderRadius = '15px';
+    var gridItem = document.createElement('div');
+    gridItem.className = 'grid-item';
+    gridItem.style.borderRadius = '15px';
+    gridItem.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
 
     var img = document.createElement('div');
     img.className = 'thumbnail';
     img.style.backgroundImage = `url('${thumbnail}')`;
+    img.style.backgroundSize = 'cover';
+    img.style.backgroundPosition = 'center';
     gridItem.appendChild(img);
 
     var caption = document.createElement('div');
     caption.className = 'caption';
+    caption.style.backgroundColor = 'white';
 
     var h6 = document.createElement('h6');
     h6.textContent = workflowName;
+    h6.style.margin = '1px 0';
 
     var pAuthor = document.createElement('p');
     pAuthor.textContent = `Author: ${author}`;
+    pAuthor.style.margin = '1px 0';
+    pAuthor.style.fontSize = '10px';
 
     var pTime = document.createElement('p');
     pTime.textContent = `Date: ${time}`;
+    pTime.style.margin = '1px 0';
+    pTime.style.fontSize = '10px';
 
     var button = document.createElement('button');
     button.textContent = ' Load ';
-    button.className = 'button load-button';
+    button.className = 'button';
+    button.style.backgroundColor = '#007aff';
+    button.style.color = 'white';
+    button.style.padding = '2px 7px';
+    button.style.border = 'none';
+    button.style.borderRadius = '8px';
+    button.style.fontSize = '12px';
+    button.style.cursor = 'pointer';
+    button.style.transition = 'background 0.3s';
 
+    button.addEventListener('mouseover', function () {
+        button.style.backgroundColor = '#005bb5';
+    });
+
+    button.addEventListener('mouseout', function () {
+        button.style.backgroundColor = '#007aff';
+    });
     button.onclick = function (e) {
         e.preventDefault();
-        sendWorkflow(workflowName);
+        if (showDeleteButton) {
+            sendWorkflow(workflowName);
+        } else {
+            const workflowData = galleryWorkflows[index];
+            importGalleryWorkflow(JSON.stringify(workflowData));
+        }
     };
 
     caption.appendChild(h6);
@@ -2909,7 +2999,22 @@ function createGridItem(workflowName, container, thumbnail, author = '', time = 
     if (showDeleteButton) {
         var deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.className = 'button delete-button';
+        deleteButton.className = 'button';
+        deleteButton.style.backgroundColor = '#007aff';
+        deleteButton.style.color = 'white';
+        deleteButton.style.padding = '2px 3px';
+        deleteButton.style.border = 'none';
+        deleteButton.style.borderRadius = '8px';
+        deleteButton.style.fontSize = '12px';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.style.transition = 'background 0.3s';
+
+        deleteButton.addEventListener('mouseover', function () {
+            deleteButton.style.backgroundColor = '#005bb5';
+        });
+        deleteButton.addEventListener('mouseout', function () {
+            deleteButton.style.backgroundColor = '#007aff';
+        });
 
         deleteButton.onclick = function (e) {
             e.preventDefault();
@@ -2922,49 +3027,6 @@ function createGridItem(workflowName, container, thumbnail, author = '', time = 
     gridItem.appendChild(caption);
     container.appendChild(gridItem);
     console.log('Grid item appended:', gridItem);
-}
-
-
-function showGalleryWorkflowList(tabId) {
-    const container = document.getElementById(tabId).querySelector('.grid-container');
-    container.innerHTML = '';
-
-    fetch('/fetch-gallery', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({})
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Fetched gallery data:', data);
-
-            const workflows = data.json || [];
-
-            if (!Array.isArray(workflows)) {
-                console.error('The server did not return an array as expected.', data);
-                workflows = [workflows];
-            }
-
-            workflows.forEach(workflow => {
-                const meta = workflow.meta;
-                const title = meta.title;
-                const author = meta.author;
-                const time = meta.time;
-                const thumbnail = meta.thumbnail || generateThumbnailFromContent(meta);
-                createGridItem(title, container, thumbnail, author, time, false);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching gallery workflows:', error);
-
-        });
 }
 
 function showLoadWorkflowList(tabId) {

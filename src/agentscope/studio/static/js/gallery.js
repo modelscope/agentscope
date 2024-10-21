@@ -1,10 +1,62 @@
-
 showTab('tab1');
+
+function showTab(tabId) {
+    var tabs = document.getElementsByClassName("tab");
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove("active");
+        tabs[i].style.display = "none";
+    }
+    var tab = document.getElementById(tabId);
+    if (tab) {
+        tab.classList.add("active");
+        tab.style.display = "block";
+        console.log(`Activated tab with ID: ${tab.id}`);
+
+        var tabButtons = document.getElementsByClassName("tab-button");
+        for (var j = 0; j < tabButtons.length; j++) {
+            tabButtons[j].classList.remove("active");
+        }
+        var activeTabButton = document.querySelector(`.tab-button[onclick*="${tabId}"]`);
+        if (activeTabButton) {
+            activeTabButton.classList.add("active");
+        }
+
+        if (tabId === "tab2") {
+            showLoadWorkflowList(tabId);
+        } else if (tabId === "tab1") {
+            console.log('Loading Gallery Workflow List');
+            showGalleryWorkflowList(tabId);
+        }
+    }
+}
+
 function sendWorkflow(fileName) {
     if (confirm('Are you sure you want to import this workflow?')) {
         const workstationUrl = '/workstation?filename=' + encodeURIComponent(fileName);
         window.location.href = workstationUrl;
     }
+}
+
+function importGalleryWorkflow(data) {
+    try {
+        const parsedData = JSON.parse(data);
+        addHtmlAndReplacePlaceHolderBeforeImport(parsedData)
+            .then(() => {
+                editor.clear();
+                editor.import(parsedData);
+                importSetupNodes(parsedData);
+
+                if (confirm('Imported!')) {
+                    const workstationUrl = '/workstation';
+                    window.location.href = workstationUrl;
+                }
+            })
+            .catch(error => {
+                alert(`Import error: ${error}`);
+            });
+    } catch (error) {
+        alert(`Import error: ${error}`);
+                }
 }
 
 function deleteWorkflow(fileName) {
@@ -32,36 +84,7 @@ function deleteWorkflow(fileName) {
     }
 }
 
-function showTab(tabId) {
-    var tabs = document.getElementsByClassName("tab");
-    for (var i = 0; i < tabs.length; i++) {
-        tabs[i].classList.remove("active");
-        tabs[i].style.display = "none";
-    }
-    var tab = document.getElementById(tabId);
-    if (tab) {
-        tab.classList.add("active");
-        tab.style.display = "block";
-
-        var tabButtons = document.getElementsByClassName("tab-button");
-        for (var j = 0; j < tabButtons.length; j++) {
-            tabButtons[j].classList.remove("active");
-        }
-        var activeTabButton = document.querySelector(`.tab-button[onclick*="${tabId}"]`);
-        if (activeTabButton) {
-            activeTabButton.classList.add("active");
-        }
-
-        if (tabId === "tab2") {
-            showLoadWorkflowList(tabId);
-        } else if (tabId === "tab1") {
-            showGalleryWorkflowList(tabId);
-        }
-    }
-}
-
-
-function createGridItem(workflowName, container, thumbnail, author = '', time = '', showDeleteButton = false) {
+function createGridItem(workflowName, container, thumbnail, author = '', time = '', showDeleteButton = false, index) {
     var gridItem = document.createElement('div');
     gridItem.className = 'grid-item';
     gridItem.style.borderRadius = '15px';
@@ -116,8 +139,14 @@ function createGridItem(workflowName, container, thumbnail, author = '', time = 
     });
     button.onclick = function (e) {
         e.preventDefault();
-        sendWorkflow(workflowName);
+        if (showDeleteButton) {
+            sendWorkflow(workflowName);
+        } else {
+            const workflowData = galleryWorkflows[index];
+            importGalleryWorkflow(JSON.stringify(workflowData));
+        }
     };
+
 
     caption.appendChild(h6);
     if (author) caption.appendChild(pAuthor);
@@ -158,6 +187,8 @@ function createGridItem(workflowName, container, thumbnail, author = '', time = 
     console.log('Grid item appended:', gridItem);
 }
 
+// let galleryWorkflows = [];
+
 function showGalleryWorkflowList(tabId) {
     const container = document.getElementById(tabId).querySelector('.grid-container');
     container.innerHTML = '';
@@ -196,7 +227,7 @@ function showGalleryWorkflowList(tabId) {
         })
         .catch(error => {
             console.error('Error fetching gallery workflows:', error);
-
+            alert('Failed to load gallery workflows.');
         });
 }
 

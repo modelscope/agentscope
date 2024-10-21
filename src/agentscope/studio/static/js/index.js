@@ -11,6 +11,7 @@ let activeExpanded = false;
 
 // Check if the script is already loaded
 function isScriptLoaded(src) {
+    if(src == 'static/js/gallery.js')return;
     let curURL = new URL(src, window.location.href).pathname;
     return Array.from(document.scripts).some((script) => {
         try {
