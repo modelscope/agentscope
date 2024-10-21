@@ -62,21 +62,17 @@ body {
     background: none;
     border: none;
     text-decoration: underline;
+    opacity: 0.001;
 }
 
 #loginGuestButton:hover {
     transform: scale(1.01);
     text-decoration: underline;
-}
-
-#loginGuestButton:active {
-    transform: scale(1);
-    text-decoration: underline;
+    cursor: default;
 }
 
 #loginGuestButton:disabled {
     color: #d3d3d3;
-    cursor: not-allowed;
     text-decoration: none;
     transform: none;
 }
