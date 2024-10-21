@@ -148,6 +148,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">from</span> <span class="nn">flask_socketio</span> <span class="kn">import</span> <span class="n">SocketIO</span><span class="p">,</span> <span class="n">join_room</span><span class="p">,</span> <span class="n">leave_room</span>
 
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_DEFAULT_CACHE_DIR</span><span class="p">,</span>
     <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span>
     <span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">,</span>
     <span class="n">FILE_SIZE_LIMIT</span><span class="p">,</span>
@@ -165,7 +166,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1"># Set the cache directory</span>
-<span class="n">_cache_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;.cache&quot;</span> <span class="o">/</span> <span class="s2">&quot;agentscope-studio&quot;</span>
+<span class="n">_cache_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">_DEFAULT_CACHE_DIR</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;studio&quot;</span>
 <span class="n">_cache_db</span> <span class="o">=</span> <span class="n">_cache_dir</span> <span class="o">/</span> <span class="s2">&quot;agentscope.db&quot;</span>
 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_cache_dir</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
