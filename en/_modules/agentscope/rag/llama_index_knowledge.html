@@ -328,8 +328,9 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">persist_root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">persist_root</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">run_dir</span> <span class="ow">or</span> <span class="s2">&quot;./&quot;</span>
+            <span class="n">persist_root</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">cache_dir</span> <span class="ow">or</span> <span class="s2">&quot;./&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">persist_root</span><span class="p">,</span> <span class="n">knowledge_id</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;** persist_dir: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emb_model</span> <span class="o">=</span> <span class="n">emb_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite_index</span> <span class="o">=</span> <span class="n">overwrite_index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">showprogress</span> <span class="o">=</span> <span class="n">showprogress</span>

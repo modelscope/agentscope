@@ -158,13 +158,12 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="c1"># Format the dict to avoid duplicate keys</span>
         <span class="n">embedding_model</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">embedding_model_hash</span> <span class="o">=</span> <span class="n">_hash_string</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="n">hash_method</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The embedding model must be a string or a dict, got &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
+    <span class="n">embedding_model_hash</span> <span class="o">=</span> <span class="n">_hash_string</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="n">hash_method</span><span class="p">)</span>
 
     <span class="c1"># Calculate the embedding id by hashing the hash codes of the</span>
     <span class="c1"># original data and the embedding model</span>
