@@ -27,18 +27,6 @@ except ImportError:
     nx = None
 
 
-def remove_duplicates_from_end(lst: list) -> list:
-    """remove duplicates element from end on a list"""
-    seen = set()
-    result = []
-    for item in reversed(lst):
-        if item not in seen:
-            seen.add(item)
-            result.append(item)
-    result.reverse()
-    return result
-
-
 class ASDiGraph(nx.DiGraph):
     """
     A class that represents a directed graph, extending the functionality of
@@ -128,9 +116,10 @@ class ASDiGraph(nx.DiGraph):
         def format_python_code(code: str) -> str:
             try:
                 from black import FileMode, format_str
+                import isort
 
-                logger.debug("Formatting Code with black...")
-                return format_str(code, mode=FileMode())
+                logger.debug("Formatting Code with black and isort...")
+                return isort.code(format_str(code, mode=FileMode()))
             except Exception:
                 return code
 
@@ -153,9 +142,6 @@ class ASDiGraph(nx.DiGraph):
 
         header = "\n".join(self.imports)
 
-        # Remove duplicate import
-        new_imports = remove_duplicates_from_end(header.split("\n"))
-        header = "\n".join(new_imports)
         body = "\n    ".join(self.inits + self.execs)
 
         main_body = f"def main():\n    {body}"

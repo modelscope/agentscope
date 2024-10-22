@@ -37,6 +37,7 @@
 
     <script src="{{ url_for('static', filename='js_third_party/sweetalert2@11') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/micromodal.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/monaco-editor.loader.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/workstation.js') }}"></script>
 </head>
@@ -357,6 +358,16 @@
                                 draggable="true" ondragstart="drag(event)">
                                 Post
                             </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="Code"
+                                draggable="true" ondragstart="drag(event)">
+                                Code
+                            </li>
+                            <!-- <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="IF/ELSE"
+                                draggable="true" ondragstart="drag(event)">
+                                IF/ELSE
+                            </li> -->
                         </ul>
                     </li>
                 </ul>

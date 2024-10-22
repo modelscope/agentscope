@@ -5,7 +5,9 @@ from abc import ABC, abstractmethod
 from enum import IntEnum
 from functools import partial
 from typing import List, Optional, Any
-
+import json
+import re
+from textwrap import dedent
 from agentscope import msghub
 from agentscope.agents import (
     DialogAgent,
@@ -40,10 +42,12 @@ from agentscope.service import (
     dashscope_text_to_audio,
     dashscope_text_to_image,
     ServiceToolkit,
+    ServiceExecStatus,
 )
 from agentscope.studio.tools.image_composition import stitch_images_with_grid
 from agentscope.studio.tools.image_motion import create_video_or_gif_from_image
 from agentscope.studio.tools.video_composition import merge_videos
+from agentscope.studio.tools.condition_operator import eval_condition_operator
 
 from agentscope.studio.tools.web_post import web_post
 
@@ -93,9 +97,13 @@ class WorkflowNode(ABC):
         self.dep_opts = dep_opts
         self.dep_vars = [opt.var_name for opt in self.dep_opts]
         self.var_name = f"{self.node_type.name.lower()}_{self.node_id}"
+        self.source_kwargs.pop("condition_op", "")
+        self.source_kwargs.pop("target_value", "")
+        self._post_init()
 
+    def _post_init(self) -> None:
         # Warning: Might cause error when args is still string
-        if not only_compile:
+        if not self.only_compile:
             for key, value in self.opt_kwargs.items():
                 if is_callable_expression(value):
                     self.opt_kwargs[key] = convert_str_to_callable(value)
@@ -134,21 +142,8 @@ class ModelNode(WorkflowNode):
 
     node_type = WorkflowNodeType.MODEL
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         ModelManager.get_instance().load_model_configs([self.opt_kwargs])
 
     def compile(self) -> dict:
@@ -170,21 +165,8 @@ class MsgNode(WorkflowNode):
 
     node_type = WorkflowNodeType.MESSAGE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.msg = Msg(**self.opt_kwargs)
 
     def __call__(self, x: dict = None) -> dict:
@@ -206,21 +188,8 @@ class DialogAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = DialogAgent(**self.opt_kwargs)
 
     def __call__(self, x: dict = None) -> dict:
@@ -243,21 +212,8 @@ class UserAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = UserAgent(**self.opt_kwargs)
 
     def __call__(self, x: dict = None) -> dict:
@@ -280,21 +236,8 @@ class TextToImageAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = TextToImageAgent(**self.opt_kwargs)
 
     def __call__(self, x: dict = None) -> dict:
@@ -317,21 +260,8 @@ class DictDialogAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = DictDialogAgent(**self.opt_kwargs)
 
     def __call__(self, x: dict = None) -> dict:
@@ -354,24 +284,11 @@ class ReActAgentNode(WorkflowNode):
 
     node_type = WorkflowNodeType.AGENT
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         # Build tools
         self.service_toolkit = ServiceToolkit()
-        for tool in dep_opts:
+        for tool in self.dep_opts:
             if not hasattr(tool, "service_func"):
                 raise TypeError(f"{tool} must be tool!")
             self.service_toolkit.add(tool.service_func)
@@ -411,21 +328,8 @@ class MsgHubNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.announcement = Msg(
             name=self.opt_kwargs["announcement"].get("name", "Host"),
             content=self.opt_kwargs["announcement"].get("content", "Welcome!"),
@@ -478,21 +382,8 @@ class PlaceHolderNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = placeholder
 
     def __call__(self, x: dict = None) -> dict:
@@ -518,21 +409,8 @@ class SequentialPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = SequentialPipeline(operators=self.dep_opts)
 
     def __call__(self, x: dict = None) -> dict:
@@ -558,21 +436,16 @@ class ForLoopPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
+    def _post_init(self) -> None:
+        # Not call super post init to avoid converting callable
+        self.condition_op = self.opt_kwargs.pop("condition_op", "")
+        self.target_value = self.opt_kwargs.pop("target_value", "")
+        self.opt_kwargs["break_func"] = partial(
+            eval_condition_operator,
+            operator=self.condition_op,
+            target_value=self.target_value,
         )
+
         assert (
             len(self.dep_opts) == 1
         ), "ForLoopPipelineNode can only contain one PipelineNode."
@@ -586,11 +459,16 @@ class ForLoopPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines import ForLoopPipeline",
+            "imports": "from agentscope.pipelines import ForLoopPipeline\n"
+            "from functools import partial\n"
+            "from agentscope.studio.tools.condition_operator import "
+            "eval_condition_operator",
             "inits": f"{self.var_name} = ForLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
-            f" {kwarg_converter(self.source_kwargs)})",
+            f" {kwarg_converter(self.source_kwargs)},"
+            f" break_func=partial(eval_condition_operator, operator"
+            f"='{self.condition_op}', target_value='{self.target_value}'))",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
@@ -606,21 +484,8 @@ class WhileLoopPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         assert (
             len(self.dep_opts) == 1
         ), "WhileLoopPipelineNode can only contain one PipelineNode."
@@ -654,21 +519,16 @@ class IfElsePipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
+    def _post_init(self) -> None:
+        # Not call super post init to avoid converting callable
+        self.condition_op = self.opt_kwargs.pop("condition_op", "")
+        self.target_value = self.opt_kwargs.pop("target_value", "")
+        self.opt_kwargs["condition_func"] = partial(
+            eval_condition_operator,
+            operator=self.condition_op,
+            target_value=self.target_value,
         )
+
         assert (
             0 < len(self.dep_opts) <= 2
         ), "IfElsePipelineNode must contain one or two PipelineNode."
@@ -688,13 +548,21 @@ class IfElsePipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        imports = "from agentscope.pipelines import IfElsePipeline"
+        imports = (
+            "from agentscope.pipelines import IfElsePipeline\n"
+            "from functools import partial\n"
+            "from agentscope.studio.tools.condition_operator "
+            "import eval_condition_operator"
+        )
         execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         if len(self.dep_vars) == 1:
             return {
                 "imports": imports,
                 "inits": f"{self.var_name} = IfElsePipeline("
-                f"if_body_operators={self.dep_vars[0]})",
+                f"if_body_operators={self.dep_vars[0]}, "
+                f"condition_func=partial(eval_condition_operator, "
+                f"operator='{self.condition_op}', "
+                f"target_value='{self.target_value}'))",
                 "execs": execs,
             }
         elif len(self.dep_vars) == 2:
@@ -702,7 +570,10 @@ class IfElsePipelineNode(WorkflowNode):
                 "imports": imports,
                 "inits": f"{self.var_name} = IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]}, "
-                f"else_body_operators={self.dep_vars[1]})",
+                f"else_body_operators={self.dep_vars[1]},"
+                f"condition_func=partial(eval_condition_operator, "
+                f"operator='{self.condition_op}', "
+                f"target_value='{self.target_value}'))",
                 "execs": execs,
             }
         raise ValueError
@@ -718,21 +589,8 @@ class SwitchPipelineNode(WorkflowNode):
 
     node_type = WorkflowNodeType.PIPELINE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         assert 0 < len(self.dep_opts), (
             "SwitchPipelineNode must contain at least " "one PipelineNode."
         )
@@ -798,21 +656,8 @@ class CopyNode(WorkflowNode):
 
     node_type = WorkflowNodeType.COPY
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         assert len(self.dep_opts) == 1, "CopyNode can only have one parent!"
         self.pipeline = self.dep_opts[0]
         self.var_name = self.pipeline.var_name
@@ -836,21 +681,8 @@ class BingSearchServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = partial(bing_search, **self.opt_kwargs)
 
     def compile(self) -> dict:
@@ -871,21 +703,8 @@ class GoogleSearchServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = partial(google_search, **self.opt_kwargs)
 
     def compile(self) -> dict:
@@ -906,21 +725,8 @@ class PythonServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = execute_python_code
 
     def compile(self) -> dict:
@@ -939,21 +745,8 @@ class ReadTextServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = read_text_file
 
     def compile(self) -> dict:
@@ -972,21 +765,8 @@ class WriteTextServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = write_text_file
 
     def compile(self) -> dict:
@@ -1003,22 +783,8 @@ class PostNode(WorkflowNode):
 
     node_type = WorkflowNodeType.TOOL
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
-
+    def _post_init(self) -> None:
+        super()._post_init()
         if "kwargs" in self.opt_kwargs:
             kwargs = ast.literal_eval(self.opt_kwargs["kwargs"].strip())
             del self.opt_kwargs["kwargs"]
@@ -1048,21 +814,8 @@ class TextToAudioServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = partial(dashscope_text_to_audio, **self.opt_kwargs)
 
     def compile(self) -> dict:
@@ -1083,21 +836,8 @@ class TextToImageServiceNode(WorkflowNode):
 
     node_type = WorkflowNodeType.SERVICE
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.service_func = partial(dashscope_text_to_image, **self.opt_kwargs)
 
     def compile(self) -> dict:
@@ -1118,21 +858,8 @@ class ImageCompositionNode(WorkflowNode):
 
     node_type = WorkflowNodeType.TOOL
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = partial(stitch_images_with_grid, **self.opt_kwargs)
 
     def __call__(self, x: list = None) -> dict:
@@ -1159,21 +886,8 @@ class ImageMotionNode(WorkflowNode):
 
     node_type = WorkflowNodeType.TOOL
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = partial(
             create_video_or_gif_from_image,
             **self.opt_kwargs,
@@ -1202,21 +916,8 @@ class VideoCompositionNode(WorkflowNode):
 
     node_type = WorkflowNodeType.TOOL
 
-    def __init__(
-        self,
-        node_id: str,
-        opt_kwargs: dict,
-        source_kwargs: dict,
-        dep_opts: list,
-        only_compile: bool = True,
-    ) -> None:
-        super().__init__(
-            node_id,
-            opt_kwargs,
-            source_kwargs,
-            dep_opts,
-            only_compile,
-        )
+    def _post_init(self) -> None:
+        super()._post_init()
         self.pipeline = partial(merge_videos, **self.opt_kwargs)
 
     def __call__(self, x: dict = None) -> dict:
@@ -1231,6 +932,92 @@ class VideoCompositionNode(WorkflowNode):
             f", {kwarg_converter(self.opt_kwargs)})",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"([{DEFAULT_FLOW_VAR}])",
+        }
+
+
+class CodeNode(WorkflowNode):
+    """
+    Python Code Node
+    """
+
+    node_type = WorkflowNodeType.TOOL
+
+    def _post_init(self) -> None:
+        super()._post_init()
+        self.pipeline = execute_python_code
+        self.code_tags = "{{code}}"
+        self.input_tags = "{{inputs}}"
+        self.output_tags = "<<RESULT>>"
+
+    def template(self) -> str:
+        """
+        Code template
+        """
+        template_str = dedent(
+            f"""
+            from agentscope.message import Msg
+            {self.code_tags}
+            import json
+
+            if isinstance({self.input_tags}, str):
+                inputs_obj = json.loads({self.input_tags})
+            else:
+                inputs_obj = {self.input_tags}
+
+            output_obj = function(*inputs_obj)
+
+            output_json = json.dumps(output_obj, indent=4)
+            result = f'''{self.output_tags}{{output_json}}{self.output_tags}'''
+            print(result)
+            """,
+        )
+        return template_str
+
+    def extract_result(self, content: str) -> Any:
+        """
+        Extract result from content
+        """
+        result = re.search(
+            rf"{self.output_tags}(.*){self.output_tags}",
+            content,
+            re.DOTALL,
+        )
+        if not result:
+            raise ValueError("Failed to parse result")
+        result = result.group(1)
+        return result
+
+    def __call__(self, x: list = None) -> dict:
+        if isinstance(x, dict):
+            x = [x]
+
+        code = self.template().replace(
+            self.code_tags,
+            self.opt_kwargs.get("code", ""),
+        )
+        inputs = json.dumps(x, ensure_ascii=True).replace("null", "None")
+        code = code.replace(self.input_tags, inputs)
+        try:
+            out = self.pipeline(code)
+            if out.status == ServiceExecStatus.SUCCESS:
+                content = self.extract_result(out.content)
+                return Msg(**json.loads(content))
+            return out
+        except Exception as e:
+            raise RuntimeError(
+                f"Code id: {self.node_id},error executing :{e}",
+            ) from e
+
+    def compile(self) -> dict:
+        code = self.opt_kwargs.get("code", "").replace(
+            "def function",
+            f"def function_{self.node_id}",
+        )
+        return {
+            "imports": f"from agentscope.message import Msg\n{code}",
+            "inits": "",
+            "execs": f"{DEFAULT_FLOW_VAR} = function_{self.node_id}"
+            f"(*[{DEFAULT_FLOW_VAR}])",
         }
 
 
@@ -1263,6 +1050,7 @@ NODE_NAME_MAPPING = {
     "TextToAudioService": TextToAudioServiceNode,
     "TextToImageService": TextToImageServiceNode,
     "ImageComposition": ImageCompositionNode,
+    "Code": CodeNode,
     "ImageMotion": ImageMotionNode,
     "VideoComposition": VideoCompositionNode,
 }

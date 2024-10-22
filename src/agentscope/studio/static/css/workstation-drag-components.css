@@ -84,6 +84,10 @@
     display: none;
 }
 
+.hidden {
+    display: none;
+}
+
 .box input, .box select, .box textarea {
     display: flex;
     flex-direction: column;
