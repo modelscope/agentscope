@@ -167,10 +167,14 @@ class LangChainKnowledge(Knowledge):
         Load the persisted index from persist_dir.
         """
         # set the storage
-        self.vectorstore = InMemoryVectorStore.load(
-            self.persist_store_file,
-            self.emb_model,
+        self.vectorstore = self._set_store(
+            self.knowledge_config.get("store_and_index", {}),
         )
+        if not self.vectorstore:
+            self.vectorstore = InMemoryVectorStore.load(
+                self.persist_store_file,
+                self.emb_model,
+            )
         # set the record manager
         self.record_manager = InMemoryRecordManager(self.knowledge_id)
         self.record_manager.create_schema()
@@ -185,9 +189,7 @@ class LangChainKnowledge(Knowledge):
         chunks = []
         for config in self.knowledge_config.get("data_processing"):
             documents = self._data_to_docs(config=config)
-            splitter = self._set_splitter(config=config).get(
-                "splitter",
-            )
+            splitter = self._set_splitter(config=config).get("splitter")
             chunks_docs = self._docs_to_chunks(
                 documents=documents,
                 splitter=splitter,
@@ -195,20 +197,35 @@ class LangChainKnowledge(Knowledge):
             chunks = chunks + chunks_docs
 
         # convert chunks to vector store and index
-        self.vectorstore = InMemoryVectorStore(self.emb_model)
+        self.vectorstore = self._set_store(
+            config=self.knowledge_config.get("store_and_index", {}),
+        )
+        if not self.vectorstore:
+            self.vectorstore = InMemoryVectorStore(
+                self.emb_model,
+            )
         index(
             chunks,
             self.record_manager,
             self.vectorstore,
             cleanup=None,
             source_id_key="source",
+            # upsert_kwargs={"embedding": self.emb_model}
+            # This feature is only supported in langchain 0.3.10
         )
         logger.info("vector store and index created successfully.")
-        self.vectorstore.dump(self.persist_store_file)
+
+        # persist
+        if isinstance(self.vectorstore, InMemoryVectorStore):
+            self.vectorstore.dump(self.persist_store_file)
+            logger.info("In-memory vector store are persisted.")
         self._save_memory_record(self.persist_index_file)
-        logger.info("vector store and index are persisted.")
+        logger.info("index are persisted.")
 
     def _save_memory_record(self, filename: str) -> None:
+        filedir = os.path.dirname(filename)
+        if not os.path.exists(filedir):
+            os.makedirs(filedir)
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(self.record_manager.records, f, indent=4)
 
@@ -246,6 +263,26 @@ class LangChainKnowledge(Knowledge):
         splitter: Optional[TextSplitter],
     ) -> Any:
         return splitter.split_documents(documents)
+
+    def _set_store(self, config: dict) -> Any:
+        if "stores" in config:
+            init_config = (
+                config.get("stores", {})
+                .get("vector_store", {})
+                .get("init_args", {})
+            )
+            embedding_key = init_config.pop(
+                "embedding_key",
+                "embedding",
+            )
+            init_config[embedding_key] = self.emb_model
+            temp = self._prepare_args_from_config(
+                config=config.get("stores", {}),
+            )
+            vector_store = temp.get("vector_store")
+        else:
+            vector_store = None
+        return vector_store
 
     def _set_loader(self, config: dict) -> Any:
         """
@@ -285,7 +322,16 @@ class LangChainKnowledge(Knowledge):
         Args:
             config (dict): a dictionary containing configurations.
         """
-        if "store_and_index" in config:
+        if "data_parse" in config:
+            temp = self._prepare_args_from_config(
+                config=config.get("data_parse", {}),
+            )
+            splitter = temp.get("splitter")
+        elif "store_and_index" in config:
+            logger.warning(
+                "The old configuration structure is deprecated, "
+                "please use data_parse instead of store_and_index.",
+            )
             temp = self._prepare_args_from_config(
                 config=config.get("store_and_index", {}),
             )
