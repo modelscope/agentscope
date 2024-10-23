@@ -176,9 +176,10 @@ def main(args: argparse.Namespace) -> None:
     # Setup the persona of Carol
     carol = ChatRoomAgent(
         name="Carol",
-        sys_prompt=r"""You are Carol, and now you need to interview Bob. """
-        r"""Just ask him where he is from, which school he graduated from, """
-        r"""his profession, and his hobbies.""",
+        sys_prompt="""You are Carol, and now you need to interview Bob. """
+        """Just ask him where he is from, which school he graduated from, """
+        """his profession, and his hobbies. You'd better only ask one """
+        """question at a time.""",
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
         to_dist=args.use_dist,
     )
