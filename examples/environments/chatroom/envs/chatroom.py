@@ -171,7 +171,7 @@ class ChatRoom(BasicEnv):
         if agent.name not in self.children:
             return False
         del self.children[agent.name]
-        del self.children[agent.name]
+        del self.member_introduction[agent.name]
         return True
 
     @event_func
