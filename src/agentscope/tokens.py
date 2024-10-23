@@ -9,6 +9,7 @@ from loguru import logger
 
 __register_models = {}
 # The dictionary to store the model names and token counting functions.
+# TODO: a more elegant way to store the model names and functions.
 
 
 def count(model_name: str, messages: list[dict[str, str]]) -> int:
