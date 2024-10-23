@@ -174,6 +174,16 @@ class ChatRoom(BasicEnv):
             history_idx = self.children[agent_name].history_idx
         return deepcopy(self.history[history_idx:])
 
+    def get_history_length(self, agent_name: str) -> int:
+        """Get the length of the history of the agent."""
+        if agent_name not in self.children:
+            return 0
+        if self.all_history:
+            history_idx = 0
+        else:
+            history_idx = self.children[agent_name].history_idx
+        return len(self.history) - history_idx
+
     def describe(self, agent_name: str, **kwargs: Any) -> str:
         """Get the description of the chatroom."""
         ann = (
@@ -183,18 +193,20 @@ class ChatRoom(BasicEnv):
             members_profile = []
             for name, member in self.children.items():
                 sys_prompt = member.agent.sys_prompt
-                members_profile.append(f'{name}: {sys_prompt}')
+                members_profile.append(f"{name}: {sys_prompt}")
             members_profile_str = "\n\n".join(members_profile)
-            if hasattr(self, 'model'):
+            if hasattr(self, "model"):
                 desc_prompt = (
-                    f"""{self.children[agent_name].agent.sys_prompt}\nYou are participating in a chatroom.\n\n"""
+                    f"""{self.children[agent_name].agent.sys_prompt}\n"""
+                    f"""You are participating in a chatroom.\n\n"""
                     f"""======= CHATROOM MEMBERS' PROFILE BEGIN ========\n"""
                     f"""{members_profile_str}"""
                     f"""======= CHATROOM MEMBERS' PROFILE END ========\n"""
-                    f"""Please describe the group members in one sentence from {agent_name}'s perspective."""
+                    f"""Please describe the group members in one sentence """
+                    f"""from {agent_name}'s perspective."""
                 )
                 prompt = self.model.format(
-                    Msg(name="system", role="system", content=desc_prompt)
+                    Msg(name="system", role="system", content=desc_prompt),
                 )
                 logger.debug(prompt)
                 response = self.model(prompt)
@@ -205,11 +217,11 @@ class ChatRoom(BasicEnv):
             self.member_description[agent_name] = desc
         ann += f"\n{self.member_description[agent_name]}\n\n"
         ann += (
-            r"""Please generate a suitable response in this work group based """
-            r"""on the following chat history. When you need to mention """
-            r"""someone, you can use @ to remind them. You only need to output """
-            rf"""{agent_name}'s possible replies, without giving anyone else's replies """
-            r"""or continuing the conversation."""
+            r"""Please generate a suitable response in this work group based"""
+            r""" on the following chat history. When you need to mention """
+            r"""someone, you can use @ to remind them. You only need to """
+            rf"""output {agent_name}'s possible replies, without giving """
+            r"""anyone else's replies or continuing the conversation."""
         )
         history = "\n\n".join(
             [
@@ -293,7 +305,8 @@ class ChatRoom(BasicEnv):
     ) -> None:
         """Let all agents to chat freely without any preset order"""
         tasks = []
-        agent_name_list = agent_name_list or list(self.children.keys())
+        if agent_name_list is None:
+            agent_name_list = list(self.children.keys())
         for agent_name in agent_name_list:
             task = threading.Thread(
                 target=self.children[agent_name].chat_freely,
@@ -314,7 +327,7 @@ class ChatRoom(BasicEnv):
         Args:
             agent_name_order (`List[str]`): Order of speakers' names.
         """
-        agent_name_list = agent_name_list or list(self.children.keys())
+        agent_name_order = agent_name_order or list(self.children.keys())
         for agent_name in agent_name_order:
             self.children[agent_name].chat()
 
@@ -373,6 +386,7 @@ class ChatRoomAgent(AgentBase):
     def join(self, room: ChatRoom) -> bool:
         """Join a room"""
         self.room = room
+        self.room_history_length = self.room.get_history_length(self.name)
         return room.join(self)
 
     def _is_mentioned(self) -> bool:
@@ -390,21 +404,27 @@ class ChatRoomAgent(AgentBase):
                         for msg in self.mentioned_messages
                     ],
                 )
+                self.mentioned_messages = []
                 return True, hint
             return False, ""
 
     def _want_to_speak(self, hint: str) -> bool:
         """Check whether the agent want to speak currently"""
+        hint = (
+            f"{self.sys_prompt}\n\nYou are participating in a chatroom.\n"
+            + hint
+        )
         prompt = self.model.format(
             Msg(name="system", role="system", content=hint),
             Msg(
                 name="user",
                 role="user",
                 content="Based on the CHATROOM."
-                " Do you want to speak in the chatroom now?\n"
-                "Speak yes or no.",
+                " Do you want to or need to speak in the chatroom now?\n"
+                "Return yes or no.",
             ),
         )
+        logger.debug(prompt)
         response = self.model(
             prompt,
             max_retries=3,
@@ -428,21 +448,27 @@ class ChatRoomAgent(AgentBase):
 
     def reply(self, x: Msg = None) -> Msg:
         """Generate reply to chat room"""
-        room_history_length = len(self.room.history)
+        room_history_length = self.room.get_history_length(self.name)
         if room_history_length != self.room_history_length:
             self.room_history_length = room_history_length
             self.room_slient_count = 0
         else:
             self.room_slient_count += 1
         room_info = self.room.describe(self.name)
-        reply_hint = ''
+        reply_hint = ""
         mentioned, mentioned_hint = self._generate_mentioned_prompt()
         if mentioned:
-            reply_hint = f'{mentioned_hint}\n{self.name}:'
+            reply_hint = f"{mentioned_hint}\n{self.name}:"
         else:
             # decide whether to speak
-            if self.room_history_length <= 3 or (self.room_slient_count <= 2 and self._want_to_speak(room_info)):
-                reply_hint = f"Please generate a response based on the CHATROOM.\n{self.name}:"
+            if self.room_history_length <= 3 or (
+                self.room_slient_count <= 2 and self._want_to_speak(room_info)
+            ):
+                reply_hint = (
+                    f"Please generate a response based on the"
+                    f" CHATROOM. You need only generate response without "
+                    f"reasoning.\n{self.name}:"
+                )
             else:
                 return Msg(name="assistant", role="assistant", content="")
         system_hint = (
@@ -454,7 +480,7 @@ class ChatRoomAgent(AgentBase):
                 name="system",
                 role="system",
                 content=system_hint,
-            )
+            ),
         )
         prompt[-1]["content"] = prompt[-1]["content"].strip()
         logger.debug(prompt)
@@ -466,6 +492,7 @@ class ChatRoomAgent(AgentBase):
         msg = Msg(name=self.name, content=response, role="assistant")
         if response:
             self.speak(msg)
+        self.room_history_length = self.room.get_history_length(self.name)
         return msg
 
 
@@ -510,35 +537,28 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
         if content is not None:  # user input
             response = content
         else:  # assistant reply
-            room_history_length = len(self.room.history)
+            room_history_length = self.room.get_history_length(self.name)
             if room_history_length == self.room_history_length:
                 return Msg(name="assistant", role="assistant", content="")
             self.room_history_length = room_history_length
-            # msg_hint = self._generate_mentioned_prompt()
             room_info = self.room.describe(self.name)
-            reply_hint = ''
+            reply_hint = ""
             mentioned, mentioned_hint = self._generate_mentioned_prompt()
             if mentioned:
-                reply_hint = f'{mentioned_hint}\n{self.name}:'
+                reply_hint = f"{mentioned_hint}\n{self.name}:"
             else:
-                # decide whether to speak
-                if self.room_history_length <= 3 or (self.room_slient_count <= 2 and self._want_to_speak(room_info)):
-                    reply_hint = f"Please generate a response based on the CHATROOM.\n{self.name}:"
-                else:
-                    return Msg(name="assistant", role="assistant", content="")
+                reply_hint = (
+                    f"Please generate a response based on the CHATROOM."
+                    f"\n{self.name}:"
+                )
             system_hint = (
                 f"{self.sys_prompt}\n\nYou are participating in a chatroom.\n"
                 f"\n{room_info}\n{reply_hint}"
             )
             msg_hint = Msg(name=self.name, content=system_hint, role="system")
 
-            self_msg = Msg(name=self.name, content="", role="assistant")
-
-            # history = self.room.get_history(self.agent_id)
             prompt = self.model.format(
                 msg_hint,
-                # history,
-                self_msg,
             )
             logger.debug(prompt)
             response = self.model(
@@ -550,4 +570,5 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
                 response = "[auto reply] " + response
         msg = Msg(name=self.name, content=response, role="user")
         self.speak(msg)
+        self.room_history_length = self.room.get_history_length(self.name)
         return msg

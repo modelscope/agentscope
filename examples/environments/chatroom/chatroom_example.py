@@ -59,7 +59,12 @@ def main(args: argparse.Namespace) -> None:
         ),
         role="system",
     )
-    r = ChatRoom(name="chat", announcement=ann, model_config_name=YOUR_MODEL_CONFIGURATION_NAME, to_dist=args.use_dist)
+    r = ChatRoom(
+        name="chat",
+        announcement=ann,
+        model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
+        to_dist=args.use_dist,
+    )
 
     # Setup the persona of Alice, Bob and Carol
     alice = ChatRoomAgent(  # Game Art Designer
@@ -90,7 +95,7 @@ def main(args: argparse.Namespace) -> None:
     r.chat_freely(
         delay=10,
         interval=10,
-        max_round=3, # 10,
+        max_round=10,
     )
 
 
