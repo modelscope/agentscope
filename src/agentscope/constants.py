@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Some constants used in the project"""
+import os
 from numbers import Number
 from enum import IntEnum
 
@@ -19,7 +20,16 @@ _DEFAULT_LOG_LEVEL = "INFO"
 _DEFAULT_SUBDIR_CODE = "code"
 _DEFAULT_SUBDIR_FILE = "file"
 _DEFAULT_SUBDIR_INVOKE = "invoke"
-_DEFAULT_CACHE_DIR = str(Path.home() / ".cache" / "agentscope")
+_DEFAULT_CACHE_DIR = str(
+    Path(
+        os.environ.get(
+            "AS_HOME_PATH",
+            str(Path.home()),
+        ),
+    )
+    / ".cache"
+    / "agentscope",
+)
 _DEFAULT_CFG_NAME = ".config"
 _DEFAULT_IMAGE_NAME = "image_{}_{}.png"
 _DEFAULT_SQLITE_DB_NAME = "agentscope.db"

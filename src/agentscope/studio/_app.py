@@ -30,6 +30,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, join_room, leave_room
 
 from ..constants import (
+    _DEFAULT_CACHE_DIR,
     _DEFAULT_SUBDIR_CODE,
     _DEFAULT_SUBDIR_INVOKE,
     FILE_SIZE_LIMIT,
@@ -47,7 +48,7 @@ from ..rpc.rpc_client import RpcClient
 _app = Flask(__name__)
 
 # Set the cache directory
-_cache_dir = Path.home() / ".cache" / "agentscope-studio"
+_cache_dir = Path(_DEFAULT_CACHE_DIR) / "studio"
 _cache_db = _cache_dir / "agentscope.db"
 os.makedirs(str(_cache_dir), exist_ok=True)
 
