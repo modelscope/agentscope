@@ -7,7 +7,6 @@ from typing import Optional, Generator, Tuple
 from typing import Sequence
 from typing import Union
 from typing import Any
-from typing import Type
 import json
 import uuid
 from loguru import logger
@@ -107,39 +106,6 @@ class AgentBase(Operator, metaclass=RpcMeta):
         """Generate the agent_id of this agent instance"""
         # TODO: change cls.__name__ into a global unique agent_type
         return uuid.uuid4().hex
-
-    # todo: add a unique agent_type field to distinguish different agent class
-    @classmethod
-    def get_agent_class(cls, agent_class_name: str) -> Type[AgentBase]:
-        """Get the agent class based on the specific agent class name.
-
-        Args:
-            agent_class_name (`str`): the name of the agent class.
-
-        Raises:
-            ValueError: Agent class name not exits.
-
-        Returns:
-            Type[AgentBase]: the AgentBase subclass.
-        """
-        if agent_class_name not in cls._registry:
-            raise ValueError(f"Agent class <{agent_class_name}> not found.")
-        return cls._registry[agent_class_name]  # type: ignore[return-value]
-
-    @classmethod
-    def register_agent_class(cls, agent_class: Type[AgentBase]) -> None:
-        """Register the agent class into the registry.
-
-        Args:
-            agent_class (Type[AgentBase]): the agent class to be registered.
-        """
-        agent_class_name = agent_class.__name__
-        if agent_class_name in cls._registry:
-            logger.info(
-                f"Agent class with name [{agent_class_name}] already exists.",
-            )
-        else:
-            cls._registry[agent_class_name] = agent_class
 
     @async_func
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
