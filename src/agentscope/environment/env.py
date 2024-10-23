@@ -271,6 +271,8 @@ class BasicEnv(Env):
         Args:
             parent (`Env`): The parent env.
         """
+        if self.parent is not None:
+            self.parent.remove_child(self.name)
         self.parent = parent
 
     def get_children(self) -> dict[str, Env]:
@@ -391,5 +393,6 @@ class BasicEnv(Env):
         if env_name not in self.children:
             self.children[env_name] = env
             env.set_parent(self)
+            logger.debug(f"Set Env[{env_name}] as child of Env[{self.name}]")
         else:
             raise EnvAlreadyExistError(env_name)
