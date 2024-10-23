@@ -70,7 +70,7 @@ def main(args: argparse.Namespace) -> None:
 
     bob = ChatRoomAgentWithAssistant(
         name="Bob",
-        sys_prompt=r"""You are Bob's chat room assistant and he is """
+        sys_prompt=r"""You are Bob's chat room assistant and Bob is """
         r"""currently unable to reply to messages. Please generate a """
         r"""suitable response based on the following chat history without """
         r"""reasoning. The content you reply to must be based on the chat """

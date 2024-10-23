@@ -144,7 +144,7 @@ class ChatRoom(BasicEnv):
             )
         self.history = []
         self.announcement = announcement
-        self.member_description = {}
+        self.member_introduction = {}
         if model_config_name is not None:
             model_manager = ModelManager.get_instance()
             self.model = model_manager.get_model_by_config_name(
@@ -161,15 +161,17 @@ class ChatRoom(BasicEnv):
             agent=agent,
             history_idx=len(self.history),
         )
+        self.member_introduction[agent.name] = agent.introduction
         self.add_listener("speak", Notifier())
         return True
 
     @event_func
     def leave(self, agent: AgentBase) -> bool:
         """Remove the participant agent from the chatroom."""
-        if agent.agent_id not in self.children:
+        if agent.name not in self.children:
             return False
-        del self.children[agent.agent_id]
+        del self.children[agent.name]
+        del self.children[agent.name]
         return True
 
     @event_func
@@ -202,40 +204,14 @@ class ChatRoom(BasicEnv):
 
     def describe(self, agent_name: str, **kwargs: Any) -> str:
         """Get the description of the chatroom."""
-        ann = (
-            self.announcement.content if self.announcement.content else "EMPTY"
+        ann = self.announcement.content if self.announcement.content else ""
+        members_introduction = "\n\n".join(
+            [
+                f"{name}: {introduction}"
+                for name, introduction in self.member_introduction.items()
+            ],
         )
-        if agent_name not in self.member_description:
-            members_profile = []
-            for name, member in self.children.items():
-                sys_prompt = member.agent.sys_prompt
-                members_profile.append(f"{name}: {sys_prompt}")
-            members_profile_str = "\n\n".join(members_profile)
-            if hasattr(self, "model"):
-                sys_prompt = self.children[agent_name].agent.sys_prompt
-                desc_prompt = (
-                    # f"""{self.children[agent_name].agent.sys_prompt}\n"""
-                    f"""You are participating in a chatroom.\n\n"""
-                    f"""======= CHATROOM MEMBERS' PROFILE BEGIN ========\n"""
-                    f"""{members_profile_str}"""
-                    f"""======= CHATROOM MEMBERS' PROFILE END ========\n"""
-                    f"""Please describe the group members in one sentence """
-                    f"""from {agent_name}'s perspective."""
-                )
-                prompt = format_messages(
-                    [
-                        Msg(name="system", role="system", content=sys_prompt),
-                        Msg(name="user", role="user", content=desc_prompt),
-                    ],
-                )
-                logger.debug(prompt)
-                response = self.model(prompt)
-                desc = response.text
-                logger.info(desc)
-            else:
-                desc = members_profile_str
-            self.member_description[agent_name] = desc
-        ann += f"\n{self.member_description[agent_name]}\n\n"
+        ann += f"\n{members_introduction}\n\n"
         ann += (
             """Please generate a suitable response in this work group based"""
             """ on the following chat history. When you need to mention """
@@ -392,6 +368,33 @@ class ChatRoomAgent(AgentBase):
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
         )
+        if self.sys_prompt:
+            prompt = format_messages(
+                [
+                    Msg(
+                        name="user",
+                        role="user",
+                        content=(
+                            f"Please generate a brief character introduction "
+                            f"in one sentence, which based on the following "
+                            f"prompt:\n"
+                            f"Prompt: {sys_prompt}\n"
+                            f"The generated description needs to follow the "
+                            f"following format:\n"
+                            f"[PERSONA BEGIN]\n"
+                            f"Description: One sentence introduction\n"
+                            f"[PERSONA END]"
+                        ),
+                    ),
+                ],
+            )
+            raw_introduction = self.model(prompt).text
+            raw_introduction = raw_introduction.split("[PERSONA BEGIN]", 1)[1]
+            raw_introduction = raw_introduction.split("[PERSONA END]")[0]
+            self.introduction = raw_introduction.strip()
+        else:
+            self.introduction = ""
+        logger.info(f"introduction: {self.introduction}")
         self.room_history_length = 0
         self.room_slient_count = 0
         self.room = None
@@ -578,7 +581,6 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
                     f"\n{self.name}:"
                 )
             system_hint = (
-                # f"{self.sys_prompt}\n\n"
                 f"You are participating in a chatroom.\n"
                 f"\n{room_info}\n{reply_hint}"
             )
