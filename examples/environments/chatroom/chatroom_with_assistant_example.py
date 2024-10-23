@@ -70,12 +70,12 @@ def main(args: argparse.Namespace) -> None:
 
     bob = ChatRoomAgentWithAssistant(
         name="Bob",
-        sys_prompt=r"""You are Bob's chat room assistant and he is """
+        sys_prompt=r"""You are Bob's chat room assistant and Bob is """
         r"""currently unable to reply to messages. Please generate a """
-        r"""suitable response based on the following chat history. """
-        r"""The content you reply to must be based on the chat history. """
-        r"""Please refuse to reply to questions that are beyond the scope """
-        r"""of the chat history.""",
+        r"""suitable response based on the following chat history without """
+        r"""reasoning. The content you reply to must be based on the chat """
+        r"""history. Please refuse to reply to questions that are beyond """
+        r"""the scope of the chat history.""",
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
         to_dist=args.use_dist,
         timeout=args.timeout,
@@ -176,11 +176,10 @@ def main(args: argparse.Namespace) -> None:
     # Setup the persona of Carol
     carol = ChatRoomAgent(
         name="Carol",
-        sys_prompt=r"""You are Carol, and now you need to interview Bob. """
-        r"""Just ask him where he is from, which school he graduated from, """
-        r"""his profession, and his hobbies. At the end of the interview, """
-        r"""please output a reply containing Goodbye to indicate the end """
-        r"""of the conversation.""",
+        sys_prompt="""You are Carol, and now you need to interview Bob. """
+        """Just ask him where he is from, which school he graduated from, """
+        """his profession, and his hobbies. You'd better only ask one """
+        """question at a time.""",
         model_config_name=YOUR_MODEL_CONFIGURATION_NAME,
         to_dist=args.use_dist,
     )

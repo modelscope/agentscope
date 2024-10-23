@@ -73,6 +73,7 @@ class AgentWithChatRoom(AgentBase):
     ) -> None:
         super().__init__(name=name)
         self.room = None
+        self.introduction = ""
         self.event_list = []
 
     def join(self, room: ChatRoom) -> bool:

@@ -198,6 +198,7 @@ class RpcObject(ABC):
             )
 
     def __getitem__(self, item: str) -> Any:
+        self._check_created()
         return self._call_func("__getitem__", {"args": (item,)})
 
     def _launch_server(self) -> None:
