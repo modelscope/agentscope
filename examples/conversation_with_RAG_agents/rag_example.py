@@ -104,7 +104,7 @@ def main() -> None:
     rag_agent_descriptions = [
         "agent name: "
         + agent.name
-        + "\n agent description："
+        + "\n agent description: "
         + agent.description
         + "\n"
         for agent in rag_agent_list

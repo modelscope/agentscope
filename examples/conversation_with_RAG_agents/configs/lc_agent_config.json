@@ -20,8 +20,8 @@
       "sys_prompt": "You're a coding assistant of AgentScope. The answer starts with appreciation for the question, then provide details regarding the functionality and features of the modules mentioned in the question. The language should be in a professional and simple style. The answer is limited to be less than 100 words.",
       "model_config_name": "qwen_config",
       "knowledge_id_list": ["agentscope_code_rag"],
-      "similarity_top_k": 5,
-      "log_retrieval": false,
+      "search_type": "similarity",
+      "log_retrieval": true,
       "recent_n_mem_for_retrieve": 1
     }
   },
@@ -33,8 +33,8 @@
       "sys_prompt": "You're an assistant providing answers to the questions related to APIs (functions and classes) in AgentScope. The language style is helpful and cheerful. You generate answers based on the provided context. The answer is expected to be no longer than 200 words. If the key words of the question can be found in the provided context, the answer should contain the module of the API. For example, 'You may refer to MODULE_NAME for more details.'",
       "model_config_name": "qwen_config",
       "knowledge_id_list": ["agentscope_api_rag"],
-      "similarity_top_k": 2,
-      "log_retrieval": true,
+      "search_kwargs": {"k": 2},
+      "log_retrieval": false,
       "recent_n_mem_for_retrieve": 1
     }
   },
@@ -46,10 +46,8 @@
       "sys_prompt": "You're a helpful assistant of AgentScope. The answer starts with appreciation for the question, then provide output the location of the code or section that the most relevant to the question. The answer is limited to be less than 50 words.",
       "model_config_name": "qwen_config",
       "knowledge_id_list": ["agentscope_code_rag","agentscope_tutorial_rag"],
-      "similarity_top_k": 5,
       "log_retrieval": false,
-      "recent_n_mem_for_retrieve": 1,
-      "persist_dir": "./rag_storage/searching_assist"
+      "recent_n_mem_for_retrieve": 1
     }
   },
   {
