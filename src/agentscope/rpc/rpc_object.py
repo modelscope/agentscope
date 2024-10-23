@@ -74,7 +74,16 @@ class _ClassInfo:
 
 
 class RpcObject(ABC):
-    """A proxy object which represent an object located in a rpc server."""
+    """A proxy object which represent an object located in an Rpc server.
+
+    Note:
+
+        When `to_dist` is called on an object or when using the `to_dist`
+        parameter to create an object, the object is moved to an Rpc server,
+        and an `RpcObject` instance is left behind in the local process.
+        The `RpcObject` will automatically forward all public method invocations
+        to the original object in the rpc server.
+    """
 
     def __init__(  # pylint: disable=R0912
         self,
