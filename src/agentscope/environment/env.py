@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Any, List, Callable
 from concurrent.futures import ThreadPoolExecutor
 import inspect
+from loguru import logger
 from ..exception import (
     EnvNotFoundError,
     EnvAlreadyExistError,
@@ -326,6 +327,13 @@ class BasicEnv(Env):
             if listener.name not in self.event_listeners[target_event]:
                 self.event_listeners[target_event][listener.name] = listener
                 return True
+            else:
+                logger.warning(
+                    f"Listener {listener.name} already "
+                    f"exists in {target_event}",
+                )
+        else:
+            logger.warning(f"Event {target_event} does not exist")
         return False
 
     def remove_listener(self, target_event: str, listener_name: str) -> bool:
@@ -342,6 +350,13 @@ class BasicEnv(Env):
             if listener_name in self.event_listeners[target_event]:
                 del self.event_listeners[target_event][listener_name]
                 return True
+            else:
+                logger.warning(
+                    f"Listener {listener_name} does not"
+                    f" exist in {target_event}",
+                )
+        else:
+            logger.warning(f"Event {target_event} does not exist")
         return False
 
     def get_listeners(self, target_event: str) -> List[EventListener]:

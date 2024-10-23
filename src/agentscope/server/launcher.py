@@ -179,7 +179,7 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             the result of an async call.
         studio_url (`str`, defaults to `None`):
             URL of the AgentScope Studio.
-        custom_agent_classes (`list`, defaults to `None`):
+        custom_classes (`list`, defaults to `None`):
             A list of customized agent classes that are not in
             `agentscope.agents`.
         agent_dir (`str`, defaults to `None`):
