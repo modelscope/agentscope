@@ -323,8 +323,9 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input messages into a list of dict, which is</span>
-<span class="sd">        compatible to OpenAI Chat API.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input messages into a list of dict according to the model</span>
+<span class="sd">        name. For example, if the model name is prefixed with &quot;gpt-&quot;, the</span>
+<span class="sd">        input messages will be formatted for OpenAI models.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>

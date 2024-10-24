@@ -377,7 +377,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A common format strategy for chat models, which will format the</span>
-<span class="sd">        input messages into a user message.</span>
+<span class="sd">        input messages into a system message (if provided) and a user message.</span>
 
 <span class="sd">        Note this strategy maybe not suitable for all scenarios,</span>
 <span class="sd">        and developers are encouraged to implement their own prompt</span>
@@ -405,10 +405,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            # prompt1</span>
 <span class="sd">            [</span>
 <span class="sd">                {</span>
+<span class="sd">                    &quot;role&quot;: &quot;system&quot;,</span>
+<span class="sd">                    &quot;content&quot;: &quot;You&#39;re a helpful assistant&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                {</span>
 <span class="sd">                    &quot;role&quot;: &quot;user&quot;,</span>
 <span class="sd">                    &quot;content&quot;: (</span>
-<span class="sd">                        &quot;You&#39;re a helpful assistant\\n&quot;</span>
-<span class="sd">                        &quot;\\n&quot;</span>
 <span class="sd">                        &quot;## Conversation History\\n&quot;</span>
 <span class="sd">                        &quot;Bob: Hi, how can I help you?\\n&quot;</span>
 <span class="sd">                        &quot;user: What&#39;s the date today?&quot;</span>
@@ -474,11 +476,6 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="p">)</span>
 
         <span class="n">content_components</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># Add system prompt at the beginning if provided</span>
-        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">sys_prompt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-                <span class="n">sys_prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">content_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sys_prompt</span><span class="p">)</span>
 
         <span class="c1"># The conversation history is added to the user message if not empty</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -490,6 +487,10 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">content_components</span><span class="p">),</span>
             <span class="p">},</span>
         <span class="p">]</span>
+
+        <span class="c1"># Add system prompt at the beginning if provided</span>
+        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">sys_prompt</span><span class="p">}]</span> <span class="o">+</span> <span class="n">messages</span>
 
         <span class="k">return</span> <span class="n">messages</span></div>
 

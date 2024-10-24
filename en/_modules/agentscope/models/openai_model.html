@@ -130,7 +130,6 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">Dict</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Generator</span><span class="p">,</span>
-    <span class="n">get_args</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
@@ -614,7 +613,9 @@ window.addEventListener("load", () => mermaid.run());
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input string and dictionary into the format that</span>
-<span class="sd">        OpenAI Chat API required.</span>
+<span class="sd">        OpenAI Chat API required. If you&#39;re using a OpenAI-compatible model</span>
+<span class="sd">        without a prefix &quot;gpt-&quot; in its name, the format method will</span>
+<span class="sd">        automatically format the input messages into the required format.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
@@ -627,17 +628,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">                The formatted messages in the format that OpenAI Chat API</span>
 <span class="sd">                required.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check if the OpenAI library is installed</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">openai</span>
-        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot find openai package, please install it by &quot;</span>
-                <span class="s2">&quot;`pip install openai`&quot;</span><span class="p">,</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
         <span class="c1"># Format messages according to the model name</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="ow">in</span> <span class="n">get_args</span><span class="p">(</span><span class="n">openai</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">ChatModel</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gpt-&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">static_format</span><span class="p">(</span>
                 <span class="o">*</span><span class="n">args</span><span class="p">,</span>
                 <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
