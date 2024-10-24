@@ -251,7 +251,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The reply method of the agent.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">):</span>
             <span class="c1"># Step 1: Reasoning: decide what function to call</span>
             <span class="n">function_call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning</span><span class="p">()</span>
 
