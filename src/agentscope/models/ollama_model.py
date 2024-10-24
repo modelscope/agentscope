@@ -291,9 +291,12 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
             [
                 {
+                    "role": "system",
+                    "content": "You're a helpful assistant"
+                },
+                {
                     "role": "user",
                     "content": (
-                        "You're a helpful assistant\\n\\n"
                         "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
@@ -329,7 +332,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 )
 
         # record dialog history as a list of strings
-        system_content_template = []
+        system_prompt = None
+        history_content_template = []
         dialogue = []
         # TODO: here we default the url links to images
         images = []
@@ -337,9 +341,6 @@ class OllamaChatWrapper(OllamaWrapperBase):
             if i == 0 and unit.role == "system":
                 # system prompt
                 system_prompt = _convert_to_str(unit.content)
-                if not system_prompt.endswith("\n"):
-                    system_prompt += "\n"
-                system_content_template.append(system_prompt)
             else:
                 # Merge all messages into a conversation history prompt
                 dialogue.append(
@@ -352,21 +353,28 @@ class OllamaChatWrapper(OllamaWrapperBase):
         if len(dialogue) != 0:
             dialogue_history = "\n".join(dialogue)
 
-            system_content_template.extend(
+            history_content_template.extend(
                 ["## Conversation History", dialogue_history],
             )
 
-        system_content = "\n".join(system_content_template)
+        history_content = "\n".join(history_content_template)
 
-        system_message = {
+        # The conversation history message
+        history_message = {
             "role": "user",
-            "content": system_content,
+            "content": history_content,
         }
 
         if len(images) != 0:
-            system_message["images"] = images
+            history_message["images"] = images
 
-        return [system_message]
+        if system_prompt is None:
+            return [history_message]
+
+        return [
+            {"role": "system", "content": system_prompt},
+            history_message,
+        ]
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
