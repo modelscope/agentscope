@@ -122,6 +122,34 @@ class ModelResponseParserTest(unittest.TestCase):
         )
         self.gt_code = """\nprint("Hello, world!")\n"""
 
+        self.res_dict_with_nested_schema = ModelResponse(
+            text=(
+                "```json\n"
+                '{"inside":'
+                '{"speak": "Hello, world!", '
+                '"thought": "xxx", '
+                '"end_discussion": true}'
+                "}\n```"
+            ),
+        )
+        self.gt_dict_with_nested_schema = {
+            "inside": {
+                "speak": "Hello, world!",
+                "thought": "xxx",
+                "end_discussion": True,
+            }
+        }
+        self.instruction_dict_with_nested_schema = (
+            "Respond a JSON dictionary in a markdown's fenced code block as follows:\n"
+            "```json\n{a_JSON_dictionary}\n```\nThe generated JSON dictionary MUST follow this schema: \n"
+            "{'$defs': {'InsideSchema': {'properties': "
+            "{'speak': {'description': 'what you speak', 'title': 'Speak', 'type': 'string'}, "
+            "'thought': {'description': 'what you thought', 'title': 'Thought', 'type': 'string'}, "
+            "'end_discussion': {'description': 'whether the discussion reached an agreement or not', 'title': 'End Discussion', 'type': 'boolean'}}, "
+            "'required': ['speak', 'thought', 'end_discussion'], 'title': 'InsideSchema', 'type': 'object'}}, "
+            "'properties': {'inside': {'allOf': [{'$ref': '#/$defs/InsideSchema'}], 'description': 'InsideSchema'}}, "
+            "'required': ['inside'], 'title': 'NestedSchema', 'type': 'object'}"
+        )
     def test_markdownjsondictparser_with_schema(self) -> None:
         """Test for MarkdownJsonDictParser with schema"""
 
@@ -159,6 +187,50 @@ class ModelResponseParserTest(unittest.TestCase):
         )
 
         self.assertDictEqual(res.parsed, self.gt_dict)
+
+    def test_markdownjsondictparser_with_nested_schema(self) -> None:
+        """Test for MarkdownJsonDictParser with schema"""
+
+        class InsideSchema(BaseModel):  # pylint: disable=missing-class-docstring
+            speak: str = Field(description="what you speak")
+            thought: str = Field(description="what you thought")
+            end_discussion: bool = Field(
+                description="whether the discussion reached an agreement or " "not",
+            )
+
+        class NestedSchema(BaseModel):
+            inside: InsideSchema = Field(description="InsideSchema")
+
+        parser = MarkdownJsonDictParser(
+            content_hint=NestedSchema,
+            keys_to_memory=["speak", "thought"],
+            keys_to_content="speak",
+            keys_to_metadata=["end_discussion"],
+        )
+
+        self.assertEqual(
+            parser.format_instruction, self.instruction_dict_with_nested_schema
+        )
+
+        res = parser.parse(self.res_dict_with_nested_schema)
+
+        self.assertDictEqual(res.parsed, self.gt_dict_with_nested_schema)
+
+        res = parser.parse(
+            ModelResponse(
+                text="""```json
+        {
+            "inside": {
+                "speak" : "Hello, world!",
+                "thought" : "xxx",
+                "end_discussion" : "true"
+            }
+        }
+        ```""",
+            ),
+        )
+
+        self.assertDictEqual(res.parsed, self.gt_dict_with_nested_schema)
 
     def test_markdownjsondictparser(self) -> None:
         """Test for MarkdownJsonDictParser"""
