@@ -231,7 +231,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
-        """Format the input string or dict into the format that the model
+        """Format the input messages into the format that the model
         API required."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"
