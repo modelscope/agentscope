@@ -1,0 +1,47 @@
+{
+    "total_num": 600,
+    "distributions": [
+        {
+            "distribution_name": "Gender",
+            "categories": [
+                {
+                    "category_name": "Male",
+                    "percentage": 0.5
+                },
+                {
+                    "category_name": "Female",
+                    "percentage": 0.5
+                }
+            ]
+        },
+        {
+            "distribution_name": "Profession",
+            "categories": [
+                {
+                    "category_name": "Professor of Game Theory",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Economists",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Psychologists",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Athletes",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Artists",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Writers",
+                    "percentage": 0.2
+                }
+            ]
+        }
+    ]
+}

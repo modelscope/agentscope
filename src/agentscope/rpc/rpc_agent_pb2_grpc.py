@@ -76,13 +76,13 @@ class RpcAgentStub(object):
         )
         self.call_agent_func = channel.unary_unary(
             "/RpcAgent/call_agent_func",
-            request_serializer=rpc__agent__pb2.RpcMsg.SerializeToString,
-            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
+            request_serializer=rpc__agent__pb2.CallFuncRequest.SerializeToString,
+            response_deserializer=rpc__agent__pb2.CallFuncResponse.FromString,
         )
         self.update_placeholder = channel.unary_unary(
             "/RpcAgent/update_placeholder",
             request_serializer=rpc__agent__pb2.UpdatePlaceholderRequest.SerializeToString,
-            response_deserializer=rpc__agent__pb2.GeneralResponse.FromString,
+            response_deserializer=rpc__agent__pb2.CallFuncResponse.FromString,
         )
         self.download_file = channel.unary_stream(
             "/RpcAgent/download_file",
@@ -227,13 +227,13 @@ def add_RpcAgentServicer_to_server(servicer, server):
         ),
         "call_agent_func": grpc.unary_unary_rpc_method_handler(
             servicer.call_agent_func,
-            request_deserializer=rpc__agent__pb2.RpcMsg.FromString,
-            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
+            request_deserializer=rpc__agent__pb2.CallFuncRequest.FromString,
+            response_serializer=rpc__agent__pb2.CallFuncResponse.SerializeToString,
         ),
         "update_placeholder": grpc.unary_unary_rpc_method_handler(
             servicer.update_placeholder,
             request_deserializer=rpc__agent__pb2.UpdatePlaceholderRequest.FromString,
-            response_serializer=rpc__agent__pb2.GeneralResponse.SerializeToString,
+            response_serializer=rpc__agent__pb2.CallFuncResponse.SerializeToString,
         ),
         "download_file": grpc.unary_stream_rpc_method_handler(
             servicer.download_file,
@@ -559,8 +559,8 @@ class RpcAgent(object):
             request,
             target,
             "/RpcAgent/call_agent_func",
-            rpc__agent__pb2.RpcMsg.SerializeToString,
-            rpc__agent__pb2.GeneralResponse.FromString,
+            rpc__agent__pb2.CallFuncRequest.SerializeToString,
+            rpc__agent__pb2.CallFuncResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -589,7 +589,7 @@ class RpcAgent(object):
             target,
             "/RpcAgent/update_placeholder",
             rpc__agent__pb2.UpdatePlaceholderRequest.SerializeToString,
-            rpc__agent__pb2.GeneralResponse.FromString,
+            rpc__agent__pb2.CallFuncResponse.FromString,
             options,
             channel_credentials,
             insecure,

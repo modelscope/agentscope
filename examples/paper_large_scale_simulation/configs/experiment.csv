@@ -1,0 +1,2 @@
+participant_num,agent_type,agent_server_num,env_server_num,model_per_host,model_name,sys_id,usr_id,host_num,ratio,round
+100,llm,4,1,1,qwen_25,1,1,1,2/3,3

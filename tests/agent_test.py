@@ -74,5 +74,5 @@ class BasicAgentTest(unittest.TestCase):
         a4 = TestAgent(
             "d",
         )
-        a4._agent_id = "agent_id_for_d"  # pylint: disable=W0212
+        a4.agent_id = "agent_id_for_d"  # pylint: disable=W0212
         self.assertEqual(a4.agent_id, "agent_id_for_d")

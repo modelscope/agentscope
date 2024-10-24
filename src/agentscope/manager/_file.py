@@ -47,7 +47,6 @@ def _get_text_embedding_record_hash(
         original_data_hash + embedding_model_hash,
         hash_method,
     )
-
     return record_hash
 
 

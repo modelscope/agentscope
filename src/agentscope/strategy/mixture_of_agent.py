@@ -169,7 +169,7 @@ class MixtureOfAgents:
                     i, result = future.result()
                     new_refs[i] = result
                     if self.show_internal:
-                        print(f"Round {r+1}, Model_{i}: {result}")
+                        print(f"Round {r + 1}, Model_{i}: {result}")
             self.references = new_refs
 
         final_res = self._get_res_with_aggregate_model(self.main_model)
