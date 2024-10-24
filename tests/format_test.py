@@ -239,10 +239,12 @@ class FormatTest(unittest.TestCase):
         # correct format
         ground_truth = [
             {
+                "role": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
                 "role": "user",
                 "content": (
-                    "You are a helpful assistant\n"
-                    "\n"
                     "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
@@ -261,10 +263,12 @@ class FormatTest(unittest.TestCase):
         # correct format
         ground_truth = [
             {
+                "role": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
                 "role": "user",
                 "content": (
-                    "You are a helpful assistant\n"
-                    "\n"
                     "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
@@ -283,10 +287,12 @@ class FormatTest(unittest.TestCase):
         # correct format
         ground_truth = [
             {
+                "role": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
                 "role": "user",
                 "content": (
-                    "You are a helpful assistant\n"
-                    "\n"
                     "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
@@ -359,9 +365,11 @@ class FormatTest(unittest.TestCase):
 
         ground_truth = [
             {
+                "role": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
                 "content": (
-                    "You are a helpful assistant\n"
-                    "\n"
                     "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
@@ -387,9 +395,11 @@ class FormatTest(unittest.TestCase):
 
         ground_truth = [
             {
+                "role": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
                 "content": (
-                    "You are a helpful assistant\n"
-                    "\n"
                     "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"
@@ -415,10 +425,12 @@ class FormatTest(unittest.TestCase):
 
         ground_truth = [
             {
+                "role": "system",
+                "content": "You are a helpful assistant",
+            },
+            {
                 "role": "user",
                 "content": (
-                    "You are a helpful assistant\n"
-                    "\n"
                     "## Conversation History\n"
                     "user: What is the weather today?\n"
                     "assistant: It is sunny today"

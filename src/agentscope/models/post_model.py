@@ -192,8 +192,9 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict]]:
-        """Format the input messages into a list of dict, which is
-        compatible to OpenAI Chat API.
+        """Format the input messages into a list of dict according to the model
+        name. For example, if the model name is prefixed with "gpt-", the
+        input messages will be formatted for OpenAI models.
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
