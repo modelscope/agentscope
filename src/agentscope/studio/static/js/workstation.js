@@ -214,11 +214,6 @@ async function initializeWorkstationPage() {
         // console.log('Position mouse x:' + position.x + ' y:' + position.y);
     })
 
-    editor.on('nodeMoved', function (id) {
-        console.log("Node moved " + id);
-        disableButtons();
-    })
-
     editor.on('zoom', function (zoom) {
         console.log('Zoom level ' + zoom);
     })
@@ -277,8 +272,8 @@ async function initializeWorkstationPage() {
 
         if (editor.node_selected && editor.drag) {
             const selectedNodeId = editor.node_selected.id.slice(5);
-            var dx = (last_x - x) * editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom);
-            var dy = (last_y - y) * editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom);
+            var dx = Math.ceil((last_x - x) * editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom));
+            var dy = Math.ceil((last_y - y) * editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom));
 
             if (editor.node_selected.classList.contains("GROUP")) {
                 moveGroupNodes(selectedNodeId, -dx, -dy);
@@ -322,6 +317,7 @@ async function initializeWorkstationPage() {
             togglePortsDisplay(dragNode, '');
             removeOfGroupNode(dragNode);
         }
+        disableButtons();
     })
 
     editor.on("nodeRemoved", (id) => {
@@ -491,8 +487,8 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
     if (editor.editor_mode === 'fixed') {
         return false;
     }
-    pos_x = pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)));
-    pos_y = pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)));
+    pos_x = Math.ceil(pos_x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom)) - (editor.precanvas.getBoundingClientRect().x * (editor.precanvas.clientWidth / (editor.precanvas.clientWidth * editor.zoom))));
+    pos_y = Math.ceil(pos_y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom)) - (editor.precanvas.getBoundingClientRect().y * (editor.precanvas.clientHeight / (editor.precanvas.clientHeight * editor.zoom))));
 
     var htmlSourceCode = await fetchHtmlSourceCodeByName(name);
 
@@ -2373,8 +2369,14 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
 
 function importSetupNodes(dataToImport) {
     Object.keys(dataToImport.drawflow.Home.data).forEach((nodeId) => {
+        // import the node use addNode function
+        disableButtons();
+        makeNodeTop(nodeId);
         setupNodeListeners(nodeId);
-
+        setupNodeCopyListens(nodeId);
+        addEventListenersToNumberInputs(nodeId);
+        setupTextInputListeners(nodeId);
+        reloadi18n();
         const nodeElement = document.getElementById(`node-${nodeId}`);
         if (nodeElement) {
             const copyButton = nodeElement.querySelector('.button.copy-button');
