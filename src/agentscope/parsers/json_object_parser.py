@@ -271,7 +271,9 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
         # Requirement checking by Pydantic
         if self.pydantic_class is not None:
             try:
-                response.parsed = dict(self.pydantic_class(**response.parsed))
+                response.parsed = self.pydantic_class(
+                    **response.parsed,
+                ).model_dump()
             except Exception as e:
                 raise JsonParsingError(
                     message=str(e),
