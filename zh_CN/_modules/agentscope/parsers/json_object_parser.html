@@ -411,7 +411,9 @@ window.addEventListener("load", () => mermaid.run());
         <span class="c1"># Requirement checking by Pydantic</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pydantic_class</span><span class="p">(</span>
+                    <span class="o">**</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
                     <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
