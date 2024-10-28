@@ -21,13 +21,11 @@ class MutableEnv(BasicEnv, Getable, Setable):
         value: Any,
         listeners: dict[str, List[EventListener]] = None,
         children: List[Env] = None,
-        parent: Env = None,
     ) -> None:
         super().__init__(
             name=name,
             listeners=listeners,
             children=children,
-            parent=parent,
         )
         self._value = value
 

@@ -97,7 +97,7 @@ class Env(ABC, metaclass=RpcMeta):
 
     Each env has its own name and value, and multiple envs can
     be organized into a tree structure, where each env can have
-    multiple children envs and one parent env.
+    multiple children envs.
 
     Different implementations of envs may have different event
     functions, which are marked by `@event_func`.
@@ -113,22 +113,6 @@ class Env(ABC, metaclass=RpcMeta):
 
         Returns:
             `str`: The name of the env.
-        """
-
-    @abstractmethod
-    def get_parent(self) -> Env:
-        """Get the parent env of the current env.
-
-        Returns:
-            `Env`: The parent env.
-        """
-
-    @abstractmethod
-    def set_parent(self, parent: Env) -> None:
-        """Set the parent env of the current env.
-
-        Args:
-            parent (`Env`): The parent env.
         """
 
     @abstractmethod
@@ -225,7 +209,6 @@ class BasicEnv(Env):
         name: str,
         listeners: dict[str, List[EventListener]] = None,
         children: List[Env] = None,
-        parent: Env = None,
     ) -> None:
         """Init an BasicEnv instance.
 
@@ -235,14 +218,11 @@ class BasicEnv(Env):
             listener dict. Defaults to None.
             children (`List[Env]`, optional): A list of children
             envs. Defaults to None.
-            parent (`Env`, optional): The parent env. Defaults
-            to None.
         """
         self._name = name
         self.children = {
             child.name: child for child in (children if children else [])
         }
-        self.parent = parent
         self.event_listeners = {}
         if listeners:
             for target_func, listener in listeners.items():
@@ -256,24 +236,6 @@ class BasicEnv(Env):
     def name(self) -> str:
         """Name of the env"""
         return self._name
-
-    def get_parent(self) -> Env:
-        """Get the parent env of the current env.
-
-        Returns:
-            `Env`: The parent env.
-        """
-        return self.parent
-
-    def set_parent(self, parent: Env) -> None:
-        """Set the parent env of the current env.
-
-        Args:
-            parent (`Env`): The parent env.
-        """
-        if self.parent is not None:
-            self.parent.remove_child(self.name)
-        self.parent = parent
 
     def get_children(self) -> dict[str, Env]:
         """Get the children envs of the current env.
@@ -296,7 +258,6 @@ class BasicEnv(Env):
         if child.name in self.children:
             return False
         self.children[child.name] = child
-        child.set_parent(self)
         return True
 
     def remove_child(self, children_name: str) -> bool:
@@ -392,7 +353,6 @@ class BasicEnv(Env):
             raise TypeError("Only Env can be set")
         if env_name not in self.children:
             self.children[env_name] = env
-            env.set_parent(self)
             logger.debug(f"Set Env[{env_name}] as child of Env[{self.name}]")
         else:
             raise EnvAlreadyExistError(env_name)

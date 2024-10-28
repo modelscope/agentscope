@@ -41,7 +41,6 @@ class Map2D(BasicEnv):
         self,
         name: str,
         children: List[Env] = None,
-        parent: Env = None,
     ) -> None:
         """Initialize a Map2D env.
 
@@ -49,7 +48,6 @@ class Map2D(BasicEnv):
             name (`str`): The name of the env.
             children (`List[envibute]`): The children of the env. Note
             that all children must be Movable2D.
-            parent (`envibute`): The parent of the env.
         """
         for child in children if children else []:
             if not isinstance(child, Movable2D):
@@ -60,7 +58,6 @@ class Map2D(BasicEnv):
         super().__init__(
             name=name,
             children=children,
-            parent=parent,
         )
 
     @event_func

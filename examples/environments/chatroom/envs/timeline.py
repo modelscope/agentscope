@@ -20,12 +20,10 @@ class Timeline(BasicEnv, Getable):
         unit: int = 1,
         end: Optional[int] = None,
         children: List[Env] = None,
-        parent: Env = None,
     ) -> None:
         super().__init__(
             name=name,
             children=children,
-            parent=parent,
         )
         self.cur_time = start
         self.unit = unit

@@ -22,13 +22,11 @@ class Point2D(BasicEnv, Movable2D):
         y: float,
         listeners: dict[str, List[EventListener]] = None,
         children: List[Env] = None,
-        parent: Env = None,
     ) -> None:
         super().__init__(
             name=name,
             listeners=listeners,
             children=children,
-            parent=parent,
         )
         self.x = x
         self.y = y
@@ -75,14 +73,12 @@ class EnvWithPoint2D(MutableEnv, Movable2D):
         y: float,
         listeners: dict[str, List[EventListener]] = None,
         children: List[Env] = None,
-        parent: Env = None,
     ) -> None:
         super().__init__(
             name=name,
             value=value,
             listeners=listeners,
             children=children,
-            parent=parent,
         )
         self.add_child(Point2D("position", x, y))
 
