@@ -8,7 +8,6 @@ from typing import Any, Union, Sequence, List
 import requests
 from loguru import logger
 
-from .gemini_model import GeminiChatWrapper
 from .openai_model import OpenAIChatWrapper
 from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
@@ -154,14 +153,21 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
         # step3: record model invocation
         # record the model api invocation, which will be skipped if
         # `FileManager.save_api_invocation` is `False`
+        try:
+            response_json = response.json()
+        except requests.exceptions.JSONDecodeError as e:
+            raise RuntimeError(
+                f"Fail to serialize the response to json: \n{str(response)}",
+            ) from e
+
         self._save_model_invocation(
             arguments=request_kwargs,
-            response=response.json(),
+            response=response_json,
         )
 
         # step4: parse the response
         if response.status_code == requests.codes.ok:
-            return self._parse_response(response.json())
+            return self._parse_response(response_json)
         else:
             logger.error(json.dumps(request_kwargs, indent=4))
             raise RuntimeError(
@@ -186,8 +192,9 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict]]:
-        """Format the input messages into a list of dict, which is
-        compatible to OpenAI Chat API.
+        """Format the input messages into a list of dict according to the model
+        name. For example, if the model name is prefixed with "gpt-", the
+        input messages will be formatted for OpenAI models.
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
@@ -214,6 +221,8 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 
         # Gemini
         elif model_name and model_name.startswith("gemini"):
+            from .gemini_model import GeminiChatWrapper
+
             return GeminiChatWrapper.format(*args)
 
         # Include DashScope, ZhipuAI, Ollama, the other models supported by

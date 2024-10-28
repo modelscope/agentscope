@@ -2,6 +2,7 @@
 """A manager for AgentScope."""
 import os
 from typing import Union, Any
+from copy import deepcopy
 
 from loguru import logger
 
@@ -9,7 +10,8 @@ from ._monitor import MonitorManager
 from ._file import FileManager
 from ._model import ModelManager
 from ..logging import LOG_LEVEL, setup_logger
-from ..utils.tools import (
+from .._version import __version__
+from ..utils.common import (
     _generate_random_code,
     _get_process_creation_time,
     _get_timestamp,
@@ -158,6 +160,8 @@ class ASManager:
             k: getattr(self, k) for k in self.__serialized_attrs
         }
 
+        serialized_data["agentscope_version"] = __version__
+
         serialized_data["file"] = self.file.state_dict()
         serialized_data["model"] = self.model.state_dict()
         serialized_data["logger"] = {
@@ -166,7 +170,7 @@ class ASManager:
         serialized_data["studio"] = _studio_client.state_dict()
         serialized_data["monitor"] = self.monitor.state_dict()
 
-        return serialized_data
+        return deepcopy(serialized_data)
 
     def load_dict(self, data: dict) -> None:
         """Load the runtime information from a dictionary"""

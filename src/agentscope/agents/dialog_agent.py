@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
-from typing import Optional, Union, Sequence
+from typing import Optional, Union, Sequence, Any
+
+from loguru import logger
 
 from ..message import Msg
 from .agent import AgentBase
@@ -16,7 +18,7 @@ class DialogAgent(AgentBase):
         sys_prompt: str,
         model_config_name: str,
         use_memory: bool = True,
-        memory_config: Optional[dict] = None,
+        **kwargs: Any,
     ) -> None:
         """Initialize the dialog agent.
 
@@ -31,16 +33,18 @@ class DialogAgent(AgentBase):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
         """
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             use_memory=use_memory,
-            memory_config=memory_config,
         )
+
+        if kwargs:
+            logger.warning(
+                f"Unused keyword arguments are provided: {kwargs}",
+            )
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """Reply function of the agent. Processes the input data,

@@ -80,6 +80,8 @@
     "message-msg-labelName-placeholder": "Host",
     "message-msg-labelContent": "Content",
     "message-msg-labelContent-placeholder": "Hello",
+    "message-msg-labelRole": "Role",
+    "message-msg-labelRole-placeholder": "assistant",
     "message-msg-labelURL": "URL (Optional)",
     "model-dashscope-chat-readme": "DashScope Chat Configurations (Your API key will NOT be stored and exposed to the website maintainer)",
     "model-dashscope-chat-labelConfigName": "Config Name",

@@ -213,6 +213,7 @@
           "data": {
             "args": {
               "name": "User",
+              "role": "user",
               "content": "Hello every one",
               "url": ""
             }

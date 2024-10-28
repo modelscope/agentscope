@@ -3,14 +3,9 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union, Generator
 
-from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils.tools import _convert_to_str
-
-try:
-    import ollama
-except ImportError:
-    ollama = None
+from ..message import Msg
+from ..models import ModelWrapperBase, ModelResponse
+from ..utils.common import _convert_to_str
 
 
 class OllamaWrapperBase(ModelWrapperBase, ABC):
@@ -67,6 +62,15 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
 
         self.options = options
         self.keep_alive = keep_alive
+
+        try:
+            import ollama
+        except ImportError as e:
+            raise ImportError(
+                "The package ollama is not found. Please install it by "
+                'running command `pip install "ollama>=0.1.7"`',
+            ) from e
+
         self.client = ollama.Client(host=host, **kwargs)
 
 
@@ -287,9 +291,12 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
             [
                 {
+                    "role": "system",
+                    "content": "You're a helpful assistant"
+                },
+                {
                     "role": "user",
                     "content": (
-                        "You're a helpful assistant\\n\\n"
                         "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
@@ -325,7 +332,8 @@ class OllamaChatWrapper(OllamaWrapperBase):
                 )
 
         # record dialog history as a list of strings
-        system_content_template = []
+        system_prompt = None
+        history_content_template = []
         dialogue = []
         # TODO: here we default the url links to images
         images = []
@@ -333,9 +341,6 @@ class OllamaChatWrapper(OllamaWrapperBase):
             if i == 0 and unit.role == "system":
                 # system prompt
                 system_prompt = _convert_to_str(unit.content)
-                if not system_prompt.endswith("\n"):
-                    system_prompt += "\n"
-                system_content_template.append(system_prompt)
             else:
                 # Merge all messages into a conversation history prompt
                 dialogue.append(
@@ -348,21 +353,28 @@ class OllamaChatWrapper(OllamaWrapperBase):
         if len(dialogue) != 0:
             dialogue_history = "\n".join(dialogue)
 
-            system_content_template.extend(
+            history_content_template.extend(
                 ["## Conversation History", dialogue_history],
             )
 
-        system_content = "\n".join(system_content_template)
+        history_content = "\n".join(history_content_template)
 
-        system_message = {
-            "role": "system",
-            "content": system_content,
+        # The conversation history message
+        history_message = {
+            "role": "user",
+            "content": history_content,
         }
 
         if len(images) != 0:
-            system_message["images"] = images
+            history_message["images"] = images
 
-        return [system_message]
+        if system_prompt is None:
+            return [history_message]
+
+        return [
+            {"role": "system", "content": system_prompt},
+            history_message,
+        ]
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):

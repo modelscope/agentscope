@@ -10,8 +10,6 @@ from collections import defaultdict
 
 from PIL import Image
 
-from dashscope.audio.asr import RecognitionCallback, Recognition
-
 SYS_MSG_PREFIX = "【SYSTEM】"
 
 thread_local_data = threading.local()
@@ -170,7 +168,15 @@ def generate_image_from_name(name: str) -> str:
 
 def audio2text(audio_path: str) -> str:
     """Converts audio file at the given path to text using ASR."""
-    # dashscope.api_key = ""
+
+    try:
+        from dashscope.audio.asr import RecognitionCallback, Recognition
+    except ImportError as e:
+        raise ImportError(
+            "The package dashscope is not found. Please install it by "
+            "running `pip install dashscope==1.14.1`",
+        ) from e
+
     callback = RecognitionCallback()
     rec = Recognition(
         model="paraformer-realtime-v1",

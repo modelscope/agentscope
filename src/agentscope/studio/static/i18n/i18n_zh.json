@@ -80,6 +80,8 @@
     "message-msg-labelName-placeholder": "主持人",
     "message-msg-labelContent": "内容",
     "message-msg-labelContent-placeholder": "你好",
+    "message-msg-labelRole": "角色",
+    "message-msg-labelRole-placeholder": "assistant",
     "message-msg-labelURL": "网址（可选）",
     "model-dashscope-chat-readme": "DashScope 聊天配置（您的 API 密钥不会被存储或暴露给网站维护者）",
     "model-dashscope-chat-labelConfigName": "配置名称",

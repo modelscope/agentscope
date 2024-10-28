@@ -80,7 +80,7 @@ agent = ReActAgent(
     verbose=True,
     service_toolkit=service_toolkit,
 )
-user = UserAgent(name="User")
+user = UserAgent(name="User", input_hint="User Input ('exit' to quit): ")
 
 # Build
 x = None

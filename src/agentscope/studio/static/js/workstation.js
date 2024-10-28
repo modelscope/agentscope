@@ -640,22 +640,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
     }
     break;
 
-  case "TextToImageAgent":
-    const TextToImageAgentID =
-                editor.addNode("TextToImageAgent", 1,
-                  1, pos_x, pos_y,
-                  "TextToImageAgent", {
-                    "args": {
-                      "name": "",
-                      "model_config_name": ""
-                    }
-                  }, htmlSourceCode);
-    var nodeElement = document.querySelector(`#node-${TextToImageAgentID} .node-id`);
-    if (nodeElement) {
-      nodeElement.textContent = TextToImageAgentID;
-    }
-    break;
-
   case "DictDialogAgent":
     const DictDialogAgentID = editor.addNode("DictDialogAgent", 1,
       1, pos_x, pos_y,
@@ -839,15 +823,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
         }
       }, htmlSourceCode);
     break;
-    // case 'IF/ELSE':
-    //     const IfelseID = editor.addNode('IF/ELSE', 1, 2,
-    //         pos_x, pos_y, 'IF/ELSE', {
-    //             "args": {
-    //                 "condition_op": "",
-    //                 "target_value": "",
-    //             }
-    //         }, htmlSourceCode);
-    //     break;
 
   case "ImageMotion":
     editor.addNode("ImageMotion", 1, 1,
@@ -2030,7 +2005,6 @@ function showExportRunMSPopup() {
 function showExportHTMLPopup() {
   const rawData = editor.export();
 
-  // Remove the html attribute from the nodes to avoid inconsistencies in html
   removeHtmlFromUsers(rawData);
   const hasError = sortElementsByPosition(rawData);
   if (hasError) {
