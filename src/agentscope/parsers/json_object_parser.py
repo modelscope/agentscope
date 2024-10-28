@@ -289,7 +289,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
         if len(keys_missing) != 0:
             raise RequiredFieldNotFoundError(
                 f"Missing required "
-                f"field{'' if len(keys_missing)==1 else 's'} "
+                f"field{'' if len(keys_missing) == 1 else 's'} "
                 f"{_join_str_with_comma_and(keys_missing)} in the JSON "
                 f"dictionary object.",
                 response.text,
