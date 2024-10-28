@@ -23,7 +23,6 @@ This example will consume a huge amount of tokens. Please do not use model API t
 - The distribute version of AgentScope is installed on all machines.
 - The v0.4.3 or higher versions of [vLLM](https://github.com/vllm-project/vllm) is installed on all machines.
 
-
 ## Usage
 
 ## How to Run
@@ -68,6 +67,7 @@ python benchmark.py -name large_scale -config experiment --hosts worker1 worker2
 ### Step 4: View the Results
 
 All results will be saved in `./result` folder, and organized as follows:
+
 ```text
 result
 `-- <benchmark_name>
@@ -111,6 +111,7 @@ Moderator: Save result to ./result/studio/random/1-2-100-1-0.667/2024-08-13-07:3
       author={Xuchen Pan and
               Dawei Gao and
               Yuexiang Xie
+              and Yushuo Chen
               and Zhewei Wei and
               Yaliang Li and
               Bolin Ding and
