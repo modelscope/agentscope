@@ -60,7 +60,8 @@ extra_distribute_requires = [
     "grpcio-tools==1.60.0",
     "protobuf==4.25.0",
     "expiringdict",
-    "dill",
+    "cloudpickle",
+    "redis",
 ]
 
 extra_dev_requires = [
@@ -162,7 +163,7 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.studio:init",
+            "as_studio=agentscope.studio:as_studio",
             "as_gradio=agentscope.web.gradio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
             "as_server=agentscope.server.launcher:as_server",

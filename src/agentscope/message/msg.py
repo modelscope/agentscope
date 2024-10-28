@@ -228,6 +228,18 @@ class Msg:
                 colored_strs.append(f"{name}: {self.url}")
         return "\n".join(colored_strs)
 
+    def __eq__(self, value: object) -> bool:
+        return (
+            isinstance(value, Msg)
+            and self.id == value.id
+            and self.name == value.name
+            and self.content == value.content
+            and self.role == value.role
+            and self.url == value.url
+            and self.metadata == value.metadata
+            and self.timestamp == value.timestamp
+        )
+
     def to_dict(self) -> dict:
         """Serialize the message into a dictionary, which can be
         deserialized by calling the `from_dict` function.

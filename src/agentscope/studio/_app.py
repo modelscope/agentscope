@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """The Web Server of the AgentScope Studio."""
+# pylint: disable=C0302
 import json
 import os
 import re
@@ -11,6 +12,8 @@ from datetime import datetime
 from typing import Tuple, Union, Any, Optional
 from pathlib import Path
 from random import choice
+import argparse
+
 
 from flask import (
     Flask,
@@ -39,7 +42,7 @@ from ..utils.common import (
     _is_windows,
     _generate_new_runtime_id,
 )
-from ..rpc.rpc_agent_client import RpcAgentClient
+from ..rpc.rpc_client import RpcClient
 
 
 _app = Flask(__name__)
@@ -300,7 +303,7 @@ def _get_all_servers() -> Response:
 @_app.route("/api/servers/status/<server_id>", methods=["GET"])
 def _get_server_status(server_id: str) -> Response:
     server = _ServerTable.query.filter_by(id=server_id).first()
-    status = RpcAgentClient(
+    status = RpcClient(
         host=server.host,
         port=server.port,
     ).get_server_info()
@@ -323,7 +326,7 @@ def _delete_server() -> Response:
     stop_server = request.json.get("stop", False)
     server = _ServerTable.query.filter_by(id=server_id).first()
     if stop_server:
-        RpcAgentClient(host=server.host, port=server.port).stop()
+        RpcClient(host=server.host, port=server.port).stop()
     _ServerTable.query.filter_by(id=server_id).delete()
     _db.session.commit()
     return jsonify({"status": "ok"})
@@ -333,7 +336,7 @@ def _delete_server() -> Response:
 def _get_server_agent_info(server_id: str) -> Response:
     _app.logger.info(f"Get info of server [{server_id}]")
     server = _ServerTable.query.filter_by(id=server_id).first()
-    agents = RpcAgentClient(
+    agents = RpcClient(
         host=server.host,
         port=server.port,
     ).get_agent_list()
@@ -347,11 +350,11 @@ def _delete_agent() -> Response:
     server = _ServerTable.query.filter_by(id=server_id).first()
     # delete all agents if agent_id is None
     if agent_id is not None:
-        ok = RpcAgentClient(host=server.host, port=server.port).delete_agent(
+        ok = RpcClient(host=server.host, port=server.port).delete_agent(
             agent_id,
         )
     else:
-        ok = RpcAgentClient(
+        ok = RpcClient(
             host=server.host,
             port=server.port,
         ).delete_all_agent()
@@ -363,7 +366,7 @@ def _agent_memory() -> Response:
     server_id = request.json.get("server_id")
     agent_id = request.json.get("agent_id")
     server = _ServerTable.query.filter_by(id=server_id).first()
-    mem = RpcAgentClient(host=server.host, port=server.port).get_agent_memory(
+    mem = RpcClient(host=server.host, port=server.port).get_agent_memory(
         agent_id,
     )
     if isinstance(mem, dict):
@@ -379,13 +382,18 @@ def _alloc_server() -> Response:
     # TODO: allocate based on server's cpu and memory usage
     # currently random select a server
     servers = _ServerTable.query.all()
+    if len(servers) == 0:
+        return jsonify({"status": "fail"})
     server = choice(servers)
-    return jsonify(
-        {
-            "host": server.host,
-            "port": server.port,
-        },
-    )
+    if RpcClient(host=server.host, port=server.port).is_alive():
+        return jsonify(
+            {
+                "host": server.host,
+                "port": server.port,
+            },
+        )
+    else:
+        return jsonify({"status": "fail"})
 
 
 @_app.route("/api/messages/push", methods=["POST"])
@@ -709,7 +717,7 @@ def _save_workflow() -> Response:
         return jsonify(
             {
                 "message": f"The workflow file size exceeds "
-                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+                f"{FILE_SIZE_LIMIT / (1024 * 1024)} MB limit",
             },
         )
 
@@ -916,6 +924,40 @@ def _on_leave(data: dict) -> None:
     leave_room(run_id)
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse args from command line."""
+    parser = argparse.ArgumentParser(
+        description="Start the AgentScope Studio web UI.",
+    )
+
+    parser.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="The host of the web UI.",
+    )
+
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=5000,
+        help="The port of the web UI.",
+    )
+
+    parser.add_argument(
+        "--run-dirs",
+        nargs="*",
+        help="The directories to search for the history of runtime instances.",
+    )
+
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode.",
+    )
+
+    return parser.parse_args()
+
+
 def init(
     host: str = "127.0.0.1",
     port: int = 5000,
@@ -961,4 +1003,15 @@ def init(
         port=port,
         debug=debug,
         allow_unsafe_werkzeug=True,
+    )
+
+
+def as_studio() -> None:
+    """Start the AgentScope Studio web UI in commandline"""
+    args = parse_args()
+    init(
+        host=args.host,
+        port=args.port,
+        run_dirs=args.run_dirs,
+        debug=args.debug,
     )

@@ -159,6 +159,17 @@ class AgentCallError(AgentServerError):
     """The exception class for failing to call agent."""
 
 
+class AgentServerUnsupportedMethodError(AgentServerError):
+    """The exception class for agent server not supporting certain method."""
+
+    def __init__(self, host: str, port: int, oid: str, func_name: str) -> None:
+        super().__init__(
+            host,
+            port,
+            f"Object[{oid}] does not support method[{func_name}]",
+        )
+
+
 # - Monitor related Exceptions
 
 
@@ -177,3 +188,56 @@ class QuotaExceededError(Exception):
         self.message = f"Metric [{name}] exceeds quota."
         self.name = name
         super().__init__(self.message)
+
+
+# - Environment Exceptions
+
+
+class EnvError(Exception):
+    """The exception class for env related errors."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}: {self.message}"
+
+
+class EnvNotFoundError(EnvError):
+    """The exception class for env not found error."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Env {name} not found.")
+
+
+class EnvAlreadyExistError(EnvError):
+    """The exception class for env already exist error."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Env {name} already exist.")
+
+
+class EnvUnsupportedFunctionError(EnvError):
+    """The exception class for use unsupported function of env error."""
+
+    def __init__(self, env_name: str, func_name: str) -> None:
+        super().__init__(f"Env {env_name} doesn't have {func_name}.")
+
+
+class EnvTypeError(EnvError):
+    """The exception class for use wrong type of env error."""
+
+    def __init__(self, env_name: str, type_name: str) -> None:
+        super().__init__(
+            f"Env {env_name} is not an instance of [{type_name}]",
+        )
+
+
+class EnvListenerError(Exception):
+    """The exception class for listener related errors."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}: {self.message}"
