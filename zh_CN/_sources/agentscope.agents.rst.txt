@@ -13,7 +13,6 @@ Submodules
    agentscope.agents.operator
    agentscope.agents.rag_agent
    agentscope.agents.react_agent
-   agentscope.agents.rpc_agent
    agentscope.agents.user_agent
 
 Module contents

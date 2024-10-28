@@ -92,6 +92,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils package</a></li>
@@ -191,7 +192,10 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">_DEFAULT_RPC_OPTIONS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="s2">&quot;grpc.max_send_message_length&quot;</span><span class="p">,</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">),</span>
     <span class="p">(</span><span class="s2">&quot;grpc.max_receive_message_length&quot;</span><span class="p">,</span> <span class="mi">32</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;grpc.max_metadata_size&quot;</span><span class="p">,</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">),</span>
 <span class="p">]</span>
+<span class="n">_DEFAULT_RPC_TIMEOUT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">_DEFAULT_RPC_RETRY_TIMES</span> <span class="o">=</span> <span class="mi">10</span>
 
 
 <span class="c1"># enums</span>

@@ -7,9 +7,14 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   agentscope.rpc.rpc_agent_client
+   agentscope.rpc.retry_strategy
    agentscope.rpc.rpc_agent_pb2
    agentscope.rpc.rpc_agent_pb2_grpc
+   agentscope.rpc.rpc_async
+   agentscope.rpc.rpc_client
+   agentscope.rpc.rpc_config
+   agentscope.rpc.rpc_meta
+   agentscope.rpc.rpc_object
 
 Module contents
 ---------------

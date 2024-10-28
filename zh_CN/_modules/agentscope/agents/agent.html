@@ -92,6 +92,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../agentscope.utils.html">agentscope.utils package</a></li>
@@ -126,142 +127,27 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">&quot;&quot;&quot; Base class for Agent &quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">GeneratorType</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">agentscope.agents.operator</span> <span class="kn">import</span> <span class="n">Operator</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_config</span> <span class="kn">import</span> <span class="n">DistConf</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_meta</span> <span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span><span class="p">,</span> <span class="n">sync_func</span>
 <span class="kn">from</span> <span class="nn">agentscope.logging</span> <span class="kn">import</span> <span class="n">log_stream_msg</span><span class="p">,</span> <span class="n">log_msg</span>
 <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span> <span class="nn">agentscope.memory</span> <span class="kn">import</span> <span class="n">TemporaryMemory</span>
 
 
-<span class="k">class</span> <span class="nc">_AgentMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The metaclass for agent.</span>
-
-<span class="sd">    1. record the init args into `_init_settings` field.</span>
-<span class="sd">    2. register class name into `registry` field.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_registry&quot;</span><span class="p">):</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Agent class with name [</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="n">to_dist</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;to_dist&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">to_dist</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">to_dist</span> <span class="o">=</span> <span class="n">DistConf</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">to_dist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">to_dist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">.rpc_agent</span> <span class="kn">import</span> <span class="n">RpcAgent</span>
-
-            <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">RpcAgent</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">RpcAgent</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">RpcAgent</span><span class="p">(</span>
-                    <span class="n">name</span><span class="o">=</span><span class="p">(</span>
-                        <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                        <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore[arg-type]</span>
-                    <span class="p">),</span>
-                    <span class="n">host</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                        <span class="s2">&quot;host&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">port</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>  <span class="c1"># type: ignore[arg-type]</span>
-                    <span class="n">max_pool_size</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                        <span class="s2">&quot;max_pool_size&quot;</span><span class="p">,</span>
-                        <span class="mi">8192</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                        <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">,</span>
-                        <span class="mi">7200</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">local_mode</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                        <span class="s2">&quot;local_mode&quot;</span><span class="p">,</span>
-                        <span class="kc">True</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">lazy_launch</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>  <span class="c1"># type: ignore[arg-type]</span>
-                        <span class="s2">&quot;lazy_launch&quot;</span><span class="p">,</span>
-                        <span class="kc">True</span><span class="p">,</span>
-                    <span class="p">),</span>
-                    <span class="n">agent_id</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">generate_agent_id</span><span class="p">(),</span>
-                    <span class="n">connect_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">agent_class</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span>
-                    <span class="n">agent_configs</span><span class="o">=</span><span class="p">{</span>
-                        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">args</span><span class="p">,</span>
-                        <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">,</span>
-                        <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">)</span>
-        <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">instance</span><span class="o">.</span><span class="n">_init_settings</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">args</span><span class="p">,</span>
-            <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">,</span>
-            <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">instance</span>
-
-
-<div class="viewcode-block" id="DistConf">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.DistConf">[文档]</a>
-<span class="k">class</span> <span class="nc">DistConf</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Distribution configuration for agents.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="DistConf.__init__">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.DistConf.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
-        <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init the distributed configuration.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            host (`str`, defaults to `&quot;localhost&quot;`):</span>
-<span class="sd">                Hostname of the rpc agent server.</span>
-<span class="sd">            port (`int`, defaults to `None`):</span>
-<span class="sd">                Port of the rpc agent server.</span>
-<span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
-<span class="sd">                Max number of task results that the server can accommodate.</span>
-<span class="sd">            max_timeout_seconds (`int`, defaults to `7200`):</span>
-<span class="sd">                Timeout for task results.</span>
-<span class="sd">            local_mode (`bool`, defaults to `True`):</span>
-<span class="sd">                Whether the started rpc server only listens to local</span>
-<span class="sd">                requests.</span>
-<span class="sd">            lazy_launch (`bool`, defaults to `False`):</span>
-<span class="sd">                Only launch the server when the agent is called.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">host</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;max_pool_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_pool_size</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_timeout_seconds</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;local_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_mode</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;lazy_launch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lazy_launch</span></div>
-</div>
-
-
-
 <div class="viewcode-block" id="AgentBase">
 <a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase">[文档]</a>
-<span class="k">class</span> <span class="nc">AgentBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">_AgentMeta</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AgentBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">RpcMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all agents.</span>
 
 <span class="sd">    All agents should inherit from this class and implement the `reply`</span>
@@ -334,9 +220,6 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># The global unique id of this agent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">generate_agent_id</span><span class="p">()</span>
-
         <span class="c1"># The audience of this agent, which means if this agent generates a</span>
         <span class="c1"># response, it will be passed to all agents in the audience.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="kc">None</span>
@@ -357,47 +240,9 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span></div>
 
 
-    <span class="c1"># todo: add a unique agent_type field to distinguish different agent class</span>
-<div class="viewcode-block" id="AgentBase.get_agent_class">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.get_agent_class">[文档]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_agent_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">agent_class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the agent class based on the specific agent class name.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            agent_class_name (`str`): the name of the agent class.</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            ValueError: Agent class name not exits.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Type[AgentBase]: the AgentBase subclass.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">agent_class_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent class &lt;</span><span class="si">{</span><span class="n">agent_class_name</span><span class="si">}</span><span class="s2">&gt; not found.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">agent_class_name</span><span class="p">]</span>  <span class="c1"># type: ignore[return-value]</span></div>
-
-
-<div class="viewcode-block" id="AgentBase.register_agent_class">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.register_agent_class">[文档]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">register_agent_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">agent_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the agent class into the registry.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            agent_class (Type[AgentBase]): the agent class to be registered.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">agent_class_name</span> <span class="o">=</span> <span class="n">agent_class</span><span class="o">.</span><span class="vm">__name__</span>
-        <span class="k">if</span> <span class="n">agent_class_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Agent class with name [</span><span class="si">{</span><span class="n">agent_class_name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">agent_class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">agent_class</span></div>
-
-
 <div class="viewcode-block" id="AgentBase.reply">
 <a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.reply">[文档]</a>
+    <span class="nd">@async_func</span>
     <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the actions taken by this agent.</span>
 
@@ -419,6 +264,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span></div>
 
 
+    <span class="nd">@async_func</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calling the reply function, and broadcast the generated</span>
 <span class="sd">        response to all audiences if needed.&quot;&quot;&quot;</span>
@@ -442,7 +288,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="sd">        Args:</span>
 <span class="sd">            content</span>
-<span class="sd">            (`Union[str, Msg, Generator[Tuple[bool, str], None, None]`):</span>
+<span class="sd">            (`Union[str, Msg, Generator[Tuple[bool, str], None, None]]`):</span>
 <span class="sd">                The content of the message to be spoken out. If a string is</span>
 <span class="sd">                given, a Msg object will be created with the agent&#39;s name, role</span>
 <span class="sd">                as &quot;assistant&quot;, and the given string as the content.</span>
@@ -536,6 +382,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
+    <span class="nd">@sync_func</span>
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">serialized_fields</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
@@ -557,75 +404,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        Returns:</span>
 <span class="sd">            str: agent_id</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_id</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oid</span>
 
-<div class="viewcode-block" id="AgentBase.to_dist">
-<a class="viewcode-back" href="../../../agentscope.agents.agent.html#agentscope.agents.AgentBase.to_dist">[文档]</a>
-    <span class="k">def</span> <span class="nf">to_dist</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
-        <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">lazy_launch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">launch_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentBase</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert current agent instance into a distributed version.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            host (`str`, defaults to `&quot;localhost&quot;`):</span>
-<span class="sd">                Hostname of the rpc agent server.</span>
-<span class="sd">            port (`int`, defaults to `None`):</span>
-<span class="sd">                Port of the rpc agent server.</span>
-<span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
-<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
-<span class="sd">                The max number of agent reply messages that the started agent</span>
-<span class="sd">                server can accommodate. Note that the oldest message will be</span>
-<span class="sd">                deleted after exceeding the pool size.</span>
-<span class="sd">            max_timeout_seconds (`int`, defaults to `7200`):</span>
-<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
-<span class="sd">                Maximum time for reply messages to be cached in the launched</span>
-<span class="sd">                agent server. Note that expired messages will be deleted.</span>
-<span class="sd">            local_mode (`bool`, defaults to `True`):</span>
-<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
-<span class="sd">                Whether the started agent server only listens to local</span>
-<span class="sd">                requests.</span>
-<span class="sd">            lazy_launch (`bool`, defaults to `False`):</span>
-<span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
-<span class="sd">                If `True`, launch the agent server when the agent is called,</span>
-<span class="sd">                otherwise, launch the agent server immediately.</span>
-<span class="sd">            launch_server(`bool`, defaults to `None`):</span>
-<span class="sd">                This field has been deprecated and will be removed in</span>
-<span class="sd">                future releases.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `AgentBase`: the wrapped agent instance with distributed</span>
-<span class="sd">            functionality</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.rpc_agent</span> <span class="kn">import</span> <span class="n">RpcAgent</span>
-
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">RpcAgent</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span>
-        <span class="k">if</span> <span class="n">launch_server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;`launch_server` has been deprecated and will be removed in &quot;</span>
-                <span class="s2">&quot;future releases. When `host` and `port` is not provided, the &quot;</span>
-                <span class="s2">&quot;agent server will be launched automatically.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">RpcAgent</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">agent_class</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
-            <span class="n">agent_configs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_settings</span><span class="p">,</span>
-            <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
-            <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-            <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
-            <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
-            <span class="n">local_mode</span><span class="o">=</span><span class="n">local_mode</span><span class="p">,</span>
-            <span class="n">lazy_launch</span><span class="o">=</span><span class="n">lazy_launch</span><span class="p">,</span>
-            <span class="n">agent_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
-        <span class="p">)</span></div>
-</div>
+    <span class="nd">@agent_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">agent_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the unique id of this agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oid</span> <span class="o">=</span> <span class="n">agent_id</span></div>
 
 </pre></div>
 

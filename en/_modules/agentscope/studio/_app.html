@@ -121,6 +121,7 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.studio._app</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The Web Server of the AgentScope Studio.&quot;&quot;&quot;</span>
+<span class="c1"># pylint: disable=C0302</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -132,6 +133,8 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
 
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Flask</span><span class="p">,</span>
@@ -160,7 +163,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">_is_windows</span><span class="p">,</span>
     <span class="n">_generate_new_runtime_id</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..rpc.rpc_agent_client</span> <span class="kn">import</span> <span class="n">RpcAgentClient</span>
+<span class="kn">from</span> <span class="nn">..rpc.rpc_client</span> <span class="kn">import</span> <span class="n">RpcClient</span>
 
 
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -421,7 +424,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/status/&lt;server_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">_get_server_status</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="n">status</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
         <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">get_server_info</span><span class="p">()</span>
@@ -444,7 +447,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">stop_server</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">stop_server</span><span class="p">:</span>
-        <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
     <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
     <span class="n">_db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ok&quot;</span><span class="p">})</span>
@@ -454,7 +457,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="k">def</span> <span class="nf">_get_server_agent_info</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get info of server [</span><span class="si">{</span><span class="n">server_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="n">agents</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span>
+    <span class="n">agents</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
         <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">get_agent_list</span><span class="p">()</span>
@@ -468,11 +471,11 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="c1"># delete all agents if agent_id is None</span>
     <span class="k">if</span> <span class="n">agent_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ok</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">delete_agent</span><span class="p">(</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">delete_agent</span><span class="p">(</span>
             <span class="n">agent_id</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ok</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span>
             <span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
             <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">delete_all_agent</span><span class="p">()</span>
@@ -484,7 +487,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">server_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;server_id&quot;</span><span class="p">)</span>
     <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;agent_id&quot;</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-    <span class="n">mem</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">get_agent_memory</span><span class="p">(</span>
+    <span class="n">mem</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">get_agent_memory</span><span class="p">(</span>
         <span class="n">agent_id</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mem</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -500,13 +503,18 @@ window.addEventListener("load", () => mermaid.run());
     <span class="c1"># TODO: allocate based on server&#39;s cpu and memory usage</span>
     <span class="c1"># currently random select a server</span>
     <span class="n">servers</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">servers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;fail&quot;</span><span class="p">})</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">servers</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span>
-        <span class="p">{</span>
-            <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
-            <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">)</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;fail&quot;</span><span class="p">})</span>
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/messages/push&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
@@ -830,7 +838,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;The workflow file size exceeds &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_SIZE_LIMIT</span><span class="o">/</span><span class="p">(</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">)</span><span class="si">}</span><span class="s2"> MB limit&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_SIZE_LIMIT</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="mi">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="p">)</span><span class="si">}</span><span class="s2"> MB limit&quot;</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
@@ -1037,6 +1045,40 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">leave_room</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse args from command line.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start the AgentScope Studio web UI.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The host of the web UI.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The port of the web UI.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--run-dirs&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The directories to search for the history of runtime instances.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable debug mode.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
 <div class="viewcode-block" id="init">
 <a class="viewcode-back" href="../../../agentscope.studio.html#agentscope.studio.init">[docs]</a>
 <span class="k">def</span> <span class="nf">init</span><span class="p">(</span>
@@ -1084,6 +1126,20 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
         <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span>
         <span class="n">allow_unsafe_werkzeug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="as_studio">
+<a class="viewcode-back" href="../../../agentscope.studio.html#agentscope.studio.as_studio">[docs]</a>
+<span class="k">def</span> <span class="nf">as_studio</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the AgentScope Studio web UI in commandline&quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">init</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">run_dirs</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">run_dirs</span><span class="p">,</span>
+        <span class="n">debug</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 </pre></div>

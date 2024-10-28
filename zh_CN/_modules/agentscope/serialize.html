@@ -92,6 +92,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils package</a></li>
@@ -136,12 +137,6 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;agentscope.message.msg&quot;</span>
             <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Msg&quot;</span>
-        <span class="p">):</span>
-            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s2">&quot;agentscope.message.placeholder&quot;</span>
-            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;PlaceholderMessage&quot;</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 

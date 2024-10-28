@@ -128,6 +128,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Pipe</span>
 <span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
 <span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
@@ -147,9 +148,8 @@ window.addEventListener("load", () => mermaid.run());
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">import</span> <span class="nn">agentscope</span>
+<span class="kn">from</span> <span class="nn">..rpc.rpc_meta</span> <span class="kn">import</span> <span class="n">RpcMeta</span>
 <span class="kn">from</span> <span class="nn">..server.servicer</span> <span class="kn">import</span> <span class="n">AgentServerServicer</span>
-<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
-<span class="kn">from</span> <span class="nn">..agents.agent</span> <span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_check_port</span><span class="p">,</span> <span class="n">_generate_id_from_seed</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
 
@@ -163,8 +163,12 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">pipe</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">pool_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+    <span class="n">redis_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>
     <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-    <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
+    <span class="n">max_expire_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
+    <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">custom_agent_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -190,10 +194,22 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            A pipe instance used to pass the actual port of the server.</span>
 <span class="sd">        local_mode (`bool`, defaults to `True`):</span>
 <span class="sd">            Only listen to local requests.</span>
+<span class="sd">        capacity (`int`, default to `32`):</span>
+<span class="sd">            The number of concurrent agents in the server.</span>
+<span class="sd">        pool-type (`str`, defaults to `&quot;local&quot;`): The type of the async</span>
+<span class="sd">            message pool, which can be `local` or `redis`. If `redis` is</span>
+<span class="sd">            specified, you need to start a redis server before launching</span>
+<span class="sd">            the server.</span>
+<span class="sd">        redis-url (`str`, defaults to `&quot;redis://localhost:6379&quot;`): The</span>
+<span class="sd">            url of the redis server.</span>
 <span class="sd">        max_pool_size (`int`, defaults to `8192`):</span>
 <span class="sd">            Max number of agent replies that the server can accommodate.</span>
-<span class="sd">        max_timeout_seconds (`int`, defaults to `7200`):</span>
-<span class="sd">            Timeout for agent replies.</span>
+<span class="sd">        max_expire_time (`int`, defaults to `7200`):</span>
+<span class="sd">            Maximum time for async results to be cached in the server.</span>
+<span class="sd">            Note that expired messages will be deleted.</span>
+<span class="sd">        max_timeout_seconds (`int`, defaults to `5`):</span>
+<span class="sd">            The maximum time (in seconds) that the server will wait for</span>
+<span class="sd">            the result of an async call.</span>
 <span class="sd">        studio_url (`str`, defaults to `None`):</span>
 <span class="sd">            URL of the AgentScope Studio.</span>
 <span class="sd">        custom_agent_classes (`list`, defaults to `None`):</span>
@@ -213,10 +229,14 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">stop_event</span><span class="o">=</span><span class="n">stop_event</span><span class="p">,</span>
             <span class="n">pipe</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
             <span class="n">local_mode</span><span class="o">=</span><span class="n">local_mode</span><span class="p">,</span>
+            <span class="n">capacity</span><span class="o">=</span><span class="n">capacity</span><span class="p">,</span>
+            <span class="n">pool_type</span><span class="o">=</span><span class="n">pool_type</span><span class="p">,</span>
+            <span class="n">redis_url</span><span class="o">=</span><span class="n">redis_url</span><span class="p">,</span>
             <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+            <span class="n">max_expire_time</span><span class="o">=</span><span class="n">max_expire_time</span><span class="p">,</span>
             <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
             <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
-            <span class="n">custom_agent_classes</span><span class="o">=</span><span class="n">custom_agent_classes</span><span class="p">,</span>
+            <span class="n">custom_classes</span><span class="o">=</span><span class="n">custom_agent_classes</span><span class="p">,</span>
             <span class="n">agent_dir</span><span class="o">=</span><span class="n">agent_dir</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span>
@@ -231,10 +251,14 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">pipe</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">pool_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+    <span class="n">redis_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>
     <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-    <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
+    <span class="n">max_expire_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
+    <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">custom_agent_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">custom_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup agent server in an async way.</span>
@@ -256,16 +280,27 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        local_mode (`bool`, defaults to `True`):</span>
 <span class="sd">            If `True`, only listen to requests from &quot;localhost&quot;, otherwise,</span>
 <span class="sd">            listen to requests from all hosts.</span>
+<span class="sd">        capacity (`int`, default to `32`):</span>
+<span class="sd">            The number of concurrent agents in the server.</span>
+<span class="sd">        pool-type (`str`, defaults to `&quot;local&quot;`): The type of the async</span>
+<span class="sd">            message pool, which can be `local` or `redis`. If `redis` is</span>
+<span class="sd">            specified, you need to start a redis server before launching</span>
+<span class="sd">            the server.</span>
+<span class="sd">        redis-url (`str`, defaults to `&quot;redis://localhost:6379&quot;`): The url</span>
+<span class="sd">            of the redis server.</span>
 <span class="sd">        max_pool_size (`int`, defaults to `8192`):</span>
 <span class="sd">            The max number of agent reply messages that the server can</span>
 <span class="sd">            accommodate. Note that the oldest message will be deleted</span>
 <span class="sd">            after exceeding the pool size.</span>
-<span class="sd">        max_timeout_seconds (`int`, defaults to `7200`):</span>
-<span class="sd">            Maximum time for reply messages to be cached in the server.</span>
+<span class="sd">        max_expire_time (`int`, defaults to `7200`):</span>
+<span class="sd">            Maximum time for async results to be cached in the server.</span>
 <span class="sd">            Note that expired messages will be deleted.</span>
+<span class="sd">        max_timeout_seconds (`int`, defaults to `5`):</span>
+<span class="sd">            The maximum time (in seconds) that the server will wait for</span>
+<span class="sd">            the result of an async call.</span>
 <span class="sd">        studio_url (`str`, defaults to `None`):</span>
 <span class="sd">            URL of the AgentScope Studio.</span>
-<span class="sd">        custom_agent_classes (`list`, defaults to `None`):</span>
+<span class="sd">        custom_classes (`list`, defaults to `None`):</span>
 <span class="sd">            A list of customized agent classes that are not in</span>
 <span class="sd">            `agentscope.agents`.</span>
 <span class="sd">        agent_dir (`str`, defaults to `None`):</span>
@@ -274,6 +309,8 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">init_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
+
         <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">init_settings</span><span class="p">)</span>
 
     <span class="n">servicer</span> <span class="o">=</span> <span class="n">AgentServerServicer</span><span class="p">(</span>
@@ -282,16 +319,20 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
         <span class="n">server_id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span>
         <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
+        <span class="n">capacity</span><span class="o">=</span><span class="n">capacity</span><span class="p">,</span>
+        <span class="n">pool_type</span><span class="o">=</span><span class="n">pool_type</span><span class="p">,</span>
+        <span class="n">redis_url</span><span class="o">=</span><span class="n">redis_url</span><span class="p">,</span>
         <span class="n">max_pool_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+        <span class="n">max_expire_time</span><span class="o">=</span><span class="n">max_expire_time</span><span class="p">,</span>
         <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">custom_agent_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">custom_agent_classes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">custom_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">custom_classes</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">agent_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">custom_agent_classes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_agents_from_dir</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">))</span>
+        <span class="n">custom_classes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">load_agents_from_dir</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">))</span>
     <span class="c1"># update agent registry</span>
-    <span class="k">for</span> <span class="n">agent_class</span> <span class="ow">in</span> <span class="n">custom_agent_classes</span><span class="p">:</span>
-        <span class="n">AgentBase</span><span class="o">.</span><span class="n">register_agent_class</span><span class="p">(</span><span class="n">agent_class</span><span class="o">=</span><span class="n">agent_class</span><span class="p">)</span>
+    <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">custom_classes</span><span class="p">:</span>
+        <span class="n">RpcMeta</span><span class="o">.</span><span class="n">register_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_signal_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -315,7 +356,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">port</span> <span class="o">=</span> <span class="n">_check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
             <span class="n">servicer</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
             <span class="n">server</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">aio</span><span class="o">.</span><span class="n">server</span><span class="p">(</span>
-                <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+                <span class="n">futures</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">capacity</span><span class="p">),</span>
                 <span class="c1"># set max message size to 32 MB</span>
                 <span class="n">options</span><span class="o">=</span><span class="n">_DEFAULT_RPC_OPTIONS</span><span class="p">,</span>
             <span class="p">)</span>
@@ -348,9 +389,9 @@ window.addEventListener("load", () => mermaid.run());
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="load_agents_from_file">
-<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.load_agents_from_file">[docs]</a>
-<span class="k">def</span> <span class="nf">load_agents_from_file</span><span class="p">(</span><span class="n">agent_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<div class="viewcode-block" id="load_custom_class_from_file">
+<a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.load_custom_class_from_file">[docs]</a>
+<span class="k">def</span> <span class="nf">load_custom_class_from_file</span><span class="p">(</span><span class="n">agent_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load AgentBase sub classes from a python file.</span>
 
 <span class="sd">    Args:</span>
@@ -367,16 +408,13 @@ window.addEventListener("load", () => mermaid.run());
     <span class="p">)</span>
     <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-    <span class="n">custom_agent_classes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">custom_classes</span> <span class="o">=</span> <span class="p">[]</span>
+
     <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">AgentBase</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">AgentBase</span>
-        <span class="p">):</span>
-            <span class="n">custom_agent_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">custom_agent_classes</span></div>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="n">custom_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">custom_classes</span></div>
 
 
 
@@ -404,7 +442,7 @@ window.addEventListener("load", () => mermaid.run());
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">module_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
                         <span class="n">custom_agent_classes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                            <span class="n">load_agents_from_file</span><span class="p">(</span><span class="n">module_path</span><span class="p">),</span>
+                            <span class="n">load_custom_class_from_file</span><span class="p">(</span><span class="n">module_path</span><span class="p">),</span>
                         <span class="p">)</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -427,8 +465,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="n">pool_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+        <span class="n">redis_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>
         <span class="n">max_pool_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
-        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
+        <span class="n">max_expire_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
+        <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">custom_agent_classes</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -442,13 +484,23 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">                Hostname of the agent server.</span>
 <span class="sd">            port (`int`, defaults to `None`):</span>
 <span class="sd">                Socket port of the agent server.</span>
+<span class="sd">            capacity (`int`, default to `32`):</span>
+<span class="sd">                The number of concurrent agents in the server.</span>
+<span class="sd">            pool-type (`str`, defaults to `&quot;local&quot;`): The type of the async</span>
+<span class="sd">                message pool, which can be `local` or `redis`. If `redis` is</span>
+<span class="sd">                specified, you need to start a redis server before launching</span>
+<span class="sd">                the server.</span>
+<span class="sd">            redis-url (`str`, defaults to `&quot;redis://localhost:6379&quot;`): The</span>
+<span class="sd">                address of the redis server.</span>
 <span class="sd">            max_pool_size (`int`, defaults to `8192`):</span>
-<span class="sd">                The max number of agent reply messages that the server can</span>
-<span class="sd">                accommodate. Note that the oldest message will be deleted</span>
+<span class="sd">                The max number of async results that the server can</span>
+<span class="sd">                accommodate. Note that the oldest result will be deleted</span>
 <span class="sd">                after exceeding the pool size.</span>
-<span class="sd">            max_timeout_seconds (`int`, defaults to `7200`):</span>
-<span class="sd">                Maximum time for reply messages to be cached in the server.</span>
+<span class="sd">            max_expire_time (`int`, defaults to `7200`):</span>
+<span class="sd">                Maximum time for async results to be cached in the server.</span>
 <span class="sd">                Note that expired messages will be deleted.</span>
+<span class="sd">            max_timeout_seconds (`int`, defaults to `5`):</span>
+<span class="sd">                Max timeout seconds for rpc calls.</span>
 <span class="sd">            local_mode (`bool`, defaults to `False`):</span>
 <span class="sd">                If `True`, only listen to requests from &quot;localhost&quot;, otherwise,</span>
 <span class="sd">                listen to requests from all hosts.</span>
@@ -465,7 +517,11 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">_check_port</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">capacity</span> <span class="o">=</span> <span class="n">capacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool_type</span> <span class="o">=</span> <span class="n">pool_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redis_url</span> <span class="o">=</span> <span class="n">redis_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">max_pool_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_expire_time</span> <span class="o">=</span> <span class="n">max_expire_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span> <span class="o">=</span> <span class="n">max_timeout_seconds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span> <span class="o">=</span> <span class="n">local_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span>
@@ -500,12 +556,16 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">_setup_agent_server_async</span><span class="p">(</span>
                 <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
                 <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="n">capacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">capacity</span><span class="p">,</span>
                 <span class="n">stop_event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="p">,</span>
                 <span class="n">server_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server_id</span><span class="p">,</span>
+                <span class="n">pool_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_type</span><span class="p">,</span>
+                <span class="n">redis_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">redis_url</span><span class="p">,</span>
                 <span class="n">max_pool_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="n">max_expire_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_expire_time</span><span class="p">,</span>
                 <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
                 <span class="n">local_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
-                <span class="n">custom_agent_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_agent_classes</span><span class="p">,</span>
+                <span class="n">custom_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">custom_agent_classes</span><span class="p">,</span>
                 <span class="n">agent_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_dir</span><span class="p">,</span>
                 <span class="n">studio_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span><span class="p">,</span>
             <span class="p">),</span>
@@ -513,7 +573,18 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="k">def</span> <span class="nf">_launch_in_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch an agent server in sub-process.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
+        <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+
         <span class="n">init_settings</span> <span class="o">=</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+        <span class="c1"># gRPC channel should be closed before forking new process</span>
+        <span class="c1"># ref: https://github.com/grpc/grpc/blob/master/doc/fork_support.md</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">_</span><span class="p">,</span>
+            <span class="n">channel</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="n">RpcClient</span><span class="o">.</span><span class="n">_CHANNEL_POOL</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># pylint: disable=W0212</span>
+            <span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">RpcClient</span><span class="o">.</span><span class="n">_CHANNEL_POOL</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># pylint: disable=W0212</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_con</span><span class="p">,</span> <span class="n">child_con</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">()</span>
         <span class="n">start_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
@@ -527,7 +598,10 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;start_event&quot;</span><span class="p">:</span> <span class="n">start_event</span><span class="p">,</span>
                 <span class="s2">&quot;stop_event&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="p">,</span>
                 <span class="s2">&quot;pipe&quot;</span><span class="p">:</span> <span class="n">child_con</span><span class="p">,</span>
+                <span class="s2">&quot;pool_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_type</span><span class="p">,</span>
+                <span class="s2">&quot;redis_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">redis_url</span><span class="p">,</span>
                 <span class="s2">&quot;max_pool_size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="s2">&quot;max_expire_time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_expire_time</span><span class="p">,</span>
                 <span class="s2">&quot;max_timeout_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
                 <span class="s2">&quot;local_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
                 <span class="s2">&quot;studio_url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span><span class="p">,</span>
@@ -597,11 +671,17 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="sd">        * `--host`: the hostname of the server.</span>
 <span class="sd">        * `--port`: the socket port of the server.</span>
+<span class="sd">        * `--capacity`: the number of concurrent agents in the server.</span>
+<span class="sd">        * `--pool-type`: the type of the async message pool, which can be</span>
+<span class="sd">          `local` or `redis`. If `redis` is specified, you need to start a</span>
+<span class="sd">          redis server before launching the server. Defaults to `local`.</span>
+<span class="sd">        * `--redis-url`: the url of the redis server, defaults to</span>
+<span class="sd">          `redis://localhost:6379`.</span>
 <span class="sd">        * `--max-pool-size`: max number of agent reply messages that the server</span>
 <span class="sd">          can accommodate. Note that the oldest message will be deleted</span>
 <span class="sd">          after exceeding the pool size.</span>
-<span class="sd">        * `--max-timeout-seconds`: max time for reply messages to be cached</span>
-<span class="sd">          in the server. Note that expired messages will be deleted.</span>
+<span class="sd">        * `--max-expire`: max expire time for async function result.</span>
+<span class="sd">        * `--max-timeout-seconds`: max timeout for rpc call.</span>
 <span class="sd">        * `--local-mode`: whether the started agent server only listens to</span>
 <span class="sd">          local requests.</span>
 <span class="sd">        * `--model-config-path`: the path to the model config json file</span>
@@ -614,44 +694,79 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="sd">        .. code-block:: shell</span>
 
-<span class="sd">            as_server --host localhost \</span>
+<span class="sd">            as_server start --host localhost \</span>
 <span class="sd">                --port 12345 \</span>
 <span class="sd">                --model-config-path config.json \</span>
 <span class="sd">                --agent-dir ./my_agents</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;command&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;sub-commands of as_server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;start the server.&quot;</span><span class="p">)</span>
+    <span class="n">stop_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;stop the server.&quot;</span><span class="p">)</span>
+    <span class="n">status_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;check the status of the server.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;hostname of the server&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">12310</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;socket port of the server&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--capacity&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;the number of concurrent agents in the server, exceeding this &quot;</span>
+            <span class="s2">&quot;may cause severe performance degradation or even deadlock.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--pool-type&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;redis&quot;</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the url of agentscope studio&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--redis-url&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the url of redis server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--max-pool-size&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">8192</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;max number of agent reply messages that the server &quot;</span>
-            <span class="s2">&quot;can accommodate. Note that the oldest message will be deleted &quot;</span>
+            <span class="s2">&quot;the max number of async result that the server &quot;</span>
+            <span class="s2">&quot;can accommodate. Note that the oldest result will be deleted &quot;</span>
             <span class="s2">&quot;after exceeding the pool size.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--max-timeout-seconds&quot;</span><span class="p">,</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max-expire-time&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;max time for agent reply messages to be cached&quot;</span>
-            <span class="s2">&quot;in the server. Note that expired messages will be deleted.&quot;</span>
-        <span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;max expire time in second for async results.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max-timeout-seconds&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;max timeout for rpc call in seconds&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--local-mode&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -660,65 +775,113 @@ window.addEventListener("load", () => mermaid.run());
             <span class="s2">&quot;listen to requests from all hosts.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--model-config-path&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;path to the model config json file&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--server-id&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;id of the server, used to register to the studio, generated&quot;</span>
         <span class="s2">&quot; randomly if not specified.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--studio-url&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the url of agentscope studio&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--agent-dir&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the directory containing customized agent python files&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--no-log&quot;</span><span class="p">,</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;whether to disable log&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--save-api-invoke&quot;</span><span class="p">,</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;whether to save api invoke&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="n">start_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--use-monitor&quot;</span><span class="p">,</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;whether to use monitor&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">stop_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;host of the server to stop&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">stop_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;port of the server to stop&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">status_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;host of the server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">status_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;port of the server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-        <span class="n">project</span><span class="o">=</span><span class="s2">&quot;agent_server&quot;</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;server_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">save_log</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_log</span><span class="p">,</span>
-        <span class="n">save_api_invoke</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">save_api_invoke</span><span class="p">,</span>
-        <span class="n">model_configs</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">model_config_path</span><span class="p">,</span>
-        <span class="n">use_monitor</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
-        <span class="n">server_id</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">server_id</span><span class="p">,</span>
-        <span class="n">max_pool_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
-        <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
-        <span class="n">local_mode</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
-        <span class="n">studio_url</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">studio_url</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span></div>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+        <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+            <span class="n">project</span><span class="o">=</span><span class="s2">&quot;agent_server&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;server_</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">save_log</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_log</span><span class="p">,</span>
+            <span class="n">save_api_invoke</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">save_api_invoke</span><span class="p">,</span>
+            <span class="n">model_configs</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">model_config_path</span><span class="p">,</span>
+            <span class="n">use_monitor</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+            <span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">server_id</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">server_id</span><span class="p">,</span>
+            <span class="n">capacity</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">capacity</span><span class="p">,</span>
+            <span class="n">pool_type</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">pool_type</span><span class="p">,</span>
+            <span class="n">redis_url</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">redis_url</span><span class="p">,</span>
+            <span class="n">max_pool_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_pool_size</span><span class="p">,</span>
+            <span class="n">max_expire_time</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_expire_time</span><span class="p">,</span>
+            <span class="n">max_timeout_seconds</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">max_timeout_seconds</span><span class="p">,</span>
+            <span class="n">local_mode</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">local_mode</span><span class="p">,</span>
+            <span class="n">studio_url</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">studio_url</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+
+        <span class="n">client</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Server at [</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] stopped.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fail to stop server at [</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+
+        <span class="n">client</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Server at [</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">] is not alive.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">agent_infos</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_agent_list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">agent_infos</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_infos</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No agents found on the server [</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">agent_infos</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span></div>
 
 </pre></div>
 

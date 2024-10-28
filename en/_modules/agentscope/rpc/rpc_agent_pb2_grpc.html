@@ -137,12 +137,12 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentStub">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentStub">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub">[docs]</a>
 <span class="k">class</span> <span class="nc">RpcAgentStub</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RpcAgentStub.__init__">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentStub.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
 
@@ -201,13 +201,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">call_agent_func</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
             <span class="s2">&quot;/RpcAgent/call_agent_func&quot;</span><span class="p">,</span>
-            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
-            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_placeholder</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
             <span class="s2">&quot;/RpcAgent/update_placeholder&quot;</span><span class="p">,</span>
             <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
-            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_stream</span><span class="p">(</span>
             <span class="s2">&quot;/RpcAgent/download_file&quot;</span><span class="p">,</span>
@@ -219,12 +219,12 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer">[docs]</a>
 <span class="k">class</span> <span class="nc">RpcAgentServicer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RpcAgentServicer.is_alive">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.is_alive">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.is_alive">[docs]</a>
     <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;check server is alive&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -233,7 +233,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.stop">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.stop">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.stop">[docs]</a>
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;stop the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -242,7 +242,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.create_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.create_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.create_agent">[docs]</a>
     <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;create a new agent on the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -251,7 +251,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.delete_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.delete_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.delete_agent">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;delete agent from the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -260,7 +260,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.delete_all_agents">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.delete_all_agents">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.delete_all_agents">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_all_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;clear all agent on the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -269,7 +269,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.clone_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.clone_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.clone_agent">[docs]</a>
     <span class="k">def</span> <span class="nf">clone_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;clone an agent with specific agent_id&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -278,7 +278,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.get_agent_list">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.get_agent_list">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_agent_list">[docs]</a>
     <span class="k">def</span> <span class="nf">get_agent_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get id of all agents on the server as a list&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -287,7 +287,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.get_server_info">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.get_server_info">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_server_info">[docs]</a>
     <span class="k">def</span> <span class="nf">get_server_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get the resource utilization information of the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -296,7 +296,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.set_model_configs">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.set_model_configs">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.set_model_configs">[docs]</a>
     <span class="k">def</span> <span class="nf">set_model_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;update the model configs in the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -305,7 +305,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.get_agent_memory">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.get_agent_memory">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_agent_memory">[docs]</a>
     <span class="k">def</span> <span class="nf">get_agent_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;get memory of a specific agent&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -314,7 +314,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.call_agent_func">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.call_agent_func">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_agent_func">[docs]</a>
     <span class="k">def</span> <span class="nf">call_agent_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;call funcs of agent running on the server&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -323,7 +323,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.update_placeholder">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.update_placeholder">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.update_placeholder">[docs]</a>
     <span class="k">def</span> <span class="nf">update_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;update value of PlaceholderMessage&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -332,7 +332,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgentServicer.download_file">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgentServicer.download_file">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.download_file">[docs]</a>
     <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;file transfer&quot;&quot;&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
@@ -343,7 +343,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="add_RpcAgentServicer_to_server">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.add_RpcAgentServicer_to_server">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">[docs]</a>
 <span class="k">def</span> <span class="nf">add_RpcAgentServicer_to_server</span><span class="p">(</span><span class="n">servicer</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
     <span class="n">rpc_method_handlers</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;is_alive&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
@@ -398,13 +398,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">),</span>
         <span class="s2">&quot;call_agent_func&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
             <span class="n">servicer</span><span class="o">.</span><span class="n">call_agent_func</span><span class="p">,</span>
-            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
-            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="s2">&quot;update_placeholder&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
             <span class="n">servicer</span><span class="o">.</span><span class="n">update_placeholder</span><span class="p">,</span>
             <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
-            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="s2">&quot;download_file&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_stream_rpc_method_handler</span><span class="p">(</span>
             <span class="n">servicer</span><span class="o">.</span><span class="n">download_file</span><span class="p">,</span>
@@ -422,12 +422,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="c1"># This class is part of an EXPERIMENTAL API.</span>
 <div class="viewcode-block" id="RpcAgent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent">[docs]</a>
 <span class="k">class</span> <span class="nc">RpcAgent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RpcAgent.is_alive">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.is_alive">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.is_alive">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -459,7 +459,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.stop">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.stop">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.stop">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -491,7 +491,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.create_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.create_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.create_agent">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -523,7 +523,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.delete_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.delete_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.delete_agent">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -555,7 +555,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.delete_all_agents">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.delete_all_agents">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.delete_all_agents">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">delete_all_agents</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -587,7 +587,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.clone_agent">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.clone_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.clone_agent">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">clone_agent</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -619,7 +619,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.get_agent_list">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.get_agent_list">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_agent_list">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_agent_list</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -651,7 +651,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.get_server_info">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.get_server_info">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_server_info">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_server_info</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -683,7 +683,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.set_model_configs">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.set_model_configs">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.set_model_configs">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">set_model_configs</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -715,7 +715,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.get_agent_memory">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.get_agent_memory">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_agent_memory">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_agent_memory</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -747,7 +747,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.call_agent_func">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.call_agent_func">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_agent_func">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">call_agent_func</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -765,8 +765,8 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">request</span><span class="p">,</span>
             <span class="n">target</span><span class="p">,</span>
             <span class="s2">&quot;/RpcAgent/call_agent_func&quot;</span><span class="p">,</span>
-            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">RpcMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
-            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
             <span class="n">options</span><span class="p">,</span>
             <span class="n">channel_credentials</span><span class="p">,</span>
             <span class="n">insecure</span><span class="p">,</span>
@@ -779,7 +779,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.update_placeholder">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.update_placeholder">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.update_placeholder">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">update_placeholder</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>
@@ -798,7 +798,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">target</span><span class="p">,</span>
             <span class="s2">&quot;/RpcAgent/update_placeholder&quot;</span><span class="p">,</span>
             <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
-            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
             <span class="n">options</span><span class="p">,</span>
             <span class="n">channel_credentials</span><span class="p">,</span>
             <span class="n">insecure</span><span class="p">,</span>
@@ -811,7 +811,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="RpcAgent.download_file">
-<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.RpcAgent.download_file">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.download_file">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span>
         <span class="n">request</span><span class="p">,</span>

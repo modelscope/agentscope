@@ -71,8 +71,9 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="204-service.html">Tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="202-pipeline.html">Pipeline and MsgHub</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Distribution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developer-guide">Developer Guide</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="209-gui.html">AgentScope Studio</a></li>
@@ -127,396 +128,424 @@ window.addEventListener("load", () => mermaid.run());
              
   <section id="distribution">
 <span id="distribute-en"></span><h1>Distribution<a class="headerlink" href="#distribution" title="Link to this heading"></a></h1>
-<p>AgentScope implements an Actor-based distributed deployment and parallel optimization, providing the following features:</p>
+<p>To provide better performance and support the concurrent of more agents, AgentScope implements a parallel/distributed mode based on the Actor model. Compared to the traditional single-process mode, it has the following characteristics:</p>
 <ul class="simple">
-<li><p><strong>Automatic Parallel Optimization</strong>: Automatically optimize the application for parallelism at runtime without additional optimization costs;</p></li>
-<li><p><strong>Centralized Application Writing</strong>: Easily orchestrate distributed application flow without distributed background knowledge;</p></li>
-<li><p><strong>Zero-Cost Automatic Migration</strong>: Centralized Multi-Agent applications can be easily converted to distributed mode</p></li>
+<li><p><strong>High Performance</strong>: Different agents and other services within the same application can run on different processes or even different machines, fully utilizing computing resources to unleash performance.</p></li>
+<li><p><strong>Automatic Parallelization</strong>: Based on the Actor model, each agent has an independent state. When implementing applications, there’s no need to consider invocation order, resource competition, etc., enabling automatic application parallelization.</p></li>
+<li><p><strong>Zero Migration Cost</strong>: The code is fully compatible with the single-machine mode. Applications that can run in single-process mode can be migrated to the distributed mode at zero cost.</p></li>
 </ul>
-<p>This tutorial will introduce the implementation and usage of AgentScope distributed in detail.</p>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<p>In AgentScope, the process that runs the application flow is called the <strong>main process</strong>, and each agent can run in a separate process named <strong>agent server process</strong>.
-According to the different relationships between the main process and the agent server process, AgentScope supports two modes for each agent: <strong>Child Process</strong> and <strong>Independent Process</strong> mode.</p>
-<ul class="simple">
-<li><p>In the Child Process Mode, agent server processes will be automatically started as sub-processes from the main process.</p></li>
-<li><p>While in the Independent Process Mode, the agent server process is independent of the main process and developers need to start the agent server process on the corresponding machine.</p></li>
-</ul>
-<p>The above concepts may seem complex, but don’t worry, for application developers, you only need to convert your existing agent to its distributed version.</p>
-<section id="step-1-convert-your-agent-to-its-distributed-version">
-<h3>Step 1: Convert your agent to its distributed version<a class="headerlink" href="#step-1-convert-your-agent-to-its-distributed-version" title="Link to this heading"></a></h3>
-<p>All agents in AgentScope can automatically convert to its distributed version by calling its <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.AgentBase.to_dist" title="agentscope.agents.AgentBase.to_dist"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_dist</span></code></a> method.
-But note that your agent must inherit from the <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.AgentBase" title="agentscope.agents.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">agentscope.agents.AgentBase</span></code></a> class, because the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method is provided by the <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> class.</p>
-<p>Suppose there are two agent classes <code class="docutils literal notranslate"><span class="pre">AgentA</span></code> and <code class="docutils literal notranslate"><span class="pre">AgentB</span></code>, both of which inherit from <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Next we will introduce the conversion details of both modes.</p>
-<section id="child-process-mode">
-<h4>Child Process Mode<a class="headerlink" href="#child-process-mode" title="Link to this heading"></a></h4>
-<p>To use this mode, you only need to call each agent’s <code class="docutils literal notranslate"><span class="pre">to_dist()</span></code> method without any input parameter. AgentScope will automatically start all agent server processes from the main process.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Child Process mode</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="independent-process-mode">
-<h4>Independent Process Mode<a class="headerlink" href="#independent-process-mode" title="Link to this heading"></a></h4>
-<p>In the Independent Process Mode, we need to start the agent server process on the target machine first.
-When starting the agent server process, you need to specify a model config file, which contains the models which can be used in the agent server, the IP address and port of the agent server process
-For example, start two agent server processes on the two different machines with IP <code class="docutils literal notranslate"><span class="pre">ip_a</span></code> and <code class="docutils literal notranslate"><span class="pre">ip_b</span></code>(called <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> and <code class="docutils literal notranslate"><span class="pre">Machine2</span></code> accrodingly).
-You can run the following code on <code class="docutils literal notranslate"><span class="pre">Machine1</span></code>.Before running, make sure that the machine has access to all models that used in your application, specifically, you need to put your model config file in <code class="docutils literal notranslate"><span class="pre">model_config_path_a</span></code> and set environment variables such as your model API key correctly in <code class="docutils literal notranslate"><span class="pre">Machine1</span></code>. The example model config file instances are located under <code class="docutils literal notranslate"><span class="pre">examples/model_configs_template</span></code>. In addition, your customized agent classes that need to run in the server must be registered in <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code> so that the server can correctly identify these agents. If you only use AgentScope’s built-in agents, you can ignore <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code> field.</p>
+<p>This section will detail the usage of AgentScope’s distributed mode and introduce its principles.</p>
+<section id="basic-usage">
+<span id="basic-usage-en"></span><h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
+<p>The distributed mode requires almost no modification to the running code compared to the traditional mode. Simply call the <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.RpcMeta.to_dist" title="agentscope.rpc.RpcMeta.to_dist"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_dist</span></code></a> function during the agent initialization phase.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
 
-<span class="c1"># register models which can be used in the server</span>
-<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># Create an agent service process</span>
-<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>  <span class="c1"># choose an available port</span>
-    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">]</span> <span class="c1"># register your customized agent classes</span>
-<span class="p">)</span>
+<span class="c1"># init agentscope</span>
 
-<span class="c1"># Start the service</span>
-<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
-<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+<span class="c1"># Initialization in traditional mode</span>
+<span class="c1"># agent = Agent(...)</span>
+
+<span class="c1"># Initialization in distributed mode</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="o">...</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For simplicity, you can run the following command in your terminal rather than the above code:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a<span class="w">  </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b
+<p>In this section, we will demonstrate how to specifically use AgentScope’s distributed mode with a webpage retrieval example. To highlight the acceleration effect brought by AgentScope’s distributed mode, a simple custom <code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> is used here.
+This agent simulates the process of crawling webpages and looking for answers by sleeping for 5 seconds. In the example, there are a total of 5 agents, each crawling a webpage and searching for answers.</p>
+<p>The only difference between the traditional mode and the distributed mode lies in the initialization phase, specifically in <code class="docutils literal notranslate"><span class="pre">init_without_dist</span></code> and <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code>.
+The only difference in <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> compared to <code class="docutils literal notranslate"><span class="pre">init_without_dist</span></code> is the additional call to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function.
+After initialization, the <code class="docutils literal notranslate"><span class="pre">run</span></code> function is exactly the same for both modes. However, the running time differs significantly between the two modes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Please do not run this code in a Jupyter notebook</span>
+<span class="c1"># Copy the code to a `dist_main.py` file and run it using `python dist_main.py`</span>
+<span class="c1"># Ensure you have installed the distributed version of agentscope before running the code</span>
+<span class="c1"># pip install agentscope[distribute]</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">agentscope</span>
+<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="k">class</span> <span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulate crawling the web and looking for answers&quot;&quot;&quot;</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_answer</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+
+
+<span class="n">QUERY</span> <span class="o">=</span> <span class="s2">&quot;example query&quot;</span>
+<span class="n">URLS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;page_1&quot;</span><span class="p">,</span> <span class="s2">&quot;page_2&quot;</span><span class="p">,</span> <span class="s2">&quot;page_3&quot;</span><span class="p">,</span> <span class="s2">&quot;page_4&quot;</span><span class="p">,</span> <span class="s2">&quot;page_5&quot;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">init_without_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">URLS</span><span class="p">):</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">QUERY</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="p">))</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">simple_agents</span> <span class="o">=</span> <span class="n">init_without_dist</span><span class="p">()</span>
+    <span class="n">dist_agents</span> <span class="o">=</span> <span class="n">init_with_dist</span><span class="p">()</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken for initialization: </span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken without distributed mode: </span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">simple_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken with distributed mode: </span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">dist_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<blockquote>
-<div><p>Note:
-The <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code> field is used to specify the directory where your customized agent classes are located.
-Please make sure that all custom Agent classes are located in <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code>, and that the custom modules they depend on are also located in the directory.
-Additionally, because the above command will load all Python files in the directory, please ensure that the directory does not contain any malicious files to avoid security risks.</p>
-</div></blockquote>
-<p>Then put your model config file accordingly in <code class="docutils literal notranslate"><span class="pre">model_config_path_b</span></code>, set environment variables, and run the following code on <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
-
-<span class="c1"># register models which can be used in the server</span>
-<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_b</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># Create an agent service process</span>
-<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span> <span class="c1"># choose an available port</span>
-    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">]</span> <span class="c1"># register your customized agent classes</span>
-<span class="p">)</span>
-
-<span class="c1"># Start the service</span>
-<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
-<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+<p>Sample output of the above code is as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Time taken for initialization: 12.944042921066284
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+Time taken without distributed mode: 25.022241830825806
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+Time taken with distributed mode: 5.021369934082031
 </pre></div>
 </div>
-<blockquote>
-<div><p>Similarly, you can run the following command in your terminal to setup the agent server:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_b<span class="w"> </span>--port<span class="w"> </span><span class="m">12002</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_b<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b
-</pre></div>
-</div>
-</div></blockquote>
-<p>Then, you can connect to the agent servers from the main process with the following code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>The above code will deploy <code class="docutils literal notranslate"><span class="pre">AgentA</span></code> on the agent server process of <code class="docutils literal notranslate"><span class="pre">Machine1</span></code> and <code class="docutils literal notranslate"><span class="pre">AgentB</span></code> on the agent server process of <code class="docutils literal notranslate"><span class="pre">Machine2</span></code>.
-And developers just need to write the application flow in a centralized way in the main process.</p>
-</section>
-</section>
-<section id="step-2-orchestrate-distributed-application-flow">
-<h3>Step 2: Orchestrate Distributed Application Flow<a class="headerlink" href="#step-2-orchestrate-distributed-application-flow" title="Link to this heading"></a></h3>
-<blockquote>
-<div><p>Note:
-Currently, distributed version of Agent only supports <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method call (i.e. <code class="docutils literal notranslate"><span class="pre">agent(x)</span></code>), not support calling other methods or reading/writing properties.</p>
-</div></blockquote>
-<p>In AgentScope, the orchestration of distributed application flow is exactly the same as non-distributed programs, and developers can write the entire application flow in a centralized way.
-At the same time, AgentScope allows the use of a mixture of locally and distributed deployed agents, and developers do not need to distinguish which agents are local and which are distributed.</p>
-<p>The following is the complete code for two agents to communicate with each other in different modes. It can be seen that AgentScope supports zero-cost migration of distributed application flow from centralized to distributed.</p>
-<ul class="simple">
-<li><p>All agents are centralized</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create agent objects</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span>
-
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span>
-
-<span class="c1"># Application flow orchestration</span>
-<span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="k">while</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Agents are deployed in a distributed manner</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">AgentA</span></code> in Child Process mode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AgentB</span></code> in Independent Process Mode</p></li>
-</ul>
-</li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create agent objects</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span>
-
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Application flow orchestration</span>
-<span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="k">while</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>As observed from the output, there is a significant reduction in running time when using the distributed mode (from 25 seconds to 5 seconds).
+The example above represents the most common usage of AgentScope’s distributed mode. When not aiming for ultimate performance or the number of Agents is relatively small (e.g., no more than 10), it is advisable to use the method demonstrated above.
+For further performance optimization, a deeper understanding of AgentScope’s distributed model is required, and subsequent sections will introduce advanced usage of the distributed mode in detail.</p>
 </section>
 <section id="advanced-usage">
-<h3>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h3>
-<section id="to-dist-with-lower-cost">
-<h4><code class="docutils literal notranslate"><span class="pre">to_dist</span></code> with lower cost<a class="headerlink" href="#to-dist-with-lower-cost" title="Link to this heading"></a></h4>
-<p>All examples described above convert initialized agents into their distributed version through the <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.AgentBase.to_dist" title="agentscope.agents.AgentBase.to_dist"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_dist</span></code></a> method, which is equivalent to initialize the agent twice, once in the main process and once in the agent server process.
-For agents whose initialization process is time-consuming, the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method is inefficient. Therefore, AgentScope also provides a method to convert the Agent instance into its distributed version while initializing it, that is, passing in <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter to the Agent’s initialization function.</p>
-<p>In Child Process Mode, just pass <code class="docutils literal notranslate"><span class="pre">to_dist=True</span></code> to the Agent’s initialization function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Child Process mode</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-    <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-    <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>In Independent Process Mode, you need to encapsulate the parameters of the <code class="docutils literal notranslate"><span class="pre">to_dist()</span></code> method in  <a class="reference internal" href="../agentscope.agents.html#agentscope.agents.DistConf" title="agentscope.agents.DistConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">DistConf</span></code></a> instance and pass it into the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> field, for example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-    <span class="n">to_dist</span><span class="o">=</span><span class="n">DistConf</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>
-    <span class="p">),</span>
-<span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">AgentB</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
-    <span class="c1"># ...</span>
-    <span class="n">to_dist</span><span class="o">=</span><span class="n">DistConf</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_b&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">12002</span><span class="p">,</span>
-    <span class="p">),</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>Compared with the original <code class="docutils literal notranslate"><span class="pre">to_dist()</span></code> function call, this method just initializes the agent once in the agent server process, which reduces the cost of initialization.</p>
-</section>
-<section id="manage-your-agent-server-processes">
-<h4>Manage your agent server processes<a class="headerlink" href="#manage-your-agent-server-processes" title="Link to this heading"></a></h4>
-<p>When running large-scale multi-agent applications, it’s common to have multiple Agent Server processes running. To facilitate management of these processes, AgentScope offers management interfaces in the <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.RpcAgentClient" title="agentscope.rpc.RpcAgentClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">RpcAgentClient</span></code></a> class. Here’s a brief overview of these methods:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">is_alive</span></code>: This method checks whether the Agent Server process is still running.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">client</span> <span class="o">=</span> <span class="n">RpcAgentClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">server_host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">server_port</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-        <span class="n">do_something</span><span class="p">()</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: This method stops the Agent Server process.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-    <span class="k">assert</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">get_agent_list</span></code>: This method retrieves a list of JSON format thumbnails of all agents currently running within the Agent Server process. The thumbnail is generated by the <code class="docutils literal notranslate"><span class="pre">__str__</span></code> method of the Agent instance.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">agent_list</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_agent_list</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">agent_list</span><span class="p">)</span>  <span class="c1"># [agent1_info, agent2_info, ...]</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">get_agent_memory</span></code>: With this method, you can fetch the memory content of an agent specified by its <code class="docutils literal notranslate"><span class="pre">agent_id</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">agent_id</span> <span class="o">=</span> <span class="n">my_agent</span><span class="o">.</span><span class="n">agent_id</span>
-    <span class="n">agent_memory</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_agent_memory</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">agent_memory</span><span class="p">)</span> <span class="c1"># [msg1, msg2, ...]</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">get_server_info</span></code>：This method provides information about the resource utilization of the Agent Server process, including CPU usage, memory consumption.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">server_info</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_server_info</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">server_info</span><span class="p">)</span>  <span class="c1"># { &quot;cpu&quot;: xxx, &quot;mem&quot;: xxx }</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set_model_configs</span></code>: This method set the specific model configs into the agent server, the agent created later can directly use these model configs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">agent</span> <span class="o">=</span> <span class="n">MyAgent</span><span class="p">(</span>  <span class="c1"># failed because the model config [my_openai] is not found</span>
-        <span class="c1"># ...</span>
-        <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my_openai&quot;</span><span class="p">,</span>
-        <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span>
-            <span class="c1"># ...</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-    <span class="n">client</span><span class="o">.</span><span class="n">set_model_configs</span><span class="p">([{</span>  <span class="c1"># set the model config [my_openai]</span>
-        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_openai&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>
-        <span class="c1"># ...</span>
-    <span class="p">}])</span>
-    <span class="n">agent</span> <span class="o">=</span> <span class="n">MyAgent</span><span class="p">(</span>  <span class="c1"># success</span>
-        <span class="c1"># ...</span>
-        <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my_openai&quot;</span><span class="p">,</span>
-        <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span>
-            <span class="c1"># ...</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete_agent</span></code>: This method deletes an agent specified by its <code class="docutils literal notranslate"><span class="pre">agent_id</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">agent_id</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">agent_id</span>
-    <span class="n">ok</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_agent</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delete_all_agent</span></code>: This method deletes all agents currently running within the Agent Server process.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">ok</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">delete_all_agent</span><span class="p">()</span>
-</pre></div>
-</div>
-</li>
-</ul>
-</section>
-<section id="connecting-to-agentscope-studio">
-<h4>Connecting to AgentScope Studio<a class="headerlink" href="#connecting-to-agentscope-studio" title="Link to this heading"></a></h4>
-<p>The agent server process can be connected to <a class="reference internal" href="209-gui.html#gui-en"><span class="std std-ref">AgentScope Studio</span></a> at startup, allowing the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method in subsequent distributed applications to be assigned automatically by Studio without the need for any parameters.</p>
-<p>For scenarios where the agent server process is started using Python code, simply fill in the <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> in the initialization parameters of <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code>. This requires that the URL is correct and accessible over the network, for example, the default URL for the Studio is <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5000</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
-
-<span class="c1"># register models which can be used in the server</span>
-<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="c1"># Create an agent service process</span>
-<span class="n">server</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;ip_a&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">12001</span><span class="p">,</span>  <span class="c1"># choose an available port</span>
-    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span> <span class="c1"># register your customized agent classes</span>
-    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>  <span class="c1"># connect to AgentScope Studio</span>
-<span class="p">)</span>
-
-<span class="c1"># Start the service</span>
-<span class="n">server</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
-<span class="n">server</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>For scenarios using the command <code class="docutils literal notranslate"><span class="pre">as_server</span></code> in your command line, simply fill in the <code class="docutils literal notranslate"><span class="pre">--studio-url</span></code> parameter.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>--host<span class="w"> </span>ip_a<span class="w"> </span>--port<span class="w"> </span><span class="m">12001</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path_a<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_agent_a_and_b<span class="w"> </span>--studio-url<span class="w"> </span>http://studio_ip:studio_port
-</pre></div>
-</div>
-<p>After executing the above code or command, you can enter the Server Manager page of AgentScope Studio to check if the connection is successful. If the connection is successful, the agent server process will be displayed in the page table, and you can observe the running status and resource occupation of the process in the page, then you can use the advanced functions brought by AgentScope Studio. This section will focus on the impact of <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method brought by AgentScope Studio, and please refer to <a class="reference internal" href="209-gui.html#gui-en"><span class="std std-ref">AgentScope Studio</span></a> for the specific usage of the page.</p>
-<p>After the agent server process successfully connects to Studio, you only need to pass the <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> of this Studio in the <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> method, and then the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method no longer needs to fill in the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> fields, but automatically select an agent server process that has been connected to Studio.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import some packages</span>
-
-<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config_path_a</span><span class="p">,</span>
-    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://studio_ip:studio_port&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">a</span> <span class="o">=</span> <span class="n">AgentA</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;A&quot;</span>
-    <span class="c1"># ...</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="c1"># automatically select an agent server</span>
-
-<span class="c1"># your application code</span>
-</pre></div>
-</div>
-<blockquote>
-<div><p>Note:</p>
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
+<p>This section will introduce advanced uses of the AgentScope distributed mode to further enhance efficiency. Before delving into advanced usage, we need to have a basic understanding of the fundamental concepts of the AgentScope distributed mode.</p>
+<section id="fundamental-concepts">
+<h3>Fundamental Concepts<a class="headerlink" href="#fundamental-concepts" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>The Agent used in this method must be registered at the start of the agent server process through <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code> or <code class="docutils literal notranslate"><span class="pre">--agent-dir</span></code>.</p></li>
-<li><p>When using this method, make sure that the agent server process connected to Studio is still running normally.</p></li>
+<li><p><strong>Main Process</strong>: The process where the AgentScope application resides is called the main process. For instance, the <code class="docutils literal notranslate"><span class="pre">run</span></code> function in the example from the previous section runs in the main process. Each AgentScope application will have only one main process.</p></li>
+<li><p><strong>Agent Server Process</strong>: In distributed mode, the agent server process is where agents run. For example, in the example from the previous section, all agents in <code class="docutils literal notranslate"><span class="pre">dist_agents</span></code> actually run in the agent server process. Multiple agent server processes can exist at the same time. Agent server processes can run on any network-accessible node, and within each agent server process, multiple agents can run simultaneously.</p></li>
+<li><p><strong>Child Mode</strong>: In child mode, the agent server process is spawned as a child process by the main process. In the example from the previous section, each agent in <code class="docutils literal notranslate"><span class="pre">dist_agents</span></code> is actually a child process of the main process. This mode is the default running mode for AgentScope distributed applications, meaning that when calling the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function without any parameters, it defaults to this mode. This mode is employed in the <a class="reference internal" href="#basic-usage-en">basic usage</a> section.</p></li>
+<li><p><strong>Independent Mode</strong>: In independent mode, the agent processes are independent of the main process. The agent processes need to be started on the machine in advance, and certain parameters need to be passed to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function. This mode must be used if agents need to be deployed across different machines. Additionally, this mode is recommended if performance is major concern, or you have a large number of agents.</p></li>
 </ul>
-</div></blockquote>
-<p>After the application starts running, you can observe in the Server Manager page of Studio which agent server process this Agent is specifically running on, and after the application is completed, you can also delete this Agent through the Server Manager page.</p>
+</section>
+<section id="using-independent-mode">
+<h3>Using Independent Mode<a class="headerlink" href="#using-independent-mode" title="Link to this heading"></a></h3>
+<p>Compared to child mode, independent mode can avoid the overhead of initializing child processes during runtime, thereby eliminating startup latency and enhancing operational efficiency in scenarios with many agents.</p>
+<p>In independent mode, agent server processes need to be started in advance on the machines, and the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> of the agent server process to connect to should be passed to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function.</p>
+<p>We will still use the example from the basic usage section for demonstration. Assuming the code file from the <a class="reference internal" href="#basic-usage-en">basic usage</a> section is named <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code>, the following code should be saved as <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Do not run this code in a Jupyter notebook</span>
+<span class="c1"># Copy the code to a file named `dist_server.py` and run it using the command `python dist_server.py`. The directory structure should be:</span>
+<span class="c1"># your_project_dir</span>
+<span class="c1"># ├── dist_main.py</span>
+<span class="c1"># └── dist_server.py</span>
+<span class="c1"># Install the distributed version of agentscope before running the code</span>
+<span class="c1"># pip install agentscope[distribute]</span>
+
+<span class="kn">import</span> <span class="nn">agentscope</span>
+<span class="kn">from</span> <span class="nn">agentscope.server</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<span class="kn">from</span> <span class="nn">dist_main</span> <span class="kn">import</span> <span class="n">WebAgent</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+        <span class="c1"># model_configs=...  # Model configuration. If no model is needed, this parameter can be omitted.</span>
+    <span class="p">)</span>
+    <span class="n">assistant_server_launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+        <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="n">WebAgent</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">assistant_server_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assistant_server_launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In the above code, we use <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code> to start an agent server process. Note that <code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> is not an agent implementation provided by AgentScope, so it needs to be added to <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code>. Additionally, if model APIs are required in the agent server process, corresponding model parameters should be configured in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>.</p>
+<p>Furthermore, the <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> function in <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> needs to be updated to the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+</pre></div>
+</div>
+<p>In this new version of <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code>, two new parameters, <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code>, are added to connect to the agent server process.</p>
+<p>After modifying the code, run the <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code> file in one command line and wait for it to start successfully. Then run the <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> file in another command line. During execution, the following output will be displayed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Initialization time: 0.005397319793701172
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+Non-distributed mode runtime: 25.023009061813354
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+Distributed mode runtime: 5.021481990814209
+</pre></div>
+</div>
+<p>At this point, the initialization time of <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> will be significantly reduced, for instance, just 0.005 seconds in this case.</p>
+</section>
+<section id="avoiding-repeated-initialization">
+<h3>Avoiding Repeated Initialization<a class="headerlink" href="#avoiding-repeated-initialization" title="Link to this heading"></a></h3>
+<p>The above code calls the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function on an already initialized agent. <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> essentially clones the original agent to the agent server process, retaining an <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.RpcObject" title="agentscope.rpc.RpcObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RpcObject</span></code></a> in the main process as a proxy for the original agent. Calls to this <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> are forwarded to the corresponding agent in the agent server process.</p>
+<p>This process has a potential issue: the original agent is initialized twice, once in the main process and once in the agent server process. These two initializations occur sequentially, lacking the ability to be parallelized. For agents with low initialization costs, directly calling the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function will not significantly impact performance. However, for agents with high initialization costs, repeated initialization should be avoided. Therefore, AgentScope distributed mode provides another method for initializing in distributed mode, which entails passing the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter directly within the initialization function of any agent. The following code modifies the <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> function in <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code>.</p>
+<ul>
+<li><p>For child mode, simply pass <code class="docutils literal notranslate"><span class="pre">to_dist=True</span></code> in the initialization function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+</pre></div>
+</div>
+</li>
+<li><p>For independent mode, pass the parameters previously given to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function as a dictionary to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> field.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="s2">&quot;12345&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some IDEs might display a hint indicating that the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter does not exist, but this will not cause an error at runtime.
+Additionally, if the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter has already been passed in the initialization parameters, the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method should not be called again.</p>
+</div>
 </section>
 </section>
-</section>
-<section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Link to this heading"></a></h2>
-<section id="actor-model">
-<h3>Actor Model<a class="headerlink" href="#actor-model" title="Link to this heading"></a></h3>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Actor_model">The Actor model</a> is a widely used programming paradigm in large-scale distributed systems, and it is also applied in the distributed design of the AgentScope platform.</p>
-<p>In the distributed mode of AgentScope, each Agent is an Actor and interacts with other Agents through messages. The flow of messages implies the execution order of the Agents. Each Agent has a <code class="docutils literal notranslate"><span class="pre">reply</span></code> method, which consumes a message and generates another message, and the generated message can be sent to other Agents. For example, the following chart shows the workflow of multiple Agents. <code class="docutils literal notranslate"><span class="pre">A</span></code>~<code class="docutils literal notranslate"><span class="pre">F</span></code> are all Agents, and the arrows represent messages.</p>
+<section id="developer-guide">
+<h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This section is aimed at developers who are developing new features based on the AgentScope distributed mode. It requires a certain understanding of distributed programming principles such as processes, threads, synchronization, asynchronicity, gRPC, Python metaclasses, and the Global Interpreter Lock (GIL). Even if you lack the aforementioned background, reading this section will still provide insights into the fundamental principles and advanced usages of the AgentScope distributed mode.</p>
+</div>
+<p>The core logic of the AgentScope distributed model is:</p>
+<p><strong>By using the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function or initialization parameters, objects that originally run in any Python process are transferred to an RPC server. In the original process, a <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> proxy is retained, and any function call or attribute access on this <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> will be forwarded to the object on the RPC server. When calling functions, you can decide whether to use synchronous or asynchronous invocation.</strong></p>
+<p>The following graph illustrate the workflow of <code class="docutils literal notranslate"><span class="pre">to_dist</span></code>, synchronous and asynchronous invocation.</p>
 <pre  class="mermaid">
-        graph LR;
-A--&gt;B
-A--&gt;C
-B--&gt;D
-C--&gt;D
-E--&gt;F
-D--&gt;F
-    </pre><p>Specifically, <code class="docutils literal notranslate"><span class="pre">B</span></code> and <code class="docutils literal notranslate"><span class="pre">C</span></code> can start execution simultaneously after receiving the message from <code class="docutils literal notranslate"><span class="pre">A</span></code>, and <code class="docutils literal notranslate"><span class="pre">E</span></code> can run immediately without waiting for <code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span></code>, and <code class="docutils literal notranslate"><span class="pre">D</span></code>.
-By implementing each Agent as an Actor, an Agent will automatically wait for its input <code class="docutils literal notranslate"><span class="pre">Msg</span></code> before starting to execute the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method, and multiple Agents can also automatically execute <code class="docutils literal notranslate"><span class="pre">reply</span></code> at the same time if their input messages are ready, which avoids complex parallel control and makes things simple.</p>
+        sequenceDiagram
+    User --&gt;&gt; Process: initialize
+    Process --&gt;&gt; RPC Server: to_dist
+    User --&gt;&gt; Process: sync function call
+    Process --&gt;&gt; RPC Server: sync function call
+    RPC Server --&gt;&gt; RPC Server: calculate result
+    RPC Server --&gt;&gt; Process: sync result
+    Process --&gt;&gt; User: sync result
+    User --&gt;&gt; Process: async function call
+    Process --&gt;&gt; RPC Server: async function call
+    RPC Server --&gt;&gt; RPC Server: calculate result
+    User --&gt;&gt; Process: get async result
+    Process --&gt;&gt; RPC Server: get async result
+    RPC Server --&gt;&gt; Process: async result
+    Process --&gt;&gt; User: async result
+    </pre><p>As illustrated in the previous figure, the distributed mode of AgentScope essentially follows a Client-Server architecture. In this setup, the user-authored agent applications (Processes) act as the Client, while the agent server process (RPC Server) functions as the Server. In distributed mode, the Client side sends the local agents to the Server side for execution. The Client forwards local function calls and property accesses to the Server, which is responsible for receiving the agents and handling various invocation requests from the Client.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Communication between the Client and Server in AgentScope’s distributed mode is implemented using gRPC. There is a strict limitation on the size of messages send/recv; by default, a single message cannot exceed 32 MB. This value can be further increased by modifying the <code class="docutils literal notranslate"><span class="pre">_DEFAULT_RPC_OPTIONS</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">src/agentscope/constants.py</span></code>.</p>
+</div>
+<p>Next, we’ll introduce the implementation of the Client and Server respectively.</p>
+<section id="client-side">
+<h3>Client Side<a class="headerlink" href="#client-side" title="Link to this heading"></a></h3>
+<p>The Client Side mainly consists of two primary classes: <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code> and <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code>. <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code> is responsible for sending local objects to the Server, while <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> handles the forwarding of subsequent invocation requests.</p>
+<section id="rpcmeta">
+<h4><code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code><a class="headerlink" href="#rpcmeta" title="Link to this heading"></a></h4>
+<p>The class <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.RpcMeta" title="agentscope.rpc.RpcMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">RpcMeta</span></code></a> is a metaclass that automatically adds the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method and <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> initialization parameter to its subclasses (thus IDEs might indicate <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter does not exist, but in actuality, it won’t cause an error during runtime). Its implementation can be found in <code class="docutils literal notranslate"><span class="pre">src/agentscope/rpc/rpc_meta.py</span></code>.</p>
+<p>Calling the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method on an already initialized object sends the object’s initialization parameters to the Agent Server Process and reinitializes the object within that process. The main process returns a <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> to replace the original object.</p>
+<p>Since the original object is reconstructed using initialization parameters, it cannot maintain state changes that occurred after creation. Thus, it is recommended to call the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method immediately upon initialization or pass the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter directly in the object’s initialization function.</p>
+<p>Since <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> is automatically added to subclasses by <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code>, any class that inherits from <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code>, not just <code class="docutils literal notranslate"><span class="pre">Agent</span></code> classes, can use the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method.</p>
+<p>In addition to providing the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> method, <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code> also records callable methods and attributes from the original object to facilitate invocation within the <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code>. By default, only public methods of the original object are recorded and invoked synchronously (the caller is blocked until the method on the original object has finished executing). If asynchronous invocation is needed, the <code class="docutils literal notranslate"><span class="pre">async_func</span></code> decorator should be added to the method declaration.</p>
 </section>
-<section id="placeholder">
-<h3>PlaceHolder<a class="headerlink" href="#placeholder" title="Link to this heading"></a></h3>
-<p>Meanwhile, to support centralized application orchestration, AgentScope introduces the concept of <a class="reference internal" href="../agentscope.message.html#agentscope.message.PlaceholderMessage" title="agentscope.message.PlaceholderMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">Placeholder</span></code></a>.
-A Placeholder is a special message that contains the address and port number of the agent that generated the placeholder, which is used to indicate that the output message of the Agent is not ready yet.
-When calling the <code class="docutils literal notranslate"><span class="pre">reply</span></code> method of a distributed agent, a placeholder is returned immediately without blocking the main process.
-The interface of placeholder is exactly the same as the message, so that the orchestration flow can be written in a centralized way.
-When getting values from a placeholder, the placeholder will send a request to get the real values from the source agent.
-A placeholder itself is also a message, and it can be sent to other agents, and let other agents to get the real values, which can avoid sending the real values multiple times.</p>
-<p>About more detailed technical implementation solutions, please refer to our <a class="reference external" href="https://arxiv.org/abs/2402.14034">paper</a>.</p>
+<section id="async-func-and-asyncresult">
+<h4><code class="docutils literal notranslate"><span class="pre">async_func</span></code> and <code class="docutils literal notranslate"><span class="pre">AsyncResult</span></code><a class="headerlink" href="#async-func-and-asyncresult" title="Link to this heading"></a></h4>
+<p>The decorator <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.async_func" title="agentscope.rpc.async_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">async_func</span></code></a> is implemented in <code class="docutils literal notranslate"><span class="pre">src/agentscope/rpc/rpc_meta.py</span></code>. The <code class="docutils literal notranslate"><span class="pre">__call__</span></code> and <code class="docutils literal notranslate"><span class="pre">reply</span></code> methods of <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> and all its subclasses are marked with <code class="docutils literal notranslate"><span class="pre">async_func</span></code> to avoid blocking.</p>
+<p>In contrast to <code class="docutils literal notranslate"><span class="pre">async_func</span></code>, there is also the <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.sync_func" title="agentscope.rpc.sync_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">sync_func</span></code></a> decorator, used to indicate synchronous methods. However, since synchronous methods are the default, it is generally not used.</p>
+<p>Below is a simple example where we declare a class <code class="docutils literal notranslate"><span class="pre">Example</span></code>. In this class, <code class="docutils literal notranslate"><span class="pre">sync_method</span></code> is a synchronous method, <code class="docutils literal notranslate"><span class="pre">async_method_basic</span></code> and <code class="docutils literal notranslate"><span class="pre">async_method_complex</span></code> are marked as asynchronous methods, and <code class="docutils literal notranslate"><span class="pre">_protected_method</span></code> is a private method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span>
+
+<span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">RpcMeta</span><span class="p">):</span>
+
+    <span class="c1"># @sync_func  # Default is sync_func, can be omitted</span>
+    <span class="k">def</span> <span class="nf">sync_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Synchronous method, caller will be blocked for 1 s</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;sync&quot;</span>
+
+    <span class="nd">@async_func</span>
+    <span class="k">def</span> <span class="nf">async_method_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Asynchronous method, caller will not be blocked and can continue until attempting to get the result</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Return a basic type</span>
+        <span class="k">return</span> <span class="s2">&quot;async&quot;</span>
+
+    <span class="nd">@async_func</span>
+    <span class="k">def</span> <span class="nf">async_method_composite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># Asynchronous method</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Return a dictionary</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world&quot;</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_protected_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># Not a public method, rpc object cannot call this method</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;protected&quot;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">example</span> <span class="o">=</span> <span class="n">Example</span><span class="p">(</span><span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Calling protected method will result in undefined behavior, avoid using it</span>
+    <span class="c1"># protected_result = example._protected_method()</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">sync_result</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">sync_method</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">sync_result</span> <span class="o">==</span> <span class="s2">&quot;sync&quot;</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sync func cost: </span><span class="si">{</span><span class="n">t2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t1</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+    <span class="n">t3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">async_basic</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">async_method_basic</span><span class="p">()</span>
+    <span class="n">async_composite</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">async_method_composite</span><span class="p">()</span>
+    <span class="n">t4</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Async func cost: </span><span class="si">{</span><span class="n">t4</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t3</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+    <span class="c1"># Basic type results need to call the result method to get the asynchronous execution result</span>
+    <span class="k">assert</span> <span class="n">async_basic</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;async&quot;</span>
+    <span class="c1"># Composite types automatically update asynchronous execution results when accessing required fields</span>
+    <span class="k">assert</span> <span class="n">async_composite</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">async_composite</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">async_composite</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;hello world&quot;</span>
+</pre></div>
+</div>
+<p>The result of running the above code sample is shown below. You can observe that the time taken to call <code class="docutils literal notranslate"><span class="pre">async_method</span></code> is much shorter than <code class="docutils literal notranslate"><span class="pre">sync_method</span></code>. This is because <code class="docutils literal notranslate"><span class="pre">async_method</span></code> is asynchronous and does not block the caller, whereas <code class="docutils literal notranslate"><span class="pre">sync_method</span></code> is synchronous and blocks the caller.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Sync func cost: 1.0073761940002441 s
+Async func cost: 0.0003597736358642578 s
+</pre></div>
+</div>
+<p>In the above code, <code class="docutils literal notranslate"><span class="pre">async_method_basic</span></code> and <code class="docutils literal notranslate"><span class="pre">async_method_complex</span></code> return instances of the <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.AsyncResult" title="agentscope.rpc.AsyncResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncResult</span></code></a> class. This object can return the result of asynchronous execution through its <code class="docutils literal notranslate"><span class="pre">result</span></code> method. To maintain a consistent interface between asynchronous and synchronous calls, if the result represented by <code class="docutils literal notranslate"><span class="pre">AsyncResult</span></code> is a composite type, you do not need to call the <code class="docutils literal notranslate"><span class="pre">result</span></code> method manually. When accessing internal attributes, <code class="docutils literal notranslate"><span class="pre">result</span></code> is automatically called to update the execution result (as shown in the example for <code class="docutils literal notranslate"><span class="pre">async_composite</span></code>).</p>
 </section>
-<section id="agent-server">
-<h3>Agent Server<a class="headerlink" href="#agent-server" title="Link to this heading"></a></h3>
-<p>In agentscope, the agent server provides a running platform for various types of agents.
-Multiple agents can run in the same agent server and hold independent memory and other local states but they will share the same computation resources.</p>
-<p>After installing the distributed version of AgentScope, you can use the <code class="docutils literal notranslate"><span class="pre">as_server</span></code> command to start the agent server, and the detailed startup arguments can be found in the documentation of the <a class="reference internal" href="../agentscope.server.launcher.html#agentscope.server.launcher.as_server" title="agentscope.server.launcher.as_server"><code class="xref py py-func docutils literal notranslate"><span class="pre">as_server</span></code></a> function.</p>
-<p>As long as the code is not modified, an agent server can provide services for multiple main processes.
-This means that when running mutliple applications, you only need to start the agent server for the first time, and it can be reused subsequently.</p>
+<section id="rpcobject">
+<h4><code class="docutils literal notranslate"><span class="pre">RpcObject</span></code><a class="headerlink" href="#rpcobject" title="Link to this heading"></a></h4>
+<p><a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.RpcObject" title="agentscope.rpc.RpcObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">RpcObject</span></code></a> is implemented in <code class="docutils literal notranslate"><span class="pre">src/agentscope/rpc/rpc_object.py</span></code>.
+<code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> acts as a proxy and does not contain any attribute values or methods of the original object. It only records the address of the agent server process where the original object resides and the object’s <code class="docutils literal notranslate"><span class="pre">id</span></code>. With these parameters, <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> can connect to the original object over the network, enabling invocation on the original object.</p>
+<p>When a user calls methods or accesses attributes on a <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code>, <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> will forward the request to the original object located in the agent server process through its <code class="docutils literal notranslate"><span class="pre">__getattr__</span></code> method. For synchronous method invocations (<code class="docutils literal notranslate"><span class="pre">&#64;sync_func</span></code>) or attribute access, <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> will block the caller until the method on the original object completes execution and returns the result. In the case of asynchronous methods (<code class="docutils literal notranslate"><span class="pre">&#64;async_func</span></code>), it immediately returns an <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.AsyncResult" title="agentscope.rpc.AsyncResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncResult</span></code></a> object. The main process can continue running without blocking if it doesn’t access the specific value of this object. To obtain the execution result, the <code class="docutils literal notranslate"><span class="pre">result</span></code> method of the <code class="docutils literal notranslate"><span class="pre">AsyncResult</span></code> object needs to be called, which will block the caller if the result has not yet been returned.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When initializing <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code>, if <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> parameters are not provided (i.e., sub-process mode), a new Agent Server process is started and the original object is recreated in that process. Starting a new Agent Server process is relatively slow, which is why initialization time is longer in sub-process mode.
+If <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> parameters are provided (i.e., standalone process mode), <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> directly connects to the server and recreates the original object, avoiding the overhead of starting a new process.</p>
+</div>
+</section>
+</section>
+<section id="server-side">
+<h3>Server-Side<a class="headerlink" href="#server-side" title="Link to this heading"></a></h3>
+<p>The server side is primarily based on gRPC and mainly consists of the <code class="docutils literal notranslate"><span class="pre">AgentServerServicer</span></code> and <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code> classes.</p>
+<section id="agentserverlauncher">
+<h4><code class="docutils literal notranslate"><span class="pre">AgentServerLauncher</span></code><a class="headerlink" href="#agentserverlauncher" title="Link to this heading"></a></h4>
+<p>The implementation of <code class="docutils literal notranslate"><span class="pre">AgentServerLauncher</span></code> is located at <code class="docutils literal notranslate"><span class="pre">src/agentscope/server/launcher.py</span></code>, and it is used to launch the gRPC Server process. Specifically, to ensure that the server process can correctly reinitialize the objects sent from the client side and correctly call the model API services, it is necessary to register all subclasses of <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code> that may be used during runtime when launching the server, and properly set the model configurations. There are two ways to launch the server: through python code or command-line instructions.</p>
+<ul>
+<li><p>The method to launch through python code is as follows. You need to specify <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code>, as well as <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code>, and you also need to pass the required model configurations when calling <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>. Suppose there are custom classes <code class="docutils literal notranslate"><span class="pre">AgentA</span></code>, <code class="docutils literal notranslate"><span class="pre">AgentB</span></code>, and <code class="docutils literal notranslate"><span class="pre">AgentC</span></code> that need to be registered, and all three classes are located in the <code class="docutils literal notranslate"><span class="pre">myagents.py</span></code> file and are subclasses of <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<span class="kn">from</span> <span class="nn">agentscope.server</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<span class="kn">from</span> <span class="nn">myagents</span> <span class="kn">import</span> <span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">,</span> <span class="n">AgentC</span>
+
+<span class="n">MODEL_CONFIGS</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">HOST</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
+<span class="n">PORT</span> <span class="o">=</span> <span class="mi">12345</span>
+<span class="n">CUSTOM_CLASSES</span> <span class="o">=</span> <span class="p">[</span><span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">,</span> <span class="n">AgentC</span><span class="p">]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+        <span class="n">model_configs</span><span class="o">=</span><span class="n">MODEL_CONFIGS</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">HOST</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">PORT</span><span class="p">,</span>
+        <span class="n">custom_agent_classes</span><span class="o">=</span><span class="n">CUSTOM_CLASSES</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>The method to launch through command line is as follows. In addition to specifying <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code>, you also need to specify <code class="docutils literal notranslate"><span class="pre">model_config_path</span></code> and <code class="docutils literal notranslate"><span class="pre">agent_dir</span></code>, which correspond to the model configuration file path and the directory where custom agent classes are located, respectively. When installing <code class="docutils literal notranslate"><span class="pre">agentscope</span></code>, the <code class="docutils literal notranslate"><span class="pre">as_server</span></code> command will be installed by default, so you can directly use this command in the command line.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>start<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w"> </span>--port<span class="w"> </span><span class="m">12345</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_myagents.py
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">AgentServerLauncher</span></code> will load and execute custom Python objects. Please thoroughly inspect the objects being loaded before use, as they might contain malicious code that could cause severe system damage. The <code class="docutils literal notranslate"><span class="pre">AgentServerLauncher</span></code> class also has a <code class="docutils literal notranslate"><span class="pre">local_mode</span></code> parameter indicating whether only local access is allowed. It defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>. If access from other machines is required, it should be set to <code class="docutils literal notranslate"><span class="pre">False</span></code>. To avoid network attacks, please only use it in a trusted network environment.</p>
+</div>
+</section>
+<section id="agentserverservicer">
+<h4><code class="docutils literal notranslate"><span class="pre">AgentServerServicer</span></code><a class="headerlink" href="#agentserverservicer" title="Link to this heading"></a></h4>
+<p>The implementation of <code class="docutils literal notranslate"><span class="pre">AgentServerServicer</span></code> is located at <code class="docutils literal notranslate"><span class="pre">src/agentscope/server/servicer.py</span></code>. It is the implementation of the gRPC service responsible for receiving and processing various requests sent from the client side.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">create_agent</span></code> method is called when the client uses <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> on an object of a subclass of <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code>. It recreates the original object on the server and stores it in the <code class="docutils literal notranslate"><span class="pre">agent_pool</span></code> field with <code class="docutils literal notranslate"><span class="pre">id</span></code> as the key.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">call_agent_func</span></code> method is called when the client calls methods or properties on <code class="docutils literal notranslate"><span class="pre">RpcObject</span></code> objects. The input parameters include the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the object being called and the name of the method being called. The specific calling process varies slightly. For synchronous methods and property access, <code class="docutils literal notranslate"><span class="pre">call_agent_func</span></code> retrieves the object from <code class="docutils literal notranslate"><span class="pre">agent_pool</span></code>, calls the corresponding method or property, and blocks the caller until it returns the result. For asynchronous methods, <code class="docutils literal notranslate"><span class="pre">call_agent_func</span></code> packages the input parameters and places them in a task queue, immediately returning the task’s <code class="docutils literal notranslate"><span class="pre">task_id</span></code> to avoid blocking the caller.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AgentServerServicer</span></code> has an executor pool to automatically execute tasks (<code class="docutils literal notranslate"><span class="pre">_process_task</span></code>). The results of these tasks are then placed into a <code class="docutils literal notranslate"><span class="pre">result_pool</span></code>. The <code class="docutils literal notranslate"><span class="pre">result</span></code> method of <code class="docutils literal notranslate"><span class="pre">AsyncResult</span></code> attempts to fetch the corresponding task result from the <code class="docutils literal notranslate"><span class="pre">result_pool</span></code>. If the task result does not exist, it will block the caller until the result is available.</p>
+<section id="executor">
+<h5><code class="docutils literal notranslate"><span class="pre">executor</span></code><a class="headerlink" href="#executor" title="Link to this heading"></a></h5>
+<p>The executor is a thread pool (<code class="docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code>), with the number of threads determined by the <code class="docutils literal notranslate"><span class="pre">capacity</span></code> parameter. The setting of <code class="docutils literal notranslate"><span class="pre">capacity</span></code> greatly impacts performance and needs to be tailored based on specific tasks.
+To enable concurrent execution of various agents within the server, it is best to ensure that the <code class="docutils literal notranslate"><span class="pre">capacity</span></code> is greater than the number of agents running simultaneously in <code class="docutils literal notranslate"><span class="pre">AgentServerServicer</span></code>. Otherwise, this may lead to exponential increases in execution time, or even deadlocks in certain scenarios (such as recursive calls among multiple agents).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">capacity</span></code> parameter can be specified in the <code class="docutils literal notranslate"><span class="pre">as_server</span></code> command via <code class="docutils literal notranslate"><span class="pre">--capacity</span></code>, or directly during the initialization of <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="n">launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">capacity</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>start<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w"> </span>--port<span class="w"> </span><span class="m">12345</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_myagents<span class="w"> </span>--capacity<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+</section>
+<section id="result-pool">
+<h5><code class="docutils literal notranslate"><span class="pre">result_pool</span></code><a class="headerlink" href="#result-pool" title="Link to this heading"></a></h5>
+<p>The <code class="docutils literal notranslate"><span class="pre">ResultPool</span></code> implementation is located in <code class="docutils literal notranslate"><span class="pre">src/agentscope/server/async_result_pool.py</span></code> and is used for managing the execution results of asynchronous methods. There are currently two implementations: <code class="docutils literal notranslate"><span class="pre">local</span></code> and <code class="docutils literal notranslate"><span class="pre">redis</span></code>. The <code class="docutils literal notranslate"><span class="pre">local</span></code> implementation is based on Python’s dictionary type (<code class="docutils literal notranslate"><span class="pre">dict</span></code>), whereas the <code class="docutils literal notranslate"><span class="pre">redis</span></code> implementation is based on Redis. Both implementations include automatic deletion mechanisms to prevent results from consuming too much memory. The <code class="docutils literal notranslate"><span class="pre">local</span></code> implementation allows for timeout-based deletion (<code class="docutils literal notranslate"><span class="pre">max_expire</span></code>) or deletion when a certain number of items is exceeded (<code class="docutils literal notranslate"><span class="pre">max_len</span></code>), while the <code class="docutils literal notranslate"><span class="pre">redis</span></code> implementation only supports timeout-based deletion (<code class="docutils literal notranslate"><span class="pre">max_expire</span></code>).
+During the startup of <code class="docutils literal notranslate"><span class="pre">AgentServerLauncher</span></code>, you can specify which implementation to use by passing in the <code class="docutils literal notranslate"><span class="pre">pool_type</span></code> parameter, with the default being <code class="docutils literal notranslate"><span class="pre">local</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">redis</span></code> is specified, you must also provide the <code class="docutils literal notranslate"><span class="pre">redis_url</span></code>. Below are examples of code and command-line usage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ...</span>
+<span class="n">launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+    <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">pool_type</span><span class="o">=</span><span class="s2">&quot;redis&quot;</span><span class="p">,</span>
+    <span class="n">redis_url</span><span class="o">=</span><span class="s2">&quot;redis://localhost:6379&quot;</span><span class="p">,</span>
+    <span class="n">max_expire_time</span><span class="o">=</span><span class="mi">7200</span><span class="p">,</span> <span class="c1"># 2 hours</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>start<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w"> </span>--port<span class="w"> </span><span class="m">12345</span><span class="w"> </span>--model-config-path<span class="w"> </span>model_config_path<span class="w"> </span>--agent-dir<span class="w"> </span>parent_dir_of_myagents<span class="w"> </span>--pool-type<span class="w"> </span>redis<span class="w"> </span>--redis-url<span class="w"> </span>redis://localhost:6379<span class="w"> </span>--max-expire-time<span class="w"> </span><span class="m">7200</span>
+</pre></div>
+</div>
 <p><a class="reference internal" href="#distribute-en">[Back to the top]</a></p>
+</section>
+</section>
 </section>
 </section>
 </section>

@@ -90,7 +90,6 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.agents.react_agent.html">agentscope.agents.react_agent module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.rpc_agent.html">agentscope.agents.rpc_agent module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.agents.user_agent.html">agentscope.agents.user_agent module</a></li>
 </ul>
 </li>
@@ -104,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
@@ -202,6 +202,39 @@ the agent doesn’t need any input.</p>
 </dd>
 <dt class="field-odd">返回类型<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>Msg</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.rag_agent.LlamaIndexAgent.to_dist">
+<span class="sig-name descname"><span class="pre">to_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pool_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_expire_time:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">7200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_timeout_seconds:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_mode:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_strategy:</span> <span class="pre">~agentscope.rpc.retry_strategy.RetryBase</span> <span class="pre">=</span> <span class="pre">&lt;agentscope.rpc.retry_strategy.RetryFixedTimes</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#agentscope.agents.rag_agent.LlamaIndexAgent.to_dist" title="Link to this definition"></a></dt>
+<dd><p>Convert current object into its distributed version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>“localhost”</cite>) – Hostname of the rpc agent server.</p></li>
+<li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Port of the rpc agent server.</p></li>
+<li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+The max number of agent reply messages that the started agent
+server can accommodate. Note that the oldest message will be
+deleted after exceeding the pool size.</p></li>
+<li><p><strong>max_expire_time</strong> (<cite>int</cite>, defaults to <cite>7200</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+Maximum time for reply messages to be cached in the launched
+agent server. Note that expired messages will be deleted.</p></li>
+<li><p><strong>max_timeout_seconds</strong> (<cite>int</cite>, defaults to <cite>5</cite>) – Max timeout seconds for the rpc call.</p></li>
+<li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
+Whether the started agent server only listens to local
+requests.</p></li>
+<li><p><strong>retry_strategy</strong> (<cite>RetryBase</cite>, defaults to <cite>_DEAFULT_RETRY_STRATEGY</cite>) – The retry strategy for the async rpc call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>the wrapped agent instance with distributed
+functionality</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>RpcObject</cite></p>
 </dd>
 </dl>
 </dd></dl>

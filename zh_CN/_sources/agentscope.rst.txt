@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    agentscope.agents
+   agentscope.environment
    agentscope.manager
    agentscope.memory
    agentscope.message

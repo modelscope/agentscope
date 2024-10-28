@@ -121,8 +121,36 @@
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentServerNotAliveError"><code class="docutils literal notranslate"><span class="pre">AgentServerNotAliveError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentCreationError"><code class="docutils literal notranslate"><span class="pre">AgentCreationError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentCallError"><code class="docutils literal notranslate"><span class="pre">AgentCallError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.AgentServerUnsupportedMethodError"><code class="docutils literal notranslate"><span class="pre">AgentServerUnsupportedMethodError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.AgentServerUnsupportedMethodError.__init__"><code class="docutils literal notranslate"><span class="pre">AgentServerUnsupportedMethodError.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.QuotaExceededError"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.QuotaExceededError.__init__"><code class="docutils literal notranslate"><span class="pre">QuotaExceededError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.EnvError"><code class="docutils literal notranslate"><span class="pre">EnvError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.EnvError.__init__"><code class="docutils literal notranslate"><span class="pre">EnvError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.EnvNotFoundError"><code class="docutils literal notranslate"><span class="pre">EnvNotFoundError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.EnvNotFoundError.__init__"><code class="docutils literal notranslate"><span class="pre">EnvNotFoundError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.EnvAlreadyExistError"><code class="docutils literal notranslate"><span class="pre">EnvAlreadyExistError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.EnvAlreadyExistError.__init__"><code class="docutils literal notranslate"><span class="pre">EnvAlreadyExistError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.EnvUnsupportedFunctionError"><code class="docutils literal notranslate"><span class="pre">EnvUnsupportedFunctionError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.EnvUnsupportedFunctionError.__init__"><code class="docutils literal notranslate"><span class="pre">EnvUnsupportedFunctionError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.EnvTypeError"><code class="docutils literal notranslate"><span class="pre">EnvTypeError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.EnvTypeError.__init__"><code class="docutils literal notranslate"><span class="pre">EnvTypeError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.exception.EnvListenerError"><code class="docutils literal notranslate"><span class="pre">EnvListenerError</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.exception.EnvListenerError.__init__"><code class="docutils literal notranslate"><span class="pre">EnvListenerError.__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -131,6 +159,7 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
@@ -360,6 +389,19 @@ studio.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerUnsupportedMethodError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">AgentServerUnsupportedMethodError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#AgentServerUnsupportedMethodError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentServerUnsupportedMethodError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.AgentServerError" title="agentscope.exception.AgentServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentServerError</span></code></a></p>
+<p>The exception class for agent server not supporting certain method.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.AgentServerUnsupportedMethodError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#AgentServerUnsupportedMethodError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.AgentServerUnsupportedMethodError.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the exception with the message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
 <dt class="sig sig-object py" id="agentscope.exception.QuotaExceededError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">QuotaExceededError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#QuotaExceededError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.QuotaExceededError" title="Link to this definition"></a></dt>
 <dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
@@ -374,6 +416,78 @@ studio.</p>
 </dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.EnvError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">EnvError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#EnvError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvError" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The exception class for env related errors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.EnvError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#EnvError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.EnvNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">EnvNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#EnvNotFoundError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvNotFoundError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.EnvError" title="agentscope.exception.EnvError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvError</span></code></a></p>
+<p>The exception class for env not found error.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.EnvNotFoundError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#EnvNotFoundError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvNotFoundError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.EnvAlreadyExistError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">EnvAlreadyExistError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#EnvAlreadyExistError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvAlreadyExistError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.EnvError" title="agentscope.exception.EnvError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvError</span></code></a></p>
+<p>The exception class for env already exist error.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.EnvAlreadyExistError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#EnvAlreadyExistError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvAlreadyExistError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.EnvUnsupportedFunctionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">EnvUnsupportedFunctionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#EnvUnsupportedFunctionError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvUnsupportedFunctionError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.EnvError" title="agentscope.exception.EnvError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvError</span></code></a></p>
+<p>The exception class for use unsupported function of env error.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.EnvUnsupportedFunctionError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#EnvUnsupportedFunctionError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvUnsupportedFunctionError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.EnvTypeError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">EnvTypeError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#EnvTypeError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvTypeError" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#agentscope.exception.EnvError" title="agentscope.exception.EnvError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvError</span></code></a></p>
+<p>The exception class for use wrong type of env error.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.EnvTypeError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#EnvTypeError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvTypeError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="agentscope.exception.EnvListenerError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">agentscope.exception.</span></span><span class="sig-name descname"><span class="pre">EnvListenerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/agentscope/exception.html#EnvListenerError"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvListenerError" title="Link to this definition"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The exception class for listener related errors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.exception.EnvListenerError.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/exception.html#EnvListenerError.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.exception.EnvListenerError.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

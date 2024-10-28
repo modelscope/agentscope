@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    agentscope.message.msg
-   agentscope.message.placeholder
 
 Module contents
 ---------------

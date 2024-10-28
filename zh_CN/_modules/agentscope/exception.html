@@ -92,6 +92,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../agentscope.utils.html">agentscope.utils package</a></li>
@@ -349,6 +350,23 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
+<div class="viewcode-block" id="AgentServerUnsupportedMethodError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerUnsupportedMethodError">[文档]</a>
+<span class="k">class</span> <span class="nc">AgentServerUnsupportedMethodError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for agent server not supporting certain method.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AgentServerUnsupportedMethodError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerUnsupportedMethodError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">oid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">host</span><span class="p">,</span>
+            <span class="n">port</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Object[</span><span class="si">{</span><span class="n">oid</span><span class="si">}</span><span class="s2">] does not support method[</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
 <span class="c1"># - Monitor related Exceptions</span>
 
 
@@ -372,6 +390,95 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 </div>
+
+
+
+<span class="c1"># - Environment Exceptions</span>
+
+
+<div class="viewcode-block" id="EnvError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvError">[文档]</a>
+<span class="k">class</span> <span class="nc">EnvError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for env related errors.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnvError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EnvNotFoundError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvNotFoundError">[文档]</a>
+<span class="k">class</span> <span class="nc">EnvNotFoundError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for env not found error.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnvNotFoundError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvNotFoundError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EnvAlreadyExistError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvAlreadyExistError">[文档]</a>
+<span class="k">class</span> <span class="nc">EnvAlreadyExistError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for env already exist error.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnvAlreadyExistError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvAlreadyExistError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exist.&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EnvUnsupportedFunctionError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvUnsupportedFunctionError">[文档]</a>
+<span class="k">class</span> <span class="nc">EnvUnsupportedFunctionError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for use unsupported function of env error.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnvUnsupportedFunctionError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvUnsupportedFunctionError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2"> doesn&#39;t have </span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EnvTypeError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvTypeError">[文档]</a>
+<span class="k">class</span> <span class="nc">EnvTypeError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for use wrong type of env error.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnvTypeError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvTypeError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2"> is not an instance of [</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EnvListenerError">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvListenerError">[文档]</a>
+<span class="k">class</span> <span class="nc">EnvListenerError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for listener related errors.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnvListenerError.__init__">
+<a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvListenerError.__init__">[文档]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 </pre></div>
 

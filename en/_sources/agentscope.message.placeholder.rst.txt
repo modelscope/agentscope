@@ -1,7 +1,0 @@
-agentscope.message.placeholder module
-=====================================
-
-.. automodule:: agentscope.message.placeholder
-   :members:
-   :undoc-members:
-   :show-inheritance:

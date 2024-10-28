@@ -139,7 +139,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="kn">from</span> <span class="nn">..service.retrieval.retrieval_from_list</span> <span class="kn">import</span> <span class="n">retrieve_from_list</span>
 <span class="kn">from</span> <span class="nn">..service.retrieval.similarity</span> <span class="kn">import</span> <span class="n">Embedding</span>
 <span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">PlaceholderMessage</span>
+<span class="kn">from</span> <span class="nn">..rpc</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
 
 
 <div class="viewcode-block" id="TemporaryMemory">
@@ -201,16 +201,14 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">else</span><span class="p">:</span>
             <span class="n">record_memories</span> <span class="o">=</span> <span class="n">memories</span>
 
+        <span class="c1"># FIXME: a single message may be inserted multiple times</span>
         <span class="c1"># Assert the message types</span>
         <span class="n">memories_idx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">memory_unit</span> <span class="ow">in</span> <span class="n">record_memories</span><span class="p">:</span>
             <span class="c1"># in case this is a PlaceholderMessage, try to update</span>
             <span class="c1"># the values first</span>
-            <span class="c1"># TODO: Unify PlaceholderMessage and Msg into one class to avoid</span>
-            <span class="c1">#  type error</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">PlaceholderMessage</span><span class="p">):</span>
-                <span class="n">memory_unit</span><span class="o">.</span><span class="n">update_value</span><span class="p">()</span>
-                <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">Msg</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">memory_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">AsyncResult</span><span class="p">):</span>
+                <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">memory_unit</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

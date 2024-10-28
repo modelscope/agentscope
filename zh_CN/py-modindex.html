@@ -95,6 +95,7 @@ window.addEventListener("load", () => mermaid.run());
 <li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.html">agentscope.rpc package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.environment.html">agentscope.environment package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
@@ -178,17 +179,27 @@ window.addEventListener("load", () => mermaid.run());
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="agentscope.agents.rpc_agent.html#module-agentscope.agents.rpc_agent"><code class="xref">agentscope.agents.rpc_agent</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
        <a href="agentscope.agents.user_agent.html#module-agentscope.agents.user_agent"><code class="xref">agentscope.agents.user_agent</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="agentscope.constants.html#module-agentscope.constants"><code class="xref">agentscope.constants</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.environment.html#module-agentscope.environment"><code class="xref">agentscope.environment</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.environment.env.html#module-agentscope.environment.env"><code class="xref">agentscope.environment.env</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.environment.event.html#module-agentscope.environment.event"><code class="xref">agentscope.environment.event</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -229,11 +240,6 @@ window.addEventListener("load", () => mermaid.run());
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="agentscope.message.msg.html#module-agentscope.message.msg"><code class="xref">agentscope.message.msg</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="agentscope.message.placeholder.html#module-agentscope.message.placeholder"><code class="xref">agentscope.message.placeholder</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -373,7 +379,7 @@ window.addEventListener("load", () => mermaid.run());
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="agentscope.rpc.rpc_agent_client.html#module-agentscope.rpc.rpc_agent_client"><code class="xref">agentscope.rpc.rpc_agent_client</code></a></td><td>
+       <a href="agentscope.rpc.retry_strategy.html#module-agentscope.rpc.retry_strategy"><code class="xref">agentscope.rpc.retry_strategy</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -388,12 +394,42 @@ window.addEventListener("load", () => mermaid.run());
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="agentscope.rpc.rpc_async.html#module-agentscope.rpc.rpc_async"><code class="xref">agentscope.rpc.rpc_async</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.rpc.rpc_client.html#module-agentscope.rpc.rpc_client"><code class="xref">agentscope.rpc.rpc_client</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.rpc.rpc_config.html#module-agentscope.rpc.rpc_config"><code class="xref">agentscope.rpc.rpc_config</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.rpc.rpc_meta.html#module-agentscope.rpc.rpc_meta"><code class="xref">agentscope.rpc.rpc_meta</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.rpc.rpc_object.html#module-agentscope.rpc.rpc_object"><code class="xref">agentscope.rpc.rpc_object</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="agentscope.serialize.html#module-agentscope.serialize"><code class="xref">agentscope.serialize</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="agentscope.server.html#module-agentscope.server"><code class="xref">agentscope.server</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="agentscope.server.async_result_pool.html#module-agentscope.server.async_result_pool"><code class="xref">agentscope.server.async_result_pool</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
