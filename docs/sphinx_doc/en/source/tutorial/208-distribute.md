@@ -291,7 +291,7 @@ In addition to providing the `to_dist` method, `RpcMeta` also records callable m
 
 The decorator {func}`async_func<agentscope.rpc.async_func>` is implemented in `src/agentscope/rpc/rpc_meta.py`. The `__call__` and `reply` methods of `AgentBase` and all its subclasses are marked with `async_func` to avoid blocking.
 
-In contrast to `async_func`, there is also the {func}`sync_func<agentscope.rpc.sync_func>` decorator, used to indicate synchronous methods. However, since synchronous methods are the default, it is generally not used.
+In contrast to `async_func`, there is also the {func}`sync_func<agentscope.rpc.sync_func>` decorator, which is used to mark synchronous methods. However, since synchronous methods are the default, they generally do not need to be explicitly marked.
 
 Below is a simple example where we declare a class `Example`. In this class, `sync_method` is a synchronous method, `async_method_basic` and `async_method_complex` are marked as asynchronous methods, and `_protected_method` is a private method.
 
@@ -446,7 +446,7 @@ as_server start --host localhost --port 12345 --model-config-path model_config_p
 
 ##### `result_pool`
 
-The `ResultPool` implementation is located in `src/agentscope/server/async_result_pool.py` and is used for managing the execution results of asynchronous methods. There are currently two implementations: `local` and `redis`. The `local` implementation is based on Python's dictionary type (`dict`), whereas the `redis` implementation is based on Redis. Both implementations include automatic deletion mechanisms to prevent results from consuming too much memory. The `local` implementation allows for timeout-based deletion (`max_expire`) or deletion when a certain number of items is exceeded (`max_len`), while the `redis` implementation only supports timeout-based deletion (`max_expire`).
+The `ResultPool` implementation is located in `src/agentscope/server/async_result_pool.py` and is used for managing the execution results of asynchronous methods. There are currently two implementations: `local` and `redis`. The `local` implementation is based on Python's dictionary type (`dict`), whereas the `redis` implementation is based on Redis. Both implementations include automatic deletion mechanisms to prevent results from consuming too much memory. The `local` implementation allows for timeout-based deletion (`max_expire_time`) or deletion when a certain number of items is exceeded (`max_len`), while the `redis` implementation only supports timeout-based deletion (`max_expire_time`).
 During the startup of `AgentServerLauncher`, you can specify which implementation to use by passing in the `pool_type` parameter, with the default being `local`.
 If `redis` is specified, you must also provide the `redis_url`. Below are examples of code and command-line usage.
 

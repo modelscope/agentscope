@@ -52,7 +52,7 @@ class AgentBase(Operator, metaclass=RpcMeta):
                 Whether the agent has memory.
             to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):
                 The configurations passed to :py:meth:`to_dist` method. Used in
-                :py:class:`_AgentMeta`, when this parameter is provided,
+                :py:class:`RpcMeta`, when this parameter is provided,
                 the agent will automatically be converted into its distributed
                 version. Below are some examples:
 

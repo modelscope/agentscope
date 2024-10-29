@@ -75,11 +75,11 @@ def _setup_agent_server(
             Only listen to local requests.
         capacity (`int`, default to `32`):
             The number of concurrent agents in the server.
-        pool-type (`str`, defaults to `"local"`): The type of the async
+        pool_type (`str`, defaults to `"local"`): The type of the async
             message pool, which can be `local` or `redis`. If `redis` is
             specified, you need to start a redis server before launching
             the server.
-        redis-url (`str`, defaults to `"redis://localhost:6379"`): The
+        redis_url (`str`, defaults to `"redis://localhost:6379"`): The
             url of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             Max number of agent replies that the server can accommodate.
@@ -161,11 +161,11 @@ async def _setup_agent_server_async(  # pylint: disable=R0912
             listen to requests from all hosts.
         capacity (`int`, default to `32`):
             The number of concurrent agents in the server.
-        pool-type (`str`, defaults to `"local"`): The type of the async
+        pool_type (`str`, defaults to `"local"`): The type of the async
             message pool, which can be `local` or `redis`. If `redis` is
             specified, you need to start a redis server before launching
             the server.
-        redis-url (`str`, defaults to `"redis://localhost:6379"`): The url
+        redis_url (`str`, defaults to `"redis://localhost:6379"`): The url
             of the redis server.
         max_pool_size (`int`, defaults to `8192`):
             The max number of agent reply messages that the server can
@@ -355,12 +355,12 @@ class RpcAgentServerLauncher:
                 Socket port of the agent server.
             capacity (`int`, default to `32`):
                 The number of concurrent agents in the server.
-            pool-type (`str`, defaults to `"local"`): The type of the async
+            pool_type (`str`, defaults to `"local"`): The type of the async
                 message pool, which can be `local` or `redis`. If `redis` is
                 specified, you need to start a redis server before launching
                 the server.
-            redis-url (`str`, defaults to `"redis://localhost:6379"`): The
-                address of the redis server.
+            redis_url (`str`): The address of the redis server.
+                Defaults to `redis://localhost:6379`.
             max_pool_size (`int`, defaults to `8192`):
                 The max number of async results that the server can
                 accommodate. Note that the oldest result will be deleted
@@ -547,9 +547,9 @@ def as_server() -> None:
 
         .. code-block:: shell
 
-            as_server start --host localhost \
-                --port 12345 \
-                --model-config-path config.json \
+            as_server start --host localhost \\
+                --port 12345 \\
+                --model-config-path config.json \\
                 --agent-dir ./my_agents
     """
     parser = argparse.ArgumentParser()

@@ -30,7 +30,15 @@ def trigger_listener(env: "Env", event: Event) -> None:
 
 
 def event_func(func: Callable) -> Callable:
-    """A decorator to register an event function.
+    """A decorator to register an event function in `Env` and its
+    subclasses.
+
+    Note:
+
+        This decorator is only available in the subclasses of `Env`.
+        If a function is decorated with `@event_func`, at the end of
+        the function, all listeners bound to the function will be
+        triggered automatically.
 
     Args:
         func (`Callable`): The event function.
@@ -65,8 +73,22 @@ def event_func(func: Callable) -> Callable:
 
 
 class EventListener(ABC):
-    """A class representing a listener for listening the event of an
-    env."""
+    """A base class representing a listener for listening the event of an
+    environment. The actions of the listener should be implemented in the
+    `__call__` method.
+
+    Args:
+        env (`Env`): The environment instance who trigger the listener.
+        event (`Event`): The event information, which contains the event
+        function name (`name`: `str`), the arguments of the event function
+        (`args`: `dict`), and the return value of the event function
+        (`returns`: `Any`).
+
+    Note:
+
+        `EventListener` can only be bound to event functions (decorated
+        with `@event_func`).
+    """
 
     def __init__(self, name: str) -> None:
         """Init a EventListener instance.
@@ -128,8 +150,7 @@ class Env(ABC, metaclass=RpcMeta):
         """Add a child env to the current env.
 
         Args:
-            child (`Env`): The children
-            envs.
+            child (`Env`): The children envs.
 
         Returns:
             `bool`: Whether the children were added successfully.
@@ -200,6 +221,7 @@ class BasicEnv(Env):
     and cannot get value.
 
     Note:
+
         `BasicEnv` is used as the base class to implement other
         envs. Application developers should not use this class.
     """

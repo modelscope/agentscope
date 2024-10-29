@@ -19,7 +19,7 @@ MODEL_CONFIG = {
     "model_type": "dashscope_chat",
     "config_name": MODEL_CONFIG_NAME,
     "model_name": "qwen-max",
-    "api_key": os.environ.get("DASH_API_KEY", ""),
+    "api_key": os.environ.get("DASHSCOPE_API_KEY", ""),
 }
 
 BEGIN_TAG = "[PERSONA BEGIN]"
