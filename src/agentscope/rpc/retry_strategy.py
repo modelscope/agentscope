@@ -86,11 +86,12 @@ class RetryFixedTimes(RetryBase):
                 )
                 file_name = frame_info.filename
                 line_number = frame_info.lineno
-                logger.info(
+                logger.debug(
                     f"Attempt {attempt + 1} at [{file_name}:{line_number}] failed:"
                     f"\n{e}.\nRetrying in {random_delay:.2f} seconds...",
                 )
                 time.sleep(random_delay)
+        logger.error(f"Max timeout exceeded at [{file_name}:{line_number}].")
         raise TimeoutError("Max retry exceeded.")
 
 
@@ -157,12 +158,13 @@ class RetryExpential(RetryBase):
                 )
                 file_name = frame_info.filename
                 line_number = frame_info.lineno
-                logger.info(
+                logger.debug(
                     f"Attempt {attempt + 1} at [{file_name}:{line_number}] failed:"
                     f"\n{e}.\nRetrying in {random_delay:.2f} seconds...",
                 )
                 time.sleep(random_delay)
                 delay *= 2
+        logger.error(f"Max timeout exceeded at [{file_name}:{line_number}].")
         raise TimeoutError("Max retry exceeded.")
 
 

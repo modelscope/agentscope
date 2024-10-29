@@ -142,7 +142,7 @@ if __name__ == "__main__":
 - **智能体服务器进程 (Agent Server Process)**: AgentScope 智能体服务器进程是分布式模式下 Agent 所运行的进程。例如上一节的例子中 `dist_agents` 中的所有 Agent 的本体实际上都运行于智能体服务器进程中。AgentScope 智能体服务器进程可以存在多个。智能体服务器进程可以运行在任意网络可达的机器上，并且每个智能体服务器进程中都可以同时运行多个 Agent。
 
 - **子进程模式 (Child Mode)**: 在子进程模式下，智能体服务器进程由主进程启动的子进程。例如上一节的例子中，`dist_agents` 中的每个 Agent 实际上都是主进程的子进程。该模式是 AgentScope 分布式的默认运行模式，即直接调用 `to_dist` 函数不给定任何参数时会默认使用该模式，[基础用法](#basic_usage-zh)部分采用的就是这种模式。
-- **独立进程模式 (Indpendent Mode)**: 在独立进程模式下，智能体进程相对主进程来说是独立的，需要预先在机器上启动智能体进程，并向 `to_dist` 函数传入一些特定的参数。如果需要实现 Agent 跨机器部署，必须使用该模式，另外如果对性能要求较高或是 Agent 数量较多也建议使用该模式。
+- **独立进程模式 (Independent Mode)**: 在独立进程模式下，智能体进程相对主进程来说是独立的，需要预先在机器上启动智能体进程，并向 `to_dist` 函数传入一些特定的参数。如果需要实现 Agent 跨机器部署，必须使用该模式，另外如果对性能要求较高或是 Agent 数量较多也建议使用该模式。
 
 ### 使用独立进程模式
 
@@ -291,9 +291,9 @@ Client 主要包含 `RpcMeta`、`RpcObject` 两个主要类，其中 `RpcMeta` �
 
 #### `async_func` 和 `AsyncResult`
 
-{func}`async_func<agentscope.rpc.async_func>` 装饰器的实现位于 `src/agentscope/rpc/rpc_meta.py``AgentBase` 及其所有子类的 `__call__` 以及 `reply` 方法都被标记为了 `async_func` 以避免阻塞。
+{func}`async_func<agentscope.rpc.async_func>` 装饰器的实现位于 `src/agentscope/rpc/rpc_meta.py`。`AgentBase` 及其所有子类的 `__call__` 以及 `reply` 方法都被标记为了 `async_func` 以避免阻塞。
 
-与 `async_func` 相对的还有 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不使用。
+与 `async_func` 相对的还有 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不需要显式标注。
 
 如下是一个简单的示例，这里声明了一个 `Example` 类，其中 `sync_method` 是同步方法，`async_method_basic` 以及 `async_method_complex` 被标记为了异步方法，`_protected_method` 是私有方法。
 
@@ -417,7 +417,7 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 
 ```{warning}
 `AgentServerLauncher` 会加载并执行自定义的 Python 对象，在使用前请仔细检查被加载的对象，如果其中包含恶意代码可能会对系统造成严重损害。
-`AgentServerLauncer` 类还存在一个 `local_mode` 参数用于表示是否只允许本地访问，默认为 `True`，如果需要允许其他机器访问，则需要设置为 `False`。为了避免网络攻击，建议仅在可信的网络环境下使用。
+`AgentServerLauncher` 类还存在一个 `local_mode` 参数用于表示是否只允许本地访问，默认为 `True`，如果需要允许其他机器访问，则需要设置为 `False`。为了避免网络攻击，建议仅在可信的网络环境下使用。
 ```
 
 #### `AgentServerServicer`
@@ -433,7 +433,7 @@ Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `Rpc
 ##### `executor`
 
 executor 是一个线程池 (`concurrent.futures.ThreadPoolExecutor`)，其中的线程数量由 `capacity` 参数决定，`capacity` 的设置对运行效率的影响巨大，需要根据具体任务来针对性设置。
-为了让 Server 中的各个 Agent 能够并发执行，最好保证 `capacity` 大于 `AgentServerServicer` 中同时运行的 Agent 的数量，否则可能会导致运行时间成倍增加，甚至在一些特殊场景 (多个agent 之间进行递归调用) 中出现死锁现象。
+为了让 Server 中的各个 Agent 能够并发执行，最好保证 `capacity` 大于 `AgentServerServicer` 中同时运行的 Agent 的数量，否则可能会导致运行时间成倍增加，甚至在一些特殊场景 (多个 agent 之间进行递归调用) 中出现死锁现象。
 
 `capacity` 参数可以在 `as_server` 命令中通过 `--capacity` 指定，或是直接在 `RpcAgentServerLauncher` 初始化时指定。
 
@@ -453,7 +453,7 @@ as_server start --host localhost --port 12345 --model-config-path model_config_p
 
 ##### `result_pool`
 
-`ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_expire`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_expire`)。
+`ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_expire_time`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_expire_time`)。
 在启动 `AgentServerLauncher` 时可以通过传入 `pool_type` 来指定使用哪种实现，默认为`local`。
 如果指定为 `redis` 则还必须传入 `redis_url`，如下是代码以及命令行的使用案例。
 
