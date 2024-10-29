@@ -359,8 +359,8 @@ class RpcAgentServerLauncher:
                 message pool, which can be `local` or `redis`. If `redis` is
                 specified, you need to start a redis server before launching
                 the server.
-            redis-url (`str`, defaults to `"redis://localhost:6379"`): The
-                address of the redis server.
+            redis-url (`str`): The address of the redis server.
+                Defaults to `redis://localhost:6379`.
             max_pool_size (`int`, defaults to `8192`):
                 The max number of async results that the server can
                 accommodate. Note that the oldest result will be deleted
@@ -547,9 +547,9 @@ def as_server() -> None:
 
         .. code-block:: shell
 
-            as_server start --host localhost \
-                --port 12345 \
-                --model-config-path config.json \
+            as_server start --host localhost \\
+                --port 12345 \\
+                --model-config-path config.json \\
                 --agent-dir ./my_agents
     """
     parser = argparse.ArgumentParser()
