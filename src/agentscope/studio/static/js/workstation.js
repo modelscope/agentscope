@@ -24,6 +24,7 @@ const nameToHtmlFile = {
   "TextToImageAgent": "agent-texttoimageagent.html",
   "DictDialogAgent": "agent-dictdialogagent.html",
   "ReActAgent": "agent-reactagent.html",
+  "BroadcastAgent": "agent-broadcastagent.html",
   "Placeholder": "pipeline-placeholder.html",
   "MsgHub": "pipeline-msghub.html",
   "SequentialPipeline": "pipeline-sequentialpipeline.html",
@@ -44,6 +45,7 @@ const nameToHtmlFile = {
   // 'IF/ELSE': 'tool-if-else.html',
   "ImageMotion": "tool-image-motion.html",
   "VideoComposition": "tool-video-composition.html",
+  "CopyNode": "agent-copyagent.html"
 };
 
 const ModelNames48k = [
@@ -611,6 +613,7 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
       }, htmlSourceCode);
     break;
 
+
     // Workflow-Agent
   case "DialogAgent":
     const DialogAgentID = editor.addNode("DialogAgent", 1, 1,
@@ -690,6 +693,34 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
     var nodeElement = document.querySelector(`#node-${ReActAgentID} .node-id`);
     if (nodeElement) {
       nodeElement.textContent = ReActAgentID;
+    }
+    break;
+
+  case "BroadcastAgent":
+    const BroadcastAgentID = editor.addNode("BroadcastAgent", 1, 1,
+      pos_x,
+      pos_y,
+      "BroadcastAgent", {
+        "args": {
+          "name": "",
+          "content": ""
+        }
+      }, htmlSourceCode);
+    var nodeElement = document.querySelector(`#node-${BroadcastAgentID} .node-id`);
+    if (nodeElement) {
+      nodeElement.textContent = BroadcastAgentID;
+    }
+    break;
+
+  case "CopyNode":
+    const CopyNodeID = editor.addNode("CopyNode", 1, 1,
+      pos_x,
+      pos_y,
+      "CopyNode", {
+      }, htmlSourceCode);
+    var nodeElement = document.querySelector(`#node-${CopyNodeID} .node-id`);
+    if (nodeElement) {
+      nodeElement.textContent = nodeElement;
     }
     break;
 
@@ -947,7 +978,6 @@ function initializeMonacoEditor(nodeId) {
     parentNode.addEventListener("DOMNodeRemoved", function () {
       resizeObserver.disconnect();
     });
-
   }, function (error) {
     console.error("Error encountered while loading monaco editor: ", error);
   });
@@ -2349,20 +2379,40 @@ async function fetchHtmlSourceCodeByName(name) {
 
 async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
   const idPlaceholderRegex = /ID_PLACEHOLDER/g;
+  const namePlaceholderRegex = /NAME_PLACEHOLDER/g;
+  const readmePlaceholderRegex = /README_PLACEHOLDER/g;
+
+  const classToReadmeDescription = {
+    "node-DialogAgent": "A dialog agent that can interact with users or other agents",
+    "node-UserAgent": "A proxy agent for user",
+    "node-TextToImageAgent": "Agent for text to image generation",
+    "node-DictDialogAgent": "Agent that generates response in a dict format",
+    "node-ReActAgent": "Agent for ReAct (reasoning and acting) with tools",
+    "node-BroadcastAgent": "A broadcast agent that only broadcasts the messages it receives"
+  };
+
   for (const nodeId of Object.keys(data.drawflow.Home.data)) {
     const node = data.drawflow.Home.data[nodeId];
+
     if (!node.html) {
       if (node.name === "readme") {
-        // Remove the node if its name is "readme"
         delete data.drawflow.Home.data[nodeId];
-        continue; // Skip to the next iteration
+        continue;
       }
-      console.log(node.name);
-      const sourceCode = await fetchHtmlSourceCodeByName(node.name);
 
-      // Add new html attribute to the node
-      console.log(sourceCode);
-      node.html = sourceCode.replace(idPlaceholderRegex, nodeId);
+      node.html = await fetchHtmlSourceCodeByName(node.name);
+
+      if (node.name === "CopyNode") {
+        node.html = node.html.replace(idPlaceholderRegex, node.data.elements[0]);
+        node.html = node.html.replace(namePlaceholderRegex, node.class.split("-").slice(-1)[0]);
+
+        const readmeDescription = classToReadmeDescription[node.class];
+        if (readmeDescription) {
+          node.html = node.html.replace(readmePlaceholderRegex, readmeDescription);
+        }
+      } else {
+        node.html = node.html.replace(idPlaceholderRegex, nodeId);
+      }
     }
   }
 }
