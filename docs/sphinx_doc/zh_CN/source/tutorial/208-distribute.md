@@ -293,7 +293,7 @@ Client 主要包含 `RpcMeta`、`RpcObject` 两个主要类，其中 `RpcMeta` �
 
 {func}`async_func<agentscope.rpc.async_func>` 装饰器的实现位于 `src/agentscope/rpc/rpc_meta.py`。`AgentBase` 及其所有子类的 `__call__` 以及 `reply` 方法都被标记为了 `async_func` 以避免阻塞。
 
-与 `async_func` 相对的还有 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不使用。
+与 `async_func` 相对的还有 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不需要显式标注。
 
 如下是一个简单的示例，这里声明了一个 `Example` 类，其中 `sync_method` 是同步方法，`async_method_basic` 以及 `async_method_complex` 被标记为了异步方法，`_protected_method` 是私有方法。
 

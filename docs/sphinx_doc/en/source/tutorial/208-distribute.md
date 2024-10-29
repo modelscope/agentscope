@@ -291,7 +291,7 @@ In addition to providing the `to_dist` method, `RpcMeta` also records callable m
 
 The decorator {func}`async_func<agentscope.rpc.async_func>` is implemented in `src/agentscope/rpc/rpc_meta.py`. The `__call__` and `reply` methods of `AgentBase` and all its subclasses are marked with `async_func` to avoid blocking.
 
-In contrast to `async_func`, there is also the {func}`sync_func<agentscope.rpc.sync_func>` decorator, used to indicate synchronous methods. However, since synchronous methods are the default, it is generally not used.
+In contrast to `async_func`, there is also the {func}`sync_func<agentscope.rpc.sync_func>` decorator, which is used to mark synchronous methods. However, since synchronous methods are the default, they generally do not need to be explicitly marked.
 
 Below is a simple example where we declare a class `Example`. In this class, `sync_method` is a synchronous method, `async_method_basic` and `async_method_complex` are marked as asynchronous methods, and `_protected_method` is a private method.
 
