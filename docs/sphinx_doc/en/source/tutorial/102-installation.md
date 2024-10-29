@@ -41,9 +41,7 @@ If you prefer to install AgentScope from Pypi, you can do so easily using `pip`:
 
 ```bash
 # For centralized multi-agent applications
-pip install agentscope --pre
-# For distributed multi-agent applications
-pip install agentscope[distribute] --pre # On Mac use `pip install agentscope\[distribute\] --pre`
+pip install agentscope
 ```
 
 ### Install from Source
@@ -59,10 +57,33 @@ cd agentscope
 
 # For centralized multi-agent applications
 pip install -e .
-# For distributed multi-agent applications
-pip install -e .[distribute]  # On Mac use `pip install -e .\[distribute\]`
 ```
 
-**Note**: The `[distribute]` option installs additional dependencies required for distributed applications. Remember to activate your virtual environment before running these commands.
+### Extra Dependencies
+
+The supported optional dependencies for AgentScope are list as follows:
+
+- ollama: Ollama API
+- litellm: Litellm API
+- zhipuai: Zhipuai API
+- gemini: Gemini API
+- service: The dependencies for different service functions
+- distribute: The dependencies for distribution mode
+- full: All the dependencies
+
+You can install one or more of these dependencies by adding them to the installation command.
+
+#### Windows
+```bash
+pip install agentscope[gemini]
+# or
+pip install agentscope[ollama,distribute]
+```
+#### Mac & Linux
+```bash
+pip install agentscope\[gemini\]
+# or
+pip install agentscope\[ollama,distribute\]
+```
 
 [[Return to the top]](#102-installation-en)

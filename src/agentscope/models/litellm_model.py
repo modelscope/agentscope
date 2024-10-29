@@ -323,10 +323,12 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
             # prompt1
             [
                 {
+                    "role": "system",
+                    "content": "You're a helpful assistant"
+                },
+                {
                     "role": "user",
                     "content": (
-                        "You're a helpful assistant\\n"
-                        "\\n"
                         "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"

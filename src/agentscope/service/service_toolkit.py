@@ -21,9 +21,11 @@ from ..exception import (
     JsonParsingError,
     FunctionNotFoundError,
     FunctionCallFormatError,
+    FunctionCallError,
 )
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
+from ..message import Msg
 
 try:
     from docstring_parser import parse
@@ -414,17 +416,30 @@ class ServiceToolkit:
 
         return execute_results_prompt
 
-    def parse_and_call_func(self, text_cmd: Union[list[dict], str]) -> str:
+    def parse_and_call_func(
+        self,
+        text_cmd: Union[list[dict], str],
+        raise_exception: bool = False,
+    ) -> Msg:
         """Parse, check the text and call the function."""
 
-        # --- Step 1: Parse the text according to the tools_call_format
-        cmds = self._parse_and_check_text(text_cmd)
+        try:
+            # --- Step 1: Parse the text according to the tools_call_format
+            cmds = self._parse_and_check_text(text_cmd)
 
-        # --- Step 2: Call the service function ---
+            # --- Step 2: Call the service function ---
 
-        execute_results_prompt = self._execute_func(cmds)
+            execute_results_prompt = self._execute_func(cmds)
 
-        return execute_results_prompt
+        except FunctionCallError as e:
+            # Catch the function calling error that can be handled by
+            # the model
+            if raise_exception:
+                raise e from None
+
+            execute_results_prompt = str(e)
+
+        return Msg("system", execute_results_prompt, "system")
 
     @classmethod
     def get(

@@ -111,7 +111,7 @@ class LlamaIndexAgent(AgentBase):
             )
             query = (
                 "/n".join(
-                    [msg["content"] for msg in history],
+                    [msg.content for msg in history],
                 )
                 if isinstance(history, list)
                 else str(history)
@@ -182,7 +182,7 @@ class LlamaIndexAgent(AgentBase):
 
         # call llm and generate response
         response = self.model(prompt).text
-        msg = Msg(self.name, response)
+        msg = Msg(self.name, response, "assistant")
 
         # Print/speak the message in this agent's voice
         self.speak(msg)

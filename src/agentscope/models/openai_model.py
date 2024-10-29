@@ -9,7 +9,6 @@ from typing import (
     Dict,
     Optional,
     Generator,
-    get_args,
 )
 
 from loguru import logger
@@ -21,7 +20,7 @@ from ._model_utils import (
 from .model import ModelWrapperBase, ModelResponse
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.tools import _convert_to_str, _to_openai_image_url
+from ..utils.common import _convert_to_str, _to_openai_image_url
 
 from ..utils.token_utils import get_openai_max_length
 
@@ -188,7 +187,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     def __call__(
         self,
-        messages: list,
+        messages: list[dict],
         stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
@@ -331,7 +330,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             response=response,
         )
 
-        usage = response.get("usage")
+        usage = response.get("usage", None)
         if usage is not None:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
@@ -474,7 +473,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
-        OpenAI Chat API required.
+        OpenAI Chat API required. If you're using a OpenAI-compatible model
+        without a prefix "gpt-" in its name, the format method will
+        automatically format the input messages into the required format.
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
@@ -487,17 +488,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 The formatted messages in the format that OpenAI Chat API
                 required.
         """
-        # Check if the OpenAI library is installed
-        try:
-            import openai
-        except ImportError as e:
-            raise ImportError(
-                "Cannot find openai package, please install it by "
-                "`pip install openai`",
-            ) from e
 
         # Format messages according to the model name
-        if self.model_name in get_args(openai.types.ChatModel):
+        if self.model_name.startswith("gpt-"):
             return OpenAIChatWrapper.static_format(
                 *args,
                 model_name=self.model_name,

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=C0301
-"""The SWE-agent relay heavily on it's prompts.
-This file contains the neccessary prompts for the SWE-agent.
+"""The SWE-agent relay heavily on its prompts.
+This file contains the necessary prompts for the SWE-agent.
 Some prompts are taken and modified from the original SWE-agent repo
 or the SWE-agent implementation from Open-Devin.
 """
