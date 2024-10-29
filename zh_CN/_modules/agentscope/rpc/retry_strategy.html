@@ -227,11 +227,12 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="p">)</span>
                 <span class="n">file_name</span> <span class="o">=</span> <span class="n">frame_info</span><span class="o">.</span><span class="n">filename</span>
                 <span class="n">line_number</span> <span class="o">=</span> <span class="n">frame_info</span><span class="o">.</span><span class="n">lineno</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> at [</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">line_number</span><span class="si">}</span><span class="s2">] failed:&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">Retrying in </span><span class="si">{</span><span class="n">random_delay</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds...&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random_delay</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max timeout exceeded at [</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">line_number</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;Max retry exceeded.&quot;</span><span class="p">)</span></div>
 </div>
 
@@ -307,12 +308,13 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="p">)</span>
                 <span class="n">file_name</span> <span class="o">=</span> <span class="n">frame_info</span><span class="o">.</span><span class="n">filename</span>
                 <span class="n">line_number</span> <span class="o">=</span> <span class="n">frame_info</span><span class="o">.</span><span class="n">lineno</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> at [</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">line_number</span><span class="si">}</span><span class="s2">] failed:&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">Retrying in </span><span class="si">{</span><span class="n">random_delay</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds...&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random_delay</span><span class="p">)</span>
                 <span class="n">delay</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max timeout exceeded at [</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">line_number</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">&quot;Max retry exceeded.&quot;</span><span class="p">)</span></div>
 </div>
 

@@ -187,12 +187,12 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer">[docs]</a>
 <span class="k">class</span> <span class="nc">AgentServerServicer</span><span class="p">(</span><span class="n">RpcAgentServicer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Servicer for RPC Agent Server (formerly RpcServerSideWrapper)&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="AgentServerServicer.__init__">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span><span class="p">,</span>
@@ -265,7 +265,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.agent_exists">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.agent_exists">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.agent_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">agent_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the agent exists.</span>
 
@@ -279,7 +279,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.get_agent">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_agent">[docs]</a>
     <span class="k">def</span> <span class="nf">get_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the object by agent id.</span>
 
@@ -294,7 +294,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.is_alive">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.is_alive">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.is_alive">[docs]</a>
     <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
@@ -305,7 +305,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.stop">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.stop">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.stop">[docs]</a>
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
@@ -317,7 +317,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.create_agent">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.create_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.create_agent">[docs]</a>
     <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">CreateAgentRequest</span><span class="p">,</span>
@@ -381,7 +381,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.delete_agent">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.delete_agent">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.delete_agent">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
@@ -413,7 +413,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.delete_all_agents">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.delete_all_agents">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.delete_all_agents">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_all_agents</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
@@ -428,7 +428,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.call_agent_func">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.call_agent_func">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.call_agent_func">[docs]</a>
     <span class="k">def</span> <span class="nf">call_agent_func</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0236</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="p">,</span>
@@ -486,7 +486,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.update_placeholder">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.update_placeholder">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.update_placeholder">[docs]</a>
     <span class="k">def</span> <span class="nf">update_placeholder</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="p">,</span>
@@ -517,7 +517,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.get_agent_list">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_agent_list">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_agent_list">[docs]</a>
     <span class="k">def</span> <span class="nf">get_agent_list</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
@@ -540,7 +540,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.get_server_info">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_server_info">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_server_info">[docs]</a>
     <span class="k">def</span> <span class="nf">get_server_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
@@ -558,7 +558,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.set_model_configs">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.set_model_configs">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.set_model_configs">[docs]</a>
     <span class="k">def</span> <span class="nf">set_model_configs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
@@ -579,7 +579,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.get_agent_memory">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.get_agent_memory">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_agent_memory">[docs]</a>
     <span class="k">def</span> <span class="nf">get_agent_memory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
@@ -605,7 +605,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <div class="viewcode-block" id="AgentServerServicer.download_file">
-<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.AgentServerServicer.download_file">[docs]</a>
+<a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.download_file">[docs]</a>
     <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>

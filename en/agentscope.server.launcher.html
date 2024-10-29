@@ -171,15 +171,12 @@
 <li><p><strong>host</strong> (<cite>str</cite>, defaults to <cite>“localhost”</cite>) – Hostname of the agent server.</p></li>
 <li><p><strong>port</strong> (<cite>int</cite>, defaults to <cite>None</cite>) – Socket port of the agent server.</p></li>
 <li><p><strong>capacity</strong> (<cite>int</cite>, default to <cite>32</cite>) – The number of concurrent agents in the server.</p></li>
-<li><p><strong>pool-type</strong> (<cite>str</cite>, defaults to <cite>“local”</cite>) – The type of the async
+<li><p><strong>pool_type</strong> (<cite>str</cite>, defaults to <cite>“local”</cite>) – The type of the async
 message pool, which can be <cite>local</cite> or <cite>redis</cite>. If <cite>redis</cite> is
 specified, you need to start a redis server before launching
 the server.</p></li>
-<li><p><strong>(</strong><strong>str</strong> (<em>redis-url</em>) – //localhost:6379”<a href="#id1"><span class="problematic" id="id2">`</span></a>): The
-address of the redis server.</p></li>
-<li><p><strong>`&quot;redis</strong> (<em>defaults to</em>) – <p>//localhost:6379”<a href="#id5"><span class="problematic" id="id6">`</span></a>): The
-address of the redis server.</p>
-</p></li>
+<li><p><strong>redis_url</strong> (<cite>str</cite>) – The address of the redis server.
+Defaults to <cite>redis://localhost:6379</cite>.</p></li>
 <li><p><strong>max_pool_size</strong> (<cite>int</cite>, defaults to <cite>8192</cite>) – The max number of async results that the server can
 accommodate. Note that the oldest result will be deleted
 after exceeding the pool size.</p></li>
@@ -262,7 +259,10 @@ files</p></li>
 </ul>
 <p>In most cases, you only need to specify the <cite>–host</cite>, <cite>–port</cite> and
 <cite>–model-config-path</cite>, and <cite>–agent-dir</cite>.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>start<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w">                 </span>--port<span class="w"> </span><span class="m">12345</span><span class="w">                 </span>--model-config-path<span class="w"> </span>config.json<span class="w">                 </span>--agent-dir<span class="w"> </span>./my_agents
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>as_server<span class="w"> </span>start<span class="w"> </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--port<span class="w"> </span><span class="m">12345</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--model-config-path<span class="w"> </span>config.json<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--agent-dir<span class="w"> </span>./my_agents
 </pre></div>
 </div>
 </div>
