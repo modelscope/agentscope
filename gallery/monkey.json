@@ -109,14 +109,17 @@
         },
         "9": {
           "id": 9,
-          "name": "TextToImageAgent",
+          "name": "ImageSynthesis",
           "data": {
             "args": {
-              "name": "场景描述",
-              "model_config_name": "wanx-v1"
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
             }
           },
-          "class": "TextToImageAgent",
+          "class": "ImageSynthesis",
           "typenode": false,
           "inputs": {
             "input_1": {

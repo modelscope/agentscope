@@ -47,6 +47,7 @@ from agentscope.studio.tools.image_composition import stitch_images_with_grid
 from agentscope.studio.tools.image_motion import create_video_or_gif_from_image
 from agentscope.studio.tools.video_composition import merge_videos
 from agentscope.studio.tools.condition_operator import eval_condition_operator
+from agentscope.studio.tools.image_synthesis import image_synthesis
 
 from agentscope.studio.tools.web_post import web_post
 from agentscope.studio.tools.broadcast_agent import BroadcastAgent
@@ -852,6 +853,29 @@ class TextToImageServiceNode(WorkflowNode):
         }
 
 
+class ImageSynthesisNode(WorkflowNode):
+    """
+    Text to Image Tool Node
+    """
+
+    node_type = WorkflowNodeType.TOOL
+
+    def _post_init(self) -> None:
+        super()._post_init()
+        self.pipeline = partial(image_synthesis, **self.opt_kwargs)
+
+    def compile(self) -> dict:
+        return {
+            "imports": "from agentscope.studio.tools.image_synthesis import "
+            "image_synthesis\n"
+            "from functools import partial\n",
+            "inits": f"{self.var_name} = partial(image_synthesis,"
+            f" {kwarg_converter(self.opt_kwargs)})",
+            "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
+            f"({DEFAULT_FLOW_VAR})",
+        }
+
+
 class ImageCompositionNode(WorkflowNode):
     """
     Image Composition Node
@@ -1050,6 +1074,7 @@ NODE_NAME_MAPPING = {
     "Post": PostNode,
     "TextToAudioService": TextToAudioServiceNode,
     "TextToImageService": TextToImageServiceNode,
+    "ImageSynthesis": ImageSynthesisNode,
     "ImageComposition": ImageCompositionNode,
     "Code": CodeNode,
     "ImageMotion": ImageMotionNode,

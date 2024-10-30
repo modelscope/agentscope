@@ -16,14 +16,17 @@
       "data": {
         "9": {
           "id": 9,
-          "name": "TextToImageAgent",
+          "name": "ImageSynthesis",
           "data": {
             "args": {
-              "name": "图像生成器",
-              "model_config_name": "wanx-v1"
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
             }
           },
-          "class": "TextToImageAgent",
+          "class": "ImageSynthesis",
           "typenode": false,
           "inputs": {
             "input_1": {
@@ -191,14 +194,17 @@
         },
         "15": {
           "id": 15,
-          "name": "TextToImageAgent",
+          "name": "ImageSynthesis",
           "data": {
             "args": {
-              "name": "图像生成器",
-              "model_config_name": "wanx-v1"
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
             }
           },
-          "class": "TextToImageAgent",
+          "class": "ImageSynthesis",
           "typenode": false,
           "inputs": {
             "input_1": {
@@ -225,14 +231,17 @@
         },
         "16": {
           "id": 16,
-          "name": "TextToImageAgent",
+          "name": "ImageSynthesis",
           "data": {
             "args": {
-              "name": "图像生成器",
-              "model_config_name": "wanx-v1"
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
             }
           },
-          "class": "TextToImageAgent",
+          "class": "ImageSynthesis",
           "typenode": false,
           "inputs": {
             "input_1": {

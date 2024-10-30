@@ -14,41 +14,19 @@
   "drawflow": {
     "Home": {
       "data": {
-        "2": {
-          "id": 2,
-          "name": "dashscope_image_synthesis",
-          "data": {
-            "args": {
-              "config_name": "wanx",
-              "model_name": "wanx-v1",
-              "generate_args": {
-                "n": 1,
-                "size": "1024*1024",
-                "temperature": 0,
-                "seed": 0
-              },
-              "model_type": "dashscope_image_synthesis",
-              "messages_key": "prompt",
-              "api_key": ""
-            }
-          },
-          "class": "dashscope_image_synthesis",
-          "typenode": false,
-          "inputs": {},
-          "outputs": {},
-          "pos_x": 24.88888888888889,
-          "pos_y": -12
-        },
         "3": {
           "id": 3,
-          "name": "TextToImageAgent",
+          "name": "ImageSynthesis",
           "data": {
             "args": {
-              "name": "人物头像生成器",
-              "model_config_name": "wanx"
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
             }
           },
-          "class": "TextToImageAgent",
+          "class": "ImageSynthesis",
           "typenode": false,
           "inputs": {
             "input_1": {
@@ -70,8 +48,8 @@
               ]
             }
           },
-          "pos_x": 555,
-          "pos_y": 179
+          "pos_x": 553,
+          "pos_y": 148
         },
         "4": {
           "id": 4,
@@ -100,7 +78,7 @@
               ]
             }
           },
-          "pos_x": 245.11111111111111,
+          "pos_x": 141,
           "pos_y": 164
         },
         "5": {

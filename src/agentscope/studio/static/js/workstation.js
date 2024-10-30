@@ -21,8 +21,7 @@ const nameToHtmlFile = {
   "Message": "message-msg.html",
   "DialogAgent": "agent-dialogagent.html",
   "UserAgent": "agent-useragent.html",
-  // TODO: rename in config,
-  "TextToImageAgent": "service-text-to-image.html",
+  "ImageSynthesis": "tool-image-synthesis.html",
   "DictDialogAgent": "agent-dictdialogagent.html",
   "ReActAgent": "agent-reactagent.html",
   "BroadcastAgent": "agent-broadcastagent.html",
@@ -829,6 +828,19 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
           "api_key": "",
           "n": 1,
           "size": ""
+        }
+      }, htmlSourceCode);
+    break;
+
+  case "ImageSynthesis":
+    editor.addNode("ImageSynthesis", 1, 1,
+      pos_x, pos_y, "ImageSynthesis", {
+        "args": {
+          "model": "",
+          "api_key": "",
+          "n": 1,
+          "size": "",
+          "save_dir": ""
         }
       }, htmlSourceCode);
     break;
@@ -2360,7 +2372,6 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
   const classToReadmeDescription = {
     "node-DialogAgent": "A dialog agent that can interact with users or other agents",
     "node-UserAgent": "A proxy agent for user",
-    "node-TextToImageAgent": "Agent for text to image generation",
     "node-DictDialogAgent": "Agent that generates response in a dict format",
     "node-ReActAgent": "Agent for ReAct (reasoning and acting) with tools",
     "node-BroadcastAgent": "A broadcast agent that only broadcasts the messages it receives"

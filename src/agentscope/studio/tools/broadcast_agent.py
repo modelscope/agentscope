@@ -16,7 +16,6 @@ class BroadcastAgent(AgentBase):
         sys_prompt: str = None,
         model_config_name: str = None,
         use_memory: bool = False,
-        memory_config: Optional[dict] = None,
     ) -> None:
         """Initialize the dummy agent.
 
@@ -31,15 +30,12 @@ class BroadcastAgent(AgentBase):
                 configuration.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
-            memory_config (`Optional[dict]`):
-                The config of memory.
         """
         super().__init__(
             name=name,
             sys_prompt=sys_prompt,
             model_config_name=model_config_name,
             use_memory=use_memory,
-            memory_config=memory_config,
         )
         self.content = content
 

@@ -32,33 +32,8 @@
                     "typenode": false,
                     "inputs": {},
                     "outputs": {},
-                    "pos_x": -21,
-                    "pos_y": 42
-                },
-                "3": {
-                    "id": 3,
-                    "name": "dashscope_image_synthesis",
-                    "data": {
-                        "args": {
-                            "config_name": "wanx",
-                            "model_name": "wanx-v1",
-                            "generate_args": {
-                                "n": 1,
-                                "size": "1024*1024",
-                                "temperature": 0,
-                                "seed": 0
-                            },
-                            "model_type": "dashscope_image_synthesis",
-                            "messages_key": "prompt",
-                            "api_key": ""
-                        }
-                    },
-                    "class": "dashscope_image_synthesis",
-                    "typenode": false,
-                    "inputs": {},
-                    "outputs": {},
-                    "pos_x": -23,
-                    "pos_y": 153
+                    "pos_x": -10,
+                    "pos_y": 11
                 },
                 "4": {
                     "id": 4,
@@ -66,8 +41,9 @@
                     "data": {
                         "args": {
                             "name": "Host",
-                            "content": "请输入您想生成的绘本故事主角名字",
-                            "url": ""
+                            "content": "请输入您想生成的绘本故事大纲",
+                            "url": "",
+                            "role": "assistant"
                         }
                     },
                     "class": "Message",
@@ -87,8 +63,8 @@
                             ]
                         }
                     },
-                    "pos_x": -23,
-                    "pos_y": 262
+                    "pos_x": -15,
+                    "pos_y": 300
                 },
                 "5": {
                     "id": 5,
@@ -116,12 +92,24 @@
                                 {
                                     "node": "6",
                                     "output": "input_1"
+                                },
+                                {
+                                    "node": "7",
+                                    "output": "input_1"
+                                },
+                                {
+                                    "node": "8",
+                                    "output": "input_1"
+                                },
+                                {
+                                    "node": "9",
+                                    "output": "input_1"
                                 }
                             ]
                         }
                     },
-                    "pos_x": -25,
-                    "pos_y": 376
+                    "pos_x": -18,
+                    "pos_y": 462
                 },
                 "6": {
                     "id": 6,
@@ -129,7 +117,7 @@
                     "data": {
                         "args": {
                             "name": "第一幕",
-                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据主角名称，发挥想象，只生成第一幕的描述，不超过30个字。\n# 输出格式为\n第一幕：xxxx",
+                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据大纲，发挥想象，只生成第一幕的描述，不超过30个字。\n# 输出格式为\n第一幕：xxxx",
                             "model_config_name": "qwen"
                         }
                     },
@@ -159,11 +147,19 @@
                                 {
                                     "node": "14",
                                     "output": "input_1"
+                                },
+                                {
+                                    "node": "8",
+                                    "output": "input_1"
+                                },
+                                {
+                                    "node": "9",
+                                    "output": "input_1"
                                 }
                             ]
                         }
                     },
-                    "pos_x": 341,
+                    "pos_x": 354,
                     "pos_y": 37
                 },
                 "7": {
@@ -172,7 +168,7 @@
                     "data": {
                         "args": {
                             "name": "第二幕",
-                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据第一幕的内容，只生成第二幕的描述，不超过30个字。\n# 输出格式为\n第二幕：xxxx",
+                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据用户提供的绘本大纲和第一幕的内容，只生成第二幕的描述，不超过30个字。\n# 输出格式为\n第二幕：xxxx",
                             "model_config_name": "qwen"
                         }
                     },
@@ -183,6 +179,10 @@
                             "connections": [
                                 {
                                     "node": "6",
+                                    "input": "output_1"
+                                },
+                                {
+                                    "node": "5",
                                     "input": "output_1"
                                 }
                             ]
@@ -202,12 +202,16 @@
                                 {
                                     "node": "14",
                                     "output": "input_1"
+                                },
+                                {
+                                    "node": "9",
+                                    "output": "input_1"
                                 }
                             ]
                         }
                     },
-                    "pos_x": 339,
-                    "pos_y": 156.11111111111111
+                    "pos_x": 359,
+                    "pos_y": 160
                 },
                 "8": {
                     "id": 8,
@@ -215,7 +219,7 @@
                     "data": {
                         "args": {
                             "name": "第三幕",
-                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据第二幕的内容，只生成第三幕的描述，不超过30个字。\n# 输出格式为\n第三幕：xxxx",
+                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据用户提供的大纲和前二幕的内容，只生成第三幕的描述，不超过30个字。\n# 输出格式为\n第三幕：xxxx",
                             "model_config_name": "qwen"
                         }
                     },
@@ -226,6 +230,14 @@
                             "connections": [
                                 {
                                     "node": "7",
+                                    "input": "output_1"
+                                },
+                                {
+                                    "node": "6",
+                                    "input": "output_1"
+                                },
+                                {
+                                    "node": "5",
                                     "input": "output_1"
                                 }
                             ]
@@ -249,8 +261,8 @@
                             ]
                         }
                     },
-                    "pos_x": 357,
-                    "pos_y": 271
+                    "pos_x": 362,
+                    "pos_y": 287
                 },
                 "9": {
                     "id": 9,
@@ -258,7 +270,7 @@
                     "data": {
                         "args": {
                             "name": "第四幕",
-                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据第三幕的内容，只生成第四幕的描述，不超过30个字。\n# 输出格式为\n第四幕：xxxx",
+                            "sys_prompt": "你是一个绘本故事生成助手，绘本故事一共有四幕。请根据用户提供的大纲和前三幕的内容，只生成第四幕的描述，不超过30个字。\n# 输出格式为\n第四幕：xxxx",
                             "model_config_name": "qwen"
                         }
                     },
@@ -269,6 +281,18 @@
                             "connections": [
                                 {
                                     "node": "8",
+                                    "input": "output_1"
+                                },
+                                {
+                                    "node": "5",
+                                    "input": "output_1"
+                                },
+                                {
+                                    "node": "6",
+                                    "input": "output_1"
+                                },
+                                {
+                                    "node": "7",
                                     "input": "output_1"
                                 }
                             ]
@@ -288,19 +312,22 @@
                             ]
                         }
                     },
-                    "pos_x": 341,
-                    "pos_y": 379.1111111111111
+                    "pos_x": 356,
+                    "pos_y": 424
                 },
                 "10": {
                     "id": 10,
-                    "name": "TextToImageAgent",
+                    "name": "ImageSynthesis",
                     "data": {
                         "args": {
-                            "name": "图片生成助手1",
-                            "model_config_name": "wanx"
+                            "model": "wanx-v1",
+                            "api_key": "",
+                            "n": 1,
+                            "size": "1024*1024",
+                            "save_dir": ""
                         }
                     },
-                    "class": "TextToImageAgent",
+                    "class": "ImageSynthesis",
                     "typenode": false,
                     "inputs": {
                         "input_1": {
@@ -322,19 +349,22 @@
                             ]
                         }
                     },
-                    "pos_x": 714,
-                    "pos_y": 105
+                    "pos_x": 715,
+                    "pos_y": 28
                 },
                 "11": {
                     "id": 11,
-                    "name": "TextToImageAgent",
+                    "name": "ImageSynthesis",
                     "data": {
                         "args": {
-                            "name": "图片生成助手2",
-                            "model_config_name": "wanx"
+                            "model": "wanx-v1",
+                            "api_key": "",
+                            "n": 1,
+                            "size": "1024*1024",
+                            "save_dir": ""
                         }
                     },
-                    "class": "TextToImageAgent",
+                    "class": "ImageSynthesis",
                     "typenode": false,
                     "inputs": {
                         "input_1": {
@@ -356,19 +386,22 @@
                             ]
                         }
                     },
-                    "pos_x": 711.1111111111111,
-                    "pos_y": 221
+                    "pos_x": 722,
+                    "pos_y": 136
                 },
                 "12": {
                     "id": 12,
-                    "name": "TextToImageAgent",
+                    "name": "ImageSynthesis",
                     "data": {
                         "args": {
-                            "name": "图片生成助手3",
-                            "model_config_name": "wanx"
+                            "model": "wanx-v1",
+                            "api_key": "",
+                            "n": 1,
+                            "size": "1024*1024",
+                            "save_dir": ""
                         }
                     },
-                    "class": "TextToImageAgent",
+                    "class": "ImageSynthesis",
                     "typenode": false,
                     "inputs": {
                         "input_1": {
@@ -390,19 +423,22 @@
                             ]
                         }
                     },
-                    "pos_x": 722,
-                    "pos_y": 452
+                    "pos_x": 733,
+                    "pos_y": 264
                 },
                 "13": {
                     "id": 13,
-                    "name": "TextToImageAgent",
+                    "name": "ImageSynthesis",
                     "data": {
                         "args": {
-                            "name": "图片生成助手4",
-                            "model_config_name": "wanx"
+                            "model": "wanx-v1",
+                            "api_key": "",
+                            "n": 1,
+                            "size": "1024*1024",
+                            "save_dir": ""
                         }
                     },
-                    "class": "TextToImageAgent",
+                    "class": "ImageSynthesis",
                     "typenode": false,
                     "inputs": {
                         "input_1": {
@@ -424,8 +460,8 @@
                             ]
                         }
                     },
-                    "pos_x": 700.8888888888889,
-                    "pos_y": 571
+                    "pos_x": 727,
+                    "pos_y": 412
                 },
                 "14": {
                     "id": 14,
