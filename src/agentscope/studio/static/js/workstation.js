@@ -9,7 +9,7 @@ let dataToImportStep;
 let currentImportIndex;
 let accumulatedImportData;
 let descriptionStep;
-
+let allimportNodeId = [];
 
 const nameToHtmlFile = {
   "welcome": "welcome.html",
@@ -2160,7 +2160,12 @@ function showImportHTMLPopup() {
             editor.clear();
             editor.import(parsedData);
             importSetupNodes(parsedData);
-            Swal.fire("Imported!", "", "success");
+            Swal.fire("Imported!", "", "success")
+              .then(() => {
+                setTimeout(() => {
+                  updateImportNodes();
+                }, 200);
+              });;
           });
 
       } catch (error) {
@@ -2303,7 +2308,11 @@ function loadWorkflow(fileName) {
               editor.clear();
               editor.import(data);
               importSetupNodes(data);
-              Swal.fire("Imported!", "", "success");
+              Swal.fire("Imported!", "", "success").then(() => {
+                setTimeout(() => {
+                  updateImportNodes();
+                }, 200);
+              });
             });
 
         } catch (error) {
@@ -2368,6 +2377,7 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
   const idPlaceholderRegex = /ID_PLACEHOLDER/g;
   const namePlaceholderRegex = /NAME_PLACEHOLDER/g;
   const readmePlaceholderRegex = /README_PLACEHOLDER/g;
+  allimportNodeId = [];
 
   const classToReadmeDescription = {
     "node-DialogAgent": "A dialog agent that can interact with users or other agents",
@@ -2385,7 +2395,7 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
         delete data.drawflow.Home.data[nodeId];
         continue;
       }
-
+      allimportNodeId.push(nodeId);
       node.html = await fetchHtmlSourceCodeByName(node.name);
 
       if (node.name === "CopyNode") {
@@ -2403,6 +2413,11 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
   }
 }
 
+function updateImportNodes() {
+  allimportNodeId.forEach((nodeId) => {
+    editor.updateConnectionNodes(`node-${nodeId}`);
+  });
+}
 
 function importSetupNodes(dataToImport) {
   Object.keys(dataToImport.drawflow.Home.data).forEach((nodeId) => {
@@ -3022,6 +3037,9 @@ function importGalleryWorkflow(data) {
           if (result.isConfirmed) {
             showEditorTab();
           }
+          setTimeout(() => {
+            updateImportNodes();
+          }, 200);
         });
       });
   } catch (error) {
