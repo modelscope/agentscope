@@ -66,7 +66,8 @@ from .browser.web_browser import WebBrowser, WebElementInfo
 
 def get_help() -> None:
     """Get help message."""
-    help_msg = f"The following service are available:\n{__all__}"
+    tools = "\n - ".join(__all__)
+    help_msg = f"The following service are available:\n{tools}"
     logger.info(help_msg)
 
 

@@ -50,6 +50,24 @@ class TokenCountTest(unittest.TestCase):
                 "name": "Friday",
             },
         ]
+        self.messages_openai_vision = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I want to book a flight to Paris.",
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": "https://example.com/image.jpg",
+                            "detail": "auto",
+                        },
+                    },
+                ],
+            },
+        ]
 
     def test_openai_token_counting(self) -> None:
         """Test OpenAI token counting functions."""
@@ -58,6 +76,9 @@ class TokenCountTest(unittest.TestCase):
 
         n_tokens = count_openai_tokens("gpt-4o", self.messages)
         self.assertEqual(n_tokens, 32)
+
+        n_tokens = count_openai_tokens("gpt-4o", self.messages_openai_vision)
+        self.assertEqual(n_tokens, 186)
 
     @patch("dashscope.Tokenization.call")
     def test_dashscope_token_counting(self, mock_call: MagicMock) -> None:
