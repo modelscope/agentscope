@@ -146,7 +146,9 @@ def count_openai_tokens(  # pylint: disable=too-many-branches
         model_name (`str`):
             The name of the OpenAI Chat model, e.g. "gpt-4o".
         messages (`list[dict[str, str]]`):
-            The list of messages, each message is a dict with the key 'text'.
+            A list of dictionaries. Each dictionary should have the keys
+            of "role" and "content", and an optional key of "name". For vision
+            LLMs, the value of "content" should be a list of dictionaries.
     """
     import tiktoken
 
