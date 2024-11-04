@@ -19,7 +19,7 @@ def count(model_name: str, messages: list[dict[str, str]]) -> int:
         model_name (`str`):
             The name of the model.
         messages (`list[dict[str, str]]`):
-            The list of messages, each message is a dict with the key 'text'.
+            A list of dictionaries.
     """
     # Type checking
     if not isinstance(model_name, str):
@@ -187,7 +187,7 @@ def count_openai_tokens(  # pylint: disable=too-many-branches
             f"model {model_name}.",
         )
 
-    num_tokens = 0
+    num_tokens = 3  # every reply is primed with <|start|>assistant<|message|>
     for message in messages:
         num_tokens += tokens_per_message
         for key, value in message.items():
@@ -209,7 +209,6 @@ def count_openai_tokens(  # pylint: disable=too-many-branches
             if key == "name":
                 num_tokens += tokens_per_name
 
-    num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
     return num_tokens
 
 
