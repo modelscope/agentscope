@@ -140,6 +140,8 @@ def count_openai_tokens(  # pylint: disable=too-many-branches
     """Count the number of tokens for the given OpenAI Chat model and
     messages.
 
+    Refer to https://platform.openai.com/docs/advanced-usage/managing-tokens
+
     Args:
         model_name (`str`):
             The name of the OpenAI Chat model, e.g. "gpt-4o".
