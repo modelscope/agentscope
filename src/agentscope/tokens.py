@@ -265,7 +265,6 @@ def count_dashscope_tokens(
     """
     try:
         import dashscope
-        from dashscope.common.constants import DASHSCOPE_API_KEY_ENV
     except ImportError as exc:
         raise ImportError(
             "The package `dashscope` is required for token counting "
@@ -275,7 +274,7 @@ def count_dashscope_tokens(
     response = dashscope.Tokenization.call(
         model=model_name,
         messages=messages,
-        api_key=api_key or os.environ.get(DASHSCOPE_API_KEY_ENV),
+        api_key=api_key or os.environ.get("DASHSCOPE_API_KEY"),
     )
 
     if response.status_code != HTTPStatus.OK:
