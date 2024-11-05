@@ -138,6 +138,14 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">dashscope</span>
+
+    <span class="n">dashscope_version</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="k">if</span> <span class="n">dashscope_version</span> <span class="o">&lt;</span> <span class="s2">&quot;1.19.0&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;You are using &#39;dashscope&#39; version </span><span class="si">{</span><span class="n">dashscope_version</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="s2">&quot;which is below the recommended version 1.19.0. &quot;</span>
+            <span class="s2">&quot;Please consider upgrading to maintain compatibility.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="kn">from</span> <span class="nn">dashscope.api_entities.dashscope_response</span> <span class="kn">import</span> <span class="n">GenerationResponse</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">dashscope</span> <span class="o">=</span> <span class="kc">None</span>
@@ -183,7 +191,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">if</span> <span class="n">dashscope</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;The package &#39;dashscope&#39; is not installed. Please install it &quot;</span>
-                <span class="s2">&quot;by running `pip install dashscope==1.14.1`&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;by running `pip install dashscope&gt;=1.19.0`&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>

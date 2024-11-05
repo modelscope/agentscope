@@ -331,7 +331,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The package dashscope is not found. Please install it by &quot;</span>
-            <span class="s2">&quot;running `pip install dashscope==1.14.1`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;running `pip install dashscope&gt;=1.19.0`&quot;</span><span class="p">,</span>
         <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
 
     <span class="n">callback</span> <span class="o">=</span> <span class="n">RecognitionCallback</span><span class="p">()</span>
