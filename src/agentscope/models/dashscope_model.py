@@ -13,6 +13,14 @@ from ..utils.common import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
+
+    dashscope_version = dashscope.version.__version__
+    if dashscope_version < "1.19.0":
+        logger.warning(
+            f"You are using 'dashscope' version {dashscope_version}, "
+            "which is below the recommended version 1.19.0. "
+            "Please consider upgrading to maintain compatibility.",
+        )
     from dashscope.api_entities.dashscope_response import GenerationResponse
 except ImportError:
     dashscope = None
@@ -54,7 +62,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
         if dashscope is None:
             raise ImportError(
                 "The package 'dashscope' is not installed. Please install it "
-                "by running `pip install dashscope==1.14.1`",
+                "by running `pip install dashscope>=1.19.0`",
             )
 
         self.generate_args = generate_args or {}
