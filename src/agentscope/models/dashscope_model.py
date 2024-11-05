@@ -68,8 +68,6 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
-        if self.api_key:
-            dashscope.api_key = self.api_key
         self.max_length = None
 
     def format(
