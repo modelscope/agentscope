@@ -197,8 +197,6 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
-            <span class="n">dashscope</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -384,7 +382,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;incremental_output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">Generation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">Generation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># step3: invoke llm api, record the invocation and update the monitor</span>
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
@@ -635,6 +633,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">ImageSynthesis</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">HTTPStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">:</span>
@@ -751,6 +750,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">TextEmbedding</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
             <span class="nb">input</span><span class="o">=</span><span class="n">texts</span><span class="p">,</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -886,6 +886,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">MultiModalConversation</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># Unhandled code path here</span>
