@@ -245,7 +245,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         if stream:
             kwargs["incremental_output"] = True
 
-        response = dashscope.Generation.call(**kwargs)
+        response = dashscope.Generation.call(api_key=self.api_key, **kwargs)
 
         # step3: invoke llm api, record the invocation and update the monitor
         if stream:
@@ -490,6 +490,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         response = dashscope.ImageSynthesis.call(
             model=self.model_name,
             prompt=prompt,
+            api_key=self.api_key,
             **kwargs,
         )
         if response.status_code != HTTPStatus.OK:
@@ -603,6 +604,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         response = dashscope.TextEmbedding.call(
             input=texts,
             model=self.model_name,
+            api_key=self.api_key,
             **kwargs,
         )
 
@@ -735,6 +737,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         response = dashscope.MultiModalConversation.call(
             model=self.model_name,
             messages=messages,
+            api_key=self.api_key,
             **kwargs,
         )
         # Unhandled code path here
