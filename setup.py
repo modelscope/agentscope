@@ -75,6 +75,8 @@ extra_dev_requires = [
     "sphinx_rtd_theme",
     "myst-parser",
     "sphinxcontrib-mermaid",
+    # extra
+    "transformers",
 ]
 
 extra_gradio_requires = [
