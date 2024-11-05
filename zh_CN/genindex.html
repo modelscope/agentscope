@@ -1245,6 +1245,13 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       </ul></li>
       <li>
+    agentscope.tokens
+
+      <ul>
+        <li><a href="agentscope.tokens.html#module-agentscope.tokens">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.utils
 
       <ul>
@@ -1511,12 +1518,12 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper.config_name">config_name（agentscope.models.dashscope_model.DashScopeImageSynthesisWrapper 属性）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.config_name">config_name（agentscope.models.dashscope_model.DashScopeMultiModalWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper.config_name">config_name（agentscope.models.dashscope_model.DashScopeTextEmbeddingWrapper 属性）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.config_name">config_name（agentscope.models.gemini_model.GeminiChatWrapper 属性）</a>
 </li>
       <li><a href="agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper.config_name">config_name（agentscope.models.gemini_model.GeminiEmbeddingWrapper 属性）</a>
@@ -1581,7 +1588,17 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="agentscope.service.retrieval.similarity.html#agentscope.service.retrieval.similarity.cos_sim">cos_sim()（在 agentscope.service.retrieval.similarity 模块中）</a>
 </li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.count">count()（在 agentscope.tokens 模块中）</a>
+</li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.count_dashscope_tokens">count_dashscope_tokens()（在 agentscope.tokens 模块中）</a>
+</li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.count_gemini_tokens">count_gemini_tokens()（在 agentscope.tokens 模块中）</a>
+</li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.count_huggingface_tokens">count_huggingface_tokens()（在 agentscope.tokens 模块中）</a>
+</li>
       <li><a href="agentscope.utils.token_utils.html#agentscope.utils.token_utils.count_openai_token">count_openai_token()（在 agentscope.utils.token_utils 模块中）</a>
+</li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.count_openai_tokens">count_openai_tokens()（在 agentscope.tokens 模块中）</a>
 </li>
       <li><a href="agentscope.rpc.rpc_object.html#agentscope.rpc.rpc_object.RpcObject.create">create() （agentscope.rpc.rpc_object.RpcObject 方法）</a>
 </li>
@@ -2753,6 +2770,8 @@ window.addEventListener("load", () => mermaid.run());
 </li>
         <li><a href="agentscope.studio.utils.html#module-agentscope.studio.utils">agentscope.studio.utils</a>
 </li>
+        <li><a href="agentscope.tokens.html#module-agentscope.tokens">agentscope.tokens</a>
+</li>
         <li><a href="agentscope.utils.html#module-agentscope.utils">agentscope.utils</a>
 </li>
         <li><a href="agentscope.utils.common.html#module-agentscope.utils.common">agentscope.utils.common</a>
@@ -3170,6 +3189,8 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="agentscope.rpc.html#agentscope.rpc.RpcMeta.register_class">register_class()（agentscope.rpc.RpcMeta 静态方法）</a>
 </li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.register_model">register_model()（在 agentscope.tokens 模块中）</a>
+</li>
       <li><a href="agentscope.environment.event.html#agentscope.environment.event.Holdable.release">release() （agentscope.environment.event.Holdable 方法）</a>
 </li>
       <li><a href="agentscope.environment.html#agentscope.environment.BasicEnv.remove_child">remove_child() （agentscope.environment.BasicEnv 方法）</a>
@@ -3420,10 +3441,10 @@ window.addEventListener("load", () => mermaid.run());
 </li>
       <li><a href="agentscope.manager.html#agentscope.manager.MonitorManager.show_text_and_embedding_tokens">show_text_and_embedding_tokens() （agentscope.manager.MonitorManager 方法）</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy">ShrinkPolicy（agentscope.constants 中的类）</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.server.launcher.RpcAgentServerLauncher 方法）</a>
 </li>
       <li><a href="agentscope.server.html#agentscope.server.RpcAgentServerLauncher.shutdown">shutdown() （agentscope.server.RpcAgentServerLauncher 方法）</a>
@@ -3495,6 +3516,8 @@ window.addEventListener("load", () => mermaid.run());
       <li><a href="agentscope.service.text_processing.summarization.html#agentscope.service.text_processing.summarization.summarization">summarization()（在 agentscope.service.text_processing.summarization 模块中）</a>
 </li>
       <li><a href="agentscope.constants.html#agentscope.constants.ShrinkPolicy.SUMMARIZE">SUMMARIZE（agentscope.constants.ShrinkPolicy 属性）</a>
+</li>
+      <li><a href="agentscope.tokens.html#agentscope.tokens.supported_models">supported_models()（在 agentscope.tokens 模块中）</a>
 </li>
       <li><a href="agentscope.pipelines.html#agentscope.pipelines.switchpipeline">switchpipeline()（在 agentscope.pipelines 模块中）</a>
 </li>

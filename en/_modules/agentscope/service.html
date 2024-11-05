@@ -189,7 +189,10 @@ window.addEventListener("load", () => mermaid.run());
 <a class="viewcode-back" href="../../agentscope.service.html#agentscope.service.get_help">[docs]</a>
 <span class="k">def</span> <span class="nf">get_help</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get help message.&quot;&quot;&quot;</span>
-    <span class="n">help_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The following service are available:</span><span class="se">\n</span><span class="si">{</span><span class="n">__all__</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">help_msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> - &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">[</span><span class="s2">&quot;The following services are available:&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">__all__</span><span class="p">[</span><span class="mi">4</span><span class="p">:],</span>
+    <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">help_msg</span><span class="p">)</span></div>
 
 

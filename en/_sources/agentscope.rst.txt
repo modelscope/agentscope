@@ -36,6 +36,7 @@ Submodules
    agentscope.logging
    agentscope.msghub
    agentscope.serialize
+   agentscope.tokens
 
 Module contents
 ---------------

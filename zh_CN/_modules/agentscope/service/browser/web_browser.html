@@ -430,7 +430,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;element =&gt; element.focus()&quot;</span><span class="p">,</span> <span class="n">web_ele</span><span class="p">)</span>
 
         <span class="c1"># Type in the text</span>
-        <span class="n">web_ele</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">web_ele</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_load</span><span class="p">(</span>
             <span class="s2">&quot;Wait for finish typing&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Finished&quot;</span><span class="p">,</span>
