@@ -231,7 +231,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
-        """Format the input string or dict into the format that the model
+        """Format the input messages into the format that the model
         API required."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"
@@ -243,7 +243,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
-        input messages into a user message.
+        input messages into a system message (if provided) and a user message.
 
         Note this strategy maybe not suitable for all scenarios,
         and developers are encouraged to implement their own prompt
@@ -271,10 +271,12 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             # prompt1
             [
                 {
+                    "role": "system",
+                    "content": "You're a helpful assistant"
+                },
+                {
                     "role": "user",
                     "content": (
-                        "You're a helpful assistant\\n"
-                        "\\n"
                         "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
@@ -340,11 +342,6 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 )
 
         content_components = []
-        # Add system prompt at the beginning if provided
-        if sys_prompt is not None:
-            if not sys_prompt.endswith("\n"):
-                sys_prompt += "\n"
-            content_components.append(sys_prompt)
 
         # The conversation history is added to the user message if not empty
         if len(dialogue) > 0:
@@ -356,6 +353,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 "content": "\n".join(content_components),
             },
         ]
+
+        # Add system prompt at the beginning if provided
+        if sys_prompt is not None:
+            messages = [{"role": "system", "content": sys_prompt}] + messages
 
         return messages
 

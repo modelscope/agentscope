@@ -1,0 +1,14 @@
+[
+    {
+        "config_name": "model",
+        "model_type": "openai_chat",
+        "model_name": "path-to-your-model-dir",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://localhost:8083/v1"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    }
+]

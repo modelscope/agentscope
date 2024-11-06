@@ -295,7 +295,7 @@ def _upload_file_to_oss_online(**kwargs: Any) -> Response:
         return jsonify(
             {
                 "message": f"The workflow data size exceeds "
-                f"{FILE_SIZE_LIMIT/(1024*1024)} MB limit",
+                f"{FILE_SIZE_LIMIT / (1024 * 1024)} MB limit",
             },
         )
 

@@ -9,7 +9,6 @@ from typing import (
     Dict,
     Optional,
     Generator,
-    get_args,
 )
 
 from loguru import logger
@@ -474,7 +473,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
-        OpenAI Chat API required.
+        OpenAI Chat API required. If you're using a OpenAI-compatible model
+        without a prefix "gpt-" in its name, the format method will
+        automatically format the input messages into the required format.
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
@@ -487,17 +488,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 The formatted messages in the format that OpenAI Chat API
                 required.
         """
-        # Check if the OpenAI library is installed
-        try:
-            import openai
-        except ImportError as e:
-            raise ImportError(
-                "Cannot find openai package, please install it by "
-                "`pip install openai`",
-            ) from e
 
         # Format messages according to the model name
-        if self.model_name in get_args(openai.types.ChatModel):
+        if self.model_name.startswith("gpt-"):
             return OpenAIChatWrapper.static_format(
                 *args,
                 model_name=self.model_name,

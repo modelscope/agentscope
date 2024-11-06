@@ -123,7 +123,7 @@ class ReActAgent(AgentBase):
         """The reply method of the agent."""
         self.memory.add(x)
 
-        for _ in range(10):
+        for _ in range(self.max_iters):
             # Step 1: Reasoning: decide what function to call
             function_call = self._reasoning()
 
