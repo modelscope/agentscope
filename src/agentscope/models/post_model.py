@@ -296,16 +296,14 @@ class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
         }
         """
         if (
-                "data" not in response or
-                len(response["data"]) < 1 or
-                "embedding" not in response["data"][0]
+            "data" not in response
+            or len(response["data"]) < 1
+            or "embedding" not in response["data"][0]
         ):
             error_msg = json.dumps(response, ensure_ascii=False, indent=2)
             logger.error(f"Error in embedding API call:\n{error_msg}")
             raise ValueError(f"Error in embedding API call:\n{error_msg}")
-        embeddings = [
-            data["embedding"] for data in response["data"]
-        ]
+        embeddings = [data["embedding"] for data in response["data"]]
         return ModelResponse(
             embedding=embeddings,
             raw=response,
