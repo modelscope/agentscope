@@ -273,37 +273,37 @@ class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
         Args:
             response (`dict`):
             The response obtained from the API. This parsing assume the
-            structure of the response is as following:
+            structure of the response is the same as OpenAI's as following:
         {
-            "code": 200,
-            "data": {
-                ...
-                "response": {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.001,
-                                ...
-                            ],
-                            ...
-                        }
-                    ],
-                    "model": "xxxx",
-                    ...
-                },
-            },
+          "object": "list",
+          "data": [
+            {
+              "object": "embedding",
+              "embedding": [
+                0.0023064255,
+                -0.009327292,
+                .... (1536 floats total for ada-002)
+                -0.0028842222,
+              ],
+              "index": 0
+            }
+          ],
+          "model": "text-embedding-ada-002",
+          "usage": {
+            "prompt_tokens": 8,
+            "total_tokens": 8
+          }
         }
         """
-        if "data" not in response["data"]["response"]:
-            if "error" in response["data"]["response"]:
-                error_msg = response["data"]["response"]["error"]["message"]
-            else:
-                error_msg = response["data"]["response"]
+        if (
+            "data" not in response
+            or len(response["data"]) < 1
+            or "embedding" not in response["data"][0]
+        ):
+            error_msg = json.dumps(response, ensure_ascii=False, indent=2)
             logger.error(f"Error in embedding API call:\n{error_msg}")
             raise ValueError(f"Error in embedding API call:\n{error_msg}")
-        embeddings = [
-            data["embedding"] for data in response["data"]["response"]["data"]
-        ]
+        embeddings = [data["embedding"] for data in response["data"]]
         return ModelResponse(
             embedding=embeddings,
             raw=response,
