@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
-""" Version of AgentScope."""
+"""Version of AgentScope."""
 
-__version__ = "0.1.1.dev"
+__version__ = "0.1.2.dev"
