@@ -80,7 +80,7 @@ extra_dev_requires = [
 ]
 
 extra_gradio_requires = [
-    "gradio==4.19.1",
+    "gradio==4.44.1",
     "modelscope_studio==0.0.5",
 ]
 
