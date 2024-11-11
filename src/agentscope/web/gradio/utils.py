@@ -174,7 +174,7 @@ def audio2text(audio_path: str) -> str:
     except ImportError as e:
         raise ImportError(
             "The package dashscope is not found. Please install it by "
-            "running `pip install dashscope==1.14.1`",
+            "running `pip install dashscope>=1.19.0`",
         ) from e
 
     callback = RecognitionCallback()

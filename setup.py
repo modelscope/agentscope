@@ -38,7 +38,7 @@ minimal_requires = [
     "scipy",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
-    "dashscope==1.14.1",
+    "dashscope>=1.19.0",
 ]
 
 extra_service_requires = [
@@ -64,7 +64,8 @@ extra_distribute_requires = [
     "grpcio-tools==1.60.0",
     "protobuf==4.25.0",
     "expiringdict",
-    "dill",
+    "cloudpickle",
+    "redis",
 ]
 
 extra_dev_requires = [
@@ -78,6 +79,8 @@ extra_dev_requires = [
     "sphinx_rtd_theme",
     "myst-parser",
     "sphinxcontrib-mermaid",
+    # extra
+    "transformers",
 ]
 
 extra_gradio_requires = [
@@ -168,7 +171,7 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.studio:init",
+            "as_studio=agentscope.studio:as_studio",
             "as_gradio=agentscope.web.gradio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
             "as_server=agentscope.server.launcher:as_server",
