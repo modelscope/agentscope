@@ -383,10 +383,7 @@ class PlaceHolderNode(WorkflowNode):
     """
 
     node_type = WorkflowNodeType.PIPELINE
-
-    def _post_init(self) -> None:
-        super()._post_init()
-        self.pipeline = placeholder
+    pipeline = staticmethod(placeholder)
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)
@@ -601,7 +598,7 @@ class SwitchPipelineNode(WorkflowNode):
 
         if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
             # No default_operators provided
-            default_operators = placeholder
+            default_operators = PlaceHolderNode
             self.default_var_name = "placeholder"
         elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
             # default_operators provided
@@ -618,7 +615,7 @@ class SwitchPipelineNode(WorkflowNode):
             self.dep_opts,
             self.dep_vars,
         ):
-            case_operators[key] = value.pipeline
+            case_operators[key] = value
             self.case_operators_var[key] = var
         self.opt_kwargs.pop("cases")
         self.source_kwargs.pop("cases")
@@ -1105,6 +1102,9 @@ def get_all_agents(
         seen_agents = set()
 
     all_agents = []
+
+    if not hasattr(node.pipeline, "participants"):
+        return []
 
     for participant in node.pipeline.participants:
         if participant.node_type == WorkflowNodeType.COPY:
