@@ -2,422 +2,475 @@
 
 # 分布式
 
-AgentScope实现了基于Actor模式的智能体分布式部署和并行优化，并提供以下的特点：
+为了提供更好的性能以及支持更多的 Agent 同时运行，AgentScope 实现了基于 Actor 范式的 并行/分布式模式（后续简称为分布式模式）。该模式相比传统单进程模式具有以下特点：
 
-- **自动并行优化**：运行时自动实现应用并行优化，无需额外优化成本；
-- **应用编写中心化**：无需分布式背景知识，轻松编排分布式应用程序流程；
-- **零成本自动迁移**：中心化的Multi-Agent应用可以轻松转化成分布式模式
+- **高性能**: 同一应用中的不同 Agent 以及其他服务可以运行不同进程甚至不同机器上，充分利用计算资源释放性能。
+- **自动并行化**: 基于 Actor 模式，每个 Agent都具有独立的状态，在编写应用时无需考虑调用顺序、资源竞争等问题，自动实现应用并行化。
+- **零迁移成本**: 代码与单机模式完全兼容，单机模式可运行的应用可以零成本直接迁移至并行/分布式模式。
 
-本教程将详细介绍AgentScope分布式的实现原理和使用方法。
+本节将详细介绍 AgentScope 分布式的使用方法并阐述其原理。
 
-## 使用方法
+(basic_usage-zh)=
 
-AgentScope中，我们将运行应用流程的进程称为**主进程 (Main Process)**，而所有的智能体都会运行在额外的 **智能体服务器进程 (Agent Server Process)** 中。
-根据主进程与智能体服务器进程之间的关系，AgentScope 为每个 Agent 提供了两种启动模式：**子进程模式 (Child)** 和 **独立进程模式 (Indpendent)**。
-子进程模式中，开发者可以从主进程中启动所有的智能体服务器进程，而独立进程模式中，智能体服务器进程相对主进程来说是独立的，需要在对应的机器上启动智能体服务器进程。
+## 基础用法
 
-上述概念有些复杂，但是不用担心，对于应用开发者而言，仅需将已有的智能体转化为对应的分布式版本，其余操作都和正常的单机版本完全一致。
-
-### 步骤1: 转化为分布式版本
-
-AgentScope 中所有智能体都可以通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为对应的分布式版本。
-但需要注意，你的智能体必须继承自 {class}`agentscope.agents.AgentBase<agentscope.agents.AgentBase>` 类，因为是 `AgentBase` 提供了 `to_dist` 方法。
-
-假设有两个智能体类`AgentA`和`AgentB`，它们都继承自 `AgentBase`。
-
-```python
-a = AgentA(
-    name="A"
-    # ...
-)
-b = AgentB(
-    name="B"
-    # ...
-)
-```
-
-接下来我们将介绍如何将智能体转化到两种分布式模式。
-
-#### 子进程模式
-
-要使用该模式，你只需要调用各智能体的 `to_dist()` 方法，并且不需要提供任何参数。
-AgentScope 会自动帮你从主进程中启动智能体服务器进程并将智能体部署到对应的子进程上。
-
-```python
-# Subprocess mode
-a = AgentA(
-    name="A"
-    # ...
-).to_dist()
-b = AgentB(
-    name="B"
-    # ...
-).to_dist()
-```
-
-#### 独立进程模式
-
-在独立进程模式中，需要首先在目标机器上启动智能体服务器进程，启动时需要提供该服务器能够使用的模型的配置信息，以及服务器的 IP 和端口号。
-例如想要将两个智能体服务进程部署在 IP 分别为 `ip_a` 和 `ip_b` 的机器上（假设这两台机器分别为`Machine1` 和 `Machine2`）。
-你可以在 `Machine1` 上运行如下代码。在运行之前请确保该机器能够正确访问到应用中所使用的所有模型。具体来讲，需要将用到的所有模型的配置信息放置在 `model_config_path_a` 文件中，并检查API key 等环境变量是否正确设置，模型配置文件样例可参考 `examples/model_configs_template`。除此之外，还要将那些需要在该服务器中运行的自定义 Agent 类在 `custom_agent_classes` 中注册，以便启动的服务器能够正确识别这些自定义的 Agent，如果只是使用 AgentScope 内置的 Agent 类,则不需要填写 `custom_agent_classes`。
+分布式模式相比传统模式对运行代码几乎没有任何修改，仅需要在 Agent 初始化阶段调用 {func}`to_dist<agentscope.rpc.RpcMeta.to_dist>` 函数即可。
 
 ```python
 # import some packages
 
-# register models which can be used in the server
-agentscope.init(
-    model_configs=model_config_path_a,
-)
-# Create an agent service process
-server = RpcAgentServerLauncher(
-    host="ip_a",
-    port=12001,  # choose an available port
-    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
-)
+# init agentscope
 
-# Start the service
-server.launch()
-server.wait_until_terminate()
+# 传统模式下的初始化
+# agent = Agent(...)
+
+# 分布式模式下的初始化
+agent = Agent(...).to_dist()
+
+x = Msg(...)
+y = agent(x)
 ```
 
-为了进一步简化使用，可以在命令行中输入如下指令来代替上述代码：
+本节接下来将以一个网页检索的案例来展示具体如何使用 AgentScope 的分布式模式。
+为了突出 AgentScope 分布式模式所能带来的加速效果，这里使用了一个简单的自定义 `WebAgent`。
+该 Agent 会用 sleep 5 秒来模拟爬取网页并从中寻找问题答案的过程，样例中共有 5 个 Agent，每个 Agent 都会爬取一个网页并寻找问题答案。
 
-```shell
-as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b
-```
-
-> Note:
-> `--agent-dir` 用来指定你的自定义 Agent 类所在的目录。
-> 请确保所有的自定义 Agent 类都位于 `--agent-dir` 指定的目录下，并且它们所依赖的自定义模块也都位于该目录下。
-> 另外，因为上述指令会加载目录下的所有 Python 文件，在运行前请确保指定的目录内没有恶意文件，以避免出现安全问题。
-
-在 `Machine2` 上运行如下代码，这里同样要确保已经将模型配置文件放置在 `model_config_path_b` 位置并设置环境变量，从而确保运行在该机器上的 Agent 能够正常访问到模型。
+传统模式与分布式模式的区别仅在与初始化阶段，即 `init_without_dist` 和 `init_with_dist`。
+`init_with_dist` 函数相较于 `init_without_dist` 的唯一区别在于额外调用了 `to_dist` 函数。
+在初始化完成后具体运行部分的代码完全相同，都是 `run` 函数，但两种模式的运行耗时却有较大差异。
 
 ```python
-# import some packages
+# 请不要使用 jupyter notebook 运行该代码
+# 请将代码拷贝到 `dist_main.py` 文件后使用 `python dist_main.py` 命令运行该代码
+# 运行该代码前请先安装 agentscope 的分布式版本
+# pip install agentscope[distribute]
 
-# register models which can be used in the server
-agentscope.init(
-    model_configs=model_config_path_b,
-)
-# Create an agent service process
-server = RpcAgentServerLauncher(
-    host="ip_b",
-    port=12002, # choose an available port
-    custom_agent_classes=[AgentA, AgentB] # register your customized agent classes
-)
+import time
+import agentscope
+from agentscope.agents import AgentBase
+from agentscope.message import Msg
 
-# Start the service
-server.launch()
-server.wait_until_terminate()
-```
+class WebAgent(AgentBase):
 
-> 这里也同样可以用如下指令来代替上面的代码。
->
-> ```shell
-> as_server --host ip_b --port 12002 --model-config-path model_config_path_b  --agent-dir parent_dir_of_agent_a_and_b
-> ```
+    def __init__(self, name):
+        super().__init__(name)
 
-接下来，就可以使用如下代码从主进程中连接这两个智能体服务器进程。
+    def get_answer(self, url: str, query: str):
+        """模拟爬取网页并从中寻找问题答案"""
+        time.sleep(5)
+        return f"Answer from {self.name}"
 
-```python
-a = AgentA(
-    name="A",
-    # ...
-).to_dist(
-    host="ip_a",
-    port=12001,
-)
-b = AgentB(
-    name="B",
-    # ...
-).to_dist(
-    host="ip_b",
-    port=12002,
-)
-```
-
-上述代码将会把 `AgentA` 部署到 `Machine1` 的智能体服务器进程上，并将 `AgentB` 部署到 `Machine2` 的智能体服务器进程上。
-开发者在这之后只需要用中心化的方法编排各智能体的交互逻辑即可。
-
-### 步骤2: 编排分布式应用流程
-
-> Note:
-> 当前分布式版本的 Agent 仅支持 `__call__` 方法调用 (即 `agent(x)`)，不支持调用其他方法或是属性读写。
-
-在AgentScope中，分布式应用流程的编排和非分布式的程序完全一致，开发者可以用中心化的方式编写全部应用流程。
-同时，AgentScope允许本地和分布式部署的智能体混合使用，开发者不用特意区分哪些智能体是本地的，哪些是分布式部署的。
-
-以下是不同模式下实现两个智能体之间进行对话的全部代码，对比可见，AgentScope支持零代价将分布式应用流程从中心化向分布式迁移。
-
-- 智能体全部中心化：
-
-```python
-# 创建智能体对象
-a = AgentA(
-    name="A",
-    # ...
-)
-
-b = AgentB(
-    name="B",
-    # ...
-)
-
-# 应用流程编排
-x = None
-while x is None or x.content == "exit":
-    x = a(x)
-    x = b(x)
-```
-
-- 智能体分布式部署
-  - `AgentA` 使用子进程模式部署
-  - `AgentB` 使用独立进程模式部署
-
-```python
-# 创建智能体对象
-a = AgentA(
-    name="A"
-    # ...
-).to_dist()
-
-b = AgentB(
-    name="B",
-    # ...
-).to_dist(
-    host="ip_b",
-    port=12002,
-)
-
-# 应用流程编排
-x = None
-while x is None or x.content == "exit":
-    x = a(x)
-    x = b(x)
-```
-
-### 进阶用法
-
-#### 更低成本的 `to_dist`
-
-上面介绍的案例都是将一个已经初始化的 Agent 通过 {func}`to_dist<agentscope.agents.AgentBase.to_dist>` 方法转化为其分布式版本，相当于要执行两次初始化操作，一次在主进程中，一次在智能体进程中。如果 Agent 的初始化过程耗时较长，直接使用 `to_dist` 方法会严重影响运行效率。为此 AgentScope 提供了在初始化 Agent 实例的同时将其转化为其分布式版本的方法，即在原 Agent 实例初始化时传入 `to_dist` 参数。
-
-子进程模式下，只需要在 Agent 初始化函数中传入 `to_dist=True` 即可：
-
-```python
-# Child Process mode
-a = AgentA(
-    name="A",
-    # ...
-    to_dist=True
-)
-b = AgentB(
-    name="B",
-    # ...
-    to_dist=True
-)
-```
-
-独立进程模式下， 则需要将原来 `to_dist()` 函数的参数以 {class}`DistConf<agentscope.agents.DistConf>` 实例的形式传入 Agent 初始化函数的 `to_dist` 域：
-
-```python
-a = AgentA(
-    name="A",
-    # ...
-    to_dist=DistConf(
-        host="ip_a",
-        port=12001,
-    ),
-)
-b = AgentB(
-    name="B",
-    # ...
-    to_dist=DistConf(
-        host="ip_b",
-        port=12002,
-    ),
-)
-```
-
-相较于原有的 `to_dist()` 函数调用，该方法只会在智能体进程中初始化一次 Agent，避免了重复初始化行为，能够有效减少初始化开销。
-
-#### 管理 Agent Server
-
-在运行大规模多智能体应用时，往往需要启动众多的 Agent Server 进程。为了让使用者能够有效管理这些进程，AgentScope 在 {class}`RpcAgentClient<agentscope.rpc.RpcAgentClient>` 中提供了如下管理接口：
-
-- `is_alive`: 该方法能够判断该 Agent Server 进程是否正在运行。
-
-    ```python
-        client = RpcAgentClient(host=server_host, port=server_port)
-        if client.is_alive():
-            do_something()
-    ```
-
-- `stop`: 该方法能够停止连接的 Agent Server 进程。
-
-    ```python
-        client.stop()
-        assert(client.is_alive() == False)
-    ```
-
-- `get_agent_list`: 该方法能够获取该 Agent Server 进程中正在运行的所有 Agent 的 JSON 格式的缩略信息列表，具体展示的缩略信息内容取决于该 Agent 类的 `__str__` 方法。
-
-    ```python
-        agent_list = client.get_agent_list()
-        print(agent_list)  # [agent1_info, agent2_info, ...]
-    ```
-
-- `get_agent_memory`: 该方法能够获取指定 `agent_id` 对应 Agent 实例的 memory 内容。
-
-    ```python
-        agent_id = my_agent.agent_id
-        agent_memory = client.get_agent_memory(agent_id)
-        print(agent_memory) # [msg1, msg2, ...]
-    ```
-
-- `get_server_info`：该方法能够获取该 Agent Server 进程的资源占用情况，包括 CPU 利用率、内存占用。
-
-    ```python
-        server_info = client.get_server_info()
-        print(server_info)  # { "cpu": xxx, "mem": xxx }
-    ```
-
-- `set_model_configs`: 该方法可以将指定的模型配置信息设置到 Agent Server 进程中，新创建的 Agent 实例可以直接使用这些模型配置信息。
-
-    ```python
-        agent = MyAgent(  # 因为找不到 [my_openai] 模型而失败
-            # ...
-            model_config_name="my_openai",
-            to_dist={
-                # ...
-            }
+    def reply(self, x: dict = None) -> dict:
+        return Msg(
+            name=self.name,
+            role="assistant",
+            content=self.get_answer(x.content["url"], x.content["query"])
         )
-        client.set_model_configs([{  # 新增 [my_openai] 模型配置信息
-            "config_name": "my_openai",
-            "model_type": "openai_chat",
-            # ...
-        }])
-        agent = MyAgent(  # 成功创建 Agent 实例
-            # ...
-            model_config_name="my_openai",
-            to_dist={
-                # ...
-            }
-        )
-    ```
 
-- `delete_agent`: 该方法用于删除指定 `agent_id` 对应的 Agent 实例。
 
-    ```python
-        agent_id = agent.agent_id
-        ok = client.delete_agent(agent_id)
-    ```
+QUERY = "example query"
+URLS = ["page_1", "page_2", "page_3", "page_4", "page_5"]
 
-- `delete_all_agent`: 该方法可以删除 Agent Server 进程中所有的 Agent 实例。
+def init_without_dist():
+    return [WebAgent(f"W{i}") for i in range(len(URLS))]
 
-    ```python
-        ok = client.delete_all_agent()
-    ```
 
-#### 连接 AgentScope Studio
+def init_with_dist():
+    return [WebAgent(f"W{i}").to_dist() for i in range(len(URLS))]
 
-智能体服务器进程可以在启动时连接 [AgentScope Studio](#209-gui-zh) ，从而让后续搭建的分布式应用中的 `to_dist` 方法不再需要填写任何参数，而是由 Stduio 为其自动分配智能体服务器进程。
 
-对于使用 Python 代码启动智能体服务器进程的场景，只需要在 `RpcAgentServerLauncher` 的初始化参数中填入 `studio_url` 即可，这里需要确保填写正确且能够通过网络访问，例如默认情况下启动的 Studio 的 URL 为 `http://127.0.0.1:5000`。
+def run(agents):
+    start = time.time()
+    results = []
+    for i, url in enumerate(URLS):
+        results.append(agents[i].reply(
+            Msg(
+                name="system",
+                role="system",
+                content={
+                    "url": url,
+                    "query": QUERY
+                }
+            )
+        ))
+    for result in results:
+        print(result.content)
+    end = time.time()
+    return end - start
+
+
+if __name__ == "__main__":
+    agentscope.init()
+    start = time.time()
+    simple_agents = init_without_dist()
+    dist_agents = init_with_dist()
+    end = time.time()
+    print(f"初始化的耗时：{end - start}")
+    print(f"不使用分布式模式的耗时：{run(simple_agents)}")
+    print(f"使用分布式模式的耗时：{run(dist_agents)}")
+```
+
+上述代码的输出样例如下：
+
+```text
+初始化的耗时：12.944042921066284
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+不使用分布式模式的耗时：25.022241830825806
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+使用分布式模式的耗时：5.021369934082031
+```
+
+从上述输出中可以观察到，在采用分布式模式后，运行速度有明显的提升（从 25 s 降低到 5 s）。
+上述样例也是 AgentScope 分布式模式最常见的使用用法，在不追求极致性能的性能且 Agent 数量相对较少（例如不超过 10 个）的情况下，建议采用直接采用上述方法。
+而如果需要进一步优化性能，则需要对 AgentScope 分布式模式有更加深入的了解，下面的章节我们将具体介绍 AgentScope 分布式模式中的进阶使用方法。
+
+## 进阶用法
+
+本节将介绍 AgentScope 分布式模式的进阶使用方法，以进一步提升运行效率。在介绍进阶用法之前，我们需要先对 AgentScope 分布式模式的基本概念有一些初步认识。
+
+### 基本概念
+
+- **主进程 (Main Process)**: AgentScope 应用程序所在的进程被称为主进程。例如上一节例子中的 `run` 函数就是在主进程中运行的。每个 AgentScope 应用中只会有一个主进程。
+- **智能体服务器进程 (Agent Server Process)**: AgentScope 智能体服务器进程是分布式模式下 Agent 所运行的进程。例如上一节的例子中 `dist_agents` 中的所有 Agent 的本体实际上都运行于智能体服务器进程中。AgentScope 智能体服务器进程可以存在多个。智能体服务器进程可以运行在任意网络可达的机器上，并且每个智能体服务器进程中都可以同时运行多个 Agent。
+
+- **子进程模式 (Child Mode)**: 在子进程模式下，智能体服务器进程由主进程启动的子进程。例如上一节的例子中，`dist_agents` 中的每个 Agent 实际上都是主进程的子进程。该模式是 AgentScope 分布式的默认运行模式，即直接调用 `to_dist` 函数不给定任何参数时会默认使用该模式，[基础用法](#basic_usage-zh)部分采用的就是这种模式。
+- **独立进程模式 (Independent Mode)**: 在独立进程模式下，智能体进程相对主进程来说是独立的，需要预先在机器上启动智能体进程，并向 `to_dist` 函数传入一些特定的参数。如果需要实现 Agent 跨机器部署，必须使用该模式，另外如果对性能要求较高或是 Agent 数量较多也建议使用该模式。
+
+### 使用独立进程模式
+
+与子进程模式相比，独立进程模式能够避免子进程初始化的开销，从而消除运行初期的延迟，对于 Agent 数量较多的场景能够有效提升运行效率。
+
+独立进程模式下，需要在机器上提前启动智能体服务器进程，并且向 `to_dist` 函数传入需要连接的智能体服务进程的 `host` 以及 `port`。
+这里我们依旧使用基础用法部分的案例来演示，假设[基础用法](#basic_usage-zh)部分的代码文件为 `dist_main.py`，需要将如下代码保存为 `dist_server.py`。
 
 ```python
-# import some packages
+# 请不要使用 jupyter notebook 运行该代码
+# 请将代码拷贝到 `dist_server.py` 文件后使用 `python dist_server.py` 命令运行该代码, 目录结构如下：
+# your_project_dir
+# ├── dist_main.py
+# └── dist_server.py
+# 运行该代码前请先安装 agentscope 的分布式版本
+# pip install agentscope[distribute]
 
-# register models which can be used in the server
-agentscope.init(
-    model_configs=model_config_path_a,
-)
-# Create an agent service process
-server = RpcAgentServerLauncher(
-    host="ip_a",
-    port=12001,  # choose an available port
-    custom_agent_classes=[...] # register your customized agent classes
-    studio_url="http://studio_ip:studio_port",  # connect to AgentScope Studio
-)
+import agentscope
+from agentscope.server import RpcAgentServerLauncher
+from dist_main import WebAgent
 
-# Start the service
-server.launch()
-server.wait_until_terminate()
+
+if __name__ == "__main__":
+    agentscope.init(
+        # model_configs=...  # 模型配置，如果不需要模型，可以不设置该参数
+    )
+    assistant_server_launcher = RpcAgentServerLauncher(
+        host="localhost",
+        port=12345,
+        custom_agent_classes=[WebAgent],
+    )
+    assistant_server_launcher.launch(in_subprocess=False)
+    assistant_server_launcher.wait_until_terminate()
 ```
 
-对于使用命令行 `as_server` 的场景，也只需要在命令行中填入 `--studio-url` 参数。
+上述代码中，我们通过 `RpcAgentServerLauncher` 启动了一个智能体服务器进程，需要注意的是由于 `WebAgent` 不是 AgentScope 自带的 Agent 实现，需要将 `WebAgent` 添加到 `custom_agent_classes` ，才能在智能体服务器进程中创建该类型的 Agent。另外如果智能体服务器进程中需要使用模型 API，则需要在 `agentscope.init` 中配置对应的模型参数。
 
-```shell
-as_server --host ip_a --port 12001 --model-config-path model_config_path_a  --agent-dir parent_dir_of_agent_a_and_b --studio-url http://studio_ip:studio_port
-```
-
-执行上述代码或命令后可以进入 AgentScope Studio 的 Server Manager 页面查看是否连接成功。如果连接成功，该智能体服务器进程会显示在页面的表格中，并且可以在页面中观察到该进程的运行状态以及资源占用情况，之后就可以使用 AgentScope Studio 所带来的高级功能了。本节将聚焦于 AgentScope Studio 对 `to_dist` 方法带来的影响，而页面的具体用法请参考 [AgentScope Studio](#209-gui-zh)。
-
-在智能体服务器进程成功连接 Studio 后，只需要在 `agentscope.init` 方法中传入该 Studio 的 `studio_url`，后续的 `to_dist` 方法就不再需要填写 `host` 和 `port` 域，而是自动选择一个已经连接到 Studio 的智能体服务器进程。
+同时还需要将 `dist_main.py` 中的 `init_with_dist` 更新为下面的代码：
 
 ```python
-# import some packages
-
-agentscope.init(
-    model_configs=model_config_path_a,
-    studio_url="http://studio_ip:studio_port",
-)
-
-a = AgentA(
-    name="A"
-    # ...
-).to_dist() # automatically select an agent server
-
-# your application code
+def init_with_dist():
+    return [WebAgent(f"W{i}").to_dist(host="localhost", port=12345) for i in range(len(URLS))]
 ```
 
-> Note:
->
-> - 该方法中使用的 Agent 必须在智能体服务器进程启动时就已经通过 `custom_agent_classes` 或 `--agent-dir` 注册。
-> - 使用该方法时需要确定连接到 Studio 的智能体服务器进程还在正常运行。
+这里新版本的 `init_with_dist` 相比原版本新增了 `host` 与 `port` 两个参数，用于连接智能体服务器进程。
 
-在应用开始运行后，可以在 Studio 的 Server Manager 页面中观察该 Agent 具体运行在哪个智能体服务器进程上，应用运行完成后也可以通过 Server Manager 页面删除该 Agent。
+在代码修改完成后，先在一个命令行窗口中运行 `dist_server.py` 文件，等待启动成功后在另一个命令行窗口运行 `dist_main.py` 文件，运行的时候会看到如下输出：
 
-## 实现原理
+```text
+初始化的耗时：0.005397319793701172
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+不使用分布式模式的耗时：25.023009061813354
+[W0] Answer from page_1
+[W1] Answer from page_2
+[W2] Answer from page_3
+[W3] Answer from page_4
+[W4] Answer from page_5
+使用分布式模式的耗时：5.021481990814209
+```
 
-### Actor模式
+此时的 `dist_main.py` 初始化的耗时将会明显减少，例如这里的耗时仅为 0.005 s。
 
-[Actor模式](https://en.wikipedia.org/wiki/Actor_model)是大规模分布式系统中广泛使用的编程范式，同时也被应用于AgentScope平台的分布式设计中。
-在Actor模型中，一个actor是一个实体，它封装了自己的状态，并且仅通过消息传递与其他actor通信。
+### 避免重复初始化
 
-在AgentScope的分布式模式中，每个Agent都是一个Actor，并通过消息与其他Agent交互。消息的流转暗示了Agent的执行顺序。每个Agent都有一个`reply`方法，它消费一条消息并生成另一条消息，生成的消息可以发送给其他 Agent。例如，下面的图表显示了多个Agent的工作流程。`A`~`F`都是Agent，箭头代表消息。
+上面的代码中都是在一个已经初始化完成的 Agent 上调用 `to_dist` 函数。
+`to_dist` 本质上是将原 Agent 克隆到智能体服务器进程中，并在主进程中保留一个 {class}`RpcObject<agentscope.rpc.RpcObject>` 作为原 Agent 的代理，对该 `RpcObject`的调用都会转发到智能体服务器进程中的对应 Agent 上。
+
+这样的流程存在一个潜在问题，即原 Agent 被初始化了两次，一次是在主进程中，一次是在智能体服务器进程中，并且这两次初始化是依次执行的，无法通过并行加速。对于初始化成本比较低的 Agent，直接调用 `to_dist` 函数不会对性能产生明显影响，但是对于初始化成本较高的 Agent，则需要尽量避免重复初始化行为，为此 AgentScope 分布式模式提供了另一种分布式模式的初始化方法，即直接在任意 Agent 的初始化函数内部传入 `to_dist` 参数，例如下面的代码就是对 `dist_main.py` 的`init_with_dist` 函数的修改。
+
+- 对于子进程模式，只需要在初始化函数中传入 `to_dist=True` 即可。
+
+    ```python
+    def init_with_dist():
+        return [WebAgent(f"W{i}", to_dist=True) for i in range(len(URLS))]
+    ```
+
+- 对于独立进程模式，则需要将原来传入`to_dist`函数的参数以字典的形式传入到 `to_dist` 域中。
+
+    ```python
+    def init_with_dist():
+        return [WebAgent(f"W{i}", to_dist={"host": "localhost", "port": "12345"}) for i in range(len(URLS))]
+    ```
+
+```{note}
+一些 IDE 的自动补全功能可能提示 `to_dist` 参数不存在，但实际运行时并不会报错。
+另外，如果已经在初始化参数中传入了 `to_dist`，则不能再调用 `to_dist` 方法。
+```
+
+## 开发者指南
+
+```{note}
+本节主要面向基于 AgentScope 分布式模式开发新功能的开发者，需要开发者有一定的分布式编程基础，对进程、线程、同步、异步、gRPC、Python 元类以及GIL等概念有一定的理解。但即使没有上述基础，通过阅读本节也能学到 AgentScope 分布式模式的基本原理以及一些高级用法。
+```
+
+AgentScope 分布式模式的主要逻辑是:
+
+**将原本运行在任意 Python 进程中的对象通过 `to_dist` 函数或是初始化参数转移到 RPC 服务器中运行，并在原进程中保留一个 `RpcObject` 作为代理，任何 `RpcObject` 上的函数调用或是属性访问都会转发到 RPC 服务器中的对象上，并且在调用函数时可以自行决定是使用同步调用还是异步调用。**
+
+下图展示了`to_dist`初始化、同步函数调用以及异步函数调用的交互流程：
 
 ```{mermaid}
-graph LR;
-A-->B
-A-->C
-B-->D
-C-->D
-E-->F
-D-->F
+sequenceDiagram
+    User -->> Process: initialize
+    Process -->> RPC Server: to_dist
+    User -->> Process: sync function call
+    Process -->> RPC Server: sync function call
+    RPC Server -->> RPC Server: calculate result
+    RPC Server -->> Process: sync result
+    Process -->> User: sync result
+    User -->> Process: async function call
+    Process -->> RPC Server: async function call
+    RPC Server -->> RPC Server: calculate result
+    User -->> Process: get async result
+    Process -->> RPC Server: get async result
+    RPC Server -->> Process: async result
+    Process -->> User: async result
 ```
 
-其中，`B`和`C`可以在接收到来自`A`的消息后同时启动执行，而`E`可以立即运行，无需等待`A`、`B`、`C`和`D`。
-通过将每个Agent实现为一个Actor， Agent将自动等待其输入Msg准备好后开始执行`reply`方法，并且如果多个 Agent 的输入消息准备就绪，它们也可以同时自动执行`reply`，这避免了复杂的并行控制。
+从上图可以观察到 AgentScope 分布式模式本质是一个 Client-Server 架构，用户编写的智能体应用（Process）作为Client 端，而智能体服务器进程（RPC Server）作为 Server 端。分布式模式下 Client 端将本地的智能体发送到 Server 端运行，并将本地的函数调用以及属性访问转发到 Server 端，而 Server 端则负责接收 Client 端发送的对象，并接收 Client 端发来的各种调用请求。
 
-#### Placeholder
+```{note}
+AgentScope 分布式模式中 Client 与 Server 通信基于 gRPC 实现，对发送消息的大小有严格的限制，默认情况下单条消息不能超过 32 MB。可以通过修改 `src/agentscope/constants.py` 中的 `_DEFAULT_RPC_OPTIONS` 参数来进一步扩大该值。
+```
 
-同时，为了支持中心化的应用编排，AgentScope 引入了 {class}`Placeholder<agentscope.message.PlaceholderMessage>` 这一概念。
-Placeholder 可以理解为消息的指针，指向消息真正产生的位置，其对外接口与传统模式中的消息完全一致，因此可以按照传统中心化的消息使用方式编排应用。
-Placeholder 内部包含了该消息产生方的联络方法，可以通过网络获取到被指向消息的真正值。
-每个分布式部署的 Agent 在收到其他 Agent 发来的消息时都会立即返回一个 Placeholder，从而避免阻塞请求发起方。
-而请求发起方可以借助返回的 Placeholder 在真正需要消息内容时再去向原 Agent 发起请求，请求发起方甚至可以将 Placeholder 发送给其他 Agent 让其他 Agent 代为获取消息内容，从而减少消息真实内容的不必要转发。
+接下来将分别介绍 Client 端以及 Server 端的实现。
 
-关于更加详细的技术实现方案，请参考我们的[论文](https://arxiv.org/abs/2402.14034)。
+### Client 端
 
-### Agent Server
+Client 主要包含 `RpcMeta`、`RpcObject` 两个主要类，其中 `RpcMeta` 负责将本地对象发送到 Server 端运行，而 `RpcObject` 则负责后续的各种请求调用的转发。
 
-Agent Server 也就是智能体服务器。在 AgentScope 中，Agent Server 提供了一个让不同 Agent 实例运行的平台。多个不同类型的 Agent 可以运行在同一个 Agent Server 中并保持独立的记忆以及其他本地状态信息，但是他们将共享同一份计算资源。
+#### `RpcMeta`
 
-在安装 AgentScope 的分布式版本后就可以通过 `as_server` 命令来启动 Agent Server，具体的启动参数在 {func}`as_server<agentscope.server.launcher.as_server>` 函数文档中可以找到。
+{class}`RpcMeta<agentscope.rpc.RpcMeta>` 类是一个元类(Meta class)，会自动向继承自己的子类添加 `to_dist` 方法以及 `to_dist` 初始化参数 (因此 IDE 可能会提示 `to_dist` 参数不存在，但实际运行时并不会报错)，其实现位于 `src/agentscope/rpc/rpc_meta.py`。
 
-只要没有对代码进行修改，一个已经启动的 Agent Server 可以为多个主流程提供服务。
-这意味着在运行多个应用时，只需要在第一次运行前启动 Agent Server，后续这些 Agent Server 进程就可以持续复用。
+在一个已经初始化完成的对象上调用 `to_dist` 方法会将原对象的初始化参数打包发送到 智能体服务器进程 中，并在智能体服务器进程中重新初始化该对象，而在主进程中会返回一个 `RpcObject` 替代原有的对象。
+
+由于是使用初始化参数来重建原有对象，无法维持创建后的状态变化，因此建议在初始化的同时立即调用 `to_dist` 方法，或者直接在原对象的初始化函数中传入 `to_dist` 参数。
+
+由于 `to_dist` 是 `RpcMeta` 自动向子类添加的方法，因此不仅是 Agent 类，任何继承自 `RpcMeta` 的类都可以使用 `to_dist` 方法。
+
+`RpcMeta` 除了提供 `to_dist` 方法外还会记录原对象上能够被调用的方法以及属性，以方便在 `RpcObject` 中调用。默认情况下只会记录原对象上的公有方法，并且使用同步调用 (调用时会阻塞调用发起方，直到原对象上的方法执行完毕)。如果需要使用异步调用需要在方法声明上添加 `async_func` 装饰器。
+
+#### `async_func` 和 `AsyncResult`
+
+{func}`async_func<agentscope.rpc.async_func>` 装饰器的实现位于 `src/agentscope/rpc/rpc_meta.py`。`AgentBase` 及其所有子类的 `__call__` 以及 `reply` 方法都被标记为了 `async_func` 以避免阻塞。
+
+与 `async_func` 相对的还有 {func}`sync_func<agentscope.rpc.sync_func>` 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不需要显式标注。
+
+如下是一个简单的示例，这里声明了一个 `Example` 类，其中 `sync_method` 是同步方法，`async_method_basic` 以及 `async_method_complex` 被标记为了异步方法，`_protected_method` 是私有方法。
+
+```python
+import time
+from agentscope.rpc import RpcMeta, async_func
+
+
+class Example(metaclass=RpcMeta):
+
+    # @sync_func  # 默认即为 sync_func，可以不添加
+    def sync_method(self) -> str:
+        # 同步方法，调用者会被阻塞 1 s
+        time.sleep(1)
+        return "sync"
+
+    @async_func
+    def async_method_basic(self) -> str:
+        # 异步方法，调用者不会被阻塞，可以继续执行直到尝试获取结果
+        time.sleep(1)
+        # 返回一个基本类型
+        return "async"
+
+    @async_func
+    def async_method_composite(self) -> dict:
+        # 异步方法
+        time.sleep(1)
+        # 返回一个字典
+        return {"a": 1, "b": 2, "c": "hello world",}
+
+    def _protected_method(self) -> str:
+        # 不是公有方法，rpc object 无法调用该方法
+        time.sleep(1)
+        return "protected"
+
+
+if __name__ == "__main__":
+    example = Example(to_dist=True)
+    # 访问 protected 方法会引发未定义行为，请避免使用
+    # protected_result = example._protected_method()
+    t1 = time.time()
+    sync_result = example.sync_method()
+    assert sync_result == "sync"
+    t2 = time.time()
+    print(f"Sync func cost: {t2 - t1} s")
+    t3 = time.time()
+    async_basic = example.async_method_basic()
+    async_composite = example.async_method_composite()
+    t4 = time.time()
+    print(f"Async func cost: {t4 - t3} s")
+    # 基本类型需要在返回值上调用 result 方法获取异步执行结果
+    assert async_basic.result() == "async"
+    # 复合类型在访问所需要的域时自动更新异步执行结果
+    assert async_composite["a"] == 1
+    assert async_composite["b"] == 2
+    assert async_composite["c"] == "hello world"
+```
+
+上述代码的运行结果样例如下，可以观察到调用 `async_method` 的耗时比 `sync_method` 短很多，这是因为 `async_method` 是异步方法，不会阻塞调用发起方，而 `sync_method` 是同步方法，因此会阻塞调用发起方。
+
+```text
+Sync func cost: 1.0073761940002441 s
+Async func cost: 0.0003597736358642578 s
+```
+
+上述代码中 `async_method_basic` 以及 `async_method_complex` 返回的是 {class}`AsyncResult<agentscope.rpc.AsyncResult>` 对象，该对象可以通过 `result` 方法获取异步执行结果。为了让异步与同步调用的接口尽可能统一，如果 `AsyncResult` 所代表的结果是复合类型，就不再需要手动调用 `result` 方法，在访问内部属性时会自动调用 `result` 更新执行结果 (如上述代码中 `async_composite` 所示)。
+
+#### `RpcObject`
+
+{class}`RpcObject<agentscope.rpc.RpcObject>` 的实现位于 `src/agentscope/rpc/rpc_object.py` 中。
+`RpcObject` 是一个代理，其内部并不包含原对象的任何属性值或是方法，只记录了原对象所在的智能体服务器的地址以及该对象的 `id`，通过这些参数，`RpcObject` 可以通过网络连接原对象，从而实现对原对象的调用。
+
+当用户调用 `RpcObject` 上的方法或访问属性时，`RpcObject` 会通过 `__getattr__` 方法将请求转发到位于智能体服务器进程的原对象上。对于调用同步方法 (`@sync_func`) 或是访问属性值的情况，`RpcObject` 会阻塞调用发起方，直到原对象上的方法执行完毕，并返回执行结果。而异步方法 (`@async_func`) 则会立即返回一个 {class}`AsyncResult<agentscope.rpc.AsyncResult>` 对象，如果主进程不去访问该对象的具体值就可以无阻塞地继续运行，而如果需要获取执行结果，则需要调用 `AsyncResult` 对象上的 `result` 方法，如果此时结果还没有返回，`result` 方法会阻塞调用发起方，直到结果返回。
+
+```{note}
+`RpcObject` 在初始化时如果发现没有提供 `host` 和 `port` 参数 (即子进程模式)，就会去启动一个新的智能体服务器进程，并在该进程上重新创建原对象，而启动新的智能体服务器进程相对缓慢，这也是导致子进程模式初始化时间较长的主要原因。
+而如果提供了 `host` 和 `port` 参数 (即独立进程模式)，`RpcObject` 就会直接连接该服务器并重新创建原对象，避免了启动新进程的开销。
+```
+
+### Server 端
+
+Server 端主要基于 gRPC 实现，主要包含 `AgentServerServicer` 和 `RpcAgentServerLauncher` 这两个类。
+
+#### `AgentServerLauncher`
+
+`AgentServerLauncher` 的实现位于 `src/agentscope/server/launcher.py`，用于启动 gRPC Server 进程。
+具体来说，为了保证启动的 Server 进程中能够正确地重新初始化 Client 端发来的对象并正确调用模型API服务，需要在启动 Server 时注册在运行中可能用到的所有 `RpcMeta` 的子类，并且正确设置模型配置。具体来说有两种启动方法，分别是通过代码启动，和通过命令行指令启动。
+
+- 通过代码启动的具体方法如下，需要指定 `host` 和 `port`，以及 `custom_agent_classes`，并且需要在调用 `agentscope.init` 时传入需要使用的模型配置。这里假设有 `AgentA`，`AgentB`，`AgentC` 这三个自定义类需要被注册，并且 `AgentA`，`AgentB`，`AgentC` 这三个类都位于 `myagents.py` 文件中且都是 `AgentBase` 的子类。
+
+    ```python
+    import agentscope
+    from agentscope.server import RpcAgentServerLauncher
+    from myagents import AgentA, AgentB, AgentC
+
+
+    MODEL_CONFIGS = {}
+
+    HOST = "localhost"
+    PORT = 12345
+    CUSTOM_CLASSES = [AgentA, AgentB, AgentC]
+
+    if __name__ == "__main__":
+        agentscope.init(
+            model_configs=MODEL_CONFIGS,
+        )
+        launcher = RpcAgentServerLauncher(
+            host=HOST,
+            port=PORT,
+            custom_agent_classes=CUSTOM_CLASSES,
+        )
+        launcher.launch(in_subprocess=False)
+        launcher.wait_until_terminate()
+    ```
+
+- 通过命令行启动的具体方法如下，除了需要指定 `host` 和 `port` 外，还需要指定 `model_config_path` 和 `agent_dir`，分别对应模型配置文件路径和自定义 Agent 类所在的目录。在安装 `agentscope` 时默认会安装 `as_server` 指令，所以可以直接在命令行中使用该指令。
+
+    ```shell
+    as_server start --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents.py
+    ```
+
+```{warning}
+`AgentServerLauncher` 会加载并执行自定义的 Python 对象，在使用前请仔细检查被加载的对象，如果其中包含恶意代码可能会对系统造成严重损害。
+`AgentServerLauncher` 类还存在一个 `local_mode` 参数用于表示是否只允许本地访问，默认为 `True`，如果需要允许其他机器访问，则需要设置为 `False`。为了避免网络攻击，建议仅在可信的网络环境下使用。
+```
+
+#### `AgentServerServicer`
+
+`AgentServerServicer` 的实现位于 `src/agentscope/server/servicer.py`，是 gRPC 服务的实现类，负责具体接收并处理 Client 端发来的各种请求。
+
+其中的 `create_agent` 方法会在 Client 端对某个 `RpcMeta` 的子类对象使用 `to_dist` 时被调用，并在 server 内部重新创建原对象，并以 `id` 为键将对象保存在 `agent_pool` 域中。
+
+而 `call_agent_func` 方法会在 Client 端调用 `RpcObject` 对象上的方法或属性时被调用，输入参数中包含了被调用对象的 `id` 以及被调用方法的名称，具体的调用流程有一定差异。对于同步方法以及属性访问，`call_agent_func` 会直接从 `agent_pool` 取出对象并调用对应方法或属性，并在返回结果前阻塞调用发起方。对于异步方法，`call_agent_func` 会将输入参数打包放入任务队列中，并立即返回该任务的 `task_id` 从而避免阻塞调用发起方。
+
+`AgentServerServicer` 内部包含了一个执行器池 (`executor`) 用于自动执行任务队列中提交的任务 (`_process_task`)，并执行将结果放入 `result_pool` 中，`AsyncResult` 的 `result` 方法会尝试从 `result_pool` 中取出对应任务的结果，如果任务结果不存在则会阻塞调用发起方，直到结果返回。
+
+##### `executor`
+
+executor 是一个线程池 (`concurrent.futures.ThreadPoolExecutor`)，其中的线程数量由 `capacity` 参数决定，`capacity` 的设置对运行效率的影响巨大，需要根据具体任务来针对性设置。
+为了让 Server 中的各个 Agent 能够并发执行，最好保证 `capacity` 大于 `AgentServerServicer` 中同时运行的 Agent 的数量，否则可能会导致运行时间成倍增加，甚至在一些特殊场景 (多个 agent 之间进行递归调用) 中出现死锁现象。
+
+`capacity` 参数可以在 `as_server` 命令中通过 `--capacity` 指定，或是直接在 `RpcAgentServerLauncher` 初始化时指定。
+
+```python
+# ...
+launcher = RpcAgentServerLauncher(
+    host="localhost",
+    port=12345,
+    custom_agent_classes=[],
+    capacity=10,
+)
+```
+
+```shell
+as_server start --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --capacity 10
+```
+
+##### `result_pool`
+
+`ResultPool` 的实现位于 `src/agentscope/server/async_result_pool.py`，用于管理异步方法的执行结果，目前有两种实现分别为 `local` 和 `redis`。其中 `local` 基于 Python 的字典类型 (`dict`) 实现，而 `redis` 则是基于 Redis 实现。为了避免结果占用过多内存两种实现都包含了过期自动删除机制，其中 `local` 可以设置超时删除 (`max_expire_time`) 或超过条数删除 (`max_len`)，而 `redis` 则仅支持超时删除 (`max_expire_time`)。
+在启动 `AgentServerLauncher` 时可以通过传入 `pool_type` 来指定使用哪种实现，默认为`local`。
+如果指定为 `redis` 则还必须传入 `redis_url`，如下是代码以及命令行的使用案例。
+
+```python
+# ...
+launcher = RpcAgentServerLauncher(
+    host="localhost",
+    port=12345,
+    custom_agent_classes=[],
+    pool_type="redis",
+    redis_url="redis://localhost:6379",
+    max_expire_time=7200, # 2 hours
+)
+```
+
+```shell
+as_server start --host localhost --port 12345 --model-config-path model_config_path  --agent-dir parent_dir_of_myagents --pool-type redis --redis-url redis://localhost:6379 --max-expire-time 7200
+```
 
 [[回到顶部]](#208-distribute-zh)

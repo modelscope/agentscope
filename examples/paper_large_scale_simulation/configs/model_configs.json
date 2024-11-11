@@ -1,0 +1,501 @@
+[
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8011/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_3",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8012/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_4",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8013/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_5",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_6",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8015/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_7",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8016/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_8b_8_8",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8017/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_70b_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_70b_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "llama3_70b_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x7_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x7_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x22_0_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x22_1_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.05,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x22_2_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.25,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x22_3_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.5,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mistralai_8x22_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_0_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0,
+            "seed": 1234
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_0_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 0,
+            "seed": 1234
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_1_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.25
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_1_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.25
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_2_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_2_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.5
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_3_2_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.75
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_72b_3_2_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 0.75
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8011/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_3",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8012/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_4",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8013/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_5",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8014/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_6",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8015/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_7",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8016/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "qwen2_7b_8_8",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8017/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mix_1_1_1",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mix_1_1_2",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    },
+    {
+        "model_type": "openai_chat",
+        "config_name": "mix_1_1_3",
+        "model_name": "your_model_path",
+        "api_key": "EMPTY",
+        "client_args": {
+            "base_url": "http://127.0.0.1:8010/v1/"
+        },
+        "generate_args": {
+            "temperature": 1.0,
+            "max_tokens": 1024
+        }
+    }
+]

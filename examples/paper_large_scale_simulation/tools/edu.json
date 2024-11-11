@@ -1,0 +1,43 @@
+{
+    "total_num": 1000,
+    "distributions": [
+        {
+            "distribution_name": "Gender",
+            "categories": [
+                {
+                    "category_name": "Male",
+                    "percentage": 0.5
+                },
+                {
+                    "category_name": "Female",
+                    "percentage": 0.5
+                }
+            ]
+        },
+        {
+            "distribution_name": "Education Level",
+            "categories": [
+                {
+                    "category_name": "Elementary School",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "High School",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Bachelor's Degree",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Master's Degree",
+                    "percentage": 0.2
+                },
+                {
+                    "category_name": "Ph.D.",
+                    "percentage": 0.2
+                }
+            ]
+        }
+    ]
+}

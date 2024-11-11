@@ -54,7 +54,7 @@ def generate_request_multi_needles_in_haystack(config: dict) -> tuple:
     for i in range(len_passcode):
         pos_num_str = get_pos_num_str(i + 1)
         target_sentences.append(
-            f"The {i+1}-{pos_num_str} digit of the passcode "
+            f"The {i + 1}-{pos_num_str} digit of the passcode "
             f"to the {target_object} is {true_solution[i]}. ",
         )
     random.shuffle(target_sentences)
@@ -69,7 +69,7 @@ def generate_request_multi_needles_in_haystack(config: dict) -> tuple:
         idx = random.choice(range(len_passcode))
         pos_num_str = get_pos_num_str(idx + 1)
         s = (
-            f"The {idx+1}-{pos_num_str} digit of the passcode "
+            f"The {idx + 1}-{pos_num_str} digit of the passcode "
             f"to the {obj} is {pc[idx]}. "
         )
         length_total += len(s)

@@ -67,6 +67,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             messages=messages,
             result_format="message",
             stream=False,
+            api_key="test_api_key",
         )
 
     @patch("agentscope.models.dashscope_model.dashscope.Generation.call")
@@ -102,6 +103,7 @@ class TestDashScopeChatWrapper(unittest.TestCase):
             messages=messages,
             result_format="message",
             stream=False,
+            api_key="test_api_key",
         )
 
     def tearDown(self) -> None:
@@ -194,6 +196,7 @@ class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
             model=self.model_name,
             prompt=prompt,
             n=1,  # Assuming this is a default value used to call the API
+            api_key="test_api_key",
         )
 
     def tearDown(self) -> None:
@@ -235,6 +238,7 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
         mock_call.assert_called_once_with(
             input=texts,
             model=self.wrapper.model_name,
+            api_key="test_key",
             **self.wrapper.generate_args,
         )
 
@@ -267,6 +271,7 @@ class TestDashScopeTextEmbeddingWrapper(unittest.TestCase):
         mock_call.assert_called_once_with(
             input=texts,
             model=self.wrapper.model_name,
+            api_key="test_key",
             **self.wrapper.generate_args,
         )
 
@@ -327,6 +332,7 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
         mock_call.assert_called_once_with(
             model=self.wrapper.model_name,
             messages=messages,
+            api_key="test_key",
         )
 
     @patch(
@@ -366,6 +372,7 @@ class TestDashScopeMultiModalWrapper(unittest.TestCase):
         mock_call.assert_called_once_with(
             model=self.wrapper.model_name,
             messages=messages,
+            api_key="test_key",
         )
 
     def tearDown(self) -> None:
