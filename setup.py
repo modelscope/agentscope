@@ -57,6 +57,7 @@ extra_service_requires = [
     "isort",
     "playwright",
     "markdownify",
+    "opencv-python-headless",
 ]
 
 extra_distribute_requires = [
@@ -118,7 +119,6 @@ extra_online_requires = extra_full_requires + [
     "babel==2.15.0",
     "gunicorn",
     "numpy",
-    "opencv-python-headless",
 ]
 
 with open("README.md", "r", encoding="UTF-8") as fh:
