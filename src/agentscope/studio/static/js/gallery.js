@@ -248,14 +248,11 @@ function showLoadWorkflowList(tabId) {
       if (!Array.isArray(data.files)) {
         throw new TypeError("The return data is not an array");
       }
-
       const container = document.getElementById(tabId).querySelector(".grid-container");
       container.innerHTML = "";
-
-      data.files.forEach(workflowName => {
-        const title = workflowName.replace(/\.json$/, "");
-        const thumbnail = generateThumbnailFromContent({ title });
-        createGridItem(title, container, thumbnail, "", "", true);
+      data.files.forEach(fileName => {
+        const thumbnail = generateThumbnailFromContent({title: fileName});
+        createGridItem(fileName, container, thumbnail, "", "", true);
       });
     })
     .catch(error => {

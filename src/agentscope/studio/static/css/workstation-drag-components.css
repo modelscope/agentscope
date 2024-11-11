@@ -78,6 +78,8 @@
   font-size: 14px;
   margin-top: 10px;
   height: fit-content;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .box.hidden {

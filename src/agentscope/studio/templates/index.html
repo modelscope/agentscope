@@ -74,13 +74,14 @@
         </div>
         <div id="market-tab-btn"
              class="navigation-bar-item unselectable-text"
-             onclick="loadTabPage('static/html/gallery.html','static/js/gallery.js');return false;">
+             onclick="redirectToWorkstationGallery()">
             <svg class="navigation-bar-item-icon" viewBox="0 0 1024 1024"
-                 xmlns="http://www.w3.org/2000/svg">
-                <path d="M928 1024h-288a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160h-288a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96zM384 1024H96a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160H96a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96z"></path>
+                  xmlns="http://www.w3.org/2000/svg">
+            <path d="M928 1024h-288a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160h-288a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96zM384 1024H96a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160H96a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96z"></path>
             </svg>
-            <span class="navigation-bar-item-label">Gallery</span>
+           <span class="navigation-bar-item-label">Gallery</span>
         </div>
+
         <div id="server-tab-btn"
              class="navigation-bar-item unselectable-text"
              onclick="loadTabPage('static/html/server.html', 'static/js/server.js');return false;">
@@ -154,7 +155,29 @@
     </ul>
     <div class="close" onclick="suspensionBall.removeDrag()">x</div>
 </div>
-<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}">
+</script>
+<script>
+    function redirectToWorkstationGallery() {
+    loadTabPage('static/html/workstation_iframe.html', 'static/js/workstation_iframe.js');
+
+    setTimeout(function () {
+        var iframe = document.getElementById('content').querySelector('iframe');
+        if (iframe) {
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+            if(iframeDoc.querySelectorAll('.workstation-sidebar-item')[2]){
+                iframeDoc.querySelectorAll('.workstation-sidebar-item')[2].click();
+            }
+
+        }
+    }, 200);
+    }
+
+
+
+</script>
+
 
 </body>
 </html>

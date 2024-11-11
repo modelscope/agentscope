@@ -10,7 +10,7 @@ let currentImportIndex;
 let accumulatedImportData;
 let descriptionStep;
 let allimportNodeId = [];
-let currentNodeSelect;
+let imporTempData;
 
 const nameToHtmlFile = {
   "welcome": "welcome.html",
@@ -1319,6 +1319,7 @@ function setupNodeListeners(nodeId) {
 
       function doDragSE(e) {
         newNode.style.width = "auto";
+        newNode.style.height= "auto";
 
         const newWidth = (startWidth + e.clientX - startX);
         if (newWidth > 200) {
@@ -1474,6 +1475,7 @@ function changeModule(event) {
     all[i].classList.remove("selected");
   }
   event.target.classList.add("selected");
+  importSetupNodes(editor.drawflow);
 }
 
 
@@ -2064,15 +2066,25 @@ function showExportRunMSPopup() {
 
 function showExportHTMLPopup() {
   const rawData = editor.export();
+  const currentZoom = editor.zoom;
 
-  removeHtmlFromUsers(rawData);
+  Object.keys(rawData.drawflow.Home.data).forEach((nodeId) => {
+    const nodeElement = document.getElementById(`node-${nodeId}`);
+    const nodeData = rawData.drawflow.Home.data[nodeId];
+    if (nodeElement) {
+      const rect = nodeElement.getBoundingClientRect();
+      nodeData.width = (rect.width / currentZoom) + "px";
+      nodeData.height = (rect.height / currentZoom) + "px";
+    }
+  });
   const hasError = sortElementsByPosition(rawData);
   if (hasError) {
     return;
   }
 
-  const exportData = JSON.stringify(rawData, null, 4);
+  removeHtmlFromUsers(rawData);
 
+  const exportData = JSON.stringify(rawData, null, 4);
   const escapedExportData = exportData
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
@@ -2089,21 +2101,17 @@ function showExportHTMLPopup() {
     confirmButtonText: "Copy",
     cancelButtonText: "Close",
     willOpen: (element) => {
-      // Find the code element inside the Swal content
       const codeElement = element.querySelector("code");
-
-      // Now highlight the code element with Prism
       Prism.highlightElement(codeElement);
 
-      // Copy to clipboard logic
-      const content = codeElement.textContent;
       const copyButton = Swal.getConfirmButton();
       copyButton.addEventListener("click", () => {
-        copyToClipboard(content);
+        copyToClipboard(codeElement.textContent);
       });
     }
   });
 }
+
 
 
 function isValidDataStructure(data) {
@@ -2211,11 +2219,20 @@ function showSaveWorkflowPopup() {
 
 function saveWorkflow(fileName) {
   const rawData = editor.export();
+  const currentZoom = editor.zoom;
   filterOutApiKey(rawData);
+  Object.keys(rawData.drawflow.Home.data).forEach((nodeId) => {
+    const nodeElement = document.getElementById(`node-${nodeId}`);
+    const nodeData = rawData.drawflow.Home.data[nodeId];
+    if (nodeElement) {
+      const rect = nodeElement.getBoundingClientRect();
+      nodeData.width = (rect.width / currentZoom) + "px";
+      nodeData.height = (rect.height / currentZoom) + "px";
+    }
+  });
 
-  // Remove the html attribute from the nodes to avoid inconsistencies in html
+  rawData.zoomLevel = currentZoom;
   removeHtmlFromUsers(rawData);
-
   const exportData = JSON.stringify(rawData, null, 4);
   fetch("/save-workflow", {
     method: "POST",
@@ -2311,62 +2328,55 @@ function loadWorkflow(fileName) {
     body: JSON.stringify({
       filename: fileName,
     })
-  }).then(response => response.json())
+  })
+    .then(response => response.json())
     .then(data => {
       if (data.error) {
         Swal.fire("Error", data.error, "error");
       } else {
-        console.log(data);
         try {
-          // Add html source code to the nodes data
+          editor.zoom = data.zoomLevel || 1;
+          adjustZoom();
+
           addHtmlAndReplacePlaceHolderBeforeImport(data)
             .then(() => {
-              console.log(data);
               editor.clear();
               editor.import(data);
               importSetupNodes(data);
-              Swal.fire("Imported!", "", "success").then(() => {
-                setTimeout(() => {
-                  updateImportNodes();
-                }, 200);
-              });
-            });
 
+              Object.keys(data.drawflow.Home.data).forEach((nodeId) => {
+                const nodeElement = document.getElementById(`node-${nodeId}`);
+                const nodeData = data.drawflow.Home.data[nodeId];
+                if (nodeData.width && nodeElement) {
+                  nodeElement.style.width = nodeData.width;
+                }
+              });
+
+              Swal.fire({
+                title: "Imported!",
+                icon: "success",
+                showConfirmButton: true
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  showEditorTab();
+                }
+              });
+              setTimeout(() => {
+                updateImportNodes();
+              }, 200);
+            });
         } catch (error) {
           Swal.showValidationMessage(`Import error: ${error}`);
         }
-        Swal.fire("Success", "Workflow loaded successfully", "success");
       }
-    })
-    .catch(error => {
-      console.error("Error:", error);
-      Swal.fire("Error", "An error occurred while loading the workflow.", "error");
     });
 }
 
-function deleteWorkflow(fileName) {
-  fetch("/delete-workflow", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      filename: fileName,
-    })
-  }).then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        Swal.fire("Error", data.error, "error");
-      } else {
-        Swal.fire("Deleted!", "Workflow has been deleted.", "success");
-      }
-    })
-    .catch(error => {
-      console.error("Error:", error);
-      Swal.fire("Error", "An error occurred while deleting the workflow.", "error");
-    });
-}
 
+function adjustZoom() {
+  editor.precanvas.style.transform = `scale(${editor.zoom})`;
+  editor.zoom_refresh();
+}
 
 function removeHtmlFromUsers(data) {
   Object.keys(data.drawflow.Home.data).forEach((nodeId) => {
@@ -2394,6 +2404,7 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
   const idPlaceholderRegex = /ID_PLACEHOLDER/g;
   const namePlaceholderRegex = /NAME_PLACEHOLDER/g;
   const readmePlaceholderRegex = /README_PLACEHOLDER/g;
+  const boxDivRegex = /<div class="box"(.*?)>/;
   allimportNodeId = [];
 
   const classToReadmeDescription = {
@@ -2406,12 +2417,12 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
 
   for (const nodeId of Object.keys(data.drawflow.Home.data)) {
     const node = data.drawflow.Home.data[nodeId];
-
     if (!node.html) {
       if (node.name === "readme") {
         delete data.drawflow.Home.data[nodeId];
         continue;
       }
+
       allimportNodeId.push(nodeId);
       node.html = await fetchHtmlSourceCodeByName(node.name);
 
@@ -2426,30 +2437,51 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
       } else {
         node.html = node.html.replace(idPlaceholderRegex, nodeId);
       }
+      //TODO: fix height and width
+      // Adjust the height of the box div
+      let styleString = "";
+      if (node.width) {
+        styleString += `width: ${node.width}; `;
+        const adjustedWidth = originalWidth - 22;
+        styleString += `width: ${adjustedWidth}px; `;
+      }
+      if (node.height) {
+        const originalHeight = parseInt(node.height, 10);
+        const adjustedHeight = originalHeight - 91;
+        styleString += `height: ${adjustedHeight}px; `;
+      }
+      if (styleString !== "") {
+        node.html = node.html.replace(boxDivRegex, `<div class="box" style="${styleString}"$1>`);
+      }
     }
   }
 }
+
 
 function updateImportNodes() {
   allimportNodeId.forEach((nodeId) => {
     editor.updateConnectionNodes(`node-${nodeId}`);
   });
 }
-
 function importSetupNodes(dataToImport) {
+  imporTempData = dataToImport;
   Object.entries(dataToImport.drawflow.Home.data).forEach(([nodeId,nodeValue]) => {
-    // import the node use addNode function
     disableButtons();
     makeNodeTop(nodeId);
-    setupNodeListeners(nodeId);
     setupNodeCopyListens(nodeId);
     addEventListenersToNumberInputs(nodeId);
     setupTextInputListeners(nodeId);
     setupNodeServiceDrawer(nodeId);
     reloadi18n();
+    setupNodeListeners(nodeId);
     const nodeElement = document.getElementById(`node-${nodeId}`);
     if (nodeElement) {
-      const copyButton = nodeElement.querySelector(".button.copy-button");
+      const nodeData = dataToImport.drawflow.Home.data[nodeId];
+      if (nodeData.width) {
+        nodeElement.style.width = nodeData.width;
+        // nodeElement.style.height = nodeData.height;
+      }
+      const copyButton = nodeElement.querySelector(".copy-button");
       if (copyButton) {
         setupNodeCopyListens(nodeId);
       }
@@ -3022,19 +3054,46 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-function sendWorkflow(fileName) {
-  Swal.fire({
-    text: "Are you sure you want to import this workflow?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, import it!",
-    cancelButtonText: "Cancel"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const workstationUrl = "/workstation?filename=" + encodeURIComponent(fileName);
-      window.location.href = workstationUrl;
-    }
-  });
+function loadWorkLocalflow(fileName) {
+  fetch("/load-workflow", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      filename: fileName,
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        Swal.fire("Error", data.error, "error");
+      } else {
+        try {
+          addHtmlAndReplacePlaceHolderBeforeImport(data)
+            .then(() => {
+              editor.clear();
+              editor.import(data);
+              importSetupNodes(data);
+              Swal.fire("Imported!", "", "success").then((result) => {
+                if (result.isConfirmed) {
+                  showEditorTab();
+                }
+                setTimeout(() => {
+                  updateImportNodes();
+                }, 200);
+              });
+            });
+        } catch (error) {
+          Swal.showValidationMessage(`Import error: ${error}`);
+        }
+        Swal.fire("Success", "Workflow loaded successfully", "success");
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      Swal.fire("Error", "An error occurred while loading the workflow.", "error");
+    });
 }
 
 
@@ -3043,7 +3102,6 @@ function showEditorTab() {
   document.getElementById("col-right2").style.display = "none";
   console.log("Show Editor");
 }
-
 function importGalleryWorkflow(data) {
   try {
     const parsedData = JSON.parse(data);
@@ -3149,14 +3207,14 @@ function showGalleryWorkflowList(tabId) {
   })
     .then(response => response.json())
     .then(data => {
-      galleryWorkflows = data.json || []; // 存储获取到的工作流数据
+      galleryWorkflows = data.json || [];
       galleryWorkflows.forEach((workflow, index) => {
         const meta = workflow.meta;
         const title = meta.title;
         const author = meta.author;
         const time = meta.time;
         const thumbnail = meta.thumbnail || generateThumbnailFromContent(meta);
-        createGridItem(title, container, thumbnail, author, time, false, index); // 将index传递给createGridItem
+        createGridItem(title, container, thumbnail, author, time, false, index);
       });
     })
     .catch(error => {
@@ -3220,7 +3278,8 @@ function createGridItem(workflowName, container, thumbnail, author = "", time = 
   button.onclick = function (e) {
     e.preventDefault();
     if (showDeleteButton) {
-      sendWorkflow(workflowName);
+      loadWorkflow(workflowName);
+      showEditorTab();
     } else {
       const workflowData = galleryWorkflows[index];
       importGalleryWorkflow(JSON.stringify(workflowData));
@@ -3282,14 +3341,11 @@ function showLoadWorkflowList(tabId) {
       if (!Array.isArray(data.files)) {
         throw new TypeError("The return data is not an array");
       }
-
       const container = document.getElementById(tabId).querySelector(".grid-container");
       container.innerHTML = "";
-
-      data.files.forEach(workflowName => {
-        const title = workflowName.replace(/\.json$/, "");
-        const thumbnail = generateThumbnailFromContent({title});
-        createGridItem(title, container, thumbnail, "", "", true);
+      data.files.forEach(fileName => {
+        const thumbnail = generateThumbnailFromContent({title: fileName});
+        createGridItem(fileName, container, thumbnail, "", "", true);
       });
     })
     .catch(error => {
