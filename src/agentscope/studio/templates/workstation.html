@@ -29,7 +29,10 @@
     <script src="{{ url_for('static', filename='js_third_party/prism-python.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/prism-line-numbers.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/drawflow.min.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='js_third_party/Sortable.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/anime.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css_third_party/material-icons.css') }}">
     {#    TODO: remove#}
     <script crossorigin="anonymous"
             integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
@@ -282,51 +285,6 @@
                                 data-node="SwitchPipeline"
                                 draggable="true" ondragstart="drag(event)">
                                 SwitchPipeline
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="workstation-sidebar-subitem unselectable-text"
-                             onclick="onClickSidebarSubItem(this);"
-                             i18n="workstation-sidebar-item-Service"
-                        >
-                            Service
-                        </div>
-                        <ul class="workstation-sidebar-sub-content">
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="BingSearchService"
-                                draggable="true" ondragstart="drag(event)">
-                                Bing Search
-                            </li>
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="GoogleSearchService"
-                                draggable="true" ondragstart="drag(event)">
-                                Google Search
-                            </li>
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="PythonService"
-                                draggable="true" ondragstart="drag(event)">
-                                Python Interpreter
-                            </li>
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="ReadTextService"
-                                draggable="true" ondragstart="drag(event)">
-                                Read Text
-                            </li>
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="WriteTextService"
-                                draggable="true" ondragstart="drag(event)">
-                                Write Text
-                            </li>
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="TextToAudioService"
-                                draggable="true" ondragstart="drag(event)">
-                                Text to Audio
-                            </li>
-                            <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="TextToImageService"
-                                draggable="true" ondragstart="drag(event)">
-                                Text to Image
                             </li>
                         </ul>
                     </li>

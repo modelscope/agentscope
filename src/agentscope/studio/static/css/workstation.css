@@ -511,6 +511,13 @@ pre[class*='language-'] {
   transform: translateY(-2px);
 }
 
+.pop-drawer {
+  background-image: linear-gradient(to right, #1861e5, #171ce4);
+}
+.pop-drawer:hover {
+  background-image: linear-gradient(to left, #1861e5, #171ce4);
+  transform: unset;
+}
 .add-case {
   background-image: linear-gradient(to right, #56ab2f, #a8e063);
 }
@@ -596,6 +603,98 @@ pre[class*='language-'] {
   margin-top: 10px;
   color: #888;
 }
+
+
+.drawflow .drawflow-node.selected {
+  background: var(--main-color-very-light);
+  border: 1px solid var(--main-color-light);
+  box-shadow: 0 2px 10px 2px var(--main-color-light);
+}
+
+.tool-box{
+  display: flex;
+  gap: 10px;
+}
+
+.add-service-list{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 5%;
+  overflow: hidden;
+}
+
+.add-service-list li {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  color: black;
+}
+
+.add-service-list li:hover {
+  background-color: #f1f1f1;
+}
+
+.dropzone {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.stacked-list {
+  list-style-type: none;
+  padding: 5px;
+  margin: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.stacked-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  margin-bottom: 8px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.stacked-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.stacked-item-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.stacked-item-actions button:hover {
+  color: #4CAF50;
+}
+
+.stacked-item-actions .material-icons {
+  font-size: 18px;
+}
+
+.hidden-node {
+  display: none !important;
+}
+/* END */
 
 .swal2-container {
   z-index: 20000 !important;
@@ -1159,4 +1258,41 @@ pre[class*='language-'] {
 
 #navigation-bar-logo:hover {
   cursor: pointer;
+}
+
+.add-button-forJson{
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 25%);
+  background: black;
+  color: white;
+  cursor: pointer;
+  border: none;
+  padding: 1em;
+  border-radius: 15%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+}
+
+.add-button-forJson::before,
+.add-button-forJson::after {
+  content: '';
+  position: absolute;
+  width: 60%; /* 调整 "+" 的宽度 */
+  height: 2px; /* "+" 的线条厚度 */
+  background-color: currentColor;
+}
+.add-button-forJson::before {
+  transform: rotate(90deg);
+}
+.add-button-forJson::after {
+  transform: rotate(0deg);
+}
+.add-button-forJson:hover{
+  transform: translate(-50%, 20%); ;
+  transition: all 0.3s ease-in-out;
 }
