@@ -10,7 +10,8 @@ def eval_condition_operator(
 ) -> bool:
     """Eval condition operator only for Msg content or string"""
     if isinstance(actual_value, Msg):
-        actual_value = actual_value.get("content", "")
+        if hasattr(actual_value, "content"):
+            actual_value = actual_value.content
 
     operator_funcs = {
         "contains": lambda: target_value in actual_value,
