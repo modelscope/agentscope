@@ -88,7 +88,7 @@
             "args": {
               "url": "https://api.remove.bg/v1.0/removebg",
               "image_path_or_url": "",
-              "headers": "{\"X-Api-Key\": \"\"}",
+              "headers": "{\"X-Api-Key\": \"# Please get from https://www.remove.bg/dashboard#api-key\"}",
               "data": "{\"size\": \"auto\"}",
               "json": "{}",
               "kwargs": "{}",

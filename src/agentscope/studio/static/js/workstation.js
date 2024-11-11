@@ -17,12 +17,9 @@ const nameToHtmlFile = {
   "dashscope_chat": "model-dashscope-chat.html",
   "openai_chat": "model-openai-chat.html",
   "post_api_chat": "model-post-api-chat.html",
-  "post_api_dall_e": "model-post-api-dall-e.html",
-  "dashscope_image_synthesis": "model-wanx.html",
   "Message": "message-msg.html",
   "DialogAgent": "agent-dialogagent.html",
   "UserAgent": "agent-useragent.html",
-  "ImageSynthesis": "tool-image-synthesis.html",
   "DictDialogAgent": "agent-dictdialogagent.html",
   "ReActAgent": "agent-reactagent.html",
   "BroadcastAgent": "agent-broadcastagent.html",
@@ -41,6 +38,7 @@ const nameToHtmlFile = {
   "Post": "tool-post.html",
   "TextToAudioService": "service-text-to-audio.html",
   "TextToImageService": "service-text-to-image.html",
+  "ImageSynthesis": "tool-image-synthesis.html",
   "ImageComposition": "tool-image-composition.html",
   "Code": "tool-code.html",
   // 'IF/ELSE': 'tool-if-else.html',
@@ -553,53 +551,6 @@ async function addNodeToDrawFlow(name, pos_x, pos_y) {
                         }
       },
       htmlSourceCode);
-    break;
-
-  case "post_api_dall_e":
-    editor.addNode("post_api_dall_e", 0,
-      0,
-      pos_x, pos_y,
-      "post_api_dall_e", {
-        "args":
-                        {
-                          "config_name": "",
-                          "api_url": "",
-                          "headers": {
-                            "content_type": "application/json",
-                            "authorization": "",
-                          },
-                          "json_args": {
-                            "model": "",
-                            "n": 1,
-                            "size": "",
-                            "temperature": 0.0,
-                            "seed": 0,
-                          },
-                          "model_type": "post_api_dall_e",
-                          "messages_key": "prompt"
-                        }
-      },
-      htmlSourceCode);
-    break;
-
-  case "dashscope_image_synthesis":
-    editor.addNode("dashscope_image_synthesis", 0,
-      0,
-      pos_x, pos_y,
-      "dashscope_image_synthesis", {
-        "args":
-                        {
-                          "config_name": "",
-                          "model_name": "",
-                          "generate_args": {
-                            "n": 1,
-                            "size": "",
-                            "temperature": 0.0,
-                            "seed": 0,
-                          },
-                          "model_type": "dashscope_image_synthesis"
-                        }
-      }, htmlSourceCode);
     break;
 
     // Message
