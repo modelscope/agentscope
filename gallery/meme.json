@@ -328,31 +328,6 @@
           "outputs": {},
           "pos_x": 121,
           "pos_y": 65
-        },
-        "19": {
-          "id": 19,
-          "name": "dashscope_image_synthesis",
-          "data": {
-            "args": {
-              "config_name": "wanx-v1",
-              "model_name": "wanx-v1",
-              "generate_args": {
-                "n": 1,
-                "size": "1024*1024",
-                "temperature": 0,
-                "seed": 0
-              },
-              "model_type": "dashscope_image_synthesis",
-              "messages_key": "prompt",
-              "api_key": ""
-            }
-          },
-          "class": "dashscope_image_synthesis",
-          "typenode": false,
-          "inputs": {},
-          "outputs": {},
-          "pos_x": 124,
-          "pos_y": 165.75
         }
       }
     }
