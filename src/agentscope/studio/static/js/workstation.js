@@ -1158,7 +1158,18 @@ function toggleDraggable(element) {
 
 function filterEmptyValues(obj) {
     return Object.entries(obj).reduce((acc, [key, value]) => {
-        if (typeof value === 'object' && value !== null) {
+        if (Array.isArray(value)) {
+            const filteredArray = value.map(item => {
+                if (typeof item === 'object' && item !== null) {
+                    return filterEmptyValues(item);
+                }
+                return item !== '' ? item : null;
+            }).filter(item => item !== null);
+
+            if (filteredArray.length > 0) {
+                acc[key] = filteredArray;
+            }
+        } else if (typeof value === 'object' && value !== null) {
             const filteredNestedObj = filterEmptyValues(value);
             if (Object.keys(filteredNestedObj).length > 0) {
                 acc[key] = filteredNestedObj;
