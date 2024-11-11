@@ -47,7 +47,7 @@ class Msg:
         self,
         name: str,
         content: Any,
-        role: Union[str, Literal["system", "user", "assistant"]],
+        role: Union[str, Literal["system", "user", "assistant"]] = "assistant",
         url: Optional[Union[str, List[str]]] = None,
         metadata: Optional[Union[dict, str]] = None,
         echo: bool = False,
