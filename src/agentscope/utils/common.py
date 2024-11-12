@@ -217,7 +217,9 @@ def _guess_type_by_extension(
     url: str,
 ) -> Literal["image", "audio", "video", "file"]:
     """Guess the type of the file by its extension."""
-    extension = url.split(".")[-1].lower()
+    parsed_url = urlparse(url)
+    path = parsed_url.path
+    extension = path.split(".")[-1].lower() if "." in path else ""
 
     if extension in [
         "bmp",

@@ -48,7 +48,7 @@ def image_synthesis(
     if res.status == ServiceExecStatus.SUCCESS:
         return Msg(
             name="ImageSynthesis",
-            content=res.content,
+            content="Image synthesis succeed.",
             url=res.content["image_urls"],
             role="assistant",
             echo=True,
