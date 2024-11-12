@@ -2392,7 +2392,7 @@ async function addHtmlAndReplacePlaceHolderBeforeImport(data) {
       // Adjust the height of the box div
       let styleString = "";
       if (node.width) {
-        styleString += `width: ${node.width}; `;
+        const originalWidth = parseInt(node.width, 10);
         const adjustedWidth = originalWidth - 22;
         styleString += `width: ${adjustedWidth}px; `;
       }
