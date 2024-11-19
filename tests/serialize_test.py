@@ -4,7 +4,7 @@
 import json
 import unittest
 
-from agentscope.message import Msg, PlaceholderMessage
+from agentscope.message import Msg
 from agentscope.serialize import serialize, deserialize
 
 
@@ -16,10 +16,6 @@ class SerializationTest(unittest.TestCase):
 
         msg1 = Msg("A", "A", "assistant")
         msg2 = Msg("B", "B", "assistant")
-        placeholder = PlaceholderMessage(
-            host="localhost",
-            port=50051,
-        )
 
         serialized_msg1 = serialize(msg1)
         deserialized_msg1 = deserialize(serialized_msg1)
@@ -78,23 +74,4 @@ class SerializationTest(unittest.TestCase):
                     "__name__": "Msg",
                 },
             ],
-        )
-
-        serialized_placeholder = serialize(placeholder)
-        deserialized_placeholder = deserialize(serialized_placeholder)
-        self.assertTrue(isinstance(serialized_placeholder, str))
-        self.assertTrue(
-            isinstance(deserialized_placeholder, PlaceholderMessage),
-        )
-
-        placeholder_dict = json.loads(serialized_placeholder)
-        self.assertDictEqual(
-            placeholder_dict,
-            {
-                "_host": placeholder._host,
-                "_port": placeholder._port,
-                "_task_id": placeholder._task_id,
-                "__module__": "agentscope.message.placeholder",
-                "__name__": "PlaceholderMessage",
-            },
         )

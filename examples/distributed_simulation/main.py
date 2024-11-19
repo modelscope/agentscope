@@ -196,7 +196,7 @@ def run_main_process(
         Msg(
             name="Moderator",
             role="assistant",
-            content=f"The average value is {summ/cnt} [takes {et-st} s]",
+            content=f"The average value is {summ / cnt} [takes {et - st} s]",
         ),
     )
 

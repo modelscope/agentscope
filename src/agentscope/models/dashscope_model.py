@@ -13,6 +13,14 @@ from ..utils.common import _convert_to_str, _guess_type_by_extension
 
 try:
     import dashscope
+
+    dashscope_version = dashscope.version.__version__
+    if dashscope_version < "1.19.0":
+        logger.warning(
+            f"You are using 'dashscope' version {dashscope_version}, "
+            "which is below the recommended version 1.19.0. "
+            "Please consider upgrading to maintain compatibility.",
+        )
     from dashscope.api_entities.dashscope_response import GenerationResponse
 except ImportError:
     dashscope = None
@@ -54,14 +62,12 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
         if dashscope is None:
             raise ImportError(
                 "The package 'dashscope' is not installed. Please install it "
-                "by running `pip install dashscope==1.14.1`",
+                "by running `pip install dashscope>=1.19.0`",
             )
 
         self.generate_args = generate_args or {}
 
         self.api_key = api_key
-        if self.api_key:
-            dashscope.api_key = self.api_key
         self.max_length = None
 
     def format(
@@ -237,7 +243,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         if stream:
             kwargs["incremental_output"] = True
 
-        response = dashscope.Generation.call(**kwargs)
+        response = dashscope.Generation.call(api_key=self.api_key, **kwargs)
 
         # step3: invoke llm api, record the invocation and update the monitor
         if stream:
@@ -357,10 +363,12 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             # prompt1
             [
                 {
+                    "role": "system",
+                    "content": "You're a helpful assistant"
+                },
+                {
                     "role": "user",
                     "content": (
-                        "You're a helpful assistant\\n"
-                        "\\n"
                         "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
@@ -480,6 +488,7 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         response = dashscope.ImageSynthesis.call(
             model=self.model_name,
             prompt=prompt,
+            api_key=self.api_key,
             **kwargs,
         )
         if response.status_code != HTTPStatus.OK:
@@ -593,6 +602,7 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         response = dashscope.TextEmbedding.call(
             input=texts,
             model=self.model_name,
+            api_key=self.api_key,
             **kwargs,
         )
 
@@ -725,6 +735,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         response = dashscope.MultiModalConversation.call(
             model=self.model_name,
             messages=messages,
+            api_key=self.api_key,
             **kwargs,
         )
         # Unhandled code path here
