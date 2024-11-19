@@ -271,6 +271,7 @@ class LangChainKnowledge(Knowledge):
                 .get("vector_store", {})
                 .get("init_args", {})
             )
+            # we prepare the ~embedding_key from the configs
             embedding_key = init_config.pop(
                 "embedding_key",
                 "embedding",

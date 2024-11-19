@@ -8,7 +8,7 @@ from .user_agent import UserAgent
 from .react_agent import ReActAgent
 from .rag_agent import (
     LlamaIndexAgent,
-    RAG_Agent,
+    LangChainAgent,
 )
 
 
@@ -20,4 +20,5 @@ __all__ = [
     "UserAgent",
     "ReActAgent",
     "LlamaIndexAgent",
+    "LangChainAgent",
 ]

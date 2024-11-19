@@ -1,6 +1,6 @@
 [
   {
-    "class": "RAG_Agent",
+    "class": "LlamaIndexAgent",
     "args": {
       "name": "Tutorial-Assistant",
       "description": "Tutorial-Assistant is an agent that can provide answer based on English tutorial material, mainly the markdown files. It can answer general questions about AgentScope.",
@@ -13,7 +13,7 @@
     }
   },
   {
-    "class": "RAG_Agent",
+    "class": "LlamaIndexAgent",
     "args": {
       "name": "Code-Search-Assistant",
       "description": "Code-Search-Assistant is an agent that can provide answer based on AgentScope code base. It can answer questions about specific modules in AgentScope.",
@@ -26,7 +26,7 @@
     }
   },
   {
-    "class": "RAG_Agent",
+    "class": "LlamaIndexAgent",
     "args": {
       "name": "API-Assistant",
       "description": "API-Assistant is an agent that can answer questions about APIs in AgentScope. It can answer general questions about AgentScope.",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "class": "RAG_Agent",
+    "class": "LlamaIndexAgent",
     "args": {
       "name": "Searching-Assistant",
       "description": "Search-Assistant is an agent that can provide answer based on AgentScope code and tutorial. It can answer questions about everything in AgentScope codes and tutorials.",

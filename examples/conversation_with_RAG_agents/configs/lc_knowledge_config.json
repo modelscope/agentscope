@@ -27,23 +27,7 @@
           }
         }
       }
-    ],
-    "store_and_index":{
-      "stores":{
-        "vector_store": {
-          "create_object": true,
-          "module": "langchain_elasticsearch",
-          "class": "ElasticsearchStore",
-          "init_args": {
-            "es_url": "http://localhost:9200",
-            "index_name": "lc_code_rag",
-            "es_user": "elastic",
-            "es_password": "147258",
-            "embedding_key": "embedding"
-          }
-        }
-      }
-    }
+    ]
   },
   {
     "knowledge_id": "agentscope_api_rag",
