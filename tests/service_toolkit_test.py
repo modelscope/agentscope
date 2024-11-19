@@ -26,6 +26,8 @@ class ServiceToolkitTest(unittest.TestCase):
         """Init for ExampleTest."""
         agentscope.init(disable_saving=True)
 
+        self.maxDiff = None
+
         self.json_schema_bing_search1 = {
             "type": "function",
             "function": {
@@ -81,7 +83,7 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "func",
-                "description": None,
+                "description": "",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -103,7 +105,17 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "execute_python_code",
-                "description": "Execute a piece of python code.",
+                "description": """Execute a piece of python code.
+
+This function can run Python code provided in string format. It has the
+option to execute the code within a Docker container to provide an
+additional layer of security, especially important when running
+untrusted code.
+
+WARNING: If `use_docker` is set to `False`, the `code` will be run
+directly in the host system's environment. This poses a potential
+security risk if the code is untrusted. Only disable Docker if you are
+confident in the safety of the code being executed.""",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -123,7 +135,13 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "retrieve_from_list",
-                "description": "Retrieve data in a list.",
+                "description": """Retrieve data in a list.
+
+Memory retrieval with user-defined score function. The score function is
+expected to take the `query` and one of the element in 'knowledge' (a
+list). This function retrieves top-k elements in 'knowledge' with
+HIGHEST scores. If the 'query' is a dict but has no embedding,
+we use the embedding model to embed the query.""",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -163,15 +181,20 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "summarization",
-                "description": "Summarize the input text.",
+                "description": (
+                    "Summarize the input text.\n"
+                    "\n"
+                    "Summarization function (Notice: current version "
+                    "of token limitation is\n"
+                    "built with Open AI API)"
+                ),
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "text": {
                             "type": "string",
-                            "description": (
-                                "Text to be summarized by " "the model."
-                            ),
+                            "description": "Text to be summarized by the "
+                            "model.",
                         },
                     },
                     "required": [
@@ -314,6 +337,16 @@ The following tool functions are available in the format of
 1. bing_search: Search question in Bing Search API and return the searching results
 	question (string): The search query string.
 2. execute_python_code: Execute a piece of python code.
+
+This function can run Python code provided in string format. It has the
+option to execute the code within a Docker container to provide an
+additional layer of security, especially important when running
+untrusted code.
+
+WARNING: If `use_docker` is set to `False`, the `code` will be run
+directly in the host system's environment. This poses a potential
+security risk if the code is untrusted. Only disable Docker if you are
+confident in the safety of the code being executed.
 	code (string): The Python code to be executed.
 """,  # noqa
         )

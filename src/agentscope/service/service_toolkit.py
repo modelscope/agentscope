@@ -580,7 +580,7 @@ class ServiceToolkit:
             "type": "function",
             "function": {
                 "name": service_func.__name__,
-                "description": func_description,
+                "description": func_description.strip(),
                 "parameters": {
                     "type": "object",
                     "properties": properties_field,
