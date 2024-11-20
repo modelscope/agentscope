@@ -122,7 +122,6 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.service.service_toolkit</h1><div class="highlight"><pre>
 <span></span># -*- coding: utf-8 -*-
 &quot;&quot;&quot;Service Toolkit for service function usage.&quot;&quot;&quot;
-import collections.abc
 import json
 from functools import partial
 import inspect
@@ -162,7 +161,10 @@ def _get_type_str(cls: Any) -&gt; Optional[Union[str, list]]:
         # Typing class
         if cls.__origin__ is Union:
             type_str = [_get_type_str(_) for _ in get_args(cls)]
-        elif cls.__origin__ is collections.abc.Sequence:
+            clean_type_str = [_ for _ in type_str if _ != &quot;null&quot;]
+            if len(clean_type_str) == 1:
+                type_str = clean_type_str[0]
+        elif cls.__origin__ in [list, tuple]:
             type_str = &quot;array&quot;
         else:
             type_str = str(cls.__origin__)
@@ -174,7 +176,7 @@ def _get_type_str(cls: Any) -&gt; Optional[Union[str, list]]:
             type_str = &quot;number&quot;
         elif cls is bool:
             type_str = &quot;boolean&quot;
-        elif cls is collections.abc.Sequence:
+        elif cls in [list, tuple]:
             type_str = &quot;array&quot;
         elif cls is None.__class__:
             type_str = &quot;null&quot;
@@ -652,9 +654,9 @@ class ServiceToolkit:
         docstring = parse(service_func.__doc__)
 
         # Function description
-        func_description = (
-            docstring.short_description or docstring.long_description
-        )
+        short_description = docstring.short_description or &quot;&quot;
+        long_description = docstring.long_description or &quot;&quot;
+        func_description = &quot;\n\n&quot;.join([short_description, long_description])
 
         # The arguments that requires the agent to specify
         # to support class method, the self args are deprecated
@@ -719,7 +721,7 @@ class ServiceToolkit:
             &quot;type&quot;: &quot;function&quot;,
             &quot;function&quot;: {
                 &quot;name&quot;: service_func.__name__,
-                &quot;description&quot;: func_description,
+                &quot;description&quot;: func_description.strip(),
                 &quot;parameters&quot;: {
                     &quot;type&quot;: &quot;object&quot;,
                     &quot;properties&quot;: properties_field,
@@ -816,9 +818,9 @@ class ServiceFactory:
         docstring = parse(service_func.__doc__)
 
         # Function description
-        func_description = (
-            docstring.short_description or docstring.long_description
-        )
+        short_description = docstring.short_description or &quot;&quot;
+        long_description = docstring.long_description or &quot;&quot;
+        func_description = &quot;\n&quot;.join([short_description, long_description])
 
         # The arguments that requires the agent to specify
         # we remove the self argument, for class methods

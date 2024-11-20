@@ -305,7 +305,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_SAVE_LOG</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{message}</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_DEFAULT_LOG_FORMAT</span>
+        <span class="k">return</span> <span class="n">_DEFAULT_LOG_FORMAT</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
 
 <div class="viewcode-block" id="setup_logger">
@@ -324,6 +324,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            `&quot;DEBUG&quot;`, `&quot;INFO&quot;`, `&quot;SUCCESS&quot;`, `&quot;WARNING&quot;`, `&quot;ERROR&quot;`,</span>
 <span class="sd">            `&quot;CRITICAL&quot;`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set logging level</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+
     <span class="c1"># avoid reinit in subprocess</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
         <span class="c1"># add chat function for logger</span>
@@ -333,8 +336,6 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">53</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">log_msg</span>
 
-        <span class="c1"># set logging level</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
         <span class="c1"># standard output for all logging except chat</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
