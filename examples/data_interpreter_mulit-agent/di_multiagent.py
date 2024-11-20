@@ -355,7 +355,7 @@ def init_agents() -> None:
                 "config_name": "dashscope_chat",
                 "model_type": "dashscope_chat",
                 "model_name": "qwen-max",
-                "api_key": "",
+                "api_key": dashscope_api_key,
                 "generate_args": {
                     "temperature": 0.7,
                 },
