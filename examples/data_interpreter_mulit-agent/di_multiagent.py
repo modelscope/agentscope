@@ -327,15 +327,6 @@ def init_agents() -> None:
                 },
             },
             {
-                "config_name": "dashscope",
-                "model_type": "dashscope_chat",
-                "model_name": "qwen-max-1201",
-                "api_key": dashscope_api_key,
-                "generate_args": {
-                    "temperature": 0.0,
-                },
-            },
-            {
                 "config_name": "lite_llm_claude",
                 "model_type": "litellm_chat",
                 "model_name": "claude-3-5-haiku-20241022",
