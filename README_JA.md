@@ -394,3 +394,10 @@ pre-commit install
         year    = {2024},
     }
     ```
+
+## 貢献者 ✨
+
+貢献者の皆様、ありがとうございました:
+<a href="https://github.com/modelscope/agentscope/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=modelscope/agentscope&max=999&columns=12&anon=1" />
+</a>
