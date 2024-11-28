@@ -209,9 +209,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.service.WebElementInfo.origin_y"><code class="docutils literal notranslate"><span class="pre">WebElementInfo.origin_y</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.service.WebElementInfo.width"><code class="docutils literal notranslate"><span class="pre">WebElementInfo.width</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.service.WebElementInfo.height"><code class="docutils literal notranslate"><span class="pre">WebElementInfo.height</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.WebElementInfo.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">WebElementInfo.model_computed_fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.service.WebElementInfo.model_config"><code class="docutils literal notranslate"><span class="pre">WebElementInfo.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.service.WebElementInfo.model_fields"><code class="docutils literal notranslate"><span class="pre">WebElementInfo.model_fields</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.service.ServiceFactory"><code class="docutils literal notranslate"><span class="pre">ServiceFactory</span></code></a><ul>
@@ -2863,23 +2861,9 @@ link of the element, otherwise, the value is False.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.service.WebElementInfo.model_computed_fields">
-<span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.service.WebElementInfo.model_computed_fields" title="Link to this definition"></a></dt>
-<dd><p>A dictionary of computed field names and their corresponding <cite>ComputedFieldInfo</cite> objects.</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.service.WebElementInfo.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.service.WebElementInfo.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.service.WebElementInfo.model_fields">
-<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">FieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aria_label':</span> <span class="pre">FieldInfo(annotation=Union[NoneType,</span> <span class="pre">str],</span> <span class="pre">required=True),</span> <span class="pre">'height':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'html':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'inner_text':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'is_clickable':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">bool],</span> <span class="pre">required=True),</span> <span class="pre">'meta_data':</span> <span class="pre">FieldInfo(annotation=list[str],</span> <span class="pre">required=True),</span> <span class="pre">'node_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'node_value':</span> <span class="pre">FieldInfo(annotation=Union[NoneType,</span> <span class="pre">str],</span> <span class="pre">required=True),</span> <span class="pre">'origin_x':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'origin_y':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True),</span> <span class="pre">'tag_name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True),</span> <span class="pre">'type':</span> <span class="pre">FieldInfo(annotation=Union[NoneType,</span> <span class="pre">str],</span> <span class="pre">required=True),</span> <span class="pre">'width':</span> <span class="pre">FieldInfo(annotation=float,</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#agentscope.service.WebElementInfo.model_fields" title="Link to this definition"></a></dt>
-<dd><p>Metadata about the fields defined on the model,
-mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] objects.</p>
-<p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
 </dd></dl>
 
 </dd></dl>
