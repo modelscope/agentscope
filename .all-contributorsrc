@@ -3,7 +3,7 @@
   "projectOwner": "modelscope",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": ["README.md"],
+  "files": ["README.md", "README_ZH.md", "README_JA.md"],
   "imageSize": 50,
   "commit": true,
   "contributorsPerLine": 7,
