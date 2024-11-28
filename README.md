@@ -424,7 +424,7 @@ If you find our work helpful for your research or application, please cite our p
 
 ## Contributors ✨
 
-All Thanks To Our Contributors:
+All thanks to our contributors:
 
 <a href="https://github.com/modelscope/agentscope/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=modelscope/agentscope&max=999&columns=12&anon=1" />
