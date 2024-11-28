@@ -764,6 +764,11 @@ def _delete_workflow() -> Response:
     if not filename:
         return jsonify({"error": "Filename is required"})
 
+    if not filename.endswith(".json"):
+        return jsonify({"error": "Only JSON files can be deleted"})
+
+    filename = os.path.basename(filename)
+
     filepath = os.path.join(user_dir, filename)
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"})
