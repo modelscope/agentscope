@@ -1,5 +1,7 @@
 [English](https://github.com/modelscope/agentscope/blob/main/README.md) | [中文](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | 日本語
 
+<a href="https://trendshift.io/repositories/10079" target="_blank"><img src="https://trendshift.io/api/badge/repositories/10079" alt="modelscope%2Fagentscope | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+
 # AgentScope
 
 <h1 align="left">
@@ -394,3 +396,11 @@ pre-commit install
         year    = {2024},
     }
     ```
+
+## 貢献者 ✨
+
+貢献者の皆様、ありがとうございました:
+
+<a href="https://github.com/modelscope/agentscope/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=modelscope/agentscope&max=999&columns=12&anon=1" />
+</a>
