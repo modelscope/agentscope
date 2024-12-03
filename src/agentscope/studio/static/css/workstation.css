@@ -514,10 +514,12 @@ pre[class*='language-'] {
 .pop-drawer {
   background-image: linear-gradient(to right, #1861e5, #171ce4);
 }
+
 .pop-drawer:hover {
   background-image: linear-gradient(to left, #1861e5, #171ce4);
   transform: unset;
 }
+
 .add-case {
   background-image: linear-gradient(to right, #56ab2f, #a8e063);
 }
@@ -611,12 +613,12 @@ pre[class*='language-'] {
   box-shadow: 0 2px 10px 2px var(--main-color-light);
 }
 
-.tool-box{
+.tool-box {
   display: flex;
   gap: 10px;
 }
 
-.add-service-list{
+.add-service-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -624,7 +626,7 @@ pre[class*='language-'] {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 5%;
   overflow: hidden;
@@ -694,10 +696,43 @@ pre[class*='language-'] {
 .hidden-node {
   display: none !important;
 }
+
 /* END */
 
 .swal2-container {
-  z-index: 20000 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.swal2-input {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+  width: 95%;
+  margin-bottom: 10px;
+  box-shadow: none;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.swal2-input:focus {
+  border-color: #007aff;
+}
+
+.category-button {
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.category-button.selected {
+  background-color: #007aff;
+  color: #fff;
 }
 
 .modules-info {
@@ -1260,7 +1295,7 @@ pre[class*='language-'] {
   cursor: pointer;
 }
 
-.add-button-forJson{
+.add-button-forJson {
   position: absolute;
   top: 100%;
   left: 50%;
@@ -1286,13 +1321,24 @@ pre[class*='language-'] {
   height: 2px; /* "+" 的线条厚度 */
   background-color: currentColor;
 }
+
 .add-button-forJson::before {
   transform: rotate(90deg);
 }
+
 .add-button-forJson::after {
   transform: rotate(0deg);
 }
-.add-button-forJson:hover{
-  transform: translate(-50%, 20%); ;
+
+.add-button-forJson:hover {
+  transform: translate(-50%, 20%);;
   transition: all 0.3s ease-in-out;
+}
+
+.special-icon {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 24px;
+  line-height: 1;
 }

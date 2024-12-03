@@ -3,13 +3,10 @@
     "index": 1,
     "title": "Meme Generator",
     "author": "AgentScopeTeam",
-    "keywords": [
-      "meme",
-      "image"
-    ],
     "category": "tool",
     "time": "2024-09-04",
-    "thumbnail": ""
+    "thumbnail": "",
+    "description": "meme generator"
   },
   "drawflow": {
     "Home": {

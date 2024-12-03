@@ -3,13 +3,10 @@
     "index": 2,
     "title": "Background Remover",
     "author": "AgentScopeTeam",
-    "keywords": [
-      "background",
-      "image"
-    ],
     "category": "tool",
     "time": "2024-09-04",
-    "thumbnail": ""
+    "thumbnail": "",
+    "description": "Remove image background via post api"
   },
   "drawflow": {
     "Home": {

@@ -707,6 +707,16 @@ def _fetch_gallery() -> Response:
             except (IOError, json.JSONDecodeError) as e:
                 print(f"Error reading {file_path}: {e}")
 
+    def sort_key(item: Any) -> Tuple:  # mypy: ignore
+        meta = item.get("meta", {})
+        index = meta.get("index", float("inf"))
+        time = meta.get("time", "")
+        time = datetime.strptime(time, "%Y-%m-%d") if time else datetime.min
+        is_negative = index < 0
+        return (is_negative, -index if is_negative else index, time)
+
+    gallery_items.sort(key=sort_key)
+
     return jsonify(json=gallery_items)
 
 

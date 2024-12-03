@@ -3,12 +3,13 @@
 import ipaddress
 import json
 import os
+import traceback
 import uuid
 import time
 import secrets
 import tempfile
 from typing import Tuple, Any
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import requests
 import oss2
@@ -28,7 +29,17 @@ from flask_babel import Babel, refresh
 from dotenv import load_dotenv
 
 from agentscope.constants import EXPIRATION_SECONDS, FILE_SIZE_LIMIT
-from agentscope.studio.utils import _require_auth, generate_jwt
+from agentscope.studio.utils import (
+    _require_auth,
+    generate_jwt,
+    decode_jwt,
+    get_user_status,
+    star_repository,
+    fork_repo,
+    create_branch_with_timestamp,
+    upload_file,
+    open_pull_request,
+)
 from agentscope.studio._app import (
     _convert_config_to_py,
     _read_examples,
@@ -151,35 +162,6 @@ def generate_verification_token() -> str:
     return secrets.token_urlsafe()
 
 
-def star_repository(access_token: str) -> int:
-    """
-    Star the Repo.
-    """
-    url = f"https://api.github.com/user/starred/{OWNER}/{REPO}"
-    headers = {
-        "Authorization": f"token {access_token}",
-        "Content-Length": "0",
-        "Accept": "application/vnd.github.v3+json",
-    }
-    response = requests.put(url, headers=headers)
-    return response.status_code == 204
-
-
-def get_user_status(access_token: str) -> Any:
-    """
-    Get user status.
-    """
-    url = "https://api.github.com/user"
-    headers = {
-        "Authorization": f"token {access_token}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    return None
-
-
 @_app.route("/")
 def _home() -> str:
     """
@@ -252,7 +234,7 @@ def oauth_callback() -> str:
 
     user_login = user_status.get("login")
 
-    if star_repository(access_token=access_token):
+    if star_repository(access_token=access_token, owner=OWNER, repo=REPO):
         verification_token = generate_verification_token()
         # Used for compare with `verification_token` in `jwt_token`
         session["verification_token"] = verification_token
@@ -399,6 +381,99 @@ def _load_workflow_online(**kwargs: Any) -> Response:
     Reads and returns workflow data from the specified JSON file.
     """
     return _load_workflow()
+
+
+@_app.route("/create-gallery-pr", methods=["POST"])
+@_require_auth(fail_with_exception=True, secret_key=SECRET_KEY)
+def create_gallery_pr(**kwargs: Any) -> Response:
+    # pylint: disable=unused-argument
+    """
+    Create a workflow PR for gallery.
+    """
+    try:
+        meta_info = request.json.get("meta")
+        data = request.json.get("data")
+
+        assert meta_info.get("author") == session.get("user_login")
+
+        meta_info = {
+            "index": -1,
+            "title": meta_info.get("title"),
+            "author": session.get("user_login"),
+            "description": meta_info.get("description"),
+            "category": meta_info.get("category"),
+            "time": datetime.now().strftime("%Y-%m-%d"),
+            "thumbnail": meta_info.get("thumbnail", ""),
+        }
+
+        gallery_data = {
+            "meta": meta_info,
+            "drawflow": data,
+        }
+
+        jwt_token = session.get("jwt_token")
+        payload = decode_jwt(jwt_token, secret_key=SECRET_KEY)
+        jwt_token = session.get("jwt_token")
+        payload = decode_jwt(jwt_token, secret_key=SECRET_KEY)
+        access_token = payload.get("access_token")
+        user_login = session.get("user_login")
+
+        # Fork the repository if not already forked
+        if not fork_repo(access_token, OWNER, REPO, user_login):
+            return jsonify({"message": "Failed to fork repository."}), 500
+
+        # Create a new branch with a unique name
+        new_branch = create_branch_with_timestamp(
+            access_token,
+            OWNER,
+            REPO,
+            user_login,
+            "main",
+        )
+        if not new_branch:
+            return jsonify({"message": "Failed to create branch."}), 500
+
+        # Create file path and write gallery data
+        file_name = (
+            f"{datetime.now().strftime('%Y%m%d')}"
+            f"_{meta_info['title']}_{user_login}.json"
+        )
+        file_name = file_name.replace(" ", "_")
+        file_path = f"gallery/{file_name}"
+        file_content = json.dumps(gallery_data, indent=2)
+        encoded_content = file_content.encode("utf-8").decode("ascii")
+
+        if not upload_file(
+            access_token,
+            user_login,
+            REPO,
+            new_branch,
+            file_path,
+            encoded_content,
+            f"Add gallery data for {meta_info['title']} [skip ci]",
+        ):
+            return jsonify({"message": "Failed to write file."}), 500
+
+        # Create a pull request
+        pr_title = f"[Gallery] Contribute Workflow:  {meta_info['title']}"
+        pr_response = open_pull_request(
+            access_token,
+            OWNER,
+            REPO,
+            pr_title,
+            f"{user_login}:{new_branch}",
+            "main",
+            body_content=meta_info.get("description"),
+        )
+        if not pr_response:
+            return jsonify({"message": "Failed to create pull request."}), 500
+
+        return jsonify({"message": "PR created successfully!"}), 200
+
+    except Exception as e:
+        print("Error:", e)
+        print("Trace:", traceback.format_exc())
+        return jsonify({"message": "Failed to create PR."}), 500
 
 
 @_app.route("/set_locale")
