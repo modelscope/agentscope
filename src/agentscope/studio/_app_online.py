@@ -11,6 +11,7 @@ import tempfile
 from typing import Tuple, Any
 from datetime import timedelta, datetime
 
+import json5
 import requests
 import oss2
 from loguru import logger
@@ -408,11 +409,9 @@ def create_gallery_pr(**kwargs: Any) -> Response:
 
         gallery_data = {
             "meta": meta_info,
-            "drawflow": data,
+            "drawflow": json5.loads(data),
         }
 
-        jwt_token = session.get("jwt_token")
-        payload = decode_jwt(jwt_token, secret_key=SECRET_KEY)
         jwt_token = session.get("jwt_token")
         payload = decode_jwt(jwt_token, secret_key=SECRET_KEY)
         access_token = payload.get("access_token")

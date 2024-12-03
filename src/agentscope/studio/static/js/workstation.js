@@ -2170,7 +2170,7 @@ function showContributePopup(userLogin) {
         <button type="button" class="category-button" data-value="entertainment">娱乐</button>
         <button type="button" class="category-button" data-value="manufacturing">制造业</button>
         <button type="button" class="category-button" data-value="communication">通信</button>
-        <button type="button" class="category-button" data-value="logistics">物流</button>
+        <button type="button" class="category-button" data-value="logistics">运筹</button>
         <button type="button" class="category-button" data-value="others">其他</button>
       </div>
 
