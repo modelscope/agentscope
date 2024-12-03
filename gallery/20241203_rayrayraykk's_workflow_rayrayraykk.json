@@ -1,0 +1,15 @@
+{
+  "meta": {
+    "index": -1,
+    "title": "rayrayraykk's workflow",
+    "author": "rayrayraykk",
+    "description": "cool",
+    "category": [
+      "tool",
+      "game"
+    ],
+    "time": "2024-12-03",
+    "thumbnail": ""
+  },
+  "drawflow": "{\n    \"2\": {\n        \"data\": {\n            \"args\": {\n                \"config_name\": \"qwen\",\n                \"messages_key\": \"input\",\n                \"model_name\": \"qwen-max\",\n                \"model_type\": \"dashscope_chat\",\n                \"seed\": 0,\n                \"temperature\": 0\n            }\n        },\n        \"inputs\": {},\n        \"name\": \"dashscope_chat\",\n        \"outputs\": {}\n    },\n    \"3\": {\n        \"data\": {\n            \"elements\": [\n                \"4\",\n                \"5\"\n            ]\n        },\n        \"inputs\": {\n            \"input_1\": {\n                \"connections\": []\n            }\n        },\n        \"name\": \"SequentialPipeline\",\n        \"outputs\": {\n            \"output_1\": {\n                \"connections\": []\n            }\n        }\n    },\n    \"4\": {\n        \"data\": {\n            \"args\": {\n                \"name\": \"User\"\n            }\n        },\n        \"inputs\": {\n            \"input_1\": {\n                \"connections\": []\n            }\n        },\n        \"name\": \"UserAgent\",\n        \"outputs\": {\n            \"output_1\": {\n                \"connections\": []\n            }\n        }\n    },\n    \"5\": {\n        \"data\": {\n            \"args\": {\n                \"max_iters\": 10,\n                \"model_config_name\": \"qwen\",\n                \"name\": \"Assistant\",\n                \"sys_prompt\": \"You are an assistant. \",\n                \"verbose\": \"True\"\n            },\n            \"elements\": [\n                \"6\"\n            ]\n        },\n        \"inputs\": {\n            \"input_1\": {\n                \"connections\": []\n            }\n        },\n        \"name\": \"ReActAgent\",\n        \"outputs\": {\n            \"output_1\": {\n                \"connections\": []\n            }\n        }\n    },\n    \"6\": {\n        \"data\": {},\n        \"inputs\": {},\n        \"name\": \"PythonService\",\n        \"outputs\": {}\n    }\n}"
+}
