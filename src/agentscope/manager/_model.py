@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """The model manager for AgentScope."""
 import json
+import yaml
 from typing import Any, Union, Sequence
 
 from loguru import logger
@@ -80,8 +81,12 @@ class ModelManager:
         cfgs = None
 
         if isinstance(model_configs, str):
-            with open(model_configs, "r", encoding="utf-8") as f:
-                cfgs = json.load(f)
+            if model_configs.endswith(".yaml"):
+                with open(model_configs, "r", encoding="utf-8") as f:
+                    cfgs = yaml.safe_load(f)
+            else:
+                with open(model_configs, "r", encoding="utf-8") as f:
+                    cfgs = json.load(f)
 
         if isinstance(model_configs, dict):
             cfgs = [model_configs]
