@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "index": 2,
+    "title": "Background Remover",
+    "author": "AgentScopeTeam",
+    "category": "tool",
+    "time": "2024-09-04",
+    "thumbnail": "",
+    "description": "Remove image background via post api"
+  },
+  "drawflow": {
+    "Home": {
+      "data": {
+        "3": {
+          "id": 3,
+          "name": "ImageSynthesis",
+          "data": {
+            "args": {
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
+            }
+          },
+          "class": "ImageSynthesis",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "4",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "5",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 553,
+          "pos_y": 148
+        },
+        "4": {
+          "id": 4,
+          "name": "Message",
+          "data": {
+            "args": {
+              "name": "Host",
+              "content": "一个英俊帅气的男生，背景是森林",
+              "url": ""
+            }
+          },
+          "class": "Message",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 141,
+          "pos_y": 164
+        },
+        "5": {
+          "id": 5,
+          "name": "Post",
+          "data": {
+            "args": {
+              "url": "https://api.remove.bg/v1.0/removebg",
+              "image_path_or_url": "",
+              "headers": "{\"X-Api-Key\": \"# Please get from https://www.remove.bg/dashboard#api-key\"}",
+              "data": "{\"size\": \"auto\"}",
+              "json": "{}",
+              "kwargs": "{}",
+              "output_path": "remove_bg.png"
+            }
+          },
+          "class": "Post",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "3",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 948,
+          "pos_y": -60
+        }
+      }
+    }
+  }
+}

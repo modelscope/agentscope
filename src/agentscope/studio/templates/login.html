@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ _("AgentScope WorkStation Login Page") }}</title>
+    <title i18n="login-page-title">AgentScope WorkStation Login Page</title>
     <link href="https://img.alicdn.com/imgextra/i3/O1CN01BP6UV221Lr7crkYBo_!!6000000006969-2-tps-380-372.png"
           rel="icon"
           type="image/png">
     <script src="{{ url_for('static', filename='js_third_party/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js_third_party/button.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/jquery.i18n.min.js') }}"></script>
+    <script async defer
+            src="{{ url_for('static', filename='js_third_party/buttons.js') }}"></script>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link href="{{ url_for('static', filename='css/login.css') }}"
@@ -25,7 +27,7 @@
             <option value="zh">中文</option>
         </select>
     </div>
-    <h1>{{ _("Welcome to AgentScope WorkStation") }}</h1>
+    <h1 i18n="login-page-welcome">Welcome to AgentScope WorkStation</h1>
 
     <a class="github-button" href="https://github.com/modelscope/agentscope"
        data-color-scheme="no-preference: light; light: light; dark: dark;"
@@ -49,42 +51,50 @@
     <img class="brand-gif"
          src="https://gw.alicdn.com/imgextra/i3/O1CN01uioF2Z1tYCsWgR3Cf_!!6000000005913-1-tps-2156-1080.gif"
          alt="AgentScope Animation">
-    <h4>{{ _("Please log in and star the AgentScope repository") }}.</h4>
+    <h4 i18n="login-page-terms-title">Please log in and star the AgentScope
+        repository</h4>
     <div class="terms">
-        {{ _("By logging in, you acknowledge that") }}:
+        <p i18n="login-page-terms-acknowledgment">By logging in, you
+            acknowledge that:</p>
         <ul>
-            <li>{{ _("This service will star🌟 AgentScope repository on your
-                behalf") }}.
+            <li i18n="login-page-terms-star">This service will star🌟
+                AgentScope repository on your behalf.
             </li>
-            <li>{{ _("Your API key will NOT be stored and exposed to the website
-                maintainer") }}.
+            <li i18n="login-page-terms-api">Your API key will NOT be stored and
+                exposed to the website maintainer.
             </li>
-            <li>{{ _("No user data (e.g., drawn workflow) within the service
-                will be saved") }}.
+            <li i18n="login-page-terms-data">No user data (e.g., drawn
+                workflow) within the service will be saved unless you
+                explicitly choose to save it.
             </li>
         </ul>
     </div>
     <div class="checkbox">
         <input type="checkbox" id="agreeTerms" onchange="toggleLoginButton()">
-        <label for="agreeTerms">{{ _("I agree to the terms of service") }}</label>
+        <label for="agreeTerms" i18n="login-page-terms-agree">I agree to the
+            terms of service</label>
     </div>
     <button onclick="redirectToGitHub()" disabled
-            id="loginButton">{{ _("Login with GitHub") }}
+            id="loginButton" i18n="login-page-login-github">Login with GitHub
+    </button>
+    <button onclick="loginAsGuest()" disabled
+            id="loginGuestButton" i18n="login-page-login-guest">Login as Guest
     </button>
     <br><br>
 
     <div id="loaderContainer" class="waiting" style="display: none;">
         <div class="css-spinner"></div>
-        <b>{{ _("Please wait") }}...</b>
+        <b i18n="login-page-please-wait">Please wait...</b>
     </div>
 </div>
 
 <div id="surveyModal">
     <div id="surveyContent">
         <span id="surveyClose">&times;</span>
-        <h3>{{ _("We want to hear from you") }}</h3>
-        <button id="surveyButton">{{ _("Participation in questionnaire
-            surveys") }}
+        <h3 i18n="workstation-surveyContent">"We want to hear from
+            you"</h3>
+        <button id="surveyButton" i18n="workstation-surveyContent-Button">
+            Participation in questionnaire surveys
         </button>
     </div>
 </div>
@@ -94,6 +104,8 @@
         const checkBox = document.getElementById('agreeTerms');
         const loginButton = document.getElementById('loginButton');
         loginButton.disabled = !checkBox.checked;
+        const loginGuestButton = document.getElementById('loginGuestButton');
+        loginGuestButton.disabled = !checkBox.checked;
     }
 
     function showLoader() {
@@ -127,6 +139,17 @@
         }, 500);
     }
 
+    function loginAsGuest() {
+        showLoader();
+        setTimeout(() => {
+            const ip = "{{ ip }}";
+            const port = "{{ port }}";
+            let address;
+            address = `http://${ip}:${port}/login_as_guest`
+            window.location.href = address;
+        }, 500);
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         window.addEventListener("pageshow", function (event) {
             if (event.persisted) {
@@ -156,13 +179,6 @@
                 }
             });
         });
-
-        function getCookie(name) {
-            var matches = document.cookie.match(new RegExp(
-                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-            ));
-            return matches ? decodeURIComponent(matches[1]) : undefined;
-        }
     });
 
     function showSurveyModal() {
@@ -182,6 +198,30 @@
     });
 
     setTimeout(showSurveyModal, 500);
+
+    function getCookie(name) {
+        var matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    function reloadi18n() {
+        const currentLang = getCookie("locale") || "en";
+        $("[i18n]").i18n({
+            defaultLang: currentLang,
+            filePath: "../static/i18n/",
+            filePrefix: "i18n_",
+            fileSuffix: "",
+            forever: true,
+            callback: function () {
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        reloadi18n();
+    });
 </script>
 </body>
 </html>

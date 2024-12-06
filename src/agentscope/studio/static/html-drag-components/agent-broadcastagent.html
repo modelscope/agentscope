@@ -1,0 +1,32 @@
+<div>
+    <div class="title-box" data-class="BroadcastAgent">
+        <div class="title-box-left-items">
+            <svg class="title-box-svg" viewBox="0 0 1024 1024"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.344 448h85.344v234.656H21.344V448zM554.656 192h64V106.656h-213.344V192h64v42.656h-320V896h725.344V234.656h-320V192z m234.688 128v490.656H234.688V320h554.656zM917.344 448h85.344v234.656h-85.344V448z"></path>
+                <path d="M341.344 512H448v106.656h-106.656V512zM576 512h106.656v106.656H576V512z"></path>
+            </svg>
+            <span>BroadcastAgent</span>
+        </div>
+        <button class="button copy-button"
+                i18n="agent-broadcast-Copy">Copy</button>
+        <span class="toggle-arrow">&#x25B2;</span></div>
+    <div class="box">
+        <div class="readme">
+            <span i18n="agent-broadcast-readme">
+            An agent that only broadcasts its content
+            </span>
+            <div>Node ID: <span class="node-id">ID_PLACEHOLDER</span></div>
+        </div>
+
+        <label i18n="agent-broadcast-labelName">Name</label>
+        <input type="text" df-args-name placeholder="Assistant"
+               i18n="agent-broadcast-labelName-Assistant"
+               data-required="true">
+        <br>
+
+        <label i18n="agent-broadcast-content">content</label>
+        <textarea type="text" df-args-content class="text-input"
+                  data-required="true"></textarea>
+    </div>
+</div>

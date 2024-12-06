@@ -8,17 +8,21 @@
             </svg>
             <span>UserAgent</span>
         </div>
-        <button class="button copy-button">Copy</button>
+        <button class="button copy-button" i18n="agent-useragent-Copy">Copy</button>
         <span class="toggle-arrow">&#x25B2;</span>
     </div>
     <div class="box">
         <div class="readme">
-            A proxy agent for user
+            <span i18n="agent-useragent-readme">A proxy agent for user</span>
             <div>Node ID: <span class="node-id">ID_PLACEHOLDER</span></div>
         </div>
 
-        <label>Name</label>
-        <input type="text" df-args-name placeholder="User">
+        <label i18n="agent-useragent-labelName">Name</label>
+        <input type="text" df-args-name
+            placeholder="User"
+            i18n="agent-useragent-labelName-placeholder"
+            i18n-only="placeholder"
+        >
         <br>
     </div>
 </div>

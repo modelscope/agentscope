@@ -96,7 +96,23 @@ repos:
           --disable=W0632,
           --disable=W0123,
           --disable=C3001,
+          --disable=W0201,
+          --disable=C0302,
         ]
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.32.0
+    hooks:
+      - id: eslint
+        files: \.(js|jsx)$
+        exclude: '.*js_third_party.*'
+        args: ['--fix']
+  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: v14.4.0
+    hooks:
+      - id: stylelint
+        files: \.(css|scss|sass|less)$
+        exclude: '.*css_third_party.*'
+        args: ['--fix']
   - repo: https://github.com/regebro/pyroma
     rev: "4.0"
     hooks:

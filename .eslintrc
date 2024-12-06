@@ -1,0 +1,17 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["error", "double"],
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "brace-style": ["error", "1tbs"],
+    "curly": ["error", "all"],
+    "no-eval": ["error"],
+    "prefer-const": ["error"],
+    "arrow-spacing": ["error", { "before": true, "after": true }]
+  }
+}

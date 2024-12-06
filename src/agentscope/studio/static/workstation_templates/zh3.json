@@ -1,0 +1,144 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "html": "\n        <div>\n          <div class=\"title-box\"><i class=\"fas fa-brain\"></i> DashScope Chat\n          <span class=\"toggle-arrow\">▲</span> </div>\n          <div class=\"box\">\n            <div class=\"readme\">DashScope Chat 配置 (您的API key不会被储存和暴露给网站维护者)</div><br>\n            <label> Config Name </label>\n            <input type=\"text\" df-args-config_name placeholder=\"qwen\"><br>\n            <label> Model Name</label>\n            <input type=\"text\" list=\"dashscope_chat-model-names\" df-args-model_name><br>\n            <datalist id=\"dashscope_chat-model-names\">\n              <option value=\"qwen-turbo\">\n              <option value=\"qwen-plus\">\n              <option value=\"qwen-max\">\n              <option value=\"qwen-max-1201\">\n            </datalist>\n            <label> API key</label>\n            <input type=\"text\" df-args-api_key><br>\n            <label> Temperature </label>\n            <input type=\"number\" df-args-temperature placeholder=0 min=\"0\" max=\"2\" step=\"0.1\"><br>\n            <label> Seed </label>\n            <input type=\"number\" df-args-seed placeholder=0 min=\"0\">\n          </div>\n        </div>\n        ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 351,
+          "pos_y": 113
+        },
+        "3": {
+          "id": 3,
+          "name": "WhileLoopPipeline",
+          "data": {
+            "elements": [
+              "4"
+            ],
+            "args": {
+              "condition_func": "lambda *args: True"
+            }
+          },
+          "class": "GROUP",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-project-diagram\"></i>WhileLoopPipeline\n                <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n                <div class=\"readme\">实现类似 while 循环的控制流的Pipeline\n            <div>Variable name :<span class=\"variable-name\">pipeline_3</span></div>\n            </div>\n                <p>Condition Function</p>\n                <input type=\"text\" df-args-condition_func style=\"width: 450px\"><br>\n                <div class=\"placeholder\"></div>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 699,
+          "pos_y": 151
+        },
+        "4": {
+          "id": 4,
+          "name": "SequentialPipeline",
+          "data": {
+            "elements": [
+              "5",
+              "6"
+            ]
+          },
+          "class": "GROUP",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-project-diagram\"></i>SequentialPipeline\n                <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n                <div class=\"readme\">用于实现顺序逻辑的Pipeline  (<b>从上往下顺序执行</b>)\n            <div>Variable name :<span class=\"variable-name\">pipeline_4</span></div>\n            </div>\n            <div class=\"placeholder\"></div>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 750,
+          "pos_y": 217
+        },
+        "5": {
+          "id": 5,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-robot\"></i>UserAgent\n            <button class=\"button copy-button\">Copy</button>\n            <span class=\"toggle-arrow\">▲</div>\n            <div class=\"box\">\n            <div class=\"readme\">\n            用户代理智能体\n            <div>Node ID: <span class=\"node-id\">5</span></div>\n            <div>Variable name :<span class=\"variable-name\">agent_5</span></div>\n            </div>\n            <p>Name</p>\n              <input type=\"text\" df-args-name placeholder=\"User\"><br>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 766,
+          "pos_y": 361
+        },
+        "6": {
+          "id": 6,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "Assistant",
+              "sys_prompt": "You are a helpful assistant.",
+              "model_config_name": "qwen"
+            }
+          },
+          "class": "DialogAgent",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-robot\"></i>DialogAgent\n            <button class=\"button copy-button\">Copy</button>\n                      <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n              <div class=\"readme\">\n            应用中的对话智能体\n              <div>Node ID: <span class=\"node-id\">6</span></div>\n            <div>Variable name :<span class=\"variable-name\">agent_6</span></div>\n              </div>\n              <p>Name</p>\n              <input type=\"text\" df-args-name placeholder=\"Assistant\"><br>\n              <p>System prompt</p>\n              <input type=\"text\" df-args-sys_prompt placeholder=\"You're an assistant.\"><br>\n              <p>Model config name</p>\n              <input type=\"text\" df-args-model_config_name placeholder=\"gpt-3.5-turbo\">\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 985,
+          "pos_y": 468
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 这是一个如何在 AgentScope 中编写用户-智能体循环对话的示例。 <br><br> <div class=\"modules-info\"><h4>使用到的模块:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - 每个多智能体应用都必须包含一个配置好的模型。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">WhileLoopPipeline:</span><br> - 设计用于执行while循环的重复性操作。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">SequentialPipeline:</span><br> - 使信息按预定顺序在智能体之间传递。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">UserAgent:</span><br> - 代表应用中的用户。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">DialogAgent:</span><br> - 应用中的对话智能体。</li></ur></div>更多的细节, 请参考 <a href=\"https://github.com/modelscope/agentscope/tree/main/examples/conversation_basic\" target=\"_blank\">链接</a>.  </div>\n      </div>\n      ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}

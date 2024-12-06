@@ -9,17 +9,24 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">MsgHub is used to share messages among a group of
+    <div class="readme" i18n="pipeline-msghub-readme">MsgHub is used to share messages among a group of
         agents
     </div>
 
-    <label>Announcement Name</label>
-    <input type="text" df-args-announcement-name placeholder="Host">
+    <label i18n="pipeline-msghub-AnnouncementName">Announcement Name</label>
+    <input type="text" df-args-announcement-name
+        placeholder="Host"
+        i18n-only="placeholder"
+        i18n="pipeline-msghub-AnnouncementName-placeholder"
+    >
     <br>
 
-    <label>Announcement Content</label>
+    <label i18n="pipeline-msghub-AnnouncementContent">Announcement Content</label>
     <input type="text" df-args-announcement-content
-           placeholder="Welcome to the group chat!">
+           placeholder="Welcome to the group chat!"
+           i18n-only="placeholder"
+           i18n="pipeline-msghub-AnnouncementContent-placeholder"
+           >
     <br>
 
     <div class="placeholder"></div>

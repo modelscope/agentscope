@@ -51,8 +51,13 @@ extra_service_requires = [
     "notebook",
     "nbclient",
     "nbformat",
+    "psutil",
+    "scipy",
+    "pillow",
+    "isort",
     "playwright",
     "markdownify",
+    "opencv-python-headless",
 ]
 
 extra_distribute_requires = [
@@ -113,6 +118,7 @@ extra_online_requires = extra_full_requires + [
     "flask_babel",
     "babel==2.15.0",
     "gunicorn",
+    "numpy",
 ]
 
 with open("README.md", "r", encoding="UTF-8") as fh:

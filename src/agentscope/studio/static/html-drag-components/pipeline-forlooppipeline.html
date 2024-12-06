@@ -9,17 +9,33 @@
     <span class="toggle-arrow">&#x25B2;</span>
 </div>
 <div class="box">
-    <div class="readme">A template pipeline for implementing control flow
+    <div class="readme" i18n="pipeline-forlooppipeline-readme">A template pipeline for implementing control flow
         like for-loop
     </div>
 
-    <label>Max Loop</label>
+    <label i18n="pipeline-forlooppipeline-MaxLoop">Max Loop</label>
     <input type="number" df-args-max_loop placeholder=3 min="1" step="1">
     <br>
 
-    <label>Break Function</label>
-    <input type="text" df-args-break_func>
-    <br>
+    <label i18n="condition-Operator">Condition Operator</label>
+    <input type="text" list="condition_operators" df-args-condition_op id="condition_op"
+           data-required="true"><br>
+    <datalist id="condition_operators">
+        <option value="contains">
+        <option value="not contains">
+        <option value="starts with">
+        <option value="ends with">
+        <option value="equals">
+        <option value="not equals">
+        <option value="is empty">
+        <option value="is not empty">
+        <option value="is null">
+        <option value="is not null">
+    </datalist>
+    <div id="target-container" style="display: none;">
+        <label i18n="condition-TargetValue">Target Value</label>
+        <input type="string" df-args-target_value id="target_value">
+    </div>
 
     <div class="placeholder"></div>
 </div>

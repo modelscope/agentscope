@@ -8,25 +8,32 @@
             </svg>
             <span>DialogAgent</span>
         </div>
-        <button class="button copy-button">Copy</button>
+        <button class="button copy-button" i18n="agent-dialogagent-Copy">Copy</button>
         <span class="toggle-arrow">&#x25B2;</span></div>
     <div class="box">
         <div class="readme">
-            An dialog agent that can interact with users or other agents.
+            <span i18n="agent-dialogagent-readme">
+                An dialog agent that can interact with users or other agents.
+            </span>
             <div>Node ID: <span class="node-id">ID_PLACEHOLDER</span></div>
         </div>
 
-        <label>Name</label>
+        <label i18n="agent-dialogagent-labelName">Name</label>
         <input type="text" df-args-name placeholder="Assistant"
+            i18n="agent-dialogagent-labelName-Assistant"
+            i18n-only="placeholder"
                data-required="true">
         <br>
 
-        <label>System prompt</label>
+        <label i18n="agent-dialogagent-SystemPrompt">System prompt</label>
         <textarea type="text" df-args-sys_prompt  class="text-input"
-               placeholder="You're an assistant." data-required="true"></textarea>
+            i18n="agent-dialogagent-textareaInput-placeholder"
+            placeholder="You're an assistant."
+            i18n-only="placeholder"
+            data-required="true"></textarea>
         <br>
 
-        <label>Model config name</label>
+        <label i18n="agent-dialogagent-ModelConfigName">Model config name</label>
         <input type="text" df-args-model_config_name
                placeholder="gpt-3.5-turbo" data-required="true">
     </div>

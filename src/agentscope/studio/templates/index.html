@@ -15,6 +15,8 @@
           href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/server.css') }}">
+          <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css/gallery.css') }}">
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css_third_party/tabulator.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css_third_party/highlight.min.css') }}">
@@ -25,6 +27,8 @@
     <script src="{{ url_for('static', filename='js_third_party/marked.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/marked-katex-extension.umd.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/socket.io.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/jquery.i18n.min.js') }}"></script>
     <link rel="stylesheet" type="text/css"
           href="{{ url_for('static', filename='css/dashboard-runs.css') }}">
     <link rel="stylesheet" type="text/css"
@@ -70,13 +74,14 @@
         </div>
         <div id="market-tab-btn"
              class="navigation-bar-item unselectable-text"
-             onclick="loadTabPage('static/html/market.html', null);return false;">
+             onclick="redirectToWorkstationGallery()">
             <svg class="navigation-bar-item-icon" viewBox="0 0 1024 1024"
-                 xmlns="http://www.w3.org/2000/svg">
-                <path d="M928 1024h-288a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160h-288a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96zM384 1024H96a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160H96a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96z"></path>
+                  xmlns="http://www.w3.org/2000/svg">
+            <path d="M928 1024h-288a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160h-288a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32h-288a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96zM384 1024H96a96 96 0 0 1-96-96v-288a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32v-288z m-32-160H96a96 96 0 0 1-96-96V96a96 96 0 0 1 96-96h288a96 96 0 0 1 96 96v288a96 96 0 0 1-96 96z m32-384a32 32 0 0 0-32-32H96a32 32 0 0 0-32 32v288a32 32 0 0 0 32 32h288a32 32 0 0 0 32-32V96z"></path>
             </svg>
-            <span class="navigation-bar-item-label">Gallery</span>
+           <span class="navigation-bar-item-label">Gallery</span>
         </div>
+
         <div id="server-tab-btn"
              class="navigation-bar-item unselectable-text"
              onclick="loadTabPage('static/html/server.html', 'static/js/server.js');return false;">
@@ -95,7 +100,7 @@
                  xmlns="http://www.w3.org/2000/svg">
                 <path d="M1066.270484 885.701386l-511.662474 137.125543a34.110832 34.110832 0 0 1-17.66941 0l-511.662474-137.125543A34.110832 34.110832 0 0 1 0 852.750322v-818.659957A34.110832 34.110832 0 0 1 42.945537 1.139302L545.773305 135.877086 1048.601073 1.139302A34.110832 34.110832 0 0 1 1091.54661 34.090365v818.659957a34.110832 34.110832 0 0 1-25.276126 32.951064zM511.662473 197.378916L68.221663 78.536779v748.016425l443.44081 118.808026V197.378916z m511.662474-118.808027L579.884136 197.378916v748.016425l443.440811-118.808026V78.536779zM673.381926 340.473854l238.775821-63.99192a34.110832 34.110832 0 1 1 17.66941 65.902127l-238.775821 63.99192a34.110832 34.110832 0 1 1-17.66941-65.902127z m0 170.554158l238.775821-63.99192a34.110832 34.110832 0 0 1 17.66941 65.902126l-238.775821 63.99192a34.110832 34.110832 0 0 1-17.66941-65.902126z m0 170.554158l238.775821-63.99192a34.110832 34.110832 0 0 1 17.66941 65.902126l-238.775821 63.99192a34.110832 34.110832 0 1 1-17.66941-65.902126zM179.388863 276.584267l238.775821 63.99192a34.110832 34.110832 0 1 1-17.669411 65.868015l-238.775821-63.99192A34.110832 34.110832 0 1 1 179.388863 276.584267z m0 170.554157l238.775821 63.99192a34.110832 34.110832 0 1 1-17.669411 65.902127l-238.775821-63.99192a34.110832 34.110832 0 0 1 17.669411-65.902127z m0 170.554158l238.775821 63.99192a34.110832 34.110832 0 1 1-17.669411 65.902127l-238.775821-63.99192a34.110832 34.110832 0 0 1 17.669411-65.902127z"></path>
             </svg>
-            <span class="navigation-bar-item-label">Tutorial</span>
+            <span class="navigation-bar-item-label" i18n="index-Tutorial">Tutorial</span>
         </a>
         <a class="navigation-bar-item unselectable-text"
            href="https://modelscope.github.io/agentscope/">
@@ -103,7 +108,7 @@
                  xmlns="http://www.w3.org/2000/svg">
                 <path d="M924.903226 1024H132.129032a132.129032 132.129032 0 0 1-132.129032-132.129032V132.129032a132.129032 132.129032 0 0 1 132.129032-132.129032h792.774194a132.129032 132.129032 0 0 1 132.129032 132.129032v759.741936a132.129032 132.129032 0 0 1-132.129032 132.129032z m66.064516-891.870968a66.064516 66.064516 0 0 0-66.064516-66.064516H132.129032a66.064516 66.064516 0 0 0-66.064516 66.064516v759.741936a66.064516 66.064516 0 0 0 66.064516 66.064516h792.774194a66.064516 66.064516 0 0 0 66.064516-66.064516V132.129032z m-132.129032 660.645162H297.290323a33.032258 33.032258 0 0 1 0-66.064517h561.548387a33.032258 33.032258 0 0 1 0 66.064517z m0-165.161291H297.290323a33.032258 33.032258 0 0 1 0-66.064516h561.548387a33.032258 33.032258 0 0 1 0 66.064516z m0-165.16129H297.290323a33.032258 33.032258 0 0 1 0-66.064516h561.548387a33.032258 33.032258 0 0 1 0 66.064516z m0-165.16129H297.290323a33.032258 33.032258 0 0 1 0-66.064517h561.548387a33.032258 33.032258 0 0 1 0 66.064517zM165.16129 726.709677h66.064516v66.064517H165.16129v-66.064517z m0-165.16129h66.064516v66.064516H165.16129v-66.064516z m0-165.16129h66.064516v66.064516H165.16129v-66.064516z m0-165.161291h66.064516v66.064517H165.16129V231.225806z"></path>
             </svg>
-            <span class="navigation-bar-item-label">API Document</span>
+            <span class="navigation-bar-item-label" i18n="index-API">API Document</span>
         </a>
 
         <div class="navigation-bar-hr"></div>
@@ -141,8 +146,38 @@
 <!--Main content-->
 <div id="content">
 </div>
+<div class="navbar">
+    <input type="checkbox">
+    <span></span>
+    <span></span>
+    <ul>
+        <li><a onclick="changeLanguage()" id="translate">en</a></li>
+    </ul>
+    <div class="close" onclick="suspensionBall.removeDrag()">x</div>
+</div>
+<script src="{{ url_for('static', filename='js/index.js') }}">
+</script>
+<script>
+    function redirectToWorkstationGallery() {
+    loadTabPage('static/html/workstation_iframe.html', 'static/js/workstation_iframe.js');
 
-<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    setTimeout(function () {
+        var iframe = document.getElementById('content').querySelector('iframe');
+        if (iframe) {
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+            if(iframeDoc.querySelectorAll('.workstation-sidebar-item')[2]){
+                iframeDoc.querySelectorAll('.workstation-sidebar-item')[2].click();
+            }
+
+        }
+    }, 200);
+    }
+
+
+
+</script>
+
 
 </body>
 </html>

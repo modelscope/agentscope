@@ -54,8 +54,8 @@
           "name": "SequentialPipeline",
           "data": {
             "elements": [
-              "6",
-              "5"
+              "5",
+              "6"
             ]
           },
           "class": "GROUP",
@@ -126,7 +126,7 @@
           "name": "readme",
           "data": {},
           "class": "welcome",
-          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 This is a example of how to program a user-agent conversation in AgentScope. <br><br> <div class=\"modules-info\"><h4>Modules Used:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - Each application must contain a model configured.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">WhileLoopPipeline:</span><br> - Designed to perform repetitive operations.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">SequentialPipeline:</span><br> - Make the message passes in a predefined, sequential order among agents.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">UserAgent:</span><br> - Represents a user in a application.</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">DialogAgent:</span><br> - Agent for dialog in an application.</li></ur></div>For more details, please see <a href=\"https://github.com/modelscope/agentscope/tree/main/examples/conversation_basic\" target=\"_blank\">here</a>.  </div>\n      </div>\n      ",
+          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n    <span i18n=\"en3-json-readme\">  📖 This is a example of how to program a user-agent conversation in AgentScope. </span><br><br> <div class=\"modules-info\"><h4 i18n=\"en3-json-readme-h4\">Modules Used:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> <span i18n=\"en3-json-readme-sentence1\">- Each application must contain a model configured.</span></li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">WhileLoopPipeline:</span><br> <span i18n=\"en3-json-readme-sentence2\">- Designed to perform repetitive operations.</span></li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">SequentialPipeline:</span><br> <span i18n=\"en3-json-readme-sentence3\">- Make the message passes in a predefined, sequential order among agents.</span></li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">UserAgent:</span><br> <span i18n=\"en3-json-readme-sentence4\">- Represents a user in a application.</span></li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">DialogAgent:</span><br> <span i18n=\"en3-json-readme-sentence5\">- Agent for dialog in an application.</span></li></ur></div> <span i18n=\"en3-json-readme-moreDetails\">For more details, please see </span><a href=\"https://github.com/modelscope/agentscope/tree/main/examples/conversation_basic\" target=\"_blank\" i18n=\"en3-json-readme-moreDetailsHref\">here</a>.  </div>\n      </div>\n      ",
           "typenode": false,
           "inputs": {},
           "outputs": {},

@@ -24,11 +24,15 @@
           href="{{ url_for('static', filename='css/workstation-drag-components.css') }}">
 
     <script src="{{ url_for('static', filename='js_third_party/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/jquery.i18n.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/prism.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/prism-python.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/prism-line-numbers.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/drawflow.min.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='js_third_party/Sortable.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/anime.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', filename='css_third_party/material-icons.css') }}">
     {#    TODO: remove#}
     <script crossorigin="anonymous"
             integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs="
@@ -36,22 +40,72 @@
 
     <script src="{{ url_for('static', filename='js_third_party/sweetalert2@11') }}"></script>
     <script src="{{ url_for('static', filename='js_third_party/micromodal.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js_third_party/monaco-editor.loader.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/workstation.js') }}"></script>
 </head>
 <body>
 <div id="workstation-panel">
     <div id="workstation-titlebar unselectable-text" class="page-titlebar">
-        <span>Workstation</span>
+        <span class="workstation-span" onclick="showEditorTab()">Workstation</span>
+        {% if token_dict %}
+            <div class="github-user-content">
+                <div class="user-detail">
+                    <div class="user-option">
+                        <a href="https://github.com/{{ token_dict.user_login }}"
+                           target="_blank"
+                        >
+                            {{ token_dict.user_login }}
+                        </a>
+                        <div class="triangle-down">
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <a onclick="createNotification({
+                        title: 'Notification',
+                        i18nTitle: '通知',
+                        content: `You will be logged out`,
+                        i18nContent: '您将登出',
+                        position: 'top-right',
+                        closeBtn: true,
+                        intervalTime: 3000,
+                        progress: true,
+                        confirmBtn: 'Yes',
+                        i18nConfirmBtn: '确定',
+                        cancelBtn: 'No',
+                        i18nCancelBtn: '取消',
+                        onConfirm: () => {
+                            window.location.href = '/';
+                        },
+                        onCancel: () => {
+
+                        }
+                    })">log out</a>
+                    </div>
+                </div>
+                <div>
+                    <svg aria-hidden="true" focusable="false"
+                         class="octicon octicon-mark-github"
+                         viewBox="0 0 24 24" width="32" height="32"
+                         fill="currentColor"
+                         style="display:inline-block;user-select:none;vertical-align:text-bottom;overflow:visible">
+                        <path d="M12.5.75C6.146.75 1 5.896 1 12.25c0 5.089 3.292 9.387 7.863 10.91.575.101.79-.244.79-.546 0-.273-.014-1.178-.014-2.142-2.889.532-3.636-.704-3.866-1.35-.13-.331-.69-1.352-1.18-1.625-.402-.216-.977-.748-.014-.762.906-.014 1.553.834 1.769 1.179 1.035 1.74 2.688 1.25 3.349.948.1-.747.402-1.25.733-1.538-2.559-.287-5.232-1.279-5.232-5.678 0-1.25.445-2.285 1.178-3.09-.115-.288-.517-1.467.115-3.048 0 0 .963-.302 3.163 1.179.92-.259 1.897-.388 2.875-.388.977 0 1.955.13 2.875.388 2.2-1.495 3.162-1.179 3.162-1.179.633 1.581.23 2.76.115 3.048.733.805 1.179 1.825 1.179 3.09 0 4.413-2.688 5.39-5.247 5.678.417.36.776 1.05.776 2.128 0 1.538-.014 2.774-.014 3.162 0 .302.216.662.79.547C20.709 21.637 24 17.324 24 12.25 24 5.896 18.854.75 12.5.75Z"></path>
+                    </svg>
+                </div>
+            </div>
+        {% endif %}
     </div>
     <div class="wrapper">
         <div class="col">
-            <li>
-                <div class="workstation-sidebar-item">Example</div>
+            <li class="guide-Example">
+                <div class="workstation-sidebar-item"
+                     i18n="workstation-Example">Example
+                </div>
                 <ul>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(1);">
-                        Two Agents
+                        onclick="importExample(1);"
+                    >
+                        <span i18n="workstation-sidebar-subitem-Agents">Two Agents</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
                                      importExample_step(1)">
@@ -59,8 +113,9 @@
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(2);">
-                        Pipeline
+                        onclick="importExample(2);"
+                    >
+                        <span i18n="workstation-sidebar-subitem-Pipeline">Pipeline</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
                                      importExample_step(2)">
@@ -68,8 +123,9 @@
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(3);">
-                        Conversation
+                        onclick="importExample(3);"
+                    >
+                        <span i18n="workstation-sidebar-subitem-Conversation">Conversation</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
                                      importExample_step(3)">
@@ -77,8 +133,9 @@
                         </div>
                     </li>
                     <li class="workstation-sidebar-subitem unselectable-text"
-                        onclick="importExample(4);">
-                        Group Chat
+                        onclick="importExample(4);"
+                    >
+                        <span i18n="workstation-sidebar-subitem-GroupChat">Group Chat</span>
                         <div class="new-action"
                              onclick="event.stopPropagation();
                                      importExample_step(4)">
@@ -86,16 +143,30 @@
                         </div>
                     </li>
                 </ul>
+                <div class="tour-guide">
+                    <div class="tour-step">
+                        <div class="tour-content">
+                            Use examples Learn more
+                            <button class="guide-skip" onclick="skipGuide()">
+                                <i class="fas fa-forward"></i>
+                                <span>Skip</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </li>
+            <div class="overlay" id="overlay"></div>
             <div class="workstation-sidebar-placeholder"></div>
             <li>
-                <div class="workstation-sidebar-item unselectable-text">
-                    Workflow
+                <div class="workstation-sidebar-item unselectable-text"
+                >
+                    <span i18n="workstation-sidebar-item-Workflow">Workflow</span>
                 </div>
                 <ul>
                     <li>
                         <div class="workstation-sidebar-subitem unselectable-text"
-                             onclick="onClickSidebarSubItem(this);">
+                             onclick="onClickSidebarSubItem(this);"
+                             i18n="workstation-sidebar-item-Model">
                             Model
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -112,15 +183,13 @@
                                 data-node="post_api_chat" draggable="true"
                                 ondragstart="drag(event)">Post API
                             </li>
-                            <li class="workstation-sidebar-dragitem"
-                                data-node="post_api_dall_e" draggable="true"
-                                ondragstart="drag(event)">Post API Dall-E
-                            </li>
                         </ul>
                     </li>
                     <li>
                         <div class="workstation-sidebar-subitem unselectable-text"
-                             onclick="onClickSidebarSubItem(this);">
+                             onclick="onClickSidebarSubItem(this);"
+                             i18n="workstation-sidebar-item-Message"
+                        >
                             Message
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -132,7 +201,9 @@
                     </li>
                     <li>
                         <div class="workstation-sidebar-subitem unselectable-text"
-                             onclick="onClickSidebarSubItem(this);">
+                             onclick="onClickSidebarSubItem(this);"
+                             i18n="workstation-sidebar-item-Agent"
+                        >
                             Agent
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -156,11 +227,18 @@
                                 draggable="true" ondragstart="drag(event)">
                                 ReActAgent
                             </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="BroadcastAgent"
+                                draggable="true" ondragstart="drag(event)">
+                                BroadcastAgent
+                            </li>
                         </ul>
                     </li>
                     <li>
                         <div class="workstation-sidebar-subitem unselectable-text"
-                             onclick="onClickSidebarSubItem(this);">
+                             onclick="onClickSidebarSubItem(this);"
+                             i18n="workstation-sidebar-item-Pipeline"
+                        >
                             Pipeline
                         </div>
                         <ul class="workstation-sidebar-sub-content">
@@ -203,41 +281,54 @@
                     </li>
                     <li>
                         <div class="workstation-sidebar-subitem unselectable-text"
-                             onclick="onClickSidebarSubItem(this);">
+                             onclick="onClickSidebarSubItem(this);"
+                             i18n="workstation-sidebar-item-Tool"
+                        >
                             Tool
                         </div>
                         <ul class="workstation-sidebar-sub-content">
                             <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="BingSearchService"
+                                data-node="ImageSynthesis"
                                 draggable="true" ondragstart="drag(event)">
-                                Bing Search
+                                Image Synthesis
                             </li>
                             <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="GoogleSearchService"
+                                data-node="ImageComposition"
                                 draggable="true" ondragstart="drag(event)">
-                                Google Search
+                                Image Composition
                             </li>
                             <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="PythonService"
+                                data-node="ImageMotion"
                                 draggable="true" ondragstart="drag(event)">
-                                Python Interpreter
+                                Image Motion
                             </li>
                             <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="ReadTextService"
+                                data-node="VideoComposition"
                                 draggable="true" ondragstart="drag(event)">
-                                Read Text
+                                Video Composition
                             </li>
                             <li class="workstation-sidebar-dragitem unselectable-text"
-                                data-node="WriteTextService"
+                                data-node="Post"
                                 draggable="true" ondragstart="drag(event)">
-                                Write Text
+                                Post
                             </li>
+                            <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="Code"
+                                draggable="true" ondragstart="drag(event)">
+                                Code
+                            </li>
+                            <!-- <li class="workstation-sidebar-dragitem unselectable-text"
+                                data-node="IF/ELSE"
+                                draggable="true" ondragstart="drag(event)">
+                                IF/ELSE
+                            </li> -->
                         </ul>
                     </li>
                 </ul>
+                <div class="workstation-sidebar-item" onclick="showGalleryTab()">Gallery</div>
             </li>
         </div>
-        <div class="col-right">
+        <div class="col-right" id="col-right">
             <div class="menu">
                 <div class="menu-btn unselectable-text"
                      title="Home"
@@ -246,6 +337,7 @@
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M539.648 184.064a41.6 41.6 0 0 0-55.296 0l-256 225.024a44.757333 44.757333 0 0 0-15.018667 33.621333v365.056h149.333334v-233.173333c0-48.768 38.186667-88.277333 85.333333-88.277333h128c47.146667 0 85.333333 39.509333 85.333333 88.277333v233.173333H810.666667v-365.056c0-12.970667-5.504-25.258667-15.018667-33.621333l-256-225.024z m-110.506667-67.242667a124.8 124.8 0 0 1 165.76 0l256 225.024A134.229333 134.229333 0 0 1 896 442.709333v365.056C896 856.490667 857.813333 896 810.666667 896h-149.333334c-47.146667 0-85.333333-39.509333-85.333333-88.234667v-233.173333h-128v233.173333c0 48.725333-38.186667 88.234667-85.333333 88.234667H213.333333c-47.146667 0-85.333333-39.509333-85.333333-88.234667v-365.056c0-38.826667 16.469333-75.733333 45.098667-100.864l256-225.024z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-home">Home</span>
                 </div>
                 <div class="menu-btn unselectable-text"
                      title="Download workflow configuration"
@@ -254,6 +346,7 @@
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M512 85.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v409.002667l140.501333-140.501334a42.666667 42.666667 0 1 1 60.330667 60.330667l-213.333334 213.333333a42.666667 42.666667 0 0 1-60.330666 0l-213.333334-213.333333a42.666667 42.666667 0 0 1 60.330667-60.330667L469.333333 537.002667V128a42.666667 42.666667 0 0 1 42.666667-42.666667zM128 597.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v51.2c0 36.565333 0 61.397333 1.621333 80.597333 1.493333 18.688 4.266667 28.288 7.68 34.944a85.333333 85.333333 0 0 0 37.290667 37.290667c6.656 3.413333 16.213333 6.186667 34.944 7.68C271.402667 853.333333 296.234667 853.333333 332.8 853.333333h358.4c36.565333 0 61.397333 0 80.597333-1.621333 18.688-1.493333 28.288-4.266667 34.944-7.68a85.333333 85.333333 0 0 0 37.290667-37.290667c3.413333-6.656 6.186667-16.213333 7.68-34.944 1.578667-19.2 1.621333-44.032 1.621333-80.597333V640a42.666667 42.666667 0 1 1 85.333334 0V692.949333c0 34.346667 0 62.72-1.877334 85.76-1.962667 24.021333-6.186667 46.08-16.725333 66.773334a170.666667 170.666667 0 0 1-74.581333 74.581333c-20.693333 10.538667-42.752 14.762667-66.730667 16.725333-23.082667 1.877333-51.456 1.877333-85.76 1.877334H331.008c-34.346667 0-62.72 0-85.76-1.877334-24.021333-1.962667-46.08-6.186667-66.773333-16.725333a170.666667 170.666667 0 0 1-74.581334-74.581333c-10.538667-20.693333-14.762667-42.752-16.725333-66.730667C85.333333 755.626667 85.333333 727.296 85.333333 692.992V640a42.666667 42.666667 0 0 1 42.666667-42.666667z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-download">Download workflow configuration</span>
                 </div>
                 <div class="menu-btn unselectable-text"
                      title="Load workflow configuration"
@@ -262,6 +355,7 @@
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M481.834667 97.834667a42.666667 42.666667 0 0 1 60.330666 0l213.333334 213.333333a42.666667 42.666667 0 0 1-60.330667 60.330667L554.666667 230.997333V640a42.666667 42.666667 0 1 1-85.333334 0V230.997333L328.832 371.498667a42.666667 42.666667 0 0 1-60.330667-60.330667l213.333334-213.333333zM128 597.333333a42.666667 42.666667 0 0 1 42.666667 42.666667v51.2c0 36.565333 0 61.397333 1.621333 80.597333 1.493333 18.688 4.266667 28.288 7.68 34.944a85.333333 85.333333 0 0 0 37.290667 37.290667c6.656 3.413333 16.213333 6.186667 34.944 7.68C271.402667 853.333333 296.234667 853.333333 332.8 853.333333h358.4c36.565333 0 61.397333 0 80.597333-1.621333 18.688-1.493333 28.288-4.266667 34.944-7.68a85.333333 85.333333 0 0 0 37.290667-37.290667c3.413333-6.656 6.186667-16.213333 7.68-34.944 1.578667-19.2 1.621333-44.032 1.621333-80.597333V640a42.666667 42.666667 0 1 1 85.333334 0V692.949333c0 34.346667 0 62.72-1.877334 85.76-1.962667 24.021333-6.186667 46.08-16.725333 66.773334a170.666667 170.666667 0 0 1-74.581333 74.581333c-20.693333 10.538667-42.752 14.762667-66.730667 16.725333-23.082667 1.877333-51.456 1.877333-85.76 1.877334H331.008c-34.346667 0-62.72 0-85.76-1.877334-24.021333-1.962667-46.08-6.186667-66.773333-16.725333a170.666667 170.666667 0 0 1-74.581334-74.581333c-10.538667-20.693333-14.762667-42.752-16.725333-66.730667C85.333333 755.626667 85.333333 727.296 85.333333 692.992V640a42.666667 42.666667 0 0 1 42.666667-42.666667z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-load">Load workflow configuration</span>
                 </div>
                 <div class="menu-btn unselectable-text"
                      title="Check the workflow"
@@ -271,6 +365,7 @@
                         <path d="M453.184 121.28c183.04 0.64 330.88 149.12 330.24 331.52-0.64 183.04-149.12 330.88-331.52 330.24-183.04-0.64-330.88-149.12-330.24-331.52 0-133.12 80-252.8 202.24-304.64 40.96-17.28 85.12-26.24 129.28-25.6m0-78.72a410.88 410.88 0 1 0 0.128 821.888A410.88 410.88 0 0 0 453.12 42.56z m301.44 656.64l-55.04 55.04 226.56 226.56 55.04-55.04-226.56-226.56z"></path>
                         <path d="M625.344 284.48l-226.56 226.56-117.76-117.76-55.04 55.04 117.76 117.76 55.04 55.04 55.04-55.04 226.56-226.56-55.04-55.04z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-check">Check the workflow</span>
                 </div>
                 <div class="menu-btn unselectable-text"
                      title="Clear"
@@ -279,6 +374,7 @@
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M298.666667 896c-23.466667 0-43.52-8.362667-60.245334-25.045333A82.176 82.176 0 0 1 213.333333 810.666667V256H170.666667V170.666667h213.333333V128h256v42.666667h213.333333v85.333333h-42.666666v554.666667c0 23.466667-8.362667 43.52-25.045334 60.288A82.176 82.176 0 0 1 725.333333 896H298.666667zM725.333333 256H298.666667v554.666667h426.666666V256zM384 725.333333h85.333333V341.333333H384v384z m170.666667 0h85.333333V341.333333h-85.333333v384z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-clear">Clear</span>
                 </div>
                 <div class="menu-btn unselectable-text"
                      title="Export Python code"
@@ -287,6 +383,7 @@
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M896.170667 497.365333l-241.365334 241.365334-60.330666-60.373334 180.992-180.992-180.992-181.034666L654.805333 256l241.365334 241.365333z m-647.509334 0l181.034667 180.992-60.330667 60.373334L128 497.365333 369.365333 256l60.330667 60.330667-181.034667 181.034666z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-export">Export Python code</span>
                 </div>
                 {% set version = token_dict.get('version') if token_dict is defined else "local" %}
                 <div class="menu-btn unselectable-text"
@@ -296,6 +393,7 @@
                          xmlns="http://www.w3.org/2000/svg">
                         <path d="M256 252.245333c0-6.613333 1.578667-13.098667 4.565333-18.901333 9.813333-18.773333 32-25.557333 49.621334-15.104l439.04 259.754667c5.973333 3.541333 10.88 8.789333 14.165333 15.146666 9.813333 18.773333 3.413333 42.453333-14.165333 52.864L310.186667 805.76a34.730667 34.730667 0 0 1-17.706667 4.906667C272.341333 810.666667 256 793.258667 256 771.797333V252.245333z"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-run">Run the workflow</span>
                 </div>
                 <div class="menu-btn unselectable-text" title="Save workflow"
                      onclick="showSaveWorkflowPopup()">
@@ -306,6 +404,7 @@
                               fill="#000000" fill-opacity=".9"
                               p-id="5905"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-save">Save workflow</span>
                 </div>
 
                 <div class="menu-btn unselectable-text" title="Load workflow"
@@ -316,7 +415,19 @@
                         <path d="M932.8 196.8H515.2L448 107.2H91.2c-38.4 0-68.8 30.4-68.8 68.8v680c0 38.4 30.4 68.8 68.8 68.8h843.2c38.4 0 68.8-30.4 68.8-68.8v-592c0-36.8-32-67.2-70.4-67.2z m24 660.8c0 12.8-11.2 22.4-22.4 22.4H91.2c-12.8 0-22.4-11.2-22.4-22.4V176c0-12.8 11.2-22.4 22.4-22.4h334.4l14.4 19.2 148.8 203.2h369.6v481.6z m0-528H609.6l-64-86.4h385.6c12.8 0 22.4 11.2 22.4 22.4v64zM707.2 788.8L624 705.6c22.4-28.8 35.2-65.6 35.2-104 0-96-78.4-172.8-172.8-172.8s-172.8 78.4-172.8 172.8 78.4 172.8 172.8 172.8c40 0 76.8-14.4 107.2-36.8l83.2 83.2c9.6 9.6 24 9.6 32 0 6.4-8 6.4-22.4-1.6-32zM356.8 601.6c0-70.4 57.6-128 128-128s128 57.6 128 128-57.6 128-128 128-128-59.2-128-128z"
                               fill="#2C2C2C" p-id="6933"></path>
                     </svg>
+                    <span class="tooltip" i18n="workstation-menu-btn-workflow">Load workflow</span>
                 </div>
+
+                <div class="menu-btn unselectable-text"
+                     title="Contribute to GitHub"
+                     onclick="showContributePopup('{{ token_dict.user_login }}')">
+                    <svg class="menu-btn-svg" viewBox="0 0 16 16" version="1.1" aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82a7.56 7.56 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    <span class="special-icon">🔥</span>
+                </div>
+
             </div>
             <div id="drawflow" ondragover="allowDrop(event)"
                  ondrop="drop(event)">
@@ -358,17 +469,61 @@
                 </div>
             </div>
         </div>
+        <div class="col-right2" id="col-right2" style="display: none;">
+            <div id="workstation-panel">
+                <div class="two-column-layout">
+                    <div class="content">
+                        <div class="tabs">
+                            <ul>
+                                <button class="tab-button" onclick="showTab('tab1')">Gallery</button>
+                                <button class="tab-button" onclick="showTab('tab2')">Local Workflow</button>
+                                <button class="tab-button" onclick="showEditorTab()">Back</button>
+                            </ul>
+                        </div>
+                        <div id="tab1" class="tab active">
+                            <div class="grid-container">
+                            </div>
+                        </div>
+                        <div id="tab2" class="tab active">
+                            <div class="grid-container">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="surveyModal">
         <div id="surveyContent">
             <span id="surveyClose">&times;</span>
-            <h3>"We want to hear from you"</h3>
-            <button id="surveyButton">Participation in questionnaire surveys
+            <h3 i18n="workstation-surveyContent">"We want to hear from
+                you"</h3>
+            <button id="surveyButton" i18n="workstation-surveyContent-Button">
+                Participation in questionnaire surveys
             </button>
         </div>
     </div>
 </div>
 <script>
+    function showContent(type, id) {
+        document.getElementById('col-right').style.display = 'block';
+        document.getElementById('col-right2').style.display = 'none';
+        console.log('Show Example Content ' + id);
+        importExample(id);
+    }
+
+    function showGalleryTab() {
+        document.getElementById('col-right').style.display = 'none';
+        document.getElementById('col-right2').style.display = 'block';
+        console.log('Show Gallery');
+    }
+
+    function showEditorTab() {
+       document.getElementById('col-right').style.display = 'block';
+       document.getElementById('col-right2').style.display = 'none';
+       console.log('Show Editor');
+   }
+
     console.log("Workstation page loaded");
     initializeWorkstationPage();
 </script>
