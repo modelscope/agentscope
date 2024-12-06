@@ -109,7 +109,7 @@ class ReActAgent(AgentBase):
 
         # Initialize a parser object to formulate the response from the model
         self.parser = RegexTaggedContentParser(
-            format_instruction="""Respond with specific tags as outlined below:
+            format_instruction="""Respond with specific tags as outlined below in json format:
 <thought>{what you thought}</thought>
 <function>{the function name you want to call}</function>
 <{argument name}>{argument value}</{argument name}>
