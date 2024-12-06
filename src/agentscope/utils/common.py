@@ -295,7 +295,7 @@ def _to_openai_image_url(url: str) -> str:
     lower_url = url.lower()
 
     # Web url
-    if parsed_url.scheme != "":
+    if not os.path.exists(url) and parsed_url.scheme != "":
         if any(lower_url.endswith(_) for _ in support_image_extensions):
             return url
 
