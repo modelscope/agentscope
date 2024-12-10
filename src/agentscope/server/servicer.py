@@ -483,7 +483,7 @@ class AgentServerServicer(RpcAgentServicer):
             args = args.result()  # pylint: disable=W0212
         try:
             if target_func == "reply":
-                result = getattr(agent, target_func)(args)
+                result = getattr(agent, target_func)(*args.get("args", ()))
             else:
                 result = getattr(agent, target_func)(
                     *args.get("args", ()),
