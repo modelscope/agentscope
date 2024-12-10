@@ -686,11 +686,47 @@ def _read_examples() -> Response:
     return jsonify(json=data)
 
 
+@_app.route("/fetch-gallery", methods=["POST"])
+def _fetch_gallery() -> Response:
+    """
+    Get all workflows JSON files in gallery folder.
+    """
+    gallery_path = os.path.join(_app.root_path, "..", "..", "..", "gallery")
+
+    if not os.path.exists(gallery_path):
+        return jsonify(json=[])
+
+    gallery_items = []
+    for filename in os.listdir(gallery_path):
+        if filename.endswith(".json"):
+            file_path = os.path.join(gallery_path, filename)
+            try:
+                with open(file_path, "r", encoding="utf-8") as json_file:
+                    data = json.load(json_file)
+                    gallery_items.append(data)
+            except (IOError, json.JSONDecodeError) as e:
+                print(f"Error reading {file_path}: {e}")
+
+    def sort_key(item: Any) -> Tuple:  # mypy: ignore
+        meta = item.get("meta", {})
+        index = meta.get("index", float("inf"))
+        time = meta.get("time", "")
+        time = datetime.strptime(time, "%Y-%m-%d") if time else datetime.min
+        is_negative = index < 0
+        return (is_negative, -index if is_negative else index, time)
+
+    gallery_items.sort(key=sort_key)
+
+    return jsonify(json=gallery_items)
+
+
 @_app.route("/save-workflow", methods=["POST"])
 def _save_workflow() -> Response:
     """
     Save the workflow JSON data to the local user folder.
     """
+    filename_regex = re.compile(r"^[\w\-.]+$")  # Alphanumeric, _, -, .
+
     user_login = session.get("user_login", "local_user")
     user_dir = os.path.join(_cache_dir, user_login)
     if not os.path.exists(user_dir):
@@ -700,8 +736,15 @@ def _save_workflow() -> Response:
     overwrite = data.get("overwrite", False)
     filename = data.get("filename")
     workflow_str = data.get("workflow")
-    if not filename:
-        return jsonify({"message": "Filename is required"})
+
+    # Validate the filename using the regex pattern
+    if not filename or not filename_regex.match(filename):
+        return jsonify(
+            {
+                "message": "Invalid filename. Only alphanumeric characters, "
+                "underscores, hyphens, and dots are allowed.",
+            },
+        )
 
     filepath = os.path.join(user_dir, f"{filename}.json")
 

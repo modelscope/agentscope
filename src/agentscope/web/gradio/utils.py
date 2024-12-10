@@ -20,6 +20,7 @@ def init_uid_queues() -> dict:
     return {
         "glb_queue_chat_msg": Queue(),
         "glb_queue_user_input": Queue(),
+        "glb_queue_user_signal": Queue(),
         "glb_queue_reset_msg": Queue(),
     }
 
@@ -77,11 +78,32 @@ def get_chat_msg(uid: Optional[str] = None) -> list:
     return []
 
 
+def check_user_signal(uid: Optional[str] = None) -> bool:
+    """Checks if the user signal queue has a value without removing it.
+
+    Args:
+        uid: The user's unique identifier.
+    Required to access the correct queue.
+
+    Returns:
+        bool: True if queue has a value, False if queue is empty.
+    """
+    global glb_uid_dict
+
+    if uid is not None and uid in glb_uid_dict:
+        glb_queue_user_signal = glb_uid_dict[uid]["glb_queue_user_signal"]
+        return not glb_queue_user_signal.empty()
+
+    return False
+
+
 def send_player_input(msg: str, uid: Optional[str] = None) -> None:
     """Sends player input to the web UI."""
     global glb_uid_dict
     glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
+    glb_queue_user_signal = glb_uid_dict[uid]["glb_queue_user_signal"]
     glb_queue_user_input.put([None, msg])
+    glb_queue_user_signal.get()
 
 
 def get_player_input(
@@ -91,6 +113,8 @@ def get_player_input(
     """Gets player input from the web UI or command line."""
     global glb_uid_dict
     glb_queue_user_input = glb_uid_dict[uid]["glb_queue_user_input"]
+    glb_queue_user_signal = glb_uid_dict[uid]["glb_queue_user_signal"]
+    glb_queue_user_signal.put(True)
 
     if timeout:
         try:

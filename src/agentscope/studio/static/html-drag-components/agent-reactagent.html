@@ -8,44 +8,68 @@
             </svg>
             <span>ReActAgent</span>
         </div>
-        <button class="button copy-button">Copy</button>
+        <button class="button copy-button" i18n="agent-reactagent-copy">Copy</button>
         <span class="toggle-arrow">&#x25B2;</span>
     </div>
 
 
     <div class="box">
         <div class="readme">
-            Agent for ReAct (reasoning and acting) with tools
+            <span i18n="agent-reactagent-readme">
+                Agent for ReAct (reasoning and acting) with tools
+            </span>
             <div>Node ID: <span class="node-id">ID_PLACEHOLDER</span></div>
         </div>
 
-        <label>Name</label>
+        <label i18n="agent-reactagent-labelName">Name</label>
         <input type="text" df-args-name placeholder="Assistant"
+               i18n-only="placeholder"
+               i18n="agent-reactagent-labelName-Assistant"
                data-required="true">
         <br>
 
-        <label>System prompt</label>
+        <label i18n="agent-reactagent-SystemPrompt">System prompt</label>
         <textarea type="text" df-args-sys_prompt  class="text-input"
+               i18n="agent-reactagent-SystemPrompt-textarea"
+               i18n-only="placeholder"
                placeholder="You're an assistant."
-                  data-required="true"></textarea>
+               data-required="true"></textarea>
         <br>
 
-        <label>Model config name</label>
+        <label i18n="agent-reactagent-ModelConfigName">Model config name</label>
         <input type="text" df-args-model_config_name
                placeholder="gpt-3.5-turbo" data-required="true">
         <br>
 
-        <label>Tools</label>
-        <div class="tools-placeholder" data-required="true">Please drag and
-            drop a Tool module into this area. Inserting other types of modules
-            may result in errors.
+        <div class="tool-box">
+            <label i18n="agent-reactagent-Tools">Tools</label>
+            <div class="serivce-contain">
+            <button class="button add-button pop-drawer" i18n="agent-reactagent-add-Service">Service</button>
+            <ul class="add-service-list">
+                <li data-node="BingSearchService">Bing Search</li>
+                <li data-node="GoogleSearchService">Google Search</li>
+                <li data-node="PythonService">Python Interpreter</li>
+                <li data-node="ReadTextService">Read Text</li>
+                <li data-node="WriteTextService">Write Text</li>
+                <li data-node="TextToAudioService">Text to Audio</li>
+                <li data-node="TextToImageService">Text to Image</li>
+            <ul>
+            </div>
+        </div>
+        <div class="tools-placeholder" data-required="true">
+            <span  i18n="agent-reactagent-Tools-placeholder">
+                Please click the 'Service' button above to add tools.
+            </span>
+            <div class="dropzone" id="react-tools-dropzone">
+                <ul class="stacked-list"></ul>
+            </div>
         </div>
 
-        <label>Max reasoning-acting iterations</label>
+        <label i18n="agent-reactagent-iterations">Max reasoning-acting iterations</label>
         <input type="number" df-args-max_iters placeholder=10 min=1 step=1>
         <br>
 
-        <label>Verbose</label>
+        <label i18n="agent-reactagent-Verbose">Verbose</label>
         <input type="text" list="reactagent-verbose" df-args-verbose>
         <br>
 

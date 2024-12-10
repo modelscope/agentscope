@@ -1,0 +1,134 @@
+{
+  "drawflow": {
+    "Home": {
+      "data": {
+        "2": {
+          "id": 2,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "html": "\n        <div>\n          <div class=\"title-box\"><i class=\"fas fa-brain\"></i> DashScope Chat\n          <span class=\"toggle-arrow\">▲</span> </div>\n          <div class=\"box\">\n            <div class=\"readme\">DashScope Chat 配置 (您的API key不会被储存和暴露给网站维护者)</div><br>\n            <label> Config Name </label>\n            <input type=\"text\" df-args-config_name placeholder=\"qwen\" data-required=\"true\"><br>\n            <label> Model Name</label>\n            <input type=\"text\" list=\"dashscope_chat-model-names\" df-args-model_name data-required=\"true\"><br>\n            <datalist id=\"dashscope_chat-model-names\">\n              <option value=\"qwen-turbo\">\n              <option value=\"qwen-plus\">\n              <option value=\"qwen-max\">\n              <option value=\"qwen-max-1201\">\n            </datalist>\n            <label> API key</label>\n            <input type=\"text\" df-args-api_key data-required=\"true\"><br>\n            <label> Temperature </label>\n            <input type=\"number\" df-args-temperature placeholder=0 min=\"0\" max=\"2\" step=\"0.1\"><br>\n            <label> Seed </label>\n            <input type=\"number\" df-args-seed placeholder=0 min=\"0\">\n          </div>\n        </div>\n        ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 339,
+          "pos_y": 23
+        },
+        "4": {
+          "id": 4,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-robot\"></i>UserAgent\n            <button class=\"button copy-button\">Copy</button>\n            <span class=\"toggle-arrow\">▲</div>\n            <div class=\"box\">\n            <div class=\"readme\">\n            用户代理智能体\n            <div>Node ID: <span class=\"node-id\">4</span></div>\n            <div>Variable name :<span class=\"variable-name\">agent_4</span></div>\n            </div>\n              <p>Name</p>\n              <input type=\"text\" df-args-name placeholder=\"User\"><br>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 797,
+          "pos_y": 181
+        },
+        "6": {
+          "id": 6,
+          "name": "PythonService",
+          "data": {},
+          "class": "PythonService",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-hammer\"></i>PythonService\n                      <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n            <div class=\"readme\">在 ReActAgent 中集成 Python 解释器，以增强智能体功能</div>\n            <div>Variable name :<span class=\"variable-name\">service_6</span></div>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 824,
+          "pos_y": 620
+        },
+        "3": {
+          "id": 3,
+          "name": "SequentialPipeline",
+          "data": {
+            "elements": [
+              "4",
+              "5"
+            ]
+          },
+          "class": "GROUP",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-project-diagram\"></i>SequentialPipeline\n                <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n                <div class=\"readme\">用于实现顺序逻辑的Pipeline  (<b>从上往下顺序执行</b>)\n                <div>Variable name :<span class=\"variable-name\">pipeline_3</span></div>\n                </div>\n                <div class=\"placeholder\"></div>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 643,
+          "pos_y": 55
+        },
+        "5": {
+          "id": 5,
+          "name": "ReActAgent",
+          "data": {
+            "elements": [
+              "6"
+            ],
+            "args": {
+              "name": "Assistant",
+              "sys_prompt": "You are an assistant. ",
+              "model_config_name": "qwen",
+              "max_iters": 10,
+              "verbose": "True"
+            }
+          },
+          "class": "GROUP",
+          "html": "\n          <div>\n            <div class=\"title-box\"><i class=\"fas fa-robot\"></i>ReActAgent\n            <button class=\"button copy-button\">Copy</button>\n                      <span class=\"toggle-arrow\">▲</span></div>\n            <div class=\"box\">\n              <div class=\"readme\">\n              带有工具的 ReAct（推理和行动）智能体\n              <div>Node ID: <span class=\"node-id\">5</span></div>\n            <div>Variable name :<span class=\"variable-name\">agent_5</span></div>\n                </div>\n              <p>Name</p>\n              <input type=\"text\" df-args-name placeholder=\"Assistant\" data-required=\"true\"><br>\n              <p>System prompt</p>\n              <input type=\"text\" df-args-sys_prompt placeholder=\"You're an assistant.\"><br>\n              <p>Model config name</p>\n              <input type=\"text\" df-args-model_config_name placeholder=\"gpt-3.5-turbo\" data-required=\"true\"><br>\n              <p>Tools</p>\n              <div class=\"tools-placeholder\" data-required=\"true\">Please drag and drop a Tool module into this area. Inserting other types of modules may result in errors.</div>\n              <p>Max reasoning-acting iterations</p>\n              <input type=\"number\" df-args-max_iters placeholder=10 min=1 step=1>\n              <p>Verbose</p>\n              <input type=\"text\" list=\"reactagent-verbose\" df-args-verbose><br>\n              <datalist id=\"reactagent-verbose\">\n              <option value=\"True\">\n              <option value=\"False\">\n              </datalist>\n            </div>\n          </div>\n          ",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 713,
+          "pos_y": 241
+        },
+        "1": {
+          "id": 1,
+          "name": "readme",
+          "data": {},
+          "class": "welcome",
+          "html": "\n        <div class=\"title-box\"><i class=\"fa fa-book\"></i> README <span class=\"toggle-arrow\">▲</span> </div>\n        <div class=\"box-highlight\">\n      📖 本例演示了使用 AgentScope 的 Sequential Pipeline 进行单轮用户-ReactAgent（带有Python解释器能力）的对话。 <br><br> <div class=\"modules-info\"><h4>使用到的模块:</h4><ul><li><span class=\"highlight-module\" onclick=\"editor.selectNode(2);\">DashScope Chat:</span><br> - 每个多智能体应用都必须包含一个配置好的模型。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(3);\">SequentialPipeline:</span><br> - 使信息按预定顺序在智能体之间传递。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(4);\">UserAgent:</span><br> - 代表应用中的用户。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(5);\">ReActAgent:</span><br> - 实现 ReAct 的智能体。</li><li><span class=\"highlight-module\" onclick=\"editor.selectNode(6);\">PythonService:</span><br> - 用于执行一段 python 代码。</li></ur></div> </div>\n      </div>\n      ",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 68,
+          "pos_y": 67
+        }
+      }
+    }
+  }
+}

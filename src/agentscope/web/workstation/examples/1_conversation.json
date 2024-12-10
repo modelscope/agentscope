@@ -23,7 +23,8 @@
       ],
       "args": {
         "max_loop": 3,
-        "break_func": ""
+        "condition_op": "is null",
+        "target_value": ""
       }
     },
     "inputs": {
