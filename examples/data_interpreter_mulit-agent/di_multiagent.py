@@ -28,6 +28,7 @@ from agentscope.service import (
 
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
+from agentscope.parsers import RegexTaggedContentParser
 
 # Global variables for agents with type annotations
 planner_agent: PlannerAgent
@@ -345,10 +346,10 @@ def init_agents() -> None:
             {
                 "config_name": "dashscope_chat",
                 "model_type": "dashscope_chat",
-                "model_name": "qwen-max",
+                "model_name": "qwen-plus",
                 "api_key": dashscope_api_key,
                 "generate_args": {
-                    "temperature": 0.7,
+                    "temperature": 0.0,
                 },
             },
         ],
@@ -387,6 +388,18 @@ def init_agents() -> None:
         model_config_name="dashscope_chat",
         service_toolkit=service_toolkit,
     )
+
+    # Overwrite the parser attribute with the custom format_instruction to reinforce the output adhere to json format.
+    solver_agent.parser = RegexTaggedContentParser(
+            format_instruction="""Respond with specific tags as outlined below in json format:
+        <thought>{what you thought}</thought>
+        <function>{the function name you want to call}</function>
+        <{argument name}>{argument value}</{argument name}>
+        <{argument name}>{argument value}</{argument name}>
+        ...""",  # noqa
+            try_parse_json=True,
+            required_keys=["thought", "function"],
+        )
 
     verifier_agent = VerifierAgent(
         name="verifier",
