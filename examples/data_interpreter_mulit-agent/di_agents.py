@@ -10,9 +10,9 @@ from agentscope.agents import ReActAgent
 from agentscope.agents.agent import AgentBase
 from agentscope.message import Msg
 from agentscope.models import ModelResponse
-from agentscope.parsers.json_object_parser import MarkdownJsonObjectParser
+from agentscope.parsers import MarkdownJsonObjectParser
+from agentscope.parsers import RegexTaggedContentParser
 from agentscope.service import ServiceToolkit
-
 from agentscope.service.service_response import ServiceResponse
 from agentscope.service.service_status import ServiceExecStatus
 
@@ -197,6 +197,18 @@ class VerifierAgent(ReActAgent):
             service_toolkit=service_toolkit,
             max_iters=max_iters,
             verbose=verbose,
+        )
+        
+        # Overwrite the parser attribute with the custom format_instruction to reinforce the output adhere to json format.
+        self.parser = RegexTaggedContentParser(
+            format_instruction="""Respond with specific tags as outlined below in json format:
+        <thought>{what you thought}</thought>
+        <function>{the function name you want to call}</function>
+        <{argument name}>{argument value}</{argument name}>
+        <{argument name}>{argument value}</{argument name}>
+        ...""",  # noqa
+            try_parse_json=True,
+            required_keys=["thought", "function"],
         )
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
