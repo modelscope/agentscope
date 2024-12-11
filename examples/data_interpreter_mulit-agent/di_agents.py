@@ -198,7 +198,7 @@ class VerifierAgent(ReActAgent):
             max_iters=max_iters,
             verbose=verbose,
         )
-        
+
         # Overwrite the parser attribute with the custom format_instruction to reinforce the output adhere to json format.
         self.parser = RegexTaggedContentParser(
             format_instruction="""Respond with specific tags as outlined below in json format:

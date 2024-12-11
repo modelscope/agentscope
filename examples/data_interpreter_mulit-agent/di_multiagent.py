@@ -391,15 +391,15 @@ def init_agents() -> None:
 
     # Overwrite the parser attribute with the custom format_instruction to reinforce the output adhere to json format.
     solver_agent.parser = RegexTaggedContentParser(
-            format_instruction="""Respond with specific tags as outlined below in json format:
+        format_instruction="""Respond with specific tags as outlined below in json format:
         <thought>{what you thought}</thought>
         <function>{the function name you want to call}</function>
         <{argument name}>{argument value}</{argument name}>
         <{argument name}>{argument value}</{argument name}>
         ...""",  # noqa
-            try_parse_json=True,
-            required_keys=["thought", "function"],
-        )
+        try_parse_json=True,
+        required_keys=["thought", "function"],
+    )
 
     verifier_agent = VerifierAgent(
         name="verifier",
