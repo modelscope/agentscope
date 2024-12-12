@@ -11,6 +11,7 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 1. Refine and improve the documentation for easier understanding.
 2. Support tools API.
 3. Refactor the current AgentScope studio, including Dashboard and Workstation.
+4. Improve the current RAG module.
 
 ## Task
 
@@ -53,3 +54,8 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
    - Support displaying token usage.
    - Support displaying real-time memory of agents.
 
+4. RAG
+
+ - 🚧 Provide a set of query rewrite strategies for retrieval.
+ - 📝 Support online search engine (Google/Bing search) based RAG.
+ - 📝 Support multi-RAG agent routing efficiently.
