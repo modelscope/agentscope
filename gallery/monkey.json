@@ -1,0 +1,224 @@
+{
+  "meta": {
+    "index": 0,
+    "title": "Adventure of Monkey",
+    "author": "AgentScopeTeam",
+    "category": "game",
+    "time": "2024-08-20",
+    "thumbnail": "",
+    "description": "Multi-modal game"
+  },
+  "drawflow": {
+    "Home": {
+      "data": {
+        "3": {
+          "id": 3,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen-max",
+              "model_name": "qwen-max",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 29.11111111111111,
+          "pos_y": 28
+        },
+        "6": {
+          "id": 6,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "游戏主持人",
+              "sys_prompt": "你是一款文字冒险游戏，主题是孙悟空历险记。玩家将扮演孙悟空，探索奇幻的世界，面临各种选择和挑战。每当玩家做出选择时，你需要提供四个选项（A、B、C、D），每个选项都应包含不同的故事情节或冒险。确保每个选择都有可能导致不同的后果，增强互动性和趣味性。在每个回合开始时，简要描述当前的情境，并询问玩家的选择。",
+              "model_config_name": "qwen-max"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 962,
+          "pos_y": 267.8888888888889
+        },
+        "8": {
+          "id": 8,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 963,
+          "pos_y": 577.1111111111111
+        },
+        "9": {
+          "id": 9,
+          "name": "ImageSynthesis",
+          "data": {
+            "args": {
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
+            }
+          },
+          "class": "ImageSynthesis",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 959.8888888888889,
+          "pos_y": 472
+        },
+        "11": {
+          "id": 11,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "图片提示词生成器",
+              "sys_prompt": "任务目标：根据输入的分镜，创造一组描述性短语，旨在用于指导文生图模型生成具有相应风格和特性的高质量绘本画面。 \\\\n描述应该是简洁明了的关键词或短语，以逗号分隔，以确保在画面生成时能够清楚地反映绘本所描述的画面。\\\\n如果包含人物的话，需要当下人物的神情。比如一个好的描述可能包含：人物+神情+动作描述+场景描述。人物的主角是孙悟空，因此你的输出应该以孙悟空开头。你禁止输出其他额外的内容。\n",
+              "model_config_name": "qwen-max"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 961,
+          "pos_y": 369
+        },
+        "12": {
+          "id": 12,
+          "name": "WhileLoopPipeline",
+          "data": {
+            "elements": [
+              "13"
+            ],
+            "args": {
+              "condition_func": "lambda *args: True"
+            }
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "20",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 851,
+          "pos_y": 60
+        },
+        "13": {
+          "id": 13,
+          "name": "SequentialPipeline",
+          "data": {
+            "elements": [
+              "6",
+              "9",
+              "11",
+              "8"
+            ]
+          },
+          "class": "GROUP",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 908,
+          "pos_y": 204.88888888888889
+        },
+        "20": {
+          "id": 20,
+          "name": "Message",
+          "data": {
+            "args": {
+              "name": "Hint",
+              "content": "游戏开始",
+              "url": ""
+            }
+          },
+          "class": "Message",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "12",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 410,
+          "pos_y": 248.88888888888889
+        }
+      }
+    }
+  }
+}

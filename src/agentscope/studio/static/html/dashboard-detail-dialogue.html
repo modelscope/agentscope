@@ -2,14 +2,16 @@
     <div id="chat-panel">
         <div id="chat-box" class="clusterize-scroll">
             <div id="chat-box-content" class="clusterize-content">
-                <div class="clusterize-no-data">No messages available.</div>
+                <div class="clusterize-no-data" i18n="dialogue-detail-dialogue-Nodata">No messages available.</div>
             </div>
         </div>
         <div id="chat-input">
             <div id="chat-input-panel">
-                <div id="chat-input-name">User</div>
+                <div id="chat-input-name" i18n="dialogue-detail-dialogue-User">User</div>
                 <textarea id="chat-input-textarea"
-                          placeholder="Input message here ..."></textarea>
+                          placeholder="Input message here ..."
+                          i18n-only="placeholder"
+                          i18n="dialogue-detail-dialogue-textarea"></textarea>
             </div>
             <div id="chat-control-panel">
                 <div id="chat-control-file-list">
@@ -25,7 +27,7 @@
                 </button>
                 <button id="chat-control-send-btn"
                         class="chat-control-btn unselectable-text">
-                    Send
+                    <span i18n="dialogue-detail-dialogue-send-btn">Send</span>
                     <svg class="chat-control-send-btn-svg"
                          viewBox="0 0 1024 1024"
                          xmlns="http://www.w3.org/2000/svg">

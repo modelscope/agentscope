@@ -1,0 +1,332 @@
+{
+  "meta": {
+    "index": 1,
+    "title": "Meme Generator",
+    "author": "AgentScopeTeam",
+    "category": "tool",
+    "time": "2024-09-04",
+    "thumbnail": "",
+    "description": "meme generator"
+  },
+  "drawflow": {
+    "Home": {
+      "data": {
+        "9": {
+          "id": 9,
+          "name": "ImageSynthesis",
+          "data": {
+            "args": {
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
+            }
+          },
+          "class": "ImageSynthesis",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "10",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "17",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 948.8888888888889,
+          "pos_y": 54.111111111111114
+        },
+        "10": {
+          "id": 10,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "我的朋友",
+              "sys_prompt": "你是一个疯狂的meme创造者，专精于“我的朋友认为我做了什么”的备忘录。你接受一个输入，比如“加密货币交易员”，然后输出这样的描述，描述每个场景的合适图像——让图像提示极其唤起一个非常具体的陈词滥调，高情感的描述：\"一个人坐在兰博基尼里，戴着太阳镜，拿着一叠现金自拍\"",
+              "model_config_name": "qwen-max"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "14",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "9",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 489,
+          "pos_y": 30.88888888888889
+        },
+        "11": {
+          "id": 11,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "我的父母",
+              "sys_prompt": "\"你是一个疯狂的meme创造者，专精于“我的父母认为我做了什么”的备忘录。你接受一个输入，比如“加密货币交易员”，然后输出这样的描述，描述每个场景的合适图像——让图像提示极其唤起一个非常具体的陈词滥调，高情感的描述：\"一个穿西装的华尔街狼，自信地在会议室展示加密货币图表\"",
+              "model_config_name": "qwen-max"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "14",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "15",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 492,
+          "pos_y": 466
+        },
+        "12": {
+          "id": 12,
+          "name": "DialogAgent",
+          "data": {
+            "args": {
+              "name": "实际",
+              "sys_prompt": "\"你是一个疯狂的meme创造者，专精于“我实际认为我做了什么”的备忘录。你接受一个输入，比如“加密货币交易员”，然后输出这样的描述，描述每个场景的合适图像——让图像提示极其唤起一个非常具体的陈词滥调，很衰很弱很惨的描述：\"一个穿着睡衣的睡眠不足的人，在凌晨3点疯狂刷新手机，看着自己的一生积蓄在骗局中蒸发\"",
+              "model_config_name": "qwen-max"
+            }
+          },
+          "class": "DialogAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "14",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "16",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 476.77777777777777,
+          "pos_y": 925.2222222222222
+        },
+        "14": {
+          "id": 14,
+          "name": "UserAgent",
+          "data": {
+            "args": {
+              "name": "User"
+            }
+          },
+          "class": "UserAgent",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": []
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "10",
+                  "output": "input_1"
+                },
+                {
+                  "node": "11",
+                  "output": "input_1"
+                },
+                {
+                  "node": "12",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 105,
+          "pos_y": 554
+        },
+        "15": {
+          "id": 15,
+          "name": "ImageSynthesis",
+          "data": {
+            "args": {
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
+            }
+          },
+          "class": "ImageSynthesis",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "11",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "17",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 961,
+          "pos_y": 523
+        },
+        "16": {
+          "id": 16,
+          "name": "ImageSynthesis",
+          "data": {
+            "args": {
+              "model": "wanx-v1",
+              "api_key": "",
+              "n": 1,
+              "size": "1024*1024",
+              "save_dir": ""
+            }
+          },
+          "class": "ImageSynthesis",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "12",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": [
+                {
+                  "node": "17",
+                  "output": "input_1"
+                }
+              ]
+            }
+          },
+          "pos_x": 976.1111111111111,
+          "pos_y": 979
+        },
+        "17": {
+          "id": 17,
+          "name": "ImageComposition",
+          "data": {
+            "args": {
+              "titles": "['我的朋友认为我...', '我的父母认为我...', '实际上我...']",
+              "output_path": "meme.jpg",
+              "row": 1,
+              "column": 3,
+              "spacing": 10,
+              "title_height": 100,
+              "font_name": "PingFang"
+            }
+          },
+          "class": "ImageComposition",
+          "typenode": false,
+          "inputs": {
+            "input_1": {
+              "connections": [
+                {
+                  "node": "9",
+                  "input": "output_1"
+                },
+                {
+                  "node": "15",
+                  "input": "output_1"
+                },
+                {
+                  "node": "16",
+                  "input": "output_1"
+                }
+              ]
+            }
+          },
+          "outputs": {
+            "output_1": {
+              "connections": []
+            }
+          },
+          "pos_x": 1758,
+          "pos_y": 205
+        },
+        "18": {
+          "id": 18,
+          "name": "dashscope_chat",
+          "data": {
+            "args": {
+              "config_name": "qwen-max",
+              "model_name": "qwen-max",
+              "api_key": "",
+              "temperature": 0,
+              "seed": 0,
+              "model_type": "dashscope_chat",
+              "messages_key": "input"
+            }
+          },
+          "class": "dashscope_chat",
+          "typenode": false,
+          "inputs": {},
+          "outputs": {},
+          "pos_x": 121,
+          "pos_y": 65
+        }
+      }
+    }
+  }
+}

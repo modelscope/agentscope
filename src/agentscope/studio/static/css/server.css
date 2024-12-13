@@ -1,132 +1,132 @@
 :root {
-    --server-content-padding-vertical: 20px;
-    --server-content-padding-horizontal: 30px;
-    --server-table-height: calc(100% - var(--runs-content-control-panel-height));
+  --server-content-padding-vertical: 20px;
+  --server-content-padding-horizontal: 30px;
+  --server-table-height: calc(100% - var(--runs-content-control-panel-height));
 }
 
 
 #server-panel {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    flex-direction: column;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
 }
 
 #server-content {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: var(--server-content-padding-vertical) var(--server-content-padding-horizontal);
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--server-content-padding-vertical) var(--server-content-padding-horizontal);
+  box-sizing: border-box;
 }
 
 .collapsed {
-    display: none;
+  display: none;
 }
 
 #server-table {
-    flex-grow: 1;
-    overflow-y: auto;
-    max-height: 30vh;
-    width: 100%;
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 30vh;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
 }
 
 #agent-memory-content {
-    display: flex;
-    flex-direction: row;
-    height: 200px;
-    width: 100%;
-    border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: row;
+  height: 200px;
+  width: 100%;
+  border: 1px solid var(--border-color);
 }
 
 #agent-memory-table {
-    display: flex;
-    flex-direction: column;
-    width: 350px;
-    box-sizing: border-box;
-    border: 0;
-    background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  box-sizing: border-box;
+  border: 0;
+  background-color: #ffffff;
 }
 
 #agent-memory-raw {
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - 350px);
-    height: 100%;
-    box-sizing: border-box;
-    border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 350px);
+  height: 100%;
+  box-sizing: border-box;
+  border-left: 1px solid var(--border-color);
 }
 
 #agent-memory-raw .monaco-editor {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    min-width: 100%;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  min-width: 100%;
 }
 
 .server-section-title-bar {
-    display: flex;
-    justify-content: flex-start;
-    font-size: 20px;
-    padding: 6px 0px;
+  display: flex;
+  justify-content: flex-start;
+  font-size: 20px;
+  padding: 6px 0px;
 }
 
 
 .align-right-btn {
-    margin-left: auto;
+  margin-left: auto;
 }
 
 #server-content .icon {
-    display: flex;
-    height: 20px;
-    padding: 4px 15px;
-    cursor: pointer;
+  display: flex;
+  height: 20px;
+  padding: 4px 15px;
+  cursor: pointer;
 }
 
 #agent-table {
-    flex-grow: 1;
-    overflow-y: auto;
-    max-height: 30vh;
-    width: 100%;
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 30vh;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
 }
 
 .status-tag {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    height: 26px;
-    width: fit-content;
-    border-radius: 13px;
-    color: var(--base-color);
-    box-sizing: border-box;
-    margin: 0 5px;
-    padding: 0 14px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 26px;
+  width: fit-content;
+  border-radius: 13px;
+  color: var(--base-color);
+  box-sizing: border-box;
+  margin: 0 5px;
+  padding: 0 14px;
 }
 
 .running.status-tag {
-    background-color: #ccf4dd;
-    color: #27ae60;
-    fill: #27ae60;
+  background-color: #ccf4dd;
+  color: #27ae60;
+  fill: #27ae60;
 }
 
 .dead.status-tag {
-    background-color: #f5d5d1;
-    color: #c0392b;
-    fill: #c0392b;
+  background-color: #f5d5d1;
+  color: #c0392b;
+  fill: #c0392b;
 }
 
 .loading.status-tag {
-    background-color: #e1e1e1;
-    color: #3d4047;
-    fill: #3d4047;
+  background-color: #e1e1e1;
+  color: #3d4047;
+  fill: #3d4047;
 }
 
 .unknown.status-tag {
-    background-color: #e1e1e1;
-    color: #3d4047;
-    fill: #3d4047;
+  background-color: #e1e1e1;
+  color: #3d4047;
+  fill: #3d4047;
 }

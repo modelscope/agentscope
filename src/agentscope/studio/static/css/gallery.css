@@ -1,0 +1,88 @@
+
+.two-column-layout {
+  display: flex;
+  width: 100%;
+  height: var(--page-content-height);
+}
+
+.sidebar {
+  flex-basis: var(--page-sidebar-width);
+  box-sizing: border-box;
+  padding: 50px 10px;
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  width: 100%;
+}
+
+
+.tabs {
+  display: block;
+  padding: 0;
+  margin: 50px 0 20px 0;
+
+}
+.tab-button {
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  margin-right: 20px;
+  border-radius: 15px;
+}
+.tab-button.active {
+  background-color: var(--main-color-light);
+}
+
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+
+.grid-container {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+
+.grid-item {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 200px;
+  height: 200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-item :hover {
+  transform: scale(1.05);
+}
+
+.grid-item img {
+  width: 100%;
+  height: 61.8%;
+  object-fit: cover;
+}
+
+.grid-item .caption {
+  width: 100%;
+  height: 38.2%;
+}
+.thumbnail {
+  width: 100%;
+  flex-grow: 1;
+}
+
+.caption {
+  text-align: center;
+}
+
