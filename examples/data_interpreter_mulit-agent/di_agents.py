@@ -46,48 +46,6 @@ def read_csv_file(file_path: str) -> ServiceResponse:
         )
 
 
-def write_csv_file(
-    file_path: str,
-    data: List[List[Any]],
-    overwrite: bool = False,
-) -> ServiceResponse:
-    """
-    Write data to a CSV file.
-
-    Args:
-        file_path (`str`):
-            The path to the file where the CSV data will be written.
-        data (`List[List[Any]]`):
-            The data to write to the CSV file
-            (each inner list represents a row).
-        overwrite (`bool`):
-            Whether to overwrite the file if it already exists.
-
-    Returns:
-        `ServiceResponse`: where the boolean indicates success, and the
-        str contains an error message if any, including the error type.
-    """
-    if not overwrite and os.path.exists(file_path):
-        return ServiceResponse(
-            status=ServiceExecStatus.ERROR,
-            content="FileExistsError: The file already exists.",
-        )
-    try:
-        with open(file_path, "w", encoding="utf-8", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerows(data)
-        return ServiceResponse(
-            status=ServiceExecStatus.SUCCESS,
-            content="Success",
-        )
-    except Exception as e:
-        error_message = f"{e.__class__.__name__}: {e}"
-        return ServiceResponse(
-            status=ServiceExecStatus.ERROR,
-            content=error_message,
-        )
-
-
 class PlannerAgent(AgentBase):
     """
     PlannerAgent is responsible for decomposing complex tasks into manageable
