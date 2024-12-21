@@ -4,7 +4,6 @@
 This script demonstrates task solving with a data interpreter pipeline
 formed by multiple agents, each specialized in one aspect of problem solving.
 """
-import csv
 import os
 import copy
 from typing import Any, List, Dict, Optional
@@ -26,8 +25,6 @@ from agentscope.service import (
     execute_shell_command,
 )
 
-from agentscope.service.service_response import ServiceResponse
-from agentscope.service.service_status import ServiceExecStatus
 from agentscope.parsers import RegexTaggedContentParser
 
 # Global variables for agents with type annotations
@@ -40,37 +37,6 @@ replanner_agent: ReplanningAgent
 # Global variables for failure tracking
 total_failure_count = 0
 max_total_failures = 3  # Adjust as needed
-
-
-def read_csv_file(file_path: str) -> ServiceResponse:
-    """
-    Read and parse a CSV file.
-
-    Args:
-        file_path (`str`):
-            The path to the CSV file to be read.
-
-    Returns:
-        `ServiceResponse`: Where the boolean indicates success, the
-        Any is the parsed CSV content (typically a list of rows),
-        and the str contains an error message if any, including
-        the error type.
-    """
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            data: List[List[str]] = list(reader)
-        return ServiceResponse(
-            status=ServiceExecStatus.SUCCESS,
-            content=data,
-        )
-    except Exception as e:
-        error_message = f"{e.__class__.__name__}: {e}"
-        return ServiceResponse(
-            status=ServiceExecStatus.ERROR,
-            content=error_message,
-        )
-
 
 _ = load_dotenv(find_dotenv())  # read local .env file
 

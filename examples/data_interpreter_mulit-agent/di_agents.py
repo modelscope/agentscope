@@ -3,8 +3,6 @@
 """
 This script defines all the agents used in the data interpreter pipeline.
 """
-import os
-import csv
 from typing import Any, Dict, List, Tuple, Optional, Union, Sequence
 from agentscope.agents import ReActAgent
 from agentscope.agents.agent import AgentBase
@@ -13,37 +11,6 @@ from agentscope.models import ModelResponse
 from agentscope.parsers import MarkdownJsonObjectParser
 from agentscope.parsers import RegexTaggedContentParser
 from agentscope.service import ServiceToolkit
-from agentscope.service.service_response import ServiceResponse
-from agentscope.service.service_status import ServiceExecStatus
-
-
-def read_csv_file(file_path: str) -> ServiceResponse:
-    """
-    Read and parse a CSV file.
-
-    Args:
-        file_path (`str`):
-            The path to the CSV file to be read.
-
-    Returns:
-        `ServiceResponse`: Where the boolean indicates success, the
-        Any is the parsed CSV content (typically a list of rows), and
-        the str contains an error message if any, including the error type.
-    """
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            reader = csv.reader(file)
-            data: List[List[str]] = list(reader)
-        return ServiceResponse(
-            status=ServiceExecStatus.SUCCESS,
-            content=data,
-        )
-    except Exception as e:
-        error_message = f"{e.__class__.__name__}: {e}"
-        return ServiceResponse(
-            status=ServiceExecStatus.ERROR,
-            content=error_message,
-        )
 
 
 class PlannerAgent(AgentBase):
