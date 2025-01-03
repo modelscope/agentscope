@@ -23,13 +23,13 @@ class AnthropicChatWrapper(ModelWrapperBase):
         config_name: Optional[str] = None,
         api_key: Optional[str] = None,
         stream: bool = False,
-        client_kwargs: Optional[dict] = None,
+        client_kwargs: dict = {},
     ) -> None:
         """Initialize the Anthropic model wrapper.
 
         Args:
             model_name (`str`):
-                The name of the used model, e.g. `claude-3-5-sonnet`.
+                The name of the used model, e.g. `claude-3-5-sonnet-20241022`.
             config_name (`Optional[str]`, defaults to `None`):
                 The name of the model configuration.
             api_key (`Optional[str]`, defaults to `None`):
@@ -145,6 +145,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
         self,
         messages: list[dict[str, str]],
         stream: Optional[bool] = None,
+        max_tokens: int = 2048,
         **kwargs: Any,
     ) -> ModelResponse:
         """Call the Anthropic model.
@@ -159,6 +160,8 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 'role' and 'content' keys.
             stream (`Optional[bool]`, defaults to `None`):
                 Enable streaming mode or not.
+            max_tokens (`int`, defaults to `2048`):
+                The max tokens in generation.
             **kwargs (`Any`):
                 The additional keyword arguments for the model.
 
@@ -203,6 +206,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
             {
                 "model": self.model_name,
                 "stream": stream,
+                "max_tokens": max_tokens,
             },
         )
 
@@ -226,18 +230,48 @@ class AnthropicChatWrapper(ModelWrapperBase):
         if stream:
 
             def generator() -> Generator[str, None, None]:
-                # text = ""
-                # last_chunk = {}
+                # Used in model invocation recording
+                gathered_response = {}
+
+                text = ""
+                current_block = None
                 for chunk in response:
                     chunk = chunk.model_dump()
-                    import json
+                    chunk_type = chunk.get("type", None)
 
-                    print(json.dumps(chunk))
-                    yield chunk
+                    if chunk_type == "message_start":
+                        gathered_response.update(**chunk["message"])
 
-                    # last_chunk = chunk
+                    if chunk_type == "message_delta":
+                        for key, cost in chunk.get("usage", {}).items():
+                            gathered_response["usage"][key] = (
+                                gathered_response["usage"].get(key, 0) + cost
+                            )
 
-                # TODO: save model invocation and update monitor
+                    if chunk_type == "content_block_start":
+                        # Refresh the current block
+                        current_block = chunk["content_block"]
+
+                    if chunk_type == "content_block_delta":
+                        delta = chunk.get("delta", {})
+                        if delta.get("type", None) == "text_delta":
+                            # To recover the complete response with multiple blocks in its content field
+                            current_block["text"] = current_block.get(
+                                "text", ""
+                            ) + delta.get("text", "")
+                            # Used for feedback
+                            text += delta.get("text", "")
+                            yield text
+
+                        # TODO: Support tool calls in streaming mode
+
+                    if chunk_type == "content_block_stop":
+                        gathered_response["content"].append(current_block)
+
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    gathered_response,
+                )
 
             return ModelResponse(
                 stream=generator(),
@@ -252,9 +286,19 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 response,
             )
 
+            text = []
+            # Gather text from content blocks
+            for block in response.get("content", []):
+                if (
+                    isinstance(block, dict)
+                    and block.get("type", None) == "text"
+                ):
+                    text.append(block.get("text", ""))
+            text = "\n".join(text)
+
             # Return the response
             return ModelResponse(
-                text=response["content"],
+                text=text,
                 raw=response,
             )
 
@@ -268,7 +312,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
             response=response,
         )
 
-        usage = response.get("usage", {})
+        usage = response.get("usage", None)
         if usage is not None:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
