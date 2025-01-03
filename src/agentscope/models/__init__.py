@@ -41,6 +41,7 @@ from .litellm_model import (
 from .yi_model import (
     YiChatWrapper,
 )
+from .anthropic_model import AnthropicChatWrapper
 
 __all__ = [
     "ModelWrapperBase",
@@ -64,6 +65,7 @@ __all__ = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "YiChatWrapper",
+    "AnthropicChatWrapper",
 ]
 
 
