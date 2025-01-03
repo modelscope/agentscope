@@ -1,21 +1,26 @@
 # -*- coding: utf-8 -*-
 """The model manager for AgentScope."""
+import importlib
 import json
-from typing import Any, Union, Sequence
+import os
+from typing import Any, Union, Type
 
 from loguru import logger
 
-from ..models import ModelWrapperBase, _get_model_wrapper
+from ..models import ModelWrapperBase, _BUILD_IN_MODEL_WRAPPERS
 
 
 class ModelManager:
     """The model manager for AgentScope, which is responsible for loading and
     managing model configurations and models."""
 
+    _instance = None
+
     model_configs: dict[str, dict] = {}
     """The model configs"""
 
-    _instance = None
+    model_wrapper_mapping: dict[str, Type[ModelWrapperBase]] = {}
+    """The registered model wrapper classes."""
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Any:
         """Create a singleton instance."""
@@ -43,6 +48,13 @@ class ModelManager:
     ) -> None:
         """Initialize the model manager with model configs"""
         self.model_configs = {}
+        self.model_wrapper_mapping = {}
+
+        for cls_name in _BUILD_IN_MODEL_WRAPPERS:
+            models_module = importlib.import_module("agentscope.models")
+            cls = getattr(models_module, cls_name)
+            if getattr(cls, "model_type", None):
+                self.register_model_wrapper_class(cls, exist_ok=False)
 
     def initialize(
         self,
@@ -79,10 +91,17 @@ class ModelManager:
 
         cfgs = None
 
+        # Load model configs from a path
         if isinstance(model_configs, str):
+            if not os.path.exists(model_configs):
+                raise FileNotFoundError(
+                    f"Cannot find the model configs file in the given path "
+                    f"`{model_configs}`.",
+                )
             with open(model_configs, "r", encoding="utf-8") as f:
                 cfgs = json.load(f)
 
+        # Load model configs from a dict or a list of dicts
         if isinstance(model_configs, dict):
             cfgs = [model_configs]
 
@@ -100,16 +119,22 @@ class ModelManager:
                 f"list of dicts), but got {type(model_configs)}",
             )
 
-        formatted_configs = _format_configs(configs=cfgs)
+        # Check and register the model configs
+        for cfg in cfgs:
+            # Check the format of model configs
+            if "config_name" not in cfg or "model_type" not in cfg:
+                raise ValueError(
+                    "The `config_name` and `model_type` fields are required "
+                    f"for model config, but got: {cfg}",
+                )
 
-        # check if name is unique
-        for cfg in formatted_configs:
-            if cfg["config_name"] in self.model_configs:
+            config_name = cfg["config_name"]
+            if config_name in self.model_configs:
                 logger.warning(
-                    f"config_name [{cfg['config_name']}] already exists.",
+                    f"Config name [{config_name}] already exists.",
                 )
                 continue
-            self.model_configs[cfg["config_name"]] = cfg
+            self.model_configs[config_name] = cfg
 
         # print the loaded model configs
         logger.info(
@@ -138,10 +163,16 @@ class ModelManager:
             )
 
         model_type = config["model_type"]
-
         kwargs = {k: v for k, v in config.items() if k != "model_type"}
 
-        return _get_model_wrapper(model_type=model_type)(**kwargs)
+        if model_type not in self.model_wrapper_mapping:
+            raise ValueError(
+                f"Unsupported model_type `{model_type}`, currently supported "
+                f"model types: "
+                f"{', '.join(list(self.model_wrapper_mapping.keys()))}. ",
+            )
+
+        return self.model_wrapper_mapping[model_type](**kwargs)
 
     def get_config_by_name(self, config_name: str) -> Union[dict, None]:
         """Load the model config by name, and return the config dict."""
@@ -159,33 +190,50 @@ class ModelManager:
         assert "model_configs" in data
         self.model_configs = data["model_configs"]
 
+    def register_model_wrapper_class(
+        self,
+        model_wrapper_class: Type[ModelWrapperBase],
+        exist_ok: bool,
+    ) -> None:
+        """Register the model wrapper class.
+
+        Args:
+            model_wrapper_class (`Type[ModelWrapperBase]`):
+                The model wrapper class to be registered, which must inherit
+                from `ModelWrapperBase`.
+            exist_ok (`bool`):
+                Whether to overwrite the existing model wrapper with the same
+                name.
+        """
+
+        if not issubclass(model_wrapper_class, ModelWrapperBase):
+            raise TypeError(
+                "The model wrapper class should inherit from "
+                f"ModelWrapperBase, but got {model_wrapper_class}.",
+            )
+
+        if not hasattr(model_wrapper_class, "model_type"):
+            raise ValueError(
+                f"The model wrapper class `{model_wrapper_class}` should "
+                f"have a `model_type` attribute.",
+            )
+
+        model_type = model_wrapper_class.model_type
+        if model_type in self.model_wrapper_mapping:
+            if exist_ok:
+                logger.warning(
+                    f'Model wrapper "{model_type}" '
+                    "already exists, overwrite it.",
+                )
+                self.model_wrapper_mapping[model_type] = model_wrapper_class
+            else:
+                raise ValueError(
+                    f'Model wrapper "{model_type}" already exists, '
+                    "please set `exist_ok=True` to overwrite it.",
+                )
+        else:
+            self.model_wrapper_mapping[model_type] = model_wrapper_class
+
     def flush(self) -> None:
         """Flush the model manager."""
         self.clear_model_configs()
-
-
-def _format_configs(
-    configs: Union[Sequence[dict], dict],
-) -> Sequence:
-    """Check the format of model configs.
-
-    Args:
-        configs (Union[Sequence[dict], dict]): configs in dict format.
-
-    Returns:
-        Sequence[dict]: converted ModelConfig list.
-    """
-    if isinstance(configs, dict):
-        configs = [configs]
-    for config in configs:
-        if "config_name" not in config:
-            raise ValueError(
-                "The `config_name` field is required for Cfg",
-            )
-        if "model_type" not in config:
-            logger.warning(
-                "`model_type` is not provided in config"
-                f"[{config['config_name']}],"
-                " use `PostAPIModelWrapperBase` by default.",
-            )
-    return configs
