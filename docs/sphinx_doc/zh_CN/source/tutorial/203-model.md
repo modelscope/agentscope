@@ -586,6 +586,7 @@ AgentScope允许开发者自定义自己的模型包装器。新的模型包装�
 - 继承自`ModelWrapperBase`类，
 - 提供`model_type`字段以在模型配置中标识这个Model Wrapper类，并
 - 实现`__init__`和`__call__`函数。
+- 调用`agentscope.register_model_wrapper_class`函数，将其注册到AgentScope中。
 
 ```python
 from agentscope.models import ModelWrapperBase
@@ -604,10 +605,13 @@ class MyModelWrapper(ModelWrapperBase):
         # ...
 ```
 
-在创建新的模型包装器类之后，模型包装器将自动注册到AgentScope中。
-您可以直接在模型配置中使用它。
+然后调用`register_model_wrapper_class`函数将其注册到AgentScope中。
 
 ```python
+import agentscope
+
+agentscope.register_model_wrapper_class(MyModelWrapper)
+
 my_model_config = {
     # 基础参数
     "config_name": "my_model_config",

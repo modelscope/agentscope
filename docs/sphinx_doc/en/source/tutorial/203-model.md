@@ -566,6 +566,7 @@ The new model wrapper class should
 - inherit from `ModelWrapperBase` class,
 - provide a `model_type` field to identify this model wrapper in the model configuration, and
 - implement its `__init__` and `__call__` functions.
+- register the new model wrapper class by calling `agentscope.register_model_wrapper_class` function
 
 The following is an example for creating a new model wrapper class.
 
@@ -586,10 +587,13 @@ class MyModelWrapper(ModelWrapperBase):
         # ...
 ```
 
-After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically.
-You can use it in the model configuration directly.
+Then we register the new model wrapper class and use it in the model configuration.
 
 ```python
+import agentscope
+
+agentscope.register_model_wrapper_class(MyModelWrapper)
+
 my_model_config = {
     # Basic parameters
     "config_name": "my_model_config",
