@@ -1,58 +1,6 @@
 # -*- coding: utf-8 -*-
-"""The configuration file should contain one or a list of model configs,
-and each model config should follow the following format.
+"""The model wrapper base class."""
 
-.. code-block:: python
-
-    {
-        "config_name": "{config_name}",
-        "model_type": "openai_chat" | "post_api" | ...,
-        ...
-    }
-
-After that, you can specify model by {config_name}.
-
-Note:
-    The parameters for different types of models are different. For OpenAI API,
-    the format is:
-
-        .. code-block:: python
-
-            {
-                "config_name": "{id of your model}",
-                "model_type": "openai_chat",
-                "model_name": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
-                "api_key": "{your_api_key}",
-                "organization": "{your_organization, if needed}",
-                "client_args": {
-                    # ...
-                },
-                "generate_args": {
-                    # ...
-                }
-            }
-
-
-    For Post API, toking huggingface inference API as an example, its format
-    is:
-
-        .. code-block:: python
-
-            {
-                "config_name": "{config_name}",
-                "model_type": "post_api",
-                "api_url": "{api_url}",
-                "headers": {"Authorization": "Bearer {API_TOKEN}"},
-                "max_length": {max_length_of_model},
-                "timeout": {timeout},
-                "max_retries": {max_retries},
-                "generate_args": {
-                    "temperature": 0.5,
-                    # ...
-                }
-            }
-
-"""
 from __future__ import annotations
 import inspect
 import time

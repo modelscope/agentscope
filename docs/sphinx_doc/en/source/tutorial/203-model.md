@@ -90,7 +90,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
 | LiteLLM API            | Chat            | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)               | `"litellm_chat"`              | -                                                |
 | Yi API                 | Chat            | [`YiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/yi_model.py)                         | `"yi_chat"`                   | yi-large, yi-medium, ...                         |
-| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | -                             | -                                                |
 |                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
 |                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
 |                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
@@ -519,7 +519,7 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 ```python
 {
     "config_name": "my_postapiwrapper_config",
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
 
     # Required parameters
     "api_url": "https://xxx.xxx",

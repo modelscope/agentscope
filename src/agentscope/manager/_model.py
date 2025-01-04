@@ -89,30 +89,28 @@ class ModelManager:
         if clear_existing:
             self.clear_model_configs()
 
-        cfgs = None
+        cfgs = model_configs
 
         # Load model configs from a path
-        if isinstance(model_configs, str):
-            if not os.path.exists(model_configs):
+        if isinstance(cfgs, str):
+            if not os.path.exists(cfgs):
                 raise FileNotFoundError(
                     f"Cannot find the model configs file in the given path "
                     f"`{model_configs}`.",
                 )
-            with open(model_configs, "r", encoding="utf-8") as f:
+            with open(cfgs, "r", encoding="utf-8") as f:
                 cfgs = json.load(f)
 
         # Load model configs from a dict or a list of dicts
-        if isinstance(model_configs, dict):
-            cfgs = [model_configs]
+        if isinstance(cfgs, dict):
+            cfgs = [cfgs]
 
-        if isinstance(model_configs, list):
-            if not all(isinstance(_, dict) for _ in model_configs):
+        if isinstance(cfgs, list):
+            if not all(isinstance(_, dict) for _ in cfgs):
                 raise ValueError(
                     "The model config unit should be a dict.",
                 )
-            cfgs = model_configs
-
-        if cfgs is None:
+        else:
             raise TypeError(
                 f"Invalid type of model_configs, it could be a dict, a list "
                 f"of dicts, or a path to a json file (containing a dict or a "
@@ -163,14 +161,14 @@ class ModelManager:
             )
 
         model_type = config["model_type"]
-        kwargs = {k: v for k, v in config.items() if k != "model_type"}
-
         if model_type not in self.model_wrapper_mapping:
             raise ValueError(
                 f"Unsupported model_type `{model_type}`, currently supported "
                 f"model types: "
                 f"{', '.join(list(self.model_wrapper_mapping.keys()))}. ",
             )
+
+        kwargs = {k: v for k, v in config.items() if k != "model_type"}
 
         return self.model_wrapper_mapping[model_type](**kwargs)
 
