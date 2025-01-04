@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """The init function for the package."""
 import json
-from typing import Optional, Union, Sequence
+from typing import Optional, Union, Sequence, Type
+
+from loguru import logger
+
 from agentscope import agents
 from .agents import AgentBase
 from .logging import LOG_LEVEL
 from .constants import _DEFAULT_SAVE_DIR
 from .constants import _DEFAULT_LOG_LEVEL
 from .constants import _DEFAULT_CACHE_DIR
-from .manager import ASManager
+from .manager import ASManager, ModelManager
+from .models import ModelWrapperBase
 
 # init the singleton class by default settings to avoid reinit in subprocess
 # especially in spawn mode, which will copy the object from the parent process
@@ -122,3 +126,27 @@ def state_dict() -> dict:
 def print_llm_usage() -> dict:
     """Print the usage of LLM."""
     return ASManager.get_instance().monitor.print_llm_usage()
+
+
+def register_model_wrapper_class(
+    model_wrapper_class: Type[ModelWrapperBase],
+    exist_ok: bool = False,
+) -> None:
+    """Register the model wrapper in AgentScope so that you can use it with
+    model configurations.
+
+    Args:
+        model_wrapper_class (`Type[ModelWrapperBase]`):
+            The model wrapper class to be registered, which must inherit from
+            `ModelWrapperBase`.
+        exist_ok (`bool`, defaults to `False`):
+            Whether to overwrite the existing model wrapper with the same name.
+    """
+    logger.info(
+        f"Registering model wrapper class `{model_wrapper_class.__name__}`.",
+    )
+    ModelManager.get_instance().register_model_wrapper_class(
+        model_wrapper_class,
+        exist_ok,
+    )
+    logger.info("Done.")

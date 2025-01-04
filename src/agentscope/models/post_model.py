@@ -19,7 +19,7 @@ from ..message import Msg
 class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
     """The base model wrapper for the model deployed on the POST API."""
 
-    model_type: str = "post_api"
+    model_type: str
 
     def __init__(
         self,
@@ -235,8 +235,6 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai dall_e"""
 
     model_type: str = "post_api_dall_e"
-
-    deprecated_model_type: str = "post_api_dalle"
 
     def _parse_response(self, response: dict) -> ModelResponse:
         if "data" not in response["data"]["response"]:

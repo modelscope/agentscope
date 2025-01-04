@@ -119,8 +119,6 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
     model_type: str = "dashscope_chat"
 
-    deprecated_model_type: str = "tongyi_chat"
-
     def __init__(
         self,
         config_name: str,
