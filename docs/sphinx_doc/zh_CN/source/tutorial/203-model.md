@@ -16,6 +16,7 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 - LiteLLM API, 包括对话（Chat）, 支持各种模型的API.
 - Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
+- Anthropic 对话 API。
 
 ## 配置方式
 
@@ -114,6 +115,7 @@ API如下：
 |                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
 |                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
 |                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
+| Anthropic API          | Chat            | [`AnthropicChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py)          | `"anthropic_chat"`            | claude-3-5-sonnet-20241022, ...                  |
 
 #### 详细参数
 
@@ -560,8 +562,29 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 </details>
 
 
+<br/>
 
+#### Anthropic API
 
+<details>
+<summary>
+Anthropic Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py">agentscope.models.AnthropicChatWrapper</a></code>)
+</summary>
+
+```python
+{
+  "model_config": "my_anthropic_chat_config",
+  "model_type": "anthropic_chat",
+  "model_name": "claude-3-5-sonnet-20241022",
+
+  # 必要参数
+  "api_key": "{your_api_key}",
+
+  # 可选参数
+  "temperature": 0.5
+}
+```
+</details>
 
 <br/>
 
