@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """The Anthropic model wrapper for AgentScope."""
-from typing import Optional, Union, Generator, Any
+from typing import Optional, Union, Generator, Any, Sequence
 
-from agentscope.manager import FileManager
-from agentscope.message import Msg
-from agentscope.models import ModelWrapperBase, ModelResponse
-from agentscope.utils.common import (
+from ..manager import FileManager
+from ..message import Msg
+from .model import ModelWrapperBase, ModelResponse
+from ..utils.common import (
     _guess_type_by_extension,
     _is_web_url,
     _get_base64_from_image_path,
@@ -15,6 +15,8 @@ from agentscope.utils.common import (
 class AnthropicChatWrapper(ModelWrapperBase):
     """The Anthropic model wrapper for AgentScope."""
 
+    model_type: str = "anthropic_chat"
+
     _supported_image_format: list[str] = ["jpeg", "png", "gif", "webp"]
 
     def __init__(
@@ -23,7 +25,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
         config_name: Optional[str] = None,
         api_key: Optional[str] = None,
         stream: bool = False,
-        client_kwargs: dict = {},
+        client_kwargs: Optional[dict] = None,
     ) -> None:
         """Initialize the Anthropic model wrapper.
 
@@ -41,7 +43,15 @@ class AnthropicChatWrapper(ModelWrapperBase):
         """
         super().__init__(config_name, model_name)
 
-        import anthropic
+        try:
+            import anthropic
+        except ImportError as e:
+            raise ImportError(
+                "Please install the `anthropic` package by running "
+                "`pip install anthropic`.",
+            ) from e
+
+        client_kwargs = client_kwargs or {}
 
         self.client = anthropic.Anthropic(
             api_key=api_key,
@@ -51,7 +61,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, list[Msg]],
+        *args: Union[Msg, Sequence[Msg]],
     ) -> list[dict[str, object]]:
         """Format the messages for anthropic model input.
 
@@ -93,12 +103,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
 
         content = []
         for image_url in image_urls:
-            extension = image_url.split(".")[-1]
+            extension = image_url.split(".")[-1].lower()
             extension = "jpeg" if extension == "jpg" else extension
-            if (
-                extension.lower()
-                not in AnthropicChatWrapper._supported_image_format
-            ):
+            if extension not in AnthropicChatWrapper._supported_image_format:
                 raise TypeError(
                     "Anthropic model only supports image formats "
                     f"{AnthropicChatWrapper._supported_image_format}, "
@@ -108,12 +115,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
             if _is_web_url(image_url):
                 # Download the image locally
                 file_manager = FileManager.get_instance()
-                path_image = file_manager.save_image(image_url)
-            else:
-                # Local image path
-                path_image = image_url
+                image_url = file_manager.save_image(image_url)
 
-            data_base64 = _get_base64_from_image_path(path_image)
+            data_base64 = _get_base64_from_image_path(image_url)
 
             content.append(
                 {
@@ -141,9 +145,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
             "content": content,
         }
 
-    def __call__(
+    def __call__(  # pylint: disable=too-many-branches
         self,
-        messages: list[dict[str, str]],
+        messages: list[dict[str, Union[str, list[dict]]]],
         stream: Optional[bool] = None,
         max_tokens: int = 2048,
         **kwargs: Any,
@@ -155,7 +159,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
          allow the system prompt to be the first message in the input messages.
 
         Args:
-            messages (`list[dict[str, str]]`):
+            messages (`list[dict[str, Union[str, list[dict]]]]`):
                 A list of message dictionaries. Each dictionary should have
                 'role' and 'content' keys.
             stream (`Optional[bool]`, defaults to `None`):
@@ -188,7 +192,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 if msg["role"] not in ["assistant", "user", "system"]:
                     raise ValueError(
                         f"Invalid role {msg['role']}. The role must be one of "
-                        f"['assistant', 'user']",
+                        f"['assistant', 'user', 'system']",
                     )
 
         else:
@@ -211,7 +215,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
         )
 
         # Extract the system message
-        if messages[0].get("role", None) == "system":
+        if messages[0]["role"] == "system":
             if not isinstance(messages[0]["content"], str):
                 raise ValueError(
                     "The content of the system message should be a string, "
@@ -234,7 +238,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 gathered_response = {}
 
                 text = ""
-                current_block = None
+                current_block = {}
                 for chunk in response:
                     chunk = chunk.model_dump()
                     chunk_type = chunk.get("type", None)
@@ -255,9 +259,11 @@ class AnthropicChatWrapper(ModelWrapperBase):
                     if chunk_type == "content_block_delta":
                         delta = chunk.get("delta", {})
                         if delta.get("type", None) == "text_delta":
-                            # To recover the complete response with multiple blocks in its content field
+                            # To recover the complete response with multiple
+                            # blocks in its content field
                             current_block["text"] = current_block.get(
-                                "text", ""
+                                "text",
+                                "",
                             ) + delta.get("text", "")
                             # Used for feedback
                             text += delta.get("text", "")
@@ -286,19 +292,18 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 response,
             )
 
-            text = []
+            texts = []
             # Gather text from content blocks
             for block in response.get("content", []):
                 if (
                     isinstance(block, dict)
                     and block.get("type", None) == "text"
                 ):
-                    text.append(block.get("text", ""))
-            text = "\n".join(text)
+                    texts.append(block.get("text", ""))
 
             # Return the response
             return ModelResponse(
-                text=text,
+                text="\n".join(texts),
                 raw=response,
             )
 
