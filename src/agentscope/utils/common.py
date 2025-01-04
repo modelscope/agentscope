@@ -390,6 +390,22 @@ def _is_web_url(url: str) -> bool:
     return parsed_url.scheme in ["http", "https", "ftp", "oss"]
 
 
+def _get_base64_from_image_path(image_path: str) -> str:
+    """Get the base64 string from the image url.
+
+    Args:
+        image_path (`str`):
+            The local path of the image.
+    """
+    with open(image_path, "rb") as image_file:
+        base64_image = base64.b64encode(image_file.read()).decode(
+            "utf-8",
+        )
+    extension = image_path.lower().split(".")[-1]
+    mime_type = f"image/{extension}"
+    return f"data:{mime_type};base64,{base64_image}"
+
+
 def _is_json_serializable(obj: Any) -> bool:
     """Check if the given object is json serializable."""
     try:

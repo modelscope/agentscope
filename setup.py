@@ -93,6 +93,7 @@ extra_gemini_requires = ["google-generativeai>=0.4.0"]
 extra_litellm_requires = ["litellm"]
 extra_zhipuai_requires = ["zhipuai"]
 extra_ollama_requires = ["ollama>=0.1.7"]
+extra_anthropic_requires = ["anthropic"]
 
 # Full requires
 extra_full_requires = (
@@ -105,6 +106,7 @@ extra_full_requires = (
     + extra_litellm_requires
     + extra_zhipuai_requires
     + extra_ollama_requires
+    + extra_anthropic_requires
 )
 
 # For online workstation
@@ -143,6 +145,7 @@ setuptools.setup(
         "litellm": extra_litellm_requires,
         "zhipuai": extra_zhipuai_requires,
         "gemini": extra_gemini_requires,
+        "anthropic": extra_anthropic_requires,
         # For service functions
         "service": extra_service_requires,
         # For distribution mode

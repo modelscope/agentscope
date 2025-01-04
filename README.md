@@ -42,6 +42,8 @@ Start building LLM-empowered multi-agent applications in an easier way.
 
 ## News
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-01-04]** AgentScope supports Anthropic API now.
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-12-12]** We have updated the [roadmap of AgentScope](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md).
 
 - **[2024-09-06]** AgentScope version 0.1.0 is released now.
@@ -95,6 +97,7 @@ services and third-party model APIs.
 | LiteLLM API            | Chat            | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)               | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#litellm-api) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/litellm_chat_template.json)                | [models supported by litellm](https://docs.litellm.ai/docs/)... |
 | Yi API                 | Chat            | [`YiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/yi_model.py)                         | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/yi_chat_template.json)                | yi-large, yi-medium, ...                                        |
 | Post Request based API | -               | [`PostAPIModelWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#post-request-api) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/postapi_model_config_template.json)   | -                                                               |
+| Anthropic API          | Chat            | [`AnthropicChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py)           | [guidance](https://modelscope.github.io/agentscope/en/tutorial/203-model.html#anthropic-api) <br> [template](https://github.com/modelscope/agentscope/blob/main/examples/model_configs_template/anthropic_chat_model_config_template.json) | claude-3-5-sonnet-20241022, ... |
 
 **Supported Local Model Deployment**
 
