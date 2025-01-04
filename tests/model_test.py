@@ -26,6 +26,8 @@ class TestModelWrapperSimple(ModelWrapperBase):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
+        """Format the input for the model"""
+        print(*args)
         return ""
 
 
@@ -69,6 +71,7 @@ class BasicModelTest(unittest.TestCase):
             {
                 "model_type": "post_api",
                 "config_name": "my_post_api",
+                "model_name": "llama",
                 "api_url": "https://xxx",
                 "headers": {},
                 "json_args": {},
