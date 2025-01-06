@@ -32,6 +32,9 @@ jobs:
     - name: Install Dependencies
       run: |
         pip install -q -e .[full]
+    - name: Add execute permission to build.sh
+      run: |
+        chmod +x docs/tutorial/en/build.sh
     - id: build
       name: Build Documentation
       run: |
