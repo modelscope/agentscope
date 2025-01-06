@@ -5,7 +5,7 @@ from __future__ import annotations
 import inspect
 import time
 from functools import wraps
-from typing import Sequence, Any, Callable, Union, List
+from typing import Sequence, Any, Callable, Union, List, Optional
 
 from loguru import logger
 
@@ -102,8 +102,8 @@ class ModelWrapperBase:
 
     def __init__(
         self,  # pylint: disable=W0613
-        config_name: str,
-        model_name: str,
+        config_name: Optional[str] = None,
+        model_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Base class for model wrapper.
@@ -112,17 +112,25 @@ class ModelWrapperBase:
         `__call__` function.
 
         Args:
-            config_name (`str`):
+            config_name (`Optional[str]`, defaults to `None`):
                 The id of the model, which is used to extract configuration
                 from the config file.
-            model_name (`str`):
+            model_name (`Optional[str]`, defaults to `None`):
                 The name of the model.
         """
         self.monitor = MonitorManager.get_instance()
 
         self.config_name = config_name
+
+        if model_name is None:
+            raise ValueError(
+                "Model name should be provided for model "
+                f"configuration [{config_name}].",
+            )
+
         self.model_name = model_name
-        logger.info(f"Initialize model by configuration [{config_name}]")
+
+        logger.debug(f"Initialize model by configuration [{config_name}]")
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
