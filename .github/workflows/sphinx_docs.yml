@@ -37,6 +37,8 @@ jobs:
         chmod +x docs/tutorial/en/build.sh
     - id: build
       name: Build Documentation
+      env:
+        SECRET_KEY: ${{ secrets.DASHSCOPE_TEST_KEY }}
       run: |
         cd docs/tutorial/en/
         ./build.sh
