@@ -328,7 +328,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             response=response,
         )
 
-        usage = response.get("usage", {})
+        usage = response.get("usage", None)
         if usage is not None:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
