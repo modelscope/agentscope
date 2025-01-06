@@ -35,16 +35,16 @@ jobs:
     - id: build
       name: Build Documentation
       run: |
-        cd docs/sphinx_doc
-        ./build_sphinx_doc.sh
+        cd docs/tutorial/en/
+        ./build.sh
     - name: Upload Documentation
       uses: actions/upload-artifact@v4
       with:
         name: SphinxDoc
-        path: 'docs/sphinx_doc/build'
+        path: 'docs/tutorial/en/build'
     - uses: peaceiris/actions-gh-pages@v3
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: 'docs/sphinx_doc/build/html'
+        publish_dir: 'docs/tutorial/build/html'
         cname: doc.agentscope.io

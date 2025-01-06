@@ -134,7 +134,7 @@ dmypy.json
 .DS_Store
 
 # docs
-docs/sphinx_doc/build/
+docs/tutorial/en/build/
 
 # Used to save loggings and files
 *runs/
