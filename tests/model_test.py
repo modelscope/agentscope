@@ -27,6 +27,7 @@ from agentscope.models import (
     OpenAIDALLEWrapper,
     OpenAIChatWrapper,
     PostAPIChatWrapper,
+    AnthropicChatWrapper,
 )
 
 
@@ -77,6 +78,7 @@ class BasicModelTest(unittest.TestCase):
                 "zhipuai_embedding": ZhipuAIEmbeddingWrapper,
                 "litellm_chat": LiteLLMChatWrapper,
                 "yi_chat": YiChatWrapper,
+                "anthropic_chat": AnthropicChatWrapper,
             },
         )
 

@@ -58,6 +58,7 @@ _BUILD_IN_MODEL_WRAPPERS = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "YiChatWrapper",
+    "AnthropicChatWrapper",
 ]
 
 __all__ = [
