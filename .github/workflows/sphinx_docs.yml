@@ -38,7 +38,7 @@ jobs:
     - id: build
       name: Build Documentation
       env:
-        SECRET_KEY: ${{ secrets.DASHSCOPE_TEST_KEY }}
+        SECRET_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
       run: |
         cd docs/tutorial/en/
         ./build.sh
