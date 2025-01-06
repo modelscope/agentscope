@@ -90,7 +90,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
 | LiteLLM API            | Chat            | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)               | `"litellm_chat"`              | -                                                |
 | Yi API                 | Chat            | [`YiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/yi_model.py)                         | `"yi_chat"`                   | yi-large, yi-medium, ...                         |
-| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | -                             | -                                                |
 |                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
 |                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
 |                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
@@ -519,7 +519,7 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 ```python
 {
     "config_name": "my_postapiwrapper_config",
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
 
     # Required parameters
     "api_url": "https://xxx.xxx",
@@ -566,6 +566,7 @@ The new model wrapper class should
 - inherit from `ModelWrapperBase` class,
 - provide a `model_type` field to identify this model wrapper in the model configuration, and
 - implement its `__init__` and `__call__` functions.
+- register the new model wrapper class by calling `agentscope.register_model_wrapper_class` function
 
 The following is an example for creating a new model wrapper class.
 
@@ -586,10 +587,13 @@ class MyModelWrapper(ModelWrapperBase):
         # ...
 ```
 
-After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically.
-You can use it in the model configuration directly.
+Then we register the new model wrapper class and use it in the model configuration.
 
 ```python
+import agentscope
+
+agentscope.register_model_wrapper_class(MyModelWrapper)
+
 my_model_config = {
     # Basic parameters
     "config_name": "my_model_config",
