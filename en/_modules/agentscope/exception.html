@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.exception &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=c9484b72" />
 
@@ -127,7 +127,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ResponseParsingError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.ResponseParsingError">[docs]</a>
-<span class="k">class</span> <span class="nc">ResponseParsingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResponseParsingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for response parsing error with uncertain</span>
 <span class="sd">    reasons.&quot;&quot;&quot;</span>
 
@@ -136,41 +136,41 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ResponseParsingError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.ResponseParsingError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raw_response</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raw_response</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the exception with the message.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw_response</span> <span class="o">=</span> <span class="n">raw_response</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="JsonParsingError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.JsonParsingError">[docs]</a>
-<span class="k">class</span> <span class="nc">JsonParsingError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonParsingError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for JSON parsing error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="JsonDictValidationError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.JsonDictValidationError">[docs]</a>
-<span class="k">class</span> <span class="nc">JsonDictValidationError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonDictValidationError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for JSON dict validation error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="JsonTypeError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.JsonTypeError">[docs]</a>
-<span class="k">class</span> <span class="nc">JsonTypeError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonTypeError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for JSON type error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="RequiredFieldNotFoundError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.RequiredFieldNotFoundError">[docs]</a>
-<span class="k">class</span> <span class="nc">RequiredFieldNotFoundError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RequiredFieldNotFoundError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for missing required field in model response, when</span>
 <span class="sd">    the response is required to be a JSON dict object with required fields.&quot;&quot;&quot;</span></div>
 
@@ -178,7 +178,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TagNotFoundError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.TagNotFoundError">[docs]</a>
-<span class="k">class</span> <span class="nc">TagNotFoundError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TagNotFoundError</span><span class="p">(</span><span class="n">ResponseParsingError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for missing tagged content in model response.&quot;&quot;&quot;</span>
 
     <span class="n">missing_begin_tag</span><span class="p">:</span> <span class="nb">bool</span>
@@ -189,7 +189,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TagNotFoundError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.TagNotFoundError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">raw_response</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -219,44 +219,44 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FunctionCallError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.FunctionCallError">[docs]</a>
-<span class="k">class</span> <span class="nc">FunctionCallError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionCallError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for exception raising during calling functions.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FunctionCallError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.FunctionCallError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="FunctionCallFormatError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.FunctionCallFormatError">[docs]</a>
-<span class="k">class</span> <span class="nc">FunctionCallFormatError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionCallFormatError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for function calling format error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="FunctionNotFoundError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.FunctionNotFoundError">[docs]</a>
-<span class="k">class</span> <span class="nc">FunctionNotFoundError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionNotFoundError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for function not found error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ArgumentNotFoundError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.ArgumentNotFoundError">[docs]</a>
-<span class="k">class</span> <span class="nc">ArgumentNotFoundError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArgumentNotFoundError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for missing argument error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ArgumentTypeError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.ArgumentTypeError">[docs]</a>
-<span class="k">class</span> <span class="nc">ArgumentTypeError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArgumentTypeError</span><span class="p">(</span><span class="n">FunctionCallError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for argument type error.&quot;&quot;&quot;</span></div>
 
 
@@ -266,24 +266,24 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="StudioError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.StudioError">[docs]</a>
-<span class="k">class</span> <span class="nc">StudioError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for exception raising during interaction with agentscope</span>
 <span class="sd">    studio.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="StudioError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.StudioError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="StudioRegisterError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.StudioRegisterError">[docs]</a>
-<span class="k">class</span> <span class="nc">StudioRegisterError</span><span class="p">(</span><span class="n">StudioError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioRegisterError</span><span class="p">(</span><span class="n">StudioError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for error when registering to agentscope studio.&quot;&quot;&quot;</span></div>
 
 
@@ -293,7 +293,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerError">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentServerError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentServerError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for agent server related errors.&quot;&quot;&quot;</span>
 
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span>
@@ -305,7 +305,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -317,7 +317,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">]&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">err_msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -327,33 +327,33 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerNotAliveError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerNotAliveError">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentServerNotAliveError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentServerNotAliveError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for agent server not alive error.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="AgentCreationError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentCreationError">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentCreationError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentCreationError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for failing to create agent.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="AgentCallError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentCallError">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentCallError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentCallError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for failing to call agent.&quot;&quot;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="AgentServerUnsupportedMethodError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerUnsupportedMethodError">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentServerUnsupportedMethodError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentServerUnsupportedMethodError</span><span class="p">(</span><span class="n">AgentServerError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for agent server not supporting certain method.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="AgentServerUnsupportedMethodError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.AgentServerUnsupportedMethodError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">oid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">oid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">host</span><span class="p">,</span>
             <span class="n">port</span><span class="p">,</span>
@@ -368,12 +368,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="QuotaExceededError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.QuotaExceededError">[docs]</a>
-<span class="k">class</span> <span class="nc">QuotaExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QuotaExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An Exception used to indicate that a certain metric exceeds quota&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="QuotaExceededError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.QuotaExceededError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -394,28 +394,28 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="EnvError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvError">[docs]</a>
-<span class="k">class</span> <span class="nc">EnvError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for env related errors.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EnvError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="EnvNotFoundError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvNotFoundError">[docs]</a>
-<span class="k">class</span> <span class="nc">EnvNotFoundError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvNotFoundError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for env not found error.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EnvNotFoundError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvNotFoundError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found.&quot;</span><span class="p">)</span></div>
 </div>
 
@@ -423,12 +423,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="EnvAlreadyExistError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvAlreadyExistError">[docs]</a>
-<span class="k">class</span> <span class="nc">EnvAlreadyExistError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvAlreadyExistError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for env already exist error.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EnvAlreadyExistError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvAlreadyExistError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> already exist.&quot;</span><span class="p">)</span></div>
 </div>
 
@@ -436,12 +436,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="EnvUnsupportedFunctionError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvUnsupportedFunctionError">[docs]</a>
-<span class="k">class</span> <span class="nc">EnvUnsupportedFunctionError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvUnsupportedFunctionError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for use unsupported function of env error.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EnvUnsupportedFunctionError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvUnsupportedFunctionError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2"> doesn&#39;t have </span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 </div>
 
@@ -449,12 +449,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="EnvTypeError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvTypeError">[docs]</a>
-<span class="k">class</span> <span class="nc">EnvTypeError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvTypeError</span><span class="p">(</span><span class="n">EnvError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for use wrong type of env error.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EnvTypeError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvTypeError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Env </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2"> is not an instance of [</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -464,16 +464,16 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="EnvListenerError">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvListenerError">[docs]</a>
-<span class="k">class</span> <span class="nc">EnvListenerError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvListenerError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The exception class for listener related errors.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EnvListenerError.__init__">
 <a class="viewcode-back" href="../../agentscope.exception.html#agentscope.exception.EnvListenerError.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 </pre></div>

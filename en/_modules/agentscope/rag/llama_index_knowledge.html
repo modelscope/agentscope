@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.rag.llama_index_knowledge &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,27 +125,27 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">into AgentScope package</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">llama_index</span>
-    <span class="kn">from</span> <span class="nn">llama_index.core.base.base_retriever</span> <span class="kn">import</span> <span class="n">BaseRetriever</span>
-    <span class="kn">from</span> <span class="nn">llama_index.core.base.embeddings.base</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">llama_index</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.base.base_retriever</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseRetriever</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.base.embeddings.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">BaseEmbedding</span><span class="p">,</span>
         <span class="n">Embedding</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">llama_index.core.ingestion</span> <span class="kn">import</span> <span class="n">IngestionPipeline</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.ingestion</span><span class="w"> </span><span class="kn">import</span> <span class="n">IngestionPipeline</span>
 
-    <span class="kn">from</span> <span class="nn">llama_index.core.bridge.pydantic</span> <span class="kn">import</span> <span class="n">PrivateAttr</span>
-    <span class="kn">from</span> <span class="nn">llama_index.core.node_parser</span> <span class="kn">import</span> <span class="n">SentenceSplitter</span>
-    <span class="kn">from</span> <span class="nn">llama_index.core</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.bridge.pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrivateAttr</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.node_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceSplitter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">VectorStoreIndex</span><span class="p">,</span>
         <span class="n">StorageContext</span><span class="p">,</span>
         <span class="n">load_index_from_storage</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">llama_index.core.schema</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.schema</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">Document</span><span class="p">,</span>
         <span class="n">TransformComponent</span><span class="p">,</span>
     <span class="p">)</span>
@@ -163,19 +163,19 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">Document</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">TransformComponent</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_TOP_K</span><span class="p">,</span>
     <span class="n">DEFAULT_CHUNK_SIZE</span><span class="p">,</span>
     <span class="n">DEFAULT_CHUNK_OVERLAP</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">agentscope.rag.knowledge</span> <span class="kn">import</span> <span class="n">Knowledge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rag.knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knowledge</span>
 
 
 <span class="k">try</span><span class="p">:</span>
 
-    <span class="k">class</span> <span class="nc">_EmbeddingModel</span><span class="p">(</span><span class="n">BaseEmbedding</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">_EmbeddingModel</span><span class="p">(</span><span class="n">BaseEmbedding</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        wrapper for ModelWrapperBase to an embedding model can be used</span>
 <span class="sd">        in Llama Index pipeline.</span>
@@ -183,7 +183,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="n">_emb_model_wrapper</span><span class="p">:</span> <span class="n">ModelWrapperBase</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">emb_model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">,</span>
             <span class="n">embed_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -204,7 +204,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_emb_model_wrapper</span> <span class="o">=</span> <span class="n">emb_model</span>
 
-        <span class="k">def</span> <span class="nf">_get_query_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_query_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            get embedding for query</span>
 <span class="sd">            Args:</span>
@@ -214,7 +214,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="c1"># of embedding</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emb_model_wrapper</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="k">def</span> <span class="nf">_get_text_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Embedding</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_text_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Embedding</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            get embedding for list of strings</span>
 <span class="sd">            Args:</span>
@@ -225,7 +225,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">]</span>
             <span class="k">return</span> <span class="n">results</span>
 
-        <span class="k">def</span> <span class="nf">_get_text_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_text_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            get embedding for a single string</span>
 <span class="sd">            Args:</span>
@@ -234,15 +234,15 @@ window.addEventListener("load", () => mermaid.run());
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emb_model_wrapper</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># TODO: use proper async methods, but depends on model wrapper</span>
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_aget_query_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_aget_query_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;The asynchronous version of _get_query_embedding.&quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_query_embedding</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_aget_text_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_aget_text_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Asynchronously get text embedding.&quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_text_embedding</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
-        <span class="k">async</span> <span class="k">def</span> <span class="nf">_aget_text_embeddings</span><span class="p">(</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_aget_text_embeddings</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
@@ -251,26 +251,26 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
 
-    <span class="k">class</span> <span class="nc">_EmbeddingModel</span><span class="p">:</span>  <span class="c1"># type: ignore[no-redef]</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">_EmbeddingModel</span><span class="p">:</span>  <span class="c1"># type: ignore[no-redef]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A dummy embedding model for passing tests when</span>
 <span class="sd">        llama-index is not install</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emb_model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emb_model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_emb_model_wrapper</span> <span class="o">=</span> <span class="n">emb_model</span>
 
 
 <div class="viewcode-block" id="LlamaIndexKnowledge">
 <a class="viewcode-back" href="../../../agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge">[docs]</a>
-<span class="k">class</span> <span class="nc">LlamaIndexKnowledge</span><span class="p">(</span><span class="n">Knowledge</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LlamaIndexKnowledge</span><span class="p">(</span><span class="n">Knowledge</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is a wrapper with the llama index RAG.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="LlamaIndexKnowledge.__init__">
 <a class="viewcode-back" href="../../../agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">emb_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">BaseEmbedding</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -348,7 +348,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_rag</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_init_rag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_rag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the RAG. This includes:</span>
 <span class="sd">            * if the persist_dir exists, load the persisted index</span>
@@ -374,7 +374,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="sa">f</span><span class="s2">&quot;initialization completed!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the persisted index from persist_dir.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -389,7 +389,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;index loaded from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_data_to_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_to_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the data to index by configs. This includes:</span>
 <span class="sd">            * load the data to documents by using information from configs</span>
@@ -424,7 +424,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">storage_context</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">persist_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;index persisted.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_data_to_docs</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_to_docs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -459,7 +459,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">documents</span>
 
-    <span class="k">def</span> <span class="nf">_docs_to_nodes</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_docs_to_nodes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">],</span>
         <span class="n">transformations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">TransformComponent</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -492,7 +492,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;nodes generated.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nodes</span>
 
-    <span class="k">def</span> <span class="nf">_set_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the loader as needed, or just use the default setting.</span>
 
@@ -507,12 +507,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># we prepare the loader by default</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">llama_index.core</span> <span class="kn">import</span> <span class="n">SimpleDirectoryReader</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDirectoryReader</span>
             <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc_inner</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                     <span class="s2">&quot; LlamaIndexAgent requires llama-index to be install.&quot;</span>
                     <span class="s2">&quot;Please run `pip install llama-index`&quot;</span><span class="p">,</span>
-                <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc_inner</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc_inner</span>
             <span class="n">loader</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;loader&quot;</span><span class="p">:</span> <span class="n">SimpleDirectoryReader</span><span class="p">(</span>
                     <span class="n">input_dir</span><span class="o">=</span><span class="s2">&quot;set_default_data_path&quot;</span><span class="p">,</span>
@@ -521,7 +521,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;loaders are ready.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">loader</span>
 
-    <span class="k">def</span> <span class="nf">_set_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the transformations as needed, or just use the default setting.</span>
 
@@ -554,7 +554,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">transformations</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;transformations&quot;</span><span class="p">:</span> <span class="n">transformations</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">transformations</span>
 
-    <span class="k">def</span> <span class="nf">_get_retriever</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_retriever</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">similarity_top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -582,7 +582,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="LlamaIndexKnowledge.retrieve">
 <a class="viewcode-back" href="../../../agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.retrieve">[docs]</a>
-    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">similarity_top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -624,7 +624,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="LlamaIndexKnowledge.refresh_index">
 <a class="viewcode-back" href="../../../agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.refresh_index">[docs]</a>
-    <span class="k">def</span> <span class="nf">refresh_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">refresh_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Refresh the index when needed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -640,7 +640,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_insert_docs_to_index</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_insert_docs_to_index</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">],</span>
         <span class="n">transformations</span><span class="p">:</span> <span class="n">TransformComponent</span><span class="p">,</span>
@@ -696,7 +696,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="c1"># persist the updated index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">storage_context</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">persist_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_delete_docs_from_index</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_delete_docs_from_index</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

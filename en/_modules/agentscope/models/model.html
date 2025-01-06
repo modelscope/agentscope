@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.models.model &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -120,81 +120,28 @@ window.addEventListener("load", () => mermaid.run());
              
   <h1>Source code for agentscope.models.model</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;The configuration file should contain one or a list of model configs,</span>
-<span class="sd">and each model config should follow the following format.</span>
+<span class="sd">&quot;&quot;&quot;The model wrapper base class.&quot;&quot;&quot;</span>
 
-<span class="sd">.. code-block:: python</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="sd">    {</span>
-<span class="sd">        &quot;config_name&quot;: &quot;{config_name}&quot;,</span>
-<span class="sd">        &quot;model_type&quot;: &quot;openai_chat&quot; | &quot;post_api&quot; | ...,</span>
-<span class="sd">        ...</span>
-<span class="sd">    }</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="sd">After that, you can specify model by {config_name}.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseParsingError</span>
 
-<span class="sd">Note:</span>
-<span class="sd">    The parameters for different types of models are different. For OpenAI API,</span>
-<span class="sd">    the format is:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            {</span>
-<span class="sd">                &quot;config_name&quot;: &quot;{id of your model}&quot;,</span>
-<span class="sd">                &quot;model_type&quot;: &quot;openai_chat&quot;,</span>
-<span class="sd">                &quot;model_name&quot;: &quot;{model_name_for_openai, e.g. gpt-3.5-turbo}&quot;,</span>
-<span class="sd">                &quot;api_key&quot;: &quot;{your_api_key}&quot;,</span>
-<span class="sd">                &quot;organization&quot;: &quot;{your_organization, if needed}&quot;,</span>
-<span class="sd">                &quot;client_args&quot;: {</span>
-<span class="sd">                    # ...</span>
-<span class="sd">                },</span>
-<span class="sd">                &quot;generate_args&quot;: {</span>
-<span class="sd">                    # ...</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">MonitorManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_get_timestamp</span><span class="p">,</span> <span class="n">_convert_to_str</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DEFAULT_MAX_RETRIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DEFAULT_RETRY_INTERVAL</span>
 
 
-<span class="sd">    For Post API, toking huggingface inference API as an example, its format</span>
-<span class="sd">    is:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            {</span>
-<span class="sd">                &quot;config_name&quot;: &quot;{config_name}&quot;,</span>
-<span class="sd">                &quot;model_type&quot;: &quot;post_api&quot;,</span>
-<span class="sd">                &quot;api_url&quot;: &quot;{api_url}&quot;,</span>
-<span class="sd">                &quot;headers&quot;: {&quot;Authorization&quot;: &quot;Bearer {API_TOKEN}&quot;},</span>
-<span class="sd">                &quot;max_length&quot;: {max_length_of_model},</span>
-<span class="sd">                &quot;timeout&quot;: {timeout},</span>
-<span class="sd">                &quot;max_retries&quot;: {max_retries},</span>
-<span class="sd">                &quot;generate_args&quot;: {</span>
-<span class="sd">                    &quot;temperature&quot;: 0.5,</span>
-<span class="sd">                    # ...</span>
-<span class="sd">                }</span>
-<span class="sd">            }</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>
-
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-
-<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">ResponseParsingError</span>
-
-<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">MonitorManager</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_get_timestamp</span><span class="p">,</span> <span class="n">_convert_to_str</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_MAX_RETRIES</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RETRY_INTERVAL</span>
-
-
-<span class="k">def</span> <span class="nf">_response_parse_decorator</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_response_parse_decorator</span><span class="p">(</span>
     <span class="n">model_call</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator for parsing the response of model call. It will take</span>
@@ -224,7 +171,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">model_call</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">checking_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checking_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># Step1: Extract parse_func and fault_handler</span>
         <span class="n">parse_func</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;parse_func&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">fault_handler</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fault_handler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -261,34 +208,9 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">checking_wrapper</span>
 
 
-<span class="k">class</span> <span class="nc">_ModelWrapperMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A meta call to replace the model wrapper&#39;s __call__ function with</span>
-<span class="sd">    wrapper about error handling.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;__call__&quot;</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
-            <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;__call__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_response_parse_decorator</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;__call__&quot;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;_registry&quot;</span><span class="p">):</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_type_registry</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_deprecated_type_registry</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;model_type&quot;</span><span class="p">):</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_type_registry</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;deprecated_model_type&quot;</span><span class="p">):</span>
-                    <span class="bp">cls</span><span class="o">.</span><span class="n">_deprecated_type_registry</span><span class="p">[</span>
-                        <span class="bp">cls</span><span class="o">.</span><span class="n">deprecated_model_type</span>
-                    <span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
-
-
 <div class="viewcode-block" id="ModelWrapperBase">
 <a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelWrapperBase</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_ModelWrapperMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelWrapperBase</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for model wrapper.&quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span>
@@ -303,7 +225,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ModelWrapperBase.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=W0613</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -328,27 +250,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialize model by configuration [</span><span class="si">{</span><span class="n">config_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ModelWrapperBase.get_wrapper">
-<a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.get_wrapper">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the specific model wrapper&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_type_registry</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_type_registry</span><span class="p">[</span><span class="n">model_type</span><span class="p">]</span>  <span class="c1"># type: ignore[return-value]</span>
-        <span class="k">elif</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_registry</span><span class="p">[</span><span class="n">model_type</span><span class="p">]</span>  <span class="c1"># type: ignore[return-value]</span>
-        <span class="k">elif</span> <span class="n">model_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_deprecated_type_registry</span><span class="p">:</span>
-            <span class="n">deprecated_cls</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_deprecated_type_registry</span><span class="p">[</span><span class="n">model_type</span><span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Model type [</span><span class="si">{</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] will be deprecated in future &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;releases, please use [</span><span class="si">{</span><span class="n">deprecated_cls</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">] instead.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="n">deprecated_cls</span>  <span class="c1"># type: ignore[return-value]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># type: ignore[return-value]</span></div>
-
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processing input with the model.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&quot;</span>
@@ -358,7 +260,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ModelWrapperBase.format">
 <a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.format">[docs]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
@@ -373,7 +275,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="ModelWrapperBase.format_for_common_chat_models">
 <a class="viewcode-back" href="../../../agentscope.models.model.html#agentscope.models.ModelWrapperBase.format_for_common_chat_models">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">format_for_common_chat_models</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_for_common_chat_models</span><span class="p">(</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A common format strategy for chat models, which will format the</span>
@@ -495,7 +397,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">messages</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_save_model_invocation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>

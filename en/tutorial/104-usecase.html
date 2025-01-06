@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Example: Werewolf Game &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -153,14 +153,14 @@
 <li><p>Witch: A villager who can save or poison a player each night.</p></li>
 </ul>
 <p>To implement your own agent, you need to inherit <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> and implement the <code class="docutils literal notranslate"><span class="pre">reply</span></code> function, which is executed when an agent instance is called via <code class="docutils literal notranslate"><span class="pre">agent1(x)</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
         <span class="c1"># Do something here</span>
         <span class="o">...</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -184,7 +184,7 @@
 <section id="step-3-initialize-agentscope-and-the-agents">
 <h3>Step 3: Initialize AgentScope and the Agents<a class="headerlink" href="#step-3-initialize-agentscope-and-the-agents" title="Link to this heading"></a></h3>
 <p>Now we have defined the roles in the application and we can initialize the AgentScope environment and all agents. This process is simplified by AgentScope via a few lines, based on the configuration files we’ve prepared (assuming there are <strong>2</strong> werewolves, <strong>2</strong> villagers, <strong>1</strong> witch, and <strong>1</strong> seer):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="c1"># read model and agent configs, and initialize agents automatically</span>
 <span class="n">survivors</span> <span class="o">=</span> <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
@@ -230,7 +230,7 @@
 <p>To simplify the construction of agent communication, AgentScope provides two helpful concepts: <strong>Pipeline</strong> and <strong>MsgHub</strong>.</p>
 <ul>
 <li><p><strong>Pipeline</strong>: It allows users to program communication among agents easily.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">(</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># the message x will be passed and replied by agent 1,2,3 in order</span>

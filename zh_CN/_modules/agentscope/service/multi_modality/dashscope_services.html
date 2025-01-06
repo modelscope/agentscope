@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.multi_modality.dashscope_services &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -131,25 +131,25 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">https://dashscope.aliyun.com/</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">...models</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DashScopeImageSynthesisWrapper</span><span class="p">,</span>
     <span class="n">DashScopeMultiModalWrapper</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ServiceResponse</span><span class="p">,</span>
     <span class="n">ServiceExecStatus</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">_download_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_download_file</span>
 
 
 <div class="viewcode-block" id="dashscope_text_to_image">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.dashscope_services.html#agentscope.service.dashscope_text_to_image">[文档]</a>
-<span class="k">def</span> <span class="nf">dashscope_text_to_image</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dashscope_text_to_image</span><span class="p">(</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -248,7 +248,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="dashscope_image_to_text">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.dashscope_services.html#agentscope.service.dashscope_image_to_text">[文档]</a>
-<span class="k">def</span> <span class="nf">dashscope_image_to_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dashscope_image_to_text</span><span class="p">(</span>
     <span class="n">image_urls</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Describe the image&quot;</span><span class="p">,</span>
@@ -347,7 +347,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="dashscope_text_to_audio">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.dashscope_services.html#agentscope.service.dashscope_text_to_audio">[文档]</a>
-<span class="k">def</span> <span class="nf">dashscope_text_to_audio</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dashscope_text_to_audio</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -388,12 +388,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">dashscope</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">dashscope</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The package &#39;dashscope&#39; is not installed. Please install it by &quot;</span>
             <span class="s2">&quot;running `pip install dashscope&gt;=1.19.0`&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">dashscope</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
 

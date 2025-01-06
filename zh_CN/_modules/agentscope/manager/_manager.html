@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.manager._manager &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,29 +125,29 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.manager._manager 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;A manager for AgentScope.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">._monitor</span> <span class="kn">import</span> <span class="n">MonitorManager</span>
-<span class="kn">from</span> <span class="nn">._file</span> <span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span> <span class="nn">._model</span> <span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span> <span class="nn">..logging</span> <span class="kn">import</span> <span class="n">LOG_LEVEL</span><span class="p">,</span> <span class="n">setup_logger</span>
-<span class="kn">from</span> <span class="nn">.._version</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._monitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">MonitorManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOG_LEVEL</span><span class="p">,</span> <span class="n">setup_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_generate_random_code</span><span class="p">,</span>
     <span class="n">_get_process_creation_time</span><span class="p">,</span>
     <span class="n">_get_timestamp</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_RUNTIME_ID_FORMAT</span><span class="p">,</span> <span class="n">_RUNTIME_TIMESTAMP_FORMAT</span>
-<span class="kn">from</span> <span class="nn">..studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RUNTIME_ID_FORMAT</span><span class="p">,</span> <span class="n">_RUNTIME_TIMESTAMP_FORMAT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
 
 
 <div class="viewcode-block" id="ASManager">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager">[文档]</a>
-<span class="k">class</span> <span class="nc">ASManager</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ASManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A manager for AgentScope.&quot;&quot;&quot;</span>
 
     <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
@@ -161,7 +161,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ASManager&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ASManager&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ASManager</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
@@ -169,7 +169,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="ASManager.get_instance">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager.get_instance">[文档]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ASManager&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ASManager&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the instance of the singleton class.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -181,7 +181,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ASManager.__init__">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the manager. Note we initialize the managers by default</span>
 <span class="sd">        arguments to avoid unnecessary errors when user doesn&#39;t call</span>
 <span class="sd">        `agentscope.init` function&quot;&quot;&quot;</span>
@@ -202,7 +202,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ASManager.initialize">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager.initialize">[文档]</a>
-    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">project</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
@@ -292,7 +292,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ASManager.state_dict">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager.state_dict">[文档]</a>
-    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize the runtime information.&quot;&quot;&quot;</span>
         <span class="n">serialized_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serialized_attrs</span>
@@ -313,7 +313,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ASManager.load_dict">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager.load_dict">[文档]</a>
-    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the runtime information from a dictionary&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serialized_attrs</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> not found in data.&quot;</span>
@@ -330,7 +330,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ASManager.flush">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.ASManager.flush">[文档]</a>
-    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush the runtime information.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>

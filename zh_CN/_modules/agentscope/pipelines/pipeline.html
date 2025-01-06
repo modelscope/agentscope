@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.pipelines.pipeline &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -126,14 +126,14 @@ window.addEventListener("load", () => mermaid.run());
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Base class for Pipeline &quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.functional</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Operators</span><span class="p">,</span>
     <span class="n">placeholder</span><span class="p">,</span>
     <span class="n">sequentialpipeline</span><span class="p">,</span>
@@ -142,12 +142,12 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">forlooppipeline</span><span class="p">,</span>
     <span class="n">whilelooppipeline</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..agents.operator</span> <span class="kn">import</span> <span class="n">Operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..agents.operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Operator</span>
 
 
 <div class="viewcode-block" id="PipelineBase">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.PipelineBase">[文档]</a>
-<span class="k">class</span> <span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base interface of all pipelines.</span>
 
 <span class="sd">    The pipeline is a special kind of operator that includes</span>
@@ -156,12 +156,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="PipelineBase.__init__">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.PipelineBase.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the actions taken by this pipeline.</span>
 
 <span class="sd">        Args:</span>
@@ -176,7 +176,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="IfElsePipeline">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.IfElsePipeline">[文档]</a>
-<span class="k">class</span> <span class="nc">IfElsePipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IfElsePipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like if-else.</span>
 
 <span class="sd">    IfElsePipeline(condition_func, if_body_operators, else_body_operators)</span>
@@ -190,7 +190,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="IfElsePipeline.__init__">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.IfElsePipeline.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
         <span class="n">if_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
@@ -214,7 +214,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">if_body_operator</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">else_body_operator</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ifelsepipeline</span><span class="p">(</span>
             <span class="n">condition_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span><span class="p">,</span>
             <span class="n">if_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">if_body_operator</span><span class="p">,</span>
@@ -226,7 +226,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SwitchPipeline">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SwitchPipeline">[文档]</a>
-<span class="k">class</span> <span class="nc">SwitchPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SwitchPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like switch-case.</span>
 
 <span class="sd">    SwitchPipeline(condition_func, case_operators, default_operators)</span>
@@ -241,7 +241,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SwitchPipeline.__init__">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SwitchPipeline.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">case_operators</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Operators</span><span class="p">],</span>
@@ -269,7 +269,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">switchpipeline</span><span class="p">(</span>
             <span class="n">condition_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span><span class="p">,</span>
             <span class="n">case_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">case_operators</span><span class="p">,</span>
@@ -281,7 +281,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ForLoopPipeline">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.ForLoopPipeline">[文档]</a>
-<span class="k">class</span> <span class="nc">ForLoopPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ForLoopPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like for-loop</span>
 
 <span class="sd">    ForLoopPipeline(loop_body_operators, max_loop) represents the following</span>
@@ -301,7 +301,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ForLoopPipeline.__init__">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.ForLoopPipeline.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">loop_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
         <span class="n">max_loop</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -325,7 +325,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">forlooppipeline</span><span class="p">(</span>
             <span class="n">loop_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">,</span>
             <span class="n">max_loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_loop</span><span class="p">,</span>
@@ -337,7 +337,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WhileLoopPipeline">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.WhileLoopPipeline">[文档]</a>
-<span class="k">class</span> <span class="nc">WhileLoopPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WhileLoopPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing control flow like while-loop</span>
 
 <span class="sd">    WhileLoopPipeline(loop_body_operators, condition_operator, condition_func)</span>
@@ -351,7 +351,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WhileLoopPipeline.__init__">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.WhileLoopPipeline.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">loop_body_operators</span><span class="p">:</span> <span class="n">Operators</span><span class="p">,</span>
         <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">__</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
@@ -372,7 +372,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">whilelooppipeline</span><span class="p">(</span>
             <span class="n">loop_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop_body_operators</span><span class="p">,</span>
             <span class="n">condition_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span><span class="p">,</span>
@@ -383,7 +383,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SequentialPipeline">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SequentialPipeline">[文档]</a>
-<span class="k">class</span> <span class="nc">SequentialPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SequentialPipeline</span><span class="p">(</span><span class="n">PipelineBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A template pipeline for implementing sequential logic.</span>
 
 <span class="sd">    Sequential(operators) represents the following workflow::</span>
@@ -396,7 +396,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SequentialPipeline.__init__">
 <a class="viewcode-back" href="../../../agentscope.pipelines.pipeline.html#agentscope.pipelines.SequentialPipeline.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Operator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operators</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Operator</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize a Sequential pipeline.</span>
 
 <span class="sd">        Args:</span>
@@ -407,7 +407,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">sequentialpipeline</span><span class="p">(</span><span class="n">operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operators</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span></div>
 
 </pre></div>

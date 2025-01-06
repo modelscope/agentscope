@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.rpc.rpc_meta &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,13 +125,13 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.rpc.rpc_meta 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Meta class for all classes that can run on rpc server.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">.rpc_object</span> <span class="kn">import</span> <span class="n">RpcObject</span><span class="p">,</span> <span class="n">_ClassInfo</span>
-<span class="kn">from</span> <span class="nn">.retry_strategy</span> <span class="kn">import</span> <span class="n">RetryBase</span><span class="p">,</span> <span class="n">_DEAFULT_RETRY_STRATEGY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.rpc_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcObject</span><span class="p">,</span> <span class="n">_ClassInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.retry_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetryBase</span><span class="p">,</span> <span class="n">_DEAFULT_RETRY_STRATEGY</span>
 
 
 <span class="c1"># Decorator for async and sync functions</span>
@@ -139,7 +139,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="async_func">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.async_func">[文档]</a>
-<span class="k">def</span> <span class="nf">async_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">async_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator for async function.</span>
 
 <span class="sd">    In distributed mode, async functions will return a `AsyncResult`</span>
@@ -156,7 +156,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="sync_func">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.sync_func">[文档]</a>
-<span class="k">def</span> <span class="nf">sync_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sync_func</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator for sync function.</span>
 
 <span class="sd">    In distributed mode, sync functions will block the current thread until</span>
@@ -180,7 +180,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="generate_oid">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.generate_oid">[文档]</a>
-<span class="k">def</span> <span class="nf">generate_oid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_oid</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a unique id&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span></div>
 
@@ -188,7 +188,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RpcMeta">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.RpcMeta">[文档]</a>
-<span class="k">class</span> <span class="nc">RpcMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RpcMeta</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The metaclass for all classes that can use `to_dist` and other</span>
 <span class="sd">    distributed related functionality.</span>
 
@@ -204,7 +204,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RpcMeta.__init__">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.RpcMeta.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">RpcMeta</span><span class="o">.</span><span class="n">_REGISTRY</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class with name [</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">] already exists.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -216,12 +216,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">cls</span><span class="o">.</span><span class="n">_info</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;to_dist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RpcMeta</span><span class="o">.</span><span class="n">to_dist</span>
         <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ClassInfo</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>  <span class="c1"># type: ignore[misc]</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="n">to_dist</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;to_dist&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">to_dist</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">to_dist</span> <span class="o">=</span> <span class="p">{}</span>
@@ -274,7 +274,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="RpcMeta.get_class">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.RpcMeta.get_class">[文档]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_class</span><span class="p">(</span><span class="n">cls_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_class</span><span class="p">(</span><span class="n">cls_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the class based on the specific class name.</span>
 
 <span class="sd">        Args:</span>
@@ -294,7 +294,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="RpcMeta.register_class">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.RpcMeta.register_class">[文档]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">register_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># pylint: disable=W0211</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># pylint: disable=W0211</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the class into the registry.</span>
 
 <span class="sd">        Args:</span>
@@ -318,7 +318,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="RpcMeta.to_dist">
 <a class="viewcode-back" href="../../../agentscope.rpc.rpc_meta.html#agentscope.rpc.RpcMeta.to_dist">[文档]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">to_dist</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0211</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dist</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0211</span>
         <span class="bp">self</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

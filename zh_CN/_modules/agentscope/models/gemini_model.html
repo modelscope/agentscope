@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.models.gemini_model &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,22 +125,22 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.models.gemini_model 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Google Gemini model wrapper.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">google.generativeai</span> <span class="k">as</span> <span class="nn">genai</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">google.generativeai</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">genai</span>
 
     <span class="c1"># This package will be installed when the google-generativeai is installed</span>
-    <span class="kn">import</span> <span class="nn">google.ai.generativelanguage</span> <span class="k">as</span> <span class="nn">glm</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">google.ai.generativelanguage</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">glm</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">genai</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">glm</span> <span class="o">=</span> <span class="kc">None</span>
@@ -148,7 +148,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GeminiWrapperBase">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiWrapperBase">[文档]</a>
-<span class="k">class</span> <span class="nc">GeminiWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeminiWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for Google Gemini model wrapper.&quot;&quot;&quot;</span>
 
     <span class="n">_generation_method</span> <span class="o">=</span> <span class="kc">None</span>
@@ -157,7 +157,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GeminiWrapperBase.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiWrapperBase.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -198,7 +198,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GeminiWrapperBase.list_models">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiWrapperBase.list_models">[文档]</a>
-    <span class="k">def</span> <span class="nf">list_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List all available models for this API calling.&quot;&quot;&quot;</span>
         <span class="n">support_models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">genai</span><span class="o">.</span><span class="n">list_models</span><span class="p">())</span>
 
@@ -212,7 +212,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processing input with the model.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&quot;</span>
@@ -224,7 +224,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GeminiChatWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">GeminiChatWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeminiChatWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini chat model, e.g. gemini-pro&quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gemini_chat&quot;</span>
@@ -235,7 +235,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GeminiChatWrapper.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -267,7 +267,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">genai</span><span class="o">.</span><span class="n">GenerativeModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -313,7 +313,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="n">last_chunk</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
@@ -350,7 +350,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -379,7 +379,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">completion_tokens</span><span class="o">=</span><span class="n">token_response</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_extract_text_content_from_response</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_text_content_from_response</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -446,7 +446,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="GeminiChatWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper.format">[文档]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function provide a basic prompting strategy for Gemini Chat</span>
@@ -545,7 +545,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="GeminiEmbeddingWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.gemini_model.html#agentscope.models.GeminiEmbeddingWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">GeminiEmbeddingWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeminiEmbeddingWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini embedding model,</span>
 <span class="sd">    e.g. models/embedding-001</span>
 
@@ -569,7 +569,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">_generation_method</span> <span class="o">=</span> <span class="s2">&quot;embedContent&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The generation method used in `__call__` function.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">task_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

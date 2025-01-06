@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Model &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -146,7 +146,7 @@ post request based model APIs.</p></li>
 <code class="docutils literal notranslate"><span class="pre">model_configs</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> interface.
 <code class="docutils literal notranslate"><span class="pre">model_configs</span></code> can be a <strong>dictionary</strong>, <strong>a list of dictionaries</strong>, or a
 <strong>path</strong> to model configuration file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="n">MODEL_CONFIG_OR_PATH</span><span class="p">)</span>
 </pre></div>
@@ -173,7 +173,7 @@ The detailed parameters will be fed into the corresponding model class’s const
 which we will use to specify the model service when initializing an agent.</p>
 <p><code class="docutils literal notranslate"><span class="pre">model_type</span></code> corresponds to the type of <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> and is used to specify the type of model service.
 It corresponds to the <code class="docutils literal notranslate"><span class="pre">model_type</span></code> field in the <code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code> class in the source code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s chat API.&quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai_chat&quot;</span>
@@ -291,7 +291,7 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <tr class="row-even"><td><p>Post Request based API</p></td>
 <td><p>-</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api&quot;</span></code></p></td>
+<td><p>-</p></td>
 <td><p>-</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
@@ -689,7 +689,7 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
 
     <span class="c1"># Required parameters</span>
     <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
@@ -739,27 +739,31 @@ The new model wrapper class should</p>
 <li><p>inherit from <code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code> class,</p></li>
 <li><p>provide a <code class="docutils literal notranslate"><span class="pre">model_type</span></code> field to identify this model wrapper in the model configuration, and</p></li>
 <li><p>implement its <code class="docutils literal notranslate"><span class="pre">__init__</span></code> and <code class="docutils literal notranslate"><span class="pre">__call__</span></code> functions.</p></li>
+<li><p>register the new model wrapper class by calling <code class="docutils literal notranslate"><span class="pre">agentscope.register_model_wrapper_class</span></code> function</p></li>
 </ul>
 <p>The following is an example for creating a new model wrapper class.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 
-<span class="k">class</span> <span class="nc">MyModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;my_model&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">my_arg1</span><span class="p">,</span> <span class="n">my_arg2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">my_arg1</span><span class="p">,</span> <span class="n">my_arg2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># Initialize the model instance</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
         <span class="c1"># ...</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># Call the model instance</span>
         <span class="c1"># ...</span>
 </pre></div>
 </div>
-<p>After creating the new model wrapper class, the model wrapper will be registered into AgentScope automatically.
-You can use it in the model configuration directly.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_model_config</span> <span class="o">=</span> <span class="p">{</span>
+<p>Then we register the new model wrapper class and use it in the model configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">register_model_wrapper_class</span><span class="p">(</span><span class="n">MyModelWrapper</span><span class="p">)</span>
+
+<span class="n">my_model_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1"># Basic parameters</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_model_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;my_model&quot;</span><span class="p">,</span>

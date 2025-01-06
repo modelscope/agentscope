@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.manager._file &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -121,21 +121,21 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.manager._file</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Manage the file system for saving files, code and logs.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Generator</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_download_file</span><span class="p">,</span>
     <span class="n">_hash_string</span><span class="p">,</span>
     <span class="n">_get_timestamp</span><span class="p">,</span>
     <span class="n">_generate_random_code</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span>
     <span class="n">_DEFAULT_SUBDIR_FILE</span><span class="p">,</span>
     <span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">,</span>
@@ -144,7 +144,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_text_embedding_record_hash</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_text_embedding_record_hash</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span>
     <span class="n">hash_method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="s2">&quot;md5&quot;</span><span class="p">,</span> <span class="s2">&quot;sha1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
@@ -173,7 +173,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager">[docs]</a>
-<span class="k">class</span> <span class="nc">FileManager</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A singleton class for managing the file system for saving files,</span>
 <span class="sd">    code and logs.&quot;&quot;&quot;</span>
 
@@ -190,7 +190,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="s2">&quot;cache_dir&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a singleton instance.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FileManager</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
@@ -204,7 +204,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.__init__">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the file manager with default values.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_log</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="kc">False</span>
@@ -217,7 +217,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.initialize">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.initialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">run_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">save_log</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -252,7 +252,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_and_create_subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_and_create_subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the path of the subdir and create the subdir if it does not</span>
 <span class="sd">        exist.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -263,7 +263,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="k">return</span> <span class="n">path</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">embedding_cache_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embedding_cache_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain the embedding cache directory.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -275,26 +275,26 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">dir_cache_embedding</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">file_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The directory for saving files, including images, audios and</span>
 <span class="sd">        videos.&quot;&quot;&quot;</span>
         <span class="c1"># To be compatible with files saving when disable_saving is True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_and_create_subdir</span><span class="p">(</span><span class="n">_DEFAULT_SUBDIR_FILE</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">code_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">code_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The directory for saving codes.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_and_create_subdir</span><span class="p">(</span><span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">invoke_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invoke_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The directory for saving api invocations.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_and_create_subdir</span><span class="p">(</span><span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FileManager.get_instance">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.get_instance">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileManager&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileManager&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the singleton instance.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -306,7 +306,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.save_api_invocation">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_api_invocation">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_api_invocation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_api_invocation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -325,7 +325,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.save_python_code">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_python_code">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_python_code</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_python_code</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the code locally.&quot;&quot;&quot;</span>
         <span class="c1"># Copy python file in os.path.curdir into runtime directory</span>
         <span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
@@ -337,7 +337,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.save_image">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_image">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">],</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -385,7 +385,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.save_file">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">generator</span><span class="p">:</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -419,7 +419,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.save_runtime_information">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.save_runtime_information">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_runtime_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runtime_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_runtime_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runtime_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the runtime information locally.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -441,7 +441,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.cache_text_embedding">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.cache_text_embedding">[docs]</a>
-    <span class="k">def</span> <span class="nf">cache_text_embedding</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cache_text_embedding</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">embedding</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -466,7 +466,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.fetch_cached_text_embedding">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.fetch_cached_text_embedding">[docs]</a>
-    <span class="k">def</span> <span class="nf">fetch_cached_text_embedding</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_cached_text_embedding</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
@@ -491,7 +491,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.state_dict">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.state_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize the configuration into a dict.&quot;&quot;&quot;</span>
         <span class="n">serialized_data</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -503,7 +503,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="FileManager.load_dict">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.load_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the configuration from a dict.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serialized_attrs</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> not found in data.&quot;</span>
@@ -513,14 +513,14 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="FileManager.is_initialized">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.is_initialized">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_initialized</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_initialized</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the file manager has been initialized.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="FileManager.flush">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.FileManager.flush">[docs]</a>
-    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush the file manager.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_log</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_code</span> <span class="o">=</span> <span class="kc">False</span>

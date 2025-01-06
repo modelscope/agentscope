@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.file.json &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -126,17 +126,17 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.service.file.json 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Operators for json file and directory. &quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service.service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service.service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 
 
 <div class="viewcode-block" id="read_json_file">
 <a class="viewcode-back" href="../../../../agentscope.service.file.json.html#agentscope.service.read_json_file">[文档]</a>
-<span class="k">def</span> <span class="nf">read_json_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_json_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read and parse a JSON file.</span>
 
@@ -166,7 +166,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="write_json_file">
 <a class="viewcode-back" href="../../../../agentscope.service.file.json.html#agentscope.service.write_json_file">[文档]</a>
-<span class="k">def</span> <span class="nf">write_json_file</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_json_file</span><span class="p">(</span>
     <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>

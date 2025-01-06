@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.models.ollama_model &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,17 +125,17 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.models.ollama_model 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Model wrapper for Ollama models.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span>
 
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_convert_to_str</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 
 <div class="viewcode-block" id="OllamaWrapperBase">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaWrapperBase">[文档]</a>
-<span class="k">class</span> <span class="nc">OllamaWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for Ollama model wrappers.</span>
 
 <span class="sd">    To use Ollama API, please</span>
@@ -162,7 +162,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaWrapperBase.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaWrapperBase.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -193,12 +193,12 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">ollama</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">ollama</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;The package ollama is not found. Please install it by &quot;</span>
                 <span class="s1">&#39;running command `pip install &quot;ollama&gt;=0.1.7&quot;`&#39;</span><span class="p">,</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">ollama</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
@@ -207,7 +207,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaChatWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">OllamaChatWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaChatWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama chat API.</span>
 
 <span class="sd">    Response:</span>
@@ -237,7 +237,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaChatWrapper.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -277,7 +277,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -335,7 +335,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
                 <span class="n">last_chunk</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
@@ -369,7 +369,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -398,7 +398,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaChatWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper.format">[文档]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
@@ -519,7 +519,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaEmbeddingWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaEmbeddingWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">OllamaEmbeddingWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaEmbeddingWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama embedding API.</span>
 
 <span class="sd">    Response:</span>
@@ -539,7 +539,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_embedding&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -608,7 +608,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaEmbeddingWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaEmbeddingWrapper.format">[文档]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
@@ -623,7 +623,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaGenerationWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaGenerationWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">OllamaGenerationWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaGenerationWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama generation API.</span>
 
 <span class="sd">    Response:</span>
@@ -649,7 +649,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_generate&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -720,7 +720,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="OllamaGenerationWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.ollama_model.html#agentscope.models.OllamaGenerationWrapper.format">[文档]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward the input to the model.</span>
 
 <span class="sd">        Args:</span>

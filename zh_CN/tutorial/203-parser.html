@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>结果解析 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -293,7 +293,7 @@
 <h5>初始化<a class="headerlink" href="#id6" title="Link to this heading"></a></h5>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code>采用 Markdown 代码块的形式，要求 LLM 将指定文本产生到指定的代码块中。可以通过<code class="docutils literal notranslate"><span class="pre">language_name</span></code>参数指定不同的语言，从而利用大模型代码能力产生对应的输出。例如要求大模型产生 Python 代码时，初始化如下：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownCodeBlockParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownCodeBlockParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">language_name</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;your python code&quot;</span><span class="p">)</span>
 </pre></div>
@@ -387,7 +387,7 @@ your python code
 <p>AgentScope中，我们通过调用<code class="docutils literal notranslate"><span class="pre">to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">to_memory</span></code>和<code class="docutils literal notranslate"><span class="pre">to_metadata</span></code>方法实现后处理功能，示意代码如下：</p>
 <ul>
 <li><p>应用中的控制流代码，创建对应的解析器对象并装载</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
 <span class="c1"># ...</span>
 
@@ -420,7 +420,7 @@ your python code
 </li>
 <li><p>智能体内部<code class="docutils literal notranslate"><span class="pre">reply</span></code>函数内实现字典的过滤</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># ...</span>
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 
         <span class="c1"># ...</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">parse_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
@@ -488,7 +488,7 @@ your python code
 <h6>初始化<a class="headerlink" href="#id11" title="Link to this heading"></a></h6>
 <p><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code> 主要用于1）不确定的标签名，以及2）不确定标签数量的场景。在这种情况下，该解析器无法提供一个泛用性广的响应格式说明，因此需要开发者在初始化时提供对应的相应格式说明（<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>）。
 除此之外，用户可以通过设置<code class="docutils literal notranslate"><span class="pre">try_parse_json</span></code>，<code class="docutils literal notranslate"><span class="pre">required_keys</span></code>等参数，设置解析器的行为。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">RegexTaggedContentParser</span><span class="p">(</span>
     <span class="n">format_instruction</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Respond with specific tags as outlined below</span>
@@ -509,7 +509,7 @@ your python code
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>要求 LLM 在 ```json 和 ``` 标识的代码块中产生指定内容的字典。</p></li>
 <li><p>除了<code class="docutils literal notranslate"><span class="pre">to_content</span></code>，<code class="docutils literal notranslate"><span class="pre">to_memory</span></code>和<code class="docutils literal notranslate"><span class="pre">to_metadata</span></code>参数外，可以通过提供 <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> 参数提供响应结果样例和说明，即提示LLM应该产生什么样子的字典，该参数可以是字符串，也可以是字典，在构建响应格式提示的时候将会被自动转换成字符串进行拼接。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
 <span class="c1"># 字典</span>
 <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
@@ -544,10 +544,10 @@ your python code
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code>中的<code class="docutils literal notranslate"><span class="pre">content_hint</span></code>参数还支持基于Pydantic的类型校验。初始化时，可以将<code class="docutils literal notranslate"><span class="pre">content_hint</span></code>设置为一个Pydantic的模型类，AgentScope将根据这个类来修改<code class="docutils literal notranslate"><span class="pre">instruction_format</span></code>属性，并且利用Pydantic在解析时对LLM返回的字典进行类型校验。
 该功能需要LLM能够理解JSON schema格式的提示，因此适用于能力较强的大模型。</p>
 <p>一个简单的例子如下，<code class="docutils literal notranslate"><span class="pre">&quot;...&quot;</span></code>处可以填写具体的类型校验规则，可以参考<a class="reference external" href="https://docs.pydantic.dev/latest/">Pydantic</a>文档。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
-<span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Schema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">thought</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;what you thought&quot;</span><span class="p">)</span>
     <span class="n">speak</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;what you speak&quot;</span><span class="p">)</span>
     <span class="n">end_discussion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;whether the discussion is finished&quot;</span><span class="p">)</span>
@@ -595,7 +595,7 @@ The generated JSON dictionary MUST follow this schema:
 <li><p>结束标签（<code class="docutils literal notranslate"><span class="pre">tag_end</span></code>)</p></li>
 <li><p>内容解析功能（<code class="docutils literal notranslate"><span class="pre">parse_json</span></code>），默认为<code class="docutils literal notranslate"><span class="pre">False</span></code>。当置为<code class="docutils literal notranslate"><span class="pre">True</span></code>时，将在响应格式提示中自动添加提示，并且提取出的内容将通过<code class="docutils literal notranslate"><span class="pre">json.loads</span></code>解析成 Python 对象</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MultiTaggedContentParser</span><span class="p">,</span> <span class="n">TaggedContent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiTaggedContentParser</span><span class="p">,</span> <span class="n">TaggedContent</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MultiTaggedContentParser</span><span class="p">(</span>
   <span class="n">TaggedContent</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span>
@@ -663,7 +663,7 @@ The generated JSON dictionary MUST follow this schema:
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code>同样采用 Markdown 的```json和```标识，但是不限制解析的内容的类型，可以是列表，字典，数值，字符串等可以通过<code class="docutils literal notranslate"><span class="pre">json.loads</span></code>进行解析字符串。</p>
 <section id="id16">
 <h5>初始化 &amp; 响应格式模版<a class="headerlink" href="#id16" title="Link to this heading"></a></h5>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonObjectParser</span><span class="p">(</span>
   <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;{A list of numbers.}&quot;</span>
@@ -719,19 +719,19 @@ The generated JSON dictionary MUST follow this schema:
 <h2>自定义解析器<a class="headerlink" href="#id20" title="Link to this heading"></a></h2>
 <p>AgentScope中提供了解析器的基类<code class="docutils literal notranslate"><span class="pre">ParserBase</span></code>，开发者可以通过继承该基类，并实现其中的<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>属性和<code class="docutils literal notranslate"><span class="pre">parse</span></code>方法来实现自己的解析器。</p>
 <p>针对目标格式是字典类型的解析，可以额外继承<code class="docutils literal notranslate"><span class="pre">agentscope.parser.DictFilterMixin</span></code>类实现对字典类型的后处理。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
 
 
-<span class="k">class</span> <span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for model response parser.&quot;&quot;&quot;</span>
 
     <span class="n">format_instruction</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The instruction for the response format.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a specific object, and stored in the</span>
 <span class="sd">        parsed field of the response object.&quot;&quot;&quot;</span>
 

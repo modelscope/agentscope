@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.execute_code.exec_python &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -126,37 +126,37 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.service.execute_code.exec_python 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Service to execute python code.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">builtins</span>
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">platform</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">builtins</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">docker</span>
-    <span class="kn">from</span> <span class="nn">docker.errors</span> <span class="kn">import</span> <span class="n">APIError</span><span class="p">,</span> <span class="n">ImageNotFound</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">docker.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIError</span><span class="p">,</span> <span class="n">ImageNotFound</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">docker</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">resource</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">resource</span>
 <span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
     <span class="n">resource</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">create_tempdir</span><span class="p">,</span> <span class="n">timer</span>
-<span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">...constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_tempdir</span><span class="p">,</span> <span class="n">timer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_DEFAULT_PYPI_MIRROR</span><span class="p">,</span>
     <span class="n">_DEFAULT_TRUSTED_HOST</span><span class="p">,</span>
 <span class="p">)</span>
@@ -164,7 +164,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="execute_python_code">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_python.html#agentscope.service.execute_python_code">[文档]</a>
-<span class="k">def</span> <span class="nf">execute_python_code</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_python_code</span><span class="p">(</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
     <span class="n">use_docker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -249,7 +249,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
-<span class="k">def</span> <span class="nf">_sys_execute</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_sys_execute</span><span class="p">(</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">shared_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
     <span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -300,7 +300,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_execute_python_code_sys</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_execute_python_code_sys</span><span class="p">(</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -348,7 +348,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_execute_python_code_docker</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_execute_python_code_docker</span><span class="p">(</span>
     <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">use_docker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -362,7 +362,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    execution succeeds.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">docker_execute</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">docker_execute</span><span class="p">(</span>
         <span class="n">exec_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
@@ -490,7 +490,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="sys_python_guard">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_python.html#agentscope.service.sys_python_guard">[文档]</a>
-<span class="k">def</span> <span class="nf">sys_python_guard</span><span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sys_python_guard</span><span class="p">(</span><span class="n">maximum_memory_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This disables various destructive functions and prevents the generated code</span>
 <span class="sd">    from interfering with the test (e.g. fork bomb, killing other processes,</span>

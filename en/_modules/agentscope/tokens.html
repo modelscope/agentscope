@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.tokens &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=c9484b72" />
 
@@ -121,11 +121,11 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.tokens</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The tokens interface for agentscope.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">http</span> <span class="kn">import</span> <span class="n">HTTPStatus</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 
 <span class="n">__register_models</span> <span class="o">=</span> <span class="p">{}</span>
@@ -135,7 +135,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="count">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.count">[docs]</a>
-<span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count the number of tokens for the given model and messages.</span>
 
 <span class="sd">    Args:</span>
@@ -187,7 +187,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 
-<span class="k">def</span> <span class="nf">_count_content_tokens_for_openai_vision_model</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_count_content_tokens_for_openai_vision_model</span><span class="p">(</span>
     <span class="n">content</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -259,7 +259,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="count_openai_tokens">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.count_openai_tokens">[docs]</a>
-<span class="k">def</span> <span class="nf">count_openai_tokens</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_openai_tokens</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -276,7 +276,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">            of &quot;role&quot; and &quot;content&quot;, and an optional key of &quot;name&quot;. For vision</span>
 <span class="sd">            LLMs, the value of &quot;content&quot; should be a list of dictionaries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">tiktoken</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tiktoken</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">encoding</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
@@ -345,7 +345,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="count_gemini_tokens">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.count_gemini_tokens">[docs]</a>
-<span class="k">def</span> <span class="nf">count_gemini_tokens</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_gemini_tokens</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -357,7 +357,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        messages (`list[dict[str, str]]`):</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">google.generativeai</span> <span class="k">as</span> <span class="nn">genai</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">google.generativeai</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">genai</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The package `google.generativeai` is required for token counting &quot;</span>
@@ -365,7 +365,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="s2">&quot;`pip install -q -U google-generativeai` and refer to &quot;</span>
             <span class="s2">&quot;https://ai.google.dev/gemini-api/docs/get-started/&quot;</span>
             <span class="s2">&quot;tutorial?lang=python for details.&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">genai</span><span class="o">.</span><span class="n">GenerativeModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
     <span class="n">tokens_count</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
@@ -375,7 +375,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="count_dashscope_tokens">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.count_dashscope_tokens">[docs]</a>
-<span class="k">def</span> <span class="nf">count_dashscope_tokens</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_dashscope_tokens</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -400,12 +400,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        `int`: The number of tokens.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">dashscope</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">dashscope</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The package `dashscope` is required for token counting &quot;</span>
             <span class="s2">&quot;for Dashscope models.&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">Tokenization</span><span class="o">.</span><span class="n">call</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
@@ -422,7 +422,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="supported_models">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.supported_models">[docs]</a>
-<span class="k">def</span> <span class="nf">supported_models</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">supported_models</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the list of supported models for token counting.&quot;&quot;&quot;</span>
     <span class="n">infos</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;Supported models for token counting: &quot;</span><span class="p">,</span>
@@ -440,7 +440,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="register_model">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.register_model">[docs]</a>
-<span class="k">def</span> <span class="nf">register_model</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_model</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">tokens_count_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span> <span class="nb">int</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -476,7 +476,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="count_huggingface_tokens">
 <a class="viewcode-back" href="../../agentscope.tokens.html#agentscope.tokens.count_huggingface_tokens">[docs]</a>
-<span class="k">def</span> <span class="nf">count_huggingface_tokens</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_huggingface_tokens</span><span class="p">(</span>
     <span class="n">pretrained_model_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
     <span class="n">use_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -507,11 +507,11 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HF_ENDPOINT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;https://hf-mirror.com&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoTokenizer</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The package `transformers` is required for downloading tokenizer&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
     <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
         <span class="n">pretrained_model_name_or_path</span><span class="p">,</span>

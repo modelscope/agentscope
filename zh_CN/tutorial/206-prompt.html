@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>提示工程 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -200,8 +200,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <li><p><code class="docutils literal notranslate"><span class="pre">List</span></code>: 根据上述规则解析列表中的每个元素。</p></li>
 </ul>
 <p>样例如下：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 我们直接初始化model wrapper，因此不需要填入config_name</span>
@@ -231,8 +231,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <p>对支持视觉的模型而言，如果输入消息包含图像url，生成的<code class="docutils literal notranslate"><span class="pre">content</span></code>字段将是一个字典的列表，其中包含文本和图像url。</p>
 <p>具体来说，如果是网络图片url，将直接传递给OpenAI Chat API，而本地图片url将被转换为base64格式。更多细节请参考<a class="reference external" href="https://platform.openai.com/docs/guides/vision">官方指南</a>。</p>
 <p>注意无效的图片url（例如<code class="docutils literal notranslate"><span class="pre">/Users/xxx/test.mp3</span></code>）将被忽略。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 为空，因为我们直接初始化model wrapper</span>
@@ -306,8 +306,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <h4>提示的构建策略<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
 <p>如果第一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，它将被转换为一条消息，其中<code class="docutils literal notranslate"><span class="pre">role</span></code>字段为<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段为系统消息。其余的消息将被转换为一条消息，其中<code class="docutils literal notranslate"><span class="pre">role</span></code>字段为<code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段为对话历史。</p>
 <p>样例如下：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 我们直接初始化model wrapper，因此不需要填入config_name</span>
@@ -384,8 +384,8 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <li><p>其余的消息将被转换为一条消息，其中<code class="docutils literal notranslate"><span class="pre">role</span></code>字段为<code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>字段为对话历史。并且所有<code class="docutils literal notranslate"><span class="pre">Msg</span></code>对象中<code class="docutils literal notranslate"><span class="pre">url</span></code>属性不为<code class="docutils literal notranslate"><span class="pre">None</span></code>的消息，都会根据<code class="docutils literal notranslate"><span class="pre">url</span></code>指向的文件类型在<code class="docutils literal notranslate"><span class="pre">content</span></code>中增加一个键值为<code class="docutils literal notranslate"><span class="pre">&quot;image&quot;</span></code>或者<code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;</span></code>的字典。</p></li>
 </ul>
 <p>样例如下：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeMultiModalWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeMultiModalWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeMultiModalWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 我们直接初始化model wrapper，因此不需要填入config_name</span>
@@ -434,7 +434,7 @@ AgentScope内置策略的目标是<strong>使初学者能够顺利调用模型AP
 <ul class="simple">
 <li><p>消息将包括对话历史，<code class="docutils literal notranslate"><span class="pre">user</span></code>消息由系统消息(system message)和”## Dialog History”前缀。</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">LiteLLMChatWrapper</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiteLLMChatWrapper</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">LiteLLMChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -482,7 +482,7 @@ prompt），其他信息将一起组成对话历史。对话历史将添加<code
 系统提示一起组成一条<code class="docutils literal notranslate"><span class="pre">role</span></code>为<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>的信息。</p></li>
 <li><p>如果输入信息中的<code class="docutils literal notranslate"><span class="pre">url</span></code>字段不为<code class="docutils literal notranslate"><span class="pre">None</span></code>，则这些url将一起被置于<code class="docutils literal notranslate"><span class="pre">&quot;images&quot;</span></code>对应的键值中。</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaChatWrapper</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaChatWrapper</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OllamaChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 我们直接初始化model wrapper，因此不需要填入config_name</span>
@@ -517,8 +517,8 @@ prompt），其他信息将一起组成对话历史。对话历史将添加<code
 <section id="id10">
 <h4>提示的构建策略<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
 <p>如果第一条消息的<code class="docutils literal notranslate"><span class="pre">role</span></code>字段是<code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>，那么它将会被转化成一条系统提示。其余消息会被拼接成对话历史。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaGenerationWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaGenerationWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OllamaGenerationWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 我们直接初始化model wrapper，因此不需要填入config_name</span>
@@ -561,8 +561,8 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 <p><strong>注意</strong>Gemini Chat API中<code class="docutils literal notranslate"><span class="pre">parts</span></code>字段可以包含图片的url，由于我们将消息转换成字符串格式
 的输入，因此图片url在目前的<code class="docutils literal notranslate"><span class="pre">format</span></code>函数中是不支持的。
 我们推荐开发者可以根据需求动手定制化自己的提示。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">GeminiChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># 我们直接初始化model wrapper，因此不需要填入config_name</span>
@@ -605,8 +605,8 @@ Alice:<span class="w"> </span>Nice<span class="w"> </span>to<span class="w"> </s
 <h4>提示的构建策略<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
 <p>如果第一条消息的 role 字段是 “system”，它将被转换为带有 role 字段为 “system” 和 content 字段为系统消息的单个消息。其余的消息会被转化为带有 role 字段为 “user” 和 content 字段为对话历史的消息。
 下面展示了一个示例：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">ZhipuAIChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>

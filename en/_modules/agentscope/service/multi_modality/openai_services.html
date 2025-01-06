@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.multi_modality.openai_services &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -127,27 +127,27 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">https://platform.openai.com/docs/overview</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span><span class="p">,</span> <span class="n">unquote</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span><span class="p">,</span> <span class="n">unquote</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ServiceResponse</span><span class="p">,</span>
     <span class="n">ServiceExecStatus</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...models.openai_model</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...models.openai_model</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">OpenAIDALLEWrapper</span><span class="p">,</span>
     <span class="n">OpenAIChatWrapper</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">_download_file</span>
-<span class="kn">from</span> <span class="nn">...message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_download_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 
-<span class="k">def</span> <span class="nf">_url_to_filename</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_url_to_filename</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean the URL to remove special characters.</span>
 <span class="sd">    including /, \\, etc.</span>
 <span class="sd">    remove spaces and replace with _.</span>
@@ -168,7 +168,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">cleaned</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_handle_openai_img_response</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_openai_img_response</span><span class="p">(</span>
     <span class="n">raw_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
@@ -198,7 +198,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="n">urls</span>
 
 
-<span class="k">def</span> <span class="nf">_parse_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesIO</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesIO</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If url is a local file path, return a BytesIO of the file content.</span>
 <span class="sd">    If url is a web URL, fetch the content and return as BytesIO.</span>
@@ -214,7 +214,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="k">return</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
 
-<span class="k">def</span> <span class="nf">_audio_filename</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_audio_filename</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[^\w.,]+&quot;</span>
     <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
     <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">cleaned</span><span class="p">)</span>
@@ -225,7 +225,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="openai_text_to_image">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_text_to_image">[docs]</a>
-<span class="k">def</span> <span class="nf">openai_text_to_image</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">openai_text_to_image</span><span class="p">(</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -340,7 +340,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="openai_edit_image">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_edit_image">[docs]</a>
-<span class="k">def</span> <span class="nf">openai_edit_image</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">openai_edit_image</span><span class="p">(</span>
     <span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -400,12 +400,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">openai</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">openai</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
             <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="c1"># _parse_url handles both local and web URLs and returns BytesIO</span>
@@ -439,7 +439,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="openai_create_image_variation">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_create_image_variation">[docs]</a>
-<span class="k">def</span> <span class="nf">openai_create_image_variation</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">openai_create_image_variation</span><span class="p">(</span>
     <span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -490,12 +490,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">openai</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">openai</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
             <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="c1"># _parse_url handles both local and web URLs and returns BytesIO</span>
@@ -522,7 +522,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="openai_image_to_text">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_image_to_text">[docs]</a>
-<span class="k">def</span> <span class="nf">openai_image_to_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">openai_image_to_text</span><span class="p">(</span>
     <span class="n">image_urls</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Describe the image&quot;</span><span class="p">,</span>
@@ -585,7 +585,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="openai_text_to_audio">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_text_to_audio">[docs]</a>
-<span class="k">def</span> <span class="nf">openai_text_to_audio</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">openai_text_to_audio</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -654,12 +654,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">openai</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">openai</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
             <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="n">save_name</span> <span class="o">=</span> <span class="n">_audio_filename</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
@@ -694,7 +694,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="openai_audio_to_text">
 <a class="viewcode-back" href="../../../../agentscope.service.multi_modality.openai_services.html#agentscope.service.openai_audio_to_text">[docs]</a>
-<span class="k">def</span> <span class="nf">openai_audio_to_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">openai_audio_to_text</span><span class="p">(</span>
     <span class="n">audio_file_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
@@ -739,12 +739,12 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &gt; }</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">openai</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">openai</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
             <span class="s2">&quot;The `openai` library is not installed. Please install it by &quot;</span>
             <span class="s2">&quot;running `pip install openai`.&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="n">audio_file_url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">audio_file_url</span><span class="p">)</span>

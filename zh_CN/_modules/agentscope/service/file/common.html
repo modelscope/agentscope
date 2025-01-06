@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.file.common &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -127,17 +127,17 @@ window.addEventListener("load", () => mermaid.run());
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1"># pylint: disable=C0301</span>
 <span class="sd">&quot;&quot;&quot; Common operators for file and directory. &quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service.service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service.service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 
 
 <div class="viewcode-block" id="create_file">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.create_file">[文档]</a>
-<span class="k">def</span> <span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a file and write content to it.</span>
 
@@ -175,7 +175,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="delete_file">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.delete_file">[文档]</a>
-<span class="k">def</span> <span class="nf">delete_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a file specified by the file path.</span>
 
 <span class="sd">    Args:</span>
@@ -204,7 +204,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="move_file">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.move_file">[文档]</a>
-<span class="k">def</span> <span class="nf">move_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">move_file</span><span class="p">(</span><span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Move a file from a source path to a destination path.</span>
 
@@ -246,7 +246,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="create_directory">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.create_directory">[文档]</a>
-<span class="k">def</span> <span class="nf">create_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a directory at the specified path.</span>
 
@@ -281,7 +281,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="delete_directory">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.delete_directory">[文档]</a>
-<span class="k">def</span> <span class="nf">delete_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Delete a directory and all of its contents.</span>
 
@@ -316,7 +316,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="move_directory">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.move_directory">[文档]</a>
-<span class="k">def</span> <span class="nf">move_directory</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">move_directory</span><span class="p">(</span>
     <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">destination_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
@@ -362,7 +362,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="list_directory_content">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.list_directory_content">[文档]</a>
-<span class="k">def</span> <span class="nf">list_directory_content</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_directory_content</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List the contents of a directory. i.e. ls -a</span>
 
@@ -401,7 +401,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_current_directory">
 <a class="viewcode-back" href="../../../../agentscope.service.file.common.html#agentscope.service.get_current_directory">[文档]</a>
-<span class="k">def</span> <span class="nf">get_current_directory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_current_directory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the current working directory path.</span>
 

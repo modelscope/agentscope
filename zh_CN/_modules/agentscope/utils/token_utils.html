@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.utils.token_utils &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,11 +125,11 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.utils.token_utils 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Token utils.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">tiktoken</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tiktoken</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">tiktoken</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -169,7 +169,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="get_openai_max_length">
 <a class="viewcode-back" href="../../../agentscope.utils.token_utils.html#agentscope.utils.token_utils.get_openai_max_length">[文档]</a>
-<span class="k">def</span> <span class="nf">get_openai_max_length</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_openai_max_length</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the max length of the OpenAi models.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">OPENAI_MAX_LENGTH</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
@@ -177,13 +177,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Model [</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">] not found in OPENAI_MAX_LENGTH. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;The last updated date is </span><span class="si">{</span><span class="n">OPENAI_MAX_LENGTH</span><span class="p">[</span><span class="s1">&#39;update&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span></div>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
 
 
 
 <div class="viewcode-block" id="count_openai_token">
 <a class="viewcode-back" href="../../../agentscope.utils.token_utils.html#agentscope.utils.token_utils.count_openai_token">[文档]</a>
-<span class="k">def</span> <span class="nf">count_openai_token</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">count_openai_token</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count token in format of OpenAI API&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">content</span> <span class="o">=</span> <span class="p">[</span><span class="n">content</span><span class="p">]</span>
@@ -225,7 +225,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="num_tokens_from_content">
 <a class="viewcode-back" href="../../../agentscope.utils.token_utils.html#agentscope.utils.token_utils.num_tokens_from_content">[文档]</a>
-<span class="k">def</span> <span class="nf">num_tokens_from_content</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">num_tokens_from_content</span><span class="p">(</span><span class="n">content</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count token in format of OpenAI Chat API&quot;&quot;&quot;</span>
     <span class="c1"># modified from https://github.com/openai/openai-cookbook/blob/main</span>
     <span class="c1"># /examples/How_to_count_tokens_with_tiktoken.ipynb</span>

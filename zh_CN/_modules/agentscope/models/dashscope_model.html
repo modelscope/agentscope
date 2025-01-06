@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.models.dashscope_model &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,19 +125,19 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.models.dashscope_model 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Model wrapper for DashScope models&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">http</span> <span class="kn">import</span> <span class="n">HTTPStatus</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_convert_to_str</span><span class="p">,</span> <span class="n">_guess_type_by_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span><span class="p">,</span> <span class="n">_guess_type_by_extension</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">dashscope</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">dashscope</span>
 
     <span class="n">dashscope_version</span> <span class="o">=</span> <span class="n">dashscope</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">__version__</span>
     <span class="k">if</span> <span class="n">dashscope_version</span> <span class="o">&lt;</span> <span class="s2">&quot;1.19.0&quot;</span><span class="p">:</span>
@@ -146,22 +146,22 @@ window.addEventListener("load", () => mermaid.run());
             <span class="s2">&quot;which is below the recommended version 1.19.0. &quot;</span>
             <span class="s2">&quot;Please consider upgrading to maintain compatibility.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">dashscope.api_entities.dashscope_response</span> <span class="kn">import</span> <span class="n">GenerationResponse</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dashscope.api_entities.dashscope_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenerationResponse</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">dashscope</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">GenerationResponse</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 
 
 <div class="viewcode-block" id="DashScopeWrapperBase">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase">[文档]</a>
-<span class="k">class</span> <span class="nc">DashScopeWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DashScopeWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope API.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DashScopeWrapperBase.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -202,7 +202,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeWrapperBase.format">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase.format">[文档]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
@@ -217,7 +217,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeChatWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">DashScopeChatWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DashScopeChatWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope&#39;s chat API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
 
@@ -255,11 +255,9 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_chat&quot;</span>
 
-    <span class="n">deprecated_model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tongyi_chat&quot;</span>
-
 <div class="viewcode-block" id="DashScopeChatWrapper.__init__">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -296,7 +294,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -387,7 +385,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="c1"># step3: invoke llm api, record the invocation and update the monitor</span>
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
                 <span class="n">last_chunk</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
@@ -440,7 +438,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">response</span><span class="p">:</span> <span class="n">GenerationResponse</span><span class="p">,</span>
@@ -471,7 +469,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeChatWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.format">[文档]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
@@ -548,7 +546,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeImageSynthesisWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeImageSynthesisWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">DashScopeImageSynthesisWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DashScopeImageSynthesisWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Image Synthesis API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1</span>
 
@@ -588,7 +586,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_image_synthesis&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">save_local</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -677,7 +675,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeTextEmbeddingWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeTextEmbeddingWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">DashScopeTextEmbeddingWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DashScopeTextEmbeddingWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Text Embedding API.</span>
 
 <span class="sd">    Response:</span>
@@ -709,7 +707,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_text_embedding&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">texts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -790,7 +788,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper">[文档]</a>
-<span class="k">class</span> <span class="nc">DashScopeMultiModalWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DashScopeMultiModalWrapper</span><span class="p">(</span><span class="n">DashScopeWrapperBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope Multimodal API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-api</span>
 
@@ -832,7 +830,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_multimodal&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -934,7 +932,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper.format">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper.format">[文档]</a>
-    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
@@ -1092,7 +1090,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DashScopeMultiModalWrapper.convert_url">
 <a class="viewcode-back" href="../../../agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper.convert_url">[文档]</a>
-    <span class="k">def</span> <span class="nf">convert_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the url to the format of DashScope API. Note for local</span>
 <span class="sd">        files, a prefix &quot;file://&quot; will be added.</span>
 

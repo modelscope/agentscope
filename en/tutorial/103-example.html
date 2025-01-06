@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quick Start &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -144,7 +144,7 @@ the repository.</p>
 </div>
 <p>More details about model invocation, deployment and open-source models please refer to <a class="reference internal" href="203-model.html#model-en"><span class="std std-ref">Model</span></a> section.</p>
 <p>After preparing the model configuration, you can register your configuration by calling the <code class="docutils literal notranslate"><span class="pre">init</span></code> method of AgentScope. Additionally, you can load multiple model configurations at once.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="c1"># init once by passing a list of config dict</span>
 <span class="n">openai_cfg_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -160,8 +160,8 @@ the repository.</p>
 <section id="step2-create-agents">
 <h2>Step2: Create Agents<a class="headerlink" href="#step2-create-agents" title="Link to this heading"></a></h2>
 <p>Creating agents is straightforward in AgentScope. After initializing AgentScope with your model configurations (Step 1 above), you can then define each agent with its corresponding role and specific model.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
 
 <span class="c1"># read model configs</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="s2">&quot;./openai_model_configs.json&quot;</span><span class="p">)</span>
@@ -176,7 +176,7 @@ the repository.</p>
 <section id="step3-agent-conversation">
 <h2>Step3: Agent Conversation<a class="headerlink" href="#step3-agent-conversation" title="Link to this heading"></a></h2>
 <p>“Message” is the primary means of communication between agents in AgentScope. They are Python dictionaries comprising essential fields like the actual <code class="docutils literal notranslate"><span class="pre">content</span></code> of this message and the sender’s <code class="docutils literal notranslate"><span class="pre">name</span></code>. Optionally, a message can include a <code class="docutils literal notranslate"><span class="pre">url</span></code> to either a local file (image, video or audio) or website.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="c1"># Example of a simple text message from Alice</span>
 <span class="n">message_from_alice</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">)</span>
@@ -198,7 +198,7 @@ the repository.</p>
 </pre></div>
 </div>
 <p>For a more advanced approach, AgentScope offers the option of using pipelines to manage the flow of messages between agents. The <code class="docutils literal notranslate"><span class="pre">sequentialpipeline</span></code> stands for sequential speech, where each agent receive message from last agent and generate its response accordingly.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines.functional</span> <span class="kn">import</span> <span class="n">sequentialpipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequentialpipeline</span>
 
 <span class="c1"># Execute the conversation loop within a pipeline structure</span>
 <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>

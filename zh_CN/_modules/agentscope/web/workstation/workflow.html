@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.web.workstation.workflow &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -125,17 +125,17 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.web.workstation.workflow 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Workflow&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">agentscope.web.workstation.workflow_dag</span> <span class="kn">import</span> <span class="n">build_dag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.web.workstation.workflow_dag</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_dag</span>
 
 
 <div class="viewcode-block" id="load_config">
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.load_config">[文档]</a>
-<span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a JSON configuration file.</span>
 
 <span class="sd">    Args:</span>
@@ -152,7 +152,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="start_workflow">
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.start_workflow">[文档]</a>
-<span class="k">def</span> <span class="nf">start_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the application workflow based on the given configuration.</span>
 
 <span class="sd">    Args:</span>
@@ -171,7 +171,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="compile_workflow">
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.compile_workflow">[文档]</a>
-<span class="k">def</span> <span class="nf">compile_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">compiled_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main.py&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compile_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">compiled_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main.py&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates Python code based on the given configuration.</span>
 
 <span class="sd">    Args:</span>
@@ -190,7 +190,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../../agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.main">[文档]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse command-line arguments and launch the application workflow.</span>
 
 <span class="sd">    This function sets up command-line argument parsing and checks if a</span>

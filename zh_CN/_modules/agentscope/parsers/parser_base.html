@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.parsers.parser_base &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,13 +125,13 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.parsers.parser_base 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The base class for model response parser.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">TagNotFoundError</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">TagNotFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
 
 <span class="c1"># TODO: Support one-time warning in logger rather than setting global variable</span>
 <span class="n">_FIRST_TIME_TO_REPORT_CONTENT</span> <span class="o">=</span> <span class="kc">True</span>
@@ -140,18 +140,18 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="ParserBase">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.ParserBase">[文档]</a>
-<span class="k">class</span> <span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for model response parser.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ParserBase.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.ParserBase.parse">[文档]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a specific object, and stored in the</span>
 <span class="sd">        parsed field of the response object.&quot;&quot;&quot;</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_extract_first_content_by_tag</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_first_content_by_tag</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">,</span>
         <span class="n">tag_start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -207,7 +207,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DictFilterMixin">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.DictFilterMixin">[文档]</a>
-<span class="k">class</span> <span class="nc">DictFilterMixin</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DictFilterMixin</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A mixin class to filter the parsed response by keys. It allows users</span>
 <span class="sd">    to set keys to be filtered during speaking, storing in memory, and</span>
 <span class="sd">    returning in the agent reply function.</span>
@@ -215,7 +215,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DictFilterMixin.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.DictFilterMixin.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">keys_to_memory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">keys_to_content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -254,7 +254,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DictFilterMixin.to_memory">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.DictFilterMixin.to_memory">[文档]</a>
-    <span class="k">def</span> <span class="nf">to_memory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_memory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parsed_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">allow_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -269,7 +269,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DictFilterMixin.to_content">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.DictFilterMixin.to_content">[文档]</a>
-    <span class="k">def</span> <span class="nf">to_content</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_content</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parsed_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">allow_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -286,7 +286,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DictFilterMixin.to_metadata">
 <a class="viewcode-back" href="../../../agentscope.parsers.parser_base.html#agentscope.parsers.DictFilterMixin.to_metadata">[文档]</a>
-    <span class="k">def</span> <span class="nf">to_metadata</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_metadata</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parsed_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">allow_missing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -300,7 +300,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_filter_content_by_names</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_filter_content_by_names</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parsed_response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>

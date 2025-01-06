@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.web.tripadvisor &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -123,15 +123,15 @@ window.addEventListener("load", () => mermaid.run());
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;TripAdvisor APIs for searching and retrieving location information.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 
 
 <div class="viewcode-block" id="tripadvisor_search_location_photos">
 <a class="viewcode-back" href="../../../../agentscope.service.web.tripadvisor.html#agentscope.service.tripadvisor_search_location_photos">[docs]</a>
-<span class="k">def</span> <span class="nf">tripadvisor_search_location_photos</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tripadvisor_search_location_photos</span><span class="p">(</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">location_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -339,7 +339,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="tripadvisor_search">
 <a class="viewcode-back" href="../../../../agentscope.service.web.tripadvisor.html#agentscope.service.tripadvisor_search">[docs]</a>
-<span class="k">def</span> <span class="nf">tripadvisor_search</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tripadvisor_search</span><span class="p">(</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
@@ -465,7 +465,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="tripadvisor_search_location_details">
 <a class="viewcode-back" href="../../../../agentscope.service.web.tripadvisor.html#agentscope.service.tripadvisor_search_location_details">[docs]</a>
-<span class="k">def</span> <span class="nf">tripadvisor_search_location_details</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tripadvisor_search_location_details</span><span class="p">(</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">location_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

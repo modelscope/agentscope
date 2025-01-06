@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.manager._monitor &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -121,18 +121,18 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.manager._monitor</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The manager of monitor module.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">text</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">DeclarativeMeta</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.declarative</span><span class="w"> </span><span class="kn">import</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">DeclarativeMeta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">sessionmaker</span>
 
-<span class="kn">from</span> <span class="nn">._file</span> <span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_is_windows</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_is_windows</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_DEFAULT_SQLITE_DB_NAME</span><span class="p">,</span>
     <span class="n">_DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING</span><span class="p">,</span>
     <span class="n">_DEFAULT_TABLE_NAME_FOR_IMAGE</span><span class="p">,</span>
@@ -141,7 +141,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">_Base</span><span class="p">:</span> <span class="n">DeclarativeMeta</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">_ModelTable</span><span class="p">(</span><span class="n">_Base</span><span class="p">):</span>  <span class="c1"># mypy: ignore</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ModelTable</span><span class="p">(</span><span class="n">_Base</span><span class="p">):</span>  <span class="c1"># mypy: ignore</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The table for invocation records of chat and embedding models.&quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="n">_DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING</span>
@@ -153,7 +153,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">total_tokens</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_ImageModelTable</span><span class="p">(</span><span class="n">_Base</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ImageModelTable</span><span class="p">(</span><span class="n">_Base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The table for invocation records of image models.&quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="n">_DEFAULT_TABLE_NAME_FOR_IMAGE</span>
@@ -166,12 +166,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager">[docs]</a>
-<span class="k">class</span> <span class="nc">MonitorManager</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MonitorManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The manager of monitor module.&quot;&quot;&quot;</span>
 
     <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a singleton instance.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">MonitorManager</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span>
@@ -185,7 +185,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">path_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">path_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The path to the database&quot;&quot;&quot;</span>
         <span class="n">run_dir</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">run_dir</span>
         <span class="k">if</span> <span class="n">run_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -194,7 +194,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.__init__">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the monitor manager.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
@@ -207,7 +207,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.initialize">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.initialize">[docs]</a>
-    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the monitor manager.</span>
 
 <span class="sd">        Args:</span>
@@ -224,7 +224,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="MonitorManager.get_instance">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.get_instance">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MonitorManager&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MonitorManager&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the instance of the singleton class.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -234,7 +234,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_print_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the table data.&quot;&quot;&quot;</span>
         <span class="c1"># TODO: use a better way to display the table data</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -258,7 +258,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_monitor_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_monitor_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the database.&quot;&quot;&quot;</span>
         <span class="c1"># To avoid path error in windows</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -314,7 +314,7 @@ window.addEventListener("load", () => mermaid.run());
 
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_close_monitor_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_close_monitor_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the monitor database to avoid file occupation error in</span>
 <span class="sd">        windows.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -325,7 +325,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.update_image_tokens">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.update_image_tokens">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_image_tokens</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_image_tokens</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">resolution</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -351,7 +351,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.update_text_and_embedding_tokens">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.update_text_and_embedding_tokens">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_text_and_embedding_tokens</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_text_and_embedding_tokens</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">prompt_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -383,7 +383,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.print_llm_usage">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.print_llm_usage">[docs]</a>
-    <span class="k">def</span> <span class="nf">print_llm_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_llm_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the usage of all different model APIs.&quot;&quot;&quot;</span>
         <span class="n">text_and_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_text_and_embedding_tokens</span><span class="p">()</span>
 
@@ -397,7 +397,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.show_image_tokens">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.show_image_tokens">[docs]</a>
-    <span class="k">def</span> <span class="nf">show_image_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_image_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Show the tokens of all image models.&quot;&quot;&quot;</span>
         <span class="n">usage</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -431,7 +431,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.show_text_and_embedding_tokens">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.show_text_and_embedding_tokens">[docs]</a>
-    <span class="k">def</span> <span class="nf">show_text_and_embedding_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_text_and_embedding_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Show the tokens of all models.&quot;&quot;&quot;</span>
         <span class="n">usage</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -467,7 +467,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.rm_database">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.rm_database">[docs]</a>
-    <span class="k">def</span> <span class="nf">rm_database</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rm_database</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the database.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_db</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_db</span><span class="p">)</span></div>
@@ -475,7 +475,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.state_dict">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.state_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize the monitor manager into a dict.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;use_monitor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">,</span>
@@ -485,7 +485,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.load_dict">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.load_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the monitor manager from a dict.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="s2">&quot;use_monitor&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Key &#39;use_monitor&#39; not found in data.&quot;</span>
 
@@ -494,7 +494,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MonitorManager.flush">
 <a class="viewcode-back" href="../../../agentscope.manager.html#agentscope.manager.MonitorManager.flush">[docs]</a>
-    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush the monitor manager.&quot;&quot;&quot;</span>
         <span class="c1"># Close the database before flushing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_monitor_db</span><span class="p">()</span>

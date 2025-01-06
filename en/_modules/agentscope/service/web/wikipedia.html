@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.web.wikipedia &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -124,9 +124,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Search contents from WikiPedia</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ServiceResponse</span><span class="p">,</span>
     <span class="n">ServiceExecStatus</span><span class="p">,</span>
 <span class="p">)</span>
@@ -134,7 +134,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="wikipedia_search_categories">
 <a class="viewcode-back" href="../../../../agentscope.service.web.wikipedia.html#agentscope.service.wikipedia_search_categories">[docs]</a>
-<span class="k">def</span> <span class="nf">wikipedia_search_categories</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wikipedia_search_categories</span><span class="p">(</span>
     <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">max_members</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
@@ -234,7 +234,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="wikipedia_search">
 <a class="viewcode-back" href="../../../../agentscope.service.web.wikipedia.html#agentscope.service.wikipedia_search">[docs]</a>
-<span class="k">def</span> <span class="nf">wikipedia_search</span><span class="p">(</span>  <span class="c1"># pylint: disable=C0301</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wikipedia_search</span><span class="p">(</span>  <span class="c1"># pylint: disable=C0301</span>
     <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Search the given query in Wikipedia. Note the returned text maybe related entities, which means you should adjust your query as needed and search again.</span>

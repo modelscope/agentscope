@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>模型 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -157,7 +157,7 @@ Inference API和各种符合Post请求格式的API。</p></li>
 <h2>配置方式<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>AgentScope中，用户通过<code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>接口中的<code class="docutils literal notranslate"><span class="pre">model_configs</span></code>参数来指定模型配置。
 <code class="docutils literal notranslate"><span class="pre">model_configs</span></code>可以是一个字典，或是一个字典的列表，抑或是一个指向模型配置文件的路径。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="n">MODEL_CONFIG_OR_PATH</span><span class="p">)</span>
 </pre></div>
@@ -208,7 +208,7 @@ Inference API和各种符合Post请求格式的API。</p></li>
 <h4>基础参数<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
 <p>基础参数中，<code class="docutils literal notranslate"><span class="pre">config_name</span></code>是模型配置的标识，我们将在初始化智能体时用该字段指定使用的模型服务。</p>
 <p><code class="docutils literal notranslate"><span class="pre">model_type</span></code>对应了<code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code>的类型，用于指定模型服务的类型。对应源代码中<code class="docutils literal notranslate"><span class="pre">ModelWrapper</span> </code>类的<code class="docutils literal notranslate"><span class="pre">model_type</span></code>字段。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapper</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">OpenAIChatWrapper</span><span class="p">(</span><span class="n">OpenAIWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for OpenAI&#39;s chat API.&quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai_chat&quot;</span>
@@ -326,7 +326,7 @@ API如下：</p>
 <tr class="row-even"><td><p>Post Request based API</p></td>
 <td><p>-</p></td>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIModelWrapperBase</span></code></a></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;post_api&quot;</span></code></p></td>
+<td><p>-</p></td>
 <td><p>-</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
@@ -724,7 +724,7 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <summary>Post Request API (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py">agentscope.models.PostAPIModelWrapperBase</a></code>)</summary>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_postapiwrapper_config&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
 
     <span class="c1"># 必要参数</span>
     <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://xxx.xxx&quot;</span><span class="p">,</span>
@@ -770,26 +770,30 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <li><p>继承自<code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code>类，</p></li>
 <li><p>提供<code class="docutils literal notranslate"><span class="pre">model_type</span></code>字段以在模型配置中标识这个Model Wrapper类，并</p></li>
 <li><p>实现<code class="docutils literal notranslate"><span class="pre">__init__</span></code>和<code class="docutils literal notranslate"><span class="pre">__call__</span></code>函数。</p></li>
+<li><p>调用<code class="docutils literal notranslate"><span class="pre">agentscope.register_model_wrapper_class</span></code>函数，将其注册到AgentScope中。</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 
 
-<span class="k">class</span> <span class="nc">MyModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;my_model&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">my_arg1</span><span class="p">,</span> <span class="n">my_arg2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">my_arg1</span><span class="p">,</span> <span class="n">my_arg2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># 初始化模型实例</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">)</span>
         <span class="c1"># ...</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># 调用模型实例</span>
         <span class="c1"># ...</span>
 </pre></div>
 </div>
-<p>在创建新的模型包装器类之后，模型包装器将自动注册到AgentScope中。
-您可以直接在模型配置中使用它。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_model_config</span> <span class="o">=</span> <span class="p">{</span>
+<p>然后调用<code class="docutils literal notranslate"><span class="pre">register_model_wrapper_class</span></code>函数将其注册到AgentScope中。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">register_model_wrapper_class</span><span class="p">(</span><span class="n">MyModelWrapper</span><span class="p">)</span>
+
+<span class="n">my_model_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1"># 基础参数</span>
     <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_model_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;my_model&quot;</span><span class="p">,</span>

@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.memory.temporary_memory &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -128,34 +128,34 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">Memory module for conversation</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">.memory</span> <span class="kn">import</span> <span class="n">MemoryBase</span>
-<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span> <span class="nn">..serialize</span> <span class="kn">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
-<span class="kn">from</span> <span class="nn">..service.retrieval.retrieval_from_list</span> <span class="kn">import</span> <span class="n">retrieve_from_list</span>
-<span class="kn">from</span> <span class="nn">..service.retrieval.similarity</span> <span class="kn">import</span> <span class="n">Embedding</span>
-<span class="kn">from</span> <span class="nn">..message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">..rpc</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service.retrieval.retrieval_from_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">retrieve_from_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service.retrieval.similarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncResult</span>
 
 
 <div class="viewcode-block" id="TemporaryMemory">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory">[文档]</a>
-<span class="k">class</span> <span class="nc">TemporaryMemory</span><span class="p">(</span><span class="n">MemoryBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TemporaryMemory</span><span class="p">(</span><span class="n">MemoryBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    In-memory memory module, not writing to hard disk</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TemporaryMemory.__init__">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -184,7 +184,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.add">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.add">[文档]</a>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">embed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -236,7 +236,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.delete">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.delete">[文档]</a>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete memory fragment, depending on how the memory are stored</span>
 <span class="sd">        and matched</span>
@@ -275,7 +275,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.export">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.export">[文档]</a>
-    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -307,7 +307,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.load">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.load">[文档]</a>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">],</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -373,21 +373,21 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.clear">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.clear">[文档]</a>
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean memory, depending on how the memory are stored&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="p">[]</span></div>
 
 
 <div class="viewcode-block" id="TemporaryMemory.size">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.size">[文档]</a>
-    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of memory segments in memory.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TemporaryMemory.retrieve_by_embedding">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.retrieve_by_embedding">[文档]</a>
-    <span class="k">def</span> <span class="nf">retrieve_by_embedding</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_by_embedding</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Embedding</span><span class="p">],</span>
         <span class="n">metric</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Embedding</span><span class="p">,</span> <span class="n">Embedding</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
@@ -444,7 +444,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.get_embeddings">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.get_embeddings">[文档]</a>
-    <span class="k">def</span> <span class="nf">get_embeddings</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_embeddings</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span> <span class="n">Embedding</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -473,7 +473,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TemporaryMemory.get_memory">
 <a class="viewcode-back" href="../../../agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.get_memory">[文档]</a>
-    <span class="k">def</span> <span class="nf">get_memory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_memory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">recent_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">filter_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

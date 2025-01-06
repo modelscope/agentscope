@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>样例：狼人杀游戏 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -170,15 +170,15 @@
 <li><p>女巫：一位村民，每晚可以救活或毒杀一名玩家</p></li>
 </ul>
 <p>要实现您自己的agent，您需要继承AgentBase并实现reply函数，当通过agent1(x)调用agent实例时，将执行此函数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
 
 
-<span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
         <span class="c1"># Do something here</span>
         <span class="o">...</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -202,7 +202,7 @@
 <section id="agentscopeagents">
 <h3>第三步：初始化AgentScope和Agents<a class="headerlink" href="#agentscopeagents" title="Link to this heading"></a></h3>
 <p>现在我们已经定义了角色，我们可以初始化AgentScope环境和所有agents。这个过程通过AgentScope的几行代码和我们准备的配置文件（假设有2个狼人、2个村民、1个女巫和1个预言家）就能简单完成：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="c1"># read model and agent configs, and initialize agents automatically</span>
 <span class="n">survivors</span> <span class="o">=</span> <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
@@ -249,7 +249,7 @@
 <p>为了简化agent通信的构建，AgentScope提供了两个有用的概念：Pipeline和MsgHub。</p>
 <ul>
 <li><p><strong>Pipeline</strong>：它能让用户轻松地编程实现agent之间的不同通信编排。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">(</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># the message x will be passed and replied by agent 1,2,3 in order</span>

@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.parsers.tagged_content_parser &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,18 +125,18 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.parsers.tagged_content_parser 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The parser for tagged content in the model response.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">JsonParsingError</span><span class="p">,</span> <span class="n">TagNotFoundError</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.parsers.parser_base</span> <span class="kn">import</span> <span class="n">DictFilterMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonParsingError</span><span class="p">,</span> <span class="n">TagNotFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers.parser_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictFilterMixin</span>
 
 
 <div class="viewcode-block" id="TaggedContent">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.TaggedContent">[文档]</a>
-<span class="k">class</span> <span class="nc">TaggedContent</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaggedContent</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A tagged content object to store the tag name, tag begin, content hint</span>
 <span class="sd">    and tag end.&quot;&quot;&quot;</span>
 
@@ -158,7 +158,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="TaggedContent.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.TaggedContent.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">tag_begin</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -188,7 +188,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_json</span> <span class="o">=</span> <span class="n">parse_json</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the tagged content as a string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_begin</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">content_hint</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_end</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
@@ -196,7 +196,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MultiTaggedContentParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser">[文档]</a>
-<span class="k">class</span> <span class="nc">MultiTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse response text by multiple tags, and return a dict of their</span>
 <span class="sd">    content. Asking llm to generate JSON dictionary object directly maybe not a</span>
 <span class="sd">    good idea due to involving escape characters and other issues. So we can</span>
@@ -217,7 +217,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MultiTaggedContentParser.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">tagged_contents</span><span class="p">:</span> <span class="n">TaggedContent</span><span class="p">,</span>
         <span class="n">keys_to_memory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -299,7 +299,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MultiTaggedContentParser.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.tagged_content_parser.html#agentscope.parsers.MultiTaggedContentParser.parse">[文档]</a>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text by tags, and return a dict of their content</span>
 <span class="sd">        in the parsed field of the model response object. If the tagged content</span>
 <span class="sd">        requires to parse as a JSON object by `parse_json` equals to `True`, it</span>
@@ -329,7 +329,7 @@ window.addEventListener("load", () => mermaid.run());
                             <span class="sa">f</span><span class="s1">&#39;object. An error &quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&quot; occurred when parsing: &#39;</span>
                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">raw_response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                             <span class="n">raw_response</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
-                        <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+                        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
                 <span class="n">tag_to_content</span><span class="p">[</span><span class="n">tagged_content</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_content</span>
 
@@ -341,7 +341,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="p">):</span>
                     <span class="k">continue</span>
 
-                <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span> <span class="kc">None</span>
+                <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
         <span class="n">response</span><span class="o">.</span><span class="n">parsed</span> <span class="o">=</span> <span class="n">tag_to_content</span>
         <span class="k">return</span> <span class="n">response</span></div>

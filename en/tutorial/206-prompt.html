@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Prompt Engineering &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -186,8 +186,8 @@ function in <code class="docutils literal notranslate"><span class="pre">OpenAIC
 <li><p><code class="docutils literal notranslate"><span class="pre">List</span></code>: Parse each element in the list according to the above rules.</p></li>
 </ul>
 <p>An example is shown below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -217,8 +217,8 @@ function in <code class="docutils literal notranslate"><span class="pre">OpenAIC
 <p>For vision models (gpt-4-turbo, gpt-4o, …), if the input message contains image urls, the generated <code class="docutils literal notranslate"><span class="pre">content</span></code> field will be a list of dicts, which contains text and image urls.</p>
 <p>Specifically, the web image urls will be pass to OpenAI Chat API directly, while the local image urls will be converted to base64 format. More details please refer to the <a class="reference external" href="https://platform.openai.com/docs/guides/vision">official guidance</a>.</p>
 <p>Note the invalid image urls (e.g. <code class="docutils literal notranslate"><span class="pre">/Users/xxx/test.mp3</span></code>) will be ignored.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -294,8 +294,8 @@ message in the list.</p></li>
 <h4>Prompt Strategy<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
 <p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the conversation history.</p>
 <p>An example is shown below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -380,8 +380,8 @@ message in the list.</p></li>
 <li><p>The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the conversation history. For each message, if their <code class="docutils literal notranslate"><span class="pre">url</span></code> field is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, it will add a dictionary with the key <code class="docutils literal notranslate"><span class="pre">&quot;image&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;audio&quot;</span></code> to the <code class="docutils literal notranslate"><span class="pre">content</span></code> based on the file type that the <code class="docutils literal notranslate"><span class="pre">url</span></code> points to.</p></li>
 </ul>
 <p>An example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">DashScopeMultiModalWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeMultiModalWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeMultiModalWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -436,8 +436,8 @@ own format function for your model.</p>
 <ul class="simple">
 <li><p>Messages will consist conversation history in the <code class="docutils literal notranslate"><span class="pre">user</span></code> message prefixed by the system message and “## Conversation History”.</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">LiteLLMChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiteLLMChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">LiteLLMChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -490,8 +490,8 @@ conversation history in the system message prefixed by “## Conversation Histor
 <li><p>If the <code class="docutils literal notranslate"><span class="pre">url</span></code> attribute of messages is not <code class="docutils literal notranslate"><span class="pre">None</span></code>, we will gather all urls in
 the <code class="docutils literal notranslate"><span class="pre">&quot;images&quot;</span></code> field in the returned dictionary.</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OllamaChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -533,8 +533,8 @@ takes a string prompt as input without any constraints (updated to 2024/03/22).<
 <section id="id5">
 <h4>Prompt Strategy<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
 <p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, a system prompt will be created. The rest of the messages will be combined into conversation history in string format.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">OllamaGenerationWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaGenerationWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">OllamaGenerationWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -582,8 +582,8 @@ in our built-in <code class="docutils literal notranslate"><span class="pre">for
 <p><strong>Note</strong> sometimes the <code class="docutils literal notranslate"><span class="pre">parts</span></code> field may contain image urls, which is not
 supported in <code class="docutils literal notranslate"><span class="pre">format</span></code> function. We recommend developers to customize the
 prompt according to their needs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">GeminiChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>
@@ -628,8 +628,8 @@ prompt according to their needs.</p>
 <h4>Prompt Strategy<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
 <p>If the role field of the first message is <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code>, it will be converted into a single message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;system&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the system message. The rest of the messages will be converted into a message with the <code class="docutils literal notranslate"><span class="pre">role</span></code> field as <code class="docutils literal notranslate"><span class="pre">&quot;user&quot;</span></code> and the <code class="docutils literal notranslate"><span class="pre">content</span></code> field as the conversation history.</p>
 <p>An example is shown below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZhipuAIChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">ZhipuAIChatWrapper</span><span class="p">(</span>
     <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1"># empty since we directly initialize the model wrapper</span>

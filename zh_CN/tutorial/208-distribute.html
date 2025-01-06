@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>分布式 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -185,22 +185,22 @@ window.addEventListener("load", () => mermaid.run());
 <span class="c1"># 运行该代码前请先安装 agentscope 的分布式版本</span>
 <span class="c1"># pip install agentscope[distribute]</span>
 
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
-<span class="k">class</span> <span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;模拟爬取网页并从中寻找问题答案&quot;&quot;&quot;</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
@@ -211,15 +211,15 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">QUERY</span> <span class="o">=</span> <span class="s2">&quot;example query&quot;</span>
 <span class="n">URLS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;page_1&quot;</span><span class="p">,</span> <span class="s2">&quot;page_2&quot;</span><span class="p">,</span> <span class="s2">&quot;page_3&quot;</span><span class="p">,</span> <span class="s2">&quot;page_4&quot;</span><span class="p">,</span> <span class="s2">&quot;page_5&quot;</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">init_without_dist</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init_without_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 
 
-<span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 
 
-<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">URLS</span><span class="p">):</span>
@@ -295,9 +295,9 @@ window.addEventListener("load", () => mermaid.run());
 <span class="c1"># 运行该代码前请先安装 agentscope 的分布式版本</span>
 <span class="c1"># pip install agentscope[distribute]</span>
 
-<span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.server</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
-<span class="kn">from</span> <span class="nn">dist_main</span> <span class="kn">import</span> <span class="n">WebAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dist_main</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebAgent</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
@@ -315,7 +315,7 @@ window.addEventListener("load", () => mermaid.run());
 </div>
 <p>上述代码中，我们通过 <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code> 启动了一个智能体服务器进程，需要注意的是由于 <code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> 不是 AgentScope 自带的 Agent 实现，需要将 <code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> 添加到 <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code> ，才能在智能体服务器进程中创建该类型的 Agent。另外如果智能体服务器进程中需要使用模型 API，则需要在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 中配置对应的模型参数。</p>
 <p>同时还需要将 <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> 更新为下面的代码：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 </pre></div>
 </div>
@@ -345,13 +345,13 @@ window.addEventListener("load", () => mermaid.run());
 <p>这样的流程存在一个潜在问题，即原 Agent 被初始化了两次，一次是在主进程中，一次是在智能体服务器进程中，并且这两次初始化是依次执行的，无法通过并行加速。对于初始化成本比较低的 Agent，直接调用 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> 函数不会对性能产生明显影响，但是对于初始化成本较高的 Agent，则需要尽量避免重复初始化行为，为此 AgentScope 分布式模式提供了另一种分布式模式的初始化方法，即直接在任意 Agent 的初始化函数内部传入 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> 参数，例如下面的代码就是对 <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> 的<code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> 函数的修改。</p>
 <ul>
 <li><p>对于子进程模式，只需要在初始化函数中传入 <code class="docutils literal notranslate"><span class="pre">to_dist=True</span></code> 即可。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 </pre></div>
 </div>
 </li>
 <li><p>对于独立进程模式，则需要将原来传入<code class="docutils literal notranslate"><span class="pre">to_dist</span></code>函数的参数以字典的形式传入到 <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> 域中。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="s2">&quot;12345&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 </pre></div>
 </div>
@@ -411,33 +411,33 @@ window.addEventListener("load", () => mermaid.run());
 <p><a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.async_func" title="agentscope.rpc.async_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">async_func</span></code></a> 装饰器的实现位于 <code class="docutils literal notranslate"><span class="pre">src/agentscope/rpc/rpc_meta.py</span></code>。<code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> 及其所有子类的 <code class="docutils literal notranslate"><span class="pre">__call__</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">reply</span></code> 方法都被标记为了 <code class="docutils literal notranslate"><span class="pre">async_func</span></code> 以避免阻塞。</p>
 <p>与 <code class="docutils literal notranslate"><span class="pre">async_func</span></code> 相对的还有 <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.sync_func" title="agentscope.rpc.sync_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">sync_func</span></code></a> 装饰器，用于标识同步方法。但由于同步方法为默认情况，因此一般不需要显式标注。</p>
 <p>如下是一个简单的示例，这里声明了一个 <code class="docutils literal notranslate"><span class="pre">Example</span></code> 类，其中 <code class="docutils literal notranslate"><span class="pre">sync_method</span></code> 是同步方法，<code class="docutils literal notranslate"><span class="pre">async_method_basic</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">async_method_complex</span></code> 被标记为了异步方法，<code class="docutils literal notranslate"><span class="pre">_protected_method</span></code> 是私有方法。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span>
 
 
-<span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">RpcMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Example</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">RpcMeta</span><span class="p">):</span>
 
     <span class="c1"># @sync_func  # 默认即为 sync_func，可以不添加</span>
-    <span class="k">def</span> <span class="nf">sync_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># 同步方法，调用者会被阻塞 1 s</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;sync&quot;</span>
 
     <span class="nd">@async_func</span>
-    <span class="k">def</span> <span class="nf">async_method_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">async_method_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># 异步方法，调用者不会被阻塞，可以继续执行直到尝试获取结果</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># 返回一个基本类型</span>
         <span class="k">return</span> <span class="s2">&quot;async&quot;</span>
 
     <span class="nd">@async_func</span>
-    <span class="k">def</span> <span class="nf">async_method_composite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">async_method_composite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># 异步方法</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># 返回一个字典</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world&quot;</span><span class="p">,}</span>
 
-    <span class="k">def</span> <span class="nf">_protected_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_protected_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># 不是公有方法，rpc object 无法调用该方法</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;protected&quot;</span>
@@ -493,9 +493,9 @@ Async func cost: 0.0003597736358642578 s
 具体来说，为了保证启动的 Server 进程中能够正确地重新初始化 Client 端发来的对象并正确调用模型API服务，需要在启动 Server 时注册在运行中可能用到的所有 <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code> 的子类，并且正确设置模型配置。具体来说有两种启动方法，分别是通过代码启动，和通过命令行指令启动。</p>
 <ul>
 <li><p>通过代码启动的具体方法如下，需要指定 <code class="docutils literal notranslate"><span class="pre">host</span></code> 和 <code class="docutils literal notranslate"><span class="pre">port</span></code>，以及 <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code>，并且需要在调用 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 时传入需要使用的模型配置。这里假设有 <code class="docutils literal notranslate"><span class="pre">AgentA</span></code>，<code class="docutils literal notranslate"><span class="pre">AgentB</span></code>，<code class="docutils literal notranslate"><span class="pre">AgentC</span></code> 这三个自定义类需要被注册，并且 <code class="docutils literal notranslate"><span class="pre">AgentA</span></code>，<code class="docutils literal notranslate"><span class="pre">AgentB</span></code>，<code class="docutils literal notranslate"><span class="pre">AgentC</span></code> 这三个类都位于 <code class="docutils literal notranslate"><span class="pre">myagents.py</span></code> 文件中且都是 <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> 的子类。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.server</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
-<span class="kn">from</span> <span class="nn">myagents</span> <span class="kn">import</span> <span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">,</span> <span class="n">AgentC</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myagents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">,</span> <span class="n">AgentC</span>
 
 
 <span class="n">MODEL_CONFIGS</span> <span class="o">=</span> <span class="p">{}</span>

@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.web.search &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -122,15 +122,15 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.service.web.search</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Search question in the web&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">...utils.common</span> <span class="kn">import</span> <span class="n">_requests_get</span>
-<span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_requests_get</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
 
 
 <div class="viewcode-block" id="bing_search">
 <a class="viewcode-back" href="../../../../agentscope.service.web.search.html#agentscope.service.bing_search">[docs]</a>
-<span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bing_search</span><span class="p">(</span>
     <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -240,7 +240,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="google_search">
 <a class="viewcode-back" href="../../../../agentscope.service.web.search.html#agentscope.service.google_search">[docs]</a>
-<span class="k">def</span> <span class="nf">google_search</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">google_search</span><span class="p">(</span>
     <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">cse_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>

@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.rag.knowledge_bank &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -123,13 +123,13 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Knowledge bank for making Knowledge objects easier to use</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">..manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span> <span class="nn">.knowledge</span> <span class="kn">import</span> <span class="n">Knowledge</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knowledge</span>
 
 <span class="n">DEFAULT_INDEX_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;knowledge_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -154,7 +154,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="KnowledgeBank">
 <a class="viewcode-back" href="../../../agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank">[docs]</a>
-<span class="k">class</span> <span class="nc">KnowledgeBank</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KnowledgeBank</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    KnowledgeBank enables</span>
 <span class="sd">    1) provide an easy and fast way to initialize the Knowledge object;</span>
@@ -163,7 +163,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="KnowledgeBank.__init__">
 <a class="viewcode-back" href="../../../agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -179,7 +179,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_knowledge</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_init_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;initialize the knowledge bank&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
@@ -192,7 +192,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="KnowledgeBank.add_data_as_knowledge">
 <a class="viewcode-back" href="../../../agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank.add_data_as_knowledge">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_data_as_knowledge</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_data_as_knowledge</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">emb_model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -233,7 +233,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">                )</span>
 <span class="sd">            &#39;&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">.llama_index_knowledge</span> <span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.llama_index_knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
 
         <span class="k">if</span> <span class="n">knowledge_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;knowledge_id </span><span class="si">{</span><span class="n">knowledge_id</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
@@ -267,7 +267,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="KnowledgeBank.get_knowledge">
 <a class="viewcode-back" href="../../../agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank.get_knowledge">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_knowledge</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_knowledge</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">duplicate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -296,7 +296,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="KnowledgeBank.equip">
 <a class="viewcode-back" href="../../../agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank.equip">[docs]</a>
-    <span class="k">def</span> <span class="nf">equip</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">equip</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">agent</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
         <span class="n">knowledge_id_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

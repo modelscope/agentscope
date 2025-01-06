@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.strategy.mixture_of_agent &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -127,13 +127,13 @@ window.addEventListener("load", () => mermaid.run());
 <span class="c1"># pylint: disable=C0301</span>
 <span class="sd">&quot;&quot;&quot; Utils for mixing model&#39;s answers in agentscope &quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">import</span> <span class="nn">concurrent.futures</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">concurrent.futures</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 
 
 <span class="c1"># Referenced from the project [MoA](https://github.com/togethercomputer/MoA)</span>
@@ -144,7 +144,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MixtureOfAgents">
 <a class="viewcode-back" href="../../../agentscope.strategy.mixture_of_agent.html#agentscope.strategy.MixtureOfAgents">[文档]</a>
-<span class="k">class</span> <span class="nc">MixtureOfAgents</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MixtureOfAgents</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The MoA model that take multiple models and aggregate their responses,</span>
 <span class="sd">    leverages the collective strengths of multiple LLMs to enhance performance.</span>
@@ -153,7 +153,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MixtureOfAgents.__init__">
 <a class="viewcode-back" href="../../../agentscope.strategy.mixture_of_agent.html#agentscope.strategy.MixtureOfAgents.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">main_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelWrapperBase</span><span class="p">],</span>
         <span class="n">reference_models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModelWrapperBase</span><span class="p">]],</span>
@@ -219,7 +219,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">show_internal</span> <span class="o">=</span> <span class="n">show_internal</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_res_with_aggregate_model</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_res_with_aggregate_model</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">aggre_model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -239,7 +239,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">aggre_res</span> <span class="o">=</span> <span class="n">aggre_model</span><span class="p">(</span><span class="n">aggre_format_msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">aggre_res</span><span class="o">.</span><span class="n">text</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -256,7 +256,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">                The messages to be sent to the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_process_reference</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_process_reference</span><span class="p">(</span>
             <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">ref_model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">,</span>
             <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
@@ -265,7 +265,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">ref_model_res</span> <span class="o">=</span> <span class="n">ref_model</span><span class="p">(</span><span class="n">format_msg</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">ref_model_res</span><span class="o">.</span><span class="n">text</span>
 
-        <span class="k">def</span> <span class="nf">_process_new_refs</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_process_new_refs</span><span class="p">(</span>
             <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
             <span class="n">ref_model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>

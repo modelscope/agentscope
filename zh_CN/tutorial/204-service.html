@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>工具 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -335,7 +335,7 @@
 <ol class="arabic simple">
 <li><p>初始化一个ServiceToolkit对象并注册服务函数及其必要参数。例如，以下Bing搜索功能。</p></li>
 </ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bing_search</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bing_search</span><span class="p">(</span>
     <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -362,7 +362,7 @@
 </div>
 <p>We register the function in a <code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code> object by providing <code class="docutils literal notranslate"><span class="pre">api_key</span></code> and <code class="docutils literal notranslate"><span class="pre">num_results</span></code> as necessary parameters.
 我们通过提供<code class="docutils literal notranslate"><span class="pre">api_key</span></code>和<code class="docutils literal notranslate"><span class="pre">num_results</span></code>作为必要参数，在<code class="docutils literal notranslate"><span class="pre">ServiceToolkit</span></code>对象中注册bing_search函数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceToolkit</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span>
 
 <span class="n">service_toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
 
@@ -467,13 +467,13 @@ arguments两个字段，其中name为函数名，arguments为函数参数。argu
 <h3>关于ServiceResponse<a class="headerlink" href="#serviceresponse" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">ServiceResponse</span></code>是对调用的结果的封装，包含了<code class="docutils literal notranslate"><span class="pre">status</span></code>和<code class="docutils literal notranslate"><span class="pre">content</span></code>两个字段。
 当Service函数正常运行结束时，<code class="docutils literal notranslate"><span class="pre">status</span></code>为<code class="docutils literal notranslate"><span class="pre">ServiceExecStatus.</span> <span class="pre">SUCCESS</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>为函数的返回值。而当运行出现错误时，<code class="docutils literal notranslate"><span class="pre">status</span></code>为<code class="docutils literal notranslate"><span class="pre">ServiceExecStatus.</span> <span class="pre">Error</span></code>，<code class="docutils literal notranslate"><span class="pre">content</span></code>内为错误信息。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ServiceResponse</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ServiceResponse</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to wrap the execution results of the services&quot;&quot;&quot;</span>
 
     <span class="fm">__setattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__setitem__</span>
     <span class="fm">__getattr__</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="fm">__getitem__</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">ServiceExecStatus</span><span class="p">,</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -500,13 +500,13 @@ arguments两个字段，其中name为函数名，arguments为函数参数。argu
 </section>
 <section id="id5">
 <h2>示例<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 
 
-<span class="k">def</span> <span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    创建文件并向其中写入内容。</span>
 
@@ -520,10 +520,10 @@ arguments两个字段，其中name为函数名，arguments为函数参数。argu
     <span class="c1"># ... [为简洁起见省略代码]</span>
 
 
-<span class="k">class</span> <span class="nc">YourAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
     <span class="c1"># ... [为简洁起见省略代码]</span>
 
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
         <span class="c1"># ... [为简洁起见省略代码]</span>
 
         <span class="c1"># 构造提示，让代理提供 JSON 格式的参数</span>

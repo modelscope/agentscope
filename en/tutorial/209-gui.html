@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AgentScope Studio &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -133,7 +133,7 @@ It provides the following features:</p>
 <h2>Start AgentScope Studio<a class="headerlink" href="#start-agentscope-studio" title="Link to this heading"></a></h2>
 <p>To start a studio, first ensure you have installed the latest version of AgentScope.
 Then, you can simply run the following Python code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 </pre></div>
@@ -144,7 +144,7 @@ Then, you can simply run the following Python code:</p>
 </div>
 <p>After that, you can visit AgentScope studio at <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:5000</span></code>.</p>
 <p>Of course, you can change the host and port, and link to your application running histories by providing the following arguments:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>                   <span class="c1"># The IP address of AgentScope studio</span>
@@ -177,7 +177,7 @@ ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>rem
 <section id="register-running-application">
 <h3>Register Running Application<a class="headerlink" href="#register-running-application" title="Link to this heading"></a></h3>
 <p>After starting the AgentScope Studio, you can register your running applications by specifying <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.init()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="c1"># ...</span>
@@ -195,7 +195,7 @@ ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>rem
 <section id="import-running-histories">
 <h3>Import Running Histories<a class="headerlink" href="#import-running-histories" title="Link to this heading"></a></h3>
 <p>In AgentScope, the running histories are saved in the <code class="docutils literal notranslate"><span class="pre">./runs</span></code> directory by default. If you want to watch these running histories in the Dashboard, you can specify the <code class="docutils literal notranslate"><span class="pre">run_dirs</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.studio.init()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;xxx/runs&quot;</span><span class="p">]</span>

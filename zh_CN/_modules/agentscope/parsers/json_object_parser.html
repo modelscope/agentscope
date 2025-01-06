@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.parsers.json_object_parser &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,29 +125,29 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.parsers.json_object_parser 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The parser for JSON object in the model response.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exception</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TagNotFoundError</span><span class="p">,</span>
     <span class="n">JsonParsingError</span><span class="p">,</span>
     <span class="n">JsonTypeError</span><span class="p">,</span>
     <span class="n">RequiredFieldNotFoundError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
-<span class="kn">from</span> <span class="nn">..parsers.parser_base</span> <span class="kn">import</span> <span class="n">DictFilterMixin</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_join_str_with_comma_and</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..parsers.parser_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictFilterMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_join_str_with_comma_and</span>
 
 
 <div class="viewcode-block" id="MarkdownJsonObjectParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonObjectParser">[文档]</a>
-<span class="k">class</span> <span class="nc">MarkdownJsonObjectParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MarkdownJsonObjectParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A parser to parse the response text to a json object.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;json block&quot;</span>
@@ -170,7 +170,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownJsonObjectParser.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonObjectParser.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_hint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_hint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the parser with the content hint.</span>
 
 <span class="sd">        Args:</span>
@@ -192,7 +192,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownJsonObjectParser.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonObjectParser.parse">[文档]</a>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a json object, and fill it in the parsed</span>
 <span class="sd">        field in the response object.&quot;&quot;&quot;</span>
 
@@ -230,7 +230,7 @@ window.addEventListener("load", () => mermaid.run());
 
             <span class="k">except</span> <span class="n">TagNotFoundError</span><span class="p">:</span>
                 <span class="c1"># Raise the original error if the missing tags cannot be fixed</span>
-                <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span> <span class="kc">None</span>
+                <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
         <span class="c1"># Parse the content into JSON object</span>
         <span class="k">try</span><span class="p">:</span>
@@ -244,11 +244,11 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="sa">f</span><span class="s2">&quot;MUST be a JSON object.&quot;</span>
                 <span class="sa">f</span><span class="s1">&#39;When parsing &quot;</span><span class="si">{</span><span class="n">raw_response</span><span class="si">}</span><span class="s1">&quot;, an error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                 <span class="n">raw_response</span><span class="o">=</span><span class="n">raw_response</span><span class="p">,</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span></div>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the format instruction for the json object, if the</span>
 <span class="sd">        format_example is provided, it will be used as the example.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -260,7 +260,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownJsonDictParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonDictParser">[文档]</a>
-<span class="k">class</span> <span class="nc">MarkdownJsonDictParser</span><span class="p">(</span><span class="n">MarkdownJsonObjectParser</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MarkdownJsonDictParser</span><span class="p">(</span><span class="n">MarkdownJsonObjectParser</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class used to parse a JSON dictionary object in a markdown fenced</span>
 <span class="sd">    code&quot;&quot;&quot;</span>
 
@@ -300,7 +300,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownJsonDictParser.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonDictParser.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">content_hint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">required_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -377,7 +377,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the format instruction for the json object, if the</span>
 <span class="sd">        format_example is provided, it will be used as the example.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -393,7 +393,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownJsonDictParser.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.json_object_parser.html#agentscope.parsers.MarkdownJsonDictParser.parse">[文档]</a>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the text field of the response to a JSON dictionary object,</span>
 <span class="sd">        store it in the parsed field of the response object, and check if the</span>
 <span class="sd">        required keys exists.</span>
@@ -419,7 +419,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
                     <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
                     <span class="n">raw_response</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-                <span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
         <span class="c1"># Check if the required keys exist</span>
         <span class="n">keys_missing</span> <span class="o">=</span> <span class="p">[]</span>

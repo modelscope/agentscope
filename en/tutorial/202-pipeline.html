@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pipeline and MsgHub &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -125,11 +125,11 @@
 <h2>Pipelines<a class="headerlink" href="#pipelines" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> in AgentScope serves as conduits through which messages pass among agents. In AgentScope, an <code class="docutils literal notranslate"><span class="pre">Agent</span></code> is a subclass of an <code class="docutils literal notranslate"><span class="pre">Operator</span></code> that performs some operation on input data. Pipelines extend this concept by encapsulating multiple agents, and also act as an <code class="docutils literal notranslate"><span class="pre">Operator</span></code>.</p>
 <p>Here is the base class for all pipeline types:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
 <span class="w">   </span><span class="sd">&quot;&quot;&quot;Base interface of all pipelines.&quot;&quot;&quot;</span>
     <span class="c1"># ... [code omitted for brevity]</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the actions taken by this pipeline.</span>
 
 <span class="sd">        Args:</span>
@@ -218,7 +218,7 @@
 </div>
 </li>
 <li><p>Using pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">([</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">])</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -226,7 +226,7 @@
 </div>
 </li>
 <li><p>Using functional pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">sequentialpipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequentialpipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">([</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -246,7 +246,7 @@
 </div>
 </li>
 <li><p>Using pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">IfElsePipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">IfElsePipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">IfElsePipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -254,7 +254,7 @@
 </div>
 </li>
 <li><p>Using functional pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">ifelsepipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">ifelsepipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">ifelsepipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -277,7 +277,7 @@
 </div>
 </li>
 <li><p>Using pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SwitchPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SwitchPipeline</span>
 
 <span class="n">case_operators</span> <span class="o">=</span> <span class="p">{</span><span class="n">case1</span><span class="p">:</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">case2</span><span class="p">:</span> <span class="n">agent2</span><span class="p">}</span>
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">SwitchPipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">case_operators</span><span class="p">,</span> <span class="n">default_agent</span><span class="p">)</span>
@@ -286,7 +286,7 @@
 </div>
 </li>
 <li><p>Using functional pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">switchpipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">switchpipeline</span>
 
 <span class="n">case_operators</span> <span class="o">=</span> <span class="p">{</span><span class="n">case1</span><span class="p">:</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">case2</span><span class="p">:</span> <span class="n">agent2</span><span class="p">}</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">switchpipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">case_operators</span><span class="p">,</span> <span class="n">default_agent</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
@@ -307,7 +307,7 @@
 </div>
 </li>
 <li><p>Using pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">ForLoopPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForLoopPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">ForLoopPipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">,</span> <span class="n">break_condition</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -315,7 +315,7 @@
 </div>
 </li>
 <li><p>Using functional pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">forlooppipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">forlooppipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">forlooppipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">,</span> <span class="n">break_condition</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -333,7 +333,7 @@
 </div>
 </li>
 <li><p>Using pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">WhileLoopPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhileLoopPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">WhileLoopPipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -341,7 +341,7 @@
 </div>
 </li>
 <li><p>Using functional pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">whilelooppipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">whilelooppipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">whilelooppipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -353,7 +353,7 @@
 <section id="pipeline-combination">
 <h3>Pipeline Combination<a class="headerlink" href="#pipeline-combination" title="Link to this heading"></a></h3>
 <p>It’s worth noting that AgentScope supports the combination of pipelines to create complex interactions. For example, we can create a pipeline that executes a sequence of agents in order, and then executes another pipeline that executes a sequence of agents in condition.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span><span class="p">,</span> <span class="n">IfElsePipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span><span class="p">,</span> <span class="n">IfElsePipeline</span>
 <span class="c1"># Create a pipeline that executes agents in order</span>
 <span class="n">pipe1</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">([</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">])</span>
 <span class="c1"># Create a pipeline that executes agents in ifElsePipeline</span>
@@ -370,20 +370,20 @@
 <h2>MsgHub<a class="headerlink" href="#msghub" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">MsgHub</span></code> is designed to manage dialogue among a group of agents, allowing for the sharing of messages. Through <code class="docutils literal notranslate"><span class="pre">MsgHub</span></code>, agents can broadcast messages to all other agents in the group with <code class="docutils literal notranslate"><span class="pre">broadcast</span></code>.</p>
 <p>Here is the core class for a <code class="docutils literal notranslate"><span class="pre">MsgHub</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MsgHubManager</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MsgHubManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MsgHub manager class for sharing dialog among a group of agents.&quot;&quot;&quot;</span>
     <span class="c1"># ... [code omitted for brevity]</span>
 
-    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the message to all participants.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">       </span><span class="sd">&quot;&quot;&quot;Add new participant into this hub&quot;&quot;&quot;</span>
         <span class="c1"># ... [code omitted for brevity]</span>
 
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">       </span><span class="sd">&quot;&quot;&quot;Delete agents from participant.&quot;&quot;&quot;</span>
         <span class="c1"># ... [code omitted for brevity]</span>
 </pre></div>
@@ -393,7 +393,7 @@
 <section id="creating-a-msghub">
 <h4>Creating a MsgHub<a class="headerlink" href="#creating-a-msghub" title="Link to this heading"></a></h4>
 <p>To create a <code class="docutils literal notranslate"><span class="pre">MsgHub</span></code>, instantiate a <code class="docutils literal notranslate"><span class="pre">MsgHubManager</span></code> by calling the <code class="docutils literal notranslate"><span class="pre">msghub</span></code> helper function with a list of participating agents. Additionally, you can supply an optional initial announcement that, if provided, will be broadcast to all participants upon initialization.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.msg_hub</span> <span class="kn">import</span> <span class="n">msghub</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.msg_hub</span><span class="w"> </span><span class="kn">import</span> <span class="n">msghub</span>
 
 <span class="c1"># Initialize MsgHub with participating agents</span>
 <span class="n">hub_manager</span> <span class="o">=</span> <span class="n">msghub</span><span class="p">(</span>

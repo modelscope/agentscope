@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.parsers.code_block_parser &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,15 +125,15 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.parsers.code_block_parser 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Model response parser class for Markdown code block.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParserBase</span>
 
 
 <div class="viewcode-block" id="MarkdownCodeBlockParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.code_block_parser.html#agentscope.parsers.MarkdownCodeBlockParser">[文档]</a>
-<span class="k">class</span> <span class="nc">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for parsing the response text by fenced block.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{language_name}</span><span class="s2"> block&quot;</span>
@@ -157,7 +157,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownCodeBlockParser.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.code_block_parser.html#agentscope.parsers.MarkdownCodeBlockParser.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">language_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">content_hint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -190,7 +190,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="MarkdownCodeBlockParser.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.code_block_parser.html#agentscope.parsers.MarkdownCodeBlockParser.parse">[文档]</a>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the content between the tag_begin and tag_end in the</span>
 <span class="sd">        response and store it in the parsed field of the response object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Response Parser &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -261,7 +261,7 @@ For example, when LLM is required to generate Python code, if the code is return
 <h5>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h5>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownCodeBlockParser</span></code> requires LLM to generate specific text within a specified code block in Markdown format. Different languages can be specified with the <code class="docutils literal notranslate"><span class="pre">language_name</span></code> parameter to utilize the large model’s ability to produce corresponding outputs. For example, when asking the large model to produce Python code, initialize as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownCodeBlockParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownCodeBlockParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownCodeBlockParser</span><span class="p">(</span><span class="n">language_name</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;your python code&quot;</span><span class="p">)</span>
 </pre></div>
@@ -352,7 +352,7 @@ When initializing the parser, you can set the <code class="docutils literal notr
 <p>In AgentScope, we achieve post-processing by calling the <code class="docutils literal notranslate"><span class="pre">to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">to_memory</span></code>, and <code class="docutils literal notranslate"><span class="pre">to_metadata</span></code> methods, as shown in the following code:</p>
 <ul>
 <li><p>The code for the application’s control flow, create the corresponding parser object and load it</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
 <span class="c1"># ...</span>
 
@@ -385,7 +385,7 @@ When initializing the parser, you can set the <code class="docutils literal notr
 </li>
 <li><p>Filter the dictionary in the agent’s <code class="docutils literal notranslate"><span class="pre">reply</span></code> function</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># ...</span>
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 
         <span class="c1"># ...</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">parse_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
@@ -453,7 +453,7 @@ When initializing the parser, you can set the <code class="docutils literal notr
 <p><code class="docutils literal notranslate"><span class="pre">RegexTaggedContentParser</span></code> is designed for scenarios where 1) the tag name is uncertain, and 2) the number of tags is uncertain.
 In this case, the parser cannot provide a general response format instruction, so developers need to provide the corresponding response format instruction (<code class="docutils literal notranslate"><span class="pre">format_instruction</span></code>) when initializing.
 Of course, the developers can handle the prompt engineering by themselves optionally.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">RegexTaggedContentParser</span><span class="p">(</span>
     <span class="n">format_instruction</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Respond with specific tags as outlined below</span>
@@ -475,7 +475,7 @@ Of course, the developers can handle the prompt engineering by themselves option
 <li><p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code> requires LLM to generate dictionary within a code block fenced by ```json and ``` tags.</p></li>
 <li><p>Except <code class="docutils literal notranslate"><span class="pre">keys_to_content</span></code>, <code class="docutils literal notranslate"><span class="pre">keys_to_memory</span></code> and <code class="docutils literal notranslate"><span class="pre">keys_to_metadata</span></code>, the <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> parameter can be provided to give an example and explanation of the response result, that is, to remind LLM where and what kind of dictionary should be generated.
 This parameter can be a string or a dictionary. For dictionary, it will be automatically converted to a string when constructing the format instruction.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
 <span class="c1"># dictionary as content_hint</span>
 <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
@@ -509,10 +509,10 @@ This parameter can be a string or a dictionary. For dictionary, it will be autom
 <h6>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h6>
 <p>The <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">MarkdownJsonDictParser</span></code> also supports type validation based on Pydantic. When initializing, you can set <code class="docutils literal notranslate"><span class="pre">content_hint</span></code> to a Pydantic model class, and AgentScope will modify the <code class="docutils literal notranslate"><span class="pre">instruction_format</span></code> attribute based on this class. Besides, Pydantic will be used to validate the dictionary returned by LLM during parsing.</p>
 <p>A simple example is as follows, where <code class="docutils literal notranslate"><span class="pre">&quot;...&quot;</span></code> can be filled with specific type validation rules, which can be referred to the <a class="reference external" href="https://docs.pydantic.dev/latest/">Pydantic</a> documentation.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
-<span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Schema</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">thought</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;what you thought&quot;</span><span class="p">)</span>
     <span class="n">speak</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;what you speak&quot;</span><span class="p">)</span>
     <span class="n">end_discussion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;whether the discussion is finished&quot;</span><span class="p">)</span>
@@ -560,7 +560,7 @@ The generated JSON dictionary MUST follow this schema:
 <li><p>End tag (<code class="docutils literal notranslate"><span class="pre">tag_end</span></code>)</p></li>
 <li><p>Content parsing indication (<code class="docutils literal notranslate"><span class="pre">parse_json</span></code>), default as <code class="docutils literal notranslate"><span class="pre">False</span></code>. When set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the parser will automatically add hint that requires JSON object between the tags, and its extracted content will be parsed into a Python object via <code class="docutils literal notranslate"><span class="pre">json.loads</span></code></p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MultiTaggedContentParser</span><span class="p">,</span> <span class="n">TaggedContent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiTaggedContentParser</span><span class="p">,</span> <span class="n">TaggedContent</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MultiTaggedContentParser</span><span class="p">(</span>
   <span class="n">TaggedContent</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span>
@@ -629,7 +629,7 @@ The following is an example of parsing the LLM response in the werewolf game:</p
 <p><code class="docutils literal notranslate"><span class="pre">MarkdownJsonObjectParser</span></code> also uses the ```json and ``` tags in Markdown, but does not limit the content type. It can be a list, dictionary, number, string, etc., which can be parsed into a Python object via <code class="docutils literal notranslate"><span class="pre">json.loads</span></code>.</p>
 <section id="id4">
 <h5>Initialization &amp; Format Instruction Template<a class="headerlink" href="#id4" title="Link to this heading"></a></h5>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.parsers</span> <span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonObjectParser</span>
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonObjectParser</span><span class="p">(</span>
   <span class="n">content_hint</span><span class="o">=</span><span class="s2">&quot;{A list of numbers.}&quot;</span>
@@ -685,19 +685,19 @@ More details can be found in the werewolf game <a class="reference external" hre
 <h2>Customized Parser<a class="headerlink" href="#customized-parser" title="Link to this heading"></a></h2>
 <p>AgentScope provides a base class <code class="docutils literal notranslate"><span class="pre">ParserBase</span></code> for parsers. Developers can inherit this base class, and implement the <code class="docutils literal notranslate"><span class="pre">format_instruction</span></code> attribute and <code class="docutils literal notranslate"><span class="pre">parse</span></code> method to create their own parser.</p>
 <p>For dictionary type parsing, you can also inherit the <code class="docutils literal notranslate"><span class="pre">agentscope.parser.DictFilterMixin</span></code> class to implement post-processing for dictionary type.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
 
 
-<span class="k">class</span> <span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParserBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for model response parser.&quot;&quot;&quot;</span>
 
     <span class="n">format_instruction</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The instruction for the response format.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a specific object, and stored in the</span>
 <span class="sd">        parsed field of the response object.&quot;&quot;&quot;</span>
 

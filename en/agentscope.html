@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope package &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=c9484b72" />
 
@@ -297,6 +297,7 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.get_instance"><code class="docutils literal notranslate"><span class="pre">ModelManager.get_instance()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.__init__"><code class="docutils literal notranslate"><span class="pre">ModelManager.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.model_configs"><code class="docutils literal notranslate"><span class="pre">ModelManager.model_configs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.model_wrapper_mapping"><code class="docutils literal notranslate"><span class="pre">ModelManager.model_wrapper_mapping</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.initialize"><code class="docutils literal notranslate"><span class="pre">ModelManager.initialize()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.clear_model_configs"><code class="docutils literal notranslate"><span class="pre">ModelManager.clear_model_configs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.load_model_configs"><code class="docutils literal notranslate"><span class="pre">ModelManager.load_model_configs()</span></code></a></li>
@@ -304,6 +305,7 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.get_config_by_name"><code class="docutils literal notranslate"><span class="pre">ModelManager.get_config_by_name()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.state_dict"><code class="docutils literal notranslate"><span class="pre">ModelManager.state_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.load_dict"><code class="docutils literal notranslate"><span class="pre">ModelManager.load_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.register_model_wrapper_class"><code class="docutils literal notranslate"><span class="pre">ModelManager.register_model_wrapper_class()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.manager.html#agentscope.manager.ModelManager.flush"><code class="docutils literal notranslate"><span class="pre">ModelManager.flush()</span></code></a></li>
 </ul>
 </li>
@@ -471,7 +473,6 @@
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase.__init__"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase.config_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.config_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase.model_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_name</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase.get_wrapper"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.get_wrapper()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.ModelWrapperBase.format_for_common_chat_models"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format_for_common_chat_models()</span></code></a></li>
 </ul>
@@ -500,7 +501,6 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.model_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.deprecated_model_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.substrings_in_vision_models_names"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.substrings_in_vision_models_names</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.OpenAIChatWrapper.static_format"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.static_format()</span></code></a></li>
@@ -517,7 +517,6 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.model_type</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.deprecated_model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.deprecated_model_type</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.__init__"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.__init__()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.models.html#agentscope.models.DashScopeChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format()</span></code></a></li>
 </ul>
@@ -1390,6 +1389,22 @@ easy and elegant!</p>
 <span class="n">agent3</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.register_model_wrapper_class">
+<span class="sig-prename descclassname"><span class="pre">agentscope.</span></span><span class="sig-name descname"><span class="pre">register_model_wrapper_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_wrapper_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exist_ok</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/agentscope/_init.html#register_model_wrapper_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.register_model_wrapper_class" title="Link to this definition"></a></dt>
+<dd><p>Register the model wrapper in AgentScope so that you can use it with
+model configurations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_wrapper_class</strong> (<cite>Type[ModelWrapperBase]</cite>) – The model wrapper class to be registered, which must inherit from
+<cite>ModelWrapperBase</cite>.</p></li>
+<li><p><strong>exist_ok</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to overwrite the existing model wrapper with the same name.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

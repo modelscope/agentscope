@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.prompt._prompt_optimizer &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,11 +125,11 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.prompt._prompt_optimizer 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;A module that optimize agent system prompt given dialog history.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span> <span class="nn">agentscope.models</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 
 <span class="n">_DEFAULT_META_PROMPT_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">You are an excellent Prompt Engineer. Your task is to optimize an Agent&#39;s system prompt by adding notes.</span>
@@ -183,14 +183,14 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SystemPromptOptimizer">
 <a class="viewcode-back" href="../../../agentscope.prompt.html#agentscope.prompt.SystemPromptOptimizer">[文档]</a>
-<span class="k">class</span> <span class="nc">SystemPromptOptimizer</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SystemPromptOptimizer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A system prompt optimizer class. For now (2024-06-13), the optimizer can</span>
 <span class="sd">    optimize system prompt by extracting notes from the dialog history. It&#39;s</span>
 <span class="sd">    more like reflection on the dialog history.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SystemPromptOptimizer.__init__">
 <a class="viewcode-back" href="../../../agentscope.prompt.html#agentscope.prompt.SystemPromptOptimizer.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_or_model_config_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">meta_prompt_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_DEFAULT_META_PROMPT_TEMPLATE</span><span class="p">,</span>
@@ -222,7 +222,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">meta_prompt</span> <span class="o">=</span> <span class="n">meta_prompt_template</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_all_tagged_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_all_tagged_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all the notes in the response text.&quot;&quot;&quot;</span>
         <span class="c1"># TODO: Use a parser to extract the notes</span>
         <span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
@@ -247,7 +247,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="SystemPromptOptimizer.generate_notes">
 <a class="viewcode-back" href="../../../agentscope.prompt.html#agentscope.prompt.SystemPromptOptimizer.generate_notes">[文档]</a>
-    <span class="k">def</span> <span class="nf">generate_notes</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_notes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">dialog_history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span>

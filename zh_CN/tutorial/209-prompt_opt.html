@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>系统提示优化 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -178,8 +178,8 @@
 <section id="id4">
 <h3>初始化<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <p>为了初始化生成器，首先需要在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 函数中注册模型配置。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">EnglishSystemPromptGenerator</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnglishSystemPromptGenerator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
@@ -198,7 +198,7 @@
 </div>
 <p>生成器将使用内置的 meta prompt 来引导 LLM 生成 system prompt。
 开发者也可以使用自己的 meta prompt，如下所示：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">EnglishSystemPromptGenerator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnglishSystemPromptGenerator</span>
 
 <span class="n">your_meta_prompt</span> <span class="o">=</span> <span class="s2">&quot;You are an expert prompt engineer adept at writing and optimizing system prompts. Your task is to ...&quot;</span>
 
@@ -209,10 +209,10 @@
 </pre></div>
 </div>
 <p>欢迎开发者尝试不同的优化方法。AgentScope 提供了相应的 <code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase</span></code> 模块，用以实现自己的优化模块。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">SystemPromptGeneratorBase</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemPromptGeneratorBase</span>
 
-<span class="k">class</span> <span class="nc">MySystemPromptGenerator</span><span class="p">(</span><span class="n">SystemPromptGeneratorBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MySystemPromptGenerator</span><span class="p">(</span><span class="n">SystemPromptGeneratorBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -227,8 +227,8 @@
 <section id="system-prompt">
 <h3>生成 System Prompt<a class="headerlink" href="#system-prompt" title="Link to this heading"></a></h3>
 <p>调用 <code class="docutils literal notranslate"><span class="pre">generate</span></code> 函数生成 system prompt，这里的输入可以是一个需求，或者是想要优化的 system prompt。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">ChineseSystemPromptGenerator</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChineseSystemPromptGenerator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
@@ -267,7 +267,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">example_selection_strategy</span></code>: 选择样例的策略，可选 “random” 和 “similarity”。</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">example_list</span></code>: 一个样例的列表，其中每个样例必须是一个包含 “user_prompt” 和 “opt_prompt” 键的字典。如果未指定，则将使用内置的样例列表。</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">ChineseSystemPromptGenerator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChineseSystemPromptGenerator</span>
 
 <span class="n">generator</span> <span class="o">=</span> <span class="n">ChineseSystemPromptGenerator</span><span class="p">(</span>
     <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{your_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -292,8 +292,8 @@
 </ul>
 <p>如果上述两个参数都没有指定，AgentScope 将默认使用 <code class="docutils literal notranslate"><span class="pre">&quot;sentence-transformers/all-mpnet-base-v2&quot;</span></code> 模型，该模型足够小，可以在 CPU 上运行。
 一个简单利用 In Context Learning 的示例如下：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">ChineseSystemPromptGenerator</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChineseSystemPromptGenerator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
@@ -363,8 +363,8 @@
 <h3>初始化<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <p>为了初始化比较器，首先在 <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> 函数中注册模型配置，然后用需要比较的 system prompt 实例化 <code class="docutils literal notranslate"><span class="pre">SystemPromptComparer</span></code> 对象。
 让我们尝试一个非常有趣的例子：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">SystemPromptComparer</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemPromptComparer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
@@ -434,8 +434,8 @@
 当用户输入一个查询时，配置了不同的 system prompt 的智能体将会依次进行回复。
 注意，这个对话中智能体不会看到其它智能体的回复，他们只能与用户进行交互。</p>
 <p>通过这种方式，我们可以观察他们在多轮对话中的表现，并在任何时候输入 “exit” 来结束对话。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">SystemPromptComparer</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemPromptComparer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
     <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
@@ -489,12 +489,12 @@ User: exit
 </div></blockquote>
 <p>为了初始化优化器，需要提供一个 model wrapper 的实例，或模型配置名称。
 这里我们在一个自定义的智能体内使用 <code class="docutils literal notranslate"><span class="pre">SystemPromptOptimizer</span></code> 模块。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.prompt</span> <span class="kn">import</span> <span class="n">SystemPromptOptimizer</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemPromptOptimizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
-<span class="k">class</span> <span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -507,7 +507,7 @@ User: exit
             <span class="c1"># 或是 model_or_model_config_name=self.model</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>

@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.web.web_digest &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -122,17 +122,17 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.service.web.web_digest</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;parsing and digesting the web pages&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 
-<span class="kn">from</span> <span class="nn">agentscope.service.service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
-<span class="kn">from</span> <span class="nn">agentscope.service.service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
-<span class="kn">from</span> <span class="nn">agentscope.models.model</span> <span class="kn">import</span> <span class="n">ModelWrapperBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">summarization</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service.service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service.service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">summarization</span>
 
 
 <span class="n">DEFAULT_WEB_SYS_PROMPT</span> <span class="o">=</span> <span class="p">(</span>
@@ -143,7 +143,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="is_valid_url">
 <a class="viewcode-back" href="../../../../agentscope.service.web.web_digest.html#agentscope.service.is_valid_url">[docs]</a>
-<span class="k">def</span> <span class="nf">is_valid_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_valid_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Use urlparse to check if a URL is valid</span>
 <span class="sd">    Args:</span>
@@ -164,7 +164,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="load_web">
 <a class="viewcode-back" href="../../../../agentscope.service.web.web_digest.html#agentscope.service.load_web">[docs]</a>
-<span class="k">def</span> <span class="nf">load_web</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_web</span><span class="p">(</span>
     <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">keep_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -280,7 +280,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="parse_html_to_text">
 <a class="viewcode-back" href="../../../../agentscope.service.web.web_digest.html#agentscope.service.parse_html_to_text">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_html_to_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_html_to_text</span><span class="p">(</span>
     <span class="n">html_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -303,17 +303,17 @@ window.addEventListener("load", () => mermaid.run());
             <span class="sa">f</span><span class="s2">&quot;extracting text information from tags: &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">html_selected_tags</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span><span class="p">,</span> <span class="n">NavigableString</span><span class="p">,</span> <span class="n">Tag</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeautifulSoup</span><span class="p">,</span> <span class="n">NavigableString</span><span class="p">,</span> <span class="n">Tag</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;BeautifulSoup4 is required for processing the &quot;</span>
                 <span class="s2">&quot;web page without model.&quot;</span>
                 <span class="s2">&quot;Please install with `pip install bs4` .&quot;</span><span class="p">,</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
         <span class="n">doc</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_text</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">get_navigable_strings</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_navigable_strings</span><span class="p">(</span>
             <span class="n">e</span><span class="p">:</span> <span class="n">Tag</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="c1"># pylint: disable=cell-var-from-loop</span>
@@ -344,7 +344,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="digest_webpage">
 <a class="viewcode-back" href="../../../../agentscope.service.web.web_digest.html#agentscope.service.digest_webpage">[docs]</a>
-<span class="k">def</span> <span class="nf">digest_webpage</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">digest_webpage</span><span class="p">(</span>
     <span class="n">web_text_or_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">ModelWrapperBase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">html_selected_tags</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">),</span>

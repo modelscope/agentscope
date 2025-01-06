@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.execute_code.exec_notebook &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -130,25 +130,25 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">Partially referenced the implementation of</span>
 <span class="sd">https://github.com/geekan/MetaGPT/blob/main/metagpt/actions/di/execute_nb_code.py</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">base64</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">nbclient</span>
-    <span class="kn">import</span> <span class="nn">nbformat</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">nbclient</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">nbformat</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">nbclient</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">nbformat</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">...manager</span> <span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span> <span class="nn">..service_status</span> <span class="kn">import</span> <span class="n">ServiceExecStatus</span>
-<span class="kn">from</span> <span class="nn">..service_response</span> <span class="kn">import</span> <span class="n">ServiceResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service_response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span>
 
 
 <div class="viewcode-block" id="NoteBookExecutor">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_notebook.html#agentscope.service.NoteBookExecutor">[文档]</a>
-<span class="k">class</span> <span class="nc">NoteBookExecutor</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoteBookExecutor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for executing jupyter notebooks block interactively.</span>
 <span class="sd">    To use the service function, you should first init the class, then call the</span>
@@ -181,7 +181,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="NoteBookExecutor.__init__">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_notebook.html#agentscope.service.NoteBookExecutor.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -206,7 +206,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_client</span><span class="p">())</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_output_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_output_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the output of the notebook cell and return str&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;output_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;stream&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
@@ -224,14 +224,14 @@ window.addEventListener("load", () => mermaid.run());
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported output encountered: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;Unsupported output encountered&quot;</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_start_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_start_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;start notebook client&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">kc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">kc</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">create_kernel_manager</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">start_new_kernel</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">start_new_kernel_client</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_kill_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_kill_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;kill notebook client&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">km</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -244,13 +244,13 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">kc</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">km</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_restart_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_restart_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Restart the notebook client&quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kill_client</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span> <span class="o">=</span> <span class="n">nbclient</span><span class="o">.</span><span class="n">NotebookClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_client</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_run_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a cell in the notebook by its index&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nb_client</span><span class="o">.</span><span class="n">execute_cell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">cell_index</span><span class="p">],</span> <span class="n">cell_index</span><span class="p">)</span>
@@ -284,13 +284,13 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">cells_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cells_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return cell length&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span>
 
 <div class="viewcode-block" id="NoteBookExecutor.async_run_code_on_notebook">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_notebook.html#agentscope.service.NoteBookExecutor.async_run_code_on_notebook">[文档]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">async_run_code_on_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_run_code_on_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the code on interactive notebook</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -301,7 +301,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="NoteBookExecutor.run_code_on_notebook">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_notebook.html#agentscope.service.NoteBookExecutor.run_code_on_notebook">[文档]</a>
-    <span class="k">def</span> <span class="nf">run_code_on_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_code_on_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the code on interactive jupyter notebook.</span>
 
@@ -318,7 +318,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="NoteBookExecutor.reset_notebook">
 <a class="viewcode-back" href="../../../../agentscope.service.execute_code.exec_notebook.html#agentscope.service.NoteBookExecutor.reset_notebook">[文档]</a>
-    <span class="k">def</span> <span class="nf">reset_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the notebook</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -329,7 +329,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_save_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_base64</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_base64</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save image data to a file.</span>
 <span class="sd">        The image name is generated randomly here&quot;&quot;&quot;</span>
         <span class="n">image_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">image_base64</span><span class="p">)</span>

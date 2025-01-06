@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>快速开始 &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -142,7 +142,7 @@
 </div>
 <p>更多关于模型调用，部署和开源模型的信息请见<a class="reference internal" href="203-model.html#model-zh"><span class="std std-ref">模型</span></a>章节。</p>
 <p>准备好模型配置后，用户可以通过调用AgentScope的初始化方法<code class="docutils literal notranslate"><span class="pre">init</span></code>函数来注册您的配置。此外，您还可以一次性加载多个模型配置。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 
 <span class="c1"># 一次性初始化多个模型配置</span>
 <span class="n">openai_cfg_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -158,8 +158,8 @@
 <section id="id3">
 <h2>第二步: 创建智能体<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>创建智能体在AgentScope中非常简单。在初始化AgentScope时，您可以使用模型配置初始化AgentScope，然后定义每个智能体及其对应的角色和特定模型。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
 
 <span class="c1"># 读取模型配置</span>
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="s2">&quot;./model_configs.json&quot;</span><span class="p">)</span>
@@ -175,7 +175,7 @@
 <h2>第三步：智能体对话<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <p>消息（Message）是AgentScope中智能体之间的主要通信手段。
 它是一个Python字典，包括了一些基本字段，如消息的<code class="docutils literal notranslate"><span class="pre">content</span></code>和消息发送者的<code class="docutils literal notranslate"><span class="pre">name</span></code>。可选地，消息可以包括一个<code class="docutils literal notranslate"><span class="pre">url</span></code>，指向本地文件（图像、视频或音频）或网站。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 <span class="c1"># 来自Alice的简单文本消息示例</span>
 <span class="n">message_from_alice</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">)</span>
@@ -198,7 +198,7 @@
 </div>
 <p>进阶的使用中，AgentScope提供了Pipeline来管理智能体之间消息流的选项。
 其中<code class="docutils literal notranslate"><span class="pre">sequentialpipeline</span></code>代表顺序对话，每个智能体从上一个智能体接收消息并生成其响应。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines.functional</span> <span class="kn">import</span> <span class="n">sequentialpipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequentialpipeline</span>
 
 <span class="c1"># 在Pipeline结构中执行对话循环</span>
 <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>

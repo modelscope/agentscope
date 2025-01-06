@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.server.launcher &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,40 +125,40 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.server.launcher 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Server of distributed agent&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">signal</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Pipe</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
-<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">signal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Pipe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent</span><span class="w"> </span><span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">grpc</span>
-    <span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">grpc</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">add_RpcAgentServicer_to_server</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
     <span class="n">grpc</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">add_RpcAgentServicer_to_server</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span>
         <span class="n">import_error</span><span class="p">,</span>
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">..rpc.rpc_meta</span> <span class="kn">import</span> <span class="n">RpcMeta</span>
-<span class="kn">from</span> <span class="nn">..server.servicer</span> <span class="kn">import</span> <span class="n">AgentServerServicer</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="n">_check_port</span><span class="p">,</span> <span class="n">_generate_id_from_seed</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rpc.rpc_meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcMeta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..server.servicer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentServerServicer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_port</span><span class="p">,</span> <span class="n">_generate_id_from_seed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DEFAULT_RPC_OPTIONS</span>
 
 
-<span class="k">def</span> <span class="nf">_setup_agent_server</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_agent_server</span><span class="p">(</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -246,7 +246,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="p">)</span>
 
 
-<span class="k">async</span> <span class="k">def</span> <span class="nf">_setup_agent_server_async</span><span class="p">(</span>  <span class="c1"># pylint: disable=R0912</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_setup_agent_server_async</span><span class="p">(</span>  <span class="c1"># pylint: disable=R0912</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -313,7 +313,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">init_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASManager</span>
 
         <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">init_settings</span><span class="p">)</span>
 
@@ -338,7 +338,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">custom_classes</span><span class="p">:</span>
         <span class="n">RpcMeta</span><span class="o">.</span><span class="n">register_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_signal_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">shutdown_signal_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Received shutdown signal. Gracefully stopping the server at &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">,</span>
@@ -395,7 +395,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="load_custom_class_from_file">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.load_custom_class_from_file">[文档]</a>
-<span class="k">def</span> <span class="nf">load_custom_class_from_file</span><span class="p">(</span><span class="n">agent_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_custom_class_from_file</span><span class="p">(</span><span class="n">agent_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load AgentBase sub classes from a python file.</span>
 
 <span class="sd">    Args:</span>
@@ -424,7 +424,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="load_agents_from_dir">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.load_agents_from_dir">[文档]</a>
-<span class="k">def</span> <span class="nf">load_agents_from_dir</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_agents_from_dir</span><span class="p">(</span><span class="n">agent_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load customized agents from a directory.</span>
 
 <span class="sd">    Args:</span>
@@ -460,12 +460,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RpcAgentServerLauncher">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher">[文档]</a>
-<span class="k">class</span> <span class="nc">RpcAgentServerLauncher</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RpcAgentServerLauncher</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The launcher of AgentServer.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.__init__">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -546,12 +546,12 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="RpcAgentServerLauncher.generate_server_id">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.generate_server_id">[文档]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">generate_server_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_server_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate server id&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_generate_id_from_seed</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_launch_in_main</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_launch_in_main</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch agent server in main-process&quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Launching agent server at [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">]...&quot;</span><span class="p">,</span>
@@ -575,10 +575,10 @@ window.addEventListener("load", () => mermaid.run());
             <span class="p">),</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_launch_in_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_launch_in_sub</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch an agent server in sub-process.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
-        <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASManager</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcClient</span>
 
         <span class="n">init_settings</span> <span class="o">=</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
         <span class="c1"># gRPC channel should be closed before forking new process</span>
@@ -623,7 +623,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.launch">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.launch">[文档]</a>
-    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_subprocess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_subprocess</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;launch an agent server.</span>
 
 <span class="sd">        Args:</span>
@@ -639,7 +639,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.wait_until_terminate">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.wait_until_terminate">[文档]</a>
-    <span class="k">def</span> <span class="nf">wait_until_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait_until_terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for server process&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
@@ -647,7 +647,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RpcAgentServerLauncher.shutdown">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.RpcAgentServerLauncher.shutdown">[文档]</a>
-    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Shutdown the agent server.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -666,7 +666,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="as_server">
 <a class="viewcode-back" href="../../../agentscope.server.launcher.html#agentscope.server.as_server">[文档]</a>
-<span class="k">def</span> <span class="nf">as_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">as_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Launch an agent server with terminal command.</span>
 
 <span class="sd">    Note:</span>
@@ -864,7 +864,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="n">launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcClient</span>
 
         <span class="n">client</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">stop</span><span class="p">():</span>
@@ -872,7 +872,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fail to stop server at [</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcClient</span>
 
         <span class="n">client</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">client</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>

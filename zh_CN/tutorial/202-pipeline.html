@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pipeline和MsgHub &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -150,11 +150,11 @@
 <p>在AgentScope中，消息的交换、传播构成了Multi-Agent应用。但是对复杂应用来说，细致的描绘每一次信息交流对开发者来说是非常困难的。
 <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>主要用于简化“描述消息传播”的编程工作。</p>
 <p><code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>中接收的对象是<code class="docutils literal notranslate"><span class="pre">Operator</span></code>，即信息的加工和传播单元（例如智能体<code class="docutils literal notranslate"><span class="pre">Agent</span></code>是<code class="docutils literal notranslate"><span class="pre">Operator</span> </code>的一个子类），而<code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>自身也是<code class="docutils literal notranslate"><span class="pre">Operator</span></code>的子类。以下是所有<code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>的基类：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PipelineBase</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
 <span class="w">   </span><span class="sd">&quot;&quot;&quot;所有pipelines的基础接口.&quot;&quot;&quot;</span>
     <span class="c1"># ... [为简洁起见省略代码]</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;在这定义pipeline采取的操作。</span>
 
 <span class="sd">        Args:</span>
@@ -244,7 +244,7 @@
 </div>
 </li>
 <li><p>使用 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">([</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">])</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -252,7 +252,7 @@
 </div>
 </li>
 <li><p>使用函数式 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">sequentialpipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequentialpipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">sequentialpipeline</span><span class="p">([</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -272,7 +272,7 @@
 </div>
 </li>
 <li><p>使用 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">IfElsePipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">IfElsePipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">IfElsePipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -280,7 +280,7 @@
 </div>
 </li>
 <li><p>使用函数式 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">ifelsepipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">ifelsepipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">ifelsepipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -303,7 +303,7 @@
 </div>
 </li>
 <li><p>使用 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SwitchPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SwitchPipeline</span>
 
 <span class="n">case_operators</span> <span class="o">=</span> <span class="p">{</span><span class="n">case1</span><span class="p">:</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">case2</span><span class="p">:</span> <span class="n">agent2</span><span class="p">}</span>
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">SwitchPipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">case_operators</span><span class="p">,</span> <span class="n">default_agent</span><span class="p">)</span>
@@ -312,7 +312,7 @@
 </div>
 </li>
 <li><p>使用函数式 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">switchpipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">switchpipeline</span>
 
 <span class="n">case_operators</span> <span class="o">=</span> <span class="p">{</span><span class="n">case1</span><span class="p">:</span> <span class="n">agent1</span><span class="p">,</span> <span class="n">case2</span><span class="p">:</span> <span class="n">agent2</span><span class="p">}</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">switchpipeline</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">case_operators</span><span class="p">,</span> <span class="n">default_agent</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
@@ -333,7 +333,7 @@
 </div>
 </li>
 <li><p>使用 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">ForLoopPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForLoopPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">ForLoopPipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">,</span> <span class="n">break_condition</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -341,7 +341,7 @@
 </div>
 </li>
 <li><p>使用函数式 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">forlooppipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">forlooppipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">forlooppipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">max_iterations</span><span class="p">,</span> <span class="n">break_condition</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -359,7 +359,7 @@
 </div>
 </li>
 <li><p>使用 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">WhileLoopPipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhileLoopPipeline</span>
 
 <span class="n">pipe</span> <span class="o">=</span> <span class="n">WhileLoopPipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">pipe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -367,7 +367,7 @@
 </div>
 </li>
 <li><p>使用函数式 pipeline:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.functional</span> <span class="kn">import</span> <span class="n">whilelooppipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">whilelooppipeline</span>
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">whilelooppipeline</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -379,7 +379,7 @@
 <section id="id3">
 <h3>Pipeline 组合<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <p>值得注意的是，AgentScope 支持组合 Pipeline 来创建复杂的交互。例如，我们可以创建一个 Pipeline，按顺序执行一系列智能体，然后执行另一个 Pipeline，根据条件执行一系列智能体。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.pipelines</span> <span class="kn">import</span> <span class="n">SequentialPipeline</span><span class="p">,</span> <span class="n">IfElsePipeline</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span><span class="p">,</span> <span class="n">IfElsePipeline</span>
 <span class="c1"># 创建一个按顺序执行智能体的 Pipeline</span>
 <span class="n">pipe1</span> <span class="o">=</span> <span class="n">SequentialPipeline</span><span class="p">([</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">])</span>
 <span class="c1"># 创建一个条件执行智能体的 Pipeline</span>
@@ -396,20 +396,20 @@
 <h2>MsgHub<a class="headerlink" href="#msghub" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">MsgHub</span></code> 旨在管理一组智能体之间的对话/群聊，其中允许共享消息。通过 <code class="docutils literal notranslate"><span class="pre">MsgHub</span></code>，智能体可以使用 <code class="docutils literal notranslate"><span class="pre">broadcast</span></code> 向群组中的所有其他智能体广播消息。</p>
 <p>以下是 <code class="docutils literal notranslate"><span class="pre">MsgHub</span></code> 的核心类：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MsgHubManager</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MsgHubManager</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MsgHub 管理类，用于在一组智能体之间共享对话。&quot;&quot;&quot;</span>
     <span class="c1"># ... [为简洁起见省略代码]</span>
 
-    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;将消息广播给所有参与者。&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">participants</span><span class="p">:</span>
             <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">       </span><span class="sd">&quot;&quot;&quot;将新参与者加入此 hub&quot;&quot;&quot;</span>
         <span class="c1"># ... [为简洁起见省略代码]</span>
 
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">       </span><span class="sd">&quot;&quot;&quot;从参与者中删除智能体。&quot;&quot;&quot;</span>
         <span class="c1"># ... [为简洁起见省略代码]</span>
 </pre></div>
@@ -419,7 +419,7 @@
 <section id="id5">
 <h4>创建一个 MsgHub<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
 <p>要创建一个 <code class="docutils literal notranslate"><span class="pre">MsgHub</span></code>，请通过调用 <code class="docutils literal notranslate"><span class="pre">msghub</span></code> 辅助函数并传入参与智能体列表来实例化一个 <code class="docutils literal notranslate"><span class="pre">MsgHubManager</span></code>。此外，您可以提供一个可选的初始声明<code class="docutils literal notranslate"><span class="pre">announcement</span></code>，如果提供，将在初始化时广播给所有参与者。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">agentscope.msg_hub</span> <span class="kn">import</span> <span class="n">msghub</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.msg_hub</span><span class="w"> </span><span class="kn">import</span> <span class="n">msghub</span>
 
 <span class="c1"># Initialize MsgHub with participating agents</span>
 <span class="n">hub_manager</span> <span class="o">=</span> <span class="n">msghub</span><span class="p">(</span>

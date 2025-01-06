@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.parsers.regex_tagged_content_parser &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -125,21 +125,21 @@ window.addEventListener("load", () => mermaid.run());
   <h1>agentscope.parsers.regex_tagged_content_parser 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The parser for dynamic tagged content&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">..exception</span> <span class="kn">import</span> <span class="n">TagNotFoundError</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span> <span class="nn">..parsers</span> <span class="kn">import</span> <span class="n">ParserBase</span>
-<span class="kn">from</span> <span class="nn">..parsers.parser_base</span> <span class="kn">import</span> <span class="n">DictFilterMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">TagNotFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParserBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..parsers.parser_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictFilterMixin</span>
 
 
 <div class="viewcode-block" id="RegexTaggedContentParser">
 <a class="viewcode-back" href="../../../agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.RegexTaggedContentParser">[文档]</a>
-<span class="k">class</span> <span class="nc">RegexTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RegexTaggedContentParser</span><span class="p">(</span><span class="n">ParserBase</span><span class="p">,</span> <span class="n">DictFilterMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A regex tagged content parser, which extracts tagged content according</span>
 <span class="sd">    to the provided regex pattern. Different from other parsers, this parser</span>
 <span class="sd">    allows to extract multiple tagged content without knowing the keys in</span>
@@ -174,7 +174,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RegexTaggedContentParser.__init__">
 <a class="viewcode-back" href="../../../agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.RegexTaggedContentParser.__init__">[文档]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tagged_content_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&lt;(?P&lt;name&gt;[^&gt;]+)&gt;&quot;</span>
         <span class="sa">r</span><span class="s2">&quot;(?P&lt;content&gt;.*?)&quot;</span>
@@ -241,7 +241,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The format instruction for the tagged content.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_instruction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -252,7 +252,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="RegexTaggedContentParser.parse">
 <a class="viewcode-back" href="../../../agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.RegexTaggedContentParser.parse">[文档]</a>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text by the regex pattern, and return a dict of</span>
 <span class="sd">        the content in the parsed field of the response.</span>
 

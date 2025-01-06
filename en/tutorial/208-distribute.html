@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Distribution &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=c9484b72" />
 
@@ -162,22 +162,22 @@ After initialization, the <code class="docutils literal notranslate"><span class
 <span class="c1"># Ensure you have installed the distributed version of agentscope before running the code</span>
 <span class="c1"># pip install agentscope[distribute]</span>
 
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span> <span class="nn">agentscope.message</span> <span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
-<span class="k">class</span> <span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Simulate crawling the web and looking for answers&quot;&quot;&quot;</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
@@ -188,15 +188,15 @@ After initialization, the <code class="docutils literal notranslate"><span class
 <span class="n">QUERY</span> <span class="o">=</span> <span class="s2">&quot;example query&quot;</span>
 <span class="n">URLS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;page_1&quot;</span><span class="p">,</span> <span class="s2">&quot;page_2&quot;</span><span class="p">,</span> <span class="s2">&quot;page_3&quot;</span><span class="p">,</span> <span class="s2">&quot;page_4&quot;</span><span class="p">,</span> <span class="s2">&quot;page_5&quot;</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">init_without_dist</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init_without_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 
 
-<span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 
 
-<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">URLS</span><span class="p">):</span>
@@ -272,9 +272,9 @@ For further performance optimization, a deeper understanding of AgentScope’s d
 <span class="c1"># Install the distributed version of agentscope before running the code</span>
 <span class="c1"># pip install agentscope[distribute]</span>
 
-<span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.server</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
-<span class="kn">from</span> <span class="nn">dist_main</span> <span class="kn">import</span> <span class="n">WebAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dist_main</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebAgent</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
@@ -291,7 +291,7 @@ For further performance optimization, a deeper understanding of AgentScope’s d
 </div>
 <p>In the above code, we use <code class="docutils literal notranslate"><span class="pre">RpcAgentServerLauncher</span></code> to start an agent server process. Note that <code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> is not an agent implementation provided by AgentScope, so it needs to be added to <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code>. Additionally, if model APIs are required in the agent server process, corresponding model parameters should be configured in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>.</p>
 <p>Furthermore, the <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> function in <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> needs to be updated to the following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 </pre></div>
 </div>
@@ -320,13 +320,13 @@ Distributed mode runtime: 5.021481990814209
 <p>This process has a potential issue: the original agent is initialized twice, once in the main process and once in the agent server process. These two initializations occur sequentially, lacking the ability to be parallelized. For agents with low initialization costs, directly calling the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function will not significantly impact performance. However, for agents with high initialization costs, repeated initialization should be avoided. Therefore, AgentScope distributed mode provides another method for initializing in distributed mode, which entails passing the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter directly within the initialization function of any agent. The following code modifies the <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> function in <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code>.</p>
 <ul>
 <li><p>For child mode, simply pass <code class="docutils literal notranslate"><span class="pre">to_dist=True</span></code> in the initialization function.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 </pre></div>
 </div>
 </li>
 <li><p>For independent mode, pass the parameters previously given to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function as a dictionary to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> field.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">init_with_dist</span><span class="p">():</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="s2">&quot;12345&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
 </pre></div>
 </div>
@@ -386,32 +386,32 @@ Additionally, if the <code class="docutils literal notranslate"><span class="pre
 <p>The decorator <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.async_func" title="agentscope.rpc.async_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">async_func</span></code></a> is implemented in <code class="docutils literal notranslate"><span class="pre">src/agentscope/rpc/rpc_meta.py</span></code>. The <code class="docutils literal notranslate"><span class="pre">__call__</span></code> and <code class="docutils literal notranslate"><span class="pre">reply</span></code> methods of <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code> and all its subclasses are marked with <code class="docutils literal notranslate"><span class="pre">async_func</span></code> to avoid blocking.</p>
 <p>In contrast to <code class="docutils literal notranslate"><span class="pre">async_func</span></code>, there is also the <a class="reference internal" href="../agentscope.rpc.html#agentscope.rpc.sync_func" title="agentscope.rpc.sync_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">sync_func</span></code></a> decorator, which is used to mark synchronous methods. However, since synchronous methods are the default, they generally do not need to be explicitly marked.</p>
 <p>Below is a simple example where we declare a class <code class="docutils literal notranslate"><span class="pre">Example</span></code>. In this class, <code class="docutils literal notranslate"><span class="pre">sync_method</span></code> is a synchronous method, <code class="docutils literal notranslate"><span class="pre">async_method_basic</span></code> and <code class="docutils literal notranslate"><span class="pre">async_method_complex</span></code> are marked as asynchronous methods, and <code class="docutils literal notranslate"><span class="pre">_protected_method</span></code> is a private method.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span>
 
-<span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">RpcMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Example</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">RpcMeta</span><span class="p">):</span>
 
     <span class="c1"># @sync_func  # Default is sync_func, can be omitted</span>
-    <span class="k">def</span> <span class="nf">sync_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># Synchronous method, caller will be blocked for 1 s</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;sync&quot;</span>
 
     <span class="nd">@async_func</span>
-    <span class="k">def</span> <span class="nf">async_method_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">async_method_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># Asynchronous method, caller will not be blocked and can continue until attempting to get the result</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Return a basic type</span>
         <span class="k">return</span> <span class="s2">&quot;async&quot;</span>
 
     <span class="nd">@async_func</span>
-    <span class="k">def</span> <span class="nf">async_method_composite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">async_method_composite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># Asynchronous method</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="c1"># Return a dictionary</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world&quot;</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_protected_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_protected_method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># Not a public method, rpc object cannot call this method</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;protected&quot;</span>
@@ -465,9 +465,9 @@ If <code class="docutils literal notranslate"><span class="pre">host</span></cod
 <p>The implementation of <code class="docutils literal notranslate"><span class="pre">AgentServerLauncher</span></code> is located at <code class="docutils literal notranslate"><span class="pre">src/agentscope/server/launcher.py</span></code>, and it is used to launch the gRPC Server process. Specifically, to ensure that the server process can correctly reinitialize the objects sent from the client side and correctly call the model API services, it is necessary to register all subclasses of <code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code> that may be used during runtime when launching the server, and properly set the model configurations. There are two ways to launch the server: through python code or command-line instructions.</p>
 <ul>
 <li><p>The method to launch through python code is as follows. You need to specify <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code>, as well as <code class="docutils literal notranslate"><span class="pre">custom_agent_classes</span></code>, and you also need to pass the required model configurations when calling <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code>. Suppose there are custom classes <code class="docutils literal notranslate"><span class="pre">AgentA</span></code>, <code class="docutils literal notranslate"><span class="pre">AgentB</span></code>, and <code class="docutils literal notranslate"><span class="pre">AgentC</span></code> that need to be registered, and all three classes are located in the <code class="docutils literal notranslate"><span class="pre">myagents.py</span></code> file and are subclasses of <code class="docutils literal notranslate"><span class="pre">AgentBase</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">agentscope</span>
-<span class="kn">from</span> <span class="nn">agentscope.server</span> <span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
-<span class="kn">from</span> <span class="nn">myagents</span> <span class="kn">import</span> <span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">,</span> <span class="n">AgentC</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcAgentServerLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myagents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentA</span><span class="p">,</span> <span class="n">AgentB</span><span class="p">,</span> <span class="n">AgentC</span>
 
 <span class="n">MODEL_CONFIGS</span> <span class="o">=</span> <span class="p">{}</span>
 

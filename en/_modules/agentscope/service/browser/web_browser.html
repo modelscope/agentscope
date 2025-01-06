@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.service.browser.web_browser &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=c9484b72" />
 
@@ -123,20 +123,20 @@ window.addEventListener("load", () => mermaid.run());
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1"># pylint: disable=C0301</span>
 <span class="sd">&quot;&quot;&quot;The web browser module for agent to interact with web pages.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.service</span> <span class="kn">import</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
 
 
 <div class="viewcode-block" id="WebElementInfo">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebElementInfo">[docs]</a>
-<span class="k">class</span> <span class="nc">WebElementInfo</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebElementInfo</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The information of a web interactive element.&quot;&quot;&quot;</span>
 
     <span class="n">html</span><span class="p">:</span> <span class="nb">str</span>
@@ -183,7 +183,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser">[docs]</a>
-<span class="k">class</span> <span class="nc">WebBrowser</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebBrowser</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The web browser for agent, which is implemented with playwright. This</span>
 <span class="sd">    module allows agent to interact with web pages, such as visiting a web</span>
 <span class="sd">    page, clicking on elements, typing text, scrolling web page, etc.</span>
@@ -253,7 +253,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.__init__">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
         <span class="n">browser_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -275,7 +275,7 @@ window.addEventListener("load", () => mermaid.run());
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">playwright.sync_api</span> <span class="kn">import</span> <span class="n">sync_playwright</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">playwright.sync_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">sync_playwright</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;Please install the `playwright` package by running `pip &quot;</span>
@@ -283,7 +283,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="s2">&quot;browser. </span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="s2">&quot;More details refer to &quot;</span>
                 <span class="s2">&quot;https://playwright.dev/python/docs/intro.&quot;</span><span class="p">,</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="c1"># Init a web page</span>
         <span class="n">playwright_process</span> <span class="o">=</span> <span class="n">sync_playwright</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -308,42 +308,42 @@ window.addEventListener("load", () => mermaid.run());
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The url of current page.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">url</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">page_html</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">page_html</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The html content of current page.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">content</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">page_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">page_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The title of current page.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">page_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">page_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The content of current page in Markdown format.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">markdownify</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">markdownify</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
                 <span class="s2">&quot;Please install the `markdownify` package to convert the page&quot;</span>
                 <span class="s2">&quot;content to markdown format.&quot;</span><span class="p">,</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="k">return</span> <span class="n">markdownify</span><span class="o">.</span><span class="n">markdownify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">page_html</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">page_screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">page_screenshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The screenshot of the current page.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">screenshot</span><span class="p">()</span>
 
     <span class="c1"># ----- Actions which are performed within a web page ---------------------</span>
 <div class="viewcode-block" id="WebBrowser.action_click">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_click">[docs]</a>
-    <span class="k">def</span> <span class="nf">action_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Click on the element with the given id.</span>
 
 <span class="sd">        Args:</span>
@@ -382,7 +382,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.action_type">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">action_type</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_type</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -443,7 +443,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.action_scroll_up">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_scroll_up">[docs]</a>
-    <span class="k">def</span> <span class="nf">action_scroll_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_scroll_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Scroll up the current web page.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">down</span><span class="p">(</span><span class="s2">&quot;Alt&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">&quot;ArrowUp&quot;</span><span class="p">)</span>
@@ -456,7 +456,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.action_scroll_down">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_scroll_down">[docs]</a>
-    <span class="k">def</span> <span class="nf">action_scroll_down</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_scroll_down</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Scroll down the current web page.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">down</span><span class="p">(</span><span class="s2">&quot;Alt&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">press</span><span class="p">(</span><span class="s2">&quot;ArrowDown&quot;</span><span class="p">)</span>
@@ -469,7 +469,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.action_press_key">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_press_key">[docs]</a>
-    <span class="k">def</span> <span class="nf">action_press_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_press_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Press down a key in the current web page.</span>
 
 <span class="sd">        Args:</span>
@@ -497,7 +497,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="c1"># ------ Actions which are performed to change the web page ---------------</span>
 <div class="viewcode-block" id="WebBrowser.action_visit_url">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.action_visit_url">[docs]</a>
-    <span class="k">def</span> <span class="nf">action_visit_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action_visit_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visit the given url.</span>
 
 <span class="sd">        Args:</span>
@@ -517,7 +517,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.get_action_functions">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.get_action_functions">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_action_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_action_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary of the action functions, where the key is the</span>
 <span class="sd">        action name and the value is the corresponding function.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -529,7 +529,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="c1"># ------ Set or remove marks of interactive elements on the web page ------</span>
 <div class="viewcode-block" id="WebBrowser.set_interactive_marks">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.set_interactive_marks">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_interactive_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WebElementInfo</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_interactive_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">WebElementInfo</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Mark the interactive elements on the current web page.&quot;&quot;&quot;</span>
 
         <span class="c1"># Remove the existing interactive elements on the current web page</span>
@@ -563,7 +563,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.remove_interactive_marks">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.remove_interactive_marks">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_interactive_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_interactive_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the interactive elements on the current web page.&quot;&quot;&quot;</span>
         <span class="c1"># Load the javascript to crawl the page</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mark_page_js</span><span class="p">)</span>
@@ -577,12 +577,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="WebBrowser.close">
 <a class="viewcode-back" href="../../../../agentscope.service.browser.web_browser.html#agentscope.service.WebBrowser.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the browser&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">browser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_wait_for_load</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wait_for_load</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hint_s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">hint_e</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Page loaded.&quot;</span><span class="p">,</span>
@@ -606,11 +606,11 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">_page</span><span class="o">.</span><span class="n">wait_for_load_state</span><span class="p">(</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">hint_e</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_verify_element_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_element_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Verify the given element id is valid or not.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">element_id</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interactive_elements</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_external_js</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_external_js</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the JavaScript from local file. The JavaScript written in</span>
 <span class="sd">        markpage.js will crawl all the interactive elements on the page,</span>
 <span class="sd">        and mark them on with square marks.</span>
@@ -621,7 +621,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">js_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mark_page_js</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_jina_page</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_jina_page</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the formatted current page text, using api from jina&quot;&quot;&quot;</span>
         <span class="n">jina_url</span> <span class="o">=</span> <span class="s2">&quot;https://r.jina.ai/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span>
         <span class="k">try</span><span class="p">:</span>

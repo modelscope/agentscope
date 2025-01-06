@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.studio._app &mdash; AgentScope  文档</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -126,21 +126,21 @@ window.addEventListener("load", () => mermaid.run());
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The Web Server of the AgentScope Studio.&quot;&quot;&quot;</span>
 <span class="c1"># pylint: disable=C0302</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">choice</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
 
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Flask</span><span class="p">,</span>
     <span class="n">request</span><span class="p">,</span>
     <span class="n">jsonify</span><span class="p">,</span>
@@ -150,24 +150,24 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">abort</span><span class="p">,</span>
     <span class="n">send_file</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">flask_cors</span> <span class="kn">import</span> <span class="n">CORS</span>
-<span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
-<span class="kn">from</span> <span class="nn">flask_socketio</span> <span class="kn">import</span> <span class="n">SocketIO</span><span class="p">,</span> <span class="n">join_room</span><span class="p">,</span> <span class="n">leave_room</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_cors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CORS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_socketio</span><span class="w"> </span><span class="kn">import</span> <span class="n">SocketIO</span><span class="p">,</span> <span class="n">join_room</span><span class="p">,</span> <span class="n">leave_room</span>
 
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_DEFAULT_CACHE_DIR</span><span class="p">,</span>
     <span class="n">_DEFAULT_SUBDIR_CODE</span><span class="p">,</span>
     <span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">,</span>
     <span class="n">FILE_SIZE_LIMIT</span><span class="p">,</span>
     <span class="n">FILE_COUNT_LIMIT</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">._studio_utils</span> <span class="kn">import</span> <span class="n">_check_and_convert_id_type</span>
-<span class="kn">from</span> <span class="nn">..utils.common</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._studio_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_and_convert_id_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_is_process_alive</span><span class="p">,</span>
     <span class="n">_is_windows</span><span class="p">,</span>
     <span class="n">_generate_new_runtime_id</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..rpc.rpc_client</span> <span class="kn">import</span> <span class="n">RpcClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rpc.rpc_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcClient</span>
 
 
 <span class="n">_app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -192,14 +192,14 @@ window.addEventListener("load", () => mermaid.run());
 <span class="n">_RUNS_DIRS</span> <span class="o">=</span> <span class="p">[]</span>
 
 
-<span class="k">class</span> <span class="nc">_UserInputRequestQueue</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_UserInputRequestQueue</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A queue to store the user input requests.&quot;&quot;&quot;</span>
 
     <span class="n">_requests</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The user input requests in the queue.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">add_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new user input request into queue.</span>
 
 <span class="sd">        Args:</span>
@@ -217,7 +217,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="bp">cls</span><span class="o">.</span><span class="n">_requests</span><span class="p">[</span><span class="n">run_id</span><span class="p">][</span><span class="n">agent_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">fetch_a_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_a_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch a user input request from the queue.</span>
 
 <span class="sd">        Args:</span>
@@ -232,7 +232,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">close_a_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_a_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close a user input request in the queue.</span>
 
 <span class="sd">        Args:</span>
@@ -245,7 +245,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="bp">cls</span><span class="o">.</span><span class="n">_requests</span><span class="p">[</span><span class="n">run_id</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">agent_id</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_RunTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_RunTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Runtime object.&quot;&quot;&quot;</span>
 
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -257,7 +257,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">status</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;finished&quot;</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_ServerTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ServerTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Server object.&quot;&quot;&quot;</span>
 
     <span class="nb">id</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -266,7 +266,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">create_time</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_MessageTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_MessageTable</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>  <span class="c1"># type: ignore[name-defined]</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Message object.&quot;&quot;&quot;</span>
 
     <span class="nb">id</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -283,7 +283,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="n">timestamp</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">String</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_all_runs_from_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_all_runs_from_dir</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all runs from the directory.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">_RUNS_DIRS</span>
     <span class="n">runtime_configs_from_dir</span> <span class="o">=</span> <span class="p">{}</span>
@@ -319,7 +319,7 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">runtime_configs_from_dir</span>
 
 
-<span class="k">def</span> <span class="nf">_remove_file_paths</span><span class="p">(</span><span class="n">error_trace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_remove_file_paths</span><span class="p">(</span><span class="n">error_trace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove the real traceback when exception happens.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -329,14 +329,14 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">cleaned_trace</span>
 
 
-<span class="k">def</span> <span class="nf">_convert_to_py</span><span class="p">(</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_to_py</span><span class="p">(</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
     <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert json config to python code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">agentscope.web.workstation.workflow_dag</span> <span class="kn">import</span> <span class="n">build_dag</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.web.workstation.workflow_dag</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_dag</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
@@ -348,13 +348,13 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/workstation&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_workstation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_workstation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Render the workstation page.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;workstation.html&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/runs/register&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_register_run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Registers a running instance of an agentscope application.&quot;&quot;&quot;</span>
 
     <span class="c1"># Extract the input data from the request</span>
@@ -383,7 +383,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/register&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_register_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Registers an agent server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -406,7 +406,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/all&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_all_servers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_all_servers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all servers.&quot;&quot;&quot;</span>
     <span class="n">servers</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 
@@ -426,7 +426,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/status/&lt;server_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_server_status</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_server_status</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
@@ -446,7 +446,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/delete&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_delete_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_delete_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">server_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;server_id&quot;</span><span class="p">)</span>
     <span class="n">stop_server</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -458,7 +458,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/agent_info/&lt;server_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_server_agent_info</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_server_agent_info</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get info of server [</span><span class="si">{</span><span class="n">server_id</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">agents</span> <span class="o">=</span> <span class="n">RpcClient</span><span class="p">(</span>
@@ -469,7 +469,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/agents/delete&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_delete_agent</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_delete_agent</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">server_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;server_id&quot;</span><span class="p">)</span>
     <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;agent_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -487,7 +487,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/agents/memory&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_agent_memory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_agent_memory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="n">server_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;server_id&quot;</span><span class="p">)</span>
     <span class="n">agent_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;agent_id&quot;</span><span class="p">)</span>
     <span class="n">server</span> <span class="o">=</span> <span class="n">_ServerTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">server_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -500,7 +500,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/servers/alloc&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_alloc_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_alloc_server</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
     <span class="c1"># TODO: check the server is still running</span>
     <span class="c1"># TODO: support to alloc multiple servers in one call</span>
     <span class="c1"># TODO: use hints to decide which server to allocate</span>
@@ -522,7 +522,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/messages/push&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_push_message</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_push_message</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive a message from the agentscope application, and display it on</span>
 <span class="sd">    the web UI.&quot;&quot;&quot;</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Flask: receive push_message&quot;</span><span class="p">)</span>
@@ -580,7 +580,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/messages/run/&lt;run_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_messages</span><span class="p">(</span><span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_messages</span><span class="p">(</span><span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the history messages of specific run_id.&quot;&quot;&quot;</span>
     <span class="c1"># From registered runtime instances</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_RunTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -618,7 +618,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/runs/get/&lt;run_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_run</span><span class="p">(</span><span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_run</span><span class="p">(</span><span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a specific run&#39;s detail.&quot;&quot;&quot;</span>
     <span class="n">run</span> <span class="o">=</span> <span class="n">_RunTable</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">run</span><span class="p">:</span>
@@ -637,7 +637,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/runs/all&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_all_runs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_all_runs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all runs.&quot;&quot;&quot;</span>
     <span class="c1"># Update the status of the registered runtimes</span>
     <span class="c1"># Note: this is only for the applications running on the local machine</span>
@@ -679,7 +679,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/invocation&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_invocations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_invocations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all API invocations in a run instance.&quot;&quot;&quot;</span>
     <span class="n">run_dir</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;run_dir&quot;</span><span class="p">)</span>
     <span class="n">path_invocations</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">_DEFAULT_SUBDIR_INVOKE</span><span class="p">)</span>
@@ -697,7 +697,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/code&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_code</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_code</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the python code from the run directory.&quot;&quot;&quot;</span>
     <span class="n">run_dir</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;run_dir&quot;</span><span class="p">)</span>
 
@@ -716,7 +716,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/file&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_get_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the local file via the url.&quot;&quot;&quot;</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -730,7 +730,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/convert-to-py&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_convert_config_to_py</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_config_to_py</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert json config to python code and send back.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -739,14 +739,14 @@ window.addEventListener("load", () => mermaid.run());
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">py_code</span><span class="o">=</span><span class="n">py_code</span><span class="p">,</span> <span class="n">is_success</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_cleanup_process</span><span class="p">(</span><span class="n">proc</span><span class="p">:</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_cleanup_process</span><span class="p">(</span><span class="n">proc</span><span class="p">:</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean up the process for running application started by workstation.&quot;&quot;&quot;</span>
     <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The process with pid </span><span class="si">{</span><span class="n">proc</span><span class="o">.</span><span class="n">pid</span><span class="si">}</span><span class="s2"> is closed&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/convert-to-py-and-run&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_convert_config_to_py_and_run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_config_to_py_and_run</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert json config to python code and run.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -780,7 +780,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/read-examples&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_read_examples</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_examples</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read tutorial examples from local file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -812,7 +812,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/save-workflow&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_save_workflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_workflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Save the workflow JSON data to the local user folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -875,7 +875,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/delete-workflow&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_delete_workflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_delete_workflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deletes a workflow JSON file from the user folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -906,7 +906,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/list-workflows&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_list_workflows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_list_workflows</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get all workflow JSON files in the user folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -920,7 +920,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/load-workflow&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">_load_workflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_workflow</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads and returns workflow data from the specified JSON file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -945,13 +945,13 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_home</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_home</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Render the home page.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@_socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;request_user_input&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_request_user_input</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_request_user_input</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Request user input&quot;&quot;&quot;</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Flask: receive request_user_input&quot;</span><span class="p">)</span>
 
@@ -978,7 +978,7 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;user_input_ready&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_user_input_ready</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_user_input_ready</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get user input and send to the agent&quot;&quot;&quot;</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Flask: receive user_input_ready: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -1021,19 +1021,19 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;connect&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_on_connect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_on_connect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute when a client is connected.&quot;&quot;&quot;</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New client connected&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@_socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;disconnect&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_on_disconnect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_on_disconnect</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute when a client is disconnected.&quot;&quot;&quot;</span>
     <span class="n">_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Client disconnected&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@_socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;join&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_on_join</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_on_join</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Join a websocket room&quot;&quot;&quot;</span>
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;run_id&quot;</span><span class="p">]</span>
     <span class="n">join_room</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
@@ -1048,13 +1048,13 @@ window.addEventListener("load", () => mermaid.run());
 
 
 <span class="nd">@_socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;leave&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_on_leave</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_on_leave</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Leave a websocket room&quot;&quot;&quot;</span>
     <span class="n">run_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;run_id&quot;</span><span class="p">]</span>
     <span class="n">leave_room</span><span class="p">(</span><span class="n">run_id</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">parse_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse args from command line.&quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start the AgentScope Studio web UI.&quot;</span><span class="p">,</span>
@@ -1090,7 +1090,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="init">
 <a class="viewcode-back" href="../../../agentscope.studio.html#agentscope.studio.init">[文档]</a>
-<span class="k">def</span> <span class="nf">init</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span>
     <span class="n">run_dirs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1141,7 +1141,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="as_studio">
 <a class="viewcode-back" href="../../../agentscope.studio.html#agentscope.studio.as_studio">[文档]</a>
-<span class="k">def</span> <span class="nf">as_studio</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">as_studio</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the AgentScope Studio web UI in commandline&quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
     <span class="n">init</span><span class="p">(</span>

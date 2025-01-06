@@ -7,7 +7,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>agentscope.server.servicer &mdash; AgentScope  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=c9484b72" />
 
@@ -121,24 +121,24 @@ window.addEventListener("load", () => mermaid.run());
   <h1>Source code for agentscope.server.servicer</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Server of distributed agent&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">concurrent</span> <span class="kn">import</span> <span class="n">futures</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.synchronize</span> <span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent</span><span class="w"> </span><span class="kn">import</span> <span class="n">futures</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span> <span class="k">as</span> <span class="n">EventClass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">cloudpickle</span> <span class="k">as</span> <span class="nn">pickle</span>
-    <span class="kn">import</span> <span class="nn">psutil</span>
-    <span class="kn">import</span> <span class="nn">grpc</span>
-    <span class="kn">from</span> <span class="nn">grpc</span> <span class="kn">import</span> <span class="n">ServicerContext</span>
-    <span class="kn">from</span> <span class="nn">google.protobuf.empty_pb2</span> <span class="kn">import</span> <span class="n">Empty</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cloudpickle</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pickle</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">grpc</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">grpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServicerContext</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">google.protobuf.empty_pb2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">agentscope.utils.common</span> <span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
     <span class="n">pickle</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
     <span class="n">psutil</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
@@ -149,18 +149,18 @@ window.addEventListener("load", () => mermaid.run());
         <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_object</span> <span class="kn">import</span> <span class="n">RpcObject</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_meta</span> <span class="kn">import</span> <span class="n">RpcMeta</span>
-<span class="kn">import</span> <span class="nn">agentscope.rpc.rpc_agent_pb2</span> <span class="k">as</span> <span class="nn">agent_pb2</span>
-<span class="kn">from</span> <span class="nn">agentscope.studio._client</span> <span class="kn">import</span> <span class="n">_studio_client</span>
-<span class="kn">from</span> <span class="nn">agentscope.exception</span> <span class="kn">import</span> <span class="n">StudioRegisterError</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc</span> <span class="kn">import</span> <span class="n">AsyncResult</span>
-<span class="kn">from</span> <span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span> <span class="kn">import</span> <span class="n">RpcAgentServicer</span>
-<span class="kn">from</span> <span class="nn">agentscope.server.async_result_pool</span> <span class="kn">import</span> <span class="n">get_pool</span>
-<span class="kn">from</span> <span class="nn">agentscope.serialize</span> <span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcObject</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcMeta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_agent_pb2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">agent_pb2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">StudioRegisterError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcAgentServicer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.server.async_result_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span>
 
 
-<span class="k">def</span> <span class="nf">_register_server_to_studio</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_server_to_studio</span><span class="p">(</span>
     <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -188,12 +188,12 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer">[docs]</a>
-<span class="k">class</span> <span class="nc">AgentServerServicer</span><span class="p">(</span><span class="n">RpcAgentServicer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentServerServicer</span><span class="p">(</span><span class="n">RpcAgentServicer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Servicer for RPC Agent Server (formerly RpcServerSideWrapper)&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="AgentServerServicer.__init__">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">stop_event</span><span class="p">:</span> <span class="n">EventClass</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
@@ -237,7 +237,7 @@ window.addEventListener("load", () => mermaid.run());
         <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span> <span class="o">=</span> <span class="n">server_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span>
         <span class="k">if</span> <span class="n">studio_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ASManager</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASManager</span>
 
             <span class="n">_register_server_to_studio</span><span class="p">(</span>
                 <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
@@ -266,7 +266,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.agent_exists">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.agent_exists">[docs]</a>
-    <span class="k">def</span> <span class="nf">agent_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agent_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the agent exists.</span>
 
 <span class="sd">        Args:</span>
@@ -280,7 +280,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.get_agent">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_agent">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the object by agent id.</span>
 
 <span class="sd">        Args:</span>
@@ -295,7 +295,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.is_alive">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.is_alive">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -306,7 +306,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.stop">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.stop">[docs]</a>
-    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -318,7 +318,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.create_agent">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.create_agent">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_agent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">CreateAgentRequest</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -358,7 +358,7 @@ window.addEventListener("load", () => mermaid.run());
             <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">rpc_init_cfg</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">to_rpc</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">to_rpc</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>  <span class="c1"># type: ignore[no-untyped-def]</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">RpcObject</span><span class="p">,</span>
                 <span class="n">obj</span><span class="o">.</span><span class="n">_dist_config</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span>  <span class="c1"># pylint: disable=W0212</span>
@@ -382,7 +382,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.delete_agent">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.delete_agent">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_agent</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_agent</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -414,7 +414,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.delete_all_agents">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.delete_all_agents">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_all_agents</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_all_agents</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -429,7 +429,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.call_agent_func">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.call_agent_func">[docs]</a>
-    <span class="k">def</span> <span class="nf">call_agent_func</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0236</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_agent_func</span><span class="p">(</span>  <span class="c1"># pylint: disable=W0236</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -487,7 +487,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.update_placeholder">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.update_placeholder">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_placeholder</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_placeholder</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -518,13 +518,13 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.get_agent_list">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_agent_list">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_agent_list</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent_list</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get id of all agents on the server as a list.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">agentscope.agents</span> <span class="kn">import</span> <span class="n">AgentBase</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id_lock</span><span class="p">:</span>
             <span class="n">summaries</span> <span class="o">=</span> <span class="p">[]</span>
@@ -541,7 +541,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.get_server_info">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_server_info">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_server_info</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_server_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">Empty</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -559,13 +559,13 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.set_model_configs">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.set_model_configs">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_model_configs</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model_configs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the model configs of the agent server.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">agentscope.manager</span> <span class="kn">import</span> <span class="n">ModelManager</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 
         <span class="n">model_configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -580,7 +580,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.get_agent_memory">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.get_agent_memory">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_agent_memory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent_memory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -606,7 +606,7 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="AgentServerServicer.download_file">
 <a class="viewcode-back" href="../../../agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.download_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">request</span><span class="p">:</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">ServicerContext</span><span class="p">,</span>
@@ -627,7 +627,7 @@ window.addEventListener("load", () => mermaid.run());
                 <span class="k">yield</span> <span class="n">agent_pb2</span><span class="o">.</span><span class="n">ByteMsg</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">piece</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_process_task</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_task</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
