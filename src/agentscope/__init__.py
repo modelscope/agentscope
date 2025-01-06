@@ -22,10 +22,12 @@ from ._version import __version__
 from ._init import init
 from ._init import print_llm_usage
 from ._init import state_dict
+from ._init import register_model_wrapper_class
 
 __all__ = [
     "init",
     "state_dict",
     "print_llm_usage",
     "msghub",
+    "register_model_wrapper_class",
 ]
