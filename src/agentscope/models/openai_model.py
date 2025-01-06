@@ -135,8 +135,6 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
     model_type: str = "openai_chat"
 
-    deprecated_model_type: str = "openai"
-
     substrings_in_vision_models_names = ["gpt-4-turbo", "vision", "gpt-4o"]
     """The substrings in the model names of vision models."""
 
