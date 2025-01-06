@@ -27,6 +27,7 @@ from agentscope.models import (
     OpenAIDALLEWrapper,
     OpenAIChatWrapper,
     PostAPIChatWrapper,
+    AnthropicChatWrapper,
 )
 
 
@@ -42,6 +43,8 @@ class TestModelWrapperSimple(ModelWrapperBase):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
+        """Format the input for the model"""
+        print(*args)
         return ""
 
 
@@ -75,6 +78,7 @@ class BasicModelTest(unittest.TestCase):
                 "zhipuai_embedding": ZhipuAIEmbeddingWrapper,
                 "litellm_chat": LiteLLMChatWrapper,
                 "yi_chat": YiChatWrapper,
+                "anthropic_chat": AnthropicChatWrapper,
             },
         )
 
@@ -93,6 +97,7 @@ class BasicModelTest(unittest.TestCase):
             {
                 "model_type": "post_api_chat",
                 "config_name": "my_post_api",
+                "model_name": "llama",
                 "api_url": "https://xxx",
                 "headers": {},
                 "json_args": {},

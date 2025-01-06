@@ -1,0 +1,9 @@
+[
+  {
+    "config_name": "anthropic_chat-claude-3-5-sonnet-20241022",
+    "model_type": "anthropic_chat",
+    "model_name": "claude-3-5-sonnet-20241022",
+
+    "api_key": "{your_api_key}"
+  }
+]

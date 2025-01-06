@@ -20,6 +20,7 @@ Currently, AgentScope supports the following model service APIs:
 - Post Request API, model inference services based on Post
   requests, including Huggingface/ModelScope Inference API and various
   post request based model APIs.
+- Anthropic Chat API.
 
 ## Configuration
 
@@ -94,6 +95,7 @@ In the current AgentScope, the supported `model_type` types, the corresponding
 |                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
 |                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
 |                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
+| Anthropic API          | Chat            | [`AnthropicChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py)          | `"anthropic_chat"`            | claude-3-5-sonnet-20241022, ...                                                |
 
 #### Detailed Parameters
 
@@ -536,6 +538,30 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 > 1) only the raw HTTP response is wanted and `.format()` is not called;
 > 2) Or, the developers want to overwrite the `.format()` and/or `._parse_response()` functions.
 
+</details>
+
+<br/>
+
+#### Anthropic API
+
+<details>
+<summary>
+Anthropic Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py">agentscope.models.AnthropicChatWrapper</a></code>)
+</summary>
+
+```python
+{
+  "model_config": "my_anthropic_chat_config",
+  "model_type": "anthropic_chat",
+  "model_name": "claude-3-5-sonnet-20241022",
+
+  # Required parameters
+  "api_key": "{your_api_key}",
+
+  # Optional parameters
+  "temperature": 0.5
+}
+```
 </details>
 
 

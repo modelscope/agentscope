@@ -38,6 +38,7 @@ from .litellm_model import (
 from .yi_model import (
     YiChatWrapper,
 )
+from .anthropic_model import AnthropicChatWrapper
 
 _BUILD_IN_MODEL_WRAPPERS = [
     "PostAPIChatWrapper",
@@ -57,6 +58,7 @@ _BUILD_IN_MODEL_WRAPPERS = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "YiChatWrapper",
+    "AnthropicChatWrapper",
 ]
 
 __all__ = [
@@ -81,4 +83,5 @@ __all__ = [
     "ZhipuAIEmbeddingWrapper",
     "LiteLLMChatWrapper",
     "YiChatWrapper",
+    "AnthropicChatWrapper",
 ]

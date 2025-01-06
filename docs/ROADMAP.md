@@ -23,6 +23,8 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 
 2. Tools Calling
 
+ - ✅ Add Support for Anthropic API.
+
  - 🚧 Support tools calling in user-assistant conversations.
    - OpenAI API
    - DashScope API
