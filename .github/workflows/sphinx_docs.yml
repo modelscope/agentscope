@@ -22,7 +22,12 @@ jobs:
       uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
-
+    - name: Update setuptools
+      run: |
+        pip install setuptools==68.2.2 wheel==0.41.2
+    - name: Install Dependencies
+      run: |
+        pip install -q -e .[full]
     - name: Add execute permission to build.sh
       run: |
         chmod +x docs/tutorial/en/build.sh
