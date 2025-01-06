@@ -66,6 +66,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#ollama-api">Ollama API</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litellm-chat-api">LiteLLM Chat API</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#post-request-api">Post Request API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anthropic-api">Anthropic API</a></li>
 </ul>
 </li>
 </ul>
@@ -151,6 +152,7 @@
 <li><p>LiteLLM API, 包括对话（Chat）, 支持各种模型的API.</p></li>
 <li><p>Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
 Inference API和各种符合Post请求格式的API。</p></li>
+<li><p>Anthropic 对话 API。</p></li>
 </ul>
 </section>
 <section id="id3">
@@ -346,6 +348,12 @@ API如下：</p>
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">post_api_embedding</span></code></p></td>
 <td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p>Anthropic API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;anthropic_chat&quot;</span></code></p></td>
+<td><p>claude-3-5-sonnet-20241022, …</p></td>
 </tr>
 </tbody>
 </table>
@@ -745,6 +753,28 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <li><p>或开发者希望实现自己的<code class="docutils literal notranslate"><span class="pre">.format()</span></code>和/或<code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code></p></li>
 </ol>
 </div></blockquote>
+</details>
+<br/>
+</section>
+<section id="anthropic-api">
+<h4>Anthropic API<a class="headerlink" href="#anthropic-api" title="Link to this heading"></a></h4>
+<details>
+<summary>
+Anthropic Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py">agentscope.models.AnthropicChatWrapper</a></code>)
+</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;model_config&quot;</span><span class="p">:</span> <span class="s2">&quot;my_anthropic_chat_config&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;anthropic_chat&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;claude-3-5-sonnet-20241022&quot;</span><span class="p">,</span>
+
+  <span class="c1"># 必要参数</span>
+  <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
+
+  <span class="c1"># 可选参数</span>
+  <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </details>
 <br/>
 </section>

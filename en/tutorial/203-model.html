@@ -138,6 +138,7 @@ model services.</p>
 <li><p>Post Request API, model inference services based on Post
 requests, including Huggingface/ModelScope Inference API and various
 post request based model APIs.</p></li>
+<li><p>Anthropic Chat API.</p></li>
 </ul>
 </section>
 <section id="configuration">
@@ -311,6 +312,12 @@ It corresponds to the <code class="docutils literal notranslate"><span class="pr
 <td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py"><code class="docutils literal notranslate"><span class="pre">PostAPIEmbeddingWrapper</span></code></a></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">post_api_embedding</span></code></p></td>
 <td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p>Anthropic API</p></td>
+<td><p>Chat</p></td>
+<td><p><a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;anthropic_chat&quot;</span></code></p></td>
+<td><p>claude-3-5-sonnet-20241022, …</p></td>
 </tr>
 </tbody>
 </table>
@@ -710,6 +717,28 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 <li><p>Or, the developers want to overwrite the <code class="docutils literal notranslate"><span class="pre">.format()</span></code> and/or <code class="docutils literal notranslate"><span class="pre">._parse_response()</span></code> functions.</p></li>
 </ol>
 </div></blockquote>
+</details>
+<br/>
+</section>
+<section id="anthropic-api">
+<h4>Anthropic API<a class="headerlink" href="#anthropic-api" title="Link to this heading"></a></h4>
+<details>
+<summary>
+Anthropic Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py">agentscope.models.AnthropicChatWrapper</a></code>)
+</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;model_config&quot;</span><span class="p">:</span> <span class="s2">&quot;my_anthropic_chat_config&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;anthropic_chat&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;claude-3-5-sonnet-20241022&quot;</span><span class="p">,</span>
+
+  <span class="c1"># Required parameters</span>
+  <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{your_api_key}</span><span class="s2">&quot;</span><span class="p">,</span>
+
+  <span class="c1"># Optional parameters</span>
+  <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </details>
 <br/>
 </section>
