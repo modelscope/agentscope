@@ -1,10 +1,6 @@
 name: Deploy Sphinx documentation to Pages
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - 'docs/**/*'
   push:
     branches:
       - main
