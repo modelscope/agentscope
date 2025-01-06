@@ -40,6 +40,8 @@ jobs:
       env:
         SECRET_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
       run: |
+        echo $DASHSCOPE_API_KEY
+        echo "Here!"
         cd docs/tutorial/en/
         ./build.sh
     - name: Upload Documentation
