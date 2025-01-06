@@ -1,6 +1,7 @@
 [{
     "config_name": "post_api_chat-flask_llama2-7b-chat-hf",
     "model_type": "post_api_chat",
+    "model_name": "llama2",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -10,6 +11,7 @@
 {
     "config_name": "post_api_chat-flask_llama2-7b-chat-ms",
     "model_type": "post_api_chat",
+    "model_name": "llama2-7b",
     "api_url": "http://127.0.0.1:8000/llm/",
     "json_args": {
         "max_length": 4096,
@@ -19,6 +21,7 @@
 {
     "config_name": "post_api-fastchat_llama2-7b-chat-hf",
     "model_type": "openai_chat",
+    "model_name": "llama2-7b",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -30,6 +33,7 @@
 {
     "config_name": "post_api-vllm_llama2-7b-chat-hf",
     "model_type": "openai_chat",
+    "model_name": "llama2-7b",
     "api_key": "EMPTY",
     "client_args": {
         "base_url": "http://127.0.0.1:8000/v1/"
@@ -41,6 +45,7 @@
 {
     "config_name": "post_api_chat-model-inference-api-gpt2",
     "model_type": "post_api_chat",
+    "model_name": "gpt2",
     "headers": {
         "Authorization": "Bearer {YOUR_API_TOKEN}"
     },
@@ -49,6 +54,7 @@
 {
     "config_name": "post_api_img_syn_config",
     "model_type": "post_api_dall_e",
+    "model_name": "{YOUR_MODEL}",
     "api_url": "http://xxx.xxx.xxx.xxx:xxxx/xxx",
     "headers": {
         "Content-Type": "application/json",
@@ -67,6 +73,7 @@
 {
     "config_name": "post_api_embedding_config",
     "model_type": "post_api_embedding",
+    "model_name": "{YOUR_MODEL}",
     "api_url": "http://xxx.xxx.xxx.xxx:xxxx/xxx",
     "headers": {
         "Content-Type": "application/json",
