@@ -46,3 +46,19 @@ Welcome to AgentScope's documentation!
    :caption: Examples
 
    build_tutorial/examples
+
+.. toctree::
+   :maxdepth: 1
+   :caption: API Docs
+
+   build_api/agentscope
+   build_api/agentscope.message
+   build_api/agentscope.models
+   build_api/agentscope.agents
+   build_api/agentscope.memory
+   build_api/agentscope.parsers
+   build_api/agentscope.rag
+   build_api/agentscope.service
+   build_api/agentscope.prompt
+   build_api/agentscope.tokens
+   build_api/agentscope.exception

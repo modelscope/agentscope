@@ -8,7 +8,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "AgentScope Doc"
-copyright = "2024, Alibaba"
+copyright = "2025, Alibaba"
 author = "Alibaba Tongyi Lab"
 
 # -- General configuration ---------------------------------------------------
@@ -17,6 +17,9 @@ author = "Alibaba Tongyi Lab"
 extensions = [
     "myst_parser",
     "sphinx_gallery.gen_gallery",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
 ]
 
 myst_enable_extensions = [
@@ -52,3 +55,23 @@ html_css_files = [
 ]
 
 source_suffix = [".md", ".rst"]
+
+
+# -- Options for API documentation -------------------------------------------
+
+autodoc_member_order = "groupwise"
+
+
+def skip_member(app, what, name, obj, skip, options):
+    if name in [
+        "Operator",
+        "ServiceFactory",
+        "",
+    ]:
+        return True
+
+    return skip
+
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip_member)
