@@ -38,7 +38,7 @@ minimal_requires = [
     "scipy",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
-    "dashscope==1.14.1",
+    "dashscope>=1.19.0",
 ]
 
 extra_service_requires = [
@@ -60,7 +60,8 @@ extra_distribute_requires = [
     "grpcio-tools==1.60.0",
     "protobuf==4.25.0",
     "expiringdict",
-    "dill",
+    "cloudpickle",
+    "redis",
 ]
 
 extra_dev_requires = [
@@ -74,10 +75,12 @@ extra_dev_requires = [
     "sphinx_rtd_theme",
     "myst-parser",
     "sphinxcontrib-mermaid",
+    # extra
+    "transformers",
 ]
 
 extra_gradio_requires = [
-    "gradio==4.19.1",
+    "gradio==4.44.1",
     "modelscope_studio==0.0.5",
 ]
 
@@ -90,6 +93,7 @@ extra_gemini_requires = ["google-generativeai>=0.4.0"]
 extra_litellm_requires = ["litellm"]
 extra_zhipuai_requires = ["zhipuai"]
 extra_ollama_requires = ["ollama>=0.1.7"]
+extra_anthropic_requires = ["anthropic"]
 
 # Full requires
 extra_full_requires = (
@@ -102,6 +106,7 @@ extra_full_requires = (
     + extra_litellm_requires
     + extra_zhipuai_requires
     + extra_ollama_requires
+    + extra_anthropic_requires
 )
 
 # For online workstation
@@ -140,6 +145,7 @@ setuptools.setup(
         "litellm": extra_litellm_requires,
         "zhipuai": extra_zhipuai_requires,
         "gemini": extra_gemini_requires,
+        "anthropic": extra_anthropic_requires,
         # For service functions
         "service": extra_service_requires,
         # For distribution mode
@@ -162,7 +168,7 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.studio:init",
+            "as_studio=agentscope.studio:as_studio",
             "as_gradio=agentscope.web.gradio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
             "as_server=agentscope.server.launcher:as_server",

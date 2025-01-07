@@ -34,13 +34,12 @@ def _get_text_embedding_record_hash(
     if isinstance(embedding_model, dict):
         # Format the dict to avoid duplicate keys
         embedding_model = json.dumps(embedding_model, sort_keys=True)
-    elif isinstance(embedding_model, str):
-        embedding_model_hash = _hash_string(embedding_model, hash_method)
-    else:
+    elif not isinstance(embedding_model, str):
         raise RuntimeError(
             f"The embedding model must be a string or a dict, got "
             f"{type(embedding_model)}.",
         )
+    embedding_model_hash = _hash_string(embedding_model, hash_method)
 
     # Calculate the embedding id by hashing the hash codes of the
     # original data and the embedding model
@@ -48,7 +47,6 @@ def _get_text_embedding_record_hash(
         original_data_hash + embedding_model_hash,
         hash_method,
     )
-
     return record_hash
 
 

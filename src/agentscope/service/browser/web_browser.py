@@ -291,7 +291,7 @@ class WebBrowser:
         self._page.evaluate("element => element.focus()", web_ele)
 
         # Type in the text
-        web_ele.type(text)
+        web_ele.type(str(text))
         self._wait_for_load(
             "Wait for finish typing",
             "Finished",

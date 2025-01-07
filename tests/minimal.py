@@ -26,6 +26,7 @@ agentscope.init(
         {
             "model_type": "post_api_chat",
             "config_name": "my_post_api",
+            "model_name": "llama",
             "api_url": "https://xxx",
             "headers": {},
             "json_args": {},

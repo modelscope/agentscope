@@ -3,7 +3,7 @@
 import json
 import time
 from abc import ABC
-from typing import Any, Union, Sequence, List
+from typing import Any, Union, Sequence, List, Optional
 
 import requests
 from loguru import logger
@@ -19,12 +19,13 @@ from ..message import Msg
 class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
     """The base model wrapper for the model deployed on the POST API."""
 
-    model_type: str = "post_api"
+    model_type: str
 
     def __init__(
         self,
         config_name: str,
         api_url: str,
+        model_name: Optional[str] = None,
         headers: dict = None,
         max_length: int = 2048,
         timeout: int = 30,
@@ -42,6 +43,9 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                 The id of the model.
             api_url (`str`):
                 The url of the post request api.
+            model_name (`str`):
+                The name of the model. If `None`, the model name will be
+                extracted from the `json_args`.
             headers (`dict`, defaults to `None`):
                 The headers of the api. Defaults to None.
             max_length (`int`, defaults to `2048`):
@@ -76,13 +80,14 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                     **post_args
                 )
         """
-        if json_args is not None:
-            model_name = json_args.get(
-                "model",
-                json_args.get("model_name", None),
-            )
-        else:
-            model_name = None
+        if model_name is None:
+            if json_args is not None:
+                model_name = json_args.get(
+                    "model",
+                    json_args.get("model_name", None),
+                )
+            else:
+                model_name = None
 
         super().__init__(config_name=config_name, model_name=model_name)
 
@@ -192,8 +197,9 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict]]:
-        """Format the input messages into a list of dict, which is
-        compatible to OpenAI Chat API.
+        """Format the input messages into a list of dict according to the model
+        name. For example, if the model name is prefixed with "gpt-", the
+        input messages will be formatted for OpenAI models.
 
         Args:
             args (`Union[Msg, Sequence[Msg]]`):
@@ -235,8 +241,6 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
 
     model_type: str = "post_api_dall_e"
 
-    deprecated_model_type: str = "post_api_dalle"
-
     def _parse_response(self, response: dict) -> ModelResponse:
         if "data" not in response["data"]["response"]:
             if "error" in response["data"]["response"]:
@@ -272,37 +276,37 @@ class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
         Args:
             response (`dict`):
             The response obtained from the API. This parsing assume the
-            structure of the response is as following:
+            structure of the response is the same as OpenAI's as following:
         {
-            "code": 200,
-            "data": {
-                ...
-                "response": {
-                    "data": [
-                        {
-                            "embedding": [
-                                0.001,
-                                ...
-                            ],
-                            ...
-                        }
-                    ],
-                    "model": "xxxx",
-                    ...
-                },
-            },
+          "object": "list",
+          "data": [
+            {
+              "object": "embedding",
+              "embedding": [
+                0.0023064255,
+                -0.009327292,
+                .... (1536 floats total for ada-002)
+                -0.0028842222,
+              ],
+              "index": 0
+            }
+          ],
+          "model": "text-embedding-ada-002",
+          "usage": {
+            "prompt_tokens": 8,
+            "total_tokens": 8
+          }
         }
         """
-        if "data" not in response["data"]["response"]:
-            if "error" in response["data"]["response"]:
-                error_msg = response["data"]["response"]["error"]["message"]
-            else:
-                error_msg = response["data"]["response"]
+        if (
+            "data" not in response
+            or len(response["data"]) < 1
+            or "embedding" not in response["data"][0]
+        ):
+            error_msg = json.dumps(response, ensure_ascii=False, indent=2)
             logger.error(f"Error in embedding API call:\n{error_msg}")
             raise ValueError(f"Error in embedding API call:\n{error_msg}")
-        embeddings = [
-            data["embedding"] for data in response["data"]["response"]["data"]
-        ]
+        embeddings = [data["embedding"] for data in response["data"]]
         return ModelResponse(
             embedding=embeddings,
             raw=response,

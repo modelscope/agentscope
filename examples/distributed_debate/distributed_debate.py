@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """ An example of distributed debate """
-
 import argparse
 
 from user_proxy_agent import UserProxyAgent
 
-from loguru import logger
 
 import agentscope
 from agentscope.agents import DialogAgent
@@ -87,6 +85,11 @@ def setup_server(parsed_args: argparse.Namespace) -> None:
     server_launcher.wait_until_terminate()
 
 
+def print_msg(msg: Msg) -> None:
+    """Print message"""
+    print(msg.formatted_str(colored=True))
+
+
 def run_main_process(parsed_args: argparse.Namespace) -> None:
     """Setup the main debate competition process"""
     pro_agent, con_agent, judge_agent = agentscope.init(
@@ -94,6 +97,7 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
         agent_configs="configs/debate_agent_configs.json",
         project="Distributed Conversation",
     )
+    judge_agent = judge_agent.to_dist()
     pro_agent = pro_agent.to_dist(
         host=parsed_args.pro_host,
         port=parsed_args.pro_port,
@@ -113,9 +117,9 @@ def run_main_process(parsed_args: argparse.Namespace) -> None:
         for i in range(3):
             hub.broadcast(announcements[i])
             pro_resp = pro_agent()
-            logger.chat(pro_resp)
+            print_msg(pro_resp)
             con_resp = con_agent()
-            logger.chat(con_resp)
+            print_msg(con_resp)
             judge_agent()
         hub.broadcast(end)
         judge_agent()

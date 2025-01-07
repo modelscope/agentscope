@@ -16,6 +16,7 @@ AgentScope中，模型的部署和调用是通过`ModelWrapper`来解耦开的�
 - LiteLLM API, 包括对话（Chat）, 支持各种模型的API.
 - Post请求API，基于Post请求实现的模型推理服务，包括Huggingface/ModelScope
   Inference API和各种符合Post请求格式的API。
+- Anthropic 对话 API。
 
 ## 配置方式
 
@@ -110,10 +111,11 @@ API如下：
 |                        | Generation      | [`OllamaGenerationWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/ollama_model.py)           | `"ollama_generate"`           | llama2, ...                                      |
 | LiteLLM API | Chat               | [`LiteLLMChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py)             | `"litellm_chat"`                  | -                                                |
 | Yi API                 | Chat            | [`YiChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/yi_model.py)                         | `"yi_chat"`                   | yi-large, yi-medium, ...                         |
-| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `"post_api"`                  | -                                                |
+| Post Request based API | -               | [`PostAPIModelWrapperBase`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | -                             | -                                                |
 |                        | Chat            | [`PostAPIChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                  | `"post_api_chat"`             | meta-llama/Meta-Llama-3-8B-Instruct, ...         |
 |                        | Image Synthesis | [`PostAPIDALLEWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)                 | `post_api_dall_e`             | -                                                |                                                  |
 |                        | Embedding       | [`PostAPIEmbeddingWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/post_model.py)             | `post_api_embedding`          | -                                                |
+| Anthropic API          | Chat            | [`AnthropicChatWrapper`](https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py)          | `"anthropic_chat"`            | claude-3-5-sonnet-20241022, ...                  |
 
 #### 详细参数
 
@@ -540,7 +542,7 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 ```python
 {
     "config_name": "my_postapiwrapper_config",
-    "model_type": "post_api",
+    "model_type": "post_api_chat",
 
     # 必要参数
     "api_url": "https://xxx.xxx",
@@ -560,8 +562,29 @@ com/modelscope/agentscope/blob/main/src/agentscope/models/litellm_model.py">agen
 </details>
 
 
+<br/>
 
+#### Anthropic API
 
+<details>
+<summary>
+Anthropic Chat API  (<code><a href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/models/anthropic_model.py">agentscope.models.AnthropicChatWrapper</a></code>)
+</summary>
+
+```python
+{
+  "model_config": "my_anthropic_chat_config",
+  "model_type": "anthropic_chat",
+  "model_name": "claude-3-5-sonnet-20241022",
+
+  # 必要参数
+  "api_key": "{your_api_key}",
+
+  # 可选参数
+  "temperature": 0.5
+}
+```
+</details>
 
 <br/>
 
@@ -586,6 +609,7 @@ AgentScope允许开发者自定义自己的模型包装器。新的模型包装�
 - 继承自`ModelWrapperBase`类，
 - 提供`model_type`字段以在模型配置中标识这个Model Wrapper类，并
 - 实现`__init__`和`__call__`函数。
+- 调用`agentscope.register_model_wrapper_class`函数，将其注册到AgentScope中。
 
 ```python
 from agentscope.models import ModelWrapperBase
@@ -604,10 +628,13 @@ class MyModelWrapper(ModelWrapperBase):
         # ...
 ```
 
-在创建新的模型包装器类之后，模型包装器将自动注册到AgentScope中。
-您可以直接在模型配置中使用它。
+然后调用`register_model_wrapper_class`函数将其注册到AgentScope中。
 
 ```python
+import agentscope
+
+agentscope.register_model_wrapper_class(MyModelWrapper)
+
 my_model_config = {
     # 基础参数
     "config_name": "my_model_config",

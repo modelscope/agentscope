@@ -258,7 +258,7 @@ def dashscope_text_to_audio(
     except ImportError as e:
         raise ImportError(
             "The package 'dashscope' is not installed. Please install it by "
-            "running `pip install dashscope==1.14.1`",
+            "running `pip install dashscope>=1.19.0`",
         ) from e
 
     dashscope.api_key = api_key

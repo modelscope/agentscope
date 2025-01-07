@@ -32,7 +32,7 @@ LEVEL_SAVE_LOG = "SAVE_LOG"
 LEVEL_SAVE_MSG = "SAVE_MSG"
 
 _DEFAULT_LOG_FORMAT = (
-    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{"
+    "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{"
     "level: <8}</level> | <cyan>{name}</cyan>:<cyan>{"
     "function}</cyan>:<cyan>{line}</cyan> - <level>{"
     "message}</level>"
@@ -175,7 +175,7 @@ def _level_format(record: dict) -> str:
     if record["level"].name == LEVEL_SAVE_LOG:
         return "{message}\n"
     else:
-        return _DEFAULT_LOG_FORMAT
+        return _DEFAULT_LOG_FORMAT + "\n"
 
 
 def setup_logger(
@@ -192,6 +192,9 @@ def setup_logger(
             `"DEBUG"`, `"INFO"`, `"SUCCESS"`, `"WARNING"`, `"ERROR"`,
             `"CRITICAL"`.
     """
+    # set logging level
+    logger.remove()
+
     # avoid reinit in subprocess
     if not hasattr(logger, "chat"):
         # add chat function for logger
@@ -201,8 +204,6 @@ def setup_logger(
         logger.level(LEVEL_SAVE_MSG, no=53)
         logger.chat = log_msg
 
-        # set logging level
-        logger.remove()
         # standard output for all logging except chat
         logger.add(
             sys.stdout,
