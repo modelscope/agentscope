@@ -60,6 +60,8 @@ source_suffix = [".md", ".rst"]
 # -- Options for API documentation -------------------------------------------
 
 autodoc_member_order = "groupwise"
+add_module_names = False
+python_display_short_literal_types = True
 
 
 def skip_member(app, what, name, obj, skip, options):
