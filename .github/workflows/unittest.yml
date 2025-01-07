@@ -1,0 +1,39 @@
+name: Python Unittest Coverage
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    if: false == contains(github.event.pull_request.title, 'WIP')
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    env:
+      OS: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Update setuptools
+      run: |
+        pip install setuptools==68.2.2 wheel==0.41.2
+    - name: Install Minimal Dependencies
+      run: |
+        pip install -q -e .
+    - name: Run minimal import tests
+      run: |
+        python tests/minimal.py
+    - name: Install Full Dependencies
+      run: |
+        pip install -q -e .[full]
+        pip install coverage
+    - name: Run tests with coverage
+      run: |
+        coverage run tests/run.py
+    - name: Generate coverage report
+      run: |
+        coverage report -m
