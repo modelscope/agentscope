@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distribution &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="System Prompt Optimization" href="prompt_optimization.html" />
+    <link rel="prev" title="RAG" href="../tutorial/rag.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Distribution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-concepts">Basic Concepts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-independent-mode">Using Independent Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#avoid-duplicate-initialization">Avoid Duplicate Initialization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Distribution</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/distribution.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-distribution-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="distribution">
+<span id="sphx-glr-build-tutorial-distribution-py"></span><span id="id1"></span><h1>Distribution<a class="headerlink" href="#distribution" title="Link to this heading"></a></h1>
+<p>This section introduces the usage of the distributed mode of AgentScope. AgentScope natively provides a distributed mode based on gRPC.
+In this mode, multiple agents in one application can be deployed to different processes or even different machines, thereby fully utilizing computational resources and improving efficiency.</p>
+<section id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h2>
+<p>The distributed mode of AgentScope requires no modification to the main
+process code compared to the traditional mode. You only need to call the
+<code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function when initializing your agent.</p>
+<p>This section will showcase how to use the distributed mode of AgentScope with
+a web search case.
+To highlight the acceleration effect brought by the distributed mode of
+AgentScope, a simple custom <code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> is used here.
+<code class="docutils literal notranslate"><span class="pre">WebAgent</span></code> will sleep 5 seconds to simulate the process of crawling a
+webpage and looking for answers from it, and there are 5 agents in the example.</p>
+<p>The process of performing the search is the <code class="docutils literal notranslate"><span class="pre">run</span></code> function. The difference
+between the traditional and distributed mode is only in the initialization
+stage, namely <code class="docutils literal notranslate"><span class="pre">init_without_dist</span></code> and <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code>.
+In distributed mode, you have to call the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function, which turns
+the original Agent into the corresponding distributed version.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Please do not run this code in jupyter notebook.</span>
+<span class="c1"># Please copy the code to the ``dist_main.py`` file and use the ``python dist_main.py`` command to run this code.</span>
+<span class="c1"># Please install the distributed version of agentscope before running this code.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_answer</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+
+
+<span class="n">QUERY</span> <span class="o">=</span> <span class="s2">&quot;example query&quot;</span>
+<span class="n">URLS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;page_1&quot;</span><span class="p">,</span> <span class="s2">&quot;page_2&quot;</span><span class="p">,</span> <span class="s2">&quot;page_3&quot;</span><span class="p">,</span> <span class="s2">&quot;page_4&quot;</span><span class="p">,</span> <span class="s2">&quot;page_5&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_without_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">URLS</span><span class="p">):</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">QUERY</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="p">))</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">simple_agents</span> <span class="o">=</span> <span class="n">init_without_dist</span><span class="p">()</span>
+    <span class="n">dist_agents</span> <span class="o">=</span> <span class="n">init_with_dist</span><span class="p">()</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialization time: </span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Runtime without distributed mode: </span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">simple_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Runtime with distributed mode: </span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">dist_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output of running this sample is as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Initialization time: 16.50428819656372
+Answer from W0
+Answer from W1
+Answer from W2
+Answer from W3
+Answer from W4
+Runtime without distributed mode: 25.034368991851807
+Answer from W0
+Answer from W1
+Answer from W3
+Answer from W2
+Answer from W4
+Runtime with distributed mode: 5.0517587661743164
+</pre></div>
+</div>
+<p>From the sample output above, we can observe that the running speed has
+significantly improved after adopting the distributed mode (25 s -&gt; 5 s).</p>
+<p>The example above is the most common use case for the distributed mode of
+AgentScope. It is recommended to use this method directly when not aiming
+for extreme performance. If you require further performance optimization,
+a deeper understanding of the distributed mode of AgentScope is necessary.
+The advanced usage method of AgentScope distributed mode will be introduced
+in the following sections.</p>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
+<p>This section will introduce advanced usage methods for the AgentScope distributed model to further improve operational efficiency.</p>
+<section id="basic-concepts">
+<h3>Basic Concepts<a class="headerlink" href="#basic-concepts" title="Link to this heading"></a></h3>
+<p>Before diving into the advanced usage, we must first cover some basic concepts of the AgentScope distributed model.</p>
+<ul class="simple">
+<li><p><strong>Main Process</strong>: The process where the AgentScope application resides is referred to as the main process. For example, the <code class="docutils literal notranslate"><span class="pre">run</span></code> function in the previous section runs in the main process. There will only be one main process in each AgentScope application.</p></li>
+<li><p><strong>Agent Server Process</strong>: The AgentScope agent server process is where the agent runs in distributed mode. For example, in the previous section, all agents in <code class="docutils literal notranslate"><span class="pre">dist_agents</span></code> run in the agent server process. There can be multiple AgentScope agent server processes. These processes can run on any network-reachable machine and numerous agents can run simultaneously within each agent server process.</p></li>
+<li><p><strong>Child Mode</strong>: In child mode, the agent server process is started by the main process as a child process. For example, in the previous section, each agent in <code class="docutils literal notranslate"><span class="pre">dist_agents</span></code> is actually a child process of the main process. This mode is the default mode, which means if you call the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function without any parameters, it will use this mode.</p></li>
+<li><p><strong>Independent Mode</strong>: In independent mode, the agent servers are independent of the main process and need to be pre-started on the machine. Specific parameters must be passed to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function, and the usage method will be introduced in the following section.</p></li>
+</ul>
+</section>
+<section id="using-independent-mode">
+<h3>Using Independent Mode<a class="headerlink" href="#using-independent-mode" title="Link to this heading"></a></h3>
+<p>Compared to child mode, independent mode can avoid the overhead of initializing child processes, thus reducing the delay at the beginning of execution. This can effectively improve efficiency for programs that make multiple calls to <code class="docutils literal notranslate"><span class="pre">to_dist</span></code>.</p>
+<p>In independent mode, you need to pre-start the agent server processes on the machine and pass specific parameters to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function. Here, we will continue using the example from the basic usage section, assuming the code file for the basic usage is <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code>. Then, create and run the following script separately.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Please do not run this code in a jupyter notebook.</span>
+<span class="c1"># Copy this code into a file named ``dist_server.py`` and run with the command ``python dist_server.py``.</span>
+<span class="c1"># Please install the distributed version of agentscope before running this code.</span>
+<span class="c1"># pip install agentscope[distributed]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dist_main</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">assistant_server_launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+        <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="n">WebAgent</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">assistant_server_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assistant_server_launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This script starts the AgentScope agent server process in the <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code> file, which is located in the same directory as the <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> file from the basic usage section. Also, we need to make some minor modifications to the <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> file by adding a new <code class="docutils literal notranslate"><span class="pre">init_with_dist_independent</span></code> function and replacing the call to <code class="docutils literal notranslate"><span class="pre">init_with_dist</span></code> with this new function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist_independent</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">simple_agents</span> <span class="o">=</span> <span class="n">init_without_dist</span><span class="p">()</span>
+    <span class="n">dist_agents</span> <span class="o">=</span> <span class="n">init_with_dist_independent</span><span class="p">()</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken for initialization: </span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken without distributed mode: </span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">simple_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken with distributed mode: </span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">dist_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After completing the modifications, open a command prompt and run the <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code> file. Once it is successfully started, open another command prompt and run the <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> file.</p>
+<p>At this point, the initialization time in the output of <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> will be significantly reduced. For example, the time taken here is only 0.02 seconds.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Time taken for initialization: 0.018129825592041016
+...
+</pre></div>
+</div>
+<p>It’s important to note that the above example uses <code class="docutils literal notranslate"><span class="pre">host=&quot;localhost&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">port=12345</span></code>, and both <code class="docutils literal notranslate"><span class="pre">dist_main.py</span></code> and <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code> are running on the same machine. In actual usage, <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code> can run on a different machine. In this case, <code class="docutils literal notranslate"><span class="pre">host</span></code> should be set to the IP address of the machine running <code class="docutils literal notranslate"><span class="pre">dist_server.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">port</span></code> should be set to any available port, ensuring that different machines can communicate over the network.</p>
+</section>
+<section id="avoid-duplicate-initialization">
+<h3>Avoid Duplicate Initialization<a class="headerlink" href="#avoid-duplicate-initialization" title="Link to this heading"></a></h3>
+<p>In the code above, the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function is called on an already initialized agent. The essence of <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> is to clone the original agent to the agent server process, while retaining an <code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code> in the main process as a proxy of the original agent. Calls to this <code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code> will be forwarded to the corresponding agent in the agent server process.</p>
+<p>There is a potential issue with this approach: the original Agent is initialized twice—once in the main process and once in the agent server process—and these initializations are executed sequentially, which cannot be accelerated via parallelism. For Agents with low initialization costs, directly calling the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function won’t significantly affect performance. However, for agents with high initialization costs, it is important to avoid redundant initialization. Therefore, the AgentScope distributed mode offers an alternative method for distributed mode initialization, which allows directly passing the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> parameter within any Agent’s initialization function, as shown in the modified example below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist_independent</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="s2">&quot;12345&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+</pre></div>
+</div>
+<p>For the subprocess mode, you only need to pass <code class="docutils literal notranslate"><span class="pre">to_dist=True</span></code> in the initialization function. For the independent process mode, you need to pass the parameters that were originally passed to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> function as a dictionary to the <code class="docutils literal notranslate"><span class="pre">to_dist</span></code> field.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-distribution-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/91915400c2174a1cf3b27144bd97a7bb/distribution.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">distribution.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/bc2ad1f644cee06b7ae14ff530961e15/distribution.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">distribution.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c847816e21879543a3e38cd7fa2c2219/distribution.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">distribution.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial/rag.html" class="btn btn-neutral float-left" title="RAG" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="prompt_optimization.html" class="btn btn-neutral float-right" title="System Prompt Optimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

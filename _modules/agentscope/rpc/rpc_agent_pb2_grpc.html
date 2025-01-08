@@ -1,0 +1,868 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.rpc.rpc_agent_pb2_grpc &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.rpc.rpc_agent_pb2_grpc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.rpc.rpc_agent_pb2_grpc</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Generated by the gRPC Python protocol compiler plugin. DO NOT EDIT!</span>
+<span class="sd">&quot;&quot;&quot;Client and server classes corresponding to protobuf-defined services.&quot;&quot;&quot;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">grpc</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">google.protobuf</span><span class="w"> </span><span class="kn">import</span> <span class="n">empty_pb2</span> <span class="k">as</span> <span class="n">google_dot_protobuf_dot_empty__pb2</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportErrorReporter</span>
+
+    <span class="n">grpc</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
+    <span class="n">google_dot_protobuf_dot_empty__pb2</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span>
+        <span class="n">import_error</span><span class="p">,</span>
+        <span class="s2">&quot;distribute&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_agent_pb2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rpc__agent__pb2</span>
+
+
+<div class="viewcode-block" id="RpcAgentStub">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RpcAgentStub</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            channel: A grpc.Channel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_alive</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/is_alive&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/stop&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_agent</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/create_agent&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CreateAgentRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_agent</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/delete_agent&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delete_all_agents</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/delete_all_agents&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clone_agent</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/clone_agent&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_list</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/get_agent_list&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_server_info</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/get_server_info&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_model_configs</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/set_model_configs&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_agent_memory</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/get_agent_memory&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_agent_func</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/call_agent_func&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_placeholder</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/update_placeholder&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">unary_stream</span><span class="p">(</span>
+            <span class="s2">&quot;/RpcAgent/download_file&quot;</span><span class="p">,</span>
+            <span class="n">request_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">response_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">ByteMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RpcAgentServicer">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RpcAgentServicer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RpcAgentServicer.is_alive">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.is_alive">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;check server is alive&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.stop">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.stop">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;stop the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.create_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.create_agent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;create a new agent on the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.delete_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.delete_agent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;delete agent from the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.delete_all_agents">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.delete_all_agents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_all_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;clear all agent on the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.clone_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.clone_agent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;clone an agent with specific agent_id&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.get_agent_list">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_agent_list">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;get id of all agents on the server as a list&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.get_server_info">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_server_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_server_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;get the resource utilization information of the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.set_model_configs">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.set_model_configs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;update the model configs in the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.get_agent_memory">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_agent_memory">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;get memory of a specific agent&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.call_agent_func">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_agent_func">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_agent_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;call funcs of agent running on the server&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.update_placeholder">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.update_placeholder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;update value of PlaceholderMessage&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgentServicer.download_file">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.download_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;file transfer&quot;&quot;&quot;</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_code</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">StatusCode</span><span class="o">.</span><span class="n">UNIMPLEMENTED</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_details</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Method not implemented!&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="add_RpcAgentServicer_to_server">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_RpcAgentServicer_to_server</span><span class="p">(</span><span class="n">servicer</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
+    <span class="n">rpc_method_handlers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;is_alive&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">is_alive</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;create_agent&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">create_agent</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CreateAgentRequest</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;delete_agent&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">delete_agent</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;delete_all_agents&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">delete_all_agents</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;clone_agent&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">clone_agent</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;get_agent_list&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">get_agent_list</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;get_server_info&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">get_server_info</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;set_model_configs&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">set_model_configs</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;get_agent_memory&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">get_agent_memory</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;call_agent_func&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">call_agent_func</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;update_placeholder&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_unary_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">update_placeholder</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;download_file&quot;</span><span class="p">:</span> <span class="n">grpc</span><span class="o">.</span><span class="n">unary_stream_rpc_method_handler</span><span class="p">(</span>
+            <span class="n">servicer</span><span class="o">.</span><span class="n">download_file</span><span class="p">,</span>
+            <span class="n">request_deserializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">response_serializer</span><span class="o">=</span><span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">ByteMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">generic_handler</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">method_handlers_generic_handler</span><span class="p">(</span>
+        <span class="s2">&quot;RpcAgent&quot;</span><span class="p">,</span>
+        <span class="n">rpc_method_handlers</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">server</span><span class="o">.</span><span class="n">add_generic_rpc_handlers</span><span class="p">((</span><span class="n">generic_handler</span><span class="p">,))</span></div>
+
+
+
+<span class="c1"># This class is part of an EXPERIMENTAL API.</span>
+<div class="viewcode-block" id="RpcAgent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RpcAgent</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Servicer for rpc agent server&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RpcAgent.is_alive">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.is_alive">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/is_alive&quot;</span><span class="p">,</span>
+            <span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.stop">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.stop">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/stop&quot;</span><span class="p">,</span>
+            <span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.create_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.create_agent">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_agent</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/create_agent&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CreateAgentRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.delete_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.delete_agent">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_agent</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/delete_agent&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.delete_all_agents">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.delete_all_agents">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_all_agents</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/delete_all_agents&quot;</span><span class="p">,</span>
+            <span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.clone_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.clone_agent">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone_agent</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/clone_agent&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.get_agent_list">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_agent_list">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent_list</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/get_agent_list&quot;</span><span class="p">,</span>
+            <span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.get_server_info">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_server_info">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_server_info</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/get_server_info&quot;</span><span class="p">,</span>
+            <span class="n">google_dot_protobuf_dot_empty__pb2</span><span class="o">.</span><span class="n">Empty</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.set_model_configs">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.set_model_configs">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_model_configs</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/set_model_configs&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.get_agent_memory">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_agent_memory">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_agent_memory</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/get_agent_memory&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">GeneralResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.call_agent_func">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_agent_func">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call_agent_func</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/call_agent_func&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.update_placeholder">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.update_placeholder">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_placeholder</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_unary</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/update_placeholder&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">UpdatePlaceholderRequest</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">CallFuncResponse</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RpcAgent.download_file">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.download_file">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">download_file</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">channel_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">call_credentials</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">insecure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">wait_for_ready</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">grpc</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">unary_stream</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="s2">&quot;/RpcAgent/download_file&quot;</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">StringMsg</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">,</span>
+            <span class="n">rpc__agent__pb2</span><span class="o">.</span><span class="n">ByteMsg</span><span class="o">.</span><span class="n">FromString</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">,</span>
+            <span class="n">channel_credentials</span><span class="p">,</span>
+            <span class="n">insecure</span><span class="p">,</span>
+            <span class="n">call_credentials</span><span class="p">,</span>
+            <span class="n">compression</span><span class="p">,</span>
+            <span class="n">wait_for_ready</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

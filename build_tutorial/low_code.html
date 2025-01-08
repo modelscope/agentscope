@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Low-code Development &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Web Browser Control" href="web_browser.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Low-code Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#workstation">Workstation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#staring-workstation">Staring Workstation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#explore-built-in-examples">Explore Built-in Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-your-application">Build Your Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-your-application">Run Your Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-or-export-your-application">Import or Export Your Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-your-application">Check Your Application</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Low-code Development</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/low_code.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-low-code-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="low-code-development">
+<span id="low-code"></span><span id="sphx-glr-build-tutorial-low-code-py"></span><h1>Low-code Development<a class="headerlink" href="#low-code-development" title="Link to this heading"></a></h1>
+<p>This tutorial introduces how to build multi-agent application with
+drag-and-drop interface in AgentScope Workstation.</p>
+<section id="workstation">
+<h2>Workstation<a class="headerlink" href="#workstation" title="Link to this heading"></a></h2>
+<p>The workstation is now integrated in <span class="xref std std-ref">agentscope-studio</span>.
+It provides zero-code users with a much easier way to build multi-agent
+applications.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Workstation is under active development, and the interface may change in the future.</p>
+</div>
+</section>
+<section id="staring-workstation">
+<h2>Staring Workstation<a class="headerlink" href="#staring-workstation" title="Link to this heading"></a></h2>
+<p>First ensure you have installed the latest version of AgentScope.</p>
+<p>Launch AgentScope Studio to start the workstation by executing the following
+python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Or run the following bash command in the terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_studio
+</pre></div>
+</div>
+<p>Then visit AgentScope Studio at <cite>https://127.0.0.1:5000</cite>, and enter
+Workstation by clicking the workstation icon in the sidebar.</p>
+<ul class="simple">
+<li><p><strong>Central workspace</strong>: The main area where you can drag and drop components</p></li>
+</ul>
+<p>to build your application.</p>
+<ul class="simple">
+<li><p><strong>Top toolbox</strong>: To import, export, check, and run your application.</p></li>
+</ul>
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" />
+<section id="explore-built-in-examples">
+<h3>Explore Built-in Examples<a class="headerlink" href="#explore-built-in-examples" title="Link to this heading"></a></h3>
+<p>For beginners, we highly recommend starting with the pre-built examples to get
+started. You have the option to directly click on an example to import it
+into your central workspace. Alternatively, for a more structured learning
+experience, you can opt to follow along with the tutorials linked to each
+example. These tutorials will walk you through how each multi-agent
+application is built on AgentScope Workstation step-by-step.</p>
+</section>
+<section id="build-your-application">
+<h3>Build Your Application<a class="headerlink" href="#build-your-application" title="Link to this heading"></a></h3>
+<p>To build an application, following these steps:</p>
+<ul class="simple">
+<li><p>Choose &amp; drag component: Click and drag your chosen component from sidebar into the central workspace area.</p></li>
+<li><p>Connect nodes: Most nodes come with input and output points. Click on an output point of one component and drag it to an input point of another to create a message flow pipeline. This process allows different nodes to pass messages.</p></li>
+<li><p>Configure nodes: After dropping your nodes into the workspace, click on any of them to fill in their configuration settings. You can customize the prompts, parameters, and other properties.</p></li>
+</ul>
+</section>
+<section id="run-your-application">
+<h3>Run Your Application<a class="headerlink" href="#run-your-application" title="Link to this heading"></a></h3>
+<p>Once the application is built, click on the “Run” button. Before running, the
+workstation will check your application for any errors. If there are any, you
+will be prompted to correct them before proceeding. After that, your
+application will be executed in the same Python environment as the AgentScope
+Studio, and you can find it in the Dashboard.</p>
+</section>
+<section id="import-or-export-your-application">
+<h3>Import or Export Your Application<a class="headerlink" href="#import-or-export-your-application" title="Link to this heading"></a></h3>
+<p>Workstation supports to import and export your application. Click the
+“Export HTML” or “Export Python” button to generate code that you can
+distribute to the community or save locally. If you want to convert the
+exported code to Python, you can compile the JSON configuration to Python
+code as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
+as_workflow<span class="w"> </span>config.json<span class="w"> </span>--compile<span class="w"> </span><span class="si">${</span><span class="nv">YOUR_PYTHON_SCRIPT_NAME</span><span class="si">}</span>.py
+</pre></div>
+</div>
+<p>If you want to run your local config directly, you can use the following
+command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run</span>
+as_gradio<span class="w"> </span>config.json
+</pre></div>
+</div>
+<p>Want to edit your application further? Simply click the “Import HTML” button
+to upload your previously exported HTML code back into the AgentScope
+Workstation.</p>
+</section>
+<section id="check-your-application">
+<h3>Check Your Application<a class="headerlink" href="#check-your-application" title="Link to this heading"></a></h3>
+<p>After building your application, you can click the “Check” button to verify the correctness of your application structure. The following checking rules will be performed:</p>
+<ul class="simple">
+<li><p>Presence of Model and Agent: Every application must include at least one model node and one agent node.</p></li>
+<li><p>Single Connection Policy: A component should not have more than one connection for each input.</p></li>
+<li><p>Mandatory Fields Validation: All required input fields must be populated to ensure that each node has the necessary args to operate correctly.</p></li>
+<li><p>Consistent Configuration Naming: The ‘Model config name’ used by Agent nodes must correspond to a ‘Config Name’ defined in a Model node.</p></li>
+<li><p>Proper Node Nesting: Nodes like ReActAgent should only contain the tool nodes. Similarly, Pipeline nodes like IfElsePipeline should contain the correct number of elements (no more than 2), and ForLoopPipeline, WhileLoopPipeline, and MsgHub should follow the one-element-only rule (must be a SequentialPipeline as a child node).</p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-low-code-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c0be78656f865663187ed65c3e10334a/low_code.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">low_code.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/93f7e31c676d414474242d0dfaff119f/low_code.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">low_code.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/87945884ef2a8769be2b2148600f164a/low_code.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">low_code.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="web_browser.html" class="btn btn-neutral float-left" title="Web Browser Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

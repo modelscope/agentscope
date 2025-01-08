@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model APIs &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Prompt Engineering" href="prompt.html" />
+    <link rel="prev" title="FQA" href="../tutorial/faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model APIs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-configuration">Using Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initializing-model-explicitly">Initializing Model Explicitly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-new-llm-api">Integrating New LLM API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openai-compatible-apis">OpenAI-Compatible APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restful-apis">RESTful APIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#from-scratch">From Scratch</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#further-reading">Further Reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Model APIs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-model-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="model-apis">
+<span id="model-api"></span><span id="sphx-glr-build-tutorial-model-py"></span><h1>Model APIs<a class="headerlink" href="#model-apis" title="Link to this heading"></a></h1>
+<p>AgentScope has integrated many popular model API libraries with different modalities.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>The text-to-speech (TTS) and speech-to-text (STT) APIs are not included in this list. You can refer to the section <a class="reference internal" href="tool.html#tools"><span class="std std-ref">Tools</span></a>.</p></li>
+<li><p>The section only introduces how to use or integrate different model APIs in AgentScope. The prompt requirements and prompt engineering strategies are left in the section <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Engineering</span></a>.</p></li>
+</ol>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>Chat</p></th>
+<th class="head"><p>Text Generation</p></th>
+<th class="head"><p>Vision</p></th>
+<th class="head"><p>Embedding</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>OpenAI</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>DashScope</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p>Gemini</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ollama</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p>Yi</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+</tr>
+<tr class="row-odd"><td><p>LiteLLM</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+</tr>
+<tr class="row-even"><td><p>Zhipu</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>Anthropic</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+</tr>
+</tbody>
+</table>
+<p>There are two ways to use the model APIs in AgentScope. You can choose the one that suits you best.</p>
+<ul class="simple">
+<li><p><strong>Use Configuration</strong>: This is the recommended way to build model API-agnostic applications. You can change model API by modifying the configuration, without changing the code.</p></li>
+<li><p><strong>Initialize Model Explicitly</strong>: If you only want to use a specific model API, initialize model explicitly is much more convenient and transparent to the developer. The API docstrings provide detailed information on the parameters and usage.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Actually, using configuration and initializing model explicitly are equivalent. When you use the configuration, AgentScope just passes the key-value pairs in the configuration to initialize the model automatically.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DashScopeChatWrapper</span><span class="p">,</span>
+    <span class="n">ModelWrapperBase</span><span class="p">,</span>
+    <span class="n">ModelResponse</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+</pre></div>
+</div>
+<section id="using-configuration">
+<h2>Using Configuration<a class="headerlink" href="#using-configuration" title="Link to this heading"></a></h2>
+<p>In a model configuration, the following three fields are required:</p>
+<ul class="simple">
+<li><p>config_name: The name of the configuration.</p></li>
+<li><p>model_type: The type of the model API, e.g. “dashscope_chat”, “openai_chat”, etc.</p></li>
+<li><p>model_name: The name of the model, e.g. “qwen-max”, “gpt-4o”, etc.</p></li>
+</ul>
+<p>You should load the configurations before using the model APIs by calling <cite>agentscope.init()</cite> as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o_temperature-0.5&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[]
+</pre></div>
+</div>
+<p>For the other parameters, you</p>
+</section>
+<section id="initializing-model-explicitly">
+<h2>Initializing Model Explicitly<a class="headerlink" href="#initializing-model-explicitly" title="Link to this heading"></a></h2>
+<p>The available model APIs are modularized in the <cite>agentscope.models</cite> module.
+You can initialize a model explicitly by calling the corresponding model class.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># print the modules under agentscope.models</span>
+<span class="k">for</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">agentscope</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">__all__</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">module_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Wrapper&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>PostAPIChatWrapper
+OpenAIChatWrapper
+OpenAIDALLEWrapper
+OpenAIEmbeddingWrapper
+DashScopeChatWrapper
+DashScopeImageSynthesisWrapper
+DashScopeTextEmbeddingWrapper
+DashScopeMultiModalWrapper
+OllamaChatWrapper
+OllamaEmbeddingWrapper
+OllamaGenerationWrapper
+GeminiChatWrapper
+GeminiEmbeddingWrapper
+ZhipuAIChatWrapper
+ZhipuAIEmbeddingWrapper
+LiteLLMChatWrapper
+YiChatWrapper
+AnthropicChatWrapper
+</pre></div>
+</div>
+<p>Taking DashScope Chat API as an example:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">],</span>
+    <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>response</cite> is an object of <cite>agentscope.models.ModelResponse</cite>, which contains the following fields:</p>
+<ul class="simple">
+<li><p>text: The generated text</p></li>
+<li><p>embedding: The generated embeddings</p></li>
+<li><p>image_urls: Refer to generated images</p></li>
+<li><p>raw: The raw response from the API</p></li>
+<li><p>parsed: The parsed response, e.g. load the text into a JSON object</p></li>
+<li><p>stream: A generator that yields the response text chunk by chunk, refer to section :ref: <cite>streaming</cite> for more details.</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Text: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Embedding: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">embedding</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image URLs: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">image_urls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Raw: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsed: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stream: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">stream</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text: Hello! How can I assist you today?
+Embedding: None
+Image URLs: None
+Raw: {&quot;status_code&quot;: 200, &quot;request_id&quot;: &quot;36526473-52ab-98b7-ab12-ac44fb1cdfd4&quot;, &quot;code&quot;: &quot;&quot;, &quot;message&quot;: &quot;&quot;, &quot;output&quot;: {&quot;text&quot;: null, &quot;finish_reason&quot;: null, &quot;choices&quot;: [{&quot;finish_reason&quot;: &quot;stop&quot;, &quot;message&quot;: {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Hello! How can I assist you today?&quot;}}]}, &quot;usage&quot;: {&quot;input_tokens&quot;: 10, &quot;output_tokens&quot;: 9, &quot;total_tokens&quot;: 19}}
+Parsed: None
+Stream: None
+</pre></div>
+</div>
+</section>
+<section id="integrating-new-llm-api">
+<span id="integrating-new-api"></span><h2>Integrating New LLM API<a class="headerlink" href="#integrating-new-llm-api" title="Link to this heading"></a></h2>
+<p>There are two ways to integrate a new LLM API into AgentScope.</p>
+<section id="openai-compatible-apis">
+<h3>OpenAI-Compatible APIs<a class="headerlink" href="#openai-compatible-apis" title="Link to this heading"></a></h3>
+<p>If your model is compatible with OpenAI Python API, reusing the <cite>OpenAIChatWrapper</cite> class with specific parameters is recommended.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should take care of the messages format manually.</p>
+</div>
+<p>Taking <a class="reference external" href="https://github.com/vllm-project/vllm?tab=readme-ov-file">vLLM</a>, an OpenAI-comptaible LLM inference engine, as an example,
+its <a class="reference external" href="https://github.com/vllm-project/vllm?tab=readme-ov-file">official doc</a> provides the following example for OpenAI Python client library:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:8000/v1&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;token-abc123&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">completion</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;NousResearch/Meta-Llama-3-8B-Instruct&quot;</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">}</span>
+    <span class="p">],</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">completion</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It’s very easy to integrate vLLM into AgentScope as follows:</p>
+<ul class="simple">
+<li><p>put the parameters for initializing OpenAI client (except <cite>api_key</cite>) into <cite>client_args</cite>, and</p></li>
+<li><p>the parameters for generating completions (expect <cite>model</cite>) into <cite>generate_args</cite>.</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">vllm_model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;vllm_llama2-7b-chat-hf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;meta-llama/Llama-2-7b-chat-hf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;token-abc123&quot;</span><span class="p">,</span>  <span class="c1"># The API key</span>
+    <span class="s2">&quot;client_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;base_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:8000/v1/&quot;</span><span class="p">,</span>  <span class="c1"># Used to specify the base URL of the API</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># The generation parameters, e.g. temperature, seed</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Or, directly initialize the OpenAI Chat model wrapper with the parameters:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;meta-llama/Llama-2-7b-chat-hf&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;token-abc123&quot;</span><span class="p">,</span>
+    <span class="n">client_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;base_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:8000/v1/&quot;</span><span class="p">},</span>
+    <span class="n">generate_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="restful-apis">
+<h3>RESTful APIs<a class="headerlink" href="#restful-apis" title="Link to this heading"></a></h3>
+<p>If your model is accessed via RESTful post API, and OpenAI-compatible in response format, consider to use the <cite>PostAPIChatWrapper</cite>.</p>
+<p>Taking the following curl command as an example, just extract the <strong>header</strong>, <strong>API URL</strong>, and <strong>data</strong> (except <cite>messages</cite>, which will be passed automatically) as the parameters for initializing the model wrapper.</p>
+<p>For an example post request:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://api.openai.com/v1/chat/completions
+-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span>
+-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$OPENAI_API_KEY</span><span class="s2">&quot;</span>
+-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">        &quot;model&quot;: &quot;gpt-4o&quot;,</span>
+<span class="s1">        &quot;messages&quot;: [</span>
+<span class="s1">            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;write a haiku about ai&quot;}</span>
+<span class="s1">        ]</span>
+<span class="s1">    }&#39;</span>
+</pre></div>
+</div>
+<p>The corresponding model wrapper initialization is as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostAPIChatWrapper</span>
+
+<span class="n">post_api_model</span> <span class="o">=</span> <span class="n">PostAPIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">api_url</span><span class="o">=</span><span class="s2">&quot;https://api.openai.com/v1/chat/completions&quot;</span><span class="p">,</span>  <span class="c1"># The target URL</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>  <span class="c1"># From the header</span>
+        <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer $OPENAI_API_KEY&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">json_args</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>  <span class="c1"># From the data</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Its model configuration is as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">post_api_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{my_post_model_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://api.openai.com/v1/chat/completions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer </span><span class="si">{YOUR_API_TOKEN}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;json_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If your model API response format is different from OpenAI API, you can inherit from <cite>PostAPIChatWrapper</cite> and override the <cite>_parse_response</cite> method to adapt to your API response format.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You need to define a new <cite>model_type</cite> field in the subclass to distinguish it from the existing model wrappers.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyNewModelWrapper</span><span class="p">(</span><span class="n">PostAPIChatWrapper</span><span class="p">):</span>
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{my_new_model_type}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response from the API server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response (`dict`):</span>
+<span class="sd">                The response obtained from API server and parsed by</span>
+<span class="sd">                `response.json()` to unify the format.</span>
+
+<span class="sd">        Return (`ModelResponse`):</span>
+<span class="sd">            The parsed response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Replace by your own parsing logic</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;content&quot;</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="from-scratch">
+<h3>From Scratch<a class="headerlink" href="#from-scratch" title="Link to this heading"></a></h3>
+<p>If you decide to implement a new model API from scratch, you need to know the following concepts in AgentScope:</p>
+<ul class="simple">
+<li><p><strong>model_type</strong>: When using model configurations, AgentScope uses the <cite>model_type</cite> field to distinguish different model APIs. So ensure your new model wrapper class has a unique <cite>model_type</cite>.</p></li>
+<li><p><strong>__init__</strong>: When initializing from configuration, AgentScope passes all the key-value pairs in the configuration to the <cite>__init__</cite> method of the model wrapper. So ensure your <cite>__init__</cite> method can handle all the parameters in the configuration.</p></li>
+<li><p><strong>__call__</strong>: The core method of the model wrapper is <cite>__call__</cite>, which takes the input messages and returns the response. Its return value should be an object of <cite>ModelResponse</cite>.</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyNewModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{my_new_model_type}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Initialize your model here</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+        <span class="c1"># TODO: Implement the core logic of your model here</span>
+
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Optionally, you can implement a format method to format the prompt before sending it to the model API.
+Refer to <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Engineering</span></a> for more details.</p>
+</div>
+</section>
+</section>
+<section id="further-reading">
+<h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Engineering</span></a></p></li>
+<li><p><a class="reference internal" href="streaming.html#streaming"><span class="std std-ref">Streaming Mode</span></a></p></li>
+<li><p><a class="reference internal" href="structured_output.html#structured-output"><span class="std std-ref">Structured Output</span></a></p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.648 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-model-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e2a1f6cdcb82f601c32184bb959ee0c3/model.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">model.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b2f646401e45d74eca70da815879e873/model.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">model.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c1abc37519b887cfd2433e1362a0fa92/model.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">model.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorial/faq.html" class="btn btn-neutral float-left" title="FQA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="prompt.html" class="btn btn-neutral float-right" title="Prompt Engineering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

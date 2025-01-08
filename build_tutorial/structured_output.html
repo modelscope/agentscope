@@ -1,0 +1,465 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Structured Output &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Streaming Mode" href="streaming.html" />
+    <link rel="prev" title="Prompt Engineering" href="prompt.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Structured Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#defining-the-parser">Defining the Parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parsing-the-output">Parsing the Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#more-complex-content">More Complex Content</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auto-post-processing">Auto Post-Processing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Structured Output</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/structured_output.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-structured-output-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="structured-output">
+<span id="sphx-glr-build-tutorial-structured-output-py"></span><span id="id1"></span><h1>Structured Output<a class="headerlink" href="#structured-output" title="Link to this heading"></a></h1>
+<p>In this tutorial, we will be building a simple agent that outputs structured
+data in JSON dictionary format using the <cite>agentscope.parsers</cite> module.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+</pre></div>
+</div>
+<section id="defining-the-parser">
+<h2>Defining the Parser<a class="headerlink" href="#defining-the-parser" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="s1">&#39;{&quot;thought&quot;: &quot;What you thought&quot;, &quot;speak&quot;: &quot;What you speak to the user&quot;}&#39;</span><span class="p">,</span>
+    <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The parser will generate a format instruction according to your input. You
+can use the <cite>format_instruction</cite> property to in your prompt to guide LLM to
+generate the desired output.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Respond a JSON dictionary in a markdown&#39;s fenced code block as follows:
+```json
+{&quot;thought&quot;: &quot;What you thought&quot;, &quot;speak&quot;: &quot;What you speak to the user&quot;}
+```
+</pre></div>
+</div>
+</section>
+<section id="parsing-the-output">
+<h2>Parsing the Output<a class="headerlink" href="#parsing-the-output" title="Link to this heading"></a></h2>
+<p>When receiving output from LLM, use <cite>parse</cite> method to extract the
+structured data.
+It takes an object of <cite>agentscope.models.ModelResponse</cite> as input, parses
+the value of the <cite>text</cite> field, and returns a parsed dictionary in the
+<cite>parsed</cite> field.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dummy_response</span> <span class="o">=</span> <span class="n">ModelResponse</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;```json</span>
+<span class="s2">{</span>
+<span class="s2">    &quot;thought&quot;: &quot;I should greet the user&quot;,</span>
+<span class="s2">    &quot;speak&quot;: &quot;Hi! How can I help you?&quot;</span>
+<span class="s2">}</span>
+<span class="s2">```&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;parsed field before parsing: </span><span class="si">{</span><span class="n">dummy_response</span><span class="o">.</span><span class="n">parsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">parsed_response</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">dummy_response</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;parsed field after parsing: </span><span class="si">{</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>parsed field before parsing: None
+parsed field after parsing: {&#39;thought&#39;: &#39;I should greet the user&#39;, &#39;speak&#39;: &#39;Hi! How can I help you?&#39;}
+&lt;class &#39;dict&#39;&gt;
+</pre></div>
+</div>
+</section>
+<section id="error-handling">
+<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
+<p>If the LLM output does not match the expected format, the parser will raise
+an error with a detailed message.
+So developers can present the error message to LLM to guide it to correct
+the output.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">error_response</span> <span class="o">=</span> <span class="n">ModelResponse</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;```json</span>
+<span class="s2">{</span>
+<span class="s2">    &quot;thought&quot;: &quot;I should greet the user&quot;</span>
+<span class="s2">}</span>
+<span class="s2">```&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">parsed_response</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">error_response</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>RequiredFieldNotFoundError: Missing required field speak in the JSON dictionary object.
+</pre></div>
+</div>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
+<section id="more-complex-content">
+<h3>More Complex Content<a class="headerlink" href="#more-complex-content" title="Link to this heading"></a></h3>
+<p>Asking LLM to directly generate a JSON dictionary can be challenging,
+especially when the JSON content is complex (e.g. code snippets, nested
+structures).
+In this case, you can use more advanced parsers to guide LLM to generate
+the desired output.
+Here is an example of a more complex parser that handle code snippets.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">RegexTaggedContentParser</span><span class="p">(</span>
+    <span class="n">format_instruction</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;Response in the following format:</span>
+<span class="s2">&lt;thought&gt;what you thought&lt;/thought&gt;</span>
+<span class="s2">&lt;number&gt;A random number here&lt;/number&gt;</span>
+<span class="s2">&lt;code&gt;your python code here&lt;/code&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="n">try_parse_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Try to parse the each value as a JSON object</span>
+    <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;thought&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;code&quot;</span><span class="p">,</span>
+    <span class="p">],</span>  <span class="c1"># Required keys in the parsed dictionary</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Response in the following format:
+&lt;thought&gt;what you thought&lt;/thought&gt;
+&lt;number&gt;A random number here&lt;/number&gt;
+&lt;code&gt;your python code here&lt;/code&gt;
+</pre></div>
+</div>
+<p>The <cite>RegexTaggedContentParser</cite> uses regular expressions to match the tagged
+content in the text and return the parsed dictionary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parsed output of <cite>RegexTaggedContentParser</cite> is a dictionary, which means the required keys should be unique.</p>
+</div>
+<p>You can also change the regular expression pattern by settings the <cite>tagged_content_pattern</cite> parameter when initializing the parser.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">dummy_response</span> <span class="o">=</span> <span class="n">ModelResponse</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;&lt;thought&gt;Print the current date&lt;/thought&gt;</span>
+<span class="s2">&lt;number&gt;42&lt;/number&gt;</span>
+<span class="s2">&lt;code&gt;import datetime</span>
+<span class="s2">print(datetime.datetime.now())</span>
+<span class="s2">&lt;/code&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">parsed_response</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">dummy_response</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of parsed response: &quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The type of the number: &quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">[</span><span class="s2">&quot;number&quot;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The type of parsed response:  &lt;class &#39;dict&#39;&gt;
+The type of the number:  &lt;class &#39;int&#39;&gt;
+{
+    &quot;thought&quot;: &quot;Print the current date&quot;,
+    &quot;number&quot;: 42,
+    &quot;code&quot;: &quot;import datetime\nprint(datetime.datetime.now())\n&quot;
+}
+</pre></div>
+</div>
+</section>
+<section id="auto-post-processing">
+<h3>Auto Post-Processing<a class="headerlink" href="#auto-post-processing" title="Link to this heading"></a></h3>
+<p>Within the parsed dictionary, different keys may require different
+post-processing steps.
+For example, in a werewolf game, the LLM is playing the role of a seer, and
+the output should contain the following keys:</p>
+<ul class="simple">
+<li><p><cite>thought</cite>: The seer’s thoughts</p></li>
+<li><p><cite>speak</cite>: The seer’s speech</p></li>
+<li><p><cite>use_ability</cite>: A boolean value indicating whether the seer should use its ability</p></li>
+</ul>
+<p>In this case, the <cite>thought</cite> and <cite>speak</cite> contents should be stored in the
+agent’s memory to ensure the consistency of the agent’s behavior.
+The <cite>speak</cite> content should be spoken out to the user.
+The <cite>use_ability</cite> key should be accessed outside the agent easily to
+determine the game flow.</p>
+<p>AgentScope supports automatic post-processing of the parsed dictionary by
+providing the following parameters when initializing the parser.</p>
+<ul class="simple">
+<li><p><cite>keys_to_memory</cite>: key(s) that should be stored in the agent’s memory</p></li>
+<li><p><cite>keys_to_content</cite>: key(s) that should be spoken out</p></li>
+<li><p><cite>keys_to_metadata</cite>: key(s) that should be stored in the metadata field of the agent’s response message</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a string is provided, the parser will extract the value of the given key from the parsed dictionary. If a list of strings is provided, a sub-dictionary will be created with the given keys.</p>
+</div>
+<p>Here is an example of using the <cite>MarkdownJsonDictParser</cite> to automatically
+post-process the parsed dictionary.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+    <span class="n">content_hint</span><span class="o">=</span><span class="s1">&#39;{&quot;thought&quot;: &quot;what you thought&quot;, &quot;speak&quot;: &quot;what you speak&quot;, &quot;use_ability&quot;: &quot;whether to use the ability&quot;}&#39;</span><span class="p">,</span>
+    <span class="n">keys_to_memory</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">],</span>
+    <span class="n">keys_to_content</span><span class="o">=</span><span class="s2">&quot;speak&quot;</span><span class="p">,</span>
+    <span class="n">keys_to_metadata</span><span class="o">=</span><span class="s2">&quot;use_ability&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dummy_response</span> <span class="o">=</span> <span class="n">ModelResponse</span><span class="p">(</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;```json</span>
+<span class="s2">{</span>
+<span class="s2">    &quot;thought&quot;: &quot;I should ...&quot;,</span>
+<span class="s2">    &quot;speak&quot;: &quot;I will not use my ability&quot;,</span>
+<span class="s2">    &quot;use_ability&quot;: false</span>
+<span class="s2">}```</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">parsed_response</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">dummy_response</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The parsed response: &quot;</span><span class="p">,</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;To memory&quot;</span><span class="p">,</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_memory</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;To message content: &quot;</span><span class="p">,</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_content</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;To message metadata: &quot;</span><span class="p">,</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The parsed response:  {&#39;thought&#39;: &#39;I should ...&#39;, &#39;speak&#39;: &#39;I will not use my ability&#39;, &#39;use_ability&#39;: False}
+To memory {&#39;thought&#39;: &#39;I should ...&#39;, &#39;speak&#39;: &#39;I will not use my ability&#39;}
+To message content:  I will not use my ability
+To message metadata:  False
+</pre></div>
+</div>
+<p>Here we show how to create an agent that can automatically post-process the
+parsed dictionary by the following core steps in the <cite>reply</cite> method.</p>
+<ol class="arabic simple">
+<li><p>Put the format instruction in prompt to guide LLM to generate the desired output</p></li>
+<li><p>Parse the LLM response</p></li>
+<li><p>Post-process the parsed dictionary by using the <cite>to_memory</cite>, <cite>to_content</cite>, and <cite>to_metadata</cite> methods</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>By changing different parsers, the agent can adapt to different scenarios and generate structured output in various formats.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Agent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Alice&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You&#39;re a helpful assistant named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
+            <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
+            <span class="n">content_hint</span><span class="o">=</span><span class="s1">&#39;{&quot;thought&quot;: &quot;what you thought&quot;, &quot;speak&quot;: &quot;what you speak&quot;, &quot;use_ability&quot;: &quot;whether to use the ability&quot;}&#39;</span><span class="p">,</span>
+            <span class="n">keys_to_memory</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">],</span>
+            <span class="n">keys_to_content</span><span class="o">=</span><span class="s2">&quot;speak&quot;</span><span class="p">,</span>
+            <span class="n">keys_to_metadata</span><span class="o">=</span><span class="s2">&quot;use_ability&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+            <span class="c1"># Instruct the model to respond in the required format</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">format_instruction</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_memory</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_content</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">(</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">parsed</span><span class="p">),</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.004 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-structured-output-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/d9e2bb7a0effd4e32a08e552ade3979e/structured_output.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">structured_output.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/85d93a8fceecab574c5f27eab2516637/structured_output.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">structured_output.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/4c5b8ba2db5cb3b71d433e434981c5ed/structured_output.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">structured_output.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="prompt.html" class="btn btn-neutral float-left" title="Prompt Engineering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="streaming.html" class="btn btn-neutral float-right" title="Streaming Mode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

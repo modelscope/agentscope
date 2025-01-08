@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tools &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RAG" href="../tutorial/rag.html" />
+    <link rel="prev" title="Configuring and Monitoring" href="monitor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-built-in-tools">Using Built-in Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-custom-tools">Creating Custom Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tools</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/tool.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-tool-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="tools">
+<span id="sphx-glr-build-tutorial-tool-py"></span><span id="id1"></span><h1>Tools<a class="headerlink" href="#tools" title="Link to this heading"></a></h1>
+<p>In this tutorial we show how to use the built-in tools in AgentScope and
+how to create custom tools.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+</pre></div>
+</div>
+<section id="using-built-in-tools">
+<h2>Using Built-in Tools<a class="headerlink" href="#using-built-in-tools" title="Link to this heading"></a></h2>
+<p>AgentScope provides a <cite>ServiceToolkit</cite> module that supports</p>
+<ul class="simple">
+<li><p>tool introduction generation,</p></li>
+<li><p>a default call format,</p></li>
+<li><p>response parsing, tools calling and agent-oriented error handling.</p></li>
+</ul>
+<p>Before using <cite>ServiceToolkit</cite>, we can take a look at the available tools in
+the <cite>agentscope.service</cite> module.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_help</span><span class="p">,</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
+
+<span class="n">get_help</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>All above functions are implemented as Python functions.
+They can be registered to the <cite>ServiceToolkit</cite> by calling the <cite>add</cite> method.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">bing_search</span><span class="p">,</span> <span class="n">execute_shell_command</span>
+
+<span class="n">toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
+<span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">execute_shell_command</span><span class="p">)</span>
+
+<span class="c1"># Note some parameters of the tool functions (e.g. api_key) should be handled</span>
+<span class="c1"># by developers.</span>
+<span class="c1"># You can directly pass these parameters as keyword arguments in the add</span>
+<span class="c1"># method as follows, the reserved parameters will be left to the agent to fill.</span>
+
+<span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bing_search</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The tools instruction:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The tools instruction:
+## Tool Functions:
+The following tool functions are available in the format of
+```
+{index}. {function name}: {function description}
+{argument1 name} ({argument type}): {argument description}
+{argument2 name} ({argument type}): {argument description}
+...
+```
+
+1. execute_shell_command: Executes a given shell command.
+        command (string): The shell command to execute.
+2. bing_search: Search question in Bing Search API and return the searching results
+        question (string): The search query string.
+        num_results (number): The number of search results to return.
+</pre></div>
+</div>
+<p>The built-in default calling format:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_calling_format</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[{&quot;name&quot;: &quot;{function name}&quot;, &quot;arguments&quot;: {&quot;{argument1 name}&quot;: xxx, &quot;{argument2 name}&quot;: xxx}}]
+</pre></div>
+</div>
+<p>The JSON Schema description of the tool functions:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{
+  &quot;execute_shell_command&quot;: {
+    &quot;type&quot;: &quot;function&quot;,
+    &quot;function&quot;: {
+      &quot;name&quot;: &quot;execute_shell_command&quot;,
+      &quot;description&quot;: &quot;Executes a given shell command.&quot;,
+      &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;command&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;The shell command to execute.&quot;
+          }
+        },
+        &quot;required&quot;: [
+          &quot;command&quot;
+        ]
+      }
+    }
+  },
+  &quot;bing_search&quot;: {
+    &quot;type&quot;: &quot;function&quot;,
+    &quot;function&quot;: {
+      &quot;name&quot;: &quot;bing_search&quot;,
+      &quot;description&quot;: &quot;Search question in Bing Search API and return the searching results&quot;,
+      &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;question&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;The search query string.&quot;
+          },
+          &quot;num_results&quot;: {
+            &quot;type&quot;: &quot;number&quot;,
+            &quot;description&quot;: &quot;The number of search results to return.&quot;,
+            &quot;default&quot;: 10
+          }
+        },
+        &quot;required&quot;: [
+          &quot;question&quot;
+        ]
+      }
+    }
+  }
+}
+</pre></div>
+</div>
+<p>After assembling the <cite>ServiceToolkit</cite>, you can integrate it into agent.
+In AgentScope, we provide a <cite>ReActAgent</cite> to handle the tool usage, you can
+directly pass the <cite>ServiceToolkit</cite> object into this agent.
+Refer to [] for implementation details of this agent.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReActAgent</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">ReActAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Friday&quot;</span><span class="p">,</span>
+    <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+    <span class="n">service_toolkit</span><span class="o">=</span><span class="n">toolkit</span><span class="p">,</span>
+    <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You&#39;re a helpful assistant named Friday.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msg_task</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Help me to calculate 1615114134*4343434343&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg_task</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>system: Respond with specific tags as outlined below:
+&lt;thought&gt;{what you thought}&lt;/thought&gt;
+&lt;function&gt;{the function name you want to call}&lt;/function&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+...
+Friday: &lt;thought&gt;I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using a shell command.&lt;/thought&gt;
+&lt;function&gt;execute_shell_command&lt;/function&gt;
+&lt;command&gt;expr 1615114134 \* 4343434343&lt;/command&gt;
+system: 1. Execute function execute_shell_command
+   [ARGUMENTS]:
+       command: expr 1615114134 \* 4343434343
+   [STATUS]: SUCCESS
+   [RESULT]: 7015142197480303962
+
+system: Respond with specific tags as outlined below:
+&lt;thought&gt;{what you thought}&lt;/thought&gt;
+&lt;function&gt;{the function name you want to call}&lt;/function&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+...
+Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I will now provide the result to the user.&lt;/thought&gt;
+&lt;function&gt;finish&lt;/function&gt;
+&lt;response&gt;The result of 1615114134 * 4343434343 is 7015142197480303962.&lt;/response&gt;
+</pre></div>
+</div>
+</section>
+<section id="creating-custom-tools">
+<h2>Creating Custom Tools<a class="headerlink" href="#creating-custom-tools" title="Link to this heading"></a></h2>
+<p>A custom tool function must follow these rules:</p>
+<ul class="simple">
+<li><p>Typing for arguments</p></li>
+<li><p>Well-written docstring in Google style</p></li>
+<li><p>The return of the function must be wrapped by <cite>ServiceResponse</cite></p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">new_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A brief introduction of this function in one line.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg1 (`str`):</span>
+<span class="sd">            Brief description of arg1</span>
+<span class="sd">        arg2 (`int`):</span>
+<span class="sd">            Brief description of arg2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Done!&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.605 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ede26fc984fd5f12a4ede3580d57b877/tool.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tool.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/6456442ff90fd4cee044c2493d6e351b/tool.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">tool.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="monitor.html" class="btn btn-neutral float-left" title="Configuring and Monitoring" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial/rag.html" class="btn btn-neutral float-right" title="RAG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

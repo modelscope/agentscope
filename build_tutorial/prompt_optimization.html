@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Prompt Optimization &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Web Browser Control" href="web_browser.html" />
+    <link rel="prev" title="Distribution" href="distribution.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">System Prompt Optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-prompt-generator">System Prompt Generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generation">Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generation-with-in-context-learning">Generation with In Context Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">System Prompt Optimization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/prompt_optimization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-prompt-optimization-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="system-prompt-optimization">
+<span id="sphx-glr-build-tutorial-prompt-optimization-py"></span><span id="id1"></span><h1>System Prompt Optimization<a class="headerlink" href="#system-prompt-optimization" title="Link to this heading"></a></h1>
+<p>AgentScope implements a module for optimizing Agent System Prompts.</p>
+<section id="system-prompt-generator">
+<span id="id2"></span><h2>System Prompt Generator<a class="headerlink" href="#system-prompt-generator" title="Link to this heading"></a></h2>
+<p>The system prompt generator uses a meta prompt to guide the LLM to generate
+the system prompt according to the user’s requirements, and allow the
+developers to use built-in examples or provide their own examples as In
+Context Learning (ICL).</p>
+<p>The system prompt generator includes a <code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code> and a
+<code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code> module, which only differ in the used
+language.</p>
+<p>We take the <code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code> as an example to illustrate how
+to use the system prompt generator.</p>
+</section>
+<section id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h2>
+<p>To initialize the generator, you need to first register your model
+configurations in the <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> function.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnglishSystemPromptGenerator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="c1"># export your api key via environment variable</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The generator will use a built-in default meta prompt to guide the LLM to
+generate the system prompt.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="n">model_config</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prompt_generator</span> <span class="o">=</span> <span class="n">EnglishSystemPromptGenerator</span><span class="p">(</span>
+    <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;qwen_config&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Users are welcome to freely try different optimization methods. We offer the
+corresponding <code class="docutils literal notranslate"><span class="pre">SystemPromptGeneratorBase</span></code> module, which you can extend to
+implement your own optimization module.</p>
+</section>
+<section id="generation">
+<h2>Generation<a class="headerlink" href="#generation" title="Link to this heading"></a></h2>
+<p>Call the <code class="docutils literal notranslate"><span class="pre">generate</span></code> function of the generator to generate the system prompt
+as follows.</p>
+<p>You can input a requirement, or your system prompt to be optimized.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">generated_system_prompt</span> <span class="o">=</span> <span class="n">prompt_generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+    <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Generate a system prompt for a RED book (also known as Xiaohongshu) marketing expert, who is responsible for prompting books.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">generated_system_prompt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>```markdown
+## System Prompt for a Xiaohongshu (RED) Book Marketing Expert
+
+### Role and Personality
+You are a Xiaohongshu (RED) book marketing expert. Your primary role is to create engaging and effective marketing content for books on the Xiaohongshu platform. You have a deep understanding of the platform&#39;s audience, trends, and best practices. You are creative, detail-oriented, and skilled in crafting compelling narratives that resonate with the target audience. Your personality is friendly, enthusiastic, and knowledgeable, which helps you connect with readers and promote books effectively.
+
+### Skill Points
+1. **Content Creation:**
+   - Create engaging and visually appealing posts, including text, images, and videos.
+   - Write compelling book summaries, reviews, and recommendations.
+   - Develop creative and attention-grabbing headlines and captions.
+
+2. **Audience Engagement:**
+   - Understand and analyze the target audience to tailor content effectively.
+   - Respond to comments and messages in a timely and engaging manner.
+   - Foster a community around the books by encouraging discussions and interactions.
+
+3. **Trend Analysis:**
+   - Stay updated with the latest trends and popular topics on Xiaohongshu.
+   - Identify and leverage trending hashtags and keywords to increase visibility.
+   - Adapt content strategies based on current trends and audience preferences.
+
+4. **Marketing Strategy:**
+   - Develop and implement comprehensive marketing plans for book promotions.
+   - Collaborate with authors, publishers, and influencers to enhance reach and engagement.
+   - Track and analyze the performance of marketing campaigns to optimize future efforts.
+
+5. **Visual Design:**
+   - Use design tools to create attractive and on-brand visuals for posts.
+   - Ensure consistency in visual style and branding across all content.
+   - Incorporate multimedia elements to make content more engaging and shareable.
+
+### Constraints
+- **Platform-Specific Guidelines:**
+  - Adhere to Xiaohongshu’s community guidelines and content policies.
+  - Respect copyright laws and ensure all content is original or properly attributed.
+
+- **Ethical Considerations:**
+  - Maintain transparency and honesty in all marketing communications.
+  - Avoid misleading or false claims about the books or their content.
+  - Promote a positive and inclusive environment for all users.
+
+- **Time Management:**
+  - Plan and schedule content in advance to maintain a consistent posting schedule.
+  - Allocate time for audience engagement and community management.
+  - Regularly review and update content to keep it fresh and relevant.
+
+### Knowledge Base and Memory
+- **Knowledge Base:**
+  - Access to a database of books, including details such as author, genre, summary, and cover images.
+  - Information on current trends, popular topics, and successful marketing strategies on Xiaohongshu.
+  - Historical data on past marketing campaigns and their performance metrics.
+
+- **Memory:**
+  - Remember previous interactions with the audience to build a stronger connection.
+  - Keep track of ongoing marketing campaigns and their progress.
+  - Store and recall successful content and strategies for future reference.
+
+### Example Task
+Create a series of posts to promote a new romance novel. The posts should include:
+- A captivating book summary and review.
+- Visually appealing images and videos.
+- Engaging headlines and captions.
+- Relevant hashtags and keywords to increase visibility.
+- A call-to-action to encourage readers to purchase and review the book.
+```
+
+This optimized system prompt provides a detailed description of the agent&#39;s role, skills, and constraints, ensuring that the agent can effectively create and manage marketing content for books on the Xiaohongshu platform.
+</pre></div>
+</div>
+</section>
+<section id="generation-with-in-context-learning">
+<h2>Generation with In Context Learning<a class="headerlink" href="#generation-with-in-context-learning" title="Link to this heading"></a></h2>
+<p>AgentScope supports in context learning in the system prompt generation.</p>
+<p>It builds in a list of examples and allows users to provide their own
+examples to optimize the system prompt.</p>
+<p>To use examples, AgentScope provides the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">example_num</span></code>: The number of examples attached to the meta prompt, defaults to 0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">example_selection_strategy</span></code>: The strategy for selecting examples, choosing from “random” and “similarity”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">example_list</span></code>: A list of examples, where each example must be a dictionary with keys “user_prompt” and “opt_prompt”. If not specified, the built-in example list will be used.</p></li>
+</ul>
+<p>Note, if you choose “similarity” as the example selection strategy, an
+embedding model could be specified in the <code class="docutils literal notranslate"><span class="pre">embed_model_config_name</span></code> or
+<code class="docutils literal notranslate"><span class="pre">local_embedding_model</span></code> parameter.</p>
+<p>Their differences are listed as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">embed_model_config_name</span></code>: You must first register the embedding model</p></li>
+</ul>
+<p>in <code class="docutils literal notranslate"><span class="pre">agentscope.init</span></code> and specify the model configuration name in this
+parameter.
+- <code class="docutils literal notranslate"><span class="pre">local_embedding_model</span></code>: Optionally, you can use a local small embedding
+model supported by the <code class="docutils literal notranslate"><span class="pre">sentence_transformers.SentenceTransformer</span></code> library.</p>
+<p>AgentScope will use a default “sentence-transformers/all-mpnet-base-v2”
+model if you do not specify the above parameters, which is small enough to
+run in CPU.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">icl_generator</span> <span class="o">=</span> <span class="n">EnglishSystemPromptGenerator</span><span class="p">(</span>
+    <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;qwen_config&quot;</span><span class="p">,</span>
+    <span class="n">example_num</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">example_selection_strategy</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">icl_generated_system_prompt</span> <span class="o">=</span> <span class="n">icl_generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+    <span class="n">user_input</span><span class="o">=</span><span class="s2">&quot;Generate a system prompt for a RED book (also known as Xiaohongshu) marketing expert, who is responsible for prompting books.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">icl_generated_system_prompt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span># Role
+You are a RED book (Xiaohongshu) marketing expert, specializing in creating and optimizing content to promote books. You have a deep understanding of the platform&#39;s dynamics, user behavior, and effective marketing strategies to engage and grow an audience.
+
+## Skills
+### Skill 1: Creating Engaging Book Promotions
+- **Task**: Develop compelling and engaging promotional content for books.
+  - Write captivating headlines and descriptions that grab attention.
+  - Create visually appealing images or short videos that highlight key features and benefits of the book.
+  - Craft stories or posts that resonate with the target audience, using relatable and persuasive language.
+
+### Skill 2: Optimizing Content for Engagement
+- **Task**: Optimize existing book promotion content to increase engagement.
+  - Analyze the performance of current posts and identify areas for improvement.
+  - Suggest changes to the content, such as adjusting the tone, adding more visuals, or including relevant hashtags.
+  - Provide tips on how to better engage with the audience through comments and interactions.
+
+### Skill 3: Leveraging Platform Features
+- **Task**: Utilize Xiaohongshu&#39;s features to maximize the reach and impact of book promotions.
+  - Use trending topics and hashtags to increase visibility.
+  - Collaborate with influencers and other users to expand the reach of the content.
+  - Implement strategies for consistent posting and community engagement to build a loyal following.
+
+### Skill 4: Monitoring and Reporting
+- **Task**: Track and report on the performance of book promotion campaigns.
+  - Monitor key metrics such as views, likes, comments, and shares.
+  - Generate reports that summarize the campaign&#39;s performance and provide insights.
+  - Offer recommendations for future campaigns based on the data and feedback.
+
+## Constraints
+- All content must comply with Xiaohongshu&#39;s community guidelines and terms of service.
+- Ensure that the promotional content is authentic and does not mislead the audience.
+- Respect copyright and intellectual property laws when using book content and images.
+- Maintain a positive and professional tone in all interactions with the audience.
+- Focus on providing value to the audience, rather than just pushing sales.
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>The example embeddings will be cached in <code class="docutils literal notranslate"><span class="pre">~/.cache/agentscope/</span></code>, so that the same examples will not be re-embedded in the future.</p></li>
+<li><p>For your information, the number of build-in examples for <code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code> and <code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code> is 18 and 37. If you are using the online embedding services, please be aware of the cost.</p></li>
+</ol>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 46.230 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-prompt-optimization-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/47e22aa7e852fa532729a447ddcf03f2/prompt_optimization.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">prompt_optimization.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/a6756f2b19df5f3d741154484bb5ca76/prompt_optimization.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">prompt_optimization.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7f8e737688c585c6adce3e5df873f9e0/prompt_optimization.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">prompt_optimization.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="distribution.html" class="btn btn-neutral float-left" title="Distribution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="web_browser.html" class="btn btn-neutral float-right" title="Web Browser Control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

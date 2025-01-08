@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual Interface &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Configuring and Monitoring" href="monitor.html" />
+    <link rel="prev" title="MultiModality" href="multimodality.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visual Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gradio">Gradio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope-studio">AgentScope Studio</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#start-agentscope-studio">Start AgentScope Studio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard">Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#note">Note</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#register-running-application">Register Running Application</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import-running-histories">Import Running Histories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Visual Interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/visual.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-visual-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="visual-interface">
+<span id="sphx-glr-build-tutorial-visual-py"></span><span id="id1"></span><h1>Visual Interface<a class="headerlink" href="#visual-interface" title="Link to this heading"></a></h1>
+<p>AgentScope supports various visual interfaces for better user experience,
+including Gradio and AgentScope Studio.</p>
+<section id="gradio">
+<h2>Gradio<a class="headerlink" href="#gradio" title="Link to this heading"></a></h2>
+<p>First ensure you have installed the full version of AgentScope, which
+includes the Gradio package.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># From pypi</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>full<span class="o">]</span>
+
+<span class="c1"># From source code</span>
+<span class="nb">cd</span><span class="w"> </span>agentscope
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>full<span class="o">]</span>
+</pre></div>
+</div>
+<p>After that, ensure your application is wrapped by a <cite>main</cite> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Your code here</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span>
+    <span class="p">})</span>
+
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice,</span>
+        <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">user</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
+            <span class="k">break</span>
+</pre></div>
+</div>
+<p>Then execute the following command in the terminal to start the Gradio UI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_gradio<span class="w"> </span><span class="o">{</span>path_to_your_python_code<span class="o">}</span>
+</pre></div>
+</div>
+<p>Finally, you can visit the Gradio UI as follows:</p>
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" />
+</section>
+<hr class="docutils" />
+<section id="agentscope-studio">
+<h2>AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h2>
+<p>AgentScope Studio is an open sourced Web UI toolkit for building and
+monitoring multi-agent applications. It provides the following features:</p>
+<ul class="simple">
+<li><p><strong>Dashboard</strong>: A user-friendly interface, where you can monitor your running applications, and look through the running histories.</p></li>
+<li><p><strong>Workstation</strong>: A powerful interface to build your multi-agent applications with Dragging &amp; Dropping.</p></li>
+<li><p><strong>Server Manager</strong>: An easy-to-use monitoring and management tool for managing large-scale distributed applications.</p></li>
+<li><p><strong>Gallery</strong>: Fruitful applications and demos in Workstation. (Coming soon!)</p></li>
+</ul>
+<p>For details about Workstation and Gallery, please refer to <a class="reference internal" href="low_code.html#low-code"><span class="std std-ref">Low-code
+Developments</span></a>.
+For details about Server Manager, please refer to <a class="reference internal" href="distribution.html#distribution"><span class="std std-ref">Distribution</span></a>.</p>
+<section id="start-agentscope-studio">
+<span id="studio"></span><h3>Start AgentScope Studio<a class="headerlink" href="#start-agentscope-studio" title="Link to this heading"></a></h3>
+<p>To start a studio, first ensure you have installed the latest version of
+AgentScope. Then, you can simply run the following Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Or you can run the following command in the terminal:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">as_studio</span>
+</pre></div>
+</div>
+<p>After that, you can visit AgentScope studio at <a class="reference external" href="http://127.0.0.1:5000">http://127.0.0.1:5000</a>, and
+the following page will be displayed:</p>
+<img alt="https://img.alicdn.com/imgextra/i3/O1CN01Xic0GQ1ZkJ4M0iD8F_!!6000000003232-0-tps-3452-1610.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i3/O1CN01Xic0GQ1ZkJ4M0iD8F_!!6000000003232-0-tps-3452-1610.jpg" />
+<p>Of course, you can change the host and port, and link to your application
+running histories by providing the following arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>          <span class="c1"># The IP address of AgentScope studio</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>                 <span class="c1"># The port number of AgentScope studio</span>
+    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span>               <span class="c1"># The directories of your running histories</span>
+        <span class="s2">&quot;xxx/xxx/runs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xxx/xxx/runs&quot;</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dashboard">
+<h3>Dashboard<a class="headerlink" href="#dashboard" title="Link to this heading"></a></h3>
+<p>Dashboard is a web interface to monitor your running applications and look
+through the running histories.</p>
+<section id="note">
+<h4>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h4>
+<p>Currently, Dashboard has the following limitations, and we are working on
+improving it. Any feedback, contribution, or suggestion are welcome!</p>
+<ul class="simple">
+<li><p>The running application and AgentScope Studio must be running on the same</p></li>
+</ul>
+<p>machine for <code class="docutils literal notranslate"><span class="pre">URL/path</span> <span class="pre">consistency</span></code>. If you want to visit AgentScope in the
+other machine, you can try to forward the port to the remote machine by
+running the following command in the remote machine:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supposing AgentScope is running on {as_host}:{as_port}, and the port</span>
+<span class="c1"># of the remote machine is {remote_machine_port}</span>
+ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>remote_machine_port<span class="o">}</span>:<span class="o">{</span>as_host<span class="o">}</span>:<span class="o">{</span>as_port<span class="o">}</span><span class="w"> </span><span class="o">[{</span>user_name<span class="o">}</span>@<span class="o">]{</span>as_host<span class="o">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>For distributed applications, the single-machine &amp; multiprocess mode is</p></li>
+</ul>
+<p>supported, but the multi-machine multiprocess mode is not supported yet.</p>
+</section>
+<section id="register-running-application">
+<h4>Register Running Application<a class="headerlink" href="#register-running-application" title="Link to this heading"></a></h4>
+<p>After starting the AgentScope Studio, you can register your running
+applications by specifying <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.init()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">project</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:5000&quot;</span>    <span class="c1"># The URL of AgentScope Studio</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>After registering, you can view the running application in the Dashboard. To
+distinguish different applications, you can specify the project and name of
+the application.</p>
+<img alt="https://img.alicdn.com/imgextra/i2/O1CN01zcUmuJ1I3OUXy1Q35_!!6000000000837-0-tps-3426-1718.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i2/O1CN01zcUmuJ1I3OUXy1Q35_!!6000000000837-0-tps-3426-1718.jpg" />
+<p>Click the program with status <code class="docutils literal notranslate"><span class="pre">waiting</span></code> to enter the execution
+interface. For example, the following picture show a conversation interface.</p>
+<img alt="https://img.alicdn.com/imgextra/i3/O1CN01sA3VUc1h7OLKVLfr3_!!6000000004230-0-tps-3448-1736.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i3/O1CN01sA3VUc1h7OLKVLfr3_!!6000000004230-0-tps-3448-1736.jpg" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Once you register the running application, the input operation
+within the <code class="docutils literal notranslate"><span class="pre">agentscope.agents.UserAgent</span></code> class will be transferred to the
+Dashboard in AgentScope Studio, and you can enter the input in the Dashboard.</p>
+</div>
+</section>
+<section id="import-running-histories">
+<h4>Import Running Histories<a class="headerlink" href="#import-running-histories" title="Link to this heading"></a></h4>
+<p>In AgentScope, the running histories are saved in the <code class="docutils literal notranslate"><span class="pre">./runs</span> <span class="pre">directory</span></code> by
+default. If you want to watch these running histories in the Dashboard, you
+can specify the <code class="docutils literal notranslate"><span class="pre">run_dirs</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.studio.init()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;xxx/runs&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-visual-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2adb983a5826b3cb754a76a37e0f76ac/visual.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">visual.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e9fc65b6518589f4eb07561d3289ff71/visual.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">visual.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/72e31b6083adcdb0276066e166292c95/visual.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">visual.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="multimodality.html" class="btn btn-neutral float-left" title="MultiModality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="monitor.html" class="btn btn-neutral float-right" title="Configuring and Monitoring" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
