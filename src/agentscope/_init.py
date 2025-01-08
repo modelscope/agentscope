@@ -66,8 +66,8 @@ def init(
             search invocation.
         cache_dir (`str`):
             The directory to cache files. In Linux/Mac, the dir defaults to
-        `~/.cache/agentscope`. In Windows, the dir defaults to
-        `C:\\users\\<username>\\.cache\\agentscope`.
+            `~/.cache/agentscope`. In Windows, the dir defaults to
+            `C:\\users\\<username>\\.cache\\agentscope`.
         use_monitor (`bool`, defaults to `True`):
             Whether to activate the monitor.
         logger_level (`LOG_LEVEL`, defaults to `"INFO"`):
