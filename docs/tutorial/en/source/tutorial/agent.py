@@ -175,5 +175,5 @@ print(json.dumps(prompt, indent=4))
 #
 # Further Reading
 # ---------------------
-# - :ref:`builtin-agent`
+# - :ref:`builtin_agent`
 # - :ref:`model_api`

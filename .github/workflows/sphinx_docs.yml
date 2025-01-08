@@ -31,8 +31,8 @@ jobs:
     - name: Add execute permission to build.sh
       run: |
         chmod +x docs/tutorial/en/build.sh
-    - id: build
-      name: Build Documentation
+    - id: build_en
+      name: Build English Documentation
       env:
         DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
       run: |
@@ -47,5 +47,5 @@ jobs:
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: 'docs/tutorial/build/html'
+        publish_dir: 'docs/tutorial/en/build/html'
         cname: doc.agentscope.io

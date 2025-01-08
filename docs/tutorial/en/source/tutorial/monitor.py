@@ -38,7 +38,7 @@ agentscope.init(
 
 import json
 
-print(json.dumps(agentscope.state_dict(), indent=2))
+print(json.dumps(agentscope.state_dict(), indent=2, ensure_ascii=False))
 
 # %%
 # Monitoring the Runtime
@@ -70,4 +70,4 @@ _ = qwen_plus([{"role": "user", "content": "Who are you?"}])
 
 usage = agentscope.print_llm_usage()
 
-print(json.dumps(usage, indent=2))
+print(json.dumps(usage, indent=2, ensure_ascii=False))
