@@ -1,64 +1,11 @@
 # -*- coding: utf-8 -*-
-"""The configuration file should contain one or a list of model configs,
-and each model config should follow the following format.
+"""The model wrapper base class."""
 
-.. code-block:: python
-
-    {
-        "config_name": "{config_name}",
-        "model_type": "openai_chat" | "post_api" | ...,
-        ...
-    }
-
-After that, you can specify model by {config_name}.
-
-Note:
-    The parameters for different types of models are different. For OpenAI API,
-    the format is:
-
-        .. code-block:: python
-
-            {
-                "config_name": "{id of your model}",
-                "model_type": "openai_chat",
-                "model_name": "{model_name_for_openai, e.g. gpt-3.5-turbo}",
-                "api_key": "{your_api_key}",
-                "organization": "{your_organization, if needed}",
-                "client_args": {
-                    # ...
-                },
-                "generate_args": {
-                    # ...
-                }
-            }
-
-
-    For Post API, toking huggingface inference API as an example, its format
-    is:
-
-        .. code-block:: python
-
-            {
-                "config_name": "{config_name}",
-                "model_type": "post_api",
-                "api_url": "{api_url}",
-                "headers": {"Authorization": "Bearer {API_TOKEN}"},
-                "max_length": {max_length_of_model},
-                "timeout": {timeout},
-                "max_retries": {max_retries},
-                "generate_args": {
-                    "temperature": 0.5,
-                    # ...
-                }
-            }
-
-"""
 from __future__ import annotations
 import inspect
 import time
-from abc import ABCMeta
 from functools import wraps
-from typing import Sequence, Any, Callable, Union, List, Type
+from typing import Sequence, Any, Callable, Union, List, Optional
 
 from loguru import logger
 
@@ -140,32 +87,7 @@ def _response_parse_decorator(
     return checking_wrapper
 
 
-class _ModelWrapperMeta(ABCMeta):
-    """A meta call to replace the model wrapper's __call__ function with
-    wrapper about error handling."""
-
-    def __new__(mcs, name: Any, bases: Any, attrs: Any) -> Any:
-        if "__call__" in attrs:
-            attrs["__call__"] = _response_parse_decorator(attrs["__call__"])
-        return super().__new__(mcs, name, bases, attrs)
-
-    def __init__(cls, name: Any, bases: Any, attrs: Any) -> None:
-        if not hasattr(cls, "_registry"):
-            cls._registry = {}
-            cls._type_registry = {}
-            cls._deprecated_type_registry = {}
-        else:
-            cls._registry[name] = cls
-            if hasattr(cls, "model_type"):
-                cls._type_registry[cls.model_type] = cls
-                if hasattr(cls, "deprecated_model_type"):
-                    cls._deprecated_type_registry[
-                        cls.deprecated_model_type
-                    ] = cls
-        super().__init__(name, bases, attrs)
-
-
-class ModelWrapperBase(metaclass=_ModelWrapperMeta):
+class ModelWrapperBase:
     """The base class for model wrapper."""
 
     model_type: str
@@ -180,8 +102,8 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
 
     def __init__(
         self,  # pylint: disable=W0613
-        config_name: str,
-        model_name: str,
+        config_name: Optional[str] = None,
+        model_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Base class for model wrapper.
@@ -190,34 +112,25 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         `__call__` function.
 
         Args:
-            config_name (`str`):
+            config_name (`Optional[str]`, defaults to `None`):
                 The id of the model, which is used to extract configuration
                 from the config file.
-            model_name (`str`):
+            model_name (`Optional[str]`, defaults to `None`):
                 The name of the model.
         """
         self.monitor = MonitorManager.get_instance()
 
         self.config_name = config_name
-        self.model_name = model_name
-        logger.info(f"Initialize model by configuration [{config_name}]")
 
-    @classmethod
-    def get_wrapper(cls, model_type: str) -> Type[ModelWrapperBase]:
-        """Get the specific model wrapper"""
-        if model_type in cls._type_registry:
-            return cls._type_registry[model_type]  # type: ignore[return-value]
-        elif model_type in cls._registry:
-            return cls._registry[model_type]  # type: ignore[return-value]
-        elif model_type in cls._deprecated_type_registry:
-            deprecated_cls = cls._deprecated_type_registry[model_type]
-            logger.warning(
-                f"Model type [{model_type}] will be deprecated in future "
-                f"releases, please use [{deprecated_cls.model_type}] instead.",
+        if model_name is None:
+            raise ValueError(
+                "Model name should be provided for model "
+                f"configuration [{config_name}].",
             )
-            return deprecated_cls  # type: ignore[return-value]
-        else:
-            return None  # type: ignore[return-value]
+
+        self.model_name = model_name
+
+        logger.debug(f"Initialize model by configuration [{config_name}]")
 
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
@@ -231,7 +144,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         self,
         *args: Union[Msg, Sequence[Msg]],
     ) -> Union[List[dict], str]:
-        """Format the input string or dict into the format that the model
+        """Format the input messages into the format that the model
         API required."""
         raise NotImplementedError(
             f"Model Wrapper [{type(self).__name__}]"
@@ -243,7 +156,7 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
-        input messages into a user message.
+        input messages into a system message (if provided) and a user message.
 
         Note this strategy maybe not suitable for all scenarios,
         and developers are encouraged to implement their own prompt
@@ -271,10 +184,12 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
             # prompt1
             [
                 {
+                    "role": "system",
+                    "content": "You're a helpful assistant"
+                },
+                {
                     "role": "user",
                     "content": (
-                        "You're a helpful assistant\\n"
-                        "\\n"
                         "## Conversation History\\n"
                         "Bob: Hi, how can I help you?\\n"
                         "user: What's the date today?"
@@ -340,11 +255,6 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 )
 
         content_components = []
-        # Add system prompt at the beginning if provided
-        if sys_prompt is not None:
-            if not sys_prompt.endswith("\n"):
-                sys_prompt += "\n"
-            content_components.append(sys_prompt)
 
         # The conversation history is added to the user message if not empty
         if len(dialogue) > 0:
@@ -356,6 +266,10 @@ class ModelWrapperBase(metaclass=_ModelWrapperMeta):
                 "content": "\n".join(content_components),
             },
         ]
+
+        # Add system prompt at the beginning if provided
+        if sys_prompt is not None:
+            messages = [{"role": "system", "content": sys_prompt}] + messages
 
         return messages
 

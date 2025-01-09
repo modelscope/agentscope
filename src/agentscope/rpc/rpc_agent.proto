@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 
+// TODO: rename to RpcServicer
 // Servicer for rpc agent server
 service RpcAgent {
     // check server is alive
@@ -10,15 +11,18 @@ service RpcAgent {
     // stop the server
     rpc stop (google.protobuf.Empty) returns (GeneralResponse) {}
 
-    // create a new agent on the server
+    // TODO: rename to create_object
+    // create a new object on the server
     rpc create_agent (CreateAgentRequest) returns (GeneralResponse) {}
 
+    // TODO: rename to delete_object
     // delete agent from the server
     rpc delete_agent (StringMsg) returns (GeneralResponse) {}
 
     // clear all agent on the server
     rpc delete_all_agents (google.protobuf.Empty) returns (GeneralResponse) {}
 
+    // TODO: remove this function
     // clone an agent with specific agent_id
     rpc clone_agent (StringMsg) returns (GeneralResponse) {}
 
@@ -34,11 +38,13 @@ service RpcAgent {
     // get memory of a specific agent
     rpc get_agent_memory (StringMsg) returns (GeneralResponse) {}
 
+    // TODO: rename to call_object_func
     // call funcs of agent running on the server
-    rpc call_agent_func(RpcMsg) returns (GeneralResponse) {}
+    rpc call_agent_func(CallFuncRequest) returns (CallFuncResponse) {}
 
+    // TODO: rename to update_async_result
     // update value of PlaceholderMessage
-    rpc update_placeholder(UpdatePlaceholderRequest) returns (GeneralResponse) {}
+    rpc update_placeholder(UpdatePlaceholderRequest) returns (CallFuncResponse) {}
 
     // file transfer
     rpc download_file(StringMsg) returns (stream ByteMsg) {}
@@ -53,7 +59,7 @@ message GeneralResponse {
 message CreateAgentRequest {
     string agent_id = 1;
     bytes agent_init_args = 2;
-    bytes agent_source_code = 3;
+    bytes agent_source_code = 3; // TODO: remove this field
 }
 
 message AgentStatus {
@@ -74,8 +80,14 @@ message ByteMsg {
 }
 
 // Message class for agent function call
-message RpcMsg {
-    string value = 1;
-    string target_func = 2;
+message CallFuncRequest {
+    string target_func = 1;
+    bytes value = 2;
     string agent_id = 3;
+}
+
+message CallFuncResponse {
+    bool ok = 1;
+    bytes value = 2;
+    string message = 3;
 }
