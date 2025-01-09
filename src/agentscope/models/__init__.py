@@ -62,6 +62,7 @@ _BUILD_IN_MODEL_WRAPPERS = [
     "LiteLLMChatWrapper",
     "YiChatWrapper",
     "AnthropicChatWrapper",
+    "StableDiffusionImageSynthesisWrapper",
 ]
 
 __all__ = [
