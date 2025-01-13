@@ -12,7 +12,7 @@ class DictDialogAgent(AgentBase):
     specify the required fields in the response via specifying the parser
 
     About parser, please refer to our
-    [tutorial](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)
+    [tutorial](https://doc.agentscope.io/build_tutorial/structured_output.html)
 
     For usage example, please refer to the example of werewolf in
     `examples/game_werewolf`"""

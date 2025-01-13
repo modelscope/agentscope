@@ -407,15 +407,16 @@ class GeminiEmbeddingWrapper(GeminiWrapperBase):
     Response:
         - Refer to https://ai.google.dev/api/embeddings?hl=zh-cn#response-body
 
-        ```json
-        {
-            "embeddings": [
-                {
-                    object (ContentEmbedding)
-                }
-            ]
-        }
-        ```
+        .. code-block:: json
+
+            {
+                "embeddings": [
+                    {
+                        object (ContentEmbedding)
+                    }
+                ]
+            }
+
     """
 
     model_type: str = "gemini_embedding"

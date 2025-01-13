@@ -31,31 +31,32 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
     Response:
         - From https://platform.openai.com/docs/api-reference/chat/create
 
-        ```json
-        {
-            "id": "chatcmpl-123",
-            "object": "chat.completion",
-            "created": 1677652288,
-            "model": "gpt-4o-mini",
-            "system_fingerprint": "fp_44709d6fcb",
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": "Hello there, how may I assist you today?",
-                    },
-                    "logprobs": null,
-                    "finish_reason": "stop"
+        .. code-block:: json
+
+            {
+                "id": "chatcmpl-123",
+                "object": "chat.completion",
+                "created": 1677652288,
+                "model": "gpt-4o-mini",
+                "system_fingerprint": "fp_44709d6fcb",
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {
+                            "role": "assistant",
+                            "content": "Hello there, how may I assist you?",
+                        },
+                        "logprobs": null,
+                        "finish_reason": "stop"
+                    }
+                ],
+                "usage": {
+                    "prompt_tokens": 9,
+                    "completion_tokens": 12,
+                    "total_tokens": 21
                 }
-            ],
-            "usage": {
-                "prompt_tokens": 9,
-                "completion_tokens": 12,
-                "total_tokens": 21
             }
-        }
-        ```
+
     """
 
     def __init__(
@@ -504,19 +505,20 @@ class OpenAIDALLEWrapper(OpenAIWrapperBase):
     Response:
         - Refer to https://platform.openai.com/docs/api-reference/images/create
 
-        ```json
-        {
-            "created": 1589478378,
-            "data": [
-                {
-                    "url": "https://..."
-                },
-                {
-                    "url": "https://..."
-                }
-            ]
-        }
-        ```
+        .. code-block:: json
+
+            {
+                "created": 1589478378,
+                "data": [
+                    {
+                        "url": "https://..."
+                    },
+                    {
+                        "url": "https://..."
+                    }
+                ]
+            }
+
     """
 
     model_type: str = "openai_dall_e"
@@ -631,28 +633,29 @@ class OpenAIEmbeddingWrapper(OpenAIWrapperBase):
         - Refer to
         https://platform.openai.com/docs/api-reference/embeddings/create
 
-        ```json
-        {
-            "object": "list",
-            "data": [
-                {
-                    "object": "embedding",
-                    "embedding": [
-                        0.0023064255,
-                        -0.009327292,
-                        .... (1536 floats total for ada-002)
-                        -0.0028842222,
-                    ],
-                    "index": 0
+        .. code-block:: json
+
+            {
+                "object": "list",
+                "data": [
+                    {
+                        "object": "embedding",
+                        "embedding": [
+                            0.0023064255,
+                            -0.009327292,
+                            .... (1536 floats total for ada-002)
+                            -0.0028842222,
+                        ],
+                        "index": 0
+                    }
+                ],
+                "model": "text-embedding-ada-002",
+                "usage": {
+                    "prompt_tokens": 8,
+                    "total_tokens": 8
                 }
-            ],
-            "model": "text-embedding-ada-002",
-            "usage": {
-                "prompt_tokens": 8,
-                "total_tokens": 8
             }
-        }
-        ```
+
     """
 
     model_type: str = "openai_embedding"
