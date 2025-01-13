@@ -81,23 +81,24 @@ class OllamaChatWrapper(OllamaWrapperBase):
         - Refer to
         https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion
 
-        ```json
-        {
-            "model": "registry.ollama.ai/library/llama3:latest",
-            "created_at": "2023-12-12T14:13:43.416799Z",
-            "message": {
-                "role": "assistant",
-                "content": "Hello! How are you today?"
-            },
-            "done": true,
-            "total_duration": 5191566416,
-            "load_duration": 2154458,
-            "prompt_eval_count": 26,
-            "prompt_eval_duration": 383809000,
-            "eval_count": 298,
-            "eval_duration": 4799921000
-        }
-        ```
+        .. code-block:: json
+
+            {
+                "model": "registry.ollama.ai/library/llama3:latest",
+                "created_at": "2023-12-12T14:13:43.416799Z",
+                "message": {
+                    "role": "assistant",
+                    "content": "Hello! How are you today?"
+                },
+                "done": true,
+                "total_duration": 5191566416,
+                "load_duration": 2154458,
+                "prompt_eval_count": 26,
+                "prompt_eval_duration": 383809000,
+                "eval_count": 298,
+                "eval_duration": 4799921000
+            }
+
     """
 
     model_type: str = "ollama_chat"
@@ -384,15 +385,16 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
         - Refer to
         https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
 
-        ```json
-        {
-            "model": "all-minilm",
-            "embeddings": [[
-                0.010071029, -0.0017594862, 0.05007221, 0.04692972,
-                0.008599704, 0.105441414, -0.025878139, 0.12958129,
-            ]]
-        }
-        ```
+        .. code-block:: json
+
+            {
+                "model": "all-minilm",
+                "embeddings": [[
+                    0.010071029, -0.0017594862, 0.05007221, 0.04692972,
+                    0.008599704, 0.105441414, -0.025878139, 0.12958129,
+                ]]
+            }
+
     """
 
     model_type: str = "ollama_embedding"
@@ -482,21 +484,22 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         - From
         https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion
 
-        ```json
-        {
-            "model": "llama3",
-            "created_at": "2023-08-04T19:22:45.499127Z",
-            "response": "The sky is blue because it is the color of the sky.",
-            "done": true,
-            "context": [1, 2, 3],
-            "total_duration": 5043500667,
-            "load_duration": 5025959,
-            "prompt_eval_count": 26,
-            "prompt_eval_duration": 325953000,
-            "eval_count": 290,
-            "eval_duration": 4709213000
-        }
-        ```
+        .. code-block:: json
+
+            {
+                "model": "llama3",
+                "created_at": "2023-08-04T19:22:45.499127Z",
+                "response": "The sky is blue because it is the color of  sky.",
+                "done": true,
+                "context": [1, 2, 3],
+                "total_duration": 5043500667,
+                "load_duration": 5025959,
+                "prompt_eval_count": 26,
+                "prompt_eval_duration": 325953000,
+                "eval_count": 290,
+                "eval_duration": 4709213000
+            }
+
     """
 
     model_type: str = "ollama_generate"

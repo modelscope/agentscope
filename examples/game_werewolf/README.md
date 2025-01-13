@@ -14,13 +14,13 @@ The werewolf game involves a complex SOP with multiple roles and different phase
 Therefore, for an agent in werewolf game, it should be able to switch its status according to the game phase and its role, and respond accordingly.
 Of course, we can hard code the SOP (or finite state machine) within the agent, but we expect the agent to be more **flexible**, **intelligent**, and **adaptive**, which means **the agent shouldn't be designed for a specific game only**. It should be able to adapt to different tasks and SOPs!
 
-To achieve this goal, in AgentScope, we use a built-in [DictDialogAgent](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) class, together with a [parser](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html) module to construct the werewolf game.
+To achieve this goal, in AgentScope, we use a built-in [DictDialogAgent](https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/dict_dialog_agent.py) class, together with a [parser](https://doc.agentscope.io/build_tutorial/structured_output.html) module to construct the werewolf game.
 
-Moreover, the [pipeline and msghub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html) in AgentScope enable us to easily construct a complex SOP with multiple agents. We hope the implementation is concise, clear and readable!
+Moreover, the [msghub](https://doc.agentscope.io/build_tutorial/conversation.html#more-than-two-agents) in AgentScope enable us to easily construct a complex SOP with multiple agents. We hope the implementation is concise, clear and readable!
 
 More details please refer to our tutorial:
-- [Parser](https://modelscope.github.io/agentscope/en/tutorial/203-parser.html)
-- [Pipeline and msghub](https://modelscope.github.io/agentscope/en/tutorial/202-pipeline.html)
+- [Parser](https://doc.agentscope.io/build_tutorial/structured_output.html)
+- [MsgHub](https://doc.agentscope.io/build_tutorial/conversation.html#more-than-two-agents)
 
 
 
