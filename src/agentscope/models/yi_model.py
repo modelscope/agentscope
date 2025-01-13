@@ -25,29 +25,30 @@ class YiChatWrapper(ModelWrapperBase):
     Response:
         - From https://platform.lingyiwanwu.com/docs
 
-        ```json
-        {
-            "id": "cmpl-ea89ae83",
-            "object": "chat.completion",
-            "created": 5785971,
-            "model": "yi-large-rag",
-            "usage": {
-                "completion_tokens": 113,
-                "prompt_tokens": 896,
-                "total_tokens": 1009
-            },
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": "Today in Los Angeles, the weather ...",
-                    },
-                    "finish_reason": "stop"
-                }
-            ]
-        }
-        ```
+        .. code-block:: json
+
+            {
+                "id": "cmpl-ea89ae83",
+                "object": "chat.completion",
+                "created": 5785971,
+                "model": "yi-large-rag",
+                "usage": {
+                    "completion_tokens": 113,
+                    "prompt_tokens": 896,
+                    "total_tokens": 1009
+                },
+                "choices": [
+                    {
+                        "index": 0,
+                        "message": {
+                            "role": "assistant",
+                            "content": "Today in Los Angeles, the weather ...",
+                        },
+                        "finish_reason": "stop"
+                    }
+                ]
+            }
+
     """
 
     model_type: str = "yi_chat"

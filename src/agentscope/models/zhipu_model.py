@@ -84,29 +84,30 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
     Response:
         - From https://maas.aminer.cn/dev/api#glm-4
 
-        ```json
-        {
-            "created": 1703487403,
-            "id": "8239375684858666781",
-            "model": "glm-4",
-            "request_id": "8239375684858666781",
-            "choices": [
-                {
-                    "finish_reason": "stop",
-                    "index": 0,
-                    "message": {
-                        "content": "Drawing blueprints with ...",
-                        "role": "assistant"
+        .. code-block:: json
+
+            {
+                "created": 1703487403,
+                "id": "8239375684858666781",
+                "model": "glm-4",
+                "request_id": "8239375684858666781",
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "index": 0,
+                        "message": {
+                            "content": "Drawing blueprints with ...",
+                            "role": "assistant"
+                        }
                     }
+                ],
+                "usage": {
+                    "completion_tokens": 217,
+                    "prompt_tokens": 31,
+                    "total_tokens": 248
                 }
-            ],
-            "usage": {
-                "completion_tokens": 217,
-                "prompt_tokens": 31,
-                "total_tokens": 248
             }
-        }
-        ```
+
     """
 
     model_type: str = "zhipuai_chat"
@@ -371,30 +372,31 @@ class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):
 
     Example Response:
 
-    ```json
-    {
-        "model": "embedding-2",
-        "data": [
+        .. code-block:: json
+
             {
-                "embedding": [ (a total of 1024 elements)
-                    -0.02675454691052437,
-                    0.019060475751757622,
-                    ......
-                    -0.005519774276763201,
-                    0.014949671924114227
+                "model": "embedding-2",
+                "data": [
+                    {
+                        "embedding": [ (a total of 1024 elements)
+                            -0.02675454691052437,
+                            0.019060475751757622,
+                            ......
+                            -0.005519774276763201,
+                            0.014949671924114227
+                        ],
+                        "index": 0,
+                        "object": "embedding"
+                    }
                 ],
-                "index": 0,
-                "object": "embedding"
+                "object": "list",
+                "usage": {
+                    "completion_tokens": 0,
+                    "prompt_tokens": 4,
+                    "total_tokens": 4
+                }
             }
-        ],
-        "object": "list",
-        "usage": {
-            "completion_tokens": 0,
-            "prompt_tokens": 4,
-            "total_tokens": 4
-        }
-    }
-    ```
+
     """
 
     model_type: str = "zhipuai_embedding"
