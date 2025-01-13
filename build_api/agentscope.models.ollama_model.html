@@ -156,25 +156,23 @@
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion">https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion</a></p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“model”: “registry.ollama.ai/library/llama3:latest”,
-“created_at”: “2023-12-12T14:13:43.416799Z”,
-“message”: {</p>
-<blockquote>
-<div><p>“role”: “assistant”,
-“content”: “Hello! How are you today?”</p>
-</div></blockquote>
-<p>},
-“done”: true,
-“total_duration”: 5191566416,
-“load_duration”: 2154458,
-“prompt_eval_count”: 26,
-“prompt_eval_duration”: 383809000,
-“eval_count”: 298,
-“eval_duration”: 4799921000</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;registry.ollama.ai/library/llama3:latest&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-12-12T14:13:43.416799Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello! How are you today?&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;done&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;total_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5191566416</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;load_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2154458</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;prompt_eval_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;prompt_eval_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">383809000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;eval_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">298</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;eval_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4799921000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">
@@ -273,17 +271,15 @@ e.g. {“temperature”: 0, “seed”: 123}</p>
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings">https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings</a></p>
-<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“model”: “all-minilm”,
-“embeddings”: [[</p>
-<blockquote>
-<div><p>0.010071029, -0.0017594862, 0.05007221, 0.04692972,
-0.008599704, 0.105441414, -0.025878139, 0.12958129,</p>
-</div></blockquote>
-<p>]]</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;all-minilm&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;embeddings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span>
+<span class="w">        </span><span class="mf">0.010071029</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.0017594862</span><span class="p">,</span><span class="w"> </span><span class="mf">0.05007221</span><span class="p">,</span><span class="w"> </span><span class="mf">0.04692972</span><span class="p">,</span>
+<span class="w">        </span><span class="mf">0.008599704</span><span class="p">,</span><span class="w"> </span><span class="mf">0.105441414</span><span class="p">,</span><span class="w"> </span><span class="mf">-0.025878139</span><span class="p">,</span><span class="w"> </span><span class="mf">0.12958129</span><span class="p">,</span>
+<span class="w">    </span><span class="p">]]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">
@@ -338,21 +334,21 @@ e.g. {“temperature”: 0, “seed”: 123}</p>
 <li><p>From</p></li>
 </ul>
 <p><a class="reference external" href="https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion">https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion</a></p>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“model”: “llama3”,
-“created_at”: “2023-08-04T19:22:45.499127Z”,
-“response”: “The sky is blue because it is the color of the sky.”,
-“done”: true,
-“context”: [1, 2, 3],
-“total_duration”: 5043500667,
-“load_duration”: 5025959,
-“prompt_eval_count”: 26,
-“prompt_eval_duration”: 325953000,
-“eval_count”: 290,
-“eval_duration”: 4709213000</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;llama3&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2023-08-04T19:22:45.499127Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The sky is blue because it is the color of  sky.&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;done&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;total_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5043500667</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;load_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5025959</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;prompt_eval_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">26</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;prompt_eval_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">325953000</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;eval_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">290</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;eval_duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4709213000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">

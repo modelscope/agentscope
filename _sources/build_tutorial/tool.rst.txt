@@ -266,12 +266,12 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using a shell command.</thought>
+    Friday: <thought>I need to calculate the product of the two numbers provided by the user. I will use the execute_shell_command function to perform the calculation using the shell.</thought>
     <function>execute_shell_command</function>
-    <command>expr 1615114134 \* 4343434343</command>
+    <command>echo "1615114134*4343434343" | bc</command>
     system: 1. Execute function execute_shell_command
        [ARGUMENTS]:
-           command: expr 1615114134 \* 4343434343
+           command: echo "1615114134*4343434343" | bc
        [STATUS]: SUCCESS
        [RESULT]: 7015142197480303962
 
@@ -281,9 +281,9 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I will now provide the result to the user.</thought>
+    Friday: <thought>The multiplication of the two numbers 1615114134 and 4343434343 has been calculated successfully, and the result is 7015142197480303962. Now I can provide this answer to the user.</thought>
     <function>finish</function>
-    <response>The result of 1615114134 * 4343434343 is 7015142197480303962.</response>
+    <response>The product of 1615114134 and 4343434343 is 7015142197480303962.</response>
 
 
 
@@ -327,7 +327,7 @@ A custom tool function must follow these rules:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 10.605 seconds)
+   **Total running time of the script:** (0 minutes 9.228 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

@@ -151,31 +151,32 @@
 <span class="sd">    Response:</span>
 <span class="sd">        - From https://platform.openai.com/docs/api-reference/chat/create</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;id&quot;: &quot;chatcmpl-123&quot;,</span>
-<span class="sd">            &quot;object&quot;: &quot;chat.completion&quot;,</span>
-<span class="sd">            &quot;created&quot;: 1677652288,</span>
-<span class="sd">            &quot;model&quot;: &quot;gpt-4o-mini&quot;,</span>
-<span class="sd">            &quot;system_fingerprint&quot;: &quot;fp_44709d6fcb&quot;,</span>
-<span class="sd">            &quot;choices&quot;: [</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;index&quot;: 0,</span>
-<span class="sd">                    &quot;message&quot;: {</span>
-<span class="sd">                        &quot;role&quot;: &quot;assistant&quot;,</span>
-<span class="sd">                        &quot;content&quot;: &quot;Hello there, how may I assist you today?&quot;,</span>
-<span class="sd">                    },</span>
-<span class="sd">                    &quot;logprobs&quot;: null,</span>
-<span class="sd">                    &quot;finish_reason&quot;: &quot;stop&quot;</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;id&quot;: &quot;chatcmpl-123&quot;,</span>
+<span class="sd">                &quot;object&quot;: &quot;chat.completion&quot;,</span>
+<span class="sd">                &quot;created&quot;: 1677652288,</span>
+<span class="sd">                &quot;model&quot;: &quot;gpt-4o-mini&quot;,</span>
+<span class="sd">                &quot;system_fingerprint&quot;: &quot;fp_44709d6fcb&quot;,</span>
+<span class="sd">                &quot;choices&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;index&quot;: 0,</span>
+<span class="sd">                        &quot;message&quot;: {</span>
+<span class="sd">                            &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                            &quot;content&quot;: &quot;Hello there, how may I assist you?&quot;,</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &quot;logprobs&quot;: null,</span>
+<span class="sd">                        &quot;finish_reason&quot;: &quot;stop&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ],</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;prompt_tokens&quot;: 9,</span>
+<span class="sd">                    &quot;completion_tokens&quot;: 12,</span>
+<span class="sd">                    &quot;total_tokens&quot;: 21</span>
 <span class="sd">                }</span>
-<span class="sd">            ],</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;prompt_tokens&quot;: 9,</span>
-<span class="sd">                &quot;completion_tokens&quot;: 12,</span>
-<span class="sd">                &quot;total_tokens&quot;: 21</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -639,19 +640,20 @@
 <span class="sd">    Response:</span>
 <span class="sd">        - Refer to https://platform.openai.com/docs/api-reference/images/create</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;created&quot;: 1589478378,</span>
-<span class="sd">            &quot;data&quot;: [</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;url&quot;: &quot;https://...&quot;</span>
-<span class="sd">                },</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;url&quot;: &quot;https://...&quot;</span>
-<span class="sd">                }</span>
-<span class="sd">            ]</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;created&quot;: 1589478378,</span>
+<span class="sd">                &quot;data&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;url&quot;: &quot;https://...&quot;</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;url&quot;: &quot;https://...&quot;</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai_dall_e&quot;</span>
@@ -769,28 +771,29 @@
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://platform.openai.com/docs/api-reference/embeddings/create</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;object&quot;: &quot;list&quot;,</span>
-<span class="sd">            &quot;data&quot;: [</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;object&quot;: &quot;embedding&quot;,</span>
-<span class="sd">                    &quot;embedding&quot;: [</span>
-<span class="sd">                        0.0023064255,</span>
-<span class="sd">                        -0.009327292,</span>
-<span class="sd">                        .... (1536 floats total for ada-002)</span>
-<span class="sd">                        -0.0028842222,</span>
-<span class="sd">                    ],</span>
-<span class="sd">                    &quot;index&quot;: 0</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;object&quot;: &quot;list&quot;,</span>
+<span class="sd">                &quot;data&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;object&quot;: &quot;embedding&quot;,</span>
+<span class="sd">                        &quot;embedding&quot;: [</span>
+<span class="sd">                            0.0023064255,</span>
+<span class="sd">                            -0.009327292,</span>
+<span class="sd">                            .... (1536 floats total for ada-002)</span>
+<span class="sd">                            -0.0028842222,</span>
+<span class="sd">                        ],</span>
+<span class="sd">                        &quot;index&quot;: 0</span>
+<span class="sd">                    }</span>
+<span class="sd">                ],</span>
+<span class="sd">                &quot;model&quot;: &quot;text-embedding-ada-002&quot;,</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;prompt_tokens&quot;: 8,</span>
+<span class="sd">                    &quot;total_tokens&quot;: 8</span>
 <span class="sd">                }</span>
-<span class="sd">            ],</span>
-<span class="sd">            &quot;model&quot;: &quot;text-embedding-ada-002&quot;,</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;prompt_tokens&quot;: 8,</span>
-<span class="sd">                &quot;total_tokens&quot;: 8</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;openai_embedding&quot;</span>

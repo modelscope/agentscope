@@ -211,36 +211,37 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for DashScope&#39;s chat API, refer to</span>
 <span class="sd">    https://help.aliyun.com/zh/dashscope/developer-reference/api-details</span>
 
-<span class="sd">    Response:</span>
+<span class="sd">    Example Response:</span>
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;status_code&quot;: 200,</span>
-<span class="sd">            &quot;request_id&quot;: &quot;a75a1b22-e512-957d-891b-37db858ae738&quot;,</span>
-<span class="sd">            &quot;code&quot;: &quot;&quot;,</span>
-<span class="sd">            &quot;message&quot;: &quot;&quot;,</span>
-<span class="sd">            &quot;output&quot;: {</span>
-<span class="sd">                &quot;text&quot;: null,</span>
-<span class="sd">                &quot;finish_reason&quot;: null,</span>
-<span class="sd">                &quot;choices&quot;: [</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;finish_reason&quot;: &quot;stop&quot;,</span>
-<span class="sd">                        &quot;message&quot;: {</span>
-<span class="sd">                            &quot;role&quot;: &quot;assistant&quot;,</span>
-<span class="sd">                            &quot;content&quot;: &quot;xxx&quot;</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;status_code&quot;: 200,</span>
+<span class="sd">                &quot;request_id&quot;: &quot;a75a1b22-e512-957d-891b-37db858ae738&quot;,</span>
+<span class="sd">                &quot;code&quot;: &quot;&quot;,</span>
+<span class="sd">                &quot;message&quot;: &quot;&quot;,</span>
+<span class="sd">                &quot;output&quot;: {</span>
+<span class="sd">                    &quot;text&quot;: null,</span>
+<span class="sd">                    &quot;finish_reason&quot;: null,</span>
+<span class="sd">                    &quot;choices&quot;: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;finish_reason&quot;: &quot;stop&quot;,</span>
+<span class="sd">                            &quot;message&quot;: {</span>
+<span class="sd">                                &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                                &quot;content&quot;: &quot;xxx&quot;</span>
+<span class="sd">                            }</span>
 <span class="sd">                        }</span>
-<span class="sd">                    }</span>
-<span class="sd">                ]</span>
-<span class="sd">            },</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;input_tokens&quot;: 25,</span>
-<span class="sd">                &quot;output_tokens&quot;: 77,</span>
-<span class="sd">                &quot;total_tokens&quot;: 102</span>
+<span class="sd">                    ]</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;input_tokens&quot;: 25,</span>
+<span class="sd">                    &quot;output_tokens&quot;: 77,</span>
+<span class="sd">                    &quot;total_tokens&quot;: 102</span>
+<span class="sd">                }</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_chat&quot;</span>
@@ -541,34 +542,35 @@
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;status_code&quot;: 200,</span>
-<span class="sd">            &quot;request_id&quot;: &quot;b54ffeb8-6212-9dac-808c-b3771cba3788&quot;,</span>
-<span class="sd">            &quot;code&quot;: null,</span>
-<span class="sd">            &quot;message&quot;: &quot;&quot;,</span>
-<span class="sd">            &quot;output&quot;: {</span>
-<span class="sd">                &quot;task_id&quot;: &quot;996523eb-034d-459b-ac88-b340b95007a4&quot;,</span>
-<span class="sd">                &quot;task_status&quot;: &quot;SUCCEEDED&quot;,</span>
-<span class="sd">                &quot;results&quot;: [</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;url&quot;: &quot;RESULT_URL1&quot;</span>
-<span class="sd">                    },</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;url&quot;: &quot;RESULT_URL2&quot;</span>
-<span class="sd">                    },</span>
-<span class="sd">                ],</span>
-<span class="sd">                &quot;task_metrics&quot;: {</span>
-<span class="sd">                    &quot;TOTAL&quot;: 2,</span>
-<span class="sd">                    &quot;SUCCEEDED&quot;: 2,</span>
-<span class="sd">                    &quot;FAILED&quot;: 0</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;status_code&quot;: 200,</span>
+<span class="sd">                &quot;request_id&quot;: &quot;b54ffeb8-6212-9dac-808c-b3771cba3788&quot;,</span>
+<span class="sd">                &quot;code&quot;: null,</span>
+<span class="sd">                &quot;message&quot;: &quot;&quot;,</span>
+<span class="sd">                &quot;output&quot;: {</span>
+<span class="sd">                    &quot;task_id&quot;: &quot;996523eb-034d-459b-ac88-b340b95007a4&quot;,</span>
+<span class="sd">                    &quot;task_status&quot;: &quot;SUCCEEDED&quot;,</span>
+<span class="sd">                    &quot;results&quot;: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;url&quot;: &quot;RESULT_URL1&quot;</span>
+<span class="sd">                        },</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;url&quot;: &quot;RESULT_URL2&quot;</span>
+<span class="sd">                        },</span>
+<span class="sd">                    ],</span>
+<span class="sd">                    &quot;task_metrics&quot;: {</span>
+<span class="sd">                        &quot;TOTAL&quot;: 2,</span>
+<span class="sd">                        &quot;SUCCEEDED&quot;: 2,</span>
+<span class="sd">                        &quot;FAILED&quot;: 0</span>
+<span class="sd">                    }</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;image_count&quot;: 2</span>
 <span class="sd">                }</span>
-<span class="sd">            },</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;image_count&quot;: 2</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_image_synthesis&quot;</span>
@@ -669,27 +671,28 @@
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;status_code&quot;: 200, // 200 indicate success otherwise failed.</span>
-<span class="sd">            &quot;request_id&quot;: &quot;fd564688-43f7-9595-b986&quot;, // The request id.</span>
-<span class="sd">            &quot;code&quot;: &quot;&quot;, // If failed, the error code.</span>
-<span class="sd">            &quot;message&quot;: &quot;&quot;, // If failed, the error message.</span>
-<span class="sd">            &quot;output&quot;: {</span>
-<span class="sd">                &quot;embeddings&quot;: [ // embeddings</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;embedding&quot;: [ // one embedding output</span>
-<span class="sd">                            -3.8450357913970947, ...,</span>
-<span class="sd">                        ],</span>
-<span class="sd">                        &quot;text_index&quot;: 0 // the input index.</span>
-<span class="sd">                    }</span>
-<span class="sd">                ]</span>
-<span class="sd">            },</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;total_tokens&quot;: 3 // the request tokens.</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;status_code&quot;: 200, // 200 indicate success otherwise failed.</span>
+<span class="sd">                &quot;request_id&quot;: &quot;fd564688-43f7-9595-b986&quot;, // The request id.</span>
+<span class="sd">                &quot;code&quot;: &quot;&quot;, // If failed, the error code.</span>
+<span class="sd">                &quot;message&quot;: &quot;&quot;, // If failed, the error message.</span>
+<span class="sd">                &quot;output&quot;: {</span>
+<span class="sd">                    &quot;embeddings&quot;: [ // embeddings</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;embedding&quot;: [ // one embedding output</span>
+<span class="sd">                                -3.8450357913970947, ...,</span>
+<span class="sd">                            ],</span>
+<span class="sd">                            &quot;text_index&quot;: 0 // the input index.</span>
+<span class="sd">                        }</span>
+<span class="sd">                    ]</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;total_tokens&quot;: 3 // the request tokens.</span>
+<span class="sd">                }</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_text_embedding&quot;</span>
@@ -783,36 +786,37 @@
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;status_code&quot;: 200,</span>
-<span class="sd">            &quot;request_id&quot;: &quot;a0dc436c-2ee7-93e0-9667-c462009dec4d&quot;,</span>
-<span class="sd">            &quot;code&quot;: &quot;&quot;,</span>
-<span class="sd">            &quot;message&quot;: &quot;&quot;,</span>
-<span class="sd">            &quot;output&quot;: {</span>
-<span class="sd">                &quot;text&quot;: null,</span>
-<span class="sd">                &quot;finish_reason&quot;: null,</span>
-<span class="sd">                &quot;choices&quot;: [</span>
-<span class="sd">                    {</span>
-<span class="sd">                        &quot;finish_reason&quot;: &quot;stop&quot;,</span>
-<span class="sd">                        &quot;message&quot;: {</span>
-<span class="sd">                            &quot;role&quot;: &quot;assistant&quot;,</span>
-<span class="sd">                            &quot;content&quot;: [</span>
-<span class="sd">                                {</span>
-<span class="sd">                                    &quot;text&quot;: &quot;这张图片显...&quot;</span>
-<span class="sd">                                }</span>
-<span class="sd">                            ]</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;status_code&quot;: 200,</span>
+<span class="sd">                &quot;request_id&quot;: &quot;a0dc436c-2ee7-93e0-9667-c462009dec4d&quot;,</span>
+<span class="sd">                &quot;code&quot;: &quot;&quot;,</span>
+<span class="sd">                &quot;message&quot;: &quot;&quot;,</span>
+<span class="sd">                &quot;output&quot;: {</span>
+<span class="sd">                    &quot;text&quot;: null,</span>
+<span class="sd">                    &quot;finish_reason&quot;: null,</span>
+<span class="sd">                    &quot;choices&quot;: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &quot;finish_reason&quot;: &quot;stop&quot;,</span>
+<span class="sd">                            &quot;message&quot;: {</span>
+<span class="sd">                                &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                                &quot;content&quot;: [</span>
+<span class="sd">                                    {</span>
+<span class="sd">                                        &quot;text&quot;: &quot;这张图片显...&quot;</span>
+<span class="sd">                                    }</span>
+<span class="sd">                                ]</span>
+<span class="sd">                            }</span>
 <span class="sd">                        }</span>
-<span class="sd">                    }</span>
-<span class="sd">                ]</span>
-<span class="sd">            },</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;input_tokens&quot;: 1277,</span>
-<span class="sd">                &quot;output_tokens&quot;: 81,</span>
-<span class="sd">                &quot;image_tokens&quot;: 1247</span>
+<span class="sd">                    ]</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;input_tokens&quot;: 1277,</span>
+<span class="sd">                    &quot;output_tokens&quot;: 81,</span>
+<span class="sd">                    &quot;image_tokens&quot;: 1247</span>
+<span class="sd">                }</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dashscope_multimodal&quot;</span>
@@ -927,26 +931,25 @@
 
 <span class="sd">        The multimodal API has the following requirements:</span>
 
-<span class="sd">            - The roles of messages must alternate between &quot;user&quot; and</span>
-<span class="sd">                &quot;assistant&quot;.</span>
-<span class="sd">            - The message with the role &quot;system&quot; should be the first message</span>
-<span class="sd">                in the list.</span>
-<span class="sd">            - If the system message exists, then the second message must</span>
-<span class="sd">                have the role &quot;user&quot;.</span>
-<span class="sd">            - The last message in the list should have the role &quot;user&quot;.</span>
-<span class="sd">            - In each message, more than one figure is allowed.</span>
+<span class="sd">        - The roles of messages must alternate between &quot;user&quot; and &quot;assistant&quot;.</span>
+<span class="sd">        - The message with the role &quot;system&quot; should be the first message</span>
+<span class="sd">         in the list.</span>
+<span class="sd">        - If the system message exists, then the second message must</span>
+<span class="sd">         have the role &quot;user&quot;.</span>
+<span class="sd">        - The last message in the list should have the role &quot;user&quot;.</span>
+<span class="sd">        - In each message, more than one figure is allowed.</span>
 
 <span class="sd">        With the above requirements, we format the messages as follows:</span>
 
-<span class="sd">            - If the first message is a system message, then we will keep it as</span>
-<span class="sd">                system prompt.</span>
-<span class="sd">            - We merge all messages into a conversation history prompt in a</span>
-<span class="sd">                single message with the role &quot;user&quot;.</span>
-<span class="sd">            - When there are multiple figures in the given messages, we will</span>
-<span class="sd">                attach it to the user message by order. Note if there are</span>
-<span class="sd">                multiple figures, this strategy may cause misunderstanding for</span>
-<span class="sd">                the model. For advanced solutions, developers are encouraged to</span>
-<span class="sd">                implement their own prompt engineering strategies.</span>
+<span class="sd">        - If the first message is a system message, then we will keep it as</span>
+<span class="sd">         system prompt.</span>
+<span class="sd">        - We merge all messages into a conversation history prompt in a</span>
+<span class="sd">         single message with the role &quot;user&quot;.</span>
+<span class="sd">         - When there are multiple figures in the given messages, we will</span>
+<span class="sd">          attach it to the user message by order. Note if there are</span>
+<span class="sd">          multiple figures, this strategy may cause misunderstanding for</span>
+<span class="sd">          the model. For advanced solutions, developers are encouraged to</span>
+<span class="sd">          implement their own prompt engineering strategies.</span>
 
 <span class="sd">        The following is an example:</span>
 
@@ -972,7 +975,7 @@
 
 <span class="sd">        The prompt will be as follows:</span>
 
-<span class="sd">        .. code-block:: python</span>
+<span class="sd">        .. code-block:: json</span>
 
 <span class="sd">            [</span>
 <span class="sd">                {</span>

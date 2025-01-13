@@ -168,35 +168,27 @@
 <dt>Response:</dt><dd><ul class="simple">
 <li><p>From <a class="reference external" href="https://docs.litellm.ai/docs/completion/output">https://docs.litellm.ai/docs/completion/output</a></p></li>
 </ul>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
-{</p>
-<blockquote>
-<div><dl>
-<dt>‘choices’: [</dt><dd><dl>
-<dt>{</dt><dd><p>‘finish_reason’: str,  # String: ‘stop’
-‘index’: int,  # Integer: 0
-‘message’: {  # Dictionary [str, str]</p>
-<blockquote>
-<div><p>‘role’: str,  # String: ‘assistant’
-‘content’: str  # String: “default message”</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>],
-‘created’: str,  # String: None
-‘model’: str,  # String: None
-‘usage’: {  # Dictionary [str, int]</p>
-<blockquote>
-<div><p>‘prompt_tokens’: int,  # Integer
-‘completion_tokens’: int,  # Integer
-‘total_tokens’: int  # Integer</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="err">&#39;choices&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="err">&#39;</span><span class="kc">f</span><span class="err">i</span><span class="kc">n</span><span class="err">ish_reaso</span><span class="kc">n</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">S</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="p">:</span><span class="w"> </span><span class="err">&#39;s</span><span class="kc">t</span><span class="err">op&#39;</span>
+<span class="w">            </span><span class="err">&#39;i</span><span class="kc">n</span><span class="err">dex&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">I</span><span class="kc">nte</span><span class="err">ger</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="err">&#39;message&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">Dic</span><span class="kc">t</span><span class="err">io</span><span class="kc">nar</span><span class="err">y</span><span class="w"> </span><span class="p">[</span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">]</span>
+<span class="w">                </span><span class="err">&#39;role&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">S</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="p">:</span><span class="w"> </span><span class="err">&#39;assis</span><span class="kc">tant</span><span class="err">&#39;</span>
+<span class="w">                </span><span class="err">&#39;co</span><span class="kc">ntent</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">S</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;default message&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="err">&#39;crea</span><span class="kc">te</span><span class="err">d&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">S</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="p">:</span><span class="w"> </span><span class="err">No</span><span class="kc">ne</span>
+<span class="w">    </span><span class="err">&#39;model&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">S</span><span class="kc">tr</span><span class="err">i</span><span class="kc">n</span><span class="err">g</span><span class="p">:</span><span class="w"> </span><span class="err">No</span><span class="kc">ne</span>
+<span class="w">    </span><span class="err">&#39;usage&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">Dic</span><span class="kc">t</span><span class="err">io</span><span class="kc">nar</span><span class="err">y</span><span class="w"> </span><span class="p">[</span><span class="err">s</span><span class="kc">tr</span><span class="p">,</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">]</span>
+<span class="w">        </span><span class="err">&#39;promp</span><span class="kc">t</span><span class="err">_</span><span class="kc">t</span><span class="err">oke</span><span class="kc">ns</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">I</span><span class="kc">nte</span><span class="err">ger</span>
+<span class="w">        </span><span class="err">&#39;comple</span><span class="kc">t</span><span class="err">io</span><span class="kc">n</span><span class="err">_</span><span class="kc">t</span><span class="err">oke</span><span class="kc">ns</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="p">,</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">I</span><span class="kc">nte</span><span class="err">ger</span>
+<span class="w">        </span><span class="err">&#39;</span><span class="kc">t</span><span class="err">o</span><span class="kc">tal</span><span class="err">_</span><span class="kc">t</span><span class="err">oke</span><span class="kc">ns</span><span class="err">&#39;</span><span class="p">:</span><span class="w"> </span><span class="err">i</span><span class="kc">nt</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">I</span><span class="kc">nte</span><span class="err">ger</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">

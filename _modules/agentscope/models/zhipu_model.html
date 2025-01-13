@@ -210,29 +210,30 @@
 <span class="sd">    Response:</span>
 <span class="sd">        - From https://maas.aminer.cn/dev/api#glm-4</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;created&quot;: 1703487403,</span>
-<span class="sd">            &quot;id&quot;: &quot;8239375684858666781&quot;,</span>
-<span class="sd">            &quot;model&quot;: &quot;glm-4&quot;,</span>
-<span class="sd">            &quot;request_id&quot;: &quot;8239375684858666781&quot;,</span>
-<span class="sd">            &quot;choices&quot;: [</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;finish_reason&quot;: &quot;stop&quot;,</span>
-<span class="sd">                    &quot;index&quot;: 0,</span>
-<span class="sd">                    &quot;message&quot;: {</span>
-<span class="sd">                        &quot;content&quot;: &quot;Drawing blueprints with ...&quot;,</span>
-<span class="sd">                        &quot;role&quot;: &quot;assistant&quot;</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;created&quot;: 1703487403,</span>
+<span class="sd">                &quot;id&quot;: &quot;8239375684858666781&quot;,</span>
+<span class="sd">                &quot;model&quot;: &quot;glm-4&quot;,</span>
+<span class="sd">                &quot;request_id&quot;: &quot;8239375684858666781&quot;,</span>
+<span class="sd">                &quot;choices&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;finish_reason&quot;: &quot;stop&quot;,</span>
+<span class="sd">                        &quot;index&quot;: 0,</span>
+<span class="sd">                        &quot;message&quot;: {</span>
+<span class="sd">                            &quot;content&quot;: &quot;Drawing blueprints with ...&quot;,</span>
+<span class="sd">                            &quot;role&quot;: &quot;assistant&quot;</span>
+<span class="sd">                        }</span>
 <span class="sd">                    }</span>
+<span class="sd">                ],</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;completion_tokens&quot;: 217,</span>
+<span class="sd">                    &quot;prompt_tokens&quot;: 31,</span>
+<span class="sd">                    &quot;total_tokens&quot;: 248</span>
 <span class="sd">                }</span>
-<span class="sd">            ],</span>
-<span class="sd">            &quot;usage&quot;: {</span>
-<span class="sd">                &quot;completion_tokens&quot;: 217,</span>
-<span class="sd">                &quot;prompt_tokens&quot;: 31,</span>
-<span class="sd">                &quot;total_tokens&quot;: 248</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;zhipuai_chat&quot;</span>
@@ -503,30 +504,31 @@
 
 <span class="sd">    Example Response:</span>
 
-<span class="sd">    ```json</span>
-<span class="sd">    {</span>
-<span class="sd">        &quot;model&quot;: &quot;embedding-2&quot;,</span>
-<span class="sd">        &quot;data&quot;: [</span>
+<span class="sd">        .. code-block:: json</span>
+
 <span class="sd">            {</span>
-<span class="sd">                &quot;embedding&quot;: [ (a total of 1024 elements)</span>
-<span class="sd">                    -0.02675454691052437,</span>
-<span class="sd">                    0.019060475751757622,</span>
-<span class="sd">                    ......</span>
-<span class="sd">                    -0.005519774276763201,</span>
-<span class="sd">                    0.014949671924114227</span>
+<span class="sd">                &quot;model&quot;: &quot;embedding-2&quot;,</span>
+<span class="sd">                &quot;data&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;embedding&quot;: [ (a total of 1024 elements)</span>
+<span class="sd">                            -0.02675454691052437,</span>
+<span class="sd">                            0.019060475751757622,</span>
+<span class="sd">                            ......</span>
+<span class="sd">                            -0.005519774276763201,</span>
+<span class="sd">                            0.014949671924114227</span>
+<span class="sd">                        ],</span>
+<span class="sd">                        &quot;index&quot;: 0,</span>
+<span class="sd">                        &quot;object&quot;: &quot;embedding&quot;</span>
+<span class="sd">                    }</span>
 <span class="sd">                ],</span>
-<span class="sd">                &quot;index&quot;: 0,</span>
-<span class="sd">                &quot;object&quot;: &quot;embedding&quot;</span>
+<span class="sd">                &quot;object&quot;: &quot;list&quot;,</span>
+<span class="sd">                &quot;usage&quot;: {</span>
+<span class="sd">                    &quot;completion_tokens&quot;: 0,</span>
+<span class="sd">                    &quot;prompt_tokens&quot;: 4,</span>
+<span class="sd">                    &quot;total_tokens&quot;: 4</span>
+<span class="sd">                }</span>
 <span class="sd">            }</span>
-<span class="sd">        ],</span>
-<span class="sd">        &quot;object&quot;: &quot;list&quot;,</span>
-<span class="sd">        &quot;usage&quot;: {</span>
-<span class="sd">            &quot;completion_tokens&quot;: 0,</span>
-<span class="sd">            &quot;prompt_tokens&quot;: 4,</span>
-<span class="sd">            &quot;total_tokens&quot;: 4</span>
-<span class="sd">        }</span>
-<span class="sd">    }</span>
-<span class="sd">    ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;zhipuai_embedding&quot;</span>

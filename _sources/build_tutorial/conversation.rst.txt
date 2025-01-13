@@ -109,12 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message was cut off. How can I assist you today?
-    Monster: Hello Angel! It looks like there might have been a mix-up, as I'm Monster, the assistant here. How can I help you today?
-    Angel: Hello! I'm Angel, and it looks like there was a bit of confusion. How can I assist you today?
-    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to assist. It seems we had a little role mix-up. How can I help you today?
-    Angel: Hello! It looks like there's been a bit of a mix-up. I'm Angel, and I'm here to assist you. How can I help you today?
-    Monster: Hello Angel! It’s great to meet you. I see we’ve had a bit of a role reversal here. I’m Monster, and I’m the one who’s here to assist. How can I help you today?
+    Angel: Hello! It seems like your message was cut off. Could you please provide more details so I can assist you better?
+    Monster: Hello Angel! It looks like there might have been a mix-up, as I didn't send a previous message. How can I assist you today?
+    Angel: Hello! I apologize for the confusion. It looks like there was a mix-up in the conversation history. How can I assist you today?
+    Monster: Hello Angel! No problem at all. It's great to meet you. How can I assist you today? Is there anything specific you need help with or any questions you have?
+    Angel: Hello! It’s nice to meet you too. I think there might be a little confusion; I’m here to assist you. Is there anything specific you need help with or any questions you have?
+    Monster: Ah, I see the mix-up now! My apologies for that. Since you're here to assist, let me think of something. How about this: I'm looking for some tips on how to stay organized and manage my time more effectively. Do you have any suggestions?
 
 
 
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 18.444 seconds)
+   **Total running time of the script:** (0 minutes 22.541 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

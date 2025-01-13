@@ -204,23 +204,24 @@
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;model&quot;: &quot;registry.ollama.ai/library/llama3:latest&quot;,</span>
-<span class="sd">            &quot;created_at&quot;: &quot;2023-12-12T14:13:43.416799Z&quot;,</span>
-<span class="sd">            &quot;message&quot;: {</span>
-<span class="sd">                &quot;role&quot;: &quot;assistant&quot;,</span>
-<span class="sd">                &quot;content&quot;: &quot;Hello! How are you today?&quot;</span>
-<span class="sd">            },</span>
-<span class="sd">            &quot;done&quot;: true,</span>
-<span class="sd">            &quot;total_duration&quot;: 5191566416,</span>
-<span class="sd">            &quot;load_duration&quot;: 2154458,</span>
-<span class="sd">            &quot;prompt_eval_count&quot;: 26,</span>
-<span class="sd">            &quot;prompt_eval_duration&quot;: 383809000,</span>
-<span class="sd">            &quot;eval_count&quot;: 298,</span>
-<span class="sd">            &quot;eval_duration&quot;: 4799921000</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;model&quot;: &quot;registry.ollama.ai/library/llama3:latest&quot;,</span>
+<span class="sd">                &quot;created_at&quot;: &quot;2023-12-12T14:13:43.416799Z&quot;,</span>
+<span class="sd">                &quot;message&quot;: {</span>
+<span class="sd">                    &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                    &quot;content&quot;: &quot;Hello! How are you today?&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;done&quot;: true,</span>
+<span class="sd">                &quot;total_duration&quot;: 5191566416,</span>
+<span class="sd">                &quot;load_duration&quot;: 2154458,</span>
+<span class="sd">                &quot;prompt_eval_count&quot;: 26,</span>
+<span class="sd">                &quot;prompt_eval_duration&quot;: 383809000,</span>
+<span class="sd">                &quot;eval_count&quot;: 298,</span>
+<span class="sd">                &quot;eval_duration&quot;: 4799921000</span>
+<span class="sd">            }</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_chat&quot;</span>
@@ -513,15 +514,16 @@
 <span class="sd">        - Refer to</span>
 <span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;model&quot;: &quot;all-minilm&quot;,</span>
-<span class="sd">            &quot;embeddings&quot;: [[</span>
-<span class="sd">                0.010071029, -0.0017594862, 0.05007221, 0.04692972,</span>
-<span class="sd">                0.008599704, 0.105441414, -0.025878139, 0.12958129,</span>
-<span class="sd">            ]]</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;model&quot;: &quot;all-minilm&quot;,</span>
+<span class="sd">                &quot;embeddings&quot;: [[</span>
+<span class="sd">                    0.010071029, -0.0017594862, 0.05007221, 0.04692972,</span>
+<span class="sd">                    0.008599704, 0.105441414, -0.025878139, 0.12958129,</span>
+<span class="sd">                ]]</span>
+<span class="sd">            }</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_embedding&quot;</span>
@@ -617,21 +619,22 @@
 <span class="sd">        - From</span>
 <span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &quot;model&quot;: &quot;llama3&quot;,</span>
-<span class="sd">            &quot;created_at&quot;: &quot;2023-08-04T19:22:45.499127Z&quot;,</span>
-<span class="sd">            &quot;response&quot;: &quot;The sky is blue because it is the color of the sky.&quot;,</span>
-<span class="sd">            &quot;done&quot;: true,</span>
-<span class="sd">            &quot;context&quot;: [1, 2, 3],</span>
-<span class="sd">            &quot;total_duration&quot;: 5043500667,</span>
-<span class="sd">            &quot;load_duration&quot;: 5025959,</span>
-<span class="sd">            &quot;prompt_eval_count&quot;: 26,</span>
-<span class="sd">            &quot;prompt_eval_duration&quot;: 325953000,</span>
-<span class="sd">            &quot;eval_count&quot;: 290,</span>
-<span class="sd">            &quot;eval_duration&quot;: 4709213000</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;model&quot;: &quot;llama3&quot;,</span>
+<span class="sd">                &quot;created_at&quot;: &quot;2023-08-04T19:22:45.499127Z&quot;,</span>
+<span class="sd">                &quot;response&quot;: &quot;The sky is blue because it is the color of  sky.&quot;,</span>
+<span class="sd">                &quot;done&quot;: true,</span>
+<span class="sd">                &quot;context&quot;: [1, 2, 3],</span>
+<span class="sd">                &quot;total_duration&quot;: 5043500667,</span>
+<span class="sd">                &quot;load_duration&quot;: 5025959,</span>
+<span class="sd">                &quot;prompt_eval_count&quot;: 26,</span>
+<span class="sd">                &quot;prompt_eval_duration&quot;: 325953000,</span>
+<span class="sd">                &quot;eval_count&quot;: 290,</span>
+<span class="sd">                &quot;eval_duration&quot;: 4709213000</span>
+<span class="sd">            }</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_generate&quot;</span>

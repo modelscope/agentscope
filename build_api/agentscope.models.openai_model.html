@@ -234,25 +234,19 @@ class in model configuration.</p>
 <dt>Response:</dt><dd><ul class="simple">
 <li><p>Refer to <a class="reference external" href="https://platform.openai.com/docs/api-reference/images/create">https://platform.openai.com/docs/api-reference/images/create</a></p></li>
 </ul>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“created”: 1589478378,
-“data”: [</p>
-<blockquote>
-<div><dl class="simple">
-<dt>{</dt><dd><p>“url”: “<a class="reference external" href="https://">https://</a>…”</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“url”: “<a class="reference external" href="https://">https://</a>…”</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;created&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1589478378</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://...&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://...&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -286,36 +280,28 @@ class in model configuration.</p>
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://platform.openai.com/docs/api-reference/embeddings/create">https://platform.openai.com/docs/api-reference/embeddings/create</a></p>
-<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“object”: “list”,
-“data”: [</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><p>“object”: “embedding”,
-“embedding”: [</p>
-<blockquote>
-<div><p>0.0023064255,
--0.009327292,
-…. (1536 floats total for ada-002)
--0.0028842222,</p>
-</div></blockquote>
-<p>],
-“index”: 0</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
-<p>],
-“model”: “text-embedding-ada-002”,
-“usage”: {</p>
-<blockquote>
-<div><p>“prompt_tokens”: 8,
-“total_tokens”: 8</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;object&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;list&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;object&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;embedding&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;embedding&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="mf">0.0023064255</span><span class="p">,</span>
+<span class="w">                </span><span class="mf">-0.009327292</span><span class="p">,</span>
+<span class="w">                </span><span class="err">....</span><span class="w"> </span><span class="err">(</span><span class="mi">1536</span><span class="w"> </span><span class="kc">fl</span><span class="err">oa</span><span class="kc">ts</span><span class="w"> </span><span class="kc">t</span><span class="err">o</span><span class="kc">tal</span><span class="w"> </span><span class="kc">f</span><span class="err">or</span><span class="w"> </span><span class="err">ada</span><span class="mi">-002</span><span class="err">)</span>
+<span class="w">                </span><span class="mf">-0.0028842222</span><span class="p">,</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text-embedding-ada-002&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;prompt_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;total_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -348,39 +334,31 @@ class in model configuration.</p>
 <dt>Response:</dt><dd><ul class="simple">
 <li><p>From <a class="reference external" href="https://platform.openai.com/docs/api-reference/chat/create">https://platform.openai.com/docs/api-reference/chat/create</a></p></li>
 </ul>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“id”: “chatcmpl-123”,
-“object”: “chat.completion”,
-“created”: 1677652288,
-“model”: “gpt-4o-mini”,
-“system_fingerprint”: “fp_44709d6fcb”,
-“choices”: [</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><p>“index”: 0,
-“message”: {</p>
-<blockquote>
-<div><p>“role”: “assistant”,
-“content”: “Hello there, how may I assist you today?”,</p>
-</div></blockquote>
-<p>},
-“logprobs”: null,
-“finish_reason”: “stop”</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
-<p>],
-“usage”: {</p>
-<blockquote>
-<div><p>“prompt_tokens”: 9,
-“completion_tokens”: 12,
-“total_tokens”: 21</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chatcmpl-123&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;object&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chat.completion&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;created&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1677652288</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;system_fingerprint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fp_44709d6fcb&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello there, how may I assist you?&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;logprobs&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;finish_reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;prompt_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;completion_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;total_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">

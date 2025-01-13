@@ -210,27 +210,28 @@
 <span class="sd">    Response:</span>
 <span class="sd">        - From https://docs.litellm.ai/docs/completion/output</span>
 
-<span class="sd">        ```json</span>
-<span class="sd">        {</span>
-<span class="sd">            &#39;choices&#39;: [</span>
-<span class="sd">                {</span>
-<span class="sd">                    &#39;finish_reason&#39;: str,  # String: &#39;stop&#39;</span>
-<span class="sd">                    &#39;index&#39;: int,  # Integer: 0</span>
-<span class="sd">                    &#39;message&#39;: {  # Dictionary [str, str]</span>
-<span class="sd">                        &#39;role&#39;: str,  # String: &#39;assistant&#39;</span>
-<span class="sd">                        &#39;content&#39;: str  # String: &quot;default message&quot;</span>
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &#39;choices&#39;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &#39;finish_reason&#39;: str,  # String: &#39;stop&#39;</span>
+<span class="sd">                        &#39;index&#39;: int,  # Integer: 0</span>
+<span class="sd">                        &#39;message&#39;: {  # Dictionary [str, str]</span>
+<span class="sd">                            &#39;role&#39;: str,  # String: &#39;assistant&#39;</span>
+<span class="sd">                            &#39;content&#39;: str  # String: &quot;default message&quot;</span>
+<span class="sd">                        }</span>
 <span class="sd">                    }</span>
+<span class="sd">                ],</span>
+<span class="sd">                &#39;created&#39;: str,  # String: None</span>
+<span class="sd">                &#39;model&#39;: str,  # String: None</span>
+<span class="sd">                &#39;usage&#39;: {  # Dictionary [str, int]</span>
+<span class="sd">                    &#39;prompt_tokens&#39;: int,  # Integer</span>
+<span class="sd">                    &#39;completion_tokens&#39;: int,  # Integer</span>
+<span class="sd">                    &#39;total_tokens&#39;: int  # Integer</span>
 <span class="sd">                }</span>
-<span class="sd">            ],</span>
-<span class="sd">            &#39;created&#39;: str,  # String: None</span>
-<span class="sd">            &#39;model&#39;: str,  # String: None</span>
-<span class="sd">            &#39;usage&#39;: {  # Dictionary [str, int]</span>
-<span class="sd">                &#39;prompt_tokens&#39;: int,  # Integer</span>
-<span class="sd">                &#39;completion_tokens&#39;: int,  # Integer</span>
-<span class="sd">                &#39;total_tokens&#39;: int  # Integer</span>
 <span class="sd">            }</span>
-<span class="sd">        }</span>
-<span class="sd">        ```</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;litellm_chat&quot;</span>

@@ -154,46 +154,36 @@
 <p>The model wrapper for DashScope’s chat API, refer to
 <a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details">https://help.aliyun.com/zh/dashscope/developer-reference/api-details</a></p>
 <dl>
-<dt>Response:</dt><dd><ul class="simple">
+<dt>Example Response:</dt><dd><ul class="simple">
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw">https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw</a></p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“status_code”: 200,
-“request_id”: “a75a1b22-e512-957d-891b-37db858ae738”,
-“code”: “”,
-“message”: “”,
-“output”: {</p>
-<blockquote>
-<div><p>“text”: null,
-“finish_reason”: null,
-“choices”: [</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><p>“finish_reason”: “stop”,
-“message”: {</p>
-<blockquote>
-<div><p>“role”: “assistant”,
-“content”: “xxx”</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-“usage”: {</p>
-<blockquote>
-<div><p>“input_tokens”: 25,
-“output_tokens”: 77,
-“total_tokens”: 102</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;status_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a75a1b22-e512-957d-891b-37db858ae738&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;finish_reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;finish_reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;xxx&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;input_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;output_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">77</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;total_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">102</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">
@@ -294,46 +284,34 @@ class in model configuration.</p>
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF">https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF</a></p>
-<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“status_code”: 200,
-“request_id”: “b54ffeb8-6212-9dac-808c-b3771cba3788”,
-“code”: null,
-“message”: “”,
-“output”: {</p>
-<blockquote>
-<div><p>“task_id”: “996523eb-034d-459b-ac88-b340b95007a4”,
-“task_status”: “SUCCEEDED”,
-“results”: [</p>
-<blockquote>
-<div><dl class="simple">
-<dt>{</dt><dd><p>“url”: “RESULT_URL1”</p>
-</dd>
-</dl>
-<p>},
-{</p>
-<blockquote>
-<div><p>“url”: “RESULT_URL2”</p>
-</div></blockquote>
-<p>},</p>
-</div></blockquote>
-<p>],
-“task_metrics”: {</p>
-<blockquote>
-<div><p>“TOTAL”: 2,
-“SUCCEEDED”: 2,
-“FAILED”: 0</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-<p>},
-“usage”: {</p>
-<blockquote>
-<div><p>“image_count”: 2</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;status_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;b54ffeb8-6212-9dac-808c-b3771cba3788&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;996523eb-034d-459b-ac88-b340b95007a4&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;task_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SUCCEEDED&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RESULT_URL1&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;RESULT_URL2&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;task_metrics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;TOTAL&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;SUCCEEDED&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;FAILED&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;image_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -368,50 +346,36 @@ class in model configuration.</p>
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN">https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN</a></p>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“status_code”: 200,
-“request_id”: “a0dc436c-2ee7-93e0-9667-c462009dec4d”,
-“code”: “”,
-“message”: “”,
-“output”: {</p>
-<blockquote>
-<div><p>“text”: null,
-“finish_reason”: null,
-“choices”: [</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><p>“finish_reason”: “stop”,
-“message”: {</p>
-<blockquote>
-<div><p>“role”: “assistant”,
-“content”: [</p>
-<blockquote>
-<div><dl class="simple">
-<dt>{</dt><dd><p>“text”: “这张图片显…”</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
-<p>]</p>
-</div></blockquote>
-<p>},
-“usage”: {</p>
-<blockquote>
-<div><p>“input_tokens”: 1277,
-“output_tokens”: 81,
-“image_tokens”: 1247</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;status_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a0dc436c-2ee7-93e0-9667-c462009dec4d&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;finish_reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;choices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;finish_reason&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stop&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;这张图片显...&quot;</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">]</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;input_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1277</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;output_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">81</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;image_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1247</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py method">
@@ -438,49 +402,42 @@ and value as the url. Only “image” and “audio” are supported.</p>
 <span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for DashScope Multimodal API.</p>
 <p>The multimodal API has the following requirements:</p>
+<ul class="simple">
+<li><p>The roles of messages must alternate between “user” and “assistant”.</p></li>
+<li><p>The message with the role “system” should be the first message</p></li>
+</ul>
 <blockquote>
-<div><ul class="simple">
-<li><dl class="simple">
-<dt>The roles of messages must alternate between “user” and</dt><dd><p>“assistant”.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>The message with the role “system” should be the first message</dt><dd><p>in the list.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>If the system message exists, then the second message must</dt><dd><p>have the role “user”.</p>
-</dd>
-</dl>
-</li>
+<div><p>in the list.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>If the system message exists, then the second message must</p></li>
+</ul>
+<blockquote>
+<div><p>have the role “user”.</p>
+</div></blockquote>
+<ul class="simple">
 <li><p>The last message in the list should have the role “user”.</p></li>
 <li><p>In each message, more than one figure is allowed.</p></li>
 </ul>
-</div></blockquote>
 <p>With the above requirements, we format the messages as follows:</p>
+<ul class="simple">
+<li><p>If the first message is a system message, then we will keep it as</p></li>
+</ul>
 <blockquote>
-<div><ul class="simple">
-<li><dl class="simple">
-<dt>If the first message is a system message, then we will keep it as</dt><dd><p>system prompt.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>We merge all messages into a conversation history prompt in a</dt><dd><p>single message with the role “user”.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>When there are multiple figures in the given messages, we will</dt><dd><p>attach it to the user message by order. Note if there are
+<div><p>system prompt.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>We merge all messages into a conversation history prompt in a</p></li>
+</ul>
+<blockquote>
+<div><p>single message with the role “user”.
+- When there are multiple figures in the given messages, we will</p>
+<blockquote>
+<div><p>attach it to the user message by order. Note if there are
 multiple figures, this strategy may cause misunderstanding for
 the model. For advanced solutions, developers are encouraged to
 implement their own prompt engineering strategies.</p>
-</dd>
-</dl>
-</li>
-</ul>
+</div></blockquote>
 </div></blockquote>
 <p>The following is an example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -503,28 +460,28 @@ implement their own prompt engineering strategies.</p>
 </pre></div>
 </div>
 <p>The prompt will be as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful assistant&quot;</span><span class="p">},</span>
-            <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;figure1&quot;</span><span class="p">}</span>
-        <span class="p">]</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;figure2&quot;</span><span class="p">},</span>
-            <span class="p">{</span><span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;figure3&quot;</span><span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="s2">&quot;Bob: How about this picture?</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="s2">&quot;user: It&#39;s wonderful! How about mine?&quot;</span>
-                <span class="p">)</span>
-            <span class="p">},</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;You are a helpful assistant&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;figure1&quot;</span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;role&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;figure2&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="nt">&quot;image&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;figure3&quot;</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="err">(</span>
+<span class="w">                    </span><span class="s2">&quot;## Conversation History\n&quot;</span>
+<span class="w">                    </span><span class="s2">&quot;Bob: How about this picture?\n&quot;</span>
+<span class="w">                    </span><span class="s2">&quot;user: It&#39;s wonderful! How about mine?&quot;</span>
+<span class="w">                </span><span class="err">)</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -579,37 +536,27 @@ class in model configuration.</p>
 <li><p>Refer to</p></li>
 </ul>
 <p><a class="reference external" href="https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3">https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3</a></p>
-<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a>json
-{</p>
-<blockquote>
-<div><p>“status_code”: 200, // 200 indicate success otherwise failed.
-“request_id”: “fd564688-43f7-9595-b986”, // The request id.
-“code”: “”, // If failed, the error code.
-“message”: “”, // If failed, the error message.
-“output”: {</p>
-<blockquote>
-<div><dl>
-<dt>“embeddings”: [ // embeddings</dt><dd><dl>
-<dt>{</dt><dd><dl class="simple">
-<dt>“embedding”: [ // one embedding output</dt><dd><p>-3.8450357913970947, …,</p>
-</dd>
-</dl>
-<p>],
-“text_index”: 0 // the input index.</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>]</p>
-</div></blockquote>
-<p>},
-“usage”: {</p>
-<blockquote>
-<div><p>“total_tokens”: 3 // the request tokens.</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;status_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="c1">// 200 indicate success otherwise failed.</span>
+<span class="w">    </span><span class="nt">&quot;request_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;fd564688-43f7-9595-b986&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// The request id.</span>
+<span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// If failed, the error code.</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// If failed, the error message.</span>
+<span class="w">    </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;embeddings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="c1">// embeddings</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;embedding&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="c1">// one embedding output</span>
+<span class="w">                    </span><span class="mf">-3.8450357913970947</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">,</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">                </span><span class="nt">&quot;text_index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="c1">// the input index.</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;usage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;total_tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="c1">// the request tokens.</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 <dl class="py attribute">

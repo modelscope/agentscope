@@ -218,40 +218,15 @@ agent generates a response message.</p>
 a Msg object will be created with the string as the content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>content</strong></p></li>
-<li><p><strong>(</strong><strong>`Union</strong><strong>[</strong><strong>str</strong> – <p>The content of the message to be spoken out. If a string is
+<dd class="field-odd"><p><strong>content</strong> – <dl class="simple">
+<dt>(<cite>Union[str, Msg, Generator[Tuple[bool, str], None, None]]</cite>):</dt><dd><p>The content of the message to be spoken out. If a string is
 given, a Msg object will be created with the agent’s name, role
 as “assistant”, and the given string as the content.
 If the content is a Generator, the agent will speak out the
 message chunk by chunk.</p>
-</p></li>
-<li><p><strong>Msg</strong> – The content of the message to be spoken out. If a string is
-given, a Msg object will be created with the agent’s name, role
-as “assistant”, and the given string as the content.
-If the content is a Generator, the agent will speak out the
-message chunk by chunk.</p></li>
-<li><p><strong>Generator</strong><strong>[</strong><strong>Tuple</strong><strong>[</strong><strong>bool</strong> – The content of the message to be spoken out. If a string is
-given, a Msg object will be created with the agent’s name, role
-as “assistant”, and the given string as the content.
-If the content is a Generator, the agent will speak out the
-message chunk by chunk.</p></li>
-<li><p><strong>str</strong><strong>]</strong> – The content of the message to be spoken out. If a string is
-given, a Msg object will be created with the agent’s name, role
-as “assistant”, and the given string as the content.
-If the content is a Generator, the agent will speak out the
-message chunk by chunk.</p></li>
-<li><p><strong>None</strong> – The content of the message to be spoken out. If a string is
-given, a Msg object will be created with the agent’s name, role
-as “assistant”, and the given string as the content.
-If the content is a Generator, the agent will speak out the
-message chunk by chunk.</p></li>
-<li><p><strong>None</strong><strong>]</strong><strong>]</strong><strong>`</strong><strong>)</strong> – The content of the message to be spoken out. If a string is
-given, a Msg object will be created with the agent’s name, role
-as “assistant”, and the given string as the content.
-If the content is a Generator, the agent will speak out the
-message chunk by chunk.</p></li>
-</ul>
+</dd>
+</dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
