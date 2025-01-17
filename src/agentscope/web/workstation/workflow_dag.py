@@ -149,6 +149,7 @@ class ASDiGraph(nx.DiGraph):
 
         # Combine header and body to form the full script
         script = (
+            "# -*- coding: utf-8 -*-\n"
             f"{header}\n\n\n{main_body}\n\nif __name__ == "
             f"'__main__':\n    main()\n"
         )
