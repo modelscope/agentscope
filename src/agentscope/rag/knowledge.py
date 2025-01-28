@@ -23,6 +23,10 @@ class Knowledge(ABC):
     """
     Base class for RAG, CANNOT be instantiated directly
     """
+    model_type: str
+    """
+    A string to identify a knowledge base class
+    """
 
     def __init__(
         self,

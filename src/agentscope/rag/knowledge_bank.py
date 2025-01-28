@@ -4,10 +4,10 @@ Knowledge bank for making Knowledge objects easier to use
 """
 import copy
 import json
-from typing import Optional, Union
+from typing import Optional, Union, Type
 from loguru import logger
 from agentscope.agents import AgentBase
-from ..manager import ModelManager
+from agentscope.manager import ModelManager
 from .knowledge import Knowledge
 
 DEFAULT_INDEX_CONFIG = {
@@ -43,7 +43,6 @@ class KnowledgeBank:
         configs: Union[dict, str],
     ) -> None:
         """initialize the knowledge bank"""
-
         if isinstance(configs, str):
             logger.info(f"Loading configs from {configs}")
             with open(configs, "r", encoding="utf-8") as fp:
@@ -52,17 +51,67 @@ class KnowledgeBank:
             self.configs = configs
         self.stored_knowledge: dict[str, Knowledge] = {}
         self._init_knowledge()
+        self.known_knowledge_types = {}
+
+        from .llama_index_knowledge import LlamaIndexKnowledge
+        from .search_knowledge import BingKnowledge
+        self.register_knowledge_class(LlamaIndexKnowledge)
+        self.register_knowledge_class(BingKnowledge)
 
     def _init_knowledge(self) -> None:
         """initialize the knowledge bank"""
         for config in self.configs:
-            print("bank", config)
             self.add_data_as_knowledge(
                 knowledge_id=config["knowledge_id"],
                 emb_model_name=config["emb_model_config_name"],
                 knowledge_config=config,
             )
         logger.info("knowledge bank initialization completed.\n ")
+
+    def register_knowledge_class(
+        self,
+        knowledge_base_class: Type[Knowledge],
+        exist_ok: bool = True,
+    ) -> None:
+        """
+        Add a new knowledge base class to the knowledge bank
+        Args:
+            knowledge_base_class (`Type[Knowledge]`):
+                The model wrapper class to be registered, which must inherit
+                from `Knowledge`.
+            exist_ok (`bool`):
+                Whether to overwrite the existing knowledge base class
+                with the same name.
+        """
+        if not issubclass(knowledge_base_class, Knowledge):
+            raise TypeError(
+                "The new knowledge base class should inherit from "
+                f"Knowledge, but got {knowledge_base_class}.",
+            )
+
+        if not hasattr(knowledge_base_class, "knowledge_type"):
+            raise ValueError(
+                f"The knowledge base class `{knowledge_base_class}` should "
+                f"have a `knowledge_type` attribute.",
+            )
+
+        knowledge_type = knowledge_base_class.knowledge_type
+        if knowledge_type in self.known_knowledge_types:
+            if exist_ok:
+                logger.warning(
+                    f'Model wrapper "{knowledge_type}" '
+                    "already exists, overwrite it.",
+                )
+                self.known_knowledge_types[knowledge_type] = (
+                    knowledge_base_class)
+            else:
+                raise ValueError(
+                    f'Model wrapper "{knowledge_type}" already exists, '
+                    "please set `exist_ok=True` to overwrite it.",
+                )
+        else:
+            self.known_knowledge_types[knowledge_type] = knowledge_base_class
+
 
     def add_data_as_knowledge(
         self,
@@ -105,8 +154,6 @@ class KnowledgeBank:
                 )
             ''
         """
-        from .llama_index_knowledge import LlamaIndexKnowledge
-
         if knowledge_id in self.stored_knowledge:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
 
@@ -122,17 +169,24 @@ class KnowledgeBank:
                 loader_config["load_data"]["loader"]["init_args"] = loader_init
                 knowledge_config["data_processing"].append(loader_config)
 
+        if "bing_search_config" in knowledge_config:
+            from .search_knowledge import BingKnowledge
+
+            KnowledgeClass = BingKnowledge
+        else:
+            from .llama_index_knowledge import LlamaIndexKnowledge
+
+            KnowledgeClass = LlamaIndexKnowledge
+
         model_manager = ModelManager.get_instance()
 
-        self.stored_knowledge[knowledge_id] = LlamaIndexKnowledge(
+        self.stored_knowledge[knowledge_id] = KnowledgeClass(
             knowledge_id=knowledge_id,
             emb_model=model_manager.get_model_by_config_name(emb_model_name),
             knowledge_config=knowledge_config,
-            model=(
-                model_manager.get_model_by_config_name(model_name)
-                if model_name
-                else None
-            ),
+            model=model_manager.get_model_by_config_name(model_name)
+            if model_name
+            else None,
         )
         logger.info(f"data loaded for knowledge_id = {knowledge_id}.")
 

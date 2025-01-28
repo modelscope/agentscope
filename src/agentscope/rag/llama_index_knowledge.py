@@ -16,7 +16,10 @@ try:
         Embedding,
     )
     from llama_index.core.ingestion import IngestionPipeline
+    from llama_index.core.storage.docstore import SimpleDocumentStore
+    from llama_index.retrievers.bm25 import BM25Retriever
 
+    from llama_index.core.vector_stores.types import VectorStore
     from llama_index.core.bridge.pydantic import PrivateAttr
     from llama_index.core.node_parser import SentenceSplitter
     from llama_index.core import (
@@ -27,6 +30,7 @@ try:
     from llama_index.core.schema import (
         Document,
         TransformComponent,
+        BaseNode,
     )
 except ImportError:
     llama_index = None
@@ -34,6 +38,9 @@ except ImportError:
     BaseEmbedding = None
     Embedding = None
     IngestionPipeline = None
+    SimpleDocumentStore = None
+    BM25Retriever = None
+    VectorStore = None
     SentenceSplitter = None
     VectorStoreIndex = None
     StorageContext = None
@@ -41,6 +48,7 @@ except ImportError:
     PrivateAttr = None
     Document = None
     TransformComponent = None
+    BaseNode = None
 
 from agentscope.manager import FileManager
 from agentscope.models import ModelWrapperBase
@@ -145,6 +153,8 @@ class LlamaIndexKnowledge(Knowledge):
     This class is a wrapper with the llama index RAG.
     """
 
+    knowledge_type: str = "llamaindex_knowledge"
+
     def __init__(
         self,
         knowledge_id: str,
@@ -152,6 +162,7 @@ class LlamaIndexKnowledge(Knowledge):
         knowledge_config: Optional[dict] = None,
         model: Optional[ModelWrapperBase] = None,
         persist_root: Optional[str] = None,
+        additional_sparse_retrieval: Optional[bool] = False,
         overwrite_index: Optional[bool] = False,
         showprogress: Optional[bool] = True,
         **kwargs: Any,
@@ -210,6 +221,11 @@ class LlamaIndexKnowledge(Knowledge):
         self.overwrite_index = overwrite_index
         self.showprogress = showprogress
         self.index = None
+
+        # if use mix retrieval with bm25 in addition to dense retrieval
+        self.additional_sparse_retrieval = additional_sparse_retrieval
+        self.bm25_retriever = None
+
         # ensure the emb_model is compatible with LlamaIndex
         if isinstance(emb_model, ModelWrapperBase):
             self.emb_model = _EmbeddingModel(emb_model)
@@ -237,10 +253,14 @@ class LlamaIndexKnowledge(Knowledge):
                 by calling rag.refresh_index() during the execution of the
                 agent.
         """
-        if os.path.exists(self.persist_dir):
+        if not os.path.exists(self.persist_dir):
+            os.makedirs(self.persist_dir, exist_ok=True)
+        try:
             self._load_index()
-            # self.refresh_index()
-        else:
+        except Exception as e:
+            logger.error(
+                f"index loading error: {str(e)}, recomputing index...",
+            )
             self._data_to_index()
         self._get_retriever()
         logger.info(
@@ -263,10 +283,14 @@ class LlamaIndexKnowledge(Knowledge):
         )
         logger.info(f"index loaded from {self.persist_dir}")
 
-    def _data_to_index(self) -> None:
+    def _data_to_index(
+        self,
+        vector_store: Optional[VectorStore] = None,
+    ) -> List[BaseNode]:
         """
         Convert the data to index by configs. This includes:
-            * load the data to documents by using information from configs
+            * load the d_data_to_ata to documents by using information
+              from configs
             * set the transformations associated with documents
             * convert the documents to nodes
             * convert the nodes to index
@@ -289,14 +313,33 @@ class LlamaIndexKnowledge(Knowledge):
             )
             nodes = nodes + nodes_docs
         # convert nodes to index
-        self.index = VectorStoreIndex(
-            nodes=nodes,
-            embed_model=self.emb_model,
-        )
-        logger.info("index calculation completed.")
-        # persist the calculated index
-        self.index.storage_context.persist(persist_dir=self.persist_dir)
-        logger.info("index persisted.")
+        if vector_store is None:
+            self.index = VectorStoreIndex(
+                nodes=nodes,
+                embed_model=self.emb_model,
+            )
+            logger.info("index calculation completed.")
+            # persist the calculated index
+            self.index.storage_context.persist(persist_dir=self.persist_dir)
+            logger.info("index persisted.")
+        else:
+            docstore = SimpleDocumentStore()
+            docstore.add_documents(nodes)
+            storage_context = StorageContext.from_defaults(
+                docstore=docstore,
+                vector_store=vector_store,
+            )
+            self.index = VectorStoreIndex(
+                nodes,
+                storage_context=storage_context,
+                embed_model=self.emb_model,
+            )
+            logger.info("[Update Mode] Added documents to VDB")
+            storage_context.docstore.persist(
+                os.path.join(self.persist_dir, "docstore.json"),
+            )
+
+        return nodes
 
     def _data_to_docs(
         self,
@@ -304,8 +347,9 @@ class LlamaIndexKnowledge(Knowledge):
         config: dict = None,
     ) -> Any:
         """
-        This method set the loader as needed, or just use the default setting.
-        Then use the loader to load data from dir to documents.
+        This method set the loader as needed, or just use the
+        default setting. Then use the loader to load data from
+        dir to documents.
 
         Notes:
             We can use simple directory loader (SimpleDirectoryReader)
@@ -451,7 +495,17 @@ class LlamaIndexKnowledge(Knowledge):
             similarity_top_k=similarity_top_k or DEFAULT_TOP_K,
             **kwargs,
         )
+
+        if not self.bm25_retriever:
+            self.bm25_retriever = BM25Retriever.from_defaults(
+                nodes=self.index.docstore.docs.values(),
+                similarity_top_k=similarity_top_k,
+            )
+        else:
+            self.bm25_retriever.similarity_top_k = similarity_top_k
+
         logger.info("retriever is ready.")
+
         return retriever
 
     def retrieve(
@@ -486,12 +540,27 @@ class LlamaIndexKnowledge(Knowledge):
         if retriever is None:
             retriever = self._get_retriever(similarity_top_k)
         retrieved = retriever.retrieve(str(query))
+        retrieved_res = retrieved
+
+        if self.additional_sparse_retrieval and self.bm25_retriever:
+            bm25_retrieved = self.bm25_retriever.retrieve(str(query))
+            retrieved_res_dict = {}
+            retrieved_res_dict["dense"] = retrieved_res
+            retrieved_res_dict["bm25"] = [
+                x for x in bm25_retrieved if x.score > 0
+            ]
+            bm25_scores = [x.score for x in bm25_retrieved]
+            logger.info(f"bm25 scores {bm25_scores}")
+            retrieved_res = retrieved_res_dict
+
+        # todo: modify the api to support multi retrivers
         if to_list_strs:
             results = []
             for node in retrieved:
                 results.append(node.get_text())
             return results
-        return retrieved
+
+        return retrieved_res
 
     def refresh_index(self) -> None:
         """
