@@ -23,7 +23,7 @@ class Knowledge(ABC):
     """
     Base class for RAG, CANNOT be instantiated directly
     """
-    model_type: str
+    knowledge_type: str = "base_knowledge"
     """
     A string to identify a knowledge base class
     """
@@ -83,6 +83,35 @@ class Knowledge(ABC):
         Returns:
             return a list with retrieved documents (in strings)
         """
+
+    @classmethod
+    def default_config(cls, **kwargs: Any) -> dict:
+        """
+        Return a default config for a knowledge class.
+        """
+        raise NotImplementedError(
+            f"{cls.__name__} does not have default_config to be defined.",
+        )
+
+    @classmethod
+    def build_knowledgebase_instance(
+        cls,
+        knowledge_id: str,
+        knowledge_config: Optional[dict] = None,
+        **kwargs: Any,
+    ) -> "Knowledge":
+        """
+        A constructor to build a knowledge base instance.
+        Args:
+            knowledge_id (str):
+                The id of the knowledge instance.
+            knowledge_config (dict):
+                The configuration to the knowledge instance.
+        """
+        raise NotImplementedError(
+            f"{knowledge_id} of {cls.__name__} does not support "
+            "auto build knowledgebase",
+        )
 
     def post_processing(
         self,

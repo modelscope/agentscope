@@ -62,13 +62,6 @@ class BingKnowledge(Knowledge):
     ) -> Any:
         pass
 
-    @staticmethod
-    def has_online_search() -> bool:
-        """
-        Easy check if this knowledge is based on online search
-        """
-        return True
-
     def retrieve(
         self,
         query: Any,
@@ -105,7 +98,7 @@ class BingKnowledge(Knowledge):
             bing_title = info_piece.get("title", "")
             info = {
                 "Title": bing_title,
-                "description": info_piece.get("snippet", ""),
+                "Description": info_piece.get("snippet", ""),
             }
 
             if self.to_load_web:
@@ -145,3 +138,32 @@ class BingKnowledge(Knowledge):
             return results
 
         return node_list
+
+    @classmethod
+    def default_config(cls, **kwargs: Any) -> dict:
+        """
+        Return a default config for a knowledge class.
+        """
+        return {}
+
+    @classmethod
+    def build_knowledgebase_instance(
+        cls,
+        knowledge_id: str,
+        knowledge_config: Optional[dict] = None,
+        to_load_web: bool = False,
+        **kwargs: Any,
+    ) -> "Knowledge":
+        """
+        A constructor to build a knowledge base instance.
+        Args:
+            knowledge_id (str):
+                The id of the knowledge instance.
+            knowledge_config (dict):
+                The configuration to the knowledge instance.
+        """
+        return cls(
+            knowledge_id=knowledge_id,
+            knowledge_config=knowledge_config,
+            to_load_web=to_load_web,
+        )

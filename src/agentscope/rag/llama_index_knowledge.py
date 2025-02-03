@@ -4,6 +4,7 @@ This module is an integration of the Llama index RAG
 into AgentScope package
 """
 
+import copy
 import os.path
 from typing import Any, Optional, List, Union
 from loguru import logger
@@ -50,7 +51,7 @@ except ImportError:
     TransformComponent = None
     BaseNode = None
 
-from agentscope.manager import FileManager
+from agentscope.manager import FileManager, ModelManager
 from agentscope.models import ModelWrapperBase
 from agentscope.constants import (
     DEFAULT_TOP_K,
@@ -258,7 +259,7 @@ class LlamaIndexKnowledge(Knowledge):
         try:
             self._load_index()
         except Exception as e:
-            logger.error(
+            logger.warning(
                 f"index loading error: {str(e)}, recomputing index...",
             )
             self._data_to_index()
@@ -654,3 +655,157 @@ class LlamaIndexKnowledge(Knowledge):
         # persist the updated index
         self.index.storage_context.persist(persist_dir=self.persist_dir)
         logger.info("nodes delete completed.")
+
+    @classmethod
+    def default_config(
+        cls,
+        knowledge_id: str,
+        data_dirs_and_types: dict[str, list[str]] = None,
+        knowledge_config: Optional[dict] = None,
+    ) -> dict:
+        """
+        Generate default config for loading data from directories and using the
+        default operations to preprocess the data for RAG usage.
+        Args:
+            knowledge_id (str):
+                user-defined unique id for the knowledge
+            data_dirs_and_types (dict[str, list[str]]):
+                dictionary of data paths (keys) to the data types
+                (file extensions) for knowledgebase
+                (e.g., [".md", ".py", ".html"])
+            knowledge_config (optional[dict]):
+                complete indexing configuration, used for more advanced
+                applications. Users can customize
+                - loader,
+                - transformations,
+                - ...
+                Examples can refer to../examples/conversation_with_RAG_agents/
+        """
+        data_dirs_and_types = (
+            data_dirs_and_types if data_dirs_and_types else {}
+        )
+
+        default_knowledge_config = {
+            "knowledge_id": "",
+            "data_processing": [],
+        }
+        default_loader_config = {
+            "load_data": {
+                "loader": {
+                    "create_object": True,
+                    "module": "llama_index.core",
+                    "class": "SimpleDirectoryReader",
+                    "init_args": {},
+                },
+            },
+        }
+        default_init_config = {
+            "input_dir": "",
+            "recursive": True,
+            "required_exts": [],
+        }
+        # generate default knowledge config
+        default_knowledge_config["knowledge_id"] = knowledge_id
+        for data_dir, types in data_dirs_and_types.items():
+            loader_config = copy.deepcopy(default_loader_config)
+            loader_init = copy.deepcopy(default_init_config)
+            loader_init["input_dir"] = data_dir
+            loader_init["required_exts"] = types
+            loader_config["load_data"]["loader"]["init_args"] = loader_init
+            default_knowledge_config["data_processing"].append(loader_config)
+
+        if knowledge_config is None:
+            return default_knowledge_config
+        else:
+            default_knowledge_config.update(knowledge_config)
+            return default_knowledge_config
+
+    @classmethod
+    def build_knowledgebase_instance(
+        cls,
+        knowledge_id: str,
+        knowledge_config: Optional[dict] = None,
+        data_dirs_and_types: dict[str, list[str]] = None,
+        emb_model_name: Optional[str] = None,
+        model_name: Optional[str] = None,
+        **kwargs: Any,
+    ) -> Knowledge:
+        """
+        Building an instance of the Llamaindex knowledge
+        Args:
+            knowledge_id (str):
+                user-defined unique id for the knowledge
+            knowledge_config (optional[dict]):
+                complete indexing configuration, used for more advanced
+                applications. Users can customize
+                - loader,
+                - transformations,
+                - ...
+                Examples can refer to../examples/conversation_with_RAG_agents/
+            data_dirs_and_types (dict[str, list[str]]):
+                dictionary of data paths (keys) to the data types
+                (file extensions) for knowledgebase
+                (e.g., [".md", ".py", ".html"])
+            emb_model_name (Optional[str]):
+                name of the embedding model.
+                This should be specified here or in the knowledge_config dict.
+                If specified both here and in the knowledge_config,
+                the input parameter takes a higher priority than the
+                one knowledge_config.
+            model_name Optional[str]):
+                name of the language model.
+                Optional, can be None and not specified in knowledge_config.
+                If specified both here and in the knowledge_config,
+                the input parameter takes a higher priority than the
+                one knowledge_config.
+
+
+            a simple example of importing data to Knowledge object:
+            ''
+                knowledge_bank.add_data_as_knowledge(
+                    knowledge_id="agentscope_tutorial_rag",
+                    emb_model_name="qwen_emb_config",
+                    data_dirs_and_types={
+                        "../../docs/sphinx_doc/en/source/tutorial": [".md"],
+                    },
+                    persist_dir="./rag_storage/tutorial_assist",
+                )
+            ''
+        """
+        model_manager = ModelManager.get_instance()
+        if emb_model_name is None and (
+            knowledge_config is None
+            or "emb_model_config_name" not in knowledge_config
+        ):
+            raise ValueError(
+                "Must specify embedding model by providing value to"
+                "'emb_model_config_name' key in  in knowledge config"
+                "of LlamaIndexKnowledge. For example"
+                """
+                {
+                    "knowledge_id": "xxx_rag",
+                    "knowlege_type": "llamaindex_knowledge",
+                    "emb_model_config_name": "qwen_emb_config",
+                    ....
+                }
+                """,
+            )
+        if emb_model_name is None:
+            emb_model_name = knowledge_config.get("emb_model_config_name")
+        # model_name is optional
+        if knowledge_config is not None and model_name is None:
+            model_name = knowledge_config.get("model_config_name")
+        knowledge_config = cls.default_config(
+            knowledge_id=knowledge_id,
+            data_dirs_and_types=data_dirs_and_types,
+            knowledge_config=knowledge_config,
+        )
+        return cls(
+            knowledge_id=knowledge_id,
+            emb_model=model_manager.get_model_by_config_name(emb_model_name),
+            knowledge_config=knowledge_config,
+            model=model_manager.get_model_by_config_name(model_name)
+            if model_name
+            else None,
+            **kwargs,
+        )

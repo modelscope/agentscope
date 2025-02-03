@@ -72,9 +72,10 @@ def main() -> None:
     # alternatively, we can easily input the configs to add data to RAG
     knowledge_bank.add_data_as_knowledge(
         knowledge_id="agentscope_tutorial_rag",
+        knowledge_type="llamaindex_knowledge",
         emb_model_name="qwen_emb_config",
         data_dirs_and_types={
-            "../../docs/sphinx_doc/en/source/tutorial": [".md"],
+            "../../docs/tutorial/en/source/tutorial": [".md", ".py"],
         },
     )
 
