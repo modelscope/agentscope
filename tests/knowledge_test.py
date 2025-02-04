@@ -6,13 +6,14 @@ Unit tests for knowledge (RAG module in AgentScope)
 import os
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-from typing import Any
+from typing import Any, Optional
 import shutil
 import json
 
 import agentscope
 from agentscope.manager import ASManager
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
+from agentscope.rag import Knowledge
 
 
 class DummyModel(OpenAIEmbeddingWrapper):
@@ -26,6 +27,38 @@ class DummyModel(OpenAIEmbeddingWrapper):
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """dummy call"""
         return ModelResponse(embedding=[[1.0, 2.0]])
+
+
+class DummyKnowledge(Knowledge):
+    """Dummy knowledge class"""
+
+    knowledge_type = "dummy_knowledge_class"
+
+    def _init_rag(
+        self,
+        **kwargs: Any,
+    ) -> Any:
+        pass
+
+    def retrieve(
+        self,
+        query: Any,
+        similarity_top_k: int = None,
+        to_list_strs: bool = False,
+        **kwargs: Any,
+    ) -> list[Any]:
+        return []
+
+    @classmethod
+    def build_knowledge_instance(
+        cls,
+        knowledge_id: str,
+        knowledge_config: Optional[dict] = None,
+        **kwargs: Any,
+    ) -> Knowledge:
+        return cls(
+            knowledge_id=knowledge_id,
+        )
 
 
 class KnowledgeTest(unittest.TestCase):
@@ -150,6 +183,34 @@ class KnowledgeTest(unittest.TestCase):
         self.assertEqual(
             retrieved[0].node.get_content(),
             expected_result[0].node.get_content(),
+        )
+
+    def test_knowledge_bank(self) -> None:
+        """test knowledge bank"""
+        dummy_knowledge_id = "test_dummy_knowledge"
+        knowledge_configs = [
+            {
+                "knowledge_id": dummy_knowledge_id,
+                "knowledge_type": "dummy_knowledge_class",
+            },
+        ]
+        from agentscope.rag.knowledge_bank import KnowledgeBank
+
+        knowledge_bank = KnowledgeBank(
+            configs=knowledge_configs,
+            new_knowledge_types=[DummyKnowledge],
+        )
+        dummy_knowledge = knowledge_bank.get_knowledge(dummy_knowledge_id)
+        self.assertEqual(
+            dummy_knowledge.retrieve("test", similarity_top_k=1),
+            [],
+        )
+        # test not allow duplicate register knowledge type
+        self.assertRaises(
+            ValueError,
+            knowledge_bank.register_knowledge_type,
+            DummyKnowledge,
+            False,
         )
 
 

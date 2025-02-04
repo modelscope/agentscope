@@ -40,6 +40,7 @@ class KnowledgeBank:
     def __init__(
         self,
         configs: Union[dict, str, list, None] = None,
+        new_knowledge_types: Union[type[Knowledge], list, None] = None,
     ) -> None:
         """
         initialize the knowledge bank
@@ -53,8 +54,11 @@ class KnowledgeBank:
                 knowledge_configs = json.loads(fp.read())
             if isinstance(knowledge_configs, dict):
                 knowledge_configs = [knowledge_configs]
-        else:
+        elif isinstance(configs, dict):
             knowledge_configs = [configs]
+        else:
+            knowledge_configs = configs
+
         self.stored_knowledge: dict[str, Knowledge] = {}
         self.known_knowledge_types: dict[str, type[Knowledge]] = {}
 
@@ -63,6 +67,11 @@ class KnowledgeBank:
 
         self.register_knowledge_type(LlamaIndexKnowledge)
         self.register_knowledge_type(BingKnowledge)
+        if new_knowledge_types is not None:
+            if not isinstance(new_knowledge_types, list):
+                new_knowledge_types = [new_knowledge_types]
+            for new_knowledge_type in new_knowledge_types:
+                self.register_knowledge_type(new_knowledge_type)
 
         self._init_knowledge(knowledge_configs)
 
@@ -118,7 +127,7 @@ class KnowledgeBank:
                 ] = knowledge_base_class
             else:
                 raise ValueError(
-                    f'Model wrapper "{knowledge_type}" already exists, '
+                    f'Knowledge class "{knowledge_type}" already exists, '
                     "please set `exist_ok=True` to overwrite it.",
                 )
         else:
@@ -167,7 +176,7 @@ class KnowledgeBank:
         print(kwargs)
         self.stored_knowledge[knowledge_id] = self.known_knowledge_types[
             knowledge_type
-        ].build_knowledgebase_instance(
+        ].build_knowledge_instance(
             knowledge_id=knowledge_id,
             knowledge_config=knowledge_config,
             **kwargs,

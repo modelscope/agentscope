@@ -721,7 +721,7 @@ class LlamaIndexKnowledge(Knowledge):
             return default_knowledge_config
 
     @classmethod
-    def build_knowledgebase_instance(
+    def build_knowledge_instance(
         cls,
         knowledge_id: str,
         knowledge_config: Optional[dict] = None,
@@ -744,7 +744,7 @@ class LlamaIndexKnowledge(Knowledge):
                 Examples can refer to../examples/conversation_with_RAG_agents/
             data_dirs_and_types (dict[str, list[str]]):
                 dictionary of data paths (keys) to the data types
-                (file extensions) for knowledgebase
+                (file extensions) for knowledge
                 (e.g., [".md", ".py", ".html"])
             emb_model_name (Optional[str]):
                 name of the embedding model.

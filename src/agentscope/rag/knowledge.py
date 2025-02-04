@@ -23,6 +23,7 @@ class Knowledge(ABC):
     """
     Base class for RAG, CANNOT be instantiated directly
     """
+
     knowledge_type: str = "base_knowledge"
     """
     A string to identify a knowledge base class
@@ -94,7 +95,7 @@ class Knowledge(ABC):
         )
 
     @classmethod
-    def build_knowledgebase_instance(
+    def build_knowledge_instance(
         cls,
         knowledge_id: str,
         knowledge_config: Optional[dict] = None,

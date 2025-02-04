@@ -147,7 +147,7 @@ class BingKnowledge(Knowledge):
         return {}
 
     @classmethod
-    def build_knowledgebase_instance(
+    def build_knowledge_instance(
         cls,
         knowledge_id: str,
         knowledge_config: Optional[dict] = None,
