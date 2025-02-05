@@ -14,9 +14,26 @@ generate an answer.
 
 import importlib
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, Union
+from dataclasses import dataclass, asdict
 from loguru import logger
 from agentscope.models import ModelWrapperBase
+
+
+@dataclass
+class RetrievedChunk:
+    """
+    Retrieved content with score and meta information
+    """
+
+    score: float = 0.0
+    content: Any = None
+    metadata: Optional[dict] = None
+    embedding: Optional[Any] = None
+
+    def to_dict(self) -> dict:
+        """convert object to dict"""
+        return asdict(self)
 
 
 class Knowledge(ABC):
@@ -69,7 +86,7 @@ class Knowledge(ABC):
         similarity_top_k: int = None,
         to_list_strs: bool = False,
         **kwargs: Any,
-    ) -> list[Any]:
+    ) -> list[Union[RetrievedChunk, str]]:
         """
         retrieve list of content from database (vector stored index) to memory
         Args:

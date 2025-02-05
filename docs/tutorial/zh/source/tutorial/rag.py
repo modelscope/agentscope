@@ -12,9 +12,9 @@ Agentscope 内置了对检索增强生成（RAG）的支持。AgentScope 中与 
 
 虽然 Knowledge 是一个基类，但 AgentScope 中新增了两个具体的内置知识类。
 
-- LlamaIndexKnowledge：旨在与最流行的 RAG 库之一 `LlamaIndex <https://www.llamaindex.ai/>_` 协同工作，用作本地知识，并通过配置支持 LlamaIndex 的大部分功能。
+- LlamaIndexKnowledge：旨在与最流行的 RAG 库之一 `LlamaIndex <https://www.llamaindex.ai/>`_ 协同工作，用作本地知识，并通过配置支持 LlamaIndex 的大部分功能。
 
-- BingKnowledge：旨在与 `Bing search <https://www.bing.com/>_` 协同工作，以提供在线知识。
+- BingKnowledge：旨在与 `Bing search <https://www.bing.com/>`_ 协同工作，以提供在线知识。
 
 
 创建一个 LlamaIndexKnowledge 实例
@@ -27,7 +27,7 @@ knowledge_id：该知识实例的唯一标识符
 
 data_dirs_and_types：一个字典，其键为数据所在目录的字符串，值为数据文件的扩展名
 
-emb_model_name：AgentScope 中嵌入模型配置的名称（需要在 AgentScope 中预先初始化）
+emb_model_config_name：AgentScope 中embedding模型配置的名称（需要在 AgentScope 中预先初始化）
 
 一个简单的例子如下。
 """
@@ -35,7 +35,7 @@ import os
 import agentscope
 from agentscope.rag.llama_index_knowledge import LlamaIndexKnowledge
 
-agent_list = agentscope.init(
+agentscope.init(
     model_configs=[
         {
             "model_type": "dashscope_text_embedding",
@@ -49,7 +49,7 @@ agent_list = agentscope.init(
 local_knowledge = LlamaIndexKnowledge.build_knowledge_instance(
     knowledge_id="agentscope_qa",
     data_dirs_and_types={"./": [".md"]},
-    emb_model_name="qwen_emb_config",
+    emb_model_config_name="qwen_emb_config",
 )
 
 
@@ -58,9 +58,7 @@ nodes = local_knowledge.retrieve(
     similarity_top_k=1,
 )
 
-print()
-print("The retrieved content:")
-nodes[0].node.get_content()
+print(f"\nThe retrieved content:\n{nodes[0].content}")
 
 # %%
 # 如果希望对数据的预处理有更多的控制，
@@ -117,9 +115,7 @@ nodes = local_knowledge.retrieve(
     similarity_top_k=1,
 )
 
-print()
-print("The retrieved content:")
-nodes[0].node.get_content()
+print(f"\nThe retrieved content:\n{nodes[0].content}")
 
 # %%
 # 创建一个 `BingKnowledge` 实例
@@ -137,9 +133,33 @@ online_knowledge = BingKnowledge.build_knowledge_instance(
 )
 nodes = online_knowledge.retrieve("agentscope", similarity_top_k=1)
 
-print()
-print("The Bing search knowledge retrieved content:")
-nodes[0].node.get_content()
+print(f"\nThe Bing search knowledge retrieved content:\n{nodes[0].content}")
+
+# %%
+# 如果想拿到满足下面条件的在线检索知识
+#
+# - 在某个特定域 (如 community.modelscope.cn)
+# - 在过去一个月内发布
+# - 含有具体的网页内信息 (在 <p> 标签内内容)
+#
+# 我们可以采用以下创建方式
+
+domain = "community.modelscope.cn"
+online_knowledge = BingKnowledge.build_knowledge_instance(
+    knowledge_id="online_knowledge",
+    knowledge_type="bing_knowledge",
+    knowledge_config={
+        "query_prefix": f"site:{domain} ",
+        "freshness": "Month",
+    },
+    to_load_web=True,
+)
+nodes = online_knowledge.retrieve("最新推理模型", similarity_top_k=1)
+
+print(
+    f"\nThe Bing search knowledge retrieved content from {domain}:"
+    f"\n{nodes[0].content}",
+)
 
 # %%
 # Create a Batch of Knowledge Instances

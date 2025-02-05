@@ -5,7 +5,7 @@ with LlamaIndex.
 
 Notice, this is a Beta version of RAG agent.
 """
-
+import json
 from typing import Any, Optional, Union, Sequence
 from loguru import logger
 
@@ -125,19 +125,19 @@ class LlamaIndexAgent(AgentBase):
             # when content has information, do retrieval
             scores = []
             for knowledge in self.knowledge_list:
-                retrieved_nodes = knowledge.retrieve(
+                retrieved_chunks = knowledge.retrieve(
                     str(query),
                     self.similarity_top_k,
                 )
-                for node in retrieved_nodes:
-                    scores.append(node.score)
+                for chunk in retrieved_chunks:
+                    scores.append(chunk.score)
                     retrieved_docs_to_string += (
-                        "\n>>>> score:"
-                        + str(node.score)
-                        + "\n>>>> source:"
-                        + str(node.node.get_metadata_str())
-                        + "\n>>>> content:"
-                        + node.get_content()
+                        json.dumps(
+                            chunk.to_dict(),
+                            ensure_ascii=False,
+                            indent=2,
+                        )
+                        + "\n"
                     )
 
             if self.log_retrieval:

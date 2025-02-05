@@ -51,8 +51,20 @@ def main() -> None:
     prepare_docstring_html()
 
     # prepare models
-    with open("configs/model_config.json", "r", encoding="utf-8") as f:
-        model_configs = json.load(f)
+    model_configs = [
+        {
+            "model_type": "dashscope_text_embedding",
+            "config_name": "qwen_emb_config",
+            "model_name": "text-embedding-v2",
+            "api_key": os.getenv("DASHSCOPE_API_KEY"),
+        },
+        {
+            "model_type": "dashscope_chat",
+            "config_name": "qwen_config",
+            "model_name": "qwen-max",
+            "api_key": os.getenv("DASHSCOPE_API_KEY"),
+        },
+    ]
 
     # load config of the agents
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
@@ -73,7 +85,7 @@ def main() -> None:
     knowledge_bank.add_data_as_knowledge(
         knowledge_id="agentscope_tutorial_rag",
         knowledge_type="llamaindex_knowledge",
-        emb_model_name="qwen_emb_config",
+        emb_model_config_name="qwen_emb_config",
         data_dirs_and_types={
             "../../docs/tutorial/en/source/tutorial": [".md", ".py"],
         },

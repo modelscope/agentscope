@@ -6,14 +6,14 @@ Retrieval Augmentation Generation (RAG)
 ==================================================================
 
 Agentscope has built-in supports for the retrieval augmentation generation
-(RAG). There are two key moduls related to RAG in AgentScope: `Knowledge` and
+(RAG). There are two key modules related to RAG in AgentScope: `Knowledge` and
 `KnowledgeBank`.
 
 Create and Use Knowledge Instances
 ----------------------------------------------
 
 While `Knowledge` is a base class, two specific built-in knowledge classes are in
-the AgentScope new.
+the AgentScope now.
 
 
 - `LlamaIndexKnowledge`: Designed to work with one of the most popular RAG library `LlamaIndex <https://www.llamaindex.ai/>`_ as local knowledge, and supporting most of LlamaIndex functionality by configuration.
@@ -30,7 +30,7 @@ There are three parameters need to be passed to the function.
 
 - `data_dirs_and_types`: a dictionary whose keys are strings of directories of the data, and values are the file extensions of the data
 
-- `emb_model_name`: name of the configuration of a embedding model in AgentScope (need to be initialized in AgentScope beforehand)
+- `emb_model_config_name`: name of the configuration of a embedding model in AgentScope (need to be initialized in AgentScope beforehand)
 
 A simple example is as follows.
 """
@@ -38,7 +38,7 @@ import os
 import agentscope
 from agentscope.rag.llama_index_knowledge import LlamaIndexKnowledge
 
-agent_list = agentscope.init(
+agentscope.init(
     model_configs=[
         {
             "model_type": "dashscope_text_embedding",
@@ -52,7 +52,7 @@ agent_list = agentscope.init(
 local_knowledge = LlamaIndexKnowledge.build_knowledge_instance(
     knowledge_id="agentscope_qa",
     data_dirs_and_types={"./": [".md"]},
-    emb_model_name="qwen_emb_config",
+    emb_model_config_name="qwen_emb_config",
 )
 
 
@@ -61,9 +61,9 @@ nodes = local_knowledge.retrieve(
     similarity_top_k=1,
 )
 
-print()
-print("The retrieved content:")
-nodes[0].node.get_content()
+
+print(f"\nThe retrieved content:\n{nodes[0].content}")
+
 
 # %%
 # If one wants to have more control on how the data are preprocessing,
@@ -119,9 +119,8 @@ nodes = local_knowledge.retrieve(
     similarity_top_k=1,
 )
 
-print()
-print("The retrieved content:")
-nodes[0].node.get_content()
+print(f"\nThe retrieved content:\n{nodes[0].content}")
+
 
 # %%
 # Create a `BingKnowledge` instance
@@ -131,16 +130,39 @@ nodes[0].node.get_content()
 
 from agentscope.rag.search_knowledge import BingKnowledge
 
-bing_key = os.getenv("BING_SEARCH_KEY")
 online_knowledge = BingKnowledge.build_knowledge_instance(
     knowledge_id="online_knowledge",
     knowledge_type="bing_knowledge",
 )
 nodes = online_knowledge.retrieve("agentscope", similarity_top_k=1)
 
-print()
-print("The Bing search knowledge retrieved content:")
-nodes[0].node.get_content()
+print(f"\nThe Bing search knowledge retrieved content:\n{nodes[0].content}")
+
+# %%
+# If one wants to have online knowledge
+#
+# - from specific domain (e.g., community.modelscope.cn)
+# - published within a month
+# - with detail content from the webpage (in <p> tags)
+#
+# we can config the knowledge as
+
+domain = "community.modelscope.cn"
+online_knowledge = BingKnowledge.build_knowledge_instance(
+    knowledge_id="online_knowledge",
+    knowledge_type="bing_knowledge",
+    knowledge_config={
+        "query_prefix": f"site:{domain} ",
+        "freshness": "Month",
+    },
+    to_load_web=True,
+)
+nodes = online_knowledge.retrieve("最新推理模型", similarity_top_k=1)
+
+print(
+    f"\nThe Bing search knowledge retrieved content from {domain}:"
+    f"\n{nodes[0].content}",
+)
 
 # %%
 # Create a Batch of Knowledge Instances

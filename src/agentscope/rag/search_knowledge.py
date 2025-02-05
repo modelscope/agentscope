@@ -5,21 +5,17 @@ into AgentScope package
 """
 import json
 import os.path
-from typing import Any, Optional, List
-
-from llama_index.core.data_structs import Node
-
-# search
-from llama_index.core.schema import NodeWithScore
+import copy
+from typing import Any, Optional, List, Union
 from loguru import logger
 
 from agentscope.constants import (
     DEFAULT_CHUNK_SIZE,
 )
 from agentscope.service import load_web
-from agentscope.utils.token_utils import count_openai_token
+from agentscope.tokens import count_openai_tokens
 from agentscope.service import bing_search
-from agentscope.rag.knowledge import Knowledge
+from agentscope.rag import Knowledge, RetrievedChunk
 
 
 class BingKnowledge(Knowledge):
@@ -44,7 +40,21 @@ class BingKnowledge(Knowledge):
             knowledge_id (str):
                 The id of the RAG knowledge unit.
             knowledge_config (dict):
-                The configuration for using online search
+                The configuration for using online search.
+                The knowledge config for BingKnowledge can have the following
+                parameter keys:
+                "query_prefix":
+                    some prefix for searching, for example, enforce search in
+                    some domain
+                Other parameters in https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/reference/query-parameters # noqa: E501 #pylint: disable=line-too-long
+                can also be added to the knowledge config.
+                For example,
+                {
+                    "query_prefix": "site:community.modelscope.cn ",
+                    "freshness": "Month",
+                    # Return webpages that Bing discovered within the
+                    # last 30 days.
+                }
             load_web (bool):
                 whether to load the web page content. Currently only supports
                 loading content in "p" tags
@@ -68,12 +78,20 @@ class BingKnowledge(Knowledge):
         similarity_top_k: int = None,
         to_list_strs: bool = False,
         **kwargs: Any,
-    ) -> List[Any]:
+    ) -> List[Union[RetrievedChunk, str]]:
         """
         retrieve content from bing search and format them in list
+        Args:
+            query (Any):
+                user query to search on
+            similarity_top_k (int):
+                number of search results to return
+            to_list_strs (bool):
+                whether to return list of strings or
+                return list of RetrievedChunk
         """
-        search_config = self.knowledge_config.get("bing_search_config", {})
-        query_prefix = search_config.get("query_prefix", "")
+        search_config = copy.deepcopy(self.knowledge_config)
+        query_prefix = search_config.pop("query_prefix", "")
         query = query_prefix + " " + query
         logger.info(f"bing query: {query}")
         key = os.getenv("BING_SEARCH_KEY", "")
@@ -87,11 +105,12 @@ class BingKnowledge(Knowledge):
             query,
             api_key=key,
             num_results=similarity_top_k,
+            **search_config,
         ).content
-        node_list = []
+        chunk_list = []
         logger.info(f"bing result: {bing_result}")
         if not isinstance(bing_result, list):
-            return node_list
+            return chunk_list
 
         for info_piece in bing_result:
             url = info_piece.get("link", "")
@@ -110,8 +129,14 @@ class BingKnowledge(Knowledge):
                 except (NotImplementedError, TypeError, KeyError) as e:
                     logger.warning(f"Load web page fail: {e}")
                     extracted = ""
+                messages = [
+                    {"assistant": extracted},
+                ]
                 try:
-                    token = count_openai_token(extracted, model="gpt-4-0613")
+                    token = count_openai_tokens(
+                        model_name="gpt-4-0613",
+                        messages=messages,
+                    )
                 except NotImplementedError as e:
                     logger.warning(e)
                     continue
@@ -121,23 +146,21 @@ class BingKnowledge(Knowledge):
 
             info["Reference"] = url
             content = json.dumps(info, ensure_ascii=False)
-            node_list.append(
-                NodeWithScore(
-                    node=Node(
-                        text=content,
-                        metadata={"file_path": url},
-                    ),
+            chunk_list.append(
+                RetrievedChunk(
+                    content=content,
+                    metadata={"file_path": url},
                     score=1.0,
                 ),
             )
 
         if to_list_strs:
             results = []
-            for node in node_list:
-                results.append(node.get_text())
+            for chunk in chunk_list:
+                results.append(str(chunk.content))
             return results
 
-        return node_list
+        return chunk_list
 
     @classmethod
     def default_config(cls, **kwargs: Any) -> dict:

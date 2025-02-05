@@ -58,7 +58,7 @@ from agentscope.constants import (
     DEFAULT_CHUNK_SIZE,
     DEFAULT_CHUNK_OVERLAP,
 )
-from agentscope.rag.knowledge import Knowledge
+from agentscope.rag import Knowledge, RetrievedChunk
 
 
 try:
@@ -540,25 +540,38 @@ class LlamaIndexKnowledge(Knowledge):
         """
         if retriever is None:
             retriever = self._get_retriever(similarity_top_k)
-        retrieved = retriever.retrieve(str(query))
-        retrieved_res = retrieved
+        dense_retrieved = retriever.retrieve(str(query))
+        retrieved_res = []
+
+        for node in dense_retrieved:
+            retrieved_res.append(
+                RetrievedChunk(
+                    score=node.score,
+                    content=node.get_content(),
+                    metadata=node.metadata,
+                    embedding=node.embedding,
+                ),
+            )
 
         if self.additional_sparse_retrieval and self.bm25_retriever:
             bm25_retrieved = self.bm25_retriever.retrieve(str(query))
-            retrieved_res_dict = {}
-            retrieved_res_dict["dense"] = retrieved_res
-            retrieved_res_dict["bm25"] = [
-                x for x in bm25_retrieved if x.score > 0
-            ]
+            sparse_retrieved = [x for x in bm25_retrieved if x.score > 0]
             bm25_scores = [x.score for x in bm25_retrieved]
             logger.info(f"bm25 scores {bm25_scores}")
-            retrieved_res = retrieved_res_dict
+            for node in sparse_retrieved:
+                retrieved_res.append(
+                    RetrievedChunk(
+                        score=node.score,
+                        content=node.get_content(),
+                        metadata=node.metadata,
+                        embedding=node.embedding,
+                    ),
+                )
 
-        # todo: modify the api to support multi retrivers
         if to_list_strs:
             results = []
-            for node in retrieved:
-                results.append(node.get_text())
+            for chunk in retrieved_res:
+                results.append(str(chunk.content))
             return results
 
         return retrieved_res
@@ -726,8 +739,8 @@ class LlamaIndexKnowledge(Knowledge):
         knowledge_id: str,
         knowledge_config: Optional[dict] = None,
         data_dirs_and_types: dict[str, list[str]] = None,
-        emb_model_name: Optional[str] = None,
-        model_name: Optional[str] = None,
+        emb_model_config_name: Optional[str] = None,
+        model_config_name: Optional[str] = None,
         **kwargs: Any,
     ) -> Knowledge:
         """
@@ -746,13 +759,13 @@ class LlamaIndexKnowledge(Knowledge):
                 dictionary of data paths (keys) to the data types
                 (file extensions) for knowledge
                 (e.g., [".md", ".py", ".html"])
-            emb_model_name (Optional[str]):
+            emb_model_config_name (Optional[str]):
                 name of the embedding model.
                 This should be specified here or in the knowledge_config dict.
                 If specified both here and in the knowledge_config,
                 the input parameter takes a higher priority than the
                 one knowledge_config.
-            model_name Optional[str]):
+            model_config_name Optional[str]):
                 name of the language model.
                 Optional, can be None and not specified in knowledge_config.
                 If specified both here and in the knowledge_config,
@@ -761,19 +774,21 @@ class LlamaIndexKnowledge(Knowledge):
 
 
             a simple example of importing data to Knowledge object:
-            ''
+
+            .. code-block:: python
+
                 knowledge_bank.add_data_as_knowledge(
                     knowledge_id="agentscope_tutorial_rag",
-                    emb_model_name="qwen_emb_config",
+                    emb_model_config_name="qwen_emb_config",
                     data_dirs_and_types={
                         "../../docs/sphinx_doc/en/source/tutorial": [".md"],
                     },
                     persist_dir="./rag_storage/tutorial_assist",
                 )
-            ''
+
         """
         model_manager = ModelManager.get_instance()
-        if emb_model_name is None and (
+        if emb_model_config_name is None and (
             knowledge_config is None
             or "emb_model_config_name" not in knowledge_config
         ):
@@ -790,11 +805,13 @@ class LlamaIndexKnowledge(Knowledge):
                 }
                 """,
             )
-        if emb_model_name is None:
-            emb_model_name = knowledge_config.get("emb_model_config_name")
+        if emb_model_config_name is None:
+            emb_model_config_name = knowledge_config.get(
+                "emb_model_config_name",
+            )
         # model_name is optional
-        if knowledge_config is not None and model_name is None:
-            model_name = knowledge_config.get("model_config_name")
+        if knowledge_config is not None and model_config_name is None:
+            model_config_name = knowledge_config.get("model_config_name")
         knowledge_config = cls.default_config(
             knowledge_id=knowledge_id,
             data_dirs_and_types=data_dirs_and_types,
@@ -802,10 +819,12 @@ class LlamaIndexKnowledge(Knowledge):
         )
         return cls(
             knowledge_id=knowledge_id,
-            emb_model=model_manager.get_model_by_config_name(emb_model_name),
+            emb_model=model_manager.get_model_by_config_name(
+                emb_model_config_name,
+            ),
             knowledge_config=knowledge_config,
-            model=model_manager.get_model_by_config_name(model_name)
-            if model_name
+            model=model_manager.get_model_by_config_name(model_config_name)
+            if model_config_name
             else None,
             **kwargs,
         )

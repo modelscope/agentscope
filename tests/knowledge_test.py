@@ -13,7 +13,7 @@ import json
 import agentscope
 from agentscope.manager import ASManager
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
-from agentscope.rag import Knowledge
+from agentscope.rag import Knowledge, RetrievedChunk
 
 
 class DummyModel(OpenAIEmbeddingWrapper):
@@ -137,8 +137,6 @@ class KnowledgeTest(unittest.TestCase):
         Test BingKnowledge function
         """
         from agentscope.rag.search_knowledge import BingKnowledge
-        from llama_index.core.schema import NodeWithScore
-        from llama_index.core.data_structs import Node
 
         mock_response = Mock()
         bing_title = "Test title from Bing"
@@ -166,11 +164,9 @@ class KnowledgeTest(unittest.TestCase):
         }
         content = json.dumps(info, ensure_ascii=False)
         expected_result = [
-            NodeWithScore(
-                node=Node(
-                    text=content,
-                    metadata={"file_path": bing_return_url},
-                ),
+            RetrievedChunk(
+                content=content,
+                metadata={"file_path": bing_return_url},
                 score=1.0,
             ),
         ]
@@ -181,8 +177,8 @@ class KnowledgeTest(unittest.TestCase):
         )
         retrieved = search_knowledge.retrieve("test", similarity_top_k=1)
         self.assertEqual(
-            retrieved[0].node.get_content(),
-            expected_result[0].node.get_content(),
+            retrieved,
+            expected_result,
         )
 
     def test_knowledge_bank(self) -> None:

@@ -44,7 +44,15 @@ class KnowledgeBank:
     ) -> None:
         """
         initialize the knowledge bank
-
+        Args:
+            configs: configurations of knowledge instances so that they can
+                be initialized with knowledge bank in a batch,
+                can be a file path (str), a single config (dict)
+                or a batch of configs (list). If there is any instance of new
+                knowledge classes, need to pass those class in
+                `new_knowledge_types`.
+            new_knowledge_types: user-defined new knowledge classes that are
+                not in the AgentScope repo.
         """
         if configs is None:
             knowledge_configs = []
@@ -97,7 +105,7 @@ class KnowledgeBank:
         Add a new knowledge base class to the knowledge bank
         Args:
             knowledge_base_class (`Type[Knowledge]`):
-                The model wrapper class to be registered, which must inherit
+                The knowledge class to be registered, which must inherit
                 from `Knowledge`.
             exist_ok (`bool`):
                 Whether to overwrite the existing knowledge base class
@@ -119,7 +127,7 @@ class KnowledgeBank:
         if knowledge_type in self.known_knowledge_types:
             if exist_ok:
                 logger.warning(
-                    f'Model wrapper "{knowledge_type}" '
+                    f'Knowledge class"{knowledge_type}" '
                     "already exists, overwrite it.",
                 )
                 self.known_knowledge_types[
@@ -150,10 +158,10 @@ class KnowledgeBank:
             knowledge_config (dict):
                 For LlamaIndexKnowledge (knowledge_type="llamaindex_knowledge")
                 the following are required:
-                emb_model_name (str):
-                    name of the embedding model
-                model_name (Optional[str]):
-                    name of the LLM for potential post-processing or
+                emb_model_config_name (str):
+                    name of the embedding model config
+                model_config_name (Optional[str]):
+                    name of the LLM config for potential post-processing or
                     query rewrite
                 data_dirs_and_types (dict[str, list[str]]):
                     dictionary of data paths (keys) to the data types
@@ -173,7 +181,6 @@ class KnowledgeBank:
         if knowledge_id in self.stored_knowledge:
             raise ValueError(f"knowledge_id {knowledge_id} already exists.")
 
-        print(kwargs)
         self.stored_knowledge[knowledge_id] = self.known_knowledge_types[
             knowledge_type
         ].build_knowledge_instance(
