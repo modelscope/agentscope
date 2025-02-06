@@ -67,7 +67,7 @@ class KnowledgeTest(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        """set up test data"""
+        """Set up test data"""
         agentscope.init(disable_saving=True)
 
         self.data_dir = "tmp_data_dir"
@@ -92,7 +92,7 @@ class KnowledgeTest(unittest.TestCase):
             pass
 
     def test_llamaindexknowledge(self) -> None:
-        """test llamaindexknowledge"""
+        """Test llamaindexknowledge"""
         from agentscope.rag.llama_index_knowledge import LlamaIndexKnowledge
 
         dummy_model = DummyModel()
@@ -182,7 +182,7 @@ class KnowledgeTest(unittest.TestCase):
         )
 
     def test_knowledge_bank(self) -> None:
-        """test knowledge bank"""
+        """Test knowledge bank"""
         dummy_knowledge_id = "test_dummy_knowledge"
         knowledge_configs = [
             {

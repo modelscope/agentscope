@@ -20,7 +20,7 @@ from agentscope.rag import Knowledge, RetrievedChunk
 
 class BingKnowledge(Knowledge):
     """
-    This class is a wrapper with the Bing search api .
+    This class is a wrapper with the Bing search api.
     """
 
     knowledge_type = "bing_knowledge"
@@ -37,9 +37,9 @@ class BingKnowledge(Knowledge):
         retrieve information online.
 
         Args:
-            knowledge_id (str):
+            knowledge_id (`str`):
                 The id of the RAG knowledge unit.
-            knowledge_config (dict):
+            knowledge_config (`dict`):
                 The configuration for using online search.
                 The knowledge config for BingKnowledge can have the following
                 parameter keys:
@@ -55,8 +55,8 @@ class BingKnowledge(Knowledge):
                     # Return webpages that Bing discovered within the
                     # last 30 days.
                 }
-            load_web (bool):
-                whether to load the web page content. Currently only supports
+            load_web (`bool`):
+                Whether to load the web page content. Currently only supports
                 loading content in "p" tags
         """
         super().__init__(
@@ -80,15 +80,19 @@ class BingKnowledge(Knowledge):
         **kwargs: Any,
     ) -> List[Union[RetrievedChunk, str]]:
         """
-        retrieve content from bing search and format them in list
+        Retrieve content from bing search and format them in list.
+
         Args:
-            query (Any):
-                user query to search on
-            similarity_top_k (int):
-                number of search results to return
-            to_list_strs (bool):
-                whether to return list of strings or
+            query (`Any`):
+                User query to search on
+            similarity_top_k (`int`):
+                Number of search results to return
+            to_list_strs (`bool`):
+                Whether to return list of strings or
                 return list of RetrievedChunk
+
+        Returns:
+            `List[Union[RetrievedChunk, str]]`: List of retrieved content
         """
         search_config = copy.deepcopy(self.knowledge_config)
         query_prefix = search_config.pop("query_prefix", "")
@@ -179,11 +183,17 @@ class BingKnowledge(Knowledge):
     ) -> "Knowledge":
         """
         A constructor to build a knowledge base instance.
+
         Args:
-            knowledge_id (str):
+            knowledge_id (`str`):
                 The id of the knowledge instance.
-            knowledge_config (dict):
+            knowledge_config (`dict`):
                 The configuration to the knowledge instance.
+            to_load_web (`bool`):
+                Whether to load the web page content.
+
+        Returns:
+            `Knowledge`: A BingKnowledge instance.
         """
         return cls(
             knowledge_id=knowledge_id,

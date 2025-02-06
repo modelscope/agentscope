@@ -33,7 +33,7 @@ your question.
 
 
 def prepare_docstring_html() -> None:
-    """prepare docstring in html for API assistant"""
+    """Prepare docstring in html for API assistant"""
     if not os.path.exists("../../docs/docstring_html/"):
         os.system(
             "sphinx-apidoc -f -o ../../docs/sphinx_doc/en/source "
@@ -96,7 +96,7 @@ def main() -> None:
     for agent in rag_agent_list:
         knowledge_bank.equip(agent, agent.knowledge_id_list)
 
-    # an alternative way is to provide knowledge list to agents
+    # An alternative way is to provide knowledge list to agents
     # when initializing them one by one, e.g.
     #
     # ```

@@ -43,15 +43,17 @@ class KnowledgeBank:
         new_knowledge_types: Union[type[Knowledge], list, None] = None,
     ) -> None:
         """
-        initialize the knowledge bank
+        Initialize the knowledge bank
         Args:
-            configs: configurations of knowledge instances so that they can
+            configs (`Union[dict, str, list, None]`):
+                Configurations of knowledge instances so that they can
                 be initialized with knowledge bank in a batch,
                 can be a file path (str), a single config (dict)
                 or a batch of configs (list). If there is any instance of new
                 knowledge classes, need to pass those class in
                 `new_knowledge_types`.
-            new_knowledge_types: user-defined new knowledge classes that are
+            new_knowledge_types (`Union[type[Knowledge], list, None]`):
+                User-defined new knowledge classes that are
                 not in the AgentScope repo.
         """
         if configs is None:
@@ -84,7 +86,13 @@ class KnowledgeBank:
         self._init_knowledge(knowledge_configs)
 
     def _init_knowledge(self, knowledge_configs: list) -> None:
-        """initialize the knowledge bank"""
+        """
+        Initialize the knowledge instance with configs
+
+        Args:
+            knowledge_configs (`list`):
+                Configurations of knowledge instances
+        """
         for config in knowledge_configs:
             self.add_data_as_knowledge(
                 knowledge_id=config["knowledge_id"],
@@ -103,6 +111,7 @@ class KnowledgeBank:
     ) -> None:
         """
         Add a new knowledge base class to the knowledge bank
+
         Args:
             knowledge_base_class (`Type[Knowledge]`):
                 The knowledge class to be registered, which must inherit
@@ -150,32 +159,33 @@ class KnowledgeBank:
     ) -> None:
         """
         Transform data in a directory to be ready to work with RAG.
+
         Args:
-            knowledge_id (str):
-                user-defined unique id for the knowledge
-            knowledge_type (str):
-                type of the knowledge to register, e.g., "llamaindex_knowledge"
-            knowledge_config (dict):
+            knowledge_id (`str`):
+                User-defined unique id for the knowledge
+            knowledge_type (`str`):
+                Type of the knowledge to register, e.g., "llamaindex_knowledge"
+            knowledge_config (`dict`):
                 For LlamaIndexKnowledge (knowledge_type="llamaindex_knowledge")
                 the following are required:
-                emb_model_config_name (str):
-                    name of the embedding model config
-                model_config_name (Optional[str]):
-                    name of the LLM config for potential post-processing or
+                emb_model_config_name (`str`):
+                    Name of the embedding model config
+                model_config_name (`Optional[str]`):
+                    Name of the LLM config for potential post-processing or
                     query rewrite
-                data_dirs_and_types (dict[str, list[str]]):
-                    dictionary of data paths (keys) to the data types
+                data_dirs_and_types (`dict[str, list[str]]`):
+                    Dictionary of data paths (keys) to the data types
                     (file extensions) for knowledgebase
                     (e.g., [".md", ".py", ".html"])
-                knowledge_config (optional[dict]):
-                    complete indexing configuration, used for more advanced
+                knowledge_config (`optional[dict]`):
+                    Complete indexing configuration, used for more advanced
                     applications. Users can customize
                     - loader,
                     - transformations,
                     - ...
                     Examples can refer to
                     ../examples/conversation_with_RAG_agents/
-            kwargs (Any):
+            kwargs (`Any`):
                 Additional keyword arguments to initialize knowledge.
         """
         if knowledge_id in self.stored_knowledge:
@@ -197,14 +207,15 @@ class KnowledgeBank:
     ) -> Knowledge:
         """
         Get a Knowledge object from the knowledge bank.
+
         Args:
-            knowledge_id (str):
-                unique id for the Knowledge object
-            duplicate (bool):
-                whether return a copy of the Knowledge object.
+            knowledge_id (`str`):
+                Unique id for the Knowledge object
+            duplicate (`bool`):
+                Whether return a copy of the Knowledge object.
         Returns:
             Knowledge:
-                the Knowledge object defined with Llama-index
+                The Knowledge object defined with Llama-index
         """
         if knowledge_id not in self.stored_knowledge:
             raise ValueError(
@@ -226,11 +237,12 @@ class KnowledgeBank:
         Equip the agent with the knowledge by knowledge ids.
 
         Args:
-            agent (AgentBase):
-                the agent to be equipped with knowledge
-            knowledge_id_list:
-                the list of knowledge ids to be equipped with the agent
-            duplicate (bool): whether to deepcopy the knowledge object
+            agent (`AgentBase`):
+                The agent to be equipped with knowledge
+            knowledge_id_list (`list[str]`):
+                The list of knowledge ids to be equipped with the agent
+            duplicate (`bool`):
+                Whether to deepcopy the knowledge object
         TODO: to accommodate with distributed setting
         """
         logger.info(f"Equipping {agent.name} knowledge {knowledge_id_list}")
