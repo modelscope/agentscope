@@ -118,8 +118,8 @@ They can be registered to the `ServiceToolkit` by calling the `add` method.
     1. execute_shell_command: Executes a given shell command.
             command (string): The shell command to execute.
     2. bing_search: Search question in Bing Search API and return the searching results
-            question (string): The search query string.
             num_results (number): The number of search results to return.
+            question (string): The search query string.
 
 
 
@@ -197,14 +197,14 @@ The JSON Schema description of the tool functions:
           "parameters": {
             "type": "object",
             "properties": {
-              "question": {
-                "type": "string",
-                "description": "The search query string."
-              },
               "num_results": {
                 "type": "number",
                 "description": "The number of search results to return.",
                 "default": 10
+              },
+              "question": {
+                "type": "string",
+                "description": "The search query string."
               }
             },
             "required": [
@@ -266,12 +266,12 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>I need to calculate the product of the two numbers provided by the user. I will use the execute_shell_command function to perform the calculation using the shell.</thought>
+    Friday: <thought>I need to calculate the product of 1615114134 and 4343434343. I can use a shell command to perform this calculation.</thought>
     <function>execute_shell_command</function>
-    <command>echo "1615114134*4343434343" | bc</command>
+    <command>expr 1615114134 \* 4343434343</command>
     system: 1. Execute function execute_shell_command
        [ARGUMENTS]:
-           command: echo "1615114134*4343434343" | bc
+           command: expr 1615114134 \* 4343434343
        [STATUS]: SUCCESS
        [RESULT]: 7015142197480303962
 
@@ -281,7 +281,7 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The multiplication of the two numbers 1615114134 and 4343434343 has been calculated successfully, and the result is 7015142197480303962. Now I can provide this answer to the user.</thought>
+    Friday: <thought>The calculation was successful and the result is 7015142197480303962. I will now provide this answer to the user.</thought>
     <function>finish</function>
     <response>The product of 1615114134 and 4343434343 is 7015142197480303962.</response>
 
@@ -327,7 +327,7 @@ A custom tool function must follow these rules:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.228 seconds)
+   **Total running time of the script:** (0 minutes 9.650 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

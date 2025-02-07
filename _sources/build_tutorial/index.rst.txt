@@ -11,6 +11,57 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Configuration ------------------------">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_examples_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_examples.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Examples</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This section introduces the usage of the distributed mode of AgentScope. AgentScope natively provides a distributed mode based on gRPC. In this mode, multiple agents in one application can be deployed to different processes or even different machines, thereby fully utilizing computational resources and improving efficiency.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_distribution_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_distribution.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Distribution</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports various visual interfaces for better user experience, including Gradio and AgentScope Studio.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_visual_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_visual.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Visual Interface</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Workstation ------------------">
 
 .. only:: html
@@ -40,57 +91,6 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Web Browser Control</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This section introduces the usage of the distributed mode of AgentScope. AgentScope natively provides a distributed mode based on gRPC. In this mode, multiple agents in one application can be deployed to different processes or even different machines, thereby fully utilizing computational resources and improving efficiency.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_distribution_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_distribution.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Distribution</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Configuration ------------------------">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_examples_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_examples.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Examples</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports various visual interfaces for better user experience, including Gradio and AgentScope Studio.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_visual_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_visual.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Visual Interface</div>
     </div>
 
 
@@ -325,11 +325,11 @@
 .. toctree::
    :hidden:
 
+   /build_tutorial/examples
+   /build_tutorial/distribution
+   /build_tutorial/visual
    /build_tutorial/low_code
    /build_tutorial/web_browser
-   /build_tutorial/distribution
-   /build_tutorial/examples
-   /build_tutorial/visual
    /build_tutorial/quickstart
    /build_tutorial/prompt
    /build_tutorial/message
