@@ -55,7 +55,7 @@ class CodeActAgent(AgentBase):
             model_config_name(`str`):
                 The name of the model configuration.
             example_code(Optional`str`):
-                The example code to be executed bewfore the interaction.
+                The example code to be executed before the interaction.
                 You can import reference libs, define variables
                 and functions to be called. For example:
 

@@ -218,7 +218,7 @@ class SWEAgent(AgentBase):
         command_name = command_call["name"]
         command_args = command_call["arguments"]
         if command_name == "exit":
-            return "Current task finished, exitting."
+            return "Current task finished, exiting."
         if command_name in ["goto", "scroll_up", "scroll_down"]:
             if command_name == "goto":
                 line = command_call["arguments"]["line_num"]
@@ -244,7 +244,7 @@ class SWEAgent(AgentBase):
                     f"Scrolling down from file {self.cur_file} to line {line}."
                 )
                 command_failed_str = (
-                    f"Failed to scrool down {self.cur_file} to line {line}"
+                    f"Failed to scroll down {self.cur_file} to line {line}"
                 )
             read_status = read_file(self.cur_file, line, line + 100)
             if read_status.status == "success":
