@@ -42,6 +42,8 @@ Start building LLM-empowered multi-agent applications in an easier way.
 
 ## News
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-07]** 🎉 AgentScope has achieved a **63.4% resolve rate** in [SWE-bench(Verified)](https://www.swebench.com/). More details about our solution are coming soon!
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-01-04]** AgentScope supports Anthropic API now.
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-12-12]** We have updated the [roadmap of AgentScope](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md).

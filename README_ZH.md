@@ -42,6 +42,8 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-07]** 🎉 AgentScope 在 [SWE-bench（Verified）](https://www.swebench.com/)榜单中取得 **63.4%** 的成绩！关于解决方案的更多细节即将发布.
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-01-04]** AgentScope 已支持 Anthropic API
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-12-12]** [AgentScope 开发路线图](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) 已更新
