@@ -287,7 +287,7 @@
 <span class="sd">            to convert data to index, and retrieve information from index.</span>
 <span class="sd">            For example:</span>
 <span class="sd">            1) preprocessing documents with data loaders</span>
-<span class="sd">            2) generate embedding by configuring pipline with embedding models</span>
+<span class="sd">            2) generate embedding by configuring pipeline with embedding models</span>
 <span class="sd">            3) store the embedding-content to vector database</span>
 <span class="sd">                the default dir is &quot;./rag_storage/knowledge_id&quot;</span>
 
@@ -478,7 +478,7 @@
         <span class="n">pipeline</span> <span class="o">=</span> <span class="n">IngestionPipeline</span><span class="p">(</span>
             <span class="n">transformations</span><span class="o">=</span><span class="n">transformations</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># stack up the nodes from the pipline</span>
+        <span class="c1"># stack up the nodes from the pipeline</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
             <span class="n">documents</span><span class="o">=</span><span class="n">documents</span><span class="p">,</span>
             <span class="n">show_progress</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">showprogress</span><span class="p">,</span>
@@ -652,7 +652,7 @@
 <span class="sd">            transformations (TransformComponent): transformations that</span>
 <span class="sd">            convert the documents into nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># this is the pipline that generate the nodes</span>
+        <span class="c1"># this is the pipeline that generate the nodes</span>
         <span class="n">pipeline</span> <span class="o">=</span> <span class="n">IngestionPipeline</span><span class="p">(</span>
             <span class="n">transformations</span><span class="o">=</span><span class="n">transformations</span><span class="p">,</span>
         <span class="p">)</span>

@@ -127,12 +127,12 @@
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_error</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportErrorReporter</span>
 
-    <span class="n">pickle</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribtue&quot;</span><span class="p">)</span>
+    <span class="n">pickle</span> <span class="o">=</span> <span class="n">ImportErrorReporter</span><span class="p">(</span><span class="n">import_error</span><span class="p">,</span> <span class="s2">&quot;distribute&quot;</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.rpc_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcClient</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_is_web_url</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.retry_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetryBase</span><span class="p">,</span> <span class="n">_DEAFULT_RETRY_STRATEGY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.retry_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetryBase</span><span class="p">,</span> <span class="n">_DEFAULT_RETRY_STRATEGY</span>
 
 
 <div class="viewcode-block" id="AsyncResult">
@@ -146,7 +146,7 @@
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">stub</span><span class="p">:</span> <span class="n">Future</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">retry</span><span class="p">:</span> <span class="n">RetryBase</span> <span class="o">=</span> <span class="n">_DEAFULT_RETRY_STRATEGY</span><span class="p">,</span>
+        <span class="n">retry</span><span class="p">:</span> <span class="n">RetryBase</span> <span class="o">=</span> <span class="n">_DEFAULT_RETRY_STRATEGY</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>

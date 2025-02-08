@@ -308,13 +308,13 @@
 <span class="sd">            `List`:</span>
 <span class="sd">                The selected examples.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Get the human query embd using the embedding model</span>
-        <span class="n">human_query_embd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_model</span><span class="p">(</span><span class="n">user_prompt</span><span class="p">)</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Get the human query embed using the embedding model</span>
+        <span class="n">human_query_embed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embed_model</span><span class="p">(</span><span class="n">user_prompt</span><span class="p">)</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># TODO: use the retrieval service instead rather than achieving it</span>
         <span class="c1">#  locally</span>
         <span class="n">selected_indices</span> <span class="o">=</span> <span class="n">_find_top_k_embeddings</span><span class="p">(</span>
-            <span class="n">human_query_embd</span><span class="p">,</span>
+            <span class="n">human_query_embed</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">example_embeddings</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">example_num</span><span class="p">,</span>
         <span class="p">)</span>

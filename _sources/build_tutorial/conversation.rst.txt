@@ -109,12 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message got cut off. How can I assist you today?
-    Monster: Hello! I apologize for any confusion. My name is Monster, and I'm here to help. How can I assist you today?
-    Angel: Hello! It looks like there might be a bit of a mix-up. I'm Angel, and I'm here to help you. How can I assist you today?
-    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm also here to help. It seems we both have the same goal of assisting, so let's work together! How can we assist you today?
-    Angel: Hello Monster! It's great to meet you. It seems we both want to help, but to avoid any confusion, I'll take the lead here. Could you please let me know how I can assist you or what you need help with today?
-    Monster: Hello Angel! It's great to meet you. I understand and completely agree to let you take the lead. If you need any assistance or if there’s anything specific you’d like me to help with, just let me know. How can we assist the user today?
+    Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
+    Monster: Hello Angel! I'm Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I don't see any previous message from you that got cut off. Could you please share what you need help with or what you were trying to ask? I'm here to assist!
+    Angel: Hello Monster! It looks like there's a bit of confusion here. I'm Angel, and I'm here to help you. Could you please let me know what you need assistance with or what you were trying to ask? I'm ready to assist you in any way I can! 😊
+    Monster: Hello Angel! It’s nice to meet you. I see there’s a bit of a mix-up, but no worries! I’m here to help with any questions or tasks you have. Could you please let me know what you need assistance with? Whether it’s information, a task, or anything else, I’m ready to help! 😊
+    Angel: Hello Monster! It's great to meet you, but it seems like there might be a bit of a misunderstanding. I'm Angel, and I'm here to assist you. Could you please let me know what you need help with or what you were trying to ask? I'm here to support you in any way I can! 😊
+    Monster: Hello Angel! It’s great to meet you, and I appreciate your patience. It seems we’ve been going back and forth a bit, but I’m here to help with anything you need. If you have any questions or tasks, please feel free to share them. What can I assist you with today? 😊
 
 
 
@@ -197,7 +197,7 @@ The three agents will participate in a conversation to report numbers alternativ
 
     with msghub(
         participants=[alice, bob, charlie],
-        announcement=greeting,  # The announcement message will be boardcasted to all participants at the beginning.
+        announcement=greeting,  # The announcement message will be broadcasted to all participants at the beginning.
     ) as hub:
         # The first round of the conversation
         alice()
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 32.312 seconds)
+   **Total running time of the script:** (0 minutes 36.748 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

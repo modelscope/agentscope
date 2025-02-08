@@ -124,7 +124,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.rpc_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcObject</span><span class="p">,</span> <span class="n">_ClassInfo</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.retry_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetryBase</span><span class="p">,</span> <span class="n">_DEAFULT_RETRY_STRATEGY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.retry_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetryBase</span><span class="p">,</span> <span class="n">_DEFAULT_RETRY_STRATEGY</span>
 
 
 <span class="c1"># Decorator for async and sync functions</span>
@@ -243,7 +243,7 @@
                     <span class="p">),</span>
                     <span class="n">retry_strategy</span><span class="o">=</span><span class="n">to_dist</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
                         <span class="s2">&quot;retry_strategy&quot;</span><span class="p">,</span>
-                        <span class="n">_DEAFULT_RETRY_STRATEGY</span><span class="p">,</span>
+                        <span class="n">_DEFAULT_RETRY_STRATEGY</span><span class="p">,</span>
                     <span class="p">),</span>
                     <span class="n">connect_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                     <span class="n">configs</span><span class="o">=</span><span class="p">{</span>
@@ -316,7 +316,7 @@
         <span class="n">max_expire_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7200</span><span class="p">,</span>
         <span class="n">max_timeout_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">local_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">retry_strategy</span><span class="p">:</span> <span class="n">RetryBase</span> <span class="o">=</span> <span class="n">_DEAFULT_RETRY_STRATEGY</span><span class="p">,</span>
+        <span class="n">retry_strategy</span><span class="p">:</span> <span class="n">RetryBase</span> <span class="o">=</span> <span class="n">_DEFAULT_RETRY_STRATEGY</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert current object into its distributed version.</span>
 
@@ -340,7 +340,7 @@
 <span class="sd">                Only takes effect when `host` and `port` are not filled in.</span>
 <span class="sd">                Whether the started agent server only listens to local</span>
 <span class="sd">                requests.</span>
-<span class="sd">            retry_strategy (`RetryBase`, defaults to `_DEAFULT_RETRY_STRATEGY`):</span>
+<span class="sd">            retry_strategy (`RetryBase`, defaults to `_DEFAULT_RETRY_STRATEGY`):</span>
 <span class="sd">                The retry strategy for the async rpc call.</span>
 
 <span class="sd">        Returns:</span>

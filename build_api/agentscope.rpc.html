@@ -159,8 +159,8 @@
 <li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryBase.retry"><code class="docutils literal notranslate"><span class="pre">RetryBase.retry()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExpential"><code class="docutils literal notranslate"><span class="pre">RetryExpential</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExpential.retry"><code class="docutils literal notranslate"><span class="pre">RetryExpential.retry()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExponential"><code class="docutils literal notranslate"><span class="pre">RetryExponential</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExponential.retry"><code class="docutils literal notranslate"><span class="pre">RetryExponential.retry()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryFixedTimes"><code class="docutils literal notranslate"><span class="pre">RetryFixedTimes</span></code></a><ul>
@@ -530,7 +530,7 @@ agent server. Note that expired messages will be deleted.</p></li>
 <li><p><strong>local_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Only takes effect when <cite>host</cite> and <cite>port</cite> are not filled in.
 Whether the started agent server only listens to local
 requests.</p></li>
-<li><p><strong>retry_strategy</strong> (<cite>RetryBase</cite>, defaults to <cite>_DEAFULT_RETRY_STRATEGY</cite>) – The retry strategy for the async rpc call.</p></li>
+<li><p><strong>retry_strategy</strong> (<cite>RetryBase</cite>, defaults to <cite>_DEFAULT_RETRY_STRATEGY</cite>) – The retry strategy for the async rpc call.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

@@ -134,5 +134,5 @@ print(response.text)
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #
 # For vision models, AgentScope currently supports OpenAI vision models and
-# Dashscope mutli modal API.
+# Dashscope multi modal API.
 # The more supported APIs will be added in the future.

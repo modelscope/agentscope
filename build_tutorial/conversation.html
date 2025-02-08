@@ -171,12 +171,12 @@ to download the full example code.</p>
     <span class="n">msg</span> <span class="o">=</span> <span class="n">monster</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message got cut off. How can I assist you today?
-Monster: Hello! I apologize for any confusion. My name is Monster, and I&#39;m here to help. How can I assist you today?
-Angel: Hello! It looks like there might be a bit of a mix-up. I&#39;m Angel, and I&#39;m here to help you. How can I assist you today?
-Monster: Hello Angel! It&#39;s nice to meet you. I&#39;m Monster, and I&#39;m also here to help. It seems we both have the same goal of assisting, so let&#39;s work together! How can we assist you today?
-Angel: Hello Monster! It&#39;s great to meet you. It seems we both want to help, but to avoid any confusion, I&#39;ll take the lead here. Could you please let me know how I can assist you or what you need help with today?
-Monster: Hello Angel! It&#39;s great to meet you. I understand and completely agree to let you take the lead. If you need any assistance or if there’s anything specific you’d like me to help with, just let me know. How can we assist the user today?
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
+Monster: Hello Angel! I&#39;m Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I don&#39;t see any previous message from you that got cut off. Could you please share what you need help with or what you were trying to ask? I&#39;m here to assist!
+Angel: Hello Monster! It looks like there&#39;s a bit of confusion here. I&#39;m Angel, and I&#39;m here to help you. Could you please let me know what you need assistance with or what you were trying to ask? I&#39;m ready to assist you in any way I can! 😊
+Monster: Hello Angel! It’s nice to meet you. I see there’s a bit of a mix-up, but no worries! I’m here to help with any questions or tasks you have. Could you please let me know what you need assistance with? Whether it’s information, a task, or anything else, I’m ready to help! 😊
+Angel: Hello Monster! It&#39;s great to meet you, but it seems like there might be a bit of a misunderstanding. I&#39;m Angel, and I&#39;m here to assist you. Could you please let me know what you need help with or what you were trying to ask? I&#39;m here to support you in any way I can! 😊
+Monster: Hello Angel! It’s great to meet you, and I appreciate your patience. It seems we’ve been going back and forth a bit, but I’m here to help with anything you need. If you have any questions or tasks, please feel free to share them. What can I assist you with today? 😊
 </pre></div>
 </div>
 <p>If you want to participate in the conversation, just instantiate a built-in <cite>UserAgent</cite> to type messages to the agents.</p>
@@ -220,7 +220,7 @@ By this way, we just need to organize the order of speaking without explicitly s
 
 <span class="k">with</span> <span class="n">msghub</span><span class="p">(</span>
     <span class="n">participants</span><span class="o">=</span><span class="p">[</span><span class="n">alice</span><span class="p">,</span> <span class="n">bob</span><span class="p">,</span> <span class="n">charlie</span><span class="p">],</span>
-    <span class="n">announcement</span><span class="o">=</span><span class="n">greeting</span><span class="p">,</span>  <span class="c1"># The announcement message will be boardcasted to all participants at the beginning.</span>
+    <span class="n">announcement</span><span class="o">=</span><span class="n">greeting</span><span class="p">,</span>  <span class="c1"># The announcement message will be broadcasted to all participants at the beginning.</span>
 <span class="p">)</span> <span class="k">as</span> <span class="n">hub</span><span class="p">:</span>
     <span class="c1"># The first round of the conversation</span>
     <span class="n">alice</span><span class="p">()</span>
@@ -283,7 +283,7 @@ Charlie: 4
 <p>In the above example, Charlie left the conversation after the first round without receiving “4” and “5” from Alice and Bob.
 Therefore, it reported “4” in the second round.
 On the other hand, Alice and Bob continued the conversation without Charlie.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 32.312 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 36.748 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-conversation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e45033d54e8ac8fc32ecea3c60595825/conversation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">conversation.ipynb</span></code></a></p>

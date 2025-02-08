@@ -154,8 +154,8 @@
         <span class="n">retry_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">retry_type</span> <span class="o">==</span> <span class="s2">&quot;fixed&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">RetryFixedTimes</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">retry_type</span> <span class="o">==</span> <span class="s2">&quot;expential&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">RetryExpential</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">retry_type</span> <span class="o">==</span> <span class="s2">&quot;exponential&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">RetryExponential</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Unknown retry strategy type: </span><span class="si">{</span><span class="n">retry_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -228,15 +228,15 @@
 
 
 
-<div class="viewcode-block" id="RetryExpential">
-<a class="viewcode-back" href="../../../build_api/agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExpential">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">RetryExpential</span><span class="p">(</span><span class="n">RetryBase</span><span class="p">):</span>
+<div class="viewcode-block" id="RetryExponential">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExponential">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RetryExponential</span><span class="p">(</span><span class="n">RetryBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retry with exponential backoff, which means the delay time will increase exponentially.</span>
 
 <span class="sd">    Init dict format:</span>
 
-<span class="sd">        - type: &#39;expential&#39;</span>
+<span class="sd">        - type: &#39;exponential&#39;</span>
 <span class="sd">        - max_retries (`int`): The max retry times</span>
 <span class="sd">        - base_delay (`float`): The base delay time</span>
 <span class="sd">        - max_delay (`float`): The max delay time, which will be used if the calculated delay time</span>
@@ -245,7 +245,7 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        retry = RetryBase.load_dict({</span>
-<span class="sd">            &quot;type&quot;: &quot;expential&quot;,</span>
+<span class="sd">            &quot;type&quot;: &quot;exponential&quot;,</span>
 <span class="sd">            &quot;max_retries&quot;: 10,</span>
 <span class="sd">            &quot;base_delay&quot;: 5,</span>
 <span class="sd">            &quot;max_delay&quot;: 300,</span>
@@ -269,8 +269,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">base_delay</span> <span class="o">=</span> <span class="n">base_delay</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_delay</span> <span class="o">=</span> <span class="n">max_delay</span>
 
-<div class="viewcode-block" id="RetryExpential.retry">
-<a class="viewcode-back" href="../../../build_api/agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExpential.retry">[docs]</a>
+<div class="viewcode-block" id="RetryExponential.retry">
+<a class="viewcode-back" href="../../../build_api/agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExponential.retry">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">retry</span><span class="p">(</span>  <span class="c1"># pylint: disable=R1710</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -307,7 +307,7 @@
 
 
 
-<span class="n">_DEAFULT_RETRY_STRATEGY</span> <span class="o">=</span> <span class="n">RetryFixedTimes</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">_DEFAULT_RETRY_STRATEGY</span> <span class="o">=</span> <span class="n">RetryFixedTimes</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
            </div>

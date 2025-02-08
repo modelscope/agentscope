@@ -267,7 +267,7 @@ The `response` is an object of `agentscope.models.ModelResponse`, which contains
     Text: Hello! How can I assist you today?
     Embedding: None
     Image URLs: None
-    Raw: {"status_code": 200, "request_id": "249ba981-d046-9139-ba91-b8bd08b6eb55", "code": "", "message": "", "output": {"text": null, "finish_reason": null, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}}]}, "usage": {"input_tokens": 10, "output_tokens": 9, "prompt_tokens_details": {"cached_tokens": 0}, "total_tokens": 19}}
+    Raw: {"status_code": 200, "request_id": "6b457d95-9302-9dc5-96e4-686b97d8e531", "code": "", "message": "", "output": {"text": null, "finish_reason": null, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}}]}, "usage": {"input_tokens": 10, "output_tokens": 9, "prompt_tokens_details": {"cached_tokens": 0}, "total_tokens": 19}}
     Parsed: None
     Stream: None
 
@@ -289,7 +289,7 @@ If your model is compatible with OpenAI Python API, reusing the `OpenAIChatWrapp
 
 .. note:: You should take care of the messages format manually.
 
-Taking `vLLM <https://github.com/vllm-project/vllm?tab=readme-ov-file>`_, an OpenAI-comptaible LLM inference engine, as an example,
+Taking `vLLM <https://github.com/vllm-project/vllm?tab=readme-ov-file>`_, an OpenAI-compatible LLM inference engine, as an example,
 its `official doc <https://github.com/vllm-project/vllm?tab=readme-ov-file>`_ provides the following example for OpenAI Python client library:
 
 .. code-block:: python
@@ -544,7 +544,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.721 seconds)
+   **Total running time of the script:** (0 minutes 1.855 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_model.py:

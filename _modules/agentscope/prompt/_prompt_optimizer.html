@@ -167,7 +167,7 @@
 <span class="s2">现在，你要</span>
 <span class="s2">1. 判断用户与agent交互的dialog history中，是否包含显式的错误（如函数调用错误、没有遵循输入输出格式），对用户意图的误解等。</span>
 <span class="s2">2. 对发生错误的原因进行详细分析，并且寻找对于对应错误的解决方案。</span>
-<span class="s2">3. 根据错误原因和用户意图，写一条或几条可以添加在用户system prompt后面的注意事项note，或者exmaple形式的note，使之不要再犯同样的错误。</span>
+<span class="s2">3. 根据错误原因和用户意图，写一条或几条可以添加在用户system prompt后面的注意事项note，或者example形式的note，使之不要再犯同样的错误。</span>
 <span class="s2">如果要添加的note包含example，需要格外小心，如果不确定添加的example是否正确，可以先不添加。</span>
 <span class="s2">你添加的note语言与用户提供的原始system prompt一致，即用户提供的原始system prompt是使用中文写的，你添加的note也必须是中文; 如果用户提供的原始system prompt是使用english写的，你添加的note也必须是english。</span>
 <span class="s2">你添加的note应该包含在tag [prompt_note]中，例如 [prompt_note] 请注意输出仅包含json格式 [/prompt_note]。如果dialog history没有明显问题，则不需要添加任何note。</span>
