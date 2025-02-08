@@ -9,12 +9,12 @@ try:
 except ImportError as import_error:
     from agentscope.utils.common import ImportErrorReporter
 
-    pickle = ImportErrorReporter(import_error, "distribtue")
+    pickle = ImportErrorReporter(import_error, "distribute")
 
 from ..message import Msg
 from .rpc_client import RpcClient
 from ..utils.common import _is_web_url
-from .retry_strategy import RetryBase, _DEAFULT_RETRY_STRATEGY
+from .retry_strategy import RetryBase, _DEFAULT_RETRY_STRATEGY
 
 
 class AsyncResult:
@@ -26,7 +26,7 @@ class AsyncResult:
         port: int,
         task_id: int = None,
         stub: Future = None,
-        retry: RetryBase = _DEAFULT_RETRY_STRATEGY,
+        retry: RetryBase = _DEFAULT_RETRY_STRATEGY,
     ) -> None:
         self._host = host
         self._port = port
