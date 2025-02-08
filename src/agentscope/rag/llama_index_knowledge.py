@@ -167,7 +167,7 @@ class LlamaIndexKnowledge(Knowledge):
             to convert data to index, and retrieve information from index.
             For example:
             1) preprocessing documents with data loaders
-            2) generate embedding by configuring pipline with embedding models
+            2) generate embedding by configuring pipeline with embedding models
             3) store the embedding-content to vector database
                 the default dir is "./rag_storage/knowledge_id"
 
@@ -358,7 +358,7 @@ class LlamaIndexKnowledge(Knowledge):
         pipeline = IngestionPipeline(
             transformations=transformations,
         )
-        # stack up the nodes from the pipline
+        # stack up the nodes from the pipeline
         nodes = pipeline.run(
             documents=documents,
             show_progress=self.showprogress,
@@ -526,7 +526,7 @@ class LlamaIndexKnowledge(Knowledge):
             transformations (TransformComponent): transformations that
             convert the documents into nodes.
         """
-        # this is the pipline that generate the nodes
+        # this is the pipeline that generate the nodes
         pipeline = IngestionPipeline(
             transformations=transformations,
         )
