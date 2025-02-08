@@ -150,7 +150,7 @@ class AgentBase(Operator, metaclass=RpcMeta):
 
         Args:
             content
-            (`Union[str, Msg, Generator[Tuple[bool, str], None, None]]`):
+             (`Union[str, Msg, Generator[Tuple[bool, str], None, None]]`):
                 The content of the message to be spoken out. If a string is
                 given, a Msg object will be created with the agent's name, role
                 as "assistant", and the given string as the content.

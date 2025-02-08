@@ -4,7 +4,7 @@ In this example, we will show
 - How to set up the stream mode in AgentScope
 - How to print in stream mode in both terminal and AgentScope Studio
 
-Refer to our tutorial for more information: [Streaming](https://modelscope.github.io/agentscope/en/tutorial/203-stream.html).
+Refer to our tutorial for more information: [Streaming](https://doc.agentscope.io/build_tutorial/streaming.html).
 
 ## Tested Models
 
@@ -18,7 +18,7 @@ These models are tested in this example. For other models, some modifications ma
 
 ## Prerequisites
 
-- Install the lastest version of AgentScope by
+- Install the latest version of AgentScope by
 
 ```bash
 git clone https://github.com/modelscope/agentscope

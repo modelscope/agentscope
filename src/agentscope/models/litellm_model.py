@@ -84,27 +84,28 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
     Response:
         - From https://docs.litellm.ai/docs/completion/output
 
-        ```json
-        {
-            'choices': [
-                {
-                    'finish_reason': str,  # String: 'stop'
-                    'index': int,  # Integer: 0
-                    'message': {  # Dictionary [str, str]
-                        'role': str,  # String: 'assistant'
-                        'content': str  # String: "default message"
+        .. code-block:: json
+
+            {
+                'choices': [
+                    {
+                        'finish_reason': str,  # String: 'stop'
+                        'index': int,  # Integer: 0
+                        'message': {  # Dictionary [str, str]
+                            'role': str,  # String: 'assistant'
+                            'content': str  # String: "default message"
+                        }
                     }
+                ],
+                'created': str,  # String: None
+                'model': str,  # String: None
+                'usage': {  # Dictionary [str, int]
+                    'prompt_tokens': int,  # Integer
+                    'completion_tokens': int,  # Integer
+                    'total_tokens': int  # Integer
                 }
-            ],
-            'created': str,  # String: None
-            'model': str,  # String: None
-            'usage': {  # Dictionary [str, int]
-                'prompt_tokens': int,  # Integer
-                'completion_tokens': int,  # Integer
-                'total_tokens': int  # Integer
             }
-        }
-        ```
+
     """
 
     model_type: str = "litellm_chat"

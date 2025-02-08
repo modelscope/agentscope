@@ -85,36 +85,37 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/api-details
 
-    Response:
+    Example Response:
         - Refer to
         https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw
 
-        ```json
-        {
-            "status_code": 200,
-            "request_id": "a75a1b22-e512-957d-891b-37db858ae738",
-            "code": "",
-            "message": "",
-            "output": {
-                "text": null,
-                "finish_reason": null,
-                "choices": [
-                    {
-                        "finish_reason": "stop",
-                        "message": {
-                            "role": "assistant",
-                            "content": "xxx"
+        .. code-block:: json
+
+            {
+                "status_code": 200,
+                "request_id": "a75a1b22-e512-957d-891b-37db858ae738",
+                "code": "",
+                "message": "",
+                "output": {
+                    "text": null,
+                    "finish_reason": null,
+                    "choices": [
+                        {
+                            "finish_reason": "stop",
+                            "message": {
+                                "role": "assistant",
+                                "content": "xxx"
+                            }
                         }
-                    }
-                ]
-            },
-            "usage": {
-                "input_tokens": 25,
-                "output_tokens": 77,
-                "total_tokens": 102
+                    ]
+                },
+                "usage": {
+                    "input_tokens": 25,
+                    "output_tokens": 77,
+                    "total_tokens": 102
+                }
             }
-        }
-        ```
+
     """
 
     model_type: str = "dashscope_chat"
@@ -409,34 +410,35 @@ class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
         - Refer to
         https://help.aliyun.com/zh/dashscope/developer-reference/api-details-9?spm=a2c4g.11186623.0.0.7108fa70Op6eqF
 
-        ```json
-        {
-            "status_code": 200,
-            "request_id": "b54ffeb8-6212-9dac-808c-b3771cba3788",
-            "code": null,
-            "message": "",
-            "output": {
-                "task_id": "996523eb-034d-459b-ac88-b340b95007a4",
-                "task_status": "SUCCEEDED",
-                "results": [
-                    {
-                        "url": "RESULT_URL1"
-                    },
-                    {
-                        "url": "RESULT_URL2"
-                    },
-                ],
-                "task_metrics": {
-                    "TOTAL": 2,
-                    "SUCCEEDED": 2,
-                    "FAILED": 0
+        .. code-block:: json
+
+            {
+                "status_code": 200,
+                "request_id": "b54ffeb8-6212-9dac-808c-b3771cba3788",
+                "code": null,
+                "message": "",
+                "output": {
+                    "task_id": "996523eb-034d-459b-ac88-b340b95007a4",
+                    "task_status": "SUCCEEDED",
+                    "results": [
+                        {
+                            "url": "RESULT_URL1"
+                        },
+                        {
+                            "url": "RESULT_URL2"
+                        },
+                    ],
+                    "task_metrics": {
+                        "TOTAL": 2,
+                        "SUCCEEDED": 2,
+                        "FAILED": 0
+                    }
+                },
+                "usage": {
+                    "image_count": 2
                 }
-            },
-            "usage": {
-                "image_count": 2
             }
-        }
-        ```
+
     """
 
     model_type: str = "dashscope_image_synthesis"
@@ -534,27 +536,28 @@ class DashScopeTextEmbeddingWrapper(DashScopeWrapperBase):
         - Refer to
         https://help.aliyun.com/zh/dashscope/developer-reference/text-embedding-api-details?spm=a2c4g.11186623.0.i3
 
-        ```json
-        {
-            "status_code": 200, // 200 indicate success otherwise failed.
-            "request_id": "fd564688-43f7-9595-b986", // The request id.
-            "code": "", // If failed, the error code.
-            "message": "", // If failed, the error message.
-            "output": {
-                "embeddings": [ // embeddings
-                    {
-                        "embedding": [ // one embedding output
-                            -3.8450357913970947, ...,
-                        ],
-                        "text_index": 0 // the input index.
-                    }
-                ]
-            },
-            "usage": {
-                "total_tokens": 3 // the request tokens.
+        .. code-block:: json
+
+            {
+                "status_code": 200, // 200 indicate success otherwise failed.
+                "request_id": "fd564688-43f7-9595-b986", // The request id.
+                "code": "", // If failed, the error code.
+                "message": "", // If failed, the error message.
+                "output": {
+                    "embeddings": [ // embeddings
+                        {
+                            "embedding": [ // one embedding output
+                                -3.8450357913970947, ...,
+                            ],
+                            "text_index": 0 // the input index.
+                        }
+                    ]
+                },
+                "usage": {
+                    "total_tokens": 3 // the request tokens.
+                }
             }
-        }
-        ```
+
     """
 
     model_type: str = "dashscope_text_embedding"
@@ -645,36 +648,37 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         - Refer to
         https://help.aliyun.com/zh/dashscope/developer-reference/tongyi-qianwen-vl-plus-api?spm=a2c4g.11186623.0.0.7fde1f5atQSalN
 
-        ```json
-        {
-            "status_code": 200,
-            "request_id": "a0dc436c-2ee7-93e0-9667-c462009dec4d",
-            "code": "",
-            "message": "",
-            "output": {
-                "text": null,
-                "finish_reason": null,
-                "choices": [
-                    {
-                        "finish_reason": "stop",
-                        "message": {
-                            "role": "assistant",
-                            "content": [
-                                {
-                                    "text": "这张图片显..."
-                                }
-                            ]
+        .. code-block:: json
+
+            {
+                "status_code": 200,
+                "request_id": "a0dc436c-2ee7-93e0-9667-c462009dec4d",
+                "code": "",
+                "message": "",
+                "output": {
+                    "text": null,
+                    "finish_reason": null,
+                    "choices": [
+                        {
+                            "finish_reason": "stop",
+                            "message": {
+                                "role": "assistant",
+                                "content": [
+                                    {
+                                        "text": "这张图片显..."
+                                    }
+                                ]
+                            }
                         }
-                    }
-                ]
-            },
-            "usage": {
-                "input_tokens": 1277,
-                "output_tokens": 81,
-                "image_tokens": 1247
+                    ]
+                },
+                "usage": {
+                    "input_tokens": 1277,
+                    "output_tokens": 81,
+                    "image_tokens": 1247
+                }
             }
-        }
-        ```
+
     """
 
     model_type: str = "dashscope_multimodal"
@@ -787,26 +791,25 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         The multimodal API has the following requirements:
 
-            - The roles of messages must alternate between "user" and
-                "assistant".
-            - The message with the role "system" should be the first message
-                in the list.
-            - If the system message exists, then the second message must
-                have the role "user".
-            - The last message in the list should have the role "user".
-            - In each message, more than one figure is allowed.
+        - The roles of messages must alternate between "user" and "assistant".
+        - The message with the role "system" should be the first message
+         in the list.
+        - If the system message exists, then the second message must
+         have the role "user".
+        - The last message in the list should have the role "user".
+        - In each message, more than one figure is allowed.
 
         With the above requirements, we format the messages as follows:
 
-            - If the first message is a system message, then we will keep it as
-                system prompt.
-            - We merge all messages into a conversation history prompt in a
-                single message with the role "user".
-            - When there are multiple figures in the given messages, we will
-                attach it to the user message by order. Note if there are
-                multiple figures, this strategy may cause misunderstanding for
-                the model. For advanced solutions, developers are encouraged to
-                implement their own prompt engineering strategies.
+        - If the first message is a system message, then we will keep it as
+         system prompt.
+        - We merge all messages into a conversation history prompt in a
+         single message with the role "user".
+         - When there are multiple figures in the given messages, we will
+          attach it to the user message by order. Note if there are
+          multiple figures, this strategy may cause misunderstanding for
+          the model. For advanced solutions, developers are encouraged to
+          implement their own prompt engineering strategies.
 
         The following is an example:
 
@@ -832,7 +835,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
         The prompt will be as follows:
 
-        .. code-block:: python
+        .. code-block:: json
 
             [
                 {

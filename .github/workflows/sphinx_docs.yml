@@ -1,16 +1,12 @@
 name: Deploy Sphinx documentation to Pages
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - 'docs/**/*'
   push:
     branches:
       - main
 
 jobs:
-  pages:
+  build_tutorial:
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -32,19 +28,24 @@ jobs:
     - name: Install Dependencies
       run: |
         pip install -q -e .[full]
-    - id: build
-      name: Build Documentation
+    - name: Add execute permission to build.sh
       run: |
-        cd docs/sphinx_doc
-        ./build_sphinx_doc.sh
+        chmod +x docs/tutorial/en/build.sh
+    - id: build_en
+      name: Build English Documentation
+      env:
+        DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+      run: |
+        cd docs/tutorial/en/
+        ./build.sh
     - name: Upload Documentation
       uses: actions/upload-artifact@v4
       with:
         name: SphinxDoc
-        path: 'docs/sphinx_doc/build'
+        path: 'docs/tutorial/en/build'
     - uses: peaceiris/actions-gh-pages@v3
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: 'docs/sphinx_doc/build/html'
+        publish_dir: 'docs/tutorial/en/build/html'
         cname: doc.agentscope.io

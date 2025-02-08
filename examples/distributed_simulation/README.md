@@ -28,7 +28,7 @@ This example will consume a huge amount of tokens. Please do not use model API t
 ## Prerequisites
 
 - The distribute version of AgentScope is installed
-- Use MacOS or Linux (Windows requires some modifiations to the scripts)
+- Use MacOS or Linux (Windows requires some modifications to the scripts)
 - [Optional] Have multiple machines with powerful GPUs (A800 or better) and install [vLLM](https://github.com/vllm-project/vllm)
 
 ## How to Run
