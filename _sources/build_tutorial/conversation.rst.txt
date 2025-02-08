@@ -109,14 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! It looks like there might have been a mix-up. I'm Monster, and I'm here to help you. Could you please let me know what you need assistance with?
-    Angel: Hello! I'm Angel, and it looks like there might be a bit of confusion. I'm here to assist you. Could you please let me know what you need help with?
-    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to help as well. It seems we both want to assist! Could you let me know what you need, and I'll do my best to support you?
-    Angel: Hello! It's great to meet you, Monster. I'm Angel, and it looks like we both have the same goal of helping out. To avoid any confusion, let's focus on assisting the person who needs help. Could you please let us know what you need assistance with, and we'll do our best to support you?
-    Monster: Hello Angel! It's great to meet you. You're right, let's make sure we're here to assist whoever needs help. 
-
-    To the person seeking assistance: Could you please share what you need help with? We're both here and ready to support you in any way we can!
+    Angel: Hello! It seems like your message was cut off. How can I assist you today?
+    Monster: Hello Angel! It looks like there might have been a mix-up. I'm Monster, and I'm here to help you. How can I assist you today?
+    Angel: Hello! It looks like there was a bit of confusion. I’m Angel, and I’m here to help you. How can I assist you today?
+    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to help as well. Let's team up to assist whoever needs our help. Is there anything specific you need assistance with, or is there someone else we should be helping together?
+    Angel: Hello Monster! It's great to meet you. I appreciate the offer to team up. Since we're both here to help, let's see if there's anyone who needs our assistance. If you have any specific tasks or if you know of someone who could use a hand, feel free to let me know. Otherwise, I'll keep an eye out for any incoming requests. How does that sound?
+    Monster: That sounds perfect, Angel! Let's keep an eye out for anyone who needs our help. If you spot any incoming requests or if there's anything specific you need assistance with, just let me know. I'm here to support and collaborate with you. 😊
 
 
 
@@ -294,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 26.179 seconds)
+   **Total running time of the script:** (0 minutes 29.312 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
