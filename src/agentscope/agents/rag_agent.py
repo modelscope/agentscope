@@ -68,7 +68,7 @@ class LlamaIndexAgent(AgentBase):
                 whether to print the retrieved content
             recent_n_mem_for_retrieve (int):
                 the number of pieces of memory used as part of
-                retrival query
+                retrieval query
         """
         super().__init__(
             name=name,

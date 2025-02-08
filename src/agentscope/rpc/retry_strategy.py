@@ -29,8 +29,8 @@ class RetryBase(ABC):
         retry_type = data.pop("type", None)
         if retry_type == "fixed":
             return RetryFixedTimes(**data)
-        elif retry_type == "expential":
-            return RetryExpential(**data)
+        elif retry_type == "exponential":
+            return RetryExponential(**data)
         else:
             raise NotImplementedError(
                 f"Unknown retry strategy type: {retry_type}",
@@ -95,13 +95,13 @@ class RetryFixedTimes(RetryBase):
         raise TimeoutError("Max retry exceeded.")
 
 
-class RetryExpential(RetryBase):
+class RetryExponential(RetryBase):
     """
     Retry with exponential backoff, which means the delay time will increase exponentially.
 
     Init dict format:
 
-        - type: 'expential'
+        - type: 'exponential'
         - max_retries (`int`): The max retry times
         - base_delay (`float`): The base delay time
         - max_delay (`float`): The max delay time, which will be used if the calculated delay time
@@ -110,7 +110,7 @@ class RetryExpential(RetryBase):
     .. code-block:: python
 
         retry = RetryBase.load_dict({
-            "type": "expential",
+            "type": "exponential",
             "max_retries": 10,
             "base_delay": 5,
             "max_delay": 300,
@@ -168,4 +168,4 @@ class RetryExpential(RetryBase):
         raise TimeoutError("Max retry exceeded.")
 
 
-_DEAFULT_RETRY_STRATEGY = RetryFixedTimes(max_retries=10, delay=5)
+_DEFAULT_RETRY_STRATEGY = RetryFixedTimes(max_retries=10, delay=5)
