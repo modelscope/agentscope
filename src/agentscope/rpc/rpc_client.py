@@ -23,7 +23,7 @@ except ImportError as import_error:
     agent_pb2 = ImportErrorReporter(import_error, "distribute")
     RpcAgentStub = ImportErrorReporter(import_error, "distribute")
 
-from .retry_strategy import RetryBase, _DEAFULT_RETRY_STRATEGY
+from .retry_strategy import RetryBase, _DEFAULT_RETRY_STRATEGY
 from ..utils.common import _generate_id_from_seed
 from ..exception import AgentServerNotAliveError
 from ..constants import _DEFAULT_RPC_OPTIONS, _DEFAULT_RPC_TIMEOUT
@@ -223,7 +223,7 @@ class RpcClient:
     def update_result(
         self,
         task_id: int,
-        retry: RetryBase = _DEAFULT_RETRY_STRATEGY,
+        retry: RetryBase = _DEFAULT_RETRY_STRATEGY,
     ) -> str:
         """Update the value of the async result.
 

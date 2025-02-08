@@ -17,7 +17,7 @@ def execute_shell_command(command: str) -> ServiceResponse:
 
     Returns:
         ServiceResponse: Contains either the output from the shell command as a
-        string if sucessful, or an error message include the error type.
+        string if successful, or an error message include the error type.
 
     Note:
         Use any bash/shell commands you want (e.g. find, grep, cat, ls),

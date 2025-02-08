@@ -166,7 +166,7 @@ print(f"Stream: {response.stream}")
 #
 # .. note:: You should take care of the messages format manually.
 #
-# Taking `vLLM <https://github.com/vllm-project/vllm?tab=readme-ov-file>`_, an OpenAI-comptaible LLM inference engine, as an example,
+# Taking `vLLM <https://github.com/vllm-project/vllm?tab=readme-ov-file>`_, an OpenAI-compatible LLM inference engine, as an example,
 # its `official doc <https://github.com/vllm-project/vllm?tab=readme-ov-file>`_ provides the following example for OpenAI Python client library:
 #
 # .. code-block:: python

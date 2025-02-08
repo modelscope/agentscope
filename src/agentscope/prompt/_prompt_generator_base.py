@@ -188,13 +188,13 @@ class SystemPromptGeneratorBase(ABC):
             `List`:
                 The selected examples.
         """
-        # Get the human query embd using the embedding model
-        human_query_embd = self.embed_model(user_prompt).embedding[0]
+        # Get the human query embed using the embedding model
+        human_query_embed = self.embed_model(user_prompt).embedding[0]
 
         # TODO: use the retrieval service instead rather than achieving it
         #  locally
         selected_indices = _find_top_k_embeddings(
-            human_query_embd,
+            human_query_embed,
             self.example_embeddings,
             self.example_num,
         )
