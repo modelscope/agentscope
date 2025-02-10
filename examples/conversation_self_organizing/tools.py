@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""some utils of angent_builder example"""
+"""some utils of agent_builder example"""
 import re
 
 

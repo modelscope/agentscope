@@ -30,7 +30,7 @@ from agentscope.exception import (
 )
 from agentscope.rpc.retry_strategy import (
     RetryFixedTimes,
-    RetryExpential,
+    RetryExponential,
 )
 
 
@@ -870,7 +870,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         delay = 1
         max_delay = 2
         fix_retry = RetryFixedTimes(max_retries=max_retries, delay=delay)
-        exp_retry = RetryExpential(
+        exp_retry = RetryExponential(
             max_retries=max_retries,
             base_delay=delay,
             max_delay=max_delay,

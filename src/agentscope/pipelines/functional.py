@@ -66,7 +66,7 @@ def ifelsepipeline(
 
     Args:
         condition_func (`Callable`):
-            A function that determines whether to exeucte `if_body_operator`
+            A function that determines whether to execute `if_body_operator`
             or `else_body_operator` based on x.
         if_body_operator (`Operators`):
             Operators executed when `condition_func` returns True.

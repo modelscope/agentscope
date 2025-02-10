@@ -225,7 +225,7 @@ def list_directory_content(directory_path: str) -> ServiceResponse:
             The path of the directory to show.
 
     Returns:
-        `ServiceResponse`: The results contain a list of direcotry contents,
+        `ServiceResponse`: The results contain a list of directory contents,
         or an error message if any, including the error type.
     """
     if not os.path.exists(directory_path):

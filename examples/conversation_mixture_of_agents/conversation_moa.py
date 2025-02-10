@@ -14,7 +14,7 @@ from agentscope.message import Msg
 
 class DialogAgentWithMoA(AgentBase):
     """A simple agent used to perform a dialogue.
-    We will show all the modifcation need to use MoA as the main model"""
+    We will show all the modification need to use MoA as the main model"""
 
     def __init__(
         self,
@@ -30,7 +30,7 @@ class DialogAgentWithMoA(AgentBase):
             sys_prompt (`Optional[str]`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
-            moa_module (`MixutreOfAgents`):
+            moa_module (`MixtureOfAgents`):
                 The inited MoA module you want to use as the main module.
             use_memory (`bool`, defaults to `True`):
                 Whether the agent has memory.
