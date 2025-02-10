@@ -88,6 +88,7 @@ extra_gradio_requires = [
 
 extra_rag_requires = [
     "llama-index==0.10.30",
+    "llama-index-retrievers-bm25==0.2.0",
 ]
 
 # API requires
