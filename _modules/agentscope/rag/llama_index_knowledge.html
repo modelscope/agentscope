@@ -66,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -122,6 +122,7 @@
 <span class="sd">into AgentScope package</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
@@ -134,7 +135,10 @@
         <span class="n">Embedding</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.ingestion</span><span class="w"> </span><span class="kn">import</span> <span class="n">IngestionPipeline</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.storage.docstore</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocumentStore</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.retrievers.bm25</span><span class="w"> </span><span class="kn">import</span> <span class="n">BM25Retriever</span>
 
+    <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.vector_stores.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorStore</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.bridge.pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrivateAttr</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.node_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceSplitter</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -145,6 +149,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">llama_index.core.schema</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
         <span class="n">Document</span><span class="p">,</span>
         <span class="n">TransformComponent</span><span class="p">,</span>
+        <span class="n">BaseNode</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">llama_index</span> <span class="o">=</span> <span class="kc">None</span>
@@ -152,6 +157,9 @@
     <span class="n">BaseEmbedding</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">Embedding</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">IngestionPipeline</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">SimpleDocumentStore</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">BM25Retriever</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">VectorStore</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">SentenceSplitter</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">VectorStoreIndex</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">StorageContext</span> <span class="o">=</span> <span class="kc">None</span>
@@ -159,22 +167,23 @@
     <span class="n">PrivateAttr</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">Document</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">TransformComponent</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">BaseNode</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span><span class="p">,</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_TOP_K</span><span class="p">,</span>
     <span class="n">DEFAULT_CHUNK_SIZE</span><span class="p">,</span>
     <span class="n">DEFAULT_CHUNK_OVERLAP</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rag.knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knowledge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rag</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knowledge</span><span class="p">,</span> <span class="n">RetrievedChunk</span>
 
 
 <span class="k">try</span><span class="p">:</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">_EmbeddingModel</span><span class="p">(</span><span class="n">BaseEmbedding</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        wrapper for ModelWrapperBase to an embedding model can be used</span>
+<span class="sd">        Wrapper for ModelWrapperBase to an embedding model can be used</span>
 <span class="sd">        in Llama Index pipeline.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -190,10 +199,10 @@
 <span class="sd">            embedding model</span>
 
 <span class="sd">            Args:</span>
-<span class="sd">                emb_model (ModelWrapperBase):</span>
-<span class="sd">                    embedding model in ModelWrapperBase</span>
-<span class="sd">                embed_batch_size (int):</span>
-<span class="sd">                    batch size, defaults to 1</span>
+<span class="sd">                emb_model (`ModelWrapperBase`):</span>
+<span class="sd">                    Embedding model in ModelWrapperBase</span>
+<span class="sd">                embed_batch_size (`int`):</span>
+<span class="sd">                    Batch size, defaults to 1</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
                 <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;Temporary_embedding_wrapper&quot;</span><span class="p">,</span>
@@ -203,9 +212,13 @@
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_get_query_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            get embedding for query</span>
+<span class="sd">            Get embedding for query</span>
+
 <span class="sd">            Args:</span>
-<span class="sd">                query (str): query to be embedded</span>
+<span class="sd">                query (`str`): Query to be embedded</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                `List[float]`: Embedding</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="c1"># Note: AgentScope embedding model wrapper returns list</span>
             <span class="c1"># of embedding</span>
@@ -213,9 +226,13 @@
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_get_text_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Embedding</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            get embedding for list of strings</span>
+<span class="sd">            Get embedding for list of strings</span>
+
 <span class="sd">            Args:</span>
-<span class="sd">                 texts ( List[str]): texts to be embedded</span>
+<span class="sd">                 texts (` List[str]`): Texts to be embedded</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                `List[float]`: List of embeddings</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emb_model_wrapper</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span>
@@ -224,9 +241,12 @@
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_get_text_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            get embedding for a single string</span>
+<span class="sd">            Get embedding for a single string</span>
 <span class="sd">            Args:</span>
-<span class="sd">                 text (str): texts to be embedded</span>
+<span class="sd">                 text (`str`): Texts to be embedded</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                `List[float]`: Embedding</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_emb_model_wrapper</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">embedding</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
@@ -265,6 +285,8 @@
 <span class="sd">    This class is a wrapper with the llama index RAG.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">knowledge_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;llamaindex_knowledge&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -272,12 +294,13 @@
         <span class="n">knowledge_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ModelWrapperBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">persist_root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">additional_sparse_retrieval</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">overwrite_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">showprogress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        initialize the knowledge component based on the</span>
+<span class="sd">        Initialize the knowledge component based on the</span>
 <span class="sd">        llama-index framework: https://github.com/run-llama/llama_index</span>
 
 <span class="sd">        Notes:</span>
@@ -289,23 +312,23 @@
 <span class="sd">            1) preprocessing documents with data loaders</span>
 <span class="sd">            2) generate embedding by configuring pipeline with embedding models</span>
 <span class="sd">            3) store the embedding-content to vector database</span>
-<span class="sd">                the default dir is &quot;./rag_storage/knowledge_id&quot;</span>
+<span class="sd">                the default dir is &quot; ~/.cache/agentscope/{knowledge_id}&quot;</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            knowledge_id (str):</span>
+<span class="sd">            knowledge_id (`str`):</span>
 <span class="sd">                The id of the RAG knowledge unit.</span>
-<span class="sd">            emb_model (ModelWrapperBase):</span>
+<span class="sd">            emb_model (`ModelWrapperBase`):</span>
 <span class="sd">                The embedding model used for generate embeddings</span>
-<span class="sd">            knowledge_config (dict):</span>
+<span class="sd">            knowledge_config (`dict`):</span>
 <span class="sd">                The configuration for llama-index to</span>
 <span class="sd">                generate or load the index.</span>
-<span class="sd">            model (ModelWrapperBase):</span>
+<span class="sd">            model (`ModelWrapperBase`):</span>
 <span class="sd">                The language model used for final synthesis</span>
-<span class="sd">            persist_root (str):</span>
+<span class="sd">            persist_root (`str`):</span>
 <span class="sd">                The root directory for index persisting</span>
-<span class="sd">            overwrite_index (Optional[bool]):</span>
+<span class="sd">            overwrite_index (`Optional[bool]`):</span>
 <span class="sd">                Whether to overwrite the index while refreshing</span>
-<span class="sd">            showprogress (Optional[bool]):</span>
+<span class="sd">            showprogress (`Optional[bool]`):</span>
 <span class="sd">                Whether to show the indexing progress</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -330,6 +353,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite_index</span> <span class="o">=</span> <span class="n">overwrite_index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">showprogress</span> <span class="o">=</span> <span class="n">showprogress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># if use mix retrieval with bm25 in addition to dense retrieval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_sparse_retrieval</span> <span class="o">=</span> <span class="n">additional_sparse_retrieval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bm25_retriever</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="c1"># ensure the emb_model is compatible with LlamaIndex</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">emb_model</span><span class="p">,</span> <span class="n">ModelWrapperBase</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">emb_model</span> <span class="o">=</span> <span class="n">_EmbeddingModel</span><span class="p">(</span><span class="n">emb_model</span><span class="p">)</span>
@@ -357,10 +385,14 @@
 <span class="sd">                by calling rag.refresh_index() during the execution of the</span>
 <span class="sd">                agent.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_index</span><span class="p">()</span>
-            <span class="c1"># self.refresh_index()</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;index loading error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">, recomputing index...&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data_to_index</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_retriever</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -383,10 +415,14 @@
         <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;index loaded from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_data_to_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_to_index</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vector_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VectorStore</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseNode</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the data to index by configs. This includes:</span>
-<span class="sd">            * load the data to documents by using information from configs</span>
+<span class="sd">            * load the d_data_to_ata to documents by using information</span>
+<span class="sd">              from configs</span>
 <span class="sd">            * set the transformations associated with documents</span>
 <span class="sd">            * convert the documents to nodes</span>
 <span class="sd">            * convert the nodes to index</span>
@@ -394,6 +430,13 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            As each selected file type may need to use a different loader</span>
 <span class="sd">            and transformations, knowledge_config is a list of configs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vector_store (`Optional[VectorStore]`):</span>
+<span class="sd">                Vector store in LlamaIndex</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           ` List[BaseNode]`: list of processed nodes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># load data to documents and set transformations</span>
@@ -409,14 +452,33 @@
             <span class="p">)</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span> <span class="o">+</span> <span class="n">nodes_docs</span>
         <span class="c1"># convert nodes to index</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">VectorStoreIndex</span><span class="p">(</span>
-            <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
-            <span class="n">embed_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_model</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;index calculation completed.&quot;</span><span class="p">)</span>
-        <span class="c1"># persist the calculated index</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">storage_context</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">persist_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;index persisted.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">vector_store</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">VectorStoreIndex</span><span class="p">(</span>
+                <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
+                <span class="n">embed_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_model</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;index calculation completed.&quot;</span><span class="p">)</span>
+            <span class="c1"># persist the calculated index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">storage_context</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">persist_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;index persisted.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">docstore</span> <span class="o">=</span> <span class="n">SimpleDocumentStore</span><span class="p">()</span>
+            <span class="n">docstore</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+            <span class="n">storage_context</span> <span class="o">=</span> <span class="n">StorageContext</span><span class="o">.</span><span class="n">from_defaults</span><span class="p">(</span>
+                <span class="n">docstore</span><span class="o">=</span><span class="n">docstore</span><span class="p">,</span>
+                <span class="n">vector_store</span><span class="o">=</span><span class="n">vector_store</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">VectorStoreIndex</span><span class="p">(</span>
+                <span class="n">nodes</span><span class="p">,</span>
+                <span class="n">storage_context</span><span class="o">=</span><span class="n">storage_context</span><span class="p">,</span>
+                <span class="n">embed_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">emb_model</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[Update Mode] Added documents to VDB&quot;</span><span class="p">)</span>
+            <span class="n">storage_context</span><span class="o">.</span><span class="n">docstore</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">,</span> <span class="s2">&quot;docstore.json&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nodes</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_data_to_docs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -424,8 +486,9 @@
         <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This method set the loader as needed, or just use the default setting.</span>
-<span class="sd">        Then use the loader to load data from dir to documents.</span>
+<span class="sd">        This method set the loader as needed, or just use the</span>
+<span class="sd">        default setting. Then use the loader to load data from</span>
+<span class="sd">        dir to documents.</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            We can use simple directory loader (SimpleDirectoryReader)</span>
@@ -434,12 +497,12 @@
 <span class="sd">            Or use SQL loader (DatabaseReader) to load database.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            query (Optional[str]):</span>
-<span class="sd">                optional, used when the data is in a database.</span>
-<span class="sd">            config (dict):</span>
-<span class="sd">                optional, used when the loader config is in a config file.</span>
+<span class="sd">            query (`Optional[str]`):</span>
+<span class="sd">                Optional, used when the data is in a database.</span>
+<span class="sd">            config (`dict`):</span>
+<span class="sd">                Optional, used when the loader config is in a config file.</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            Any: loaded documents</span>
+<span class="sd">            `Any`: loaded documents</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_loader</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loader&quot;</span><span class="p">)</span>
         <span class="c1"># let the doc_id be the filename for each document</span>
@@ -462,15 +525,15 @@
 <span class="sd">        Convert the loaded documents to nodes using transformations.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            documents (List[Document]):</span>
-<span class="sd">                documents to be processed, usually expected to be in</span>
+<span class="sd">            documents (`List[Document]`):</span>
+<span class="sd">                Documents to be processed, usually expected to be in</span>
 <span class="sd">                 llama index Documents.</span>
-<span class="sd">            transformations (Optional[list[TransformComponent]]):</span>
-<span class="sd">                optional, specifies the transformations (operators) to</span>
+<span class="sd">            transformations (`Optional[list[TransformComponent]]`):</span>
+<span class="sd">                Optional, specifies the transformations (operators) to</span>
 <span class="sd">                process documents (e.g., split the documents into smaller</span>
 <span class="sd">                chunks)</span>
 <span class="sd">        Return:</span>
-<span class="sd">            Any: return the index of the processed document</span>
+<span class="sd">            `Any`: Return the index of the processed document</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># nodes, or called chunks, is a presentation of the documents</span>
         <span class="c1"># we build nodes by using the IngestionPipeline</span>
@@ -491,7 +554,7 @@
 <span class="sd">        Set the loader as needed, or just use the default setting.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            config (dict): a dictionary containing configurations</span>
+<span class="sd">            config (`dict`): A dictionary containing configurations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;load_data&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
             <span class="c1"># we prepare the loader from the configs</span>
@@ -520,7 +583,7 @@
 <span class="sd">        Set the transformations as needed, or just use the default setting.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            config (dict): a dictionary containing configurations.</span>
+<span class="sd">            config (`dict`): A dictionary containing configurations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;store_and_index&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_args_from_config</span><span class="p">(</span>
@@ -557,10 +620,10 @@
 <span class="sd">        Set the retriever as needed, or just use the default setting.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            retriever (Optional[BaseRetriever]): passing a retriever in</span>
-<span class="sd">             LlamaIndexKnowledge</span>
-<span class="sd">            rag_config (dict): rag configuration, including similarity top k</span>
-<span class="sd">            index.</span>
+<span class="sd">            retriever (`Optional[BaseRetriever]`):</span>
+<span class="sd">                Passing a retriever in LlamaIndexKnowledge</span>
+<span class="sd">            rag_config (`dict`):</span>
+<span class="sd">                RAG configuration, including similarity top k index.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># set the retriever</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -571,7 +634,17 @@
             <span class="n">similarity_top_k</span><span class="o">=</span><span class="n">similarity_top_k</span> <span class="ow">or</span> <span class="n">DEFAULT_TOP_K</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm25_retriever</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bm25_retriever</span> <span class="o">=</span> <span class="n">BM25Retriever</span><span class="o">.</span><span class="n">from_defaults</span><span class="p">(</span>
+                <span class="n">nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">docstore</span><span class="o">.</span><span class="n">docs</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="n">similarity_top_k</span><span class="o">=</span><span class="n">similarity_top_k</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bm25_retriever</span><span class="o">.</span><span class="n">similarity_top_k</span> <span class="o">=</span> <span class="n">similarity_top_k</span>
+
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;retriever is ready.&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">retriever</span>
 
 <div class="viewcode-block" id="LlamaIndexKnowledge.retrieve">
@@ -583,37 +656,65 @@
         <span class="n">to_list_strs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">retriever</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseRetriever</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">RetrievedChunk</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This is a basic retrieve function for knowledge.</span>
 <span class="sd">        It will build a retriever on the fly and return the</span>
 <span class="sd">        result of the query.</span>
 <span class="sd">        Args:</span>
-<span class="sd">            query (str):</span>
-<span class="sd">                query is expected to be a question in string</span>
-<span class="sd">            similarity_top_k (int):</span>
-<span class="sd">                the number of most similar data returned by the</span>
+<span class="sd">            query (`str`):</span>
+<span class="sd">                Query is expected to be a question in string</span>
+<span class="sd">            similarity_top_k (`int`):</span>
+<span class="sd">                The number of most similar data returned by the</span>
 <span class="sd">                retriever.</span>
-<span class="sd">            to_list_strs (bool):</span>
-<span class="sd">                whether returns the list of strings;</span>
+<span class="sd">            to_list_strs (`bool`):</span>
+<span class="sd">                Whether returns the list of strings;</span>
 <span class="sd">                if False, return NodeWithScore</span>
-<span class="sd">            retriever (BaseRetriever):</span>
-<span class="sd">                for advanced usage, user can pass their own retriever.</span>
+<span class="sd">            retriever (`BaseRetriever`):</span>
+<span class="sd">                For advanced usage, user can pass their own retriever.</span>
 <span class="sd">        Return:</span>
-<span class="sd">            list[Any]: list of str or NodeWithScore</span>
+<span class="sd">            `list[Any]`: List of retrieved content</span>
 
 <span class="sd">        More advanced query processing can refer to</span>
 <span class="sd">        https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">retriever</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_retriever</span><span class="p">(</span><span class="n">similarity_top_k</span><span class="p">)</span>
-        <span class="n">retrieved</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="n">dense_retrieved</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="n">retrieved_res</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">dense_retrieved</span><span class="p">:</span>
+            <span class="n">retrieved_res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">RetrievedChunk</span><span class="p">(</span>
+                    <span class="n">score</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">score</span><span class="p">,</span>
+                    <span class="n">content</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get_content</span><span class="p">(),</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="n">embedding</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_sparse_retrieval</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm25_retriever</span><span class="p">:</span>
+            <span class="n">bm25_retrieved</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm25_retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+            <span class="n">sparse_retrieved</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bm25_retrieved</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">score</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">bm25_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bm25_retrieved</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bm25 scores </span><span class="si">{</span><span class="n">bm25_scores</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sparse_retrieved</span><span class="p">:</span>
+                <span class="n">retrieved_res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">RetrievedChunk</span><span class="p">(</span>
+                        <span class="n">score</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">score</span><span class="p">,</span>
+                        <span class="n">content</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get_content</span><span class="p">(),</span>
+                        <span class="n">metadata</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                        <span class="n">embedding</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">to_list_strs</span><span class="p">:</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">retrieved</span><span class="p">:</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">retrieved_res</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">results</span>
-        <span class="k">return</span> <span class="n">retrieved</span></div>
+
+        <span class="k">return</span> <span class="n">retrieved_res</span></div>
 
 
 <div class="viewcode-block" id="LlamaIndexKnowledge.refresh_index">
@@ -648,9 +749,10 @@
 <span class="sd">        the nodes to the index.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            documents (List[Document]): list of documents to be added.</span>
-<span class="sd">            transformations (TransformComponent): transformations that</span>
-<span class="sd">            convert the documents into nodes.</span>
+<span class="sd">            documents (`List[Document]`):</span>
+<span class="sd">                List of documents to be added.</span>
+<span class="sd">            transformations (`TransformComponent`):</span>
+<span class="sd">                Transformations that onvert the documents into nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># this is the pipeline that generate the nodes</span>
         <span class="n">pipeline</span> <span class="o">=</span> <span class="n">IngestionPipeline</span><span class="p">(</span>
@@ -698,7 +800,7 @@
 <span class="sd">        Delete the nodes that are associated with a list of documents.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            documents (List[Document]): list of documents to be deleted.</span>
+<span class="sd">            documents (`List[Document]`): List of documents to be deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">doc_id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">doc_id</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">ref_doc_info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -710,7 +812,179 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;docs deleted from index, doc_id=</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># persist the updated index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">storage_context</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">persist_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persist_dir</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;nodes delete completed.&quot;</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;nodes delete completed.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LlamaIndexKnowledge.default_config">
+<a class="viewcode-back" href="../../../build_api/agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.default_config">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_config</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">data_dirs_and_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">knowledge_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate default config for loading data from directories and using the</span>
+<span class="sd">        default operations to preprocess the data for RAG usage.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            knowledge_id (`str`):</span>
+<span class="sd">                User-defined unique id for the knowledge</span>
+<span class="sd">            data_dirs_and_types (`dict[str, list[str]]`):</span>
+<span class="sd">                Dictionary of data paths (keys) to the data types</span>
+<span class="sd">                (file extensions) for knowledgebase</span>
+<span class="sd">                (e.g., [&quot;.md&quot;, &quot;.py&quot;, &quot;.html&quot;])</span>
+<span class="sd">            knowledge_config (`optional[dict]`):</span>
+<span class="sd">                Complete indexing configuration, used for more advanced</span>
+<span class="sd">                applications. Users can customize</span>
+<span class="sd">                - loader,</span>
+<span class="sd">                - transformations,</span>
+<span class="sd">                - ...</span>
+<span class="sd">                Examples can refer to../examples/conversation_with_RAG_agents/</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict`: A default config of LlamaIndexKnowledge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_dirs_and_types</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data_dirs_and_types</span> <span class="k">if</span> <span class="n">data_dirs_and_types</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="p">)</span>
+
+        <span class="n">default_knowledge_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;knowledge_id&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data_processing&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        <span class="n">default_loader_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;load_data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;loader&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;create_object&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;llama_index.core&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;SimpleDirectoryReader&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;init_args&quot;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="n">default_init_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;input_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;recursive&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;required_exts&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+        <span class="c1"># generate default knowledge config</span>
+        <span class="n">default_knowledge_config</span><span class="p">[</span><span class="s2">&quot;knowledge_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">knowledge_id</span>
+        <span class="k">for</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">types</span> <span class="ow">in</span> <span class="n">data_dirs_and_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">loader_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">default_loader_config</span><span class="p">)</span>
+            <span class="n">loader_init</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">default_init_config</span><span class="p">)</span>
+            <span class="n">loader_init</span><span class="p">[</span><span class="s2">&quot;input_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dir</span>
+            <span class="n">loader_init</span><span class="p">[</span><span class="s2">&quot;required_exts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">types</span>
+            <span class="n">loader_config</span><span class="p">[</span><span class="s2">&quot;load_data&quot;</span><span class="p">][</span><span class="s2">&quot;loader&quot;</span><span class="p">][</span><span class="s2">&quot;init_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loader_init</span>
+            <span class="n">default_knowledge_config</span><span class="p">[</span><span class="s2">&quot;data_processing&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loader_config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">knowledge_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default_knowledge_config</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">default_knowledge_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">knowledge_config</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">default_knowledge_config</span></div>
+
+
+<div class="viewcode-block" id="LlamaIndexKnowledge.build_knowledge_instance">
+<a class="viewcode-back" href="../../../build_api/agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.build_knowledge_instance">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_knowledge_instance</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">knowledge_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_dirs_and_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">emb_model_config_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Knowledge</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Building an instance of the LlamaIndex knowledge</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            knowledge_id (`str`):</span>
+<span class="sd">                User-defined unique id for the knowledge</span>
+<span class="sd">            knowledge_config (`optional[dict]`):</span>
+<span class="sd">                Complete indexing configuration, used for more advanced</span>
+<span class="sd">                applications. Users can customize</span>
+<span class="sd">                - loader,</span>
+<span class="sd">                - transformations,</span>
+<span class="sd">                - ...</span>
+<span class="sd">                Examples can refer to../examples/conversation_with_RAG_agents/</span>
+<span class="sd">            data_dirs_and_types (`dict[str, list[str]]`):</span>
+<span class="sd">                Dictionary of data paths (keys) to the data types</span>
+<span class="sd">                (file extensions) for knowledge</span>
+<span class="sd">                (e.g., [&quot;.md&quot;, &quot;.py&quot;, &quot;.html&quot;])</span>
+<span class="sd">            emb_model_config_name (`Optional[str]`):</span>
+<span class="sd">                Name of the embedding model.</span>
+<span class="sd">                This should be specified here or in the knowledge_config dict.</span>
+<span class="sd">                If specified both here and in the knowledge_config,</span>
+<span class="sd">                the input parameter takes a higher priority than the</span>
+<span class="sd">                one knowledge_config.</span>
+<span class="sd">            model_config_name (`Optional[str]`):</span>
+<span class="sd">                Name of the language model.</span>
+<span class="sd">                Optional, can be None and not specified in knowledge_config.</span>
+<span class="sd">                If specified both here and in the knowledge_config,</span>
+<span class="sd">                the input parameter takes a higher priority than the</span>
+<span class="sd">                one knowledge_config.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Knowledge`: A knowledge instance</span>
+
+<span class="sd">            A simple example of importing data to Knowledge object:</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                knowledge_bank.add_data_as_knowledge(</span>
+<span class="sd">                    knowledge_id=&quot;agentscope_tutorial_rag&quot;,</span>
+<span class="sd">                    emb_model_config_name=&quot;qwen_emb_config&quot;,</span>
+<span class="sd">                    data_dirs_and_types={</span>
+<span class="sd">                        &quot;../../docs/sphinx_doc/en/source/tutorial&quot;: [&quot;.md&quot;],</span>
+<span class="sd">                    },</span>
+<span class="sd">                    persist_dir=&quot;./rag_storage/tutorial_assist&quot;,</span>
+<span class="sd">                )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">emb_model_config_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">knowledge_config</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="s2">&quot;emb_model_config_name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">knowledge_config</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Must specify embedding model by providing value to&quot;</span>
+                <span class="s2">&quot;&#39;emb_model_config_name&#39; key in  in knowledge config&quot;</span>
+                <span class="s2">&quot;of LlamaIndexKnowledge. For example&quot;</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;knowledge_id&quot;: &quot;xxx_rag&quot;,</span>
+<span class="sd">                    &quot;knowlege_type&quot;: &quot;llamaindex_knowledge&quot;,</span>
+<span class="sd">                    &quot;emb_model_config_name&quot;: &quot;qwen_emb_config&quot;,</span>
+<span class="sd">                    ....</span>
+<span class="sd">                }</span>
+<span class="sd">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">emb_model_config_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">emb_model_config_name</span> <span class="o">=</span> <span class="n">knowledge_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;emb_model_config_name&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># model_name is optional</span>
+        <span class="k">if</span> <span class="n">knowledge_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">model_config_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_config_name</span> <span class="o">=</span> <span class="n">knowledge_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_config_name&quot;</span><span class="p">)</span>
+        <span class="n">knowledge_config</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">default_config</span><span class="p">(</span>
+            <span class="n">knowledge_id</span><span class="o">=</span><span class="n">knowledge_id</span><span class="p">,</span>
+            <span class="n">data_dirs_and_types</span><span class="o">=</span><span class="n">data_dirs_and_types</span><span class="p">,</span>
+            <span class="n">knowledge_config</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">knowledge_id</span><span class="o">=</span><span class="n">knowledge_id</span><span class="p">,</span>
+            <span class="n">emb_model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
+                <span class="n">emb_model_config_name</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">knowledge_config</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">model_config_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">model_config_name</span>
+            <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
 
 </pre></div>
 

@@ -85,7 +85,7 @@ As usual, we initialize AgentScope with the above configuration, and create a ne
 
  .. code-block:: none
 
-    2025-02-08 05:41:57 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+    2025-02-10 06:48:15 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 
 
 
@@ -180,7 +180,7 @@ After that, we can send the message to the vision agent and get the response.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.482 seconds)
+   **Total running time of the script:** (0 minutes 33.257 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_multimodality.py:

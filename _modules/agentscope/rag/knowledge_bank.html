@@ -66,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -122,10 +122,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Knowledge</span>
 
 <span class="n">DEFAULT_INDEX_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
@@ -160,101 +159,168 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">configs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">new_knowledge_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Knowledge</span><span class="p">],</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;initialize the knowledge bank&quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the knowledge bank</span>
+<span class="sd">        Args:</span>
+<span class="sd">            configs (`Union[dict, str, list, None]`):</span>
+<span class="sd">                Configurations of knowledge instances so that they can</span>
+<span class="sd">                be initialized with knowledge bank in a batch,</span>
+<span class="sd">                can be a file path (str), a single config (dict)</span>
+<span class="sd">                or a batch of configs (list). If there is any instance of new</span>
+<span class="sd">                knowledge classes, need to pass those class in</span>
+<span class="sd">                `new_knowledge_types`.</span>
+<span class="sd">            new_knowledge_types (`Union[type[Knowledge], list, None]`):</span>
+<span class="sd">                User-defined new knowledge classes that are</span>
+<span class="sd">                not in the AgentScope repo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">configs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">knowledge_configs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading configs from </span><span class="si">{</span><span class="n">configs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+                <span class="n">knowledge_configs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">knowledge_configs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">knowledge_configs</span> <span class="o">=</span> <span class="p">[</span><span class="n">knowledge_configs</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">knowledge_configs</span> <span class="o">=</span> <span class="p">[</span><span class="n">configs</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">configs</span> <span class="o">=</span> <span class="n">configs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Knowledge</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_knowledge</span><span class="p">()</span>
+            <span class="n">knowledge_configs</span> <span class="o">=</span> <span class="n">configs</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_init_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;initialize the knowledge bank&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Knowledge</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">known_knowledge_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">Knowledge</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.llama_index_knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_knowledge_type</span><span class="p">(</span><span class="n">LlamaIndexKnowledge</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">new_knowledge_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_knowledge_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">new_knowledge_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_knowledge_types</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">new_knowledge_type</span> <span class="ow">in</span> <span class="n">new_knowledge_types</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">register_knowledge_type</span><span class="p">(</span><span class="n">new_knowledge_type</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_knowledge</span><span class="p">(</span><span class="n">knowledge_configs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knowledge_configs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the knowledge instance with configs</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            knowledge_configs (`list`):</span>
+<span class="sd">                Configurations of knowledge instances</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">knowledge_configs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_data_as_knowledge</span><span class="p">(</span>
                 <span class="n">knowledge_id</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;knowledge_id&quot;</span><span class="p">],</span>
-                <span class="n">emb_model_name</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;emb_model_config_name&quot;</span><span class="p">],</span>
+                <span class="n">knowledge_type</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;knowledge_type&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;llamaindex_knowledge&quot;</span><span class="p">,</span>
+                <span class="p">),</span>
                 <span class="n">knowledge_config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;knowledge bank initialization completed.</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KnowledgeBank.register_knowledge_type">
+<a class="viewcode-back" href="../../../build_api/agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank.register_knowledge_type">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_knowledge_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">knowledge_base_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Knowledge</span><span class="p">],</span>
+        <span class="n">exist_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a new knowledge base class to the knowledge bank</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            knowledge_base_class (`Type[Knowledge]`):</span>
+<span class="sd">                The knowledge class to be registered, which must inherit</span>
+<span class="sd">                from `Knowledge`.</span>
+<span class="sd">            exist_ok (`bool`):</span>
+<span class="sd">                Whether to overwrite the existing knowledge base class</span>
+<span class="sd">                with the same name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">knowledge_base_class</span><span class="p">,</span> <span class="n">Knowledge</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;The new knowledge base class should inherit from &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Knowledge, but got </span><span class="si">{</span><span class="n">knowledge_base_class</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">knowledge_base_class</span><span class="p">,</span> <span class="s2">&quot;knowledge_type&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The knowledge base class `</span><span class="si">{</span><span class="n">knowledge_base_class</span><span class="si">}</span><span class="s2">` should &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;have a `knowledge_type` attribute.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">knowledge_type</span> <span class="o">=</span> <span class="n">knowledge_base_class</span><span class="o">.</span><span class="n">knowledge_type</span>
+        <span class="k">if</span> <span class="n">knowledge_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_knowledge_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exist_ok</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Knowledge class&quot;</span><span class="si">{</span><span class="n">knowledge_type</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+                    <span class="s2">&quot;already exists, overwrite it.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">known_knowledge_types</span><span class="p">[</span>
+                    <span class="n">knowledge_type</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">knowledge_base_class</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Knowledge class &quot;</span><span class="si">{</span><span class="n">knowledge_type</span><span class="si">}</span><span class="s1">&quot; already exists, &#39;</span>
+                    <span class="s2">&quot;please set `exist_ok=True` to overwrite it.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">known_knowledge_types</span><span class="p">[</span><span class="n">knowledge_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">knowledge_base_class</span></div>
+
 
 <div class="viewcode-block" id="KnowledgeBank.add_data_as_knowledge">
 <a class="viewcode-back" href="../../../build_api/agentscope.rag.knowledge_bank.html#agentscope.rag.KnowledgeBank.add_data_as_knowledge">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_data_as_knowledge</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">knowledge_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">emb_model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">data_dirs_and_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">knowledge_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">knowledge_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transform data in a directory to be ready to work with RAG.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            knowledge_id (str):</span>
-<span class="sd">                user-defined unique id for the knowledge</span>
-<span class="sd">            emb_model_name (str):</span>
-<span class="sd">                name of the embedding model</span>
-<span class="sd">            model_name (Optional[str]):</span>
-<span class="sd">                name of the LLM for potential post-processing or query rewrite</span>
-<span class="sd">            data_dirs_and_types (dict[str, list[str]]):</span>
-<span class="sd">                dictionary of data paths (keys) to the data types</span>
-<span class="sd">                (file extensions) for knowledgebase</span>
-<span class="sd">                (e.g., [&quot;.md&quot;, &quot;.py&quot;, &quot;.html&quot;])</span>
-<span class="sd">            knowledge_config (optional[dict]):</span>
-<span class="sd">                complete indexing configuration, used for more advanced</span>
-<span class="sd">                applications. Users can customize</span>
-<span class="sd">                - loader,</span>
-<span class="sd">                - transformations,</span>
-<span class="sd">                - ...</span>
-<span class="sd">                Examples can refer to../examples/conversation_with_RAG_agents/</span>
-
-<span class="sd">            a simple example of importing data to Knowledge object:</span>
-<span class="sd">            &#39;&#39;</span>
-<span class="sd">                knowledge_bank.add_data_as_knowledge(</span>
-<span class="sd">                    knowledge_id=&quot;agentscope_tutorial_rag&quot;,</span>
-<span class="sd">                    emb_model_name=&quot;qwen_emb_config&quot;,</span>
-<span class="sd">                    data_dirs_and_types={</span>
-<span class="sd">                        &quot;../../docs/sphinx_doc/en/source/tutorial&quot;: [&quot;.md&quot;],</span>
-<span class="sd">                    },</span>
-<span class="sd">                    persist_dir=&quot;./rag_storage/tutorial_assist&quot;,</span>
-<span class="sd">                )</span>
-<span class="sd">            &#39;&#39;</span>
+<span class="sd">            knowledge_id (`str`):</span>
+<span class="sd">                User-defined unique id for the knowledge</span>
+<span class="sd">            knowledge_type (`str`):</span>
+<span class="sd">                Type of the knowledge to register, e.g., &quot;llamaindex_knowledge&quot;</span>
+<span class="sd">            knowledge_config (`dict`):</span>
+<span class="sd">                For LlamaIndexKnowledge (knowledge_type=&quot;llamaindex_knowledge&quot;)</span>
+<span class="sd">                the following are required:</span>
+<span class="sd">                emb_model_config_name (`str`):</span>
+<span class="sd">                    Name of the embedding model config</span>
+<span class="sd">                model_config_name (`Optional[str]`):</span>
+<span class="sd">                    Name of the LLM config for potential post-processing or</span>
+<span class="sd">                    query rewrite</span>
+<span class="sd">                data_dirs_and_types (`dict[str, list[str]]`):</span>
+<span class="sd">                    Dictionary of data paths (keys) to the data types</span>
+<span class="sd">                    (file extensions) for knowledgebase</span>
+<span class="sd">                    (e.g., [&quot;.md&quot;, &quot;.py&quot;, &quot;.html&quot;])</span>
+<span class="sd">                knowledge_config (`optional[dict]`):</span>
+<span class="sd">                    Complete indexing configuration, used for more advanced</span>
+<span class="sd">                    applications. Users can customize</span>
+<span class="sd">                    - loader,</span>
+<span class="sd">                    - transformations,</span>
+<span class="sd">                    - ...</span>
+<span class="sd">                    Examples can refer to</span>
+<span class="sd">                    ../examples/conversation_with_RAG_agents/</span>
+<span class="sd">            kwargs (`Any`):</span>
+<span class="sd">                Additional keyword arguments to initialize knowledge.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.llama_index_knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
-
         <span class="k">if</span> <span class="n">knowledge_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;knowledge_id </span><span class="si">{</span><span class="n">knowledge_id</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">data_dirs_and_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">knowledge_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">knowledge_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">knowledge_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">DEFAULT_INDEX_CONFIG</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">types</span> <span class="ow">in</span> <span class="n">data_dirs_and_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">loader_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">DEFAULT_LOADER_CONFIG</span><span class="p">)</span>
-                <span class="n">loader_init</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">DEFAULT_INIT_CONFIG</span><span class="p">)</span>
-                <span class="n">loader_init</span><span class="p">[</span><span class="s2">&quot;input_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dir</span>
-                <span class="n">loader_init</span><span class="p">[</span><span class="s2">&quot;required_exts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">types</span>
-                <span class="n">loader_config</span><span class="p">[</span><span class="s2">&quot;load_data&quot;</span><span class="p">][</span><span class="s2">&quot;loader&quot;</span><span class="p">][</span><span class="s2">&quot;init_args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loader_init</span>
-                <span class="n">knowledge_config</span><span class="p">[</span><span class="s2">&quot;data_processing&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loader_config</span><span class="p">)</span>
-
-        <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">[</span><span class="n">knowledge_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">LlamaIndexKnowledge</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">[</span><span class="n">knowledge_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">known_knowledge_types</span><span class="p">[</span>
+            <span class="n">knowledge_type</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">build_knowledge_instance</span><span class="p">(</span>
             <span class="n">knowledge_id</span><span class="o">=</span><span class="n">knowledge_id</span><span class="p">,</span>
-            <span class="n">emb_model</span><span class="o">=</span><span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">emb_model_name</span><span class="p">),</span>
             <span class="n">knowledge_config</span><span class="o">=</span><span class="n">knowledge_config</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="p">(</span>
-                <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">model_name</span>
-                <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;data loaded for knowledge_id = </span><span class="si">{</span><span class="n">knowledge_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 
@@ -268,14 +334,15 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Knowledge</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a Knowledge object from the knowledge bank.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            knowledge_id (str):</span>
-<span class="sd">                unique id for the Knowledge object</span>
-<span class="sd">            duplicate (bool):</span>
-<span class="sd">                whether return a copy of the Knowledge object.</span>
+<span class="sd">            knowledge_id (`str`):</span>
+<span class="sd">                Unique id for the Knowledge object</span>
+<span class="sd">            duplicate (`bool`):</span>
+<span class="sd">                Whether return a copy of the Knowledge object.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            Knowledge:</span>
-<span class="sd">                the Knowledge object defined with Llama-index</span>
+<span class="sd">                The Knowledge object defined with Llama-index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">knowledge_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_knowledge</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -300,11 +367,12 @@
 <span class="sd">        Equip the agent with the knowledge by knowledge ids.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            agent (AgentBase):</span>
-<span class="sd">                the agent to be equipped with knowledge</span>
-<span class="sd">            knowledge_id_list:</span>
-<span class="sd">                the list of knowledge ids to be equipped with the agent</span>
-<span class="sd">            duplicate (bool): whether to deepcopy the knowledge object</span>
+<span class="sd">            agent (`AgentBase`):</span>
+<span class="sd">                The agent to be equipped with knowledge</span>
+<span class="sd">            knowledge_id_list (`list[str]`):</span>
+<span class="sd">                The list of knowledge ids to be equipped with the agent</span>
+<span class="sd">            duplicate (`bool`):</span>
+<span class="sd">                Whether to deepcopy the knowledge object</span>
 <span class="sd">        TODO: to accommodate with distributed setting</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Equipping </span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> knowledge </span><span class="si">{</span><span class="n">knowledge_id_list</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

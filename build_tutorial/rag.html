@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retrieval Augmentation Generation (RAG) &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Distribution" href="distribution.html" />
+    <link rel="prev" title="Tools" href="tool.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            AgentScope Doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Retrieval Augmentation Generation (RAG)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-and-use-knowledge-instances">Create and Use Knowledge Instances</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-llamaindexknowledge-instance">Create a <cite>LlamaIndexKnowledge</cite> instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-batch-of-knowledge-instances">Create a Batch of Knowledge Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-setting-up-a-local-embedding-model-service">(Optional) Setting up a local embedding model service</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Retrieval Augmentation Generation (RAG)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/rag.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-rag-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="retrieval-augmentation-generation-rag">
+<span id="rag"></span><span id="sphx-glr-build-tutorial-rag-py"></span><h1>Retrieval Augmentation Generation (RAG)<a class="headerlink" href="#retrieval-augmentation-generation-rag" title="Link to this heading"></a></h1>
+<p>Agentscope has built-in supports for the retrieval augmentation generation
+(RAG). There are two key modules related to RAG in AgentScope: <cite>Knowledge</cite> and
+<cite>KnowledgeBank</cite>.</p>
+<section id="create-and-use-knowledge-instances">
+<h2>Create and Use Knowledge Instances<a class="headerlink" href="#create-and-use-knowledge-instances" title="Link to this heading"></a></h2>
+<p>While <cite>Knowledge</cite> is a base class, a specific built-in knowledge class is in
+the AgentScope now. (Online search is coming soon.)</p>
+<ul class="simple">
+<li><p><cite>LlamaIndexKnowledge</cite>: Designed to work with one of the most popular RAG library <a class="reference external" href="https://www.llamaindex.ai/">LlamaIndex</a> as local knowledge, and supporting most of LlamaIndex functionality by configuration.</p></li>
+</ul>
+<section id="create-a-llamaindexknowledge-instance">
+<h3>Create a <cite>LlamaIndexKnowledge</cite> instance<a class="headerlink" href="#create-a-llamaindexknowledge-instance" title="Link to this heading"></a></h3>
+<p>A quick start to create a <cite>LlamaIndexKnowledge</cite> instance is to use the <cite>build_knowledge_instance</cite> function.
+There are three parameters need to be passed to the function.</p>
+<ul class="simple">
+<li><p><cite>knowledge_id</cite>: a unique identifier for this knowledge instance</p></li>
+<li><p><cite>data_dirs_and_types</cite>: a dictionary whose keys are strings of directories of the data, and values are the file extensions of the data</p></li>
+<li><p><cite>emb_model_config_name</cite>: name of the configuration of a embedding model in AgentScope (need to be initialized in AgentScope beforehand)</p></li>
+</ul>
+<p>A simple example is as follows.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rag.llama_index_knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">LlamaIndexKnowledge</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_text_embedding&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen_emb_config&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;text-embedding-v2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">local_knowledge</span> <span class="o">=</span> <span class="n">LlamaIndexKnowledge</span><span class="o">.</span><span class="n">build_knowledge_instance</span><span class="p">(</span>
+    <span class="n">knowledge_id</span><span class="o">=</span><span class="s2">&quot;agentscope_qa&quot;</span><span class="p">,</span>
+    <span class="n">data_dirs_and_types</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;./&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;.md&quot;</span><span class="p">]},</span>
+    <span class="n">emb_model_config_name</span><span class="o">=</span><span class="s2">&quot;qwen_emb_config&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">local_knowledge</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+    <span class="s2">&quot;what is agentscope?&quot;</span><span class="p">,</span>
+    <span class="n">similarity_top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The retrieved content:</span><span class="se">\n</span><span class="si">{</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/s
+[nltk_data]     ite-packages/llama_index/core/_static/nltk_cache...
+[nltk_data]   Unzipping tokenizers/punkt_tab.zip.
+
+Parsing nodes:   0%|          | 0/8 [00:00&lt;?, ?it/s]
+Parsing nodes: 100%|██████████| 8/8 [00:00&lt;00:00, 3299.35it/s]
+
+Generating embeddings:   0%|          | 0/8 [00:00&lt;?, ?it/s]
+Generating embeddings:  12%|█▎        | 1/8 [00:00&lt;00:04,  1.44it/s]
+Generating embeddings:  25%|██▌       | 2/8 [00:01&lt;00:04,  1.32it/s]
+Generating embeddings:  38%|███▊      | 3/8 [00:02&lt;00:03,  1.28it/s]
+Generating embeddings:  50%|█████     | 4/8 [00:03&lt;00:03,  1.32it/s]
+Generating embeddings:  62%|██████▎   | 5/8 [00:03&lt;00:02,  1.37it/s]
+Generating embeddings:  75%|███████▌  | 6/8 [00:04&lt;00:01,  1.32it/s]
+Generating embeddings:  88%|████████▊ | 7/8 [00:05&lt;00:00,  1.32it/s]
+Generating embeddings: 100%|██████████| 8/8 [00:06&lt;00:00,  1.31it/s]
+Generating embeddings: 100%|██████████| 8/8 [00:06&lt;00:00,  1.32it/s]
+
+The retrieved content:
+About Agents
+
+_**Q**: How to use agents in AgentScope?_
+
+**A**: You can use the built-in agents in AgentScope, or develop your own agents. Refer to Section Built-in Agents for more details.
+</pre></div>
+</div>
+<p>If one wants to have more control on how the data are preprocessing,
+a knowledge configuration can be passed to the function.
+Especially, <cite>SimpleDirectoryReader</cite> is the class in LlamaIndex library, and <cite>init_args</cite> is the initialization parameters of <cite>SimpleDirectoryReader</cite>.
+As for the data preprocessing, developers can choose different LlamaIndex <a class="reference external" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/transformations/">transformation operations</a> to preprocess the data.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">flex_knowledge_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;knowledge_id&quot;</span><span class="p">:</span> <span class="s2">&quot;agentscope_qa_flex&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;knowlege_type&quot;</span><span class="p">:</span> <span class="s2">&quot;llamaindex_knowledge&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;emb_model_config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen_emb_config&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+    <span class="s2">&quot;chunk_overlap&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="s2">&quot;data_processing&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;load_data&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;loader&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;create_object&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;llama_index.core&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;SimpleDirectoryReader&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;init_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;input_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;required_exts&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="s2">&quot;.md&quot;</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;store_and_index&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;transformations&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;create_object&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;llama_index.core.node_parser&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;SentenceSplitter&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;init_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+<span class="n">local_knowledge_flex</span> <span class="o">=</span> <span class="n">LlamaIndexKnowledge</span><span class="o">.</span><span class="n">build_knowledge_instance</span><span class="p">(</span>
+    <span class="n">knowledge_id</span><span class="o">=</span><span class="s2">&quot;agentscope_qa_flex&quot;</span><span class="p">,</span>
+    <span class="n">knowledge_config</span><span class="o">=</span><span class="n">flex_knowledge_config</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">local_knowledge</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+    <span class="s2">&quot;what is agentscope?&quot;</span><span class="p">,</span>
+    <span class="n">similarity_top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The retrieved content:</span><span class="se">\n</span><span class="si">{</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Parsing nodes:   0%|          | 0/8 [00:00&lt;?, ?it/s]
+Parsing nodes: 100%|██████████| 8/8 [00:00&lt;00:00, 3194.14it/s]
+
+Generating embeddings:   0%|          | 0/8 [00:00&lt;?, ?it/s]
+Generating embeddings:  12%|█▎        | 1/8 [00:00&lt;00:05,  1.21it/s]
+Generating embeddings:  25%|██▌       | 2/8 [00:01&lt;00:04,  1.20it/s]
+Generating embeddings:  38%|███▊      | 3/8 [00:02&lt;00:03,  1.31it/s]
+Generating embeddings:  50%|█████     | 4/8 [00:03&lt;00:02,  1.34it/s]
+Generating embeddings:  62%|██████▎   | 5/8 [00:04&lt;00:02,  1.21it/s]
+Generating embeddings:  75%|███████▌  | 6/8 [00:04&lt;00:01,  1.22it/s]
+Generating embeddings:  88%|████████▊ | 7/8 [00:05&lt;00:00,  1.25it/s]
+Generating embeddings: 100%|██████████| 8/8 [00:06&lt;00:00,  1.30it/s]
+Generating embeddings: 100%|██████████| 8/8 [00:06&lt;00:00,  1.27it/s]
+
+The retrieved content:
+About Agents
+
+_**Q**: How to use agents in AgentScope?_
+
+**A**: You can use the built-in agents in AgentScope, or develop your own agents. Refer to Section Built-in Agents for more details.
+</pre></div>
+</div>
+</section>
+</section>
+<section id="create-a-batch-of-knowledge-instances">
+<h2>Create a Batch of Knowledge Instances<a class="headerlink" href="#create-a-batch-of-knowledge-instances" title="Link to this heading"></a></h2>
+<p>For some cases where different knowledge sources exists and require different preprocessing and/or post-proprocess, a good strategy is to create multiple knolwedge instances.
+Thus, we introduce <cite>KnowledgeBank</cite> to better manage the knowledge instances. One can initialize a batch of knowledge with a file of mulltiple knodledge configurations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">knowledge_bank</span> <span class="o">=</span> <span class="n">KnowledgeBank</span><span class="p">(</span><span class="n">configs</span><span class="o">=</span><span class="n">path_to_knowledge_configs_json</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, one can add knowledge instance dynamically to knowledge bank as well.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">knowledge_bank</span><span class="o">.</span><span class="n">add_data_as_knowledge</span><span class="p">(</span>
+     <span class="n">knowledge_id</span><span class="o">=</span><span class="s2">&quot;agentscope_tutorial_rag&quot;</span><span class="p">,</span>
+     <span class="n">emb_model_name</span><span class="o">=</span><span class="s2">&quot;qwen_emb_config&quot;</span><span class="p">,</span>
+     <span class="n">data_dirs_and_types</span><span class="o">=</span><span class="p">{</span>
+         <span class="s2">&quot;../../docs/sphinx_doc/en/source/tutorial&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;.md&quot;</span><span class="p">],</span>
+     <span class="p">},</span>
+ <span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, the <cite>knowledge_id</cite> should be unique.
+If developers have their new knowledge class, they can register the new class beforehand</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">your_knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">NewKnowledgeClass1</span><span class="p">,</span> <span class="n">NewKnowledgeClass2</span>
+<span class="n">knowledge_bank</span> <span class="o">=</span> <span class="n">KnowledgeBank</span><span class="p">(</span>
+  <span class="n">configs</span><span class="o">=</span><span class="s2">&quot;configs/knowledge_config.json&quot;</span><span class="p">,</span>
+  <span class="n">new_knowledge_types</span><span class="o">=</span><span class="p">[</span><span class="n">NewKnowledgeClass1</span><span class="p">,</span> <span class="n">NewKnowledgeClass2</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">knowledge_bank</span><span class="o">.</span><span class="n">register_knowledge_type</span><span class="p">(</span><span class="n">NewKnowledgeClass2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="optional-setting-up-a-local-embedding-model-service">
+<h2>(Optional) Setting up a local embedding model service<a class="headerlink" href="#optional-setting-up-a-local-embedding-model-service" title="Link to this heading"></a></h2>
+<p>For those who are interested in setting up a local embedding service, we provide the following example based on the
+<cite>sentence_transformers</cite> package, which is a popular specialized package for embedding models (based on the <cite>transformer</cite> package and compatible with both HuggingFace and ModelScope models).
+In this example, we will use one of the SOTA embedding models, <cite>gte-Qwen2-7B-instruct</cite>.</p>
+<ul>
+<li><p>Step 1: Follow the instruction on <a class="reference external" href="https://huggingface.co/Alibaba-NLP/gte-Qwen2-7B-instruct">HuggingFace</a> or <a href="#id1"><span class="problematic" id="id2">`</span></a>ModelScope &lt;<a class="reference external" href="https://www.modelscope.cn/models/iic/gte_Qwen2-7B-instruct">https://www.modelscope.cn/models/iic/gte_Qwen2-7B-instruct</a> &gt;”_ to download the embedding model.
+(For those who cannot access HuggingFace directly, you may want to use a HuggingFace mirror by running a bash command</p>
+<blockquote>
+<div><p><cite>export HF_ENDPOINT=https://hf-mirror.com</cite> or add a line of code <cite>os.environ[“HF_ENDPOINT”] = “https://hf-mirror.com”</cite> in your Python code.)</p>
+</div></blockquote>
+</li>
+<li><p>Step 2: Set up the server. The following code is for reference.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sentence_transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformer</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_timestamp</span><span class="p">(</span><span class="n">format_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current timestamp.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">format_</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/embedding/&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_embedding</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive post request and return response&quot;&quot;&quot;</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
+
+    <span class="k">global</span> <span class="n">model</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
+
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;embedding&quot;</span><span class="p">:</span> <span class="n">emb</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">emb</span> <span class="ow">in</span> <span class="n">embeddings</span>
+                <span class="p">],</span>
+                <span class="s2">&quot;created&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">create_timestamp</span><span class="p">(),</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;flask_model&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;text_completion&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;usage&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--model_name_or_path&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--device&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">global</span> <span class="n">model</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;setting up for embedding model....&quot;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SentenceTransformer</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">model_name_or_path</span>
+    <span class="p">)</span>
+
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Step 3: start server.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>setup_ms_service.py<span class="w"> </span>--model_name_or_path<span class="w"> </span><span class="o">{</span><span class="nv">$PATH_TO_gte_Qwen2_7B_instruct</span><span class="o">}</span>
+</pre></div>
+</div>
+<p>Testing whether the model is running successfully.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models.post_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostAPIEmbeddingWrapper</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">PostAPIEmbeddingWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;test_config&quot;</span><span class="p">,</span>
+    <span class="n">api_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:8000/embedding/&quot;</span><span class="p">,</span>
+    <span class="n">json_args</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="mi">4096</span><span class="p">,</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 15.862 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-rag-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/d2c568081e6a4b3dc97dff750041209a/rag.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">rag.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/1822b209fd81fab0e76902d3d9d90698/rag.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">rag.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/039240e84791195a937f7b28e0215d1e/rag.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">rag.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tool.html" class="btn btn-neutral float-left" title="Tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="distribution.html" class="btn btn-neutral float-right" title="Distribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

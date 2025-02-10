@@ -69,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -750,6 +750,7 @@
 <li class="toctree-l2"><a class="reference internal" href="agentscope.rag.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html">agentscope.rag.knowledge module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge"><code class="docutils literal notranslate"><span class="pre">Knowledge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html">agentscope.rag.knowledge_bank module</a><ul>
@@ -764,14 +765,26 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="agentscope.rag.html#module-agentscope.rag">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge"><code class="docutils literal notranslate"><span class="pre">Knowledge</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge.build_knowledge_instance"><code class="docutils literal notranslate"><span class="pre">Knowledge.build_knowledge_instance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge.default_config"><code class="docutils literal notranslate"><span class="pre">Knowledge.default_config()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge.post_processing"><code class="docutils literal notranslate"><span class="pre">Knowledge.post_processing()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge.retrieve"><code class="docutils literal notranslate"><span class="pre">Knowledge.retrieve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.Knowledge.knowledge_type"><code class="docutils literal notranslate"><span class="pre">Knowledge.knowledge_type</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.KnowledgeBank"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.KnowledgeBank.add_data_as_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.add_data_as_knowledge()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.KnowledgeBank.equip"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.KnowledgeBank.get_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.get_knowledge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.KnowledgeBank.register_knowledge_type"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.register_knowledge_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.RetrievedChunk"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.RetrievedChunk.to_dict"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.RetrievedChunk.content"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.RetrievedChunk.embedding"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.RetrievedChunk.metadata"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.rag.html#agentscope.rag.RetrievedChunk.score"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
 </ul>
 </li>
 </ul>

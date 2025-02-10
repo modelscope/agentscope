@@ -76,7 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
@@ -240,7 +240,7 @@ dialog agent <cite>alice</cite>.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>User input:
 Bob: Do you know me?
-Alice: Hello Bob! I don&#39;t have any specific information about you other than what you&#39;ve shared in our conversation. I&#39;m here to help with any questions or tasks you might have. Is there anything in particular you&#39;d like to chat about or get help with?
+Alice: Hello Bob! I don&#39;t have any specific information about you other than what you&#39;ve shared in our conversation. I&#39;m here to help with any questions or tasks you might have. Is there anything in particular you&#39;d like to chat about or any assistance you need?
 </pre></div>
 </div>
 </section>
@@ -277,9 +277,9 @@ Alice: Hello Bob! I don&#39;t have any specific information about you other than
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Going out in the rain can be refreshing and fun, but it depends on the circumstances such as having proper gear, the intensity of the rain, and personal health considerations.&quot;, &quot;speak&quot;: &quot;It can be a good idea if you have the right gear and don&#39;t mind getting a bit wet. However, it&#39;s important to consider the weather conditions and your own comfort. Do you have an umbrella or a raincoat?&quot;, &quot;decision&quot;: false}
+{&quot;thought&quot;: &quot;Going out in the rain can be refreshing, but it depends on whether Bob has an umbrella or proper rain gear and if there&#39;s a specific need to go out. It&#39;s also important to consider safety, such as slippery surfaces and visibility.&quot;, &quot;speak&quot;: &quot;It could be nice, but make sure you have an umbrella or raincoat. Also, be careful of slippery surfaces! If you don&#39;t need to go out, maybe it&#39;s better to stay inside and wait for the rain to stop.&quot;, &quot;decision&quot;: false}
 ```
-The content field: {&#39;thought&#39;: &#39;Going out in the rain can be refreshing and fun, but it depends on the circumstances such as having proper gear, the intensity of the rain, and personal health considerations.&#39;, &#39;speak&#39;: &quot;It can be a good idea if you have the right gear and don&#39;t mind getting a bit wet. However, it&#39;s important to consider the weather conditions and your own comfort. Do you have an umbrella or a raincoat?&quot;, &#39;decision&#39;: False}
+The content field: {&#39;thought&#39;: &quot;Going out in the rain can be refreshing, but it depends on whether Bob has an umbrella or proper rain gear and if there&#39;s a specific need to go out. It&#39;s also important to consider safety, such as slippery surfaces and visibility.&quot;, &#39;speak&#39;: &quot;It could be nice, but make sure you have an umbrella or raincoat. Also, be careful of slippery surfaces! If you don&#39;t need to go out, maybe it&#39;s better to stay inside and wait for the rain to stop.&quot;, &#39;decision&#39;: False}
 The type of content field: &lt;class &#39;dict&#39;&gt;
 </pre></div>
 </div>
@@ -299,9 +299,9 @@ The type of content field: &lt;class &#39;dict&#39;&gt;
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;I need to pick a number between 1 and 10. I&#39;ll choose 7, as it is often considered a lucky number.&quot;, &quot;speak&quot;: &quot;Sure, I pick the number 7. It&#39;s often seen as a lucky number!&quot;, &quot;number&quot;: &quot;7&quot;}
+{&quot;thought&quot;: &quot;Bob might be looking for a random number, I&#39;ll pick one to keep the conversation going.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &quot;number&quot;: &quot;7&quot;}
 ```
-The content of the response message: {&#39;thought&#39;: &quot;I need to pick a number between 1 and 10. I&#39;ll choose 7, as it is often considered a lucky number.&quot;, &#39;speak&#39;: &quot;Sure, I pick the number 7. It&#39;s often seen as a lucky number!&quot;, &#39;number&#39;: &#39;7&#39;}
+The content of the response message: {&#39;thought&#39;: &quot;Bob might be looking for a random number, I&#39;ll pick one to keep the conversation going.&quot;, &#39;speak&#39;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &#39;number&#39;: &#39;7&#39;}
 </pre></div>
 </div>
 <p>The next question is how to post-process the structured output.
@@ -331,12 +331,12 @@ while the <cite>speak</cite> field should be displayed to the user, and the <cit
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;I need to pick a number between 20 and 30. I&#39;ll choose 25, as it is right in the middle of the range.&quot;, &quot;speak&quot;: &quot;I pick the number 25. It&#39;s right in the middle of the range!&quot;, &quot;number&quot;: &quot;25&quot;}
+{&quot;thought&quot;: &quot;Bob is asking for another random number within a different range. I&#39;ll choose a number between 20 and 30 to continue the conversation.&quot;, &quot;speak&quot;: &quot;Let&#39;s go with 24 this time!&quot;, &quot;number&quot;: &quot;24&quot;}
 ```
-The content field: I pick the number 25. It&#39;s right in the middle of the range!
+The content field: Let&#39;s go with 24 this time!
 The type of content field: &lt;class &#39;str&#39;&gt;
 
-The metadata field: 25
+The metadata field: 24
 The type of metadata field: &lt;class &#39;str&#39;&gt;
 </pre></div>
 </div>
@@ -386,7 +386,7 @@ loop manner.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;To calculate the multiplication of 151513434 and 54353453453, I need to use the execute_python_code function with the appropriate Python code.&lt;/thought&gt;
+David: &lt;thought&gt;I need to use the execute_python_code function to calculate the product of 151513434 and 54353453453.&lt;/thought&gt;
 &lt;function&gt;execute_python_code&lt;/function&gt;
 &lt;code&gt;151513434 * 54353453453&lt;/code&gt;
 system: 1. Execute function execute_python_code
@@ -401,16 +401,16 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;The multiplication result has been computed successfully, now I can provide the answer to Bob.&lt;/thought&gt;
+David: &lt;thought&gt;The calculation was successful, and now I can provide the result to Bob.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The result of 151513434 multiplied by 54353453453 is 8209216980756525202.&lt;/response&gt;
+&lt;response&gt;The product of 151513434 and 54353453453 is 8207072265900877022.&lt;/response&gt;
 </pre></div>
 </div>
 </section>
 <section id="llamaindexagent">
 <h2>LlamaIndexAgent<a class="headerlink" href="#llamaindexagent" title="Link to this heading"></a></h2>
 <p>Refer to the RAG Section for more details.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 35.291 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 32.278 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-builtin-agent-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/46ed2b57b0b63e420edd471093498f41/builtin_agent.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">builtin_agent.ipynb</span></code></a></p>

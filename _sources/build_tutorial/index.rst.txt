@@ -232,6 +232,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Agentscope has built-in supports for the retrieval augmentation generation (RAG). There are two key modules related to RAG in AgentScope: Knowledge and KnowledgeBank.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_rag_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_rag.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Retrieval Augmentation Generation (RAG)</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports developers to build conversation with explicit message exchange among different agents.">
 
 .. only:: html
@@ -338,6 +355,7 @@
    /build_tutorial/prompt_optimization
    /build_tutorial/monitor
    /build_tutorial/tool
+   /build_tutorial/rag
    /build_tutorial/conversation
    /build_tutorial/agent
    /build_tutorial/builtin_agent

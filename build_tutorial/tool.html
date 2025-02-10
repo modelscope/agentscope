@@ -24,7 +24,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="RAG" href="../tutorial/rag.html" />
+    <link rel="next" title="Retrieval Augmentation Generation (RAG)" href="rag.html" />
     <link rel="prev" title="Configuring and Monitoring" href="monitor.html" /> 
 </head>
 
@@ -73,7 +73,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#creating-custom-tools">Creating Custom Tools</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
@@ -278,12 +278,12 @@ Refer to [] for implementation details of this agent.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;I need to calculate the product of 1615114134 and 4343434343. I can use the execute_shell_command function to perform this calculation using the &#39;bc&#39; command, which is a command-line calculator.&lt;/thought&gt;
+Friday: &lt;thought&gt;I need to calculate the multiplication of the two numbers provided by the user. I can use a shell command to perform this calculation.&lt;/thought&gt;
 &lt;function&gt;execute_shell_command&lt;/function&gt;
-&lt;command&gt;echo &quot;1615114134*4343434343&quot; | bc&lt;/command&gt;
+&lt;command&gt;echo $((1615114134*4343434343))&lt;/command&gt;
 system: 1. Execute function execute_shell_command
    [ARGUMENTS]:
-       command: echo &quot;1615114134*4343434343&quot; | bc
+       command: echo $((1615114134*4343434343))
    [STATUS]: SUCCESS
    [RESULT]: 7015142197480303962
 
@@ -293,9 +293,9 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;The calculation has been successfully performed, and the product of 1615114134 and 4343434343 is 7015142197480303962. I will now provide this result to the user.&lt;/thought&gt;
+Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I can now inform the user about the result.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The product of 1615114134 and 4343434343 is 7015142197480303962.&lt;/response&gt;
+&lt;response&gt;The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.&lt;/response&gt;
 </pre></div>
 </div>
 </section>
@@ -322,7 +322,7 @@ Friday: &lt;thought&gt;The calculation has been successfully performed, and the 
     <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 15.481 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.903 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>
@@ -343,7 +343,7 @@ Friday: &lt;thought&gt;The calculation has been successfully performed, and the 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="monitor.html" class="btn btn-neutral float-left" title="Configuring and Monitoring" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../tutorial/rag.html" class="btn btn-neutral float-right" title="RAG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rag.html" class="btn btn-neutral float-right" title="Retrieval Augmentation Generation (RAG)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

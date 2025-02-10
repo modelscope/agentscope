@@ -69,7 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -91,6 +91,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="agentscope.rag.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.rag.knowledge module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.knowledge.Knowledge"><code class="docutils literal notranslate"><span class="pre">Knowledge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.knowledge.RetrievedChunk"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html">agentscope.rag.knowledge_bank module</a></li>
@@ -150,20 +151,59 @@ generate an answer.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>Base class for RAG, CANNOT be instantiated directly</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.build_knowledge_instance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_knowledge_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knowledge_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#agentscope.rag.knowledge.Knowledge" title="agentscope.rag.knowledge.Knowledge"><span class="pre">Knowledge</span></a></span></span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#Knowledge.build_knowledge_instance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.build_knowledge_instance" title="Link to this definition"></a></dt>
+<dd><p>A constructor to build a knowledge base instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>knowledge_id</strong> (<cite>str</cite>) – The id of the knowledge instance.</p></li>
+<li><p><strong>knowledge_config</strong> (<cite>dict</cite>) – The configuration to the knowledge instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a Knowledge instance</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#agentscope.rag.knowledge.Knowledge" title="agentscope.rag.knowledge.Knowledge">Knowledge</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.default_config">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#Knowledge.default_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.default_config" title="Link to this definition"></a></dt>
+<dd><p>Return a default config for a knowledge class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<cite>Any</cite>) – Parameters for config</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a default config of the knowledge class</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.post_processing">
 <span class="sig-name descname"><span class="pre">post_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">retrieved_docs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#Knowledge.post_processing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.post_processing" title="Link to this definition"></a></dt>
 <dd><p>A default solution for post-processing function, generates answer
-based on the retrieved documents.
-:param retrieved_docs: list of retrieved documents
-:type retrieved_docs: list[str]
-:param prompt: prompt for LLM generating answer with the retrieved documents
-:type prompt: str</p>
+based on the retrieved documents.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a synthesized answer from LLM with retrieved documents</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>retrieved_docs</strong> (<cite>list[str]</cite>) – List of retrieved documents</p></li>
+<li><p><strong>prompt</strong> (<cite>str</cite>) – Prompt for LLM generating answer with the retrieved documents</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Any</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A synthesized answer from LLM with retrieved documents</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -172,23 +212,61 @@ based on the retrieved documents.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.retrieve">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">similarity_top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_list_strs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#Knowledge.retrieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.retrieve" title="Link to this definition"></a></dt>
-<dd><p>retrieve list of content from database (vector stored index) to memory
-:param query: query for retrieval
-:type query: Any
-:param similarity_top_k: the number of most similar data returned by the</p>
-<blockquote>
-<div><p>retriever.</p>
-</div></blockquote>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">similarity_top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_list_strs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.rag.knowledge.RetrievedChunk" title="agentscope.rag.knowledge.RetrievedChunk"><span class="pre">RetrievedChunk</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#Knowledge.retrieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.retrieve" title="Link to this definition"></a></dt>
+<dd><p>Retrieve list of content from database (vector stored index) to memory</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>to_list_strs</strong> (<em>bool</em>) – whether return a list of str</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<cite>Any</cite>) – Query for retrieval</p></li>
+<li><p><strong>similarity_top_k</strong> (<cite>int</cite>) – The number of most similar data returned by the
+retriever.</p></li>
+<li><p><strong>to_list_strs</strong> (<cite>bool</cite>) – Whether return a list of str</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>return a list with retrieved documents (in strings)</p>
+<dd class="field-even"><p>Return a list with retrieved documents (in strings)</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.Knowledge.knowledge_type">
+<span class="sig-name descname"><span class="pre">knowledge_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'base_knowledge'</span></em><a class="headerlink" href="#agentscope.rag.knowledge.Knowledge.knowledge_type" title="Link to this definition"></a></dt>
+<dd><p>A string to identify a knowledge base class</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.RetrievedChunk">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RetrievedChunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#RetrievedChunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.RetrievedChunk" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Retrieved content with score and meta information</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.RetrievedChunk.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/rag/knowledge.html#RetrievedChunk.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.rag.knowledge.RetrievedChunk.to_dict" title="Link to this definition"></a></dt>
+<dd><p>convert object to dict</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.RetrievedChunk.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.rag.knowledge.RetrievedChunk.content" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.RetrievedChunk.embedding">
+<span class="sig-name descname"><span class="pre">embedding</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.rag.knowledge.RetrievedChunk.embedding" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.RetrievedChunk.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.rag.knowledge.RetrievedChunk.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.rag.knowledge.RetrievedChunk.score">
+<span class="sig-name descname"><span class="pre">score</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#agentscope.rag.knowledge.RetrievedChunk.score" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

@@ -66,7 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/tool.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/rag.html">RAG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -1089,6 +1089,12 @@
 </li>
       <li><a href="build_api/agentscope.web.workstation.workflow_dag.html#agentscope.web.workstation.workflow_dag.build_dag">build_dag() (in module agentscope.web.workstation.workflow_dag)</a>
 </li>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.Knowledge.build_knowledge_instance">build_knowledge_instance() (Knowledge class method)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.build_knowledge_instance">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.build_knowledge_instance">(LlamaIndexKnowledge class method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1228,7 +1234,11 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.content">content (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.content">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.content">(RetrievedChunk attribute)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.content">[1]</a>
 </li>
+      </ul></li>
       <li><a href="build_api/agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.content_hint">content_hint (MarkdownCodeBlockParser attribute)</a>, <a href="build_api/agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.content_hint">[1]</a>
 
       <ul>
@@ -1361,6 +1371,12 @@
       </ul></li>
       <li><a href="build_api/agentscope.studio.utils.html#agentscope.studio.utils.decode_jwt">decode_jwt() (in module agentscope.studio.utils)</a>
 </li>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.Knowledge.default_config">default_config() (Knowledge class method)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.default_config">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.default_config">(LlamaIndexKnowledge class method)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.memory.html#agentscope.memory.MemoryBase.delete">delete() (MemoryBase method)</a>, <a href="build_api/agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.delete">[1]</a>
 
       <ul>
@@ -1467,6 +1483,8 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.embedding">embedding (RetrievedChunk attribute)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.embedding">[1]</a>
+</li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.embedding_cache_dir">embedding_cache_dir (FileManager property)</a>
 </li>
       <li><a href="build_api/agentscope.prompt.html#agentscope.prompt.EnglishSystemPromptGenerator">EnglishSystemPromptGenerator (class in agentscope.prompt)</a>
@@ -1927,12 +1945,18 @@
         <li><a href="build_api/agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaWrapperBase.keep_alive">(OllamaWrapperBase attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.rag.html#agentscope.rag.Knowledge">Knowledge (class in agentscope.rag)</a>
 
       <ul>
         <li><a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge">(class in agentscope.rag.knowledge)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.Knowledge.knowledge_type">knowledge_type (Knowledge attribute)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.knowledge_type">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.knowledge_type">(LlamaIndexKnowledge attribute)</a>
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.rag.html#agentscope.rag.KnowledgeBank">KnowledgeBank (class in agentscope.rag)</a>
@@ -2056,7 +2080,11 @@
       <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.meta_data">meta_data (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.meta_data">[1]</a>
 </li>
       <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.metadata">metadata (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.metadata">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.metadata">(RetrievedChunk attribute)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.metadata">[1]</a>
 </li>
+      </ul></li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_begin_tag">missing_begin_tag (TagNotFoundError attribute)</a>
 </li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.TagNotFoundError.missing_end_tag">missing_end_tag (TagNotFoundError attribute)</a>
@@ -2822,6 +2850,8 @@
       </ul></li>
       <li><a href="build_api/agentscope.rpc.html#agentscope.rpc.RpcMeta.register_class">register_class() (RpcMeta static method)</a>, <a href="build_api/agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.RpcMeta.register_class">[1]</a>
 </li>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.KnowledgeBank.register_knowledge_type">register_knowledge_type() (KnowledgeBank method)</a>, <a href="build_api/agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.register_knowledge_type">[1]</a>
+</li>
       <li><a href="build_api/agentscope.tokens.html#agentscope.tokens.register_model">register_model() (in module agentscope.tokens)</a>
 </li>
       <li><a href="build_api/agentscope.html#agentscope.register_model_wrapper_class">register_model_wrapper_class() (in module agentscope)</a>
@@ -2896,6 +2926,12 @@
 
       <ul>
         <li><a href="build_api/agentscope.service.retrieval.retrieval_from_list.html#agentscope.service.retrieval.retrieval_from_list.retrieve_from_list">(in module agentscope.service.retrieval.retrieval_from_list)</a>
+</li>
+      </ul></li>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk">RetrievedChunk (class in agentscope.rag)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk">(class in agentscope.rag.knowledge)</a>
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryBase.retry">retry() (RetryBase method)</a>
@@ -2975,6 +3011,8 @@
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.save_python_code">save_python_code() (FileManager method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.save_runtime_information">save_runtime_information() (FileManager method)</a>
+</li>
+      <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.score">score (RetrievedChunk attribute)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.score">[1]</a>
 </li>
       <li><a href="build_api/agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.send_audio">send_audio() (in module agentscope.web.gradio.studio)</a>
 </li>
@@ -3207,7 +3245,11 @@
       <li><a href="build_api/agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.to_content">to_content() (DictFilterMixin method)</a>
 </li>
       <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.to_dict">to_dict() (Msg method)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.to_dict">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.to_dict">(RetrievedChunk method)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.to_dict">[1]</a>
 </li>
+      </ul></li>
       <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.to_dist">to_dist() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.to_dist">[1]</a>
 
       <ul>
