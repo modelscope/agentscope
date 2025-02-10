@@ -240,7 +240,7 @@ class ChatRoom(BasicEnv):
         """Get the announcement of the chatroom."""
         return deepcopy(self.announcement)
 
-    # Syntaic sugar, not an event function
+    # Syntactic sugar, not an event function
     def listen_to(
         self,
         target_names: List[str],
@@ -396,7 +396,7 @@ class ChatRoomAgent(AgentBase):
             self.introduction = ""
         logger.info(f"introduction: {self.introduction}")
         self.room_history_length = 0
-        self.room_slient_count = 0
+        self.room_silent_count = 0
         self.room = None
         self.mentioned_messages = []
         self.mentioned_messages_lock = threading.Lock()
@@ -476,9 +476,9 @@ class ChatRoomAgent(AgentBase):
         room_history_length = self.room.get_history_length(self.name)
         if room_history_length != self.room_history_length:
             self.room_history_length = room_history_length
-            self.room_slient_count = 0
+            self.room_silent_count = 0
         else:
-            self.room_slient_count += 1
+            self.room_silent_count += 1
         room_info = self.room.describe(self.name)
         reply_hint = ""
         mentioned, mentioned_hint = self._generate_mentioned_prompt()
@@ -487,7 +487,7 @@ class ChatRoomAgent(AgentBase):
         else:
             # decide whether to speak
             if self.room_history_length <= 3 or (
-                self.room_slient_count <= 2 and self._want_to_speak(room_info)
+                self.room_silent_count <= 2 and self._want_to_speak(room_info)
             ):
                 reply_hint = (
                     f"Please generate a response based on the"

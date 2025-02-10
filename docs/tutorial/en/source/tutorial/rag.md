@@ -113,7 +113,7 @@ The `.retrieve` function accepts at least three basic parameters:
 * `similarity_top_k`: how many most similar "data blocks" will be returned;
 * `to_list_strs`: whether return the retrieved information as strings.
 
-*Advanaced:* In `LlamaIndexKnowledge`, it also supports users passing their own retriever to retrieve from knowledge.
+*Advanced:* In `LlamaIndexKnowledge`, it also supports users passing their own retriever to retrieve from knowledge.
 
 ### More details inside `LlamaIndexKnowledge`
 Here, we will use `LlamaIndexKnowledge` as an example to illustrate the operation within the `Knowledge` module.

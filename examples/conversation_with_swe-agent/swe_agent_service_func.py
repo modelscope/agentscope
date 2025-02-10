@@ -65,7 +65,7 @@ def write_file(
     end_line: int = -1,
 ) -> ServiceResponse:
     """
-    Write content to a file by replacing the current lines between <start_line> and <end_line> with <content>. Default start_line = 0 and end_line = -1. Calling this with no <start_line> <end_line> args will replace the whole file, so besure to use this with caution when writing to a file that already exists.
+    Write content to a file by replacing the current lines between <start_line> and <end_line> with <content>. Default start_line = 0 and end_line = -1. Calling this with no <start_line> <end_line> args will replace the whole file, so be sure to use this with caution when writing to a file that already exists.
 
     Args:
         file_path (`str`): The path to the file to write to.
