@@ -73,10 +73,9 @@ class KnowledgeBank:
         self.known_knowledge_types: dict[str, type[Knowledge]] = {}
 
         from .llama_index_knowledge import LlamaIndexKnowledge
-        from .search_knowledge import BingKnowledge
 
         self.register_knowledge_type(LlamaIndexKnowledge)
-        self.register_knowledge_type(BingKnowledge)
+
         if new_knowledge_types is not None:
             if not isinstance(new_knowledge_types, list):
                 new_knowledge_types = [new_knowledge_types]

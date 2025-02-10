@@ -10,11 +10,9 @@ Agentscope 内置了对检索增强生成（RAG）的支持。AgentScope 中与 
 创建和使用知识(Knowledge)实例
 ----------------------------------------------
 
-虽然 Knowledge 是一个基类，但 AgentScope 中新增了两个具体的内置知识类。
+虽然 Knowledge 是一个基类，但 AgentScope 中目前有一个具体的内置知识类。（在线搜索会知识类会很快更新。）
 
 - LlamaIndexKnowledge：旨在与最流行的 RAG 库之一 `LlamaIndex <https://www.llamaindex.ai/>`_ 协同工作，用作本地知识，并通过配置支持 LlamaIndex 的大部分功能。
-
-- BingKnowledge：旨在与 `Bing search <https://www.bing.com/>`_ 协同工作，以提供在线知识。
 
 
 创建一个 LlamaIndexKnowledge 实例
@@ -117,49 +115,6 @@ nodes = local_knowledge.retrieve(
 
 print(f"\nThe retrieved content:\n{nodes[0].content}")
 
-# %%
-# 创建一个 `BingKnowledge` 实例
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# 如果希望为 AgentScope 的RAG 应用使用在线搜索引擎，`BingKnowledge` 可以作为您的一个选择。
-# 这里`BingKnowledge` 需要一个 Bing 搜索 API 密钥。
-
-
-from agentscope.rag.search_knowledge import BingKnowledge
-
-bing_key = os.getenv("BING_SEARCH_KEY")
-online_knowledge = BingKnowledge.build_knowledge_instance(
-    knowledge_id="online_knowledge",
-    knowledge_type="bing_knowledge",
-)
-nodes = online_knowledge.retrieve("agentscope", similarity_top_k=1)
-
-print(f"\nThe Bing search knowledge retrieved content:\n{nodes[0].content}")
-
-# %%
-# 如果想拿到满足下面条件的在线检索知识
-#
-# - 在某个特定域 (如 community.modelscope.cn)
-# - 在过去一个月内发布
-# - 含有具体的网页内信息 (在 <p> 标签内内容)
-#
-# 我们可以采用以下创建方式
-
-domain = "community.modelscope.cn"
-online_knowledge = BingKnowledge.build_knowledge_instance(
-    knowledge_id="online_knowledge",
-    knowledge_type="bing_knowledge",
-    knowledge_config={
-        "query_prefix": f"site:{domain} ",
-        "freshness": "Month",
-    },
-    to_load_web=True,
-)
-nodes = online_knowledge.retrieve("最新推理模型", similarity_top_k=1)
-
-print(
-    f"\nThe Bing search knowledge retrieved content from {domain}:"
-    f"\n{nodes[0].content}",
-)
 
 # %%
 # Create a Batch of Knowledge Instances

@@ -5,15 +5,13 @@ Unit tests for knowledge (RAG module in AgentScope)
 
 import os
 import unittest
-from unittest.mock import Mock, patch, MagicMock
 from typing import Any, Optional
 import shutil
-import json
 
 import agentscope
 from agentscope.manager import ASManager
 from agentscope.models import OpenAIEmbeddingWrapper, ModelResponse
-from agentscope.rag import Knowledge, RetrievedChunk
+from agentscope.rag import Knowledge
 
 
 class DummyModel(OpenAIEmbeddingWrapper):
@@ -129,56 +127,6 @@ class KnowledgeTest(unittest.TestCase):
         self.assertEqual(
             retrieved,
             [self.content],
-        )
-
-    @patch("agentscope.utils.common.requests.get")
-    def test_bingknowledge(self, mock_get: MagicMock) -> None:
-        """
-        Test BingKnowledge function
-        """
-        from agentscope.rag.search_knowledge import BingKnowledge
-
-        mock_response = Mock()
-        bing_title = "Test title from Bing"
-        bing_snippet = "Test snippet from Bing"
-        bing_return_url = "Test url from Bing"
-        mock_dict = {
-            "webPages": {
-                "value": [
-                    {
-                        "name": bing_title,
-                        "url": bing_return_url,
-                        "snippet": bing_snippet,
-                    },
-                ],
-            },
-        }
-        mock_response.json.return_value = mock_dict
-        mock_get.return_value = mock_response
-
-        os.environ["BING_SEARCH_KEY"] = "xxx"
-        info = {
-            "Title": bing_title,
-            "Description": bing_snippet,
-            "Reference": bing_return_url,
-        }
-        content = json.dumps(info, ensure_ascii=False)
-        expected_result = [
-            RetrievedChunk(
-                content=content,
-                metadata={"file_path": bing_return_url},
-                score=1.0,
-            ),
-        ]
-        search_knowledge = BingKnowledge(
-            knowledge_id="test_knowledge",
-            knowledge_config={},
-            to_load_web=False,
-        )
-        retrieved = search_knowledge.retrieve("test", similarity_top_k=1)
-        self.assertEqual(
-            retrieved,
-            expected_result,
         )
 
     def test_knowledge_bank(self) -> None:

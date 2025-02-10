@@ -12,13 +12,12 @@ Agentscope has built-in supports for the retrieval augmentation generation
 Create and Use Knowledge Instances
 ----------------------------------------------
 
-While `Knowledge` is a base class, two specific built-in knowledge classes are in
-the AgentScope now.
+While `Knowledge` is a base class, a specific built-in knowledge class is in
+the AgentScope now. (Online search is coming soon.)
 
 
 - `LlamaIndexKnowledge`: Designed to work with one of the most popular RAG library `LlamaIndex <https://www.llamaindex.ai/>`_ as local knowledge, and supporting most of LlamaIndex functionality by configuration.
 
--  `BingKnowledge`: Designed to work with `Bing search <https://www.bing.com/>`_ to provide online knowledge.
 
 Create a `LlamaIndexKnowledge` instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -121,48 +120,6 @@ nodes = local_knowledge.retrieve(
 
 print(f"\nThe retrieved content:\n{nodes[0].content}")
 
-
-# %%
-# Create a `BingKnowledge` instance
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# If one want to have online search engine for RAG application, `BingKnowledge` can be an option.
-# `BingKnowledge` requires a Bing search API key .
-
-from agentscope.rag.search_knowledge import BingKnowledge
-
-online_knowledge = BingKnowledge.build_knowledge_instance(
-    knowledge_id="online_knowledge",
-    knowledge_type="bing_knowledge",
-)
-nodes = online_knowledge.retrieve("agentscope", similarity_top_k=1)
-
-print(f"\nThe Bing search knowledge retrieved content:\n{nodes[0].content}")
-
-# %%
-# If one wants to have online knowledge
-#
-# - from specific domain (e.g., community.modelscope.cn)
-# - published within a month
-# - with detail content from the webpage (in <p> tags)
-#
-# we can config the knowledge as
-
-domain = "community.modelscope.cn"
-online_knowledge = BingKnowledge.build_knowledge_instance(
-    knowledge_id="online_knowledge",
-    knowledge_type="bing_knowledge",
-    knowledge_config={
-        "query_prefix": f"site:{domain} ",
-        "freshness": "Month",
-    },
-    to_load_web=True,
-)
-nodes = online_knowledge.retrieve("最新推理模型", similarity_top_k=1)
-
-print(
-    f"\nThe Bing search knowledge retrieved content from {domain}:"
-    f"\n{nodes[0].content}",
-)
 
 # %%
 # Create a Batch of Knowledge Instances
