@@ -5,7 +5,7 @@ with LlamaIndex.
 
 Notice, this is a Beta version of RAG agent.
 """
-
+import json
 from typing import Any, Optional, Union, Sequence
 from loguru import logger
 
@@ -42,33 +42,33 @@ class LlamaIndexAgent(AgentBase):
         Initialize the RAG LlamaIndexAgent
         Args:
             name (str):
-                the name for the agent
+                The name for the agent
             sys_prompt (str):
-                system prompt for the RAG agent
+                System prompt for the RAG agent
             model_config_name (str):
-                language model for the agent
+                Language model for the agent
             knowledge_list (list[Knowledge]):
-                a list of knowledge.
+                A list of knowledge.
                 User can choose to pass a list knowledge object
                 directly when initializing the RAG agent. Another
                 choice can be passing a list of knowledge ids and
                 obtain the knowledge with the `equip` function of a
                 knowledge bank.
             knowledge_id_list (list[Knowledge]):
-                a list of id of the knowledge.
+                A list of id of the knowledge.
                 This is designed for easy setting up multiple RAG
                 agents with a config file. To obtain the knowledge
                 objects, users can pass this agent to the `equip`
                 function in a knowledge bank to add corresponding
                 knowledge to agent's self.knowledge_list.
             similarity_top_k (int):
-                the number of most similar data blocks retrieved
+                The number of most similar data blocks retrieved
                 from each of the knowledge
             log_retrieval (bool):
-                whether to print the retrieved content
+                Whether to print the retrieved content
             recent_n_mem_for_retrieve (int):
-                the number of pieces of memory used as part of
-                retrieval query
+                The number of pieces of memory used as part of
+                retrival query
         """
         super().__init__(
             name=name,
@@ -125,19 +125,19 @@ class LlamaIndexAgent(AgentBase):
             # when content has information, do retrieval
             scores = []
             for knowledge in self.knowledge_list:
-                retrieved_nodes = knowledge.retrieve(
+                retrieved_chunks = knowledge.retrieve(
                     str(query),
                     self.similarity_top_k,
                 )
-                for node in retrieved_nodes:
-                    scores.append(node.score)
+                for chunk in retrieved_chunks:
+                    scores.append(chunk.score)
                     retrieved_docs_to_string += (
-                        "\n>>>> score:"
-                        + str(node.score)
-                        + "\n>>>> source:"
-                        + str(node.node.get_metadata_str())
-                        + "\n>>>> content:"
-                        + node.get_content()
+                        json.dumps(
+                            chunk.to_dict(),
+                            ensure_ascii=False,
+                            indent=2,
+                        )
+                        + "\n"
                     )
 
             if self.log_retrieval:

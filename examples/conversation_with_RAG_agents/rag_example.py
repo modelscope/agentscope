@@ -33,7 +33,7 @@ your question.
 
 
 def prepare_docstring_html() -> None:
-    """prepare docstring in html for API assistant"""
+    """Prepare docstring in html for API assistant"""
     if not os.path.exists("../../docs/docstring_html/"):
         os.system(
             "sphinx-apidoc -f -o ../../docs/sphinx_doc/en/source "
@@ -51,8 +51,20 @@ def main() -> None:
     prepare_docstring_html()
 
     # prepare models
-    with open("configs/model_config.json", "r", encoding="utf-8") as f:
-        model_configs = json.load(f)
+    model_configs = [
+        {
+            "model_type": "dashscope_text_embedding",
+            "config_name": "qwen_emb_config",
+            "model_name": "text-embedding-v2",
+            "api_key": os.getenv("DASHSCOPE_API_KEY"),
+        },
+        {
+            "model_type": "dashscope_chat",
+            "config_name": "qwen_config",
+            "model_name": "qwen-max",
+            "api_key": os.getenv("DASHSCOPE_API_KEY"),
+        },
+    ]
 
     # load config of the agents
     with open("configs/agent_config.json", "r", encoding="utf-8") as f:
@@ -72,9 +84,10 @@ def main() -> None:
     # alternatively, we can easily input the configs to add data to RAG
     knowledge_bank.add_data_as_knowledge(
         knowledge_id="agentscope_tutorial_rag",
-        emb_model_name="qwen_emb_config",
+        knowledge_type="llamaindex_knowledge",
+        emb_model_config_name="qwen_emb_config",
         data_dirs_and_types={
-            "../../docs/sphinx_doc/en/source/tutorial": [".md"],
+            "../../docs/tutorial/en/source/tutorial": [".md", ".py"],
         },
     )
 
@@ -83,7 +96,7 @@ def main() -> None:
     for agent in rag_agent_list:
         knowledge_bank.equip(agent, agent.knowledge_id_list)
 
-    # an alternative way is to provide knowledge list to agents
+    # An alternative way is to provide knowledge list to agents
     # when initializing them one by one, e.g.
     #
     # ```
