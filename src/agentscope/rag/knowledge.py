@@ -14,14 +14,36 @@ generate an answer.
 
 import importlib
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, Union
+from dataclasses import dataclass, asdict
 from loguru import logger
 from agentscope.models import ModelWrapperBase
+
+
+@dataclass
+class RetrievedChunk:
+    """
+    Retrieved content with score and meta information
+    """
+
+    score: float = 0.0
+    content: Any = None
+    metadata: Optional[dict] = None
+    embedding: Optional[Any] = None
+
+    def to_dict(self) -> dict:
+        """convert object to dict"""
+        return asdict(self)
 
 
 class Knowledge(ABC):
     """
     Base class for RAG, CANNOT be instantiated directly
+    """
+
+    knowledge_type: str = "base_knowledge"
+    """
+    A string to identify a knowledge base class
     """
 
     def __init__(
@@ -34,13 +56,14 @@ class Knowledge(ABC):
     ) -> None:
         # pylint: disable=unused-argument
         """
-        initialize the knowledge component
+        Initialize the knowledge component
+
         Args:
-        knowledge_id (str):
+        knowledge_id (`str`):
             The id of the knowledge unit.
-        emb_model (ModelWrapperBase):
+        emb_model (`ModelWrapperBase`):
             The embedding model used for generate embeddings
-        knowledge_config (dict):
+        knowledge_config (`dict`):
             The configuration to generate or load the index.
         """
         self.knowledge_id = knowledge_id
@@ -64,21 +87,62 @@ class Knowledge(ABC):
         similarity_top_k: int = None,
         to_list_strs: bool = False,
         **kwargs: Any,
-    ) -> list[Any]:
+    ) -> list[Union[RetrievedChunk, str]]:
         """
-        retrieve list of content from database (vector stored index) to memory
+        Retrieve list of content from database (vector stored index) to memory
+
         Args:
-            query (Any):
-                query for retrieval
-            similarity_top_k (int):
-                the number of most similar data returned by the
+            query (`Any`):
+                Query for retrieval
+            similarity_top_k (`int`):
+                The number of most similar data returned by the
                 retriever.
-            to_list_strs (bool):
-                whether return a list of str
+            to_list_strs (`bool`):
+                Whether return a list of str
 
         Returns:
-            return a list with retrieved documents (in strings)
+            Return a list with retrieved documents (in strings)
         """
+
+    @classmethod
+    def default_config(cls, **kwargs: Any) -> dict:
+        """
+        Return a default config for a knowledge class.
+
+        Args:
+            kwargs (`Any`):
+                Parameters for config
+
+        Returns:
+            dict: a default config of the knowledge class
+        """
+        raise NotImplementedError(
+            f"{cls.__name__} does not have default_config to be defined.",
+        )
+
+    @classmethod
+    def build_knowledge_instance(
+        cls,
+        knowledge_id: str,
+        knowledge_config: Optional[dict] = None,
+        **kwargs: Any,
+    ) -> "Knowledge":
+        """
+        A constructor to build a knowledge base instance.
+
+        Args:
+            knowledge_id (`str`):
+                The id of the knowledge instance.
+            knowledge_config (`dict`):
+                The configuration to the knowledge instance.
+
+        Returns:
+            Knowledge: a Knowledge instance
+        """
+        raise NotImplementedError(
+            f"{knowledge_id} of {cls.__name__} does not support "
+            "auto build knowledgebase",
+        )
 
     def post_processing(
         self,
@@ -89,14 +153,15 @@ class Knowledge(ABC):
         """
         A default solution for post-processing function, generates answer
         based on the retrieved documents.
+
         Args:
-            retrieved_docs (list[str]):
-                list of retrieved documents
-            prompt (str):
-                prompt for LLM generating answer with the retrieved documents
+            retrieved_docs (`list[str]`):
+                List of retrieved documents
+            prompt (`str`):
+                Prompt for LLM generating answer with the retrieved documents
 
         Returns:
-            Any: a synthesized answer from LLM with retrieved documents
+            Any: A synthesized answer from LLM with retrieved documents
 
         Example:
             self.postprocessing_model(prompt.format(retrieved_docs))
@@ -110,10 +175,11 @@ class Knowledge(ABC):
         Helper function to build objects in RAG classes.
 
         Args:
-            config (dict): a dictionary containing configurations
+            config (`dict`):
+                A dictionary containing configurations
         Returns:
-            Any: an object that is parsed/built to be an element
-                of input to the function of RAG module.
+            Any: An object that is parsed/built to be an element
+            of input to the function of RAG module.
         """
         if not isinstance(config, dict):
             return config
