@@ -162,9 +162,10 @@ class RegexTaggedContentParser(ParserBase, DictFilterMixin):
                 except json.JSONDecodeError:
                     keys_failed.append(key)
 
-            logger.debug(
-                f'Failed to parse JSON for keys: {", ".join(keys_failed)}',
-            )
+            if keys_failed:
+                logger.debug(
+                    f'Failed to parse JSON for keys: {", ".join(keys_failed)}',
+                )
 
         response.parsed = results
         return response
