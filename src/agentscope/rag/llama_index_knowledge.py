@@ -547,11 +547,11 @@ class LlamaIndexKnowledge(Knowledge):
                 retriever.
             to_list_strs (`bool`):
                 Whether returns the list of strings;
-                if False, return NodeWithScore
+                if False, return list of RetrievedChunk
             retriever (`BaseRetriever`):
                 For advanced usage, user can pass their own retriever.
         Return:
-            `list[Any]`: List of retrieved content
+            `list[Union[RetrievedChunk, str]]`: List of retrieved content
 
         More advanced query processing can refer to
         https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html
@@ -568,6 +568,7 @@ class LlamaIndexKnowledge(Knowledge):
                     content=node.get_content(),
                     metadata=node.metadata,
                     embedding=node.embedding,
+                    hash=node.node.hash,
                 ),
             )
 
@@ -583,6 +584,7 @@ class LlamaIndexKnowledge(Knowledge):
                         content=node.get_content(),
                         metadata=node.metadata,
                         embedding=node.embedding,
+                        hash=node.node.hash,
                     ),
                 )
 
