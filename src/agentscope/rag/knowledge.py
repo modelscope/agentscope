@@ -24,12 +24,25 @@ from agentscope.models import ModelWrapperBase
 class RetrievedChunk:
     """
     Retrieved content with score and meta information
+
+    Attributes:
+        score (`float`):
+            Similarity score of this retrieved chunk
+        content (`Any`):
+            The retrieved content
+        metadata (`Optional[dict]`):
+            The meta data of this retrieved chunk, such as file path
+        embedding (`Optional[Any]`)`:
+            The embedding of the chunk
+        hash (`Optional[str]`):
+            The hash of the retrieved content
     """
 
     score: float = 0.0
     content: Any = None
     metadata: Optional[dict] = None
     embedding: Optional[Any] = None
+    hash: Optional[str] = None
 
     def to_dict(self) -> dict:
         """convert object to dict"""
