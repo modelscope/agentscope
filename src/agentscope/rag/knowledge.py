@@ -30,6 +30,7 @@ class RetrievedChunk:
     content: Any = None
     metadata: Optional[dict] = None
     embedding: Optional[Any] = None
+    hash: Optional[str] = None
 
     def to_dict(self) -> dict:
         """convert object to dict"""
