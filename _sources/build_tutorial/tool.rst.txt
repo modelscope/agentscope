@@ -118,8 +118,8 @@ They can be registered to the `ServiceToolkit` by calling the `add` method.
     1. execute_shell_command: Executes a given shell command.
             command (string): The shell command to execute.
     2. bing_search: Search question in Bing Search API and return the searching results
-            num_results (number): The number of search results to return.
             question (string): The search query string.
+            num_results (number): The number of search results to return.
 
 
 
@@ -197,14 +197,14 @@ The JSON Schema description of the tool functions:
           "parameters": {
             "type": "object",
             "properties": {
+              "question": {
+                "type": "string",
+                "description": "The search query string."
+              },
               "num_results": {
                 "type": "number",
                 "description": "The number of search results to return.",
                 "default": 10
-              },
-              "question": {
-                "type": "string",
-                "description": "The search query string."
               }
             },
             "required": [
@@ -281,7 +281,7 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I can now inform the user about the result.</thought>
+    Friday: <thought>The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I will now inform the user of the result.</thought>
     <function>finish</function>
     <response>The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.</response>
 
@@ -327,7 +327,7 @@ A custom tool function must follow these rules:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 11.903 seconds)
+   **Total running time of the script:** (0 minutes 11.512 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

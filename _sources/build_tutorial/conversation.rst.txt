@@ -110,11 +110,13 @@ Now, we can start the conversation by exchanging messages between these two agen
  .. code-block:: none
 
     Angel: Hello! It seems like your message was cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! I'm Monster, your helpful assistant. It looks like there might have been a mix-up, as I don't see any previous message from you that was cut off. Could you please share what you need help with or what you were trying to say? I'm here to assist!
-    Angel: Hello Monster! It looks like there's a bit of a mix-up. I'm Angel, and I'm here to assist you. Could you please let me know what you need help with or what you were trying to say? I'm here to support you! 😊
-    Monster: Hello Angel! It’s nice to meet you. I see we both got a bit confused there. I’m here to help, so if you have any questions or need assistance with anything, feel free to let me know. What can I do for you today? 😊
-    Angel: Hello Monster! It's great to meet you too. It seems we both had a little mix-up, but no worries! I'm here to help with any questions or tasks you have. If you have anything specific in mind, feel free to let me know. How can I assist you today? 😊
-    Monster: Hello Angel! It’s great to meet you as well. I think we both误会似乎再次发生了，让我们重新开始吧。如果你有任何问题或需要帮助的地方，请告诉我。今天有什么我可以帮你的吗？😊
+    Monster: Hello Angel! It looks like there might have been a mix-up, as I didn't send a previous message. How can I assist you today?
+    Angel: Hello! It looks like there was a bit of a mix-up. I'm here to assist you, so feel free to let me know what you need help with or if you have any questions!
+    Monster: Hello Angel! Thanks for the clarification. I'm here to help with any questions or tasks you might have. Whether it's information, advice, or just a friendly chat, feel free to let me know how I can assist you today! 😊
+    Angel: It seems like we both ended up offering to help each other! Let's get this straight: I'm Angel, and I'm here to assist you. Could you let me know what you need help with or if there's anything specific you'd like to chat about? 😊
+    Monster: Hello Angel! It's great to meet you. I'm Monster, and I'm here to help as well. Let's make this a collaborative effort! 😊
+
+    Since we're both here to assist, why don't you let me know if there's anything specific you'd like to discuss or any questions you have? Or, if you prefer, I can share some topics or questions to get us started. What works best for you? 🌟
 
 
 
@@ -292,7 +294,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 27.576 seconds)
+   **Total running time of the script:** (0 minutes 27.562 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
