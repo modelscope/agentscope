@@ -109,16 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message may have been cut off. Could you please provide more information so I can assist you better?
-    Monster: Hello Angel! I'm Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I don't see any previous message that was cut off. How can I assist you today?
-    Angel: Hello! It looks like there might be a bit of confusion. I'm Angel, and I'm here to help you. How can I assist you today?
-    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to help as well. It seems like we both got a bit mixed up. Let's make sure we're on the same page: Is there something specific you need assistance with, or is there someone else you were expecting to chat with?
-    Angel: Hello! It's great to meet you, Monster. It seems there was a bit of a mix-up indeed. I'm Angel, and I'm here to assist. Let's make sure we're clear: Is there something specific you need help with, or is there someone else you were expecting to chat with? If you have any questions or need assistance, feel free to let me know!
-    Monster: Hello Angel! It's great to meet you too. I'm Monster, and I'm here to assist as well. It seems like we're both here to help, which is fantastic!
-
-    Since we're both here, let's make sure we're clear on who needs assistance. If you have any specific questions or if there's something you need help with, feel free to let me know. If you were expecting to chat with someone else, just let me know, and I'll do my best to help or direct you accordingly.
-
-    How can I assist you today?
+    Angel: Hello! It seems like your message got cut off. How can I assist you today?
+    Monster: Hello! I'm Monster, here to help you. It looks like there was a bit of a mix-up with the previous message. How can I assist you today?
+    Angel: Hello! I'm Angel, and it looks like there was a little confusion. How can I assist you today?
+    Monster: Hello Angel! It seems we both got a bit mixed up. I'm Monster, and I'm here to help. How can I assist you today?
+    Angel: Hello! It seems there's been a bit of a mix-up with the introductions. I'm Angel, and I'm here to help you. How can I assist you today?
+    Monster: Hello Angel! It’s nice to meet you. I’m Monster, and I’m here to help as well. It seems we both had the same idea! How can we assist you today?
 
 
 
@@ -296,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 34.699 seconds)
+   **Total running time of the script:** (0 minutes 26.532 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

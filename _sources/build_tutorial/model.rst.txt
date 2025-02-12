@@ -267,7 +267,7 @@ The `response` is an object of `agentscope.models.ModelResponse`, which contains
     Text: Hello! How can I assist you today?
     Embedding: None
     Image URLs: None
-    Raw: {"status_code": 200, "request_id": "7adfc3b2-dec7-9031-9a22-39ed1724504b", "code": "", "message": "", "output": {"text": null, "finish_reason": null, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}}]}, "usage": {"input_tokens": 10, "output_tokens": 9, "prompt_tokens_details": {"cached_tokens": 0}, "total_tokens": 19}}
+    Raw: {"status_code": 200, "request_id": "0befbe55-c993-9a46-bac0-ece191f0f26b", "code": "", "message": "", "output": {"text": null, "finish_reason": null, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}}]}, "usage": {"input_tokens": 10, "output_tokens": 9, "prompt_tokens_details": {"cached_tokens": 0}, "total_tokens": 19}}
     Parsed: None
     Stream: None
 
@@ -544,7 +544,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.822 seconds)
+   **Total running time of the script:** (0 minutes 1.628 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_model.py:
