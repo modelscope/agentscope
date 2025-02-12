@@ -19,7 +19,7 @@ class WebElementInfo(BaseModel):
     """The html content of the element."""
 
     tag_name: str
-    """The tage name of the element."""
+    """The tag name of the element."""
 
     node_name: str
     """The node name of the element."""
