@@ -93,7 +93,7 @@ class CodeActAgent(AgentBase):
             )
             code_exec_msg = self.handle_code_result(
                 code_execution_result,
-                "Example Code excuted: ",
+                "Example Code executed: ",
             )
             self.memory.add(example_msg)
             self.memory.add(code_exec_msg)
@@ -109,9 +109,9 @@ class CodeActAgent(AgentBase):
         """return the message from code result"""
         code_exec_content = content_pre_sring
         if code_execution_result.status == ServiceExecStatus.SUCCESS:
-            code_exec_content += "Excution Successful:\n"
+            code_exec_content += "Execution Successful:\n"
         else:
-            code_exec_content += "Excution Failed:\n"
+            code_exec_content += "Execution Failed:\n"
         code_exec_content += "Execution Output:\n" + str(
             code_execution_result.content,
         )
@@ -122,10 +122,10 @@ class CodeActAgent(AgentBase):
 
         self.memory.add(x)
 
-        excution_count = 0
+        execution_count = 0
         while (
             self.memory.get_memory(1)[-1].role == "user"
-            and excution_count < self.n_max_executions
+            and execution_count < self.n_max_executions
         ):
             prompt = self.model.format(self.memory.get_memory())
             model_res = self.model(prompt)
@@ -143,15 +143,15 @@ class CodeActAgent(AgentBase):
                 code_execution_result = (
                     self.code_executor.run_code_on_notebook(code)
                 )
-                excution_count += 1
+                execution_count += 1
                 code_exec_msg = self.handle_code_result(code_execution_result)
                 self.memory.add(code_exec_msg)
                 self.speak(code_exec_msg)
 
-        if excution_count == self.n_max_executions:
+        if execution_count == self.n_max_executions:
             assert self.memory.get_memory(1)[-1].role == "user"
             code_max_exec_msg = Msg(
-                name="assitant",
+                name="assistant",
                 role="assistant",
                 content=(
                     "I have reached the maximum number "
