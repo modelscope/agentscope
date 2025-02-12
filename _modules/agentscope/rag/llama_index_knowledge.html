@@ -669,11 +669,11 @@
 <span class="sd">                retriever.</span>
 <span class="sd">            to_list_strs (`bool`):</span>
 <span class="sd">                Whether returns the list of strings;</span>
-<span class="sd">                if False, return NodeWithScore</span>
+<span class="sd">                if False, return list of RetrievedChunk</span>
 <span class="sd">            retriever (`BaseRetriever`):</span>
 <span class="sd">                For advanced usage, user can pass their own retriever.</span>
 <span class="sd">        Return:</span>
-<span class="sd">            `list[Any]`: List of retrieved content</span>
+<span class="sd">            `list[Union[RetrievedChunk, str]]`: List of retrieved content</span>
 
 <span class="sd">        More advanced query processing can refer to</span>
 <span class="sd">        https://docs.llamaindex.ai/en/stable/examples/query_transformations/query_transform_cookbook.html</span>
@@ -690,6 +690,7 @@
                     <span class="n">content</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get_content</span><span class="p">(),</span>
                     <span class="n">metadata</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
                     <span class="n">embedding</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span>
+                    <span class="nb">hash</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span>
                 <span class="p">),</span>
             <span class="p">)</span>
 
@@ -705,6 +706,7 @@
                         <span class="n">content</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get_content</span><span class="p">(),</span>
                         <span class="n">metadata</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
                         <span class="n">embedding</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">embedding</span><span class="p">,</span>
+                        <span class="nb">hash</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span>
                     <span class="p">),</span>
                 <span class="p">)</span>
 

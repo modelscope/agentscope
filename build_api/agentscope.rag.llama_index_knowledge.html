@@ -243,7 +243,7 @@ result of the query.
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>to_list_strs</strong> (<cite>bool</cite>) – Whether returns the list of strings;
-if False, return NodeWithScore</p></li>
+if False, return list of RetrievedChunk</p></li>
 <li><p><strong>retriever</strong> (<cite>BaseRetriever</cite>) – For advanced usage, user can pass their own retriever.</p></li>
 </ul>
 </dd>
@@ -251,7 +251,7 @@ if False, return NodeWithScore</p></li>
 <dd class="field-even"><p>List of retrieved content</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list[Any]</cite></p>
+<dd class="field-odd"><p><cite>list[Union[RetrievedChunk, str]]</cite></p>
 </dd>
 </dl>
 <p>More advanced query processing can refer to

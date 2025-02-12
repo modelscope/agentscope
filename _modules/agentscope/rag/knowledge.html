@@ -144,12 +144,25 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RetrievedChunk</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieved content with score and meta information</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        score (`float`):</span>
+<span class="sd">            Similarity score of this retrieved chunk</span>
+<span class="sd">        content (`Any`):</span>
+<span class="sd">            The retrieved content</span>
+<span class="sd">        metadata (`Optional[dict]`):</span>
+<span class="sd">            The meta data of this retrieved chunk, such as file path</span>
+<span class="sd">        embedding (`Optional[Any]`)`:</span>
+<span class="sd">            The embedding of the chunk</span>
+<span class="sd">        hash (`Optional[str]`):</span>
+<span class="sd">            The hash of the retrieved content</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">embedding</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="RetrievedChunk.to_dict">
 <a class="viewcode-back" href="../../../build_api/agentscope.rag.knowledge.html#agentscope.rag.RetrievedChunk.to_dict">[docs]</a>
