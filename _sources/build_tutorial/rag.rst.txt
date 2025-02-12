@@ -98,8 +98,8 @@ A simple example is as follows.
     [nltk_data]     /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/s
     [nltk_data]     ite-packages/llama_index/core/_static/nltk_cache...
     [nltk_data]   Unzipping tokenizers/punkt_tab.zip.
-    Parsing nodes:   0%|          | 0/8 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 8/8 [00:00<00:00, 3201.76it/s]
-    Generating embeddings:   0%|          | 0/8 [00:00<?, ?it/s]    Generating embeddings:  12%|█▎        | 1/8 [00:00<00:06,  1.15it/s]    Generating embeddings:  25%|██▌       | 2/8 [00:01<00:05,  1.16it/s]    Generating embeddings:  38%|███▊      | 3/8 [00:02<00:04,  1.08it/s]    Generating embeddings:  50%|█████     | 4/8 [00:03<00:03,  1.08it/s]    Generating embeddings:  62%|██████▎   | 5/8 [00:04<00:02,  1.04it/s]    Generating embeddings:  75%|███████▌  | 6/8 [00:05<00:01,  1.05it/s]    Generating embeddings:  88%|████████▊ | 7/8 [00:06<00:00,  1.08it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.02it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.05it/s]
+    Parsing nodes:   0%|          | 0/8 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 8/8 [00:00<00:00, 3235.41it/s]
+    Generating embeddings:   0%|          | 0/8 [00:00<?, ?it/s]    Generating embeddings:  12%|█▎        | 1/8 [00:00<00:06,  1.06it/s]    Generating embeddings:  25%|██▌       | 2/8 [00:01<00:05,  1.08it/s]    Generating embeddings:  38%|███▊      | 3/8 [00:02<00:04,  1.08it/s]    Generating embeddings:  50%|█████     | 4/8 [00:03<00:03,  1.08it/s]    Generating embeddings:  62%|██████▎   | 5/8 [00:04<00:02,  1.10it/s]    Generating embeddings:  75%|███████▌  | 6/8 [00:05<00:01,  1.08it/s]    Generating embeddings:  88%|████████▊ | 7/8 [00:06<00:00,  1.09it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.08it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.08it/s]
 
     The retrieved content:
     About Agents
@@ -182,8 +182,8 @@ As for the data preprocessing, developers can choose different LlamaIndex `trans
 
  .. code-block:: none
 
-    Parsing nodes:   0%|          | 0/8 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 8/8 [00:00<00:00, 3554.87it/s]
-    Generating embeddings:   0%|          | 0/8 [00:00<?, ?it/s]    Generating embeddings:  12%|█▎        | 1/8 [00:00<00:06,  1.11it/s]    Generating embeddings:  25%|██▌       | 2/8 [00:01<00:05,  1.12it/s]    Generating embeddings:  38%|███▊      | 3/8 [00:02<00:04,  1.10it/s]    Generating embeddings:  50%|█████     | 4/8 [00:03<00:03,  1.06it/s]    Generating embeddings:  62%|██████▎   | 5/8 [00:04<00:02,  1.05it/s]    Generating embeddings:  75%|███████▌  | 6/8 [00:05<00:01,  1.05it/s]    Generating embeddings:  88%|████████▊ | 7/8 [00:06<00:00,  1.03it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.02it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.05it/s]
+    Parsing nodes:   0%|          | 0/8 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 8/8 [00:00<00:00, 3573.04it/s]
+    Generating embeddings:   0%|          | 0/8 [00:00<?, ?it/s]    Generating embeddings:  12%|█▎        | 1/8 [00:01<00:07,  1.06s/it]    Generating embeddings:  25%|██▌       | 2/8 [00:01<00:05,  1.02it/s]    Generating embeddings:  38%|███▊      | 3/8 [00:02<00:04,  1.05it/s]    Generating embeddings:  50%|█████     | 4/8 [00:03<00:03,  1.06it/s]    Generating embeddings:  62%|██████▎   | 5/8 [00:04<00:02,  1.09it/s]    Generating embeddings:  75%|███████▌  | 6/8 [00:05<00:01,  1.12it/s]    Generating embeddings:  88%|████████▊ | 7/8 [00:06<00:00,  1.07it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.02it/s]    Generating embeddings: 100%|██████████| 8/8 [00:07<00:00,  1.05it/s]
 
     The retrieved content:
     About Agents
@@ -351,7 +351,7 @@ Testing whether the model is running successfully.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 19.276 seconds)
+   **Total running time of the script:** (0 minutes 19.064 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_rag.py:
