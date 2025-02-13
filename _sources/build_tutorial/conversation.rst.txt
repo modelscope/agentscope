@@ -110,11 +110,11 @@ Now, we can start the conversation by exchanging messages between these two agen
  .. code-block:: none
 
     Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! I'm Monster, your helpful assistant. It looks like there might have been a mix-up, as I didn't send a previous message. How can I assist you today?
-    Angel: Hello! I'm Angel, and it looks like there was a bit of confusion. I'm here to help you. How can I assist you today?
-    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to help as well. It seems we both got a little mixed up with the roles! How can I assist you today?
-    Angel: Hello! It’s great to meet you, Monster. It seems there was a bit of a mix-up indeed. I’m Angel, and I’m here to assist you. How can I help you today?
-    Monster: Hello Angel! It's good to clear that up. I'm here to assist, so if you have any questions or need help with anything, feel free to let me know. How can I help you today?
+    Monster: Hello Angel! I'm Monster, your helpful assistant. It looks like there might have been a mix-up, as I don't see any previous message from me that was cut off. How can I assist you today?
+    Angel: Hello! I'm Angel, and it looks like there might be a bit of confusion. It seems you introduced yourself as "Monster," but I'm here to help you. Could you please let me know how I can assist you today?
+    Monster: Hello Angel! It seems there's a bit of a mix-up. I'm indeed the assistant, and my name is Monster. I'm here to help you with any questions or tasks you have. How can I assist you today?
+    Angel: It seems there's a bit of confusion here. I'm Angel, and I'm here to assist you. If you have any questions or need help with something, feel free to let me know! How can I assist you today?
+    Monster: Hello Angel! I see there's a bit of confusion. Let's clear that up: I'm the assistant, and my name is Monster. I'm here to help you with any questions or tasks you might have. How can I assist you today?
 
 
 
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 22.505 seconds)
+   **Total running time of the script:** (0 minutes 24.343 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

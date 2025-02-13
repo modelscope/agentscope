@@ -98,8 +98,8 @@ A simple example is as follows.
     [nltk_data]     /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/s
     [nltk_data]     ite-packages/llama_index/core/_static/nltk_cache...
     [nltk_data]   Unzipping tokenizers/punkt_tab.zip.
-    Parsing nodes:   0%|          | 0/8 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 8/8 [00:00<00:00, 3219.58it/s]
-    Generating embeddings:   0%|          | 0/8 [00:00<?, ?it/s]    Generating embeddings:  12%|█▎        | 1/8 [00:00<00:05,  1.33it/s]    Generating embeddings:  25%|██▌       | 2/8 [00:01<00:04,  1.30it/s]    Generating embeddings:  38%|███▊      | 3/8 [00:02<00:04,  1.24it/s]    Generating embeddings:  50%|█████     | 4/8 [00:03<00:03,  1.18it/s]    Generating embeddings:  62%|██████▎   | 5/8 [00:04<00:02,  1.18it/s]    Generating embeddings:  75%|███████▌  | 6/8 [00:04<00:01,  1.24it/s]    Generating embeddings:  88%|████████▊ | 7/8 [00:05<00:00,  1.25it/s]    Generating embeddings: 100%|██████████| 8/8 [00:06<00:00,  1.24it/s]    Generating embeddings: 100%|██████████| 8/8 [00:06<00:00,  1.24it/s]
+    Parsing nodes:   0%|          | 0/16 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 16/16 [00:00<00:00, 3139.60it/s]
+    Generating embeddings:   0%|          | 0/16 [00:00<?, ?it/s]    Generating embeddings:   6%|▋         | 1/16 [00:00<00:11,  1.31it/s]    Generating embeddings:  12%|█▎        | 2/16 [00:01<00:10,  1.31it/s]    Generating embeddings:  19%|█▉        | 3/16 [00:02<00:10,  1.25it/s]    Generating embeddings:  25%|██▌       | 4/16 [00:03<00:09,  1.29it/s]    Generating embeddings:  31%|███▏      | 5/16 [00:03<00:08,  1.25it/s]    Generating embeddings:  38%|███▊      | 6/16 [00:04<00:08,  1.20it/s]    Generating embeddings:  44%|████▍     | 7/16 [00:05<00:07,  1.21it/s]    Generating embeddings:  50%|█████     | 8/16 [00:06<00:06,  1.19it/s]    Generating embeddings:  56%|█████▋    | 9/16 [00:07<00:05,  1.22it/s]    Generating embeddings:  62%|██████▎   | 10/16 [00:08<00:04,  1.22it/s]    Generating embeddings:  69%|██████▉   | 11/16 [00:08<00:03,  1.27it/s]    Generating embeddings:  75%|███████▌  | 12/16 [00:09<00:03,  1.26it/s]    Generating embeddings:  81%|████████▏ | 13/16 [00:10<00:02,  1.22it/s]    Generating embeddings:  88%|████████▊ | 14/16 [00:11<00:01,  1.25it/s]    Generating embeddings:  94%|█████████▍| 15/16 [00:12<00:00,  1.23it/s]    Generating embeddings: 100%|██████████| 16/16 [00:12<00:00,  1.27it/s]    Generating embeddings: 100%|██████████| 16/16 [00:12<00:00,  1.25it/s]
 
     The retrieved content:
     About Agents
@@ -182,8 +182,8 @@ As for the data preprocessing, developers can choose different LlamaIndex `trans
 
  .. code-block:: none
 
-    Parsing nodes:   0%|          | 0/8 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 8/8 [00:00<00:00, 3355.78it/s]
-    Generating embeddings:   0%|          | 0/8 [00:00<?, ?it/s]    Generating embeddings:  12%|█▎        | 1/8 [00:00<00:05,  1.32it/s]    Generating embeddings:  25%|██▌       | 2/8 [00:01<00:04,  1.33it/s]    Generating embeddings:  38%|███▊      | 3/8 [00:02<00:03,  1.29it/s]    Generating embeddings:  50%|█████     | 4/8 [00:03<00:03,  1.33it/s]    Generating embeddings:  62%|██████▎   | 5/8 [00:03<00:02,  1.28it/s]    Generating embeddings:  75%|███████▌  | 6/8 [00:04<00:01,  1.30it/s]    Generating embeddings:  88%|████████▊ | 7/8 [00:05<00:00,  1.34it/s]    Generating embeddings: 100%|██████████| 8/8 [00:06<00:00,  1.30it/s]    Generating embeddings: 100%|██████████| 8/8 [00:06<00:00,  1.31it/s]
+    Parsing nodes:   0%|          | 0/16 [00:00<?, ?it/s]    Parsing nodes: 100%|██████████| 16/16 [00:00<00:00, 2722.58it/s]
+    Generating embeddings:   0%|          | 0/16 [00:00<?, ?it/s]    Generating embeddings:   6%|▋         | 1/16 [00:00<00:12,  1.19it/s]    Generating embeddings:  12%|█▎        | 2/16 [00:01<00:12,  1.17it/s]    Generating embeddings:  19%|█▉        | 3/16 [00:02<00:11,  1.18it/s]    Generating embeddings:  25%|██▌       | 4/16 [00:03<00:10,  1.12it/s]    Generating embeddings:  31%|███▏      | 5/16 [00:04<00:09,  1.11it/s]    Generating embeddings:  38%|███▊      | 6/16 [00:05<00:08,  1.18it/s]    Generating embeddings:  44%|████▍     | 7/16 [00:06<00:07,  1.18it/s]    Generating embeddings:  50%|█████     | 8/16 [00:06<00:06,  1.20it/s]    Generating embeddings:  56%|█████▋    | 9/16 [00:07<00:05,  1.17it/s]    Generating embeddings:  62%|██████▎   | 10/16 [00:08<00:05,  1.19it/s]    Generating embeddings:  69%|██████▉   | 11/16 [00:09<00:04,  1.09it/s]    Generating embeddings:  75%|███████▌  | 12/16 [00:10<00:03,  1.10it/s]    Generating embeddings:  81%|████████▏ | 13/16 [00:11<00:02,  1.16it/s]    Generating embeddings:  88%|████████▊ | 14/16 [00:12<00:01,  1.18it/s]    Generating embeddings:  94%|█████████▍| 15/16 [00:12<00:00,  1.19it/s]    Generating embeddings: 100%|██████████| 16/16 [00:13<00:00,  1.22it/s]    Generating embeddings: 100%|██████████| 16/16 [00:13<00:00,  1.17it/s]
 
     The retrieved content:
     About Agents
@@ -351,7 +351,7 @@ Testing whether the model is running successfully.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 16.050 seconds)
+   **Total running time of the script:** (0 minutes 30.338 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_rag.py:
