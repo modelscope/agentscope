@@ -1,7 +1,7 @@
 [
   {
     "knowledge_id": "agentscope_code_rag",
-    "knowlege_type": "llamaindex_knowledge",
+    "knowledge_type": "llamaindex_knowledge",
     "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 2048,
     "chunk_overlap": 40,
@@ -39,7 +39,7 @@
   },
   {
     "knowledge_id": "agentscope_api_rag",
-    "knowlege_type": "llamaindex_knowledge",
+    "knowledge_type": "llamaindex_knowledge",
     "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 1024,
     "chunk_overlap": 40,

@@ -233,7 +233,7 @@ def dashscope_text_to_audio(
             The model to use. Full model list can be found in
             https://help.aliyun.com/zh/dashscope/model-list
         sample_rate (`int`, defaults to 48000):
-            Samplerate of the audio.
+            Sample rate of the audio.
 
     Returns:
         `ServiceResponse`:
