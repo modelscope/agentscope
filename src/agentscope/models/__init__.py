@@ -18,6 +18,7 @@ from .dashscope_model import (
     DashScopeImageSynthesisWrapper,
     DashScopeTextEmbeddingWrapper,
     DashScopeMultiModalWrapper,
+    DashScopeApplicationWrapper,
 )
 from .ollama_model import (
     OllamaChatWrapper,
@@ -59,6 +60,7 @@ _BUILD_IN_MODEL_WRAPPERS = [
     "LiteLLMChatWrapper",
     "YiChatWrapper",
     "AnthropicChatWrapper",
+    "DashScopeApplicationWrapper",
 ]
 
 __all__ = [

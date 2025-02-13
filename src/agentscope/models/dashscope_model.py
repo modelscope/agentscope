@@ -402,6 +402,226 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         return ModelWrapperBase.format_for_common_chat_models(*args)
 
 
+class DashScopeApplicationWrapper(DashScopeWrapperBase):
+    """The model wrapper for DashScope's application API, refer to
+        https://help.aliyun.com/zh/model-studio/developer-reference/call-application-through-api/
+    Example Response:
+        - Refer to
+        https://help.aliyun.com/zh/model-studio/developer-reference/call-application-through-api/
+        .. code-block:: json
+
+            {
+                "status_code": 200,
+                "request_id": "a75a1b22-e512-957d-891b-37db858ae738",
+                "code": "",
+                "message": "",
+                "output": {
+                    "finish_reason": "stop",
+                    "text": "xxx",
+                    "session_id": "xxx",
+                },
+                "usage": {
+                    "models": [
+                        {
+                            "input_tokens": 25,
+                            "output_tokens": 77,
+                            "total_tokens": 102
+                        }
+                    ]
+                }
+            }
+
+    """
+
+    model_type: str = "dashscope_application"
+
+    def __init__(
+        self,
+        config_name: str,
+        api_key: str = None,
+        stream: bool = False,
+        generate_args: dict = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the DashScope application wrapper.
+
+        Args:
+            config_name (`str`):
+                The name of the model config.
+            model_name (`str`, default `None`):
+                The name of the model to use in DashScope API.
+            api_key (`str`, default `None`):
+                The API key for DashScope API.
+            stream (`bool`, default `False`):
+                If True, the response will be a generator in the `stream`
+                field of the returned `ModelResponse` object.
+            generate_args (`dict`, default `None`):
+                The extra keyword arguments used in DashScope Application api
+                generation, e.g. `app_id`, `session_id`.
+        """
+
+        super().__init__(
+            config_name=config_name,
+            api_key=api_key,
+            generate_args=generate_args,
+            **kwargs,
+        )
+
+        self.stream = stream
+
+    def __call__(
+        self,
+        messages: list,
+        stream: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> ModelResponse:
+        """Processes a list of messages to construct a payload for the
+        DashScope Application API call. It then makes a request to the
+        DashScope Application API and returns the response. This method
+        also updates monitoring metrics based on the API response.
+        Args:
+            messages (`list`):
+                A list of messages to process.
+            stream (`Optional[bool]`, default `None`):
+                The stream flag to control the response format, which will
+                overwrite the stream flag in the constructor.
+            **kwargs (`Any`):
+                The keyword arguments to DashScope Application API. Please
+                refer to
+                https://help.aliyun.com/zh/model-studio/developer-reference/call-application-through-api/
+                for more detailed arguments.
+
+        Returns:
+            `ModelResponse`:
+                A response object with the response text in text field, and
+                the raw response in raw field. If stream is True, the response
+                will be a generator in the `stream` field.
+        """
+        # step1: prepare keyword arguments
+        kwargs = {**self.generate_args, **kwargs}
+
+        # step2: checking messages
+        if not isinstance(messages, list):
+            raise ValueError(
+                "Dashscope `messages` field expected type `list`, "
+                f"got `{type(messages)}` instead.",
+            )
+        if not all("role" in msg and "content" in msg for msg in messages):
+            raise ValueError(
+                "Each message in the 'messages' list must contain a 'role' "
+                "and 'content' key for DashScope API.",
+            )
+
+        # step3: forward to generate response
+        if stream is None:
+            stream = self.stream
+
+        kwargs.update(
+            {
+                "messages": messages,
+                # Set the result to be "message" format.
+                "result_format": "message",
+                "stream": stream,
+            },
+        )
+
+        # Switch to the incremental_output mode
+        if stream:
+            kwargs["incremental_output"] = True
+
+        response = dashscope.Application.call(
+            api_key=self.api_key,
+            **kwargs,
+        )
+
+        # step3: invoke llm api, record the invocation and update the monitor
+        if stream:
+
+            def generator() -> Generator[str, None, None]:
+                last_chunk = None
+                text = ""
+                for chunk in response:
+                    if chunk.status_code != HTTPStatus.OK:
+                        error_msg = (
+                            f"Request id: {chunk.request_id}\n"
+                            f"Status code: {chunk.status_code}\n"
+                            f"Error code: {chunk.code}\n"
+                            f"Error message: {chunk.message}"
+                        )
+                        raise RuntimeError(error_msg)
+                    text += chunk.output["text"]
+                    yield text
+                    last_chunk = chunk
+                # Replace the last chunk with the full text
+                last_chunk.output["text"] = text
+                # Save the model invocation and update the monitor
+                self._save_model_invocation_and_update_monitor(
+                    kwargs,
+                    last_chunk,
+                )
+
+            return ModelResponse(
+                stream=generator(),
+                raw=response,
+            )
+        else:
+            if response.status_code != HTTPStatus.OK:
+                error_msg = (
+                    f"Request id: {response.request_id},\n"
+                    f"Status code: {response.status_code},\n"
+                    f"Error code: {response.code},\n"
+                    f"Error message: {response.message}."
+                )
+                raise RuntimeError(error_msg)
+
+            # Record the model invocation and update the monitor
+            self._save_model_invocation_and_update_monitor(
+                kwargs,
+                response,
+            )
+
+            return ModelResponse(
+                text=response.output["text"],
+                raw=response,
+            )
+
+    def _save_model_invocation_and_update_monitor(
+        self,
+        kwargs: dict,
+        response: GenerationResponse,
+    ) -> None:
+        """Save the model invocation and update the monitor accordingly.
+        Args:
+            kwargs (`dict`):
+                The keyword arguments to the DashScope chat API.
+            response (`GenerationResponse`):
+                The response object returned by the DashScope chat API.
+        """
+        input_tokens = response.usage.models[0].get("input_tokens", 0)
+        output_tokens = response.usage.models[0].get("output_tokens", 0)
+        # Update the token record accordingly
+        self.monitor.update_text_and_embedding_tokens(
+            model_name=self.model_name,
+            prompt_tokens=input_tokens,
+            completion_tokens=output_tokens,
+        )
+        # Save the model invocation after the stream is exhausted
+        self._save_model_invocation(
+            arguments=kwargs,
+            response=response,
+        )
+
+    def format(
+        self,
+        *args: Union[Msg, Sequence[Msg]],
+    ) -> List[dict]:
+        """A common format strategy for dashscope Application calls,
+        which will format the input messages into a user message.
+        """
+
+        return ModelWrapperBase.format_for_common_chat_models(*args)
+
+
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope Image Synthesis API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/quick-start-1

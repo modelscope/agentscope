@@ -7,6 +7,7 @@ from .pipeline import (
     SwitchPipeline,
     ForLoopPipeline,
     WhileLoopPipeline,
+    SchedulerPipeline,
 )
 
 from .functional import (
@@ -15,6 +16,7 @@ from .functional import (
     switchpipeline,
     forlooppipeline,
     whilelooppipeline,
+    schedulerpipeline,
 )
 
 __all__ = [
@@ -24,9 +26,11 @@ __all__ = [
     "SwitchPipeline",
     "ForLoopPipeline",
     "WhileLoopPipeline",
+    "SchedulerPipeline",
     "sequentialpipeline",
     "ifelsepipeline",
     "switchpipeline",
     "forlooppipeline",
     "whilelooppipeline",
+    "schedulerpipeline",
 ]

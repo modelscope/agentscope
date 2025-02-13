@@ -16,8 +16,10 @@ from .functional import (
     switchpipeline,
     forlooppipeline,
     whilelooppipeline,
+    schedulerpipeline,
 )
 from ..agents.operator import Operator
+from ..message import Msg
 
 
 class PipelineBase(Operator):
@@ -249,3 +251,25 @@ class SequentialPipeline(PipelineBase):
 
     def __call__(self, x: Optional[dict] = None) -> dict:
         return sequentialpipeline(operators=self.operators, x=x)
+
+
+class SchedulerPipeline(PipelineBase):
+    r"""A template pipeline for implementing scheduling logic."""
+
+    def __init__(
+        self,
+        planner_model_config_name: str,
+        operators: Operators,
+        desc_list: list[str],
+    ) -> None:
+        self.planner_model_config_name = planner_model_config_name
+        self.operators = operators
+        self.desc_list = desc_list
+
+    def __call__(self, x: Optional[dict] = None) -> Msg:
+        return schedulerpipeline(
+            planner_model_config_name=self.planner_model_config_name,
+            operators=self.operators,
+            desc_list=self.desc_list,
+            x=x,
+        )
