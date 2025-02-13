@@ -22,7 +22,7 @@ These models are tested in this example. For other models, some modifications ma
 
 ## Prerequisites
 
-- Install the lastest version of AgentScope by
+- Install the latest version of AgentScope by
 
 ```bash
 git clone https://github.com/modelscope/agentscope

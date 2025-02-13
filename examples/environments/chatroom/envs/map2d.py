@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A 2D map env with mutiple child envibtues
+"""A 2D map env with multiple child envibtues
 who have Location2D position"""
 import math
 from typing import List
