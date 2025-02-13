@@ -116,7 +116,7 @@ Action: Type [4]; agentscope GitHub
 ```
 
 
-In the next iter, we see that the agent is presented with the searching result page, and the agent select the offical github link.
+In the next iter, we see that the agent is presented with the searching result page, and the agent select the official github link.
 ![screenshot_2](https://github.com/garyzhang99/agentscope/assets/46197280/9b6708c6-eced-4d8b-8ebe-cdbd197b40ea)
 
 ```
