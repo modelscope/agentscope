@@ -11,6 +11,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports various visual interfaces for better user experience, including Gradio and AgentScope Studio.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_visual_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_visual.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Visual Interface</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Configuration ------------------------">
 
 .. only:: html
@@ -40,23 +57,6 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Distribution</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports various visual interfaces for better user experience, including Gradio and AgentScope Studio.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_visual_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_visual.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Visual Interface</div>
     </div>
 
 
@@ -342,9 +342,9 @@
 .. toctree::
    :hidden:
 
+   /build_tutorial/visual
    /build_tutorial/examples
    /build_tutorial/distribution
-   /build_tutorial/visual
    /build_tutorial/low_code
    /build_tutorial/web_browser
    /build_tutorial/quickstart
