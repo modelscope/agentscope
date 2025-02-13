@@ -47,6 +47,14 @@ Welcome to AgentScope's documentation!
 
    build_tutorial/examples
 
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Applications
+
+   tutorial/swe
+
+
 .. toctree::
    :maxdepth: 1
    :caption: API Docs
