@@ -91,7 +91,7 @@ def main() -> None:
         },
     )
 
-    # let knowledgebank to equip rag agent with a (set of) knowledge
+    # let knowledge_bank to equip rag agent with a (set of) knowledge
     # corresponding to its knowledge_id_list
     for agent in rag_agent_list:
         knowledge_bank.equip(agent, agent.knowledge_id_list)

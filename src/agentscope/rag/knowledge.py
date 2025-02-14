@@ -154,7 +154,7 @@ class Knowledge(ABC):
         """
         raise NotImplementedError(
             f"{knowledge_id} of {cls.__name__} does not support "
-            "auto build knowledgebase",
+            "auto build knowledge base instance",
         )
 
     def post_processing(

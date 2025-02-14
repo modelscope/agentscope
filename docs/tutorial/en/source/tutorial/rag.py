@@ -72,7 +72,7 @@ print(f"\nThe retrieved content:\n{nodes[0].content}")
 
 flex_knowledge_config = {
     "knowledge_id": "agentscope_qa_flex",
-    "knowlege_type": "llamaindex_knowledge",
+    "knowledge_type": "llamaindex_knowledge",
     "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 1024,
     "chunk_overlap": 40,
