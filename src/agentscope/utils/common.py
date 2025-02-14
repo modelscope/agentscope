@@ -491,7 +491,7 @@ class ImportErrorReporter:
 
     def _raise_import_error(self) -> Any:
         """Raise the ImportError"""
-        err_msg = f"ImportError occorred: [{self.error.msg}]."
+        err_msg = f"ImportError occurred: [{self.error.msg}]."
         if self.extras_require is not None:
             err_msg += (
                 f" Please install [{self.extras_require}] version"

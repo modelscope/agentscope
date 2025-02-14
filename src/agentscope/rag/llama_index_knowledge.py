@@ -826,7 +826,7 @@ class LlamaIndexKnowledge(Knowledge):
                 """
                 {
                     "knowledge_id": "xxx_rag",
-                    "knowlege_type": "llamaindex_knowledge",
+                    "knowledge_type": "llamaindex_knowledge",
                     "emb_model_config_name": "qwen_emb_config",
                     ....
                 }
