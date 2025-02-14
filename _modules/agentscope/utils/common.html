@@ -624,7 +624,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_raise_import_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise the ImportError&quot;&quot;&quot;</span>
-        <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ImportError occorred: [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">msg</span><span class="si">}</span><span class="s2">].&quot;</span>
+        <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ImportError occurred: [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">msg</span><span class="si">}</span><span class="s2">].&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extras_require</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">err_msg</span> <span class="o">+=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot; Please install [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">extras_require</span><span class="si">}</span><span class="s2">] version&quot;</span>

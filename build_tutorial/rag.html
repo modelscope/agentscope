@@ -194,26 +194,26 @@ There are three parameters need to be passed to the function.</p>
 [nltk_data]   Unzipping tokenizers/punkt_tab.zip.
 
 Parsing nodes:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 3139.60it/s]
+Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 3409.48it/s]
 
 Generating embeddings:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:11,  1.31it/s]
-Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:10,  1.31it/s]
-Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:10,  1.25it/s]
-Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:09,  1.29it/s]
-Generating embeddings:  31%|███▏      | 5/16 [00:03&lt;00:08,  1.25it/s]
-Generating embeddings:  38%|███▊      | 6/16 [00:04&lt;00:08,  1.20it/s]
-Generating embeddings:  44%|████▍     | 7/16 [00:05&lt;00:07,  1.21it/s]
-Generating embeddings:  50%|█████     | 8/16 [00:06&lt;00:06,  1.19it/s]
-Generating embeddings:  56%|█████▋    | 9/16 [00:07&lt;00:05,  1.22it/s]
-Generating embeddings:  62%|██████▎   | 10/16 [00:08&lt;00:04,  1.22it/s]
-Generating embeddings:  69%|██████▉   | 11/16 [00:08&lt;00:03,  1.27it/s]
-Generating embeddings:  75%|███████▌  | 12/16 [00:09&lt;00:03,  1.26it/s]
-Generating embeddings:  81%|████████▏ | 13/16 [00:10&lt;00:02,  1.22it/s]
-Generating embeddings:  88%|████████▊ | 14/16 [00:11&lt;00:01,  1.25it/s]
-Generating embeddings:  94%|█████████▍| 15/16 [00:12&lt;00:00,  1.23it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:12&lt;00:00,  1.27it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:12&lt;00:00,  1.25it/s]
+Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:13,  1.15it/s]
+Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:13,  1.07it/s]
+Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:12,  1.03it/s]
+Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:11,  1.08it/s]
+Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:10,  1.10it/s]
+Generating embeddings:  38%|███▊      | 6/16 [00:05&lt;00:09,  1.10it/s]
+Generating embeddings:  44%|████▍     | 7/16 [00:06&lt;00:08,  1.08it/s]
+Generating embeddings:  50%|█████     | 8/16 [00:07&lt;00:07,  1.07it/s]
+Generating embeddings:  56%|█████▋    | 9/16 [00:08&lt;00:06,  1.06it/s]
+Generating embeddings:  62%|██████▎   | 10/16 [00:09&lt;00:06,  1.06s/it]
+Generating embeddings:  69%|██████▉   | 11/16 [00:10&lt;00:05,  1.02s/it]
+Generating embeddings:  75%|███████▌  | 12/16 [00:11&lt;00:03,  1.01it/s]
+Generating embeddings:  81%|████████▏ | 13/16 [00:12&lt;00:02,  1.03it/s]
+Generating embeddings:  88%|████████▊ | 14/16 [00:13&lt;00:01,  1.01it/s]
+Generating embeddings:  94%|█████████▍| 15/16 [00:14&lt;00:00,  1.04it/s]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.06it/s]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.04it/s]
 
 The retrieved content:
 About Agents
@@ -229,7 +229,7 @@ Especially, <cite>SimpleDirectoryReader</cite> is the class in LlamaIndex librar
 As for the data preprocessing, developers can choose different LlamaIndex <a class="reference external" href="https://docs.llamaindex.ai/en/stable/module_guides/loading/ingestion_pipeline/transformations/">transformation operations</a> to preprocess the data.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">flex_knowledge_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;knowledge_id&quot;</span><span class="p">:</span> <span class="s2">&quot;agentscope_qa_flex&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;knowlege_type&quot;</span><span class="p">:</span> <span class="s2">&quot;llamaindex_knowledge&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;knowledge_type&quot;</span><span class="p">:</span> <span class="s2">&quot;llamaindex_knowledge&quot;</span><span class="p">,</span>
     <span class="s2">&quot;emb_model_config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen_emb_config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
     <span class="s2">&quot;chunk_overlap&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
@@ -279,26 +279,26 @@ As for the data preprocessing, developers can choose different LlamaIndex <a cla
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Parsing nodes:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 2722.58it/s]
+Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 2775.62it/s]
 
 Generating embeddings:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:12,  1.19it/s]
-Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:12,  1.17it/s]
-Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:11,  1.18it/s]
-Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:10,  1.12it/s]
-Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:09,  1.11it/s]
-Generating embeddings:  38%|███▊      | 6/16 [00:05&lt;00:08,  1.18it/s]
-Generating embeddings:  44%|████▍     | 7/16 [00:06&lt;00:07,  1.18it/s]
-Generating embeddings:  50%|█████     | 8/16 [00:06&lt;00:06,  1.20it/s]
-Generating embeddings:  56%|█████▋    | 9/16 [00:07&lt;00:05,  1.17it/s]
-Generating embeddings:  62%|██████▎   | 10/16 [00:08&lt;00:05,  1.19it/s]
-Generating embeddings:  69%|██████▉   | 11/16 [00:09&lt;00:04,  1.09it/s]
-Generating embeddings:  75%|███████▌  | 12/16 [00:10&lt;00:03,  1.10it/s]
-Generating embeddings:  81%|████████▏ | 13/16 [00:11&lt;00:02,  1.16it/s]
-Generating embeddings:  88%|████████▊ | 14/16 [00:12&lt;00:01,  1.18it/s]
-Generating embeddings:  94%|█████████▍| 15/16 [00:12&lt;00:00,  1.19it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:13&lt;00:00,  1.22it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:13&lt;00:00,  1.17it/s]
+Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:13,  1.09it/s]
+Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:12,  1.10it/s]
+Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:12,  1.08it/s]
+Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:10,  1.11it/s]
+Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:09,  1.10it/s]
+Generating embeddings:  38%|███▊      | 6/16 [00:05&lt;00:08,  1.12it/s]
+Generating embeddings:  44%|████▍     | 7/16 [00:06&lt;00:08,  1.11it/s]
+Generating embeddings:  50%|█████     | 8/16 [00:07&lt;00:07,  1.11it/s]
+Generating embeddings:  56%|█████▋    | 9/16 [00:08&lt;00:06,  1.07it/s]
+Generating embeddings:  62%|██████▎   | 10/16 [00:09&lt;00:05,  1.08it/s]
+Generating embeddings:  69%|██████▉   | 11/16 [00:10&lt;00:04,  1.06it/s]
+Generating embeddings:  75%|███████▌  | 12/16 [00:11&lt;00:03,  1.07it/s]
+Generating embeddings:  81%|████████▏ | 13/16 [00:11&lt;00:02,  1.08it/s]
+Generating embeddings:  88%|████████▊ | 14/16 [00:12&lt;00:01,  1.05it/s]
+Generating embeddings:  94%|█████████▍| 15/16 [00:13&lt;00:00,  1.04it/s]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.00s/it]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.06it/s]
 
 The retrieved content:
 About Agents
@@ -446,7 +446,7 @@ In this example, we will use one of the SOTA embedding models, <cite>gte-Qwen2-7
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 30.338 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 34.924 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-rag-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d2c568081e6a4b3dc97dff750041209a/rag.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">rag.ipynb</span></code></a></p>
