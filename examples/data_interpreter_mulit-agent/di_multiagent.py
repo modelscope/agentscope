@@ -34,6 +34,9 @@ verifier_agent: VerifierAgent
 synthesizer_agent: SynthesizerAgent
 replanner_agent: ReplanningAgent
 
+# Global variables for failure tracking
+total_failure_count = 0
+max_total_failures = 3  # Adjust as needed
 
 _ = load_dotenv(find_dotenv())  # read local .env file
 
