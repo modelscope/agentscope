@@ -52,7 +52,7 @@ _**Q**: What's the low-code development in AgentScope?_
 
 _**Q**: How can I report a bug in AgentScope?_
 <br/>
-**A**: If you encounter a bug while using AgentScope, please report it by opening an issue on our GitHub repository. This helps us improve the platform for all users.
+**A**: If you encounter a bug while using AgentScope, please report it by opening an issue on our GitHub repository.
 
 _**Q**: How can I report a security bug in AgentScope?_
 <br/>
