@@ -3,13 +3,88 @@
 """
 This script defines all the agents used in the data interpreter pipeline.
 """
+import os
+import csv
 from typing import Any, Dict, List, Tuple, Optional, Union, Sequence
 from agentscope.agents import ReActAgent, DialogAgent
 from agentscope.message import Msg
 from agentscope.models import ModelResponse
-from agentscope.parsers import MarkdownJsonObjectParser
-from agentscope.parsers import RegexTaggedContentParser
+from agentscope.parsers.json_object_parser import MarkdownJsonObjectParser
 from agentscope.service import ServiceToolkit
+from agentscope.service.service_response import ServiceResponse
+from agentscope.service.service_status import ServiceExecStatus
+from agentscope.parsers import RegexTaggedContentParser
+
+
+def read_csv_file(file_path: str) -> ServiceResponse:
+    """
+    Read and parse a CSV file.
+
+    Args:
+        file_path (`str`):
+            The path to the CSV file to be read.
+
+    Returns:
+        `ServiceResponse`: Where the boolean indicates success, the
+        Any is the parsed CSV content (typically a list of rows), and
+        the str contains an error message if any, including the error type.
+    """
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            reader = csv.reader(file)
+            data: List[List[str]] = list(reader)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=data,
+        )
+    except Exception as e:
+        error_message = f"{e.__class__.__name__}: {e}"
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=error_message,
+        )
+
+
+def write_csv_file(
+    file_path: str,
+    data: List[List[Any]],
+    overwrite: bool = False,
+) -> ServiceResponse:
+    """
+    Write data to a CSV file.
+
+    Args:
+        file_path (`str`):
+            The path to the file where the CSV data will be written.
+        data (`List[List[Any]]`):
+            The data to write to the CSV file
+            (each inner list represents a row).
+        overwrite (`bool`):
+            Whether to overwrite the file if it already exists.
+
+    Returns:
+        `ServiceResponse`: where the boolean indicates success, and the
+        str contains an error message if any, including the error type.
+    """
+    if not overwrite and os.path.exists(file_path):
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content="FileExistsError: The file already exists.",
+        )
+    try:
+        with open(file_path, "w", encoding="utf-8", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content="Success",
+        )
+    except Exception as e:
+        error_message = f"{e.__class__.__name__}: {e}"
+        return ServiceResponse(
+            status=ServiceExecStatus.ERROR,
+            content=error_message,
+        )
 
 
 class PlannerAgent(DialogAgent):
@@ -76,7 +151,8 @@ class PlannerAgent(DialogAgent):
                                 "task_id": str = "unique identifier for a task in plan, can be an ordinal",
                                 "dependent_task_ids": list[str] = "ids of tasks prerequisite to this task",
                                 "instruction": "what you should do in this task, one short phrase or sentence",
-                                "task_type": "type of this task",
+                                "task_type": "type of this task, should be one of Available Task Types",
+                                "task_type": "type of this task, should be one of Available Task Types",
                                 "tool_info": "recommended tool(s)' name(s) for solving this task",
                             }},
                             ...
@@ -119,15 +195,14 @@ class VerifierAgent(ReActAgent):
             max_iters=max_iters,
             verbose=verbose,
         )
-
         # Overwrite the parser attribute with the custom format_instruction to reinforce the output adhere to json format.
         self.parser = RegexTaggedContentParser(
             format_instruction="""Respond with specific tags as outlined below in json format:
-        <thought>{what you thought}</thought>
-        <function>{the function name you want to call}</function>
-        <{argument name}>{argument value}</{argument name}>
-        <{argument name}>{argument value}</{argument name}>
-        ...""",  # noqa
+<thought>{what you thought}</thought>
+<function>{the function name you want to call}</function>
+<{argument name}>{argument value}</{argument name}>
+<{argument name}>{argument value}</{argument name}>
+...""",  # noqa
             try_parse_json=True,
             required_keys=["thought", "function"],
         )
@@ -257,7 +332,8 @@ class ReplanningAgent(DialogAgent):
                 "task_id": str = "unique identifier for a task in plan, can be an ordinal",
                 "dependent_task_ids": list[str] = "ids of tasks prerequisite to this task",
                 "instruction": "what you should do in this task, one short phrase or sentence",
-                "task_type": "type of this task",
+                "task_type": "type of this task, should be one of Available Task Types",
+                "task_type": "type of this task, should be one of Available Task Types",
                 "tool_info": "recommended tool(s)' name(s) for solving this task",
             }},
             ...
@@ -308,7 +384,8 @@ class ReplanningAgent(DialogAgent):
                                 "task_id": str = "unique identifier for a task in plan, can be an ordinal",
                                 "dependent_task_ids": list[str] = "ids of tasks prerequisite to this task",
                                 "instruction": "what you should do in this task, one short phrase or sentence",
-                                "task_type": "type of this task",
+                                "task_type": "type of this task, should be one of Available Task Types",
+                                "task_type": "type of this task, should be one of Available Task Types",
                                 "tool_info": "recommended tool(s)' name(s) for solving this task",
                             }},
                             ...
