@@ -32,6 +32,6 @@ def prepare_docstring_txt(repo_path: str, text_dir: str) -> None:
             f"-t {repo_path}/docs/tutorial/en/source/_templates",
         )
         os.system(
-            f"sphinx-build -b text  {repo_path}/docs/tutorial/en/source "
+            f"sphinx-build -M text  {repo_path}/docs/tutorial/en/source "
             f"{text_dir} -W --keep-going",
         )

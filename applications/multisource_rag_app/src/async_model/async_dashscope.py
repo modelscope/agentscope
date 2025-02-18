@@ -72,7 +72,7 @@ class AsyncDashScopeChatWrapper(DashScopeChatWrapper):
                     response = loop.run_until_complete(async_gen.__anext__())
                     yield response
             except StopAsyncIteration as exc:
-                raise StopAsyncIteration from exc
+                pass
             finally:
                 loop.close()
         else:

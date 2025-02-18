@@ -116,8 +116,13 @@ def ds_rerank(
         node.node.embedding = chunk.embedding
         node.node.metadata = chunk.metadata
         nodes.append(node)
-
-    ranked_nodes = dashscope_rerank.postprocess_nodes(nodes, query_str=query)
+    try:
+        ranked_nodes = dashscope_rerank.postprocess_nodes(
+            nodes,
+            query_str=query
+        )
+    except AttributeError as _:
+        return chunks
 
     # convert back to RetrievedChunk
     ranked_chunks = []

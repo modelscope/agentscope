@@ -609,7 +609,6 @@ class PromptRewriter(QueryRewriter):
         response: ModelResponse,
         **kwargs: Any,
     ) -> Optional[List[Msg]]:
-        print(f">>>>>> here 2: {response}")
         metadata = query_msg.metadata if query_msg.metadata is not None else {}
         request_id = metadata.get(
             "request_id",

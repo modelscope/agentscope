@@ -29,6 +29,7 @@ def delete_existing_es_idx(knowledge_configs: list) -> None:
     es = Elasticsearch("http://localhost:9200")
     for config in knowledge_configs:
         index_name = config["es_config"]["vector_store_args"]["index_name"]
+        response = es.indices.delete(index=index_name, ignore=[400, 404])
         cluster_idx = index_name + "_cluster_means"
         response = es.indices.delete(index=cluster_idx, ignore=[400, 404])
 

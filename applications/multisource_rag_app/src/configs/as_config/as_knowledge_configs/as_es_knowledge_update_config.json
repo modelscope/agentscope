@@ -3,7 +3,7 @@
     "knowledge_id": "agentscope_tutorial_rag",
     "knowledge_type": "es_knowledge",
     "emb_model_config_name": "qwen_emb_config",
-    "chunk_size": 500,
+    "chunk_size": 1500,
     "chunk_overlap": 50,
     "language": ["English"],
     "es_config": {
@@ -21,7 +21,35 @@
             "module": "llama_index.core",
             "class": "SimpleDirectoryReader",
             "init_args": {
-              "input_dir": "~/agentscope_clean/docs/sphinx_doc/en/source/tutorial",
+              "input_dir": "~/agentscope_clean/docs/text/build_tutorial",
+              "required_exts": [
+                ".txt"
+              ]
+            }
+          }
+        },
+        "store_and_index": {
+          "transformations": [
+            {
+              "create_object": true,
+              "module": "llama_index.core.node_parser",
+              "class": "SentenceSplitter",
+              "init_args": {
+                "chunk_size": 1500,
+                "chunk_overlap": 200
+              }
+            }
+          ]
+        }
+      },
+      {
+        "load_data": {
+          "loader": {
+            "create_object": true,
+            "module": "llama_index.core",
+            "class": "SimpleDirectoryReader",
+            "init_args": {
+              "input_dir": "~/agentscope_clean/docs/",
               "required_exts": [
                 ".md"
               ]
@@ -33,18 +61,9 @@
             {
               "create_object": true,
               "module": "llama_index.core.node_parser",
-              "class": "MarkdownNodeParser",
-              "init_args": {
-                "include_metadata": true,
-                "include_prev_next_rel": true
-              }
-            },
-            {
-              "create_object": true,
-              "module": "llama_index.core.node_parser",
               "class": "SentenceSplitter",
               "init_args": {
-                "chunk_size": 1024,
+                "chunk_size": 1500,
                 "chunk_overlap": 200
               }
             }
@@ -54,43 +73,10 @@
     ]
   },
   {
-    "knowledge_id": "agentscope_code_rag",
-    "knowledge_type": "es_knowledge",
-    "emb_model_config_name": "qwen_emb_config",
-    "chunk_size": 500,
-    "chunk_overlap": 50,
-    "language": ["English"],
-    "es_config": {
-        "mode": "update",
-        "vector_store_args": {
-            "index_name": "agentscope_code_rag",
-            "es_url": "http://localhost:9200"
-        }
-    },
-    "data_processing": [
-      {
-        "load_data": {
-          "loader": {
-            "create_object": true,
-            "module": "llama_index.core",
-            "class": "SimpleDirectoryReader",
-            "init_args": {
-              "input_dir": "~/agentscope_clean/src/agentscope",
-              "recursive": true,
-              "required_exts": [
-                ".py"
-              ]
-            }
-          }
-        }
-      }
-    ]
-  },
-  {
     "knowledge_id": "agentscope_api_rag",
     "knowledge_type": "es_knowledge",
     "emb_model_config_name": "qwen_emb_config",
-    "chunk_size": 500,
+    "chunk_size": 1500,
     "chunk_overlap": 50,
     "language": ["English"],
     "es_config": {
@@ -108,7 +94,7 @@
             "module": "llama_index.core",
             "class": "SimpleDirectoryReader",
             "init_args": {
-              "input_dir": "~/agentscope_clean/docs/docstring_text/",
+              "input_dir": "~/agentscope_clean/docs/text/build_api/",
               "required_exts": [
                 ".txt"
               ]
@@ -122,7 +108,7 @@
     "knowledge_id": "agentscope_example_rag",
     "knowledge_type": "es_knowledge",
     "emb_model_config_name": "qwen_emb_config",
-    "chunk_size": 2048,
+    "chunk_size": 1500,
     "chunk_overlap": 40,
     "language": ["English"],
     "es_config": {
@@ -140,7 +126,7 @@
             "module": "llama_index.core",
             "class": "SimpleDirectoryReader",
             "init_args": {
-              "input_dir": "~/agentscope_clean/examples",
+              "input_dir": "~/agentscope_clean/examples/",
               "recursive": true,
               "required_exts": [
                 ".py",
@@ -156,7 +142,7 @@
               "module": "llama_index.core.node_parser",
               "class": "TokenTextSplitter",
               "init_args": {
-                "chunk_size": 2048,
+                "chunk_size": 1500,
                 "chunk_overlap": 40,
                 "separator": " "
               }

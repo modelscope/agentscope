@@ -16,9 +16,9 @@
       "web_path_mapping": [
         {
           "name": "",
-          "local_pattern": "docs/sphinx_doc/en/source/tutorial/",
-          "replace_suffix": ["md$", "html"],
-          "url_pattern": "https://doc.agentscope.io/en/tutorial/{}"
+          "local_pattern": "text/build_tutorial/",
+          "replace_suffix": ["txt$", "html"],
+          "url_pattern": "https://doc.agentscope.io/build_tutorial/{}"
         }
       ],
       "default_web_path_key": "agentscope_clean"
@@ -65,9 +65,9 @@
       "web_path_mapping": [
         {
           "name": "",
-          "local_pattern": "docs/docstring_text/",
+          "local_pattern": "text/build_api/",
           "replace_suffix": ["txt$", "html"],
-          "url_pattern": "https://doc.agentscope.io/en/{}"
+          "url_pattern": "https://doc.agentscope.io/build_api/{}"
         }
       ],
       "default_web_path_key": "agentscope_clean"
