@@ -48,7 +48,7 @@ as_scripts/setup_server.sh
 
 There are some variables that are already set in the script. If any developers want to migrate the service for their own applications, the following description can be used as a reference.
 
-####  Configurable variables in the [server setup script](as_scripts/setup_server.sh): 
+####  Configurable variables in the [server setup script](as_scripts/setup_server.sh):
 * Environment variable `DASHSCOPE_API_KEY`: The key of the dashscope service.
 * (Optional) Environment variable `BING_SEARCH_KEY`: The key of Bing search if the application uses Bing search (`BingKnowledge`).
 * Environment variable `RAG_AGENT_NAMES`: Names of the retrieval agents, seperated by ",".

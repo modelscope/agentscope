@@ -2,6 +2,7 @@
 """
 Adding a model wrapper for using asynchronous model API
 """
+# pylint: disable=R1710
 from typing import Optional, Any
 from http import HTTPStatus
 import asyncio
@@ -72,7 +73,7 @@ class AsyncDashScopeChatWrapper(DashScopeChatWrapper):
                     response = loop.run_until_complete(async_gen.__anext__())
                     yield response
             except StopAsyncIteration as exc:
-                pass
+                print("Asynchronous iteration completed.", exc)
             finally:
                 loop.close()
         else:

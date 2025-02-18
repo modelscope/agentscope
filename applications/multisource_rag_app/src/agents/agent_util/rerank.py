@@ -119,9 +119,10 @@ def ds_rerank(
     try:
         ranked_nodes = dashscope_rerank.postprocess_nodes(
             nodes,
-            query_str=query
+            query_str=query,
         )
-    except AttributeError as _:
+    except AttributeError as exc:
+        print(f"rerank fail: {exc}")
         return chunks
 
     # convert back to RetrievedChunk
