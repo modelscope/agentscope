@@ -124,6 +124,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         self,
         config_name: str,
         model_name: str = None,
+        api_type: str = "Generation",
         api_key: str = None,
         stream: bool = False,
         generate_args: dict = None,
@@ -155,6 +156,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         )
 
         self.stream = stream
+        self.api_type = api_type.lower()
 
     def __call__(
         self,
@@ -228,13 +230,16 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         if stream is None:
             stream = self.stream
 
+        # Update the kwargs with either 'app_id' or 'model' based on 'api_type'
         kwargs.update(
             {
-                "model": self.model_name,
                 "messages": messages,
                 # Set the result to be "message" format.
                 "result_format": "message",
                 "stream": stream,
+                "app_id"
+                if self.api_type == "application"
+                else "model": self.model_name,
             },
         )
 
@@ -242,7 +247,11 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         if stream:
             kwargs["incremental_output"] = True
 
-        response = dashscope.Generation.call(api_key=self.api_key, **kwargs)
+        response = (
+            dashscope.Application.call(api_key=self.api_key, **kwargs)
+            if self.api_type == "application"
+            else dashscope.Generation.call(api_key=self.api_key, **kwargs)
+        )
 
         # step3: invoke llm api, record the invocation and update the monitor
         if stream:
@@ -260,12 +269,21 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                         )
                         raise RuntimeError(error_msg)
 
-                    text += chunk.output["choices"][0]["message"]["content"]
+                    text += (
+                        chunk.output["text"]
+                        if self.api_type == "application"
+                        else chunk.output["choices"][0]["message"]["content"]
+                    )
                     yield text
                     last_chunk = chunk
 
                 # Replace the last chunk with the full text
-                last_chunk.output["choices"][0]["message"]["content"] = text
+                if self.api_type == "application":
+                    last_chunk.output["text"] = text
+                else:
+                    last_chunk.output["choices"][0]["message"][
+                        "content"
+                    ] = text
 
                 # Save the model invocation and update the monitor
                 self._save_model_invocation_and_update_monitor(
@@ -294,9 +312,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 kwargs,
                 response,
             )
+            if self.api_type == "application":
+                text = response.output["text"]
+            else:
+                text = response.output["choices"][0]["message"]["content"]
 
             return ModelResponse(
-                text=response.output["choices"][0]["message"]["content"],
+                text=text,
                 raw=response,
             )
 
@@ -313,8 +335,12 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             response (`GenerationResponse`):
                 The response object returned by the DashScope chat API.
         """
-        input_tokens = response.usage.get("input_tokens", 0)
-        output_tokens = response.usage.get("output_tokens", 0)
+        if self.api_type == "application":
+            input_tokens = response.usage.models[0].get("input_tokens", 0)
+            output_tokens = response.usage.models[0].get("output_tokens", 0)
+        else:
+            input_tokens = response.usage.get("input_tokens", 0)
+            output_tokens = response.usage.get("output_tokens", 0)
 
         # Update the token record accordingly
         self.monitor.update_text_and_embedding_tokens(
