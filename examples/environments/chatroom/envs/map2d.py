@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A 2D map env with mutiple child envibtues
+"""A 2D map env with multiple child envibtues
 who have Location2D position"""
 import math
 from typing import List
@@ -94,7 +94,7 @@ class Map2D(BasicEnv):
         distance: float,
         distance_type: str = "euclidean",
     ) -> None:
-        """Set a listenerwhich is activated when the distance from
+        """Set a listener which is activated when the distance from
         any env in the map to `env_name` is not larger than
         `distance`.
 
@@ -216,7 +216,7 @@ class Map2D(BasicEnv):
         if env_name not in self.children:
             raise EnvNotFoundError(env_name)
 
-        class OutofRange(EventListener):
+        class OutOfRange(EventListener):
             """A middleware that activates `target_listener` when any env
             is out of range of `center_env`"""
 
@@ -272,7 +272,7 @@ class Map2D(BasicEnv):
 
         if not self.add_listener(
             "move_child_to",
-            listener=OutofRange(
+            listener=OutOfRange(
                 name=f"out_of_range_of_{env_name}_{distance}",
                 center_env=self.children[env_name],
                 target_listener=listener,

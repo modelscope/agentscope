@@ -119,4 +119,4 @@ print(icl_generated_system_prompt)
 
 # %%
 # .. note:: 1. The example embeddings will be cached in ``~/.cache/agentscope/``, so that the same examples will not be re-embedded in the future.
-#  2. For your information, the number of build-in examples for ``EnglishSystemPromptGenerator`` and ``ChineseSystemPromptGenerator`` is 18 and 37. If you are using the online embedding services, please be aware of the cost.
+#  2. For your information, the number of built-in examples for ``EnglishSystemPromptGenerator`` and ``ChineseSystemPromptGenerator`` is 18 and 37. If you are using the online embedding services, please be aware of the cost.

@@ -103,7 +103,7 @@ In the first iter of our web browsing agent, the agent opens the default webpage
 
 We can see from the saved screenshot here that the interactive elements in this webpage are marked with numbers. This is called the set-of-mark prompting([github link](https://github.com/microsoft/SoM), [paper link](https://arxiv.org/abs/2310.11441)). Utilizing the set-of-mark prompting, the agent can interact with the webpage more naturally by selecting the elements with the corresponding numbers.
 
-After recieving the observation, the agent will give it's thought and corresponding action.
+After receiving the observation, the agent will give it's thought and corresponding action.
 In this case, the agent select the search bar (numbered as [4]) and type in it.
 
 ![screenshot_1](https://github.com/garyzhang99/agentscope/assets/46197280/9de208b8-4ef4-4b4f-9328-2f7bb500fcb2)
@@ -116,7 +116,7 @@ Action: Type [4]; agentscope GitHub
 ```
 
 
-In the next iter, we see that the agent is presented with the searching result page, and the agent select the offical github link.
+In the next iter, we see that the agent is presented with the searching result page, and the agent select the official github link.
 ![screenshot_2](https://github.com/garyzhang99/agentscope/assets/46197280/9b6708c6-eced-4d8b-8ebe-cdbd197b40ea)
 
 ```

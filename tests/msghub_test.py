@@ -27,7 +27,7 @@ class MsgHubTest(unittest.TestCase):
 
     def setUp(self) -> None:
         """Init for ExampleTest."""
-        self.wisper = TestAgent("wisper")
+        self.whisper = TestAgent("whisper")
         self.agent1 = TestAgent("agent1")
         self.agent2 = TestAgent("agent2")
         self.agent3 = TestAgent("agent3")
@@ -77,10 +77,10 @@ class MsgHubTest(unittest.TestCase):
             ),
         ]
 
-        with msghub(participants=[self.wisper, self.agent1, self.agent2]):
-            self.wisper(ground_truth)
+        with msghub(participants=[self.whisper, self.agent1, self.agent2]):
+            self.whisper(ground_truth)
 
-        # agent1 and agent2 heard wisper's secret!
+        # agent1 and agent2 heard whisper's secret!
         self.assertListEqual(
             self.agent1.memory.get_memory(),
             ground_truth,
@@ -91,7 +91,7 @@ class MsgHubTest(unittest.TestCase):
             ground_truth,
         )
 
-        # agent3 didn't hear wisper's secret!
+        # agent3 didn't hear whisper's secret!
         self.assertListEqual(
             self.agent3.memory.get_memory(),
             [],

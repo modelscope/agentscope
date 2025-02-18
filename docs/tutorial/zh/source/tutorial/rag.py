@@ -67,7 +67,7 @@ print(f"\nThe retrieved content:\n{nodes[0].content}")
 
 flex_knowledge_config = {
     "knowledge_id": "agentscope_qa_flex",
-    "knowlege_type": "llamaindex_knowledge",
+    "knowledge_type": "llamaindex_knowledge",
     "emb_model_config_name": "qwen_emb_config",
     "chunk_size": 1024,
     "chunk_overlap": 40,
@@ -119,8 +119,8 @@ print(f"\nThe retrieved content:\n{nodes[0].content}")
 # %%
 # Create a Batch of Knowledge Instances
 # ----------------------------------------------
-# For some cases where different knowledge sources exists and require different preprocessing and/or post-proprocess, a good strategy is to create multiple knolwedge instances.
-# Thus, we introduce `KnowledgeBank` to better manage the knowledge instances. One can initialize a batch of knowledge with a file of mulltiple knodledge configurations.
+# For some cases where different knowledge sources exists and require different preprocessing and/or post-process, a good strategy is to create multiple knowledge instances.
+# Thus, we introduce `KnowledgeBank` to better manage the knowledge instances. One can initialize a batch of knowledge with a file of multiple knowledge configurations.
 #
 # .. code-block:: python
 #
