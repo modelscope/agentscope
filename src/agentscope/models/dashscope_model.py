@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0302,
 """Model wrapper for DashScope models"""
 import os
 from abc import ABC
