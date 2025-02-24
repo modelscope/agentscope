@@ -1,3 +1,4 @@
+<!-- layout.html -->
 
 
 <!DOCTYPE html>
@@ -13,15 +14,19 @@
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
 
   
+    
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Build Agent" href="agent.html" />
@@ -33,12 +38,22 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
 
-          
-          
-          <a href="../index.html" class="icon icon-home">
-            AgentScope Doc
-          </a>
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -46,6 +61,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul class="current">
@@ -181,12 +198,12 @@ The content of the message: &quot;Hi! How can I help you?&quot;
     &quot;__module__&quot;: &quot;agentscope.message.msg&quot;,
     &quot;__name__&quot;: &quot;Msg&quot;,
     &quot;name&quot;: &quot;Jarvis&quot;,
+    &quot;role&quot;: &quot;assistant&quot;,
+    &quot;timestamp&quot;: &quot;2025-02-24 12:32:27&quot;,
     &quot;metadata&quot;: null,
     &quot;content&quot;: &quot;Hi! How can I help you?&quot;,
-    &quot;timestamp&quot;: &quot;2025-02-14 02:23:11&quot;,
-    &quot;role&quot;: &quot;assistant&quot;,
-    &quot;url&quot;: null,
-    &quot;id&quot;: &quot;5c6b7bd71df64af0a0c82cb91b604941&quot;
+    &quot;id&quot;: &quot;2b5b85c40eb44f8aafbe6715279a0917&quot;,
+    &quot;url&quot;: null
 }
 </pre></div>
 </div>
@@ -202,7 +219,7 @@ The content of the message: &quot;Hi! How can I help you?&quot;
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The content of the message: &quot;</span><span class="si">{</span><span class="n">new_msg</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;agentscope.message.msg.Msg object at 0x7fb038ed8730&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;agentscope.message.msg.Msg object at 0x7f299d0f2220&gt;
 The sender of the message: &quot;Jarvis&quot;
 The role of the sender: &quot;assistant&quot;
 The content of the message: &quot;Hi! How can I help you?&quot;

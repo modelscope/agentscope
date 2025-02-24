@@ -1,3 +1,4 @@
+<!-- layout.html -->
 
 
 <!DOCTYPE html>
@@ -13,15 +14,19 @@
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
 
   
+    
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="FQA" href="../tutorial/faq.html" />
@@ -33,12 +38,22 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
 
-          
-          
-          <a href="../index.html" class="icon icon-home">
-            AgentScope Doc
-          </a>
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -46,6 +61,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul class="current">
@@ -175,12 +192,12 @@ to download the full example code.</p>
     <span class="n">msg</span> <span class="o">=</span> <span class="n">monster</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
-Monster: Hello Angel! I apologize for the confusion. It looks like there might have been a mix-up, as I didn&#39;t send a previous message. How can I assist you today?
-Angel: Hello! No worries at all. It&#39;s great to hear from you, Monster. How can I assist you today? Is there anything specific you need help with or any questions you have?
-Monster: Hello Angel! Thank you for your warm welcome. I&#39;m here to help, so if you have any questions or need assistance with anything, feel free to let me know. Is there a particular topic or task you&#39;d like to discuss?
-Angel: Hello Monster! It’s nice to have you here. I think there might be a little confusion; I’m here to assist you. Could you let me know if there’s anything specific you need help with or any questions you have? Whether it’s about a particular topic, a task, or anything else, I’m here to support you!
-Monster: Hello Angel! I appreciate your patience and willingness to help. It seems we&#39;ve both been trying to assist each other! Let&#39;s get things straight: I&#39;m here to help you. If you have any questions, need information on a specific topic, or require assistance with a task, please let me know. What can I do for you today?
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message was cut off. How can I assist you today?
+Monster: Hello Angel! It looks like there might have been a mix-up. I&#39;m Monster, and I&#39;m here to help you. How can I assist you today?
+Angel: Hello! It looks like there might be a bit of confusion. I&#39;m Angel, and I&#39;m here to help you. How can I assist you today?
+Monster: Hello Angel! It’s nice to meet you. I’m Monster, and I’m here to assist as well. Let’s work together to help whoever needs it. Is there anything specific you need help with, or is there someone else we should be assisting?
+Angel: Hello Monster! It&#39;s great to meet you. It seems like we both want to help, but there might be a bit of a mix-up with roles. If there’s someone else who needs assistance, let’s focus on them. Do you have any information on what they need help with, or should we wait for the next message?
+Monster: Hello Angel! It&#39;s great to meet you. You&#39;re right, we both want to help, and it&#39;s important that we clarify our roles to best assist. Since there&#39;s no specific request from a user yet, let&#39;s indeed wait for the next message. If someone reaches out, we can work together to provide the best support possible. Is there anything else you&#39;d like to discuss in the meantime?
 </pre></div>
 </div>
 <p>If you want to participate in the conversation, just instantiate a built-in <cite>UserAgent</cite> to type messages to the agents.</p>
@@ -287,7 +304,7 @@ Charlie: 4
 <p>In the above example, Charlie left the conversation after the first round without receiving “4” and “5” from Alice and Bob.
 Therefore, it reported “4” in the second round.
 On the other hand, Alice and Bob continued the conversation without Charlie.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 32.082 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 30.318 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-conversation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e45033d54e8ac8fc32ecea3c60595825/conversation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">conversation.ipynb</span></code></a></p>

@@ -1,3 +1,4 @@
+<!-- layout.html -->
 
 
 <!DOCTYPE html>
@@ -13,15 +14,19 @@
       <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
       <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
       <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/gallery.css?v=7d1fffb2" />
+      <link rel="stylesheet" type="text/css" href="_static/css/gallery.css?v=333a68b5" />
 
   
+    
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/language_switch.js?v=6d1ec912"></script>
     <script src="_static/js/theme.js"></script>
+    <script type="text/javascript" src="_static/language_switch.js"></script>
+
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -31,12 +36,22 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+    
+    
+    <a href="index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
 
-          
-          
-          <a href="index.html" class="icon icon-home">
-            AgentScope Doc
-          </a>
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -44,6 +59,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
@@ -122,7 +139,7 @@
              
   <section id="computation-times">
 <span id="sphx-glr-sg-execution-times"></span><h1>Computation times<a class="headerlink" href="#computation-times" title="Link to this heading"></a></h1>
-<p><strong>03:32.622</strong> total execution time for 19 files <strong>from all galleries</strong>:</p>
+<p><strong>03:10.434</strong> total execution time for 19 files <strong>from all galleries</strong>:</p>
 <div class="docutils container">
 <style scoped>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
@@ -144,51 +161,51 @@ $(document).ready( function () {
 </thead>
 <tbody>
 <tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/prompt_optimization.html#sphx-glr-build-tutorial-prompt-optimization-py"><span class="std std-ref">System Prompt Optimization</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/prompt_optimization.py</span></code>)</p></td>
-<td><p>00:58.686</p></td>
+<td><p>00:59.466</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><span class="xref std std-ref">sphx_glr_build_tutorial_builtin_agent.py</span> (<code class="docutils literal notranslate"><span class="pre">tutorial/builtin_agent.py</span></code>)</p></td>
-<td><p>00:54.450</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/rag.html#sphx-glr-build-tutorial-rag-py"><span class="std std-ref">Retrieval Augmentation Generation (RAG)</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/rag.py</span></code>)</p></td>
+<td><p>00:35.103</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/rag.html#sphx-glr-build-tutorial-rag-py"><span class="std std-ref">Retrieval Augmentation Generation (RAG)</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/rag.py</span></code>)</p></td>
-<td><p>00:34.924</p></td>
+<tr class="row-even"><td><p><span class="xref std std-ref">sphx_glr_build_tutorial_builtin_agent.py</span> (<code class="docutils literal notranslate"><span class="pre">tutorial/builtin_agent.py</span></code>)</p></td>
+<td><p>00:33.755</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/conversation.html#sphx-glr-build-tutorial-conversation-py"><span class="std std-ref">Build Conversation</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/conversation.py</span></code>)</p></td>
-<td><p>00:32.082</p></td>
+<td><p>00:30.318</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/multimodality.html#sphx-glr-build-tutorial-multimodality-py"><span class="std std-ref">MultiModality</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/multimodality.py</span></code>)</p></td>
-<td><p>00:09.685</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/tool.html#sphx-glr-build-tutorial-tool-py"><span class="std std-ref">Tools</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/tool.py</span></code>)</p></td>
+<td><p>00:09.258</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/tool.html#sphx-glr-build-tutorial-tool-py"><span class="std std-ref">Tools</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/tool.py</span></code>)</p></td>
-<td><p>00:08.993</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/multimodality.html#sphx-glr-build-tutorial-multimodality-py"><span class="std std-ref">MultiModality</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/multimodality.py</span></code>)</p></td>
+<td><p>00:07.794</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/monitor.html#sphx-glr-build-tutorial-monitor-py"><span class="std std-ref">Configuring and Monitoring</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/monitor.py</span></code>)</p></td>
-<td><p>00:03.652</p></td>
+<td><p>00:03.856</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/streaming.html#sphx-glr-build-tutorial-streaming-py"><span class="std std-ref">Streaming Mode</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/streaming.py</span></code>)</p></td>
-<td><p>00:03.293</p></td>
+<td><p>00:03.615</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/quickstart.html#sphx-glr-build-tutorial-quickstart-py"><span class="std std-ref">Quick Start</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/quickstart.py</span></code>)</p></td>
-<td><p>00:02.069</p></td>
+<td><p>00:02.274</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/prompt.html#sphx-glr-build-tutorial-prompt-py"><span class="std std-ref">Prompt Engineering</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/prompt.py</span></code>)</p></td>
-<td><p>00:01.724</p></td>
+<td><p>00:01.791</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/model.html#sphx-glr-build-tutorial-model-py"><span class="std std-ref">Model APIs</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/model.py</span></code>)</p></td>
-<td><p>00:01.608</p></td>
+<td><p>00:01.745</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="build_tutorial/agent.html#sphx-glr-build-tutorial-agent-py"><span class="std std-ref">Build Agent</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/agent.py</span></code>)</p></td>
-<td><p>00:01.450</p></td>
+<td><p>00:01.453</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="build_tutorial/structured_output.html#sphx-glr-build-tutorial-structured-output-py"><span class="std std-ref">Structured Output</span></a> (<code class="docutils literal notranslate"><span class="pre">tutorial/structured_output.py</span></code>)</p></td>

@@ -81,3 +81,19 @@
     padding: 10px;
     border: 1px solid rgba(0, 0, 0, 0.22);
 }
+
+.language-switch-button {
+    background: transparent;
+    font-size: 15px;
+    margin-top: 0;
+    margin-bottom: 4px;
+    border: none;
+    color: white;
+    height: 40px;
+    width: 60px;
+    border-radius: 6px;
+}
+
+.language-switch-button:hover {
+    background: rgba(255, 255, 255, 0.1)
+}

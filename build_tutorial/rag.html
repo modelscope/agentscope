@@ -1,3 +1,4 @@
+<!-- layout.html -->
 
 
 <!DOCTYPE html>
@@ -13,15 +14,19 @@
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=7d1fffb2" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
 
   
+    
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Distribution" href="distribution.html" />
@@ -33,12 +38,22 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
 
-          
-          
-          <a href="../index.html" class="icon icon-home">
-            AgentScope Doc
-          </a>
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -46,6 +61,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
@@ -194,26 +211,26 @@ There are three parameters need to be passed to the function.</p>
 [nltk_data]   Unzipping tokenizers/punkt_tab.zip.
 
 Parsing nodes:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 3409.48it/s]
+Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 3301.79it/s]
 
 Generating embeddings:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:13,  1.15it/s]
-Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:13,  1.07it/s]
-Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:12,  1.03it/s]
-Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:11,  1.08it/s]
-Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:10,  1.10it/s]
-Generating embeddings:  38%|███▊      | 6/16 [00:05&lt;00:09,  1.10it/s]
-Generating embeddings:  44%|████▍     | 7/16 [00:06&lt;00:08,  1.08it/s]
-Generating embeddings:  50%|█████     | 8/16 [00:07&lt;00:07,  1.07it/s]
-Generating embeddings:  56%|█████▋    | 9/16 [00:08&lt;00:06,  1.06it/s]
-Generating embeddings:  62%|██████▎   | 10/16 [00:09&lt;00:06,  1.06s/it]
-Generating embeddings:  69%|██████▉   | 11/16 [00:10&lt;00:05,  1.02s/it]
-Generating embeddings:  75%|███████▌  | 12/16 [00:11&lt;00:03,  1.01it/s]
-Generating embeddings:  81%|████████▏ | 13/16 [00:12&lt;00:02,  1.03it/s]
-Generating embeddings:  88%|████████▊ | 14/16 [00:13&lt;00:01,  1.01it/s]
-Generating embeddings:  94%|█████████▍| 15/16 [00:14&lt;00:00,  1.04it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.06it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.04it/s]
+Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:14,  1.05it/s]
+Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:12,  1.10it/s]
+Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:12,  1.06it/s]
+Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:11,  1.02it/s]
+Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:11,  1.03s/it]
+Generating embeddings:  38%|███▊      | 6/16 [00:06&lt;00:10,  1.03s/it]
+Generating embeddings:  44%|████▍     | 7/16 [00:07&lt;00:09,  1.03s/it]
+Generating embeddings:  50%|█████     | 8/16 [00:07&lt;00:08,  1.01s/it]
+Generating embeddings:  56%|█████▋    | 9/16 [00:08&lt;00:06,  1.04it/s]
+Generating embeddings:  62%|██████▎   | 10/16 [00:09&lt;00:05,  1.05it/s]
+Generating embeddings:  69%|██████▉   | 11/16 [00:10&lt;00:04,  1.08it/s]
+Generating embeddings:  75%|███████▌  | 12/16 [00:11&lt;00:03,  1.06it/s]
+Generating embeddings:  81%|████████▏ | 13/16 [00:12&lt;00:03,  1.01s/it]
+Generating embeddings:  88%|████████▊ | 14/16 [00:13&lt;00:01,  1.03it/s]
+Generating embeddings:  94%|█████████▍| 15/16 [00:14&lt;00:00,  1.03it/s]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.01s/it]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.02it/s]
 
 The retrieved content:
 About Agents
@@ -279,26 +296,26 @@ As for the data preprocessing, developers can choose different LlamaIndex <a cla
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Parsing nodes:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 2775.62it/s]
+Parsing nodes: 100%|██████████| 16/16 [00:00&lt;00:00, 2907.29it/s]
 
 Generating embeddings:   0%|          | 0/16 [00:00&lt;?, ?it/s]
-Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:13,  1.09it/s]
-Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:12,  1.10it/s]
-Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:12,  1.08it/s]
-Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:10,  1.11it/s]
-Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:09,  1.10it/s]
-Generating embeddings:  38%|███▊      | 6/16 [00:05&lt;00:08,  1.12it/s]
-Generating embeddings:  44%|████▍     | 7/16 [00:06&lt;00:08,  1.11it/s]
-Generating embeddings:  50%|█████     | 8/16 [00:07&lt;00:07,  1.11it/s]
-Generating embeddings:  56%|█████▋    | 9/16 [00:08&lt;00:06,  1.07it/s]
-Generating embeddings:  62%|██████▎   | 10/16 [00:09&lt;00:05,  1.08it/s]
-Generating embeddings:  69%|██████▉   | 11/16 [00:10&lt;00:04,  1.06it/s]
-Generating embeddings:  75%|███████▌  | 12/16 [00:11&lt;00:03,  1.07it/s]
-Generating embeddings:  81%|████████▏ | 13/16 [00:11&lt;00:02,  1.08it/s]
-Generating embeddings:  88%|████████▊ | 14/16 [00:12&lt;00:01,  1.05it/s]
-Generating embeddings:  94%|█████████▍| 15/16 [00:13&lt;00:00,  1.04it/s]
-Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.00s/it]
-Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.06it/s]
+Generating embeddings:   6%|▋         | 1/16 [00:00&lt;00:13,  1.11it/s]
+Generating embeddings:  12%|█▎        | 2/16 [00:01&lt;00:12,  1.08it/s]
+Generating embeddings:  19%|█▉        | 3/16 [00:02&lt;00:12,  1.01it/s]
+Generating embeddings:  25%|██▌       | 4/16 [00:03&lt;00:11,  1.02it/s]
+Generating embeddings:  31%|███▏      | 5/16 [00:04&lt;00:10,  1.06it/s]
+Generating embeddings:  38%|███▊      | 6/16 [00:05&lt;00:09,  1.03it/s]
+Generating embeddings:  44%|████▍     | 7/16 [00:06&lt;00:08,  1.05it/s]
+Generating embeddings:  50%|█████     | 8/16 [00:07&lt;00:07,  1.02it/s]
+Generating embeddings:  56%|█████▋    | 9/16 [00:08&lt;00:06,  1.01it/s]
+Generating embeddings:  62%|██████▎   | 10/16 [00:09&lt;00:05,  1.05it/s]
+Generating embeddings:  69%|██████▉   | 11/16 [00:10&lt;00:04,  1.00it/s]
+Generating embeddings:  75%|███████▌  | 12/16 [00:11&lt;00:03,  1.03it/s]
+Generating embeddings:  81%|████████▏ | 13/16 [00:12&lt;00:02,  1.05it/s]
+Generating embeddings:  88%|████████▊ | 14/16 [00:13&lt;00:01,  1.06it/s]
+Generating embeddings:  94%|█████████▍| 15/16 [00:14&lt;00:00,  1.08it/s]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.10it/s]
+Generating embeddings: 100%|██████████| 16/16 [00:15&lt;00:00,  1.05it/s]
 
 The retrieved content:
 About Agents
@@ -446,7 +463,7 @@ In this example, we will use one of the SOTA embedding models, <cite>gte-Qwen2-7
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 34.924 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 35.103 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-rag-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d2c568081e6a4b3dc97dff750041209a/rag.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">rag.ipynb</span></code></a></p>
