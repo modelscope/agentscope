@@ -32,25 +32,13 @@
     {%- endif %}
 
     <div class="language-switch-container">
-        {% if language == 'zh_CN' %}
-            <button class="language-switch-button-bold" onclick="toChinese()">
-                中文
-            </button>
-        {% else %}
-            <button class="language-switch-button" onclick="toChinese()">
-                中文
-            </button>
-        {% endif %}
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
         |
-        {% if language == 'zh_CN' %}
-            <button class="language-switch-button" onclick="toEnglish()">
-                EN
-            </button>
-        {% else %}
-            <button class="language-switch-button-bold" onclick="toEnglish()">
-                EN
-            </button>
-        {% endif %}
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
     </div>
 
     {%- include "searchbox.html" %}
