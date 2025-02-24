@@ -1,0 +1,7 @@
+agentscope.models.yi\_model module
+==================================
+
+.. automodule:: agentscope.models.yi_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
