@@ -177,15 +177,11 @@ chunk is the last one.
 
     0. (False, 'Hello')
     Current text field: Hello
-    1. (False, 'Hello!')
-    Current text field: Hello!
-    2. (False, 'Hello! How')
-    Current text field: Hello! How
-    3. (False, 'Hello! How can I assist you')
-    Current text field: Hello! How can I assist you
-    4. (False, 'Hello! How can I assist you today?')
+    1. (False, 'Hello! How can I')
+    Current text field: Hello! How can I
+    2. (False, 'Hello! How can I assist you today?')
     Current text field: Hello! How can I assist you today?
-    5. (True, 'Hello! How can I assist you today?')
+    3. (True, 'Hello! How can I assist you today?')
     Current text field: Hello! How can I assist you today?
 
 
@@ -254,7 +250,7 @@ following code snippet for all built-in agents in AgentScope.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.615 seconds)
+   **Total running time of the script:** (0 minutes 3.415 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_streaming.py:

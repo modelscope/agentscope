@@ -261,7 +261,7 @@ dialog agent <cite>alice</cite>.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>User input:
 Bob: Do you know me?
-Alice: Hi Bob! I don&#39;t have any specific information about you beyond what you&#39;ve shared in our conversation. I&#39;m here to help, though! Is there anything in particular you&#39;d like to chat about or any questions you have?
+Alice: Hi Bob! I don&#39;t have any specific information about you beyond what you&#39;ve shared in our conversation. I&#39;m here to help with any questions or tasks you might have. Is there something in particular you&#39;d like to chat about or get help with?
 </pre></div>
 </div>
 </section>
@@ -298,9 +298,9 @@ Alice: Hi Bob! I don&#39;t have any specific information about you beyond what y
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Going out in the rain can be refreshing, but it also depends on whether Bob has an umbrella or proper rain gear, and if he needs to go out for a specific reason.&quot;, &quot;speak&quot;: &quot;It can be nice to go out in the rain, especially if you have an umbrella or raincoat. Do you need to go out for something important, or are you just thinking about a walk?&quot;, &quot;decision&quot;: false}
+{&quot;thought&quot;: &quot;Going out in the rain can be refreshing and fun, but it depends on whether Bob has proper gear and if there&#39;s a specific reason to go out. It&#39;s also important to consider safety and health, like avoiding lightning and staying warm.&quot;, &quot;speak&quot;: &quot;It can be nice to go out in the rain, especially if you have the right gear! Just make sure to stay safe and dry. Do you have a specific reason for going out, or are you just thinking about it for fun?&quot;, &quot;decision&quot;: false}
 ```
-The content field: {&#39;thought&#39;: &#39;Going out in the rain can be refreshing, but it also depends on whether Bob has an umbrella or proper rain gear, and if he needs to go out for a specific reason.&#39;, &#39;speak&#39;: &#39;It can be nice to go out in the rain, especially if you have an umbrella or raincoat. Do you need to go out for something important, or are you just thinking about a walk?&#39;, &#39;decision&#39;: False}
+The content field: {&#39;thought&#39;: &quot;Going out in the rain can be refreshing and fun, but it depends on whether Bob has proper gear and if there&#39;s a specific reason to go out. It&#39;s also important to consider safety and health, like avoiding lightning and staying warm.&quot;, &#39;speak&#39;: &#39;It can be nice to go out in the rain, especially if you have the right gear! Just make sure to stay safe and dry. Do you have a specific reason for going out, or are you just thinking about it for fun?&#39;, &#39;decision&#39;: False}
 The type of content field: &lt;class &#39;dict&#39;&gt;
 </pre></div>
 </div>
@@ -320,9 +320,9 @@ The type of content field: &lt;class &#39;dict&#39;&gt;
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Bob might be playing a guessing game or just trying to make a casual conversation. I&#39;ll pick a number and see where the conversation goes.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &quot;number&quot;: &quot;7&quot;}
+{&quot;thought&quot;: &quot;Bob might be looking for a random number or playing a game. I&#39;ll pick a number and see if he explains more about why he needs it.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &quot;number&quot;: &quot;7&quot;}
 ```
-The content of the response message: {&#39;thought&#39;: &quot;Bob might be playing a guessing game or just trying to make a casual conversation. I&#39;ll pick a number and see where the conversation goes.&quot;, &#39;speak&#39;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &#39;number&#39;: &#39;7&#39;}
+The content of the response message: {&#39;thought&#39;: &quot;Bob might be looking for a random number or playing a game. I&#39;ll pick a number and see if he explains more about why he needs it.&quot;, &#39;speak&#39;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &#39;number&#39;: &#39;7&#39;}
 </pre></div>
 </div>
 <p>The next question is how to post-process the structured output.
@@ -352,9 +352,9 @@ while the <cite>speak</cite> field should be displayed to the user, and the <cit
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Bob is continuing with the number picking, possibly for a game or just to pass time. I&#39;ll pick another number within the specified range.&quot;, &quot;speak&quot;: &quot;Alright, let&#39;s go with 23 this time.&quot;, &quot;number&quot;: &quot;23&quot;}
+{&quot;thought&quot;: &quot;Bob seems to be interested in a number within a specific range. I&#39;ll pick a number and see if he provides more context or if it&#39;s part of a game.&quot;, &quot;speak&quot;: &quot;Okay, let&#39;s go with 23. Is this for a particular reason?&quot;, &quot;number&quot;: &quot;23&quot;}
 ```
-The content field: Alright, let&#39;s go with 23 this time.
+The content field: Okay, let&#39;s go with 23. Is this for a particular reason?
 The type of content field: &lt;class &#39;str&#39;&gt;
 
 The metadata field: 23
@@ -407,7 +407,7 @@ loop manner.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;I need to calculate the product of the two numbers provided by Bob. I can use the execute_python_code function to perform this calculation.&lt;/thought&gt;
+David: &lt;thought&gt;I need to use the execute_python_code function to perform the multiplication of the two numbers provided by Bob.&lt;/thought&gt;
 &lt;function&gt;execute_python_code&lt;/function&gt;
 &lt;code&gt;151513434*54353453453&lt;/code&gt;
 system: 1. Execute function execute_python_code
@@ -422,16 +422,16 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;The calculation was successful, and I can now provide Bob with the result of the multiplication.&lt;/thought&gt;
+David: &lt;thought&gt;The multiplication has been successfully calculated. Now, I will provide the result to Bob using the finish function.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The product of 151513434 and 54353453453 is 8216804904775667602.&lt;/response&gt;
+&lt;response&gt;The result of 151513434*54353453453 is 8207069876574057562.&lt;/response&gt;
 </pre></div>
 </div>
 </section>
 <section id="llamaindexagent">
 <h2>LlamaIndexAgent<a class="headerlink" href="#llamaindexagent" title="Link to this heading"></a></h2>
 <p>Refer to the RAG Section for more details.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 33.755 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 40.817 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-builtin-agent-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/46ed2b57b0b63e420edd471093498f41/builtin_agent.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">builtin_agent.ipynb</span></code></a></p>
