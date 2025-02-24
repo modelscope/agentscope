@@ -4,8 +4,7 @@
 
 Please use the following commands to build sphinx doc of AgentScope.
 
-.. note::
-    Building AgentScope tutorial requires `DASHSCOPE_API_KEY` in your environment variables.
+> Note: Building AgentScope tutorial requires `DASHSCOPE_API_KEY` in your environment variables.
 
 ```shell
 # step 1: Install dependencies
