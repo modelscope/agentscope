@@ -32,6 +32,8 @@ jobs:
         run: |
           chmod +x docs/tutorial/en/build.sh
       - name: Build English Documentation
+        env:
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
         run: |
           cd docs/tutorial/en/
           ./build.sh
@@ -68,6 +70,8 @@ jobs:
         run: |
           chmod +x docs/tutorial/zh_CN/build.sh
       - name: Build Chinese Documentation
+        env:
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
         run: |
           cd docs/tutorial/zh_CN/
           ./build.sh
