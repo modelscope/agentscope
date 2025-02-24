@@ -135,7 +135,7 @@ dmypy.json
 
 # docs
 docs/tutorial/en/build/
-docs/tutorial/zh/build/
+docs/tutorial/zh_CN/build/
 
 # Used to save loggings and files
 *runs/
