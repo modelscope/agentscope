@@ -45,6 +45,7 @@ jobs:
           cname: doc.agentscope.io
 
   build_zh:
+    needs: build_en
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
