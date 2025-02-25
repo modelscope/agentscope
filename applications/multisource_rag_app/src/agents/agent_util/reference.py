@@ -29,10 +29,10 @@ CHECKING_PROMPT_3 = (
     "indices of those relevant content, "
     "sorted in descending order of relevance. If none of the retrieved "
     "content is relevant to the query, "
-    "return the analysis and a empty list of indices.\n"
+    "return the analysis and an empty list of indices.\n"
     "3. Try your best to answer the question based on the retrieved content "
-    "and your analysis. NEVER mention the index"
-    "of the retrieved content because they not visible to users.\n"
+    "and your analysis. NEVER mention the indices"
+    "of the retrieved content because they are not visible to users.\n"
 )
 
 CHECKING_PARSER_3 = MarkdownJsonDictParser(

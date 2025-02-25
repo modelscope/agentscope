@@ -38,7 +38,7 @@ def check_language_type(
         query_msg.metadata = {}
     request_id = query_msg.metadata.get(
         "request_id",
-        "query_rerewrite.check_language_type.default_request_id",
+        "query_rewrite.check_language_type.default_request_id",
     )
     time_start = time.perf_counter()
     logger.query_info(
@@ -820,7 +820,7 @@ class PromptContextRewriter(QueryRewriter):
 
         context_rewrite_prompt = (
             f"{system_prompt}"
-            "You are given a QUERY, a ADDITIONAL REQUIREMENT and a piece of "
+            "You are given a QUERY, an ADDITIONAL REQUIREMENT and a piece of "
             "CONTEXT to rewrite that query."
             "If the CONTEXT is related to the current QUERY, rewrite query "
             "taking the ADDITIONAL REQUIREMENT "
