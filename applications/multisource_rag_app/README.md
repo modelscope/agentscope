@@ -18,7 +18,7 @@ For more details about the design, please refer to [this paper](https://arxiv.or
 Agent configurations (e.g., names, prompts, models, knowledge bases) can be found in this [file](src/configs/as_config/as_agent_configs/agent_config_dict.json). Agents will be initialized with this file in  [copilot_app.py](src/copilot_app.py).
 
 #### Routing query to a subset of retrieval agents
-The routing mechanism is embedding-similarity based. For more details, refer to the [KIMAs paper](https://arxiv.org/abs/2502.09596) and [this paper](https://arxiv.org/abs/2501.07813). 
+The routing mechanism is embedding-similarity based. For more details, refer to the [KIMAs paper](https://arxiv.org/abs/2502.09596) and [this paper](https://arxiv.org/abs/2501.07813).
 
 #### Main Workflow and Logics
 **High-level summary.** When a user inputs a query, it will first be processed by the context manager, who will invoke relevant retrieval agents through the routing mechanism. The retrieval agents will obtain conversation-context enriched queries from the context manager, rewrite them with their own knowledge-context, and perform retrieval. More detailed conversation-context analysis and the retrieved content will finally passed to the summarizer to generate a final answer.
