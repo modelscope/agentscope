@@ -92,11 +92,14 @@ def init_model(
         model_configs = json.load(config_f)
     # set the api keys by environment variables
     for config in model_configs:
-        if "dashscope" in config.get("model_type", ""):
+        if "dashscope" in config.get("model_type", "") and (
+            len(config.get("api_key", "")) == 0
+        ):
             # for dashscope
             config["api_key"] = f"{os.environ.get('DASHSCOPE_API_KEY')}"
         else:
             # for other
+            logger.warning("Other models may not be supported now.")
             continue
     model_manager = ModelManager.get_instance()
     model_manager.register_model_wrapper_class(AsyncDashScopeChatWrapper, True)

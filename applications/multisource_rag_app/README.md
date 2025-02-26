@@ -8,8 +8,23 @@ For more details about the design, please refer to [this paper](https://arxiv.or
 <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100">
 
 ## Key components
-* [copilot_app.py](copilot_app.py): The core of the copilot application, including main logistics of the application.
-* [copilot_server.py](copilot_server.py): Setup a server that load local `copilot_core` pipeline, or remote dashscope pipeline, and connect to the client such as DingTalk/Gradio
+
+#### Agents
+* Retrieval agents: Retrieval agents are responsible for digesting the query based on the knowledge context. By default, three retrieval agents are set in the application, helping retrieve from the tutorial, API, and examples in the AgentScope repo.
+* Backup assistant: This backup assistant handles out-of-scope questions irrelevant to the knowledge domains (e.g., AgentScope repo in this application).
+* Context Manager: The context manager is responsible for digesting the conversation and distilling useful information for both the retrieval agents and the summarizer.
+* Summarizer: The summarizer summarizes the information from activated retrieval agents (or the backup assistant) and the context manager and generates the final answer.
+
+Agent configurations (e.g., names, prompts, models, knowledge bases) can be found in this [file](src/configs/as_config/as_agent_configs/agent_config_dict.json). Agents will be initialized with this file in  [copilot_app.py](src/copilot_app.py).
+
+#### Routing query to a subset of retrieval agents
+The routing mechanism is embedding-similarity based. For more details, refer to the [KIMAs paper](https://arxiv.org/abs/2502.09596) and [this paper](https://arxiv.org/abs/2501.07813). 
+
+#### Main Workflow and Logics
+**High-level summary.** When a user inputs a query, it will first be processed by the context manager, who will invoke relevant retrieval agents through the routing mechanism. The retrieval agents will obtain conversation-context enriched queries from the context manager, rewrite them with their own knowledge-context, and perform retrieval. More detailed conversation-context analysis and the retrieved content will finally passed to the summarizer to generate a final answer.
+
+* [copilot_app.py](src/copilot_app.py): The core of the copilot application, including main logistics of the application.
+* [copilot_server.py](src/copilot_server.py): Setup a server that load local `copilot_core` pipeline, or remote dashscope pipeline, and connect to the client such as DingTalk/Gradio
 
 ⚠️ This application relies on asynchronous mode of DashScope API. Therefore, all the model API calls are through DashScope library. Other library/model APIs may not be compatible.
 
@@ -48,7 +63,7 @@ as_scripts/setup_server.sh
 
 There are some variables that are already set in the script. If any developers want to migrate the service for their own applications, the following description can be used as a reference.
 
-####  Configurable variables in the [server setup script](as_scripts/setup_server.sh):
+####  Configurable variables in the [server setup script](src/as_scripts/setup_server.sh):
 * Environment variable `DASHSCOPE_API_KEY`: The key of the dashscope service.
 * (Optional) Environment variable `BING_SEARCH_KEY`: The key of Bing search if the application uses Bing search (`BingKnowledge`).
 * Environment variable `RAG_AGENT_NAMES`: Names of the retrieval agents, seperated by ",".
@@ -75,7 +90,7 @@ as_scripts/setup_gradio.sh
 
 If any developers want to setup the service for their own applications, the following description can be used as a reference.
 
-####  Configurable variables in the [Gradio setup script](as_scripts/setup_gradio.sh)
+####  Configurable variables in the [Gradio setup script](src/as_scripts/setup_gradio.sh)
 * Environment variable `DASHSCOPE_API_KEY`: The key of the dashscope service.
 * `MODEL_SERVICE_URL`: The url of the RAG application service, by default is `http://xx.xx.xx.xx:xxxx/api`
 * `FEEDBACK_SERVICE_URL`: The url of RAG application service accepting portal, by default it is `http://xx.xx.xx.xx:xxxx/api/feedback`
