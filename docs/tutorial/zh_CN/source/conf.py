@@ -38,20 +38,24 @@ sphinx_gallery_conf = {
     "example_extensions": [".py"],
 }
 
-templates_path = ["_templates"]
+templates_path = ["../../_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 languages = ["en", "zh_CN"]
-language = "en"
+language = "zh_CN"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
+html_static_path = ["../../_static"]
 
 html_css_files = [
     "css/gallery.css",
+]
+
+html_js_files = [
+    "language_switch.js",
 ]
 
 source_suffix = [".md", ".rst"]
