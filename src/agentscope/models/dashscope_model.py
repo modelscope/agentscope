@@ -4,7 +4,7 @@
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence, Optional, Generator
+from typing import Any, Union, List, Sequence, Optional, Generator, Literal
 
 from loguru import logger
 
@@ -125,7 +125,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         self,
         config_name: str,
         model_name: str = None,
-        api_type: str = "Generation",
+        app_id: str = None,
+        api_type: Literal["generation", "application"] = "generation",
         api_key: str = None,
         stream: bool = False,
         generate_args: dict = None,
@@ -158,6 +159,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         self.stream = stream
         self.api_type = api_type.lower()
+        self.app_id = app_id
 
     def __call__(
         self,
@@ -238,11 +240,12 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 # Set the result to be "message" format.
                 "result_format": "message",
                 "stream": stream,
-                "app_id"
-                if self.api_type == "application"
-                else "model": self.model_name,
             },
         )
+        if self.api_type == "application":
+            kwargs["app_id"] = self.app_id
+        else:
+            kwargs["model"] = self.model_name
 
         # Switch to the incremental_output mode
         if stream:
@@ -425,6 +428,32 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             `List[dict]`:
                 The formatted messages.
         """
+        if self.api_type == "application":
+            logger.warning(
+                "Dashscope.Application.call does not support "
+                "multiagents conversation. Please modify the "
+                "format function appropriately.",
+            )
+            # Parse all information into a list of messages
+            input_msgs = []
+            for _ in args:
+                if _ is None:
+                    continue
+                if isinstance(_, Msg):
+                    input_msgs.append(_)
+                elif isinstance(_, list) and all(
+                    isinstance(__, Msg) for __ in _
+                ):
+                    input_msgs.extend(_)
+                else:
+                    raise TypeError(
+                        f"The input should be a Msg object or a list "
+                        f"of Msg objects, got {type(_)}.",
+                    )
+            messages = [
+                {"role": _.role, "content": _.content} for _ in input_msgs
+            ]
+            return messages
 
         return ModelWrapperBase.format_for_common_chat_models(*args)
 
