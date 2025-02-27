@@ -196,7 +196,7 @@ class TestDashScopeApplicationWrapper(unittest.TestCase):
         self.assertIn("400", str(context.exception))
         self.assertIn("Test_request_id", str(context.exception))
 
-        # Verify call to dashscope.Generation.call
+        # Verify call to dashscope.Application.call
         mock_application_call.assert_called_once_with(
             app_id=self.app_id,
             messages=messages,
