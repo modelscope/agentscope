@@ -38,7 +38,7 @@ minimal_requires = [
     "scipy",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
-    "dashscope>=1.19.0",
+    "dashscope>=1.20.14",
 ]
 
 extra_service_requires = [
