@@ -41,6 +41,8 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-24]** [中文版教程](https://doc.agentscope.io/zh_CN)已上线
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-13]** 基于 AgentScope 的 [SWE-Bench(Verified)](https://www.swebench.com/) 解决方案[技术报告](https://doc.agentscope.io/tutorial/swe.html) 已上线
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-07]** 🎉 AgentScope 在 [SWE-Bench（Verified）](https://www.swebench.com/)榜单中取得 **63.4%** 的成绩！关于解决方案的更多细节即将发布

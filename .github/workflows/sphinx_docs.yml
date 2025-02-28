@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build_tutorial:
+  build_en:
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     strategy:
@@ -17,35 +17,69 @@ jobs:
       OS: ${{ matrix.os }}
       PYTHON: '3.9'
     steps:
-    - uses: actions/checkout@master
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@master
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Update setuptools
-      run: |
-        pip install setuptools==68.2.2 wheel==0.41.2
-    - name: Install Dependencies
-      run: |
-        pip install -q -e .[full]
-    - name: Add execute permission to build.sh
-      run: |
-        chmod +x docs/tutorial/en/build.sh
-    - id: build_en
-      name: Build English Documentation
-      env:
-        DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
-      run: |
-        cd docs/tutorial/en/
-        ./build.sh
-    - name: Upload Documentation
-      uses: actions/upload-artifact@v4
-      with:
-        name: SphinxDoc
-        path: 'docs/tutorial/en/build'
-    - uses: peaceiris/actions-gh-pages@v3
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: 'docs/tutorial/en/build/html'
-        cname: doc.agentscope.io
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Update setuptools
+        run: |
+          pip install setuptools==68.2.2 wheel==0.41.2
+      - name: Install Dependencies
+        run: |
+          pip install -q -e .[full]
+      - name: Add execute permission to build.sh
+        run: |
+          chmod +x docs/tutorial/en/build.sh
+      - name: Build English Documentation
+        env:
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+        run: |
+          cd docs/tutorial/en/
+          ./build.sh
+      - name: Deploy English Documentation
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/tutorial/en/build/html
+          cname: doc.agentscope.io
+
+  build_zh:
+    needs: build_en
+    timeout-minutes: 20
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.9' ]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: '3.9'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Update setuptools
+        run: |
+          pip install setuptools==68.2.2 wheel==0.41.2
+      - name: Install Dependencies
+        run: |
+          pip install -q -e .[full]
+      - name: Add execute permission to build.sh
+        run: |
+          chmod +x docs/tutorial/zh_CN/build.sh
+      - name: Build Chinese Documentation
+        env:
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+        run: |
+          cd docs/tutorial/zh_CN/
+          ./build.sh
+      - name: Deploy Chinese Documentation
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/tutorial/zh_CN/build/html
+          destination_dir: zh_CN
+          cname: doc.agentscope.io
