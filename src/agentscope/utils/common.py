@@ -15,7 +15,17 @@ import string
 import sys
 import tempfile
 import threading
-from typing import Any, Generator, Optional, Union, Tuple, Literal, List
+from typing import (
+    Any,
+    Generator,
+    Optional,
+    Union,
+    Tuple,
+    Literal,
+    List,
+    Callable,
+)
+from functools import wraps
 from urllib.parse import urlparse
 
 import psutil
@@ -613,3 +623,41 @@ def _generate_new_runtime_id() -> str:
     return _get_timestamp(_RUNTIME_ID_FORMAT).format(
         _generate_random_code(uppercase=False),
     )
+
+
+def pipeline(func: Callable) -> Callable:
+    """
+    A decorator that runs the given function in a separate thread and yields
+    message instances as they are logged.
+
+    This decorator is used to execute a function concurrently while providing a
+    mechanism to yield messages produced during its execution. It leverages
+    threading to run the function in parallel, yielding messages until the
+    function completes.
+
+    Args:
+        func: The function to be executed in a separate thread.
+
+    Returns:
+        A wrapped function that, when called, returns a generator yielding
+        message instances.
+    """
+
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Generator:
+        from ..logging import get_msg_instances
+
+        # Run the main function in a separate thread
+        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
+        thread.start()
+
+        # Yield new Msg instances as they are logged
+        for msg in get_msg_instances():
+            yield msg
+            if not thread.is_alive():
+                break
+
+        # Wait for the function to finish
+        thread.join()
+
+    return wrapper

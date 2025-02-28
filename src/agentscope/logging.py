@@ -2,7 +2,9 @@
 """Logging utilities."""
 import os
 import sys
-from typing import Optional, Literal, Any
+import time
+import threading
+from typing import Optional, Literal, Any, Generator
 
 from loguru import logger
 
@@ -39,6 +41,8 @@ _DEFAULT_LOG_FORMAT = (
 )
 
 _PREFIX_DICT = {}
+_MSG_INSTANCE = []
+_LOCK = threading.Lock()
 
 
 def log_stream_msg(msg: Msg, last: bool = True) -> None:
@@ -53,6 +57,9 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
             Otherwise, False.
     """
     global _PREFIX_DICT
+
+    with _LOCK:
+        _MSG_INSTANCE.append(msg)
 
     # Print msg to terminal
     formatted_str = msg.formatted_str(colored=True)
@@ -110,6 +117,9 @@ def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
 
     if not isinstance(msg, Msg):
         raise TypeError(f"Get type {type(msg)}, expect Msg object.")
+
+    with _LOCK:
+        _MSG_INSTANCE.append(msg)
 
     print(msg.formatted_str(colored=True))
 
@@ -239,3 +249,21 @@ def setup_logger(
             level=LEVEL_SAVE_MSG,  # The highest level to filter out all
             # other logs
         )
+
+
+def get_msg_instances() -> Generator:
+    """
+    Generator function that yields message instances.
+
+    Continuously checks for new message instances and yields them
+    if available. It uses a threading lock to ensure thread safety
+    when accessing the shared message instance list.
+
+    Yields:
+        The next message instance from the list if available.
+    """
+    while True:
+        with _LOCK:
+            if _MSG_INSTANCE:
+                yield _MSG_INSTANCE.pop(0)
+        time.sleep(0.1)  # Avoid busy waiting
