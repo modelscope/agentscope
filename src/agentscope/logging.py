@@ -256,6 +256,31 @@ def setup_logger(
         )
 
 
+def clear_msg_instances(thread_id: Optional[str] = None) -> None:
+    """
+    Clears all message instances for a specific thread ID.
+
+    This function removes all message instances associated with a given
+    thread ID (`thread_id`). It ensures thread safety through the use of a
+    threading lock when accessing the shared message instance list. This
+    prevents race conditions in concurrent environments.
+
+    Args:
+        thread_id (optional): The thread ID for which to clear message
+        instances. If `None`, the function will do nothing.
+
+    Notes:
+        - It assumes the existence of a global `_LOCKS` for synchronization and
+        a dictionary `_MSG_INSTANCE` where each thread ID maps to a list of
+        message instances.
+    """
+    if not thread_id:
+        return
+
+    with _LOCKS[thread_id]:
+        _MSG_INSTANCE[thread_id].clear()
+
+
 def get_msg_instances(thread_id: Optional[str] = None) -> Generator:
     """
     A generator function that yields message instances for a specific thread ID

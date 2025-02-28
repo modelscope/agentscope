@@ -646,7 +646,7 @@ def pipeline(func: Callable) -> Callable:
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Generator:
-        from ..logging import get_msg_instances
+        from ..logging import get_msg_instances, clear_msg_instances
 
         thread_id = "pipeline" + str(uuid.uuid4())
 
@@ -657,6 +657,7 @@ def pipeline(func: Callable) -> Callable:
             args=args,
             kwargs=kwargs,
         )
+        clear_msg_instances(thread_id=thread_id)
         thread.start()
 
         # Yield new Msg instances as they are logged
