@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import threading
+from collections import defaultdict
 from typing import Optional, Literal, Any, Generator
 
 from loguru import logger
@@ -41,8 +42,8 @@ _DEFAULT_LOG_FORMAT = (
 )
 
 _PREFIX_DICT = {}
-_MSG_INSTANCE = []
-_LOCK = threading.Lock()
+_MSG_INSTANCE = defaultdict(list)
+_LOCKS = defaultdict(threading.Lock)
 
 
 def log_stream_msg(msg: Msg, last: bool = True) -> None:
@@ -58,8 +59,10 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
     """
     global _PREFIX_DICT
 
-    with _LOCK:
-        _MSG_INSTANCE.append(msg)
+    thread_id = threading.current_thread().name
+    if thread_id.startswith("pipeline"):
+        with _LOCKS[thread_id]:
+            _MSG_INSTANCE[thread_id].append(msg)
 
     # Print msg to terminal
     formatted_str = msg.formatted_str(colored=True)
@@ -118,8 +121,10 @@ def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
     if not isinstance(msg, Msg):
         raise TypeError(f"Get type {type(msg)}, expect Msg object.")
 
-    with _LOCK:
-        _MSG_INSTANCE.append(msg)
+    thread_id = threading.current_thread().name
+    if thread_id.startswith("pipeline"):
+        with _LOCKS[thread_id]:
+            _MSG_INSTANCE[thread_id].append(msg)
 
     print(msg.formatted_str(colored=True))
 
@@ -251,19 +256,43 @@ def setup_logger(
         )
 
 
-def get_msg_instances() -> Generator:
+def get_msg_instances(thread_id: Optional[str] = None) -> Generator:
     """
-    Generator function that yields message instances.
+    A generator function that yields message instances for a specific thread ID
 
-    Continuously checks for new message instances and yields them
-    if available. It uses a threading lock to ensure thread safety
-    when accessing the shared message instance list.
+    This function is designed to continuously monitor and yield new message
+    instances associated with a given thread ID (`thread_id`). It ensures
+    thread safety through the use of a threading lock when accessing the shared
+    message instance list. This prevents race conditions in concurrent
+    environments.
+
+    Args:
+        thread_id (optional): The thread ID for which to monitor and yield
+        message instances. If `None`, the function will yield `None` and
+        terminate.
 
     Yields:
-        The next message instance from the list if available.
+        The next available message instance for the specified thread ID. If no
+        message is available, it will wait and check periodically.
+
+    Notes:
+        - The function uses a small delay (`time.sleep(0.1)`) to prevent busy
+        waiting. This ensures efficient CPU usage while waiting for new
+        messages.
+        - It assumes the existence of a global `_LOCK` for synchronization and
+        a dictionary `_MSG_INSTANCE` where each thread ID maps to a list of
+        message instances.
+
+    Example:
+        for msg in get_msg_instances(thread_id=123):
+            process_message(msg)
     """
+    if not thread_id:
+        yield
+        return
+
     while True:
-        with _LOCK:
-            if _MSG_INSTANCE:
-                yield _MSG_INSTANCE.pop(0)
+        with _LOCKS[thread_id]:
+            if _MSG_INSTANCE[thread_id]:
+                yield _MSG_INSTANCE[thread_id].pop(0)
         time.sleep(0.1)  # Avoid busy waiting

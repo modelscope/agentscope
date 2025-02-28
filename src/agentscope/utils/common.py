@@ -15,6 +15,7 @@ import string
 import sys
 import tempfile
 import threading
+import uuid
 from typing import (
     Any,
     Generator,
@@ -647,12 +648,19 @@ def pipeline(func: Callable) -> Callable:
     def wrapper(*args: Any, **kwargs: Any) -> Generator:
         from ..logging import get_msg_instances
 
+        thread_id = "pipeline" + str(uuid.uuid4())
+
         # Run the main function in a separate thread
-        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
+        thread = threading.Thread(
+            target=func,
+            name=thread_id,
+            args=args,
+            kwargs=kwargs,
+        )
         thread.start()
 
         # Yield new Msg instances as they are logged
-        for msg in get_msg_instances():
+        for msg in get_msg_instances(thread_id=thread_id):
             yield msg
             if not thread.is_alive():
                 break
