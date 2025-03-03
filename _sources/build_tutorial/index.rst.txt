@@ -28,6 +28,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Workstation ------------------">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_low_code_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_low_code.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Low-code Development</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Configuration ------------------------">
 
 .. only:: html
@@ -57,23 +74,6 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Distribution</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Workstation ------------------">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_low_code_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_low_code.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Low-code Development</div>
     </div>
 
 
@@ -343,9 +343,9 @@
    :hidden:
 
    /build_tutorial/visual
+   /build_tutorial/low_code
    /build_tutorial/examples
    /build_tutorial/distribution
-   /build_tutorial/low_code
    /build_tutorial/web_browser
    /build_tutorial/quickstart
    /build_tutorial/prompt

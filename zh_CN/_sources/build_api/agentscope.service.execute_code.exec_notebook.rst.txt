@@ -1,7 +1,0 @@
-agentscope.service.execute\_code.exec\_notebook module
-======================================================
-
-.. automodule:: agentscope.service.execute_code.exec_notebook
-   :members:
-   :undoc-members:
-   :show-inheritance:
