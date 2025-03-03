@@ -111,6 +111,105 @@ class TestDashScopeChatWrapper(unittest.TestCase):
         ASManager.get_instance().flush()
 
 
+class TestDashScopeApplicationWrapper(unittest.TestCase):
+    """Test DashScope Chat Wrapper for application"""
+
+    def setUp(self) -> None:
+        agentscope.init(disable_saving=True)
+
+        self.config_name = "test_config"
+        self.api_type = "application"
+        self.app_id = "test_app_id"
+        self.api_key = "test_api_key"
+        self.wrapper = DashScopeChatWrapper(
+            config_name=self.config_name,
+            app_id=self.app_id,
+            api_type=self.api_type,
+            api_key=self.api_key,
+        )
+
+    @patch("agentscope.models.dashscope_model.dashscope.Application.call")
+    def test_call_success(self, mock_application_call: MagicMock) -> None:
+        """Test call success"""
+        # Set up the mock response for a successful API call
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.request_id = "test_request_id"
+        mock_response.usage.models[0] = {
+            "input_tokens": 3,
+            "output_tokens": 5,
+            "total_tokens": 8,
+        }
+        mock_response.output = {
+            "text": "Hello, world!",
+        }
+
+        mock_application_call.return_value = mock_response
+
+        # Define test input
+        messages = [
+            {"role": "user", "content": "Hi!"},
+            {"role": "assistant", "content": "Hello!"},
+        ]
+
+        # Call the wrapper method
+        response = self.wrapper(messages)
+
+        # Verify the response
+        self.assertIsInstance(response, ModelResponse)
+        self.assertEqual(response.text, "Hello, world!")
+        self.assertEqual(response.raw, mock_response)
+
+        # Verify call to dashscope.Application.call
+        mock_application_call.assert_called_once_with(
+            app_id=self.app_id,
+            messages=messages,
+            result_format="message",
+            stream=False,
+            api_key="test_api_key",
+        )
+
+    @patch("agentscope.models.dashscope_model.dashscope.Application.call")
+    def test_call_failure(self, mock_application_call: MagicMock) -> None:
+        """test call failure"""
+        # Set up the mock response for a failed API call
+        mock_response = MagicMock()
+        mock_response.status_code = "400"
+        mock_response.request_id = "Test_request_id"
+        mock_response.code = "Error Code"
+        mock_response.message = "Error Message"
+        mock_application_call.return_value = mock_response
+
+        # Define test input
+        messages = [
+            {"role": "user", "content": "Hi!"},
+            {"role": "assistant", "content": "Hello!"},
+        ]
+
+        # Call the wrapper method and expect an exception
+        with self.assertRaises(RuntimeError) as context:
+            self.wrapper(messages)
+
+        # Assert the expected exception message contains the error details
+        self.assertIn("Error Code", str(context.exception))
+        self.assertIn("Error Message", str(context.exception))
+        self.assertIn("400", str(context.exception))
+        self.assertIn("Test_request_id", str(context.exception))
+
+        # Verify call to dashscope.Application.call
+        mock_application_call.assert_called_once_with(
+            app_id=self.app_id,
+            messages=messages,
+            result_format="message",
+            stream=False,
+            api_key="test_api_key",
+        )
+
+    def tearDown(self) -> None:
+        """Tear down the test"""
+        ASManager.get_instance().flush()
+
+
 class TestDashScopeImageSynthesisWrapper(unittest.TestCase):
     """Test DashScope Image Synthesis Wrapper"""
 
