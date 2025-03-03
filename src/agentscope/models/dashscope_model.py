@@ -86,6 +86,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/api-details
 
+    It also supports calling Bailian applications by setting `app_type` to
+    `application` and `app_id` to the corresponding application id, refer to
+    https://help.aliyun.com/zh/model-studio/developer-reference/call-application-through-api/
+
     Example Response:
         - Refer to
         https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw
@@ -139,6 +143,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 The name of the model config.
             model_name (`str`, default `None`):
                 The name of the model to use in DashScope API.
+            app_id (str, optional):
+                The unique identifier for the application using the
+                DashScope Application API. Defaults to None.
+            api_type (Literal["generation", "application"], optional):
+                The type of API to interact with. Choices are 'generation' for
+                dashscope.Generation.call and 'application' for
+                dashscope.Application.call. Defaults to 'generation'.
             api_key (`str`, default `None`):
                 The API key for DashScope API.
             stream (`bool`, default `False`):
