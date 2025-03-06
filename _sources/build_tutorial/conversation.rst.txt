@@ -109,12 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message may have been cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! I apologize for any confusion. I'm Monster, your helpful assistant. It looks like there might have been a mix-up, as I don't see any previous message from me. How can I assist you today?
-    Angel: Hello! It looks like there might be a bit of a mix-up with the names. I'm Angel, and I'm here to help you. How can I assist you today?
-    Monster: Hello Angel! It’s nice to meet you. I see there was a bit of a mix-up with the names, but no worries! I’m here to help as well. How can we assist you today?
-    Angel: Hello! It seems there's a bit of confusion. I'm Angel, and I'm here to assist you. There's no other assistant named Monster in this conversation. How can I help you today?
-    Monster: Hello Angel! I understand the confusion, and I appreciate your patience. Let's clear this up: I'm here to assist, and you can call me Monster. How can I help you today?
+    Angel: Hello! It looks like your message was cut off. Could you please provide more details so I can assist you better?
+    Monster: Hello Angel! I think there might have been a mix-up, as I didn't send a previous message. How can I assist you today?
+    Angel: Hello! It’s nice to meet you, Monster. I think there was a bit of a mix-up in the conversation. How can I assist you today? Is there anything specific you’d like to discuss or any questions you have?
+    Monster: Hello Angel! It's great to meet you too. Since there was a bit of a mix-up, let's start fresh. Is there anything on your mind that you'd like to chat about? Any topics or questions you're curious about?
+    Angel: Hello Monster! It’s great to have a fresh start. I’m here to help with any questions or topics you’d like to explore. Whether it’s about technology, science, culture, or anything else, feel free to ask. What’s on your mind today?
+    Monster: Hello Angel! Thanks for the warm welcome. Since we're starting fresh, how about we discuss something interesting? I'm curious—do you have any particular hobbies or interests that you enjoy? Or, if you prefer, we can dive into a topic like technology, science, or culture. What sounds good to you?
 
 
 
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 30.765 seconds)
+   **Total running time of the script:** (0 minutes 34.574 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
