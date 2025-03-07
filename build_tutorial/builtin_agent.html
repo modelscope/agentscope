@@ -261,7 +261,7 @@ dialog agent <cite>alice</cite>.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>User input:
 Bob: Do you know me?
-Alice: Hello, Bob! I don&#39;t have any specific information about you beyond what you&#39;ve shared in our conversation. I&#39;m here to help with any questions or tasks you might have. Is there something in particular you&#39;d like to talk about or ask?
+Alice: Hello, Bob! I don&#39;t have any specific information about you beyond what you&#39;ve shared in this conversation. I&#39;m here to help with any questions or tasks you might have. Is there anything in particular you&#39;d like to talk about or get help with?
 </pre></div>
 </div>
 </section>
@@ -298,9 +298,9 @@ Alice: Hello, Bob! I don&#39;t have any specific information about you beyond wh
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Going out in the rain can be refreshing and fun, but it also depends on the person&#39;s health, the temperature, and whether they have appropriate clothing. It&#39;s important to consider if they need to go out or if their activity is weather-dependent.&quot;, &quot;speak&quot;: &quot;It can be nice to go out in the rain, especially if you have the right gear like an umbrella or a raincoat. However, it might not be the best idea if you&#39;re worried about getting wet or if it&#39;s too cold. Do you need to go out, or is there something specific you&#39;re planning?&quot;, &quot;decision&quot;: false}
+{&quot;thought&quot;: &quot;Going out in the rain can be refreshing, but it also depends on the temperature, if one has proper gear, and personal health considerations. It&#39;s important to weigh these factors.&quot;, &quot;speak&quot;: &quot;It can be nice to go out in the rain, especially if you have an umbrella or a raincoat. However, consider the temperature and your own comfort. Do you feel up for it?&quot;, &quot;decision&quot;: &quot;false&quot;}
 ```
-The content field: {&#39;thought&#39;: &quot;Going out in the rain can be refreshing and fun, but it also depends on the person&#39;s health, the temperature, and whether they have appropriate clothing. It&#39;s important to consider if they need to go out or if their activity is weather-dependent.&quot;, &#39;speak&#39;: &quot;It can be nice to go out in the rain, especially if you have the right gear like an umbrella or a raincoat. However, it might not be the best idea if you&#39;re worried about getting wet or if it&#39;s too cold. Do you need to go out, or is there something specific you&#39;re planning?&quot;, &#39;decision&#39;: False}
+The content field: {&#39;thought&#39;: &quot;Going out in the rain can be refreshing, but it also depends on the temperature, if one has proper gear, and personal health considerations. It&#39;s important to weigh these factors.&quot;, &#39;speak&#39;: &#39;It can be nice to go out in the rain, especially if you have an umbrella or a raincoat. However, consider the temperature and your own comfort. Do you feel up for it?&#39;, &#39;decision&#39;: &#39;false&#39;}
 The type of content field: &lt;class &#39;dict&#39;&gt;
 </pre></div>
 </div>
@@ -320,9 +320,9 @@ The type of content field: &lt;class &#39;dict&#39;&gt;
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Bob is asking for a random number, which seems like a fun and simple request. I&#39;ll pick a number to keep the conversation light and engaging.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &quot;number&quot;: &quot;7&quot;}
+{&quot;thought&quot;: &quot;I need to pick a random number between 1 and 10. I&#39;ll choose 7 because it&#39;s often considered a lucky number.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &quot;number&quot;: &quot;7&quot;}
 ```
-The content of the response message: {&#39;thought&#39;: &quot;Bob is asking for a random number, which seems like a fun and simple request. I&#39;ll pick a number to keep the conversation light and engaging.&quot;, &#39;speak&#39;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &#39;number&#39;: &#39;7&#39;}
+The content of the response message: {&#39;thought&#39;: &quot;I need to pick a random number between 1 and 10. I&#39;ll choose 7 because it&#39;s often considered a lucky number.&quot;, &#39;speak&#39;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &#39;number&#39;: &#39;7&#39;}
 </pre></div>
 </div>
 <p>The next question is how to post-process the structured output.
@@ -352,12 +352,12 @@ while the <cite>speak</cite> field should be displayed to the user, and the <cit
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Bob is asking for a random number between 20 and 30. I&#39;ll pick a number within this range to continue the light and engaging conversation.&quot;, &quot;speak&quot;: &quot;Alright, let&#39;s go with 24. Is there a particular reason you&#39;re choosing numbers in this range?&quot;, &quot;number&quot;: &quot;24&quot;}
+{&quot;thought&quot;: &quot;I need to pick a random number between 20 and 30. I&#39;ll choose 25 because it&#39;s right in the middle of the range.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 25?&quot;, &quot;number&quot;: &quot;25&quot;}
 ```
-The content field: Alright, let&#39;s go with 24. Is there a particular reason you&#39;re choosing numbers in this range?
+The content field: Sure, I&#39;ll pick a number. How about 25?
 The type of content field: &lt;class &#39;str&#39;&gt;
 
-The metadata field: 24
+The metadata field: 25
 The type of metadata field: &lt;class &#39;str&#39;&gt;
 </pre></div>
 </div>
@@ -407,63 +407,12 @@ loop manner.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;To calculate the multiplication of 151513434 and 54353453453, I will use the execute_python_code function with the appropriate Python code. I will set use_docker to True for security reasons.&lt;/thought&gt;
+David: &lt;thought&gt;I need to use the execute_python_code function to perform the multiplication of the two numbers provided by Bob.&lt;/thought&gt;
 &lt;function&gt;execute_python_code&lt;/function&gt;
-&lt;code&gt;result = 151513434 * 54353453453; result&lt;/code&gt;
-&lt;use_docker&gt;True&lt;/use_docker&gt;
+&lt;code&gt;151513434*54353453453&lt;/code&gt;
 system: 1. Execute function execute_python_code
    [ARGUMENTS]:
-       code: result = 151513434 * 54353453453; result
-                use_docker: True
-   [STATUS]: FAILED
-   [RESULT]: Failed to pull Docker image: 400 Client Error for http+docker://localhost/v1.45/images/create?tag=latest&amp;fromImage=True: Bad Request (&quot;invalid reference format: repository name (library/True) must be lowercase&quot;)
-
-system: Respond with specific tags as outlined below:
-&lt;thought&gt;{what you thought}&lt;/thought&gt;
-&lt;function&gt;{the function name you want to call}&lt;/function&gt;
-&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
-&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
-...
-David: &lt;thought&gt;The previous attempt to use the execute_python_code function failed because there was an error with the use_docker argument. It seems that the value for use_docker should be a boolean, not a string. I will try again with the correct boolean value.&lt;/thought&gt;
-&lt;function&gt;execute_python_code&lt;/function&gt;
-&lt;code&gt;result = 151513434 * 54353453453; result&lt;/code&gt;
-&lt;use_docker&gt;True&lt;/use_docker&gt;
-system: 1. Execute function execute_python_code
-   [ARGUMENTS]:
-       code: result = 151513434 * 54353453453; result
-                use_docker: True
-   [STATUS]: FAILED
-   [RESULT]: Failed to pull Docker image: 400 Client Error for http+docker://localhost/v1.45/images/create?tag=latest&amp;fromImage=True: Bad Request (&quot;invalid reference format: repository name (library/True) must be lowercase&quot;)
-
-system: Respond with specific tags as outlined below:
-&lt;thought&gt;{what you thought}&lt;/thought&gt;
-&lt;function&gt;{the function name you want to call}&lt;/function&gt;
-&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
-&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
-...
-David: &lt;thought&gt;The execute_python_code function is failing due to an issue with the use_docker argument. It appears that the system is incorrectly interpreting the boolean value. I will attempt to run the code without Docker, which should work as long as the code is safe, and in this case, it is a simple arithmetic operation.&lt;/thought&gt;
-&lt;function&gt;execute_python_code&lt;/function&gt;
-&lt;code&gt;result = 151513434 * 54353453453; result&lt;/code&gt;
-&lt;use_docker&gt;False&lt;/use_docker&gt;
-system: 1. Execute function execute_python_code
-   [ARGUMENTS]:
-       code: result = 151513434 * 54353453453; result
-                use_docker: False
-   [STATUS]: FAILED
-   [RESULT]: Failed to pull Docker image: 400 Client Error for http+docker://localhost/v1.45/images/create?tag=latest&amp;fromImage=False: Bad Request (&quot;invalid reference format: repository name (library/False) must be lowercase&quot;)
-
-system: Respond with specific tags as outlined below:
-&lt;thought&gt;{what you thought}&lt;/thought&gt;
-&lt;function&gt;{the function name you want to call}&lt;/function&gt;
-&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
-&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
-...
-David: &lt;thought&gt;It seems that there is a persistent issue with the use_docker argument, even when I set it to False. Since the arithmetic operation is safe, I will attempt to run the Python code without specifying the use_docker argument, which should default to not using Docker.&lt;/thought&gt;
-&lt;function&gt;execute_python_code&lt;/function&gt;
-&lt;code&gt;result = 151513434 * 54353453453; result&lt;/code&gt;
-system: 1. Execute function execute_python_code
-   [ARGUMENTS]:
-       code: result = 151513434 * 54353453453; result
+       code: 151513434*54353453453
    [STATUS]: SUCCESS
    [RESULT]:
 
@@ -473,16 +422,16 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;The multiplication was successfully calculated, and now I have the result. I will inform Bob of the outcome.&lt;/thought&gt;
+David: &lt;thought&gt;The multiplication has been successfully calculated, and the result is 8217670340954854632. Now, I should inform Bob of the result.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The result of 151513434 multiplied by 54353453453 is 820942687018157622.&lt;/response&gt;
+&lt;response&gt;The result of 151513434*54353453453 is 8217670340954854632.&lt;/response&gt;
 </pre></div>
 </div>
 </section>
 <section id="llamaindexagent">
 <h2>LlamaIndexAgent<a class="headerlink" href="#llamaindexagent" title="Link to this heading"></a></h2>
 <p>Refer to the RAG Section for more details.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 14.842 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 29.632 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-builtin-agent-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/46ed2b57b0b63e420edd471093498f41/builtin_agent.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">builtin_agent.ipynb</span></code></a></p>

@@ -85,7 +85,7 @@ As usual, we initialize AgentScope with the above configuration, and create a ne
 
  .. code-block:: none
 
-    2025-03-06 04:21:45 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+    2025-03-07 02:06:35 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 
 
 
@@ -168,11 +168,11 @@ After that, we can send the message to the vision agent and get the response.
 
  .. code-block:: none
 
-    Monday: The image is a bar chart titled "The Apples Each Person Has in 2023." It shows the number of apples that three individuals, Alice, Bob, and Charlie, have. The y-axis represents the number of apples, ranging from 0 to 4, while the x-axis lists the names of the individuals.
+    Monday: The image is a bar chart titled "The Apples Each Person Has in 2023." It shows the number of apples that three individuals, Alice, Bob, and Charlie, have. The y-axis represents the number of apples, ranging from 0 to 40, and the x-axis lists the names of the individuals.
 
-    - Alice has 2 apples.
-    - Bob has 1 apple.
-    - Charlie has 4 apples.
+    - Alice has 20 apples.
+    - Bob has 10 apples.
+    - Charlie has 40 apples.
 
 
 
@@ -180,7 +180,7 @@ After that, we can send the message to the vision agent and get the response.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.942 seconds)
+   **Total running time of the script:** (0 minutes 9.544 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_multimodality.py:

@@ -109,12 +109,14 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message was cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! I'm Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I don't see any previous message from you. Could you please share what you need help with or what you were trying to ask? I'm here to assist you!
-    Angel: Hello Monster! It looks like there's a bit of confusion. I'm Angel, and I'm here to help you. Could you please let me know what you need assistance with?
-    Monster: Oh, I see! My apologies for the confusion, Angel. It seems we both got a bit mixed up. I'm here to assist, so if you have any questions or need help with anything, feel free to let me know! What can I do for you today?
-    Angel: Hello Monster! It seems there's been a bit of a role mix-up. I'm Angel, and I'm here to help you. If you have any questions or need assistance with anything, please let me know. What can I do for you today?
-    Monster: Hello Angel! I understand now. Thank you for clarifying. I'm here to help, so if you have any questions or need assistance with anything, please let me know. What can I do for you today?
+    Angel: Hello! It seems like your message got cut off. How can I assist you today?
+    Monster: Hello Angel! It looks like there might have been a mix-up, as I'm Monster, the assistant. How can I help you today?
+    Angel: Oh, hello! It seems there was a bit of confusion. I'm Angel, and I'm here to assist you. How can I help you today?
+    Monster: Hello Angel! It’s nice to meet you. It seems we both are here to assist, which is a bit unusual but fun! If you have any questions or need help with anything, feel free to let me know. How can I assist you today?
+    Angel: Hello Monster! It's indeed a bit unusual but quite fun to meet another assistant. I appreciate the offer, and if you don't mind, let's collaborate to help anyone who might need assistance. If you have any specific areas of expertise or any particular way you'd like to contribute, please let me know. How can we work together to assist others?
+    Monster: Hello Angel! That sounds like a great idea. Collaboration can definitely lead to better support and more creative solutions. I have a broad range of expertise, including technology, general knowledge, problem-solving, and even some creative writing. How about you? What are your areas of expertise?
+
+    We can work together by dividing tasks based on our strengths or by collaborating on more complex issues. If someone has a question, we can both contribute our insights, and if one of us is unsure, the other can step in. How does that sound?
 
 
 
@@ -292,7 +294,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 31.977 seconds)
+   **Total running time of the script:** (0 minutes 28.398 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
