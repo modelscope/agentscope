@@ -1,0 +1,20 @@
+agentscope.service.execute\_code package
+========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.execute_code.exec_notebook
+   agentscope.service.execute_code.exec_python
+   agentscope.service.execute_code.exec_shell
+
+Module contents
+---------------
+
+.. automodule:: agentscope.service.execute_code
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,388 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>工具 &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="检索增强生成（RAG）" href="rag.html" />
+    <link rel="prev" title="配置和监控" href="monitor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">工具</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">内置工具函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">创建工具函数</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">工具</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/tool.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">备注</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-tool-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="tools">
+<span id="sphx-glr-build-tutorial-tool-py"></span><span id="id1"></span><h1>工具<a class="headerlink" href="#tools" title="Link to this heading"></a></h1>
+<p>在本教程中，我们将展示如何使用 AgentScope 中内置的工具函数，以及如何创建自定义工具函数。</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+</pre></div>
+</div>
+<section id="id2">
+<h2>内置工具函数<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>AgentScope 提供了一个 <cite>ServiceToolkit</cite> 模块，支持以下功能:</p>
+<ul class="simple">
+<li><p>工具介绍生成,</p></li>
+<li><p>提供一套默认的调用格式,</p></li>
+<li><p>模型返回值解析、工具调用和面向智能体的错误处理。</p></li>
+</ul>
+<p>在使用 <cite>ServiceToolkit</cite> 之前,我们可以先看一下 <cite>agentscope.service</cite> 模块中可用的工具。</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_help</span><span class="p">,</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
+
+<span class="n">get_help</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>以上所有函数都是用 Python 函数实现的。
+可以通过调用 <cite>add</cite> 方法注册到 <cite>ServiceToolkit</cite> 中。</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">bing_search</span><span class="p">,</span> <span class="n">execute_shell_command</span>
+
+<span class="n">toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
+<span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">execute_shell_command</span><span class="p">)</span>
+
+<span class="c1"># 注意,一些工具函数的参数（例如 api_key）应该由开发人员处理。</span>
+<span class="c1"># 你可以直接在 add 方法中以关键字参数的形式传递这些参数，保留其他参数留给智能体填写。</span>
+
+<span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bing_search</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;工具说明:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>工具说明:
+## Tool Functions:
+The following tool functions are available in the format of
+```
+{index}. {function name}: {function description}
+{argument1 name} ({argument type}): {argument description}
+{argument2 name} ({argument type}): {argument description}
+...
+```
+
+1. execute_shell_command: Executes a given shell command.
+        command (string): The shell command to execute.
+2. bing_search: Search question in Bing Search API and return the searching results
+        num_results (number): The number of search results to return.
+        question (string): The search query string.
+</pre></div>
+</div>
+<p>内置的默认调用格式:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_calling_format</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[{&quot;name&quot;: &quot;{function name}&quot;, &quot;arguments&quot;: {&quot;{argument1 name}&quot;: xxx, &quot;{argument2 name}&quot;: xxx}}]
+</pre></div>
+</div>
+<p>自动生成的工具函数 JSON Schema 格式说明:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{
+  &quot;execute_shell_command&quot;: {
+    &quot;type&quot;: &quot;function&quot;,
+    &quot;function&quot;: {
+      &quot;name&quot;: &quot;execute_shell_command&quot;,
+      &quot;description&quot;: &quot;Executes a given shell command.&quot;,
+      &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;command&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;The shell command to execute.&quot;
+          }
+        },
+        &quot;required&quot;: [
+          &quot;command&quot;
+        ]
+      }
+    }
+  },
+  &quot;bing_search&quot;: {
+    &quot;type&quot;: &quot;function&quot;,
+    &quot;function&quot;: {
+      &quot;name&quot;: &quot;bing_search&quot;,
+      &quot;description&quot;: &quot;Search question in Bing Search API and return the searching results&quot;,
+      &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;num_results&quot;: {
+            &quot;type&quot;: &quot;number&quot;,
+            &quot;description&quot;: &quot;The number of search results to return.&quot;,
+            &quot;default&quot;: 10
+          },
+          &quot;question&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;The search query string.&quot;
+          }
+        },
+        &quot;required&quot;: [
+          &quot;question&quot;
+        ]
+      }
+    }
+  }
+}
+</pre></div>
+</div>
+<p>AgentScope 提供了 <cite>ReActAgent</cite> 智能体类来使用工具，只需要将 <cite>ServiceToolkit</cite> 对象传递给这个智能体。
+有关该智能体的实现细节，请参阅 <a class="reference internal" href="builtin_agent.html#builtin-agent"><span class="std std-ref">内置智能体</span></a>。</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReActAgent</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">ReActAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Friday&quot;</span><span class="p">,</span>
+    <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+    <span class="n">service_toolkit</span><span class="o">=</span><span class="n">toolkit</span><span class="p">,</span>
+    <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;你是一个名为 Friday 的助手。&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msg_task</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;帮我计算一下 1615114134*4343434343&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg_task</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>system: Respond with specific tags as outlined below:
+&lt;thought&gt;{what you thought}&lt;/thought&gt;
+&lt;function&gt;{the function name you want to call}&lt;/function&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+...
+Friday: &lt;thought&gt;用户需要我帮助他计算一个乘法表达式的结果。这个任务可以通过执行shell命令来完成。&lt;/thought&gt;
+&lt;function&gt;execute_shell_command&lt;/function&gt;
+&lt;command&gt;echo &quot;1615114134*4343434343&quot; | bc&lt;/command&gt;
+system: 1. Execute function execute_shell_command
+   [ARGUMENTS]:
+       command: echo &quot;1615114134*4343434343&quot; | bc
+   [STATUS]: SUCCESS
+   [RESULT]: 7015142197480303962
+
+system: Respond with specific tags as outlined below:
+&lt;thought&gt;{what you thought}&lt;/thought&gt;
+&lt;function&gt;{the function name you want to call}&lt;/function&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+&lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
+...
+Friday: &lt;thought&gt;已经成功计算出乘法表达式 1615114134*4343434343 的结果为 7015142197480303962，现在可以将此结果告知用户。&lt;/thought&gt;
+&lt;function&gt;finish&lt;/function&gt;
+&lt;response&gt;您要计算的表达式 1615114134*4343434343 的结果是 7015142197480303962。&lt;/response&gt;
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>创建工具函数<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>自定义工具函数必须遵循以下规则:</p>
+<ul class="simple">
+<li><p>参数使用 typing 指定类型</p></li>
+<li><p>使用 Google 风格书写完整的 docstring</p></li>
+<li><p>函数返回值必须用 <cite>ServiceResponse</cite> 包装</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">new_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;简单介绍该函数。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg1 (`str`):</span>
+<span class="sd">            对 arg1 的简单描述</span>
+<span class="sd">        arg2 (`int`):</span>
+<span class="sd">            对 arg2 的简单描述</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="s2">&quot;完成!&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.917 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ede26fc984fd5f12a4ede3580d57b877/tool.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tool.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/6456442ff90fd4cee044c2493d6e351b/tool.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">tool.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="monitor.html" class="btn btn-neutral float-left" title="配置和监控" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="rag.html" class="btn btn-neutral float-right" title="检索增强生成（RAG）" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
