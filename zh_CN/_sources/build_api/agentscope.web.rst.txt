@@ -1,0 +1,19 @@
+agentscope.web package
+======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.web.gradio
+   agentscope.web.workstation
+
+Module contents
+---------------
+
+.. automodule:: agentscope.web
+   :members:
+   :undoc-members:
+   :show-inheritance:
