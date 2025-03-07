@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0302,
 """Model wrapper for DashScope models"""
 import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence, Optional, Generator
+from typing import Any, Union, List, Sequence, Optional, Generator, Literal
 
 from loguru import logger
 
@@ -85,6 +86,10 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to
     https://help.aliyun.com/zh/dashscope/developer-reference/api-details
 
+    It also supports calling Bailian applications by setting `app_type` to
+    `application` and `app_id` to the corresponding application id, refer to
+    https://help.aliyun.com/zh/model-studio/developer-reference/call-application-through-api/
+
     Example Response:
         - Refer to
         https://help.aliyun.com/zh/dashscope/developer-reference/quick-start?spm=a2c4g.11186623.0.0.7e346eb5RvirBw
@@ -124,6 +129,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         self,
         config_name: str,
         model_name: str = None,
+        app_id: str = None,
+        api_type: Literal["generation", "application"] = "generation",
         api_key: str = None,
         stream: bool = False,
         generate_args: dict = None,
@@ -136,6 +143,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 The name of the model config.
             model_name (`str`, default `None`):
                 The name of the model to use in DashScope API.
+            app_id (str, optional):
+                The unique identifier for the application using the
+                DashScope Application API. Defaults to None.
+            api_type (Literal["generation", "application"], optional):
+                The type of API to interact with. Choices are 'generation' for
+                dashscope.Generation.call and 'application' for
+                dashscope.Application.call. Defaults to 'generation'.
             api_key (`str`, default `None`):
                 The API key for DashScope API.
             stream (`bool`, default `False`):
@@ -155,6 +169,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         )
 
         self.stream = stream
+        self.api_type = api_type.lower()
+        self.app_id = app_id
 
     def __call__(
         self,
@@ -228,21 +244,29 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         if stream is None:
             stream = self.stream
 
+        # Update the kwargs with either 'app_id' or 'model' based on 'api_type'
         kwargs.update(
             {
-                "model": self.model_name,
                 "messages": messages,
                 # Set the result to be "message" format.
                 "result_format": "message",
                 "stream": stream,
             },
         )
+        if self.api_type == "application":
+            kwargs["app_id"] = self.app_id
+        else:
+            kwargs["model"] = self.model_name
 
         # Switch to the incremental_output mode
         if stream:
             kwargs["incremental_output"] = True
 
-        response = dashscope.Generation.call(api_key=self.api_key, **kwargs)
+        response = (
+            dashscope.Application.call(api_key=self.api_key, **kwargs)
+            if self.api_type == "application"
+            else dashscope.Generation.call(api_key=self.api_key, **kwargs)
+        )
 
         # step3: invoke llm api, record the invocation and update the monitor
         if stream:
@@ -260,12 +284,21 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                         )
                         raise RuntimeError(error_msg)
 
-                    text += chunk.output["choices"][0]["message"]["content"]
+                    text += (
+                        chunk.output["text"]
+                        if self.api_type == "application"
+                        else chunk.output["choices"][0]["message"]["content"]
+                    )
                     yield text
                     last_chunk = chunk
 
                 # Replace the last chunk with the full text
-                last_chunk.output["choices"][0]["message"]["content"] = text
+                if self.api_type == "application":
+                    last_chunk.output["text"] = text
+                else:
+                    last_chunk.output["choices"][0]["message"][
+                        "content"
+                    ] = text
 
                 # Save the model invocation and update the monitor
                 self._save_model_invocation_and_update_monitor(
@@ -294,9 +327,13 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 kwargs,
                 response,
             )
+            if self.api_type == "application":
+                text = response.output["text"]
+            else:
+                text = response.output["choices"][0]["message"]["content"]
 
             return ModelResponse(
-                text=response.output["choices"][0]["message"]["content"],
+                text=text,
                 raw=response,
             )
 
@@ -313,8 +350,12 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             response (`GenerationResponse`):
                 The response object returned by the DashScope chat API.
         """
-        input_tokens = response.usage.get("input_tokens", 0)
-        output_tokens = response.usage.get("output_tokens", 0)
+        if self.api_type == "application":
+            input_tokens = response.usage.models[0].get("input_tokens", 0)
+            output_tokens = response.usage.models[0].get("output_tokens", 0)
+        else:
+            input_tokens = response.usage.get("input_tokens", 0)
+            output_tokens = response.usage.get("output_tokens", 0)
 
         # Update the token record accordingly
         self.monitor.update_text_and_embedding_tokens(
@@ -398,6 +439,32 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             `List[dict]`:
                 The formatted messages.
         """
+        if self.api_type == "application":
+            logger.warning(
+                "Dashscope.Application.call does not support "
+                "multiagents conversation. Please modify the "
+                "format function appropriately.",
+            )
+            # Parse all information into a list of messages
+            input_msgs = []
+            for _ in args:
+                if _ is None:
+                    continue
+                if isinstance(_, Msg):
+                    input_msgs.append(_)
+                elif isinstance(_, list) and all(
+                    isinstance(__, Msg) for __ in _
+                ):
+                    input_msgs.extend(_)
+                else:
+                    raise TypeError(
+                        f"The input should be a Msg object or a list "
+                        f"of Msg objects, got {type(_)}.",
+                    )
+            messages = [
+                {"role": _.role, "content": _.content} for _ in input_msgs
+            ]
+            return messages
 
         return ModelWrapperBase.format_for_common_chat_models(*args)
 
