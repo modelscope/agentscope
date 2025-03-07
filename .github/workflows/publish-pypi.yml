@@ -32,7 +32,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install setuptools wheel
     - name: Build package
-      run: python setup.py sdist bdist_wheel
+      run: python -m build
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
