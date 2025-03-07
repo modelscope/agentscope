@@ -1,7 +1,0 @@
-agentscope.agents.operator module
-=================================
-
-.. automodule:: agentscope.agents.operator
-   :members:
-   :undoc-members:
-   :show-inheritance:

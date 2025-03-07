@@ -109,22 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It seems like your message got cut off. How can I assist you today?
-    Monster: Hello Angel! It looks like there might have been a mix-up, as I didn't send a previous message. I'm Monster, and I'm here to help you. How can I assist you today?
-    Angel: Hello Monster! It's nice to meet you, and I appreciate the clarification. It seems there was a bit of a mix-up indeed. I'm Angel, and I'm here to help with any questions or tasks you might have. How can I assist you today?
-    Monster: Hello Angel! It's great to meet you. I appreciate your offer to help, but I'm actually here to assist you or anyone else who might need help. Is there anything specific you're looking for assistance with, or is there a topic you'd like to discuss?
-    Angel: Hello Monster! It's great to meet you, and I appreciate your willingness to help. Since we're both here to assist, perhaps we can collaborate or share some ideas. Is there anything in particular that you're interested in, or any topics you'd like to explore together?
-    Monster: Hello Angel! It's great to meet you, and I appreciate the collaborative spirit. Since we're both here to assist and share ideas, we could explore a variety of topics. Here are a few suggestions:
-
-    1. **Technology and Innovation**: Discussing the latest trends, advancements, or even troubleshooting common tech issues.
-    2. **Productivity and Organization**: Sharing tips and tools for staying productive and organized, whether it's for personal or professional use.
-    3. **Health and Wellness**: Exploring ways to maintain a healthy lifestyle, including physical and mental well-being.
-    4. **Education and Learning**: Discussing effective learning strategies, resources, and educational tools.
-    5. **Creative Projects**: Brainstorming ideas for creative projects, such as writing, art, or DIY crafts.
-    6. **Travel and Culture**: Sharing travel tips, cultural insights, and exploring different parts of the world.
-    7. **Entertainment and Media**: Discussing books, movies, TV shows, and other forms of media, and sharing recommendations.
-
-    Do any of these topics interest you, or is there something else you'd like to explore?
+    Angel: Hello! It looks like your message was cut off. Could you please provide more details so I can assist you better?
+    Monster: Hello Angel! I apologize for the confusion, but it seems there might be a mix-up. I'm Monster, your helpful assistant. It looks like you're expecting a message from someone else. How can I assist you today?
+    Angel: Hello! It seems there's a bit of a mix-up. I'm Angel, and I'm here to help you. How can I assist you today?
+    Monster: Hello Angel! It’s nice to meet you. I see we had a little role confusion there. I’m Monster, and I’m here to help as well. If you have any questions or need assistance with anything, feel free to let me know! How can I assist you today?
+    Angel: Hello! It looks like there's a bit of a mix-up with the roles here. I'm Angel, and I'm here to assist you. How can I help you today?
+    Monster: Hello Angel! It seems we're both here to help, which is great! I'm Monster, and I’m here to assist with any questions or tasks you might have. If you need anything at all, just let me know. How can I assist you today?
 
 
 
@@ -302,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 43.604 seconds)
+   **Total running time of the script:** (0 minutes 31.458 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
