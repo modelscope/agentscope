@@ -41,6 +41,8 @@
 
 ## 新闻
 
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** 我们的[多信息源RAG应用](applications/multisource_rag_app/README.md)（钉钉答疑群中的机器人）已开源!
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-24]** [中文版教程](https://doc.agentscope.io/zh_CN)已上线
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-13]** 基于 AgentScope 的 [SWE-Bench(Verified)](https://www.swebench.com/) 解决方案[技术报告](https://doc.agentscope.io/tutorial/swe.html) 已上线
