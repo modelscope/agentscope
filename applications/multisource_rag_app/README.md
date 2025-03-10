@@ -42,7 +42,7 @@ pip install -e .\[full\]
 
 Change directory and install application-specific packages:
 ```bash
-cd application/multisource_rag_app
+cd applications/multisource_rag_app
 pip install -r requirements.txt
 ```
 
