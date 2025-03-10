@@ -1,0 +1,670 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.models.gemini_model &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.models.gemini_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.models.gemini_model 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Google Gemini model wrapper.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">google.generativeai</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">genai</span>
+
+    <span class="c1"># This package will be installed when the google-generativeai is installed</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">google.ai.generativelanguage</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">glm</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">genai</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">glm</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="GeminiWrapperBase">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.gemini_model.html#agentscope.models.GeminiWrapperBase">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeminiWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for Google Gemini model wrapper.&quot;&quot;&quot;</span>
+
+    <span class="n">_generation_method</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The generation method used in `__call__` function, which is used to</span>
+<span class="sd">    filter models in `list_models` function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the wrapper for Google Gemini model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name (`str`):</span>
+<span class="sd">                The name of the model.</span>
+<span class="sd">            api_key (`str`, defaults to `None`):</span>
+<span class="sd">                The api_key for the model. If it is not provided, it will be</span>
+<span class="sd">                loaded from environment variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+        <span class="c1"># Test if the required package is installed</span>
+        <span class="k">if</span> <span class="n">genai</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;The google-generativeai package is not installed, &quot;</span>
+                <span class="s2">&quot;please install it first.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Load the api_key from argument or environment variable</span>
+        <span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GOOGLE_API_KEY&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Google api_key must be provided or set as an &quot;</span>
+                <span class="s2">&quot;environment variable.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">genai</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+
+<div class="viewcode-block" id="GeminiWrapperBase.list_models">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.gemini_model.html#agentscope.models.GeminiWrapperBase.list_models">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List all available models for this API calling.&quot;&quot;&quot;</span>
+        <span class="n">support_models</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">genai</span><span class="o">.</span><span class="n">list_models</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">generation_method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">support_models</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="n">_</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">support_models</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generation_method</span> <span class="ow">in</span> <span class="n">_</span><span class="o">.</span><span class="n">supported_generation_methods</span>
+            <span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processing input with the model.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; is missing the  the required `__call__`&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; method.&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="GeminiChatWrapper">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeminiChatWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini chat model, e.g. gemini-pro&quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gemini_chat&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of the model, which is used in model configuration.&quot;&quot;&quot;</span>
+
+    <span class="n">generation_method</span> <span class="o">=</span> <span class="s2">&quot;generateContent&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The generation method used in `__call__` function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the wrapper for Google Gemini model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name (`str`):</span>
+<span class="sd">                The name of the model.</span>
+<span class="sd">            api_key (`str`, defaults to `None`):</span>
+<span class="sd">                The api_key for the model. If it is not provided, it will be</span>
+<span class="sd">                loaded from environment variable.</span>
+<span class="sd">            stream (`bool`, defaults to `False`):</span>
+<span class="sd">                Whether to use stream mode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+
+        <span class="c1"># Create the generative model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">genai</span><span class="o">.</span><span class="n">GenerativeModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate response for the given contents.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            contents (`Union[Sequence, str]`):</span>
+<span class="sd">                The content to generate response.</span>
+<span class="sd">            stream (`Optional[bool]`, defaults to `None`)</span>
+<span class="sd">                Whether to use stream mode.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                The additional arguments for generating response.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response text in text field, and the raw response in raw</span>
+<span class="sd">                field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: checking messages</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The input content is not a string or a list of &quot;</span>
+                <span class="s2">&quot;messages, which may cause unexpected behavior.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check if stream is provided</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;contents&quot;</span><span class="p">:</span> <span class="n">contents</span><span class="p">,</span>
+                <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="n">stream</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">generate_content</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">last_chunk</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_text_content_from_response</span><span class="p">(</span>
+                        <span class="n">contents</span><span class="p">,</span>
+                        <span class="n">chunk</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">text</span>
+                    <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">chunk</span>
+
+                <span class="c1"># Update the last chunk</span>
+                <span class="n">last_chunk</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                    <span class="n">contents</span><span class="p">,</span>
+                    <span class="n">kwargs</span><span class="p">,</span>
+                    <span class="n">last_chunk</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">stream</span><span class="o">=</span><span class="n">generator</span><span class="p">(),</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                <span class="n">contents</span><span class="p">,</span>
+                <span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># step6: return response</span>
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the model invocation and update the monitor accordingly.&quot;&quot;&quot;</span>
+        <span class="c1"># Record the api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Update monitor accordingly</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s2">&quot;usage_metadata&quot;</span><span class="p">):</span>
+            <span class="n">token_prompt</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage_metadata</span><span class="o">.</span><span class="n">prompt_token_count</span>
+            <span class="n">token_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">usage_metadata</span><span class="o">.</span><span class="n">candidates_token_count</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">token_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
+            <span class="n">token_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">count_tokens</span><span class="p">(</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">total_tokens</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">token_prompt</span><span class="p">,</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">token_response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_text_content_from_response</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the text content from the response of gemini API</span>
+
+<span class="sd">        Note: to avoid import error during type checking in python 3.11+, here</span>
+<span class="sd">        we use `typing.Any` to avoid raising error</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            contents (`Union[Sequence[Any], str]`):</span>
+<span class="sd">                The prompt contents</span>
+<span class="sd">            response (`Any`):</span>
+<span class="sd">                The response from gemini API</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `str`: The extracted string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check for candidates and handle accordingly</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">parts</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+        <span class="p">):</span>
+            <span class="c1"># If we cannot get the response text from the model</span>
+            <span class="n">finish_reason</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">finish_reason</span>
+            <span class="n">reasons</span> <span class="o">=</span> <span class="n">glm</span><span class="o">.</span><span class="n">Candidate</span><span class="o">.</span><span class="n">FinishReason</span>
+
+            <span class="k">if</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">STOP</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;Natural stop point of the model or provided stop &quot;</span>
+                    <span class="s2">&quot;sequence.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">MAX_TOKENS</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The maximum number of tokens as specified in the request &quot;</span>
+                    <span class="s2">&quot;was reached.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">SAFETY</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The candidate content was flagged for safety reasons.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="o">==</span> <span class="n">reasons</span><span class="o">.</span><span class="n">RECITATION</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The candidate content was flagged for recitation reasons.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">finish_reason</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">reasons</span><span class="o">.</span><span class="n">FINISH_REASON_UNSPECIFIED</span><span class="p">,</span>
+                <span class="n">reasons</span><span class="o">.</span><span class="n">OTHER</span><span class="p">,</span>
+            <span class="p">]:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="s2">&quot;Unknown error.&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">error_info</span> <span class="o">=</span> <span class="s2">&quot;No information provided from Gemini API.&quot;</span>
+
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The Google Gemini API failed to generate text response with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the following finish reason: </span><span class="si">{</span><span class="n">error_info</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;YOUR INPUT: </span><span class="si">{</span><span class="n">contents</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;RAW RESPONSE FROM GEMINI API: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+
+<div class="viewcode-block" id="GeminiChatWrapper.format">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.gemini_model.html#agentscope.models.GeminiChatWrapper.format">[文档]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function provide a basic prompting strategy for Gemini Chat</span>
+<span class="sd">        API in multi-party conversation, which combines all input into a</span>
+<span class="sd">        single string, and wrap it into a user message.</span>
+
+<span class="sd">        We make the above decision based on the following constraints of the</span>
+<span class="sd">        Gemini generate API:</span>
+
+<span class="sd">        1. In Gemini `generate_content` API, the `role` field must be either</span>
+<span class="sd">        `user` or `model`.</span>
+
+<span class="sd">        2. If we pass a list of messages to the `generate_content` API,</span>
+<span class="sd">        the `user` role must speak in the beginning and end of the</span>
+<span class="sd">        messages, and `user` and `model` must alternative. This prevents</span>
+<span class="sd">        us to build a multi-party conversations, where `model` may keep</span>
+<span class="sd">        speaking in different names.</span>
+
+<span class="sd">        The above information is updated to 2024/03/21. More information</span>
+<span class="sd">        about the Gemini `generate_content` API can be found in</span>
+<span class="sd">        https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini</span>
+
+<span class="sd">        Based on the above considerations, we decide to combine all messages</span>
+<span class="sd">        into a single user message. This is a simple and straightforward</span>
+<span class="sd">        strategy, if you have any better ideas, pull request and</span>
+<span class="sd">        discussion are welcome in our GitHub repository</span>
+<span class="sd">        https://github.com/agentscope/agentscope!</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
+<span class="sd">                In distribution, placeholder is also allowed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                A list with one user message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;At least one message should be provided. An empty message &quot;</span>
+                <span class="s2">&quot;list is not allowed.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># record dialog history as a list of strings</span>
+        <span class="n">sys_prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
+                <span class="c1"># system prompt</span>
+                <span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Merge all messages into a conversation history prompt</span>
+                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">prompt_components</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sys_prompt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+                <span class="n">sys_prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">prompt_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sys_prompt</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prompt_components</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;## Conversation History&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">dialogue</span><span class="p">)</span>
+
+        <span class="n">user_prompt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prompt_components</span><span class="p">)</span>
+
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="n">user_prompt</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">messages</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GeminiEmbeddingWrapper">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.gemini_model.html#agentscope.models.GeminiEmbeddingWrapper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeminiEmbeddingWrapper</span><span class="p">(</span><span class="n">GeminiWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapper for Google Gemini embedding model,</span>
+<span class="sd">    e.g. models/embedding-001</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to https://ai.google.dev/api/embeddings?hl=zh-cn#response-body</span>
+
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;embeddings&quot;: [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        object (ContentEmbedding)</span>
+<span class="sd">                    }</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;gemini_embedding&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of the model, which is used in model configuration.&quot;&quot;&quot;</span>
+
+    <span class="n">_generation_method</span> <span class="o">=</span> <span class="s2">&quot;embedContent&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The generation method used in `__call__` function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">task_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate embedding for the given content. More detailed information</span>
+<span class="sd">        please refer to</span>
+<span class="sd">        https://ai.google.dev/tutorials/python_quickstart#use_embeddings</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            content (`Union[Sequence[Msg], str]`):</span>
+<span class="sd">                The content to generate embedding.</span>
+<span class="sd">            task_type (`str`, defaults to `None`):</span>
+<span class="sd">                The type of the task.</span>
+<span class="sd">            title (`str`, defaults to `None`):</span>
+<span class="sd">                The title of the content.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                The additional arguments for generating embedding.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response embedding in embedding field, and the raw response</span>
+<span class="sd">                in raw field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># step1: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">genai</span><span class="o">.</span><span class="n">embed_content</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+            <span class="n">task_type</span><span class="o">=</span><span class="n">task_type</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step2: record the api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+                <span class="s2">&quot;task_type&quot;</span><span class="p">:</span> <span class="n">task_type</span><span class="p">,</span>
+                <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># TODO: Up to 2024/07/26, the embedding model doesn&#39;t support to</span>
+        <span class="c1">#  count tokens.</span>
+        <span class="c1"># step3: update monitor accordingly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
