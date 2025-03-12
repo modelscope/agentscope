@@ -54,16 +54,7 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
     """
     global _PREFIX_DICT
 
-    # Print msg to terminal
     formatted_str = msg.formatted_str(colored=True)
-    
-    # Debug prefix tracking
-    # prev_len = _PREFIX_DICT.get(msg.id, 0)
-    # print(f"\n[DEBUG] Previous length: {prev_len}")
-    # print(f"[DEBUG] Current length: {len(formatted_str)}")
-    # print(f"[DEBUG] Content being sliced: '{formatted_str}'")
-    # print(f"[DEBUG] Slice result: '{formatted_str[prev_len:]}'")
-    
     print_str = formatted_str[_PREFIX_DICT.get(msg.id, 0) :]
 
     if last:
@@ -75,7 +66,7 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
         # Update the prefix in the dictionary
         _PREFIX_DICT[msg.id] = len(formatted_str)
 
-        print(print_str, end="")
+        print(print_str, end="", flush=True)
 
     # Push msg to studio if it is active
     if _studio_client.active:

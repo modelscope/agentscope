@@ -1,11 +1,7 @@
+# -*- coding: utf-8 -*-
 """Model Wrapper for DeepSeek Models."""
 
 from abc import ABC
-from operator import is_
-from pkgutil import resolve_name
-from pyexpat import model
-from re import I
-from token import OP
 from typing import (
     Optional,
     Any,
@@ -13,19 +9,72 @@ from typing import (
     List,
     Sequence,
     Generator,
-    Tuple,
 )
 from loguru import logger
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai._streaming import Stream
 
 from .model import ModelWrapperBase, ModelResponse
 from ..message import Msg
-import time
 from ._model_utils import (
-    _verify_reasoning_content_in_openai_delta_response,
-    _verify_reasoning_content_in_openai_message_response,
     _verify_text_content_in_openai_delta_response,
     _verify_text_content_in_openai_message_response,
 )
+
+
+def _verify_reasoning_content_in_openai_message_response(
+    response: dict,
+) -> bool:
+    """Verify if the reasoning content exists in the openai message response
+
+    Args:
+        response (`dict`):
+            The JSON-format OpenAI response (After calling `model_dump`
+             function)
+
+    Returns:
+        `bool`: If the reasoning content exists
+    """
+
+    if len(response.get("choices", [])) == 0:
+        return False
+
+    if response["choices"][0].get("message", None) is None:
+        return False
+
+    if (
+        response["choices"][0]["message"].get("reasoning_content", None)
+        is None
+    ):
+        return False
+
+    return True
+
+
+def _verify_reasoning_content_in_openai_delta_response(
+    response: dict,
+) -> bool:
+    """Verify if the reasoning content exists in the openai streaming response
+
+    Args:
+        response (`dict`):
+            The JSON-format OpenAI response (After calling `model_dump`
+             function)
+
+    Returns:
+        `bool`: If the reasoning content exists
+    """
+
+    if len(response.get("choices", [])) == 0:
+        return False
+
+    if response["choices"][0].get("delta", None) is None:
+        return False
+
+    if response["choices"][0]["delta"].get("reasoning_content", None) is None:
+        return False
+
+    return True
 
 
 class DeepSeekWrapperBase(ModelWrapperBase, ABC):
@@ -71,17 +120,19 @@ class DeepSeekWrapperBase(ModelWrapperBase, ABC):
                 "`pip install openai`",
             ) from e
 
-        DEEPSEEK_URL_API: str = "https://api.deepseek.com"
+        # DEEPSEEK_URL_API: str = "https://api.deepseek.com"
         # If deepseek official api is not available, use aliyun hosted deepseek
         # remember to change the model name to deepseek-r1 and deepseek-v3
-        # DEEPSEEK_URL_API: str = (
-        #     "https://dashscope.aliyuncs.com/compatible-mode/v1"
-        # )
+        DEEPSEEK_URL_API: str = (
+            "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        )
         # Fixed max length for DeepSeek API
         DEEPSEEK_MAX_LENGTH: int = 8192
 
         self.client = openai.OpenAI(
-            api_key=api_key, base_url=DEEPSEEK_URL_API, **(client_args or {})
+            api_key=api_key,
+            base_url=DEEPSEEK_URL_API,
+            **(client_args or {}),
         )
         self.max_length = DEEPSEEK_MAX_LENGTH
 
@@ -103,16 +154,16 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
     # Recommend use aliyun hosted deepseek
     # then the model name is deepseek-r1 and deepseek-v3
 
-    # supported_models: list[str] = [
-    #     "deepseek-chat",
-    #     "deepseek-reasoner",
-    #     "deepseek-r1",
-    #     "deepseek-v3",
-    # ]
     supported_models: list[str] = [
         "deepseek-chat",
         "deepseek-reasoner",
+        "deepseek-r1",
+        "deepseek-v3",
     ]
+    # supported_models: list[str] = [
+    #     "deepseek-chat",
+    #     "deepseek-reasoner",
+    # ]
 
     def __init__(
         self,
@@ -197,45 +248,49 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
         if not isinstance(messages, list):
             raise ValueError(
                 "DeepSeek `messages` field expected type `list`, "
-                f"got `{type(messages)}` instead."
+                f"got `{type(messages)}` instead.",
             )
         if not all("role" in msg and "content" in msg for msg in messages):
             raise ValueError(
-                "Each message must contain 'role' and 'content' keys"
+                "Each message must contain 'role' and 'content' keys",
             )
 
         # Configure streaming
         stream = stream if stream is not None else self.stream
         kwargs.update(
-            {"model": self.model_name, "messages": messages, "stream": stream}
+            {"model": self.model_name, "messages": messages, "stream": stream},
         )
         if stream:
             kwargs["stream_options"] = {"include_usage": True}
         # Make API call
-        response = self.client.chat.completions.create(**kwargs)
+        raw_response = self.client.chat.completions.create(**kwargs)
 
         # Process response
         if stream:
-            return self._handle_stream_response(response, kwargs)
+            return self._handle_stream_response(raw_response, kwargs)
         else:
-            return self._handle_normal_response(response, kwargs)
+            return self._handle_normal_response(raw_response, kwargs)
 
-    def _handle_normal_response(self, response, kwargs) -> ModelResponse:
+    def _handle_normal_response(
+        self,
+        raw_response: ChatCompletion,
+        kwargs: dict,
+    ) -> ModelResponse:
         """Handle the non-streaming response from the DeepSeek API."""
-        response = response.model_dump()
+        response = raw_response.model_dump()
         self._save_model_invocation_and_update_monitor(kwargs, response)
         if _verify_text_content_in_openai_message_response(response):
             text = response["choices"][0]["message"]["content"]
             if self.is_reasoner:
                 if _verify_reasoning_content_in_openai_message_response(
-                    response
+                    response,
                 ):
                     reasoning_content = response["choices"][0]["message"][
                         "reasoning_content"
                     ]
                     text = (
                         f"Reasoning:\n{reasoning_content}\n\n"
-                        f"Final Answer:\n{text}"
+                        f"Answer:\n{text}"
                     )
                 else:
                     logger.warning("No reasoning content in the response.")
@@ -246,7 +301,11 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
                 f"Invalid response from DeepSeek API: {response}",
             )
 
-    def _handle_stream_response(self, response, kwargs):
+    def _handle_stream_response(
+        self,
+        raw_response: Stream[ChatCompletionChunk],
+        kwargs: dict,
+    ) -> ModelResponse:
         """Handle the streaming response from the DeepSeek API."""
 
         def generator() -> Generator[str, None, None]:
@@ -256,22 +315,24 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
 
             yield "Reasoning:\n"
 
-            for chunk in response:
-                chunk = chunk.model_dump()
+            for raw_chunk in raw_response:
+                chunk = raw_chunk.model_dump()
 
                 if _verify_text_content_in_openai_delta_response(chunk):
                     content = chunk["choices"][0]["delta"]["content"]
                     if is_first_text:
                         is_first_text = False
-                        # Clear section with full yield
-                        yield reasoning_content + "\n\nFinal Answer:\n"
-                        # Start fresh with first content
-                        yield content
+                        # Instead of yielding two separate times, combine them
+                        yield reasoning_content + "\n\nAnswer:\n" + content
                         answer_content = content
                     else:
                         # Normal content accumulation
                         answer_content += content
-                        yield answer_content
+                        yield (
+                            reasoning_content
+                            + "\n\nAnswer:\n"
+                            + answer_content
+                        )
 
                 elif _verify_reasoning_content_in_openai_delta_response(chunk):
                     current = chunk["choices"][0]["delta"]["reasoning_content"]
@@ -287,7 +348,8 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
                         "reasoning_content": reasoning_content,
                     }
                     self._save_model_invocation_and_update_monitor(
-                        kwargs, chunk
+                        kwargs,
+                        chunk,
                     )
                     continue
 
@@ -297,7 +359,9 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
         return ModelWrapperBase.format_for_common_chat_models(*args)
 
     def _save_model_invocation_and_update_monitor(
-        self, kwargs: dict, response: dict
+        self,
+        kwargs: dict,
+        response: dict,
     ) -> None:
         """Save model invocation and update the monitor accordingly.
 
