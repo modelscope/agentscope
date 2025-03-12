@@ -85,6 +85,7 @@ class DeepSeekWrapperBase(ModelWrapperBase, ABC):
         config_name: str,
         model_name: Optional[str] = None,
         api_key: Optional[str] = None,
+        provider_url: Optional[str] = None,
         client_args: Optional[dict] = None,
         generate_args: Optional[dict] = None,
         **kwargs: Any,
@@ -105,6 +106,18 @@ class DeepSeekWrapperBase(ModelWrapperBase, ABC):
                 `max_tokens`
         """
 
+        DEEPSEEK_URL: str = "https://api.deepseek.com"
+
+        if model_name is None:
+            model_name = config_name
+            logger.warning("model_name is not set, use config_name instead.")
+
+        if provider_url is None:
+            provider_url = DEEPSEEK_URL
+            logger.warning(
+                "provider_url is not set," f"use offical {DEEPSEEK_URL}",
+            )
+
         super().__init__(
             config_name=config_name,
             model_name=model_name,
@@ -120,18 +133,12 @@ class DeepSeekWrapperBase(ModelWrapperBase, ABC):
                 "`pip install openai`",
             ) from e
 
-        # DEEPSEEK_URL_API: str = "https://api.deepseek.com"
-        # If deepseek official api is not available, use aliyun hosted deepseek
-        # remember to change the model name to deepseek-r1 and deepseek-v3
-        DEEPSEEK_URL_API: str = (
-            "https://dashscope.aliyuncs.com/compatible-mode/v1"
-        )
         # Fixed max length for DeepSeek API
         DEEPSEEK_MAX_LENGTH: int = 8192
 
         self.client = openai.OpenAI(
             api_key=api_key,
-            base_url=DEEPSEEK_URL_API,
+            base_url=provider_url,
             **(client_args or {}),
         )
         self.max_length = DEEPSEEK_MAX_LENGTH
@@ -160,16 +167,13 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
         "deepseek-r1",
         "deepseek-v3",
     ]
-    # supported_models: list[str] = [
-    #     "deepseek-chat",
-    #     "deepseek-reasoner",
-    # ]
 
     def __init__(
         self,
         config_name: str,
         model_name: Optional[str] = None,
         api_key: Optional[str] = None,
+        provider_url: Optional[str] = None,
         stream: bool = True,
         generate_args: Optional[dict] = None,
         **kwargs: Any,
@@ -196,6 +200,7 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
             config_name=config_name,
             model_name=model_name,
             api_key=api_key,
+            provider_url=provider_url,
             generate_args=generate_args,
             **kwargs,
         )

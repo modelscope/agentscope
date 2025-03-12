@@ -51,8 +51,6 @@ agentscope.init(
             "model_type": "deepseek_chat",
             "model_name": "deepseek-r1",
             "stream": True,
-            # "api_key": "{YOUR_API_KEY}",
-            "api_key": "sk-1a7a7958c4084fc2976c799d3027eba8",
         },
     ],
     save_api_invoke=True,
