@@ -49,8 +49,16 @@ agentscope.init(
         {
             "config_name": "stream_deepseek",
             "model_type": "deepseek_chat",
-            "model_name": "deepseek-r1",
+            "model_name": "deepseek-reasoner",
             "stream": True,
+            "api_key": "{YOUR_API_KEY}",
+            # If offical API is not responding, we recommend using Aliyun
+            # hosted DeepSeek API by setting
+            # "provider_url":
+            # "https://dashscope.aliyuncs.com/compatible-mode/v1"
+            # Note that the model names of the Aliyun hosted DeepSeek API are
+            # "deepseek-r1" and "deepseek-v3"
+            "provider_url": "https://api.deepseek.ai",
         },
     ],
     save_api_invoke=True,
@@ -87,10 +95,8 @@ class StreamingAgent(AgentBase):
         prompt = self.model.format(self.memory.get_memory())
 
         res = self.model(prompt)
-
         # Print the streaming message in the terminal and Studio
         # (if registered)
-
         # The stream filed is a generator that yields the streaming text
         self.speak(res.stream)
 
@@ -110,12 +116,6 @@ agent = StreamingAgent(
     model_config_name="stream_deepseek",
 )
 
-# from agentscope.agents import DialogAgent
-# agent = DialogAgent(
-#     name="assistant",
-#     sys_prompt="You're a helpful assistant",
-#     model_config_name="stream_deepseek",
-# )
 user = UserAgent("user")
 
 msg = None

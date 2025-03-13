@@ -218,10 +218,12 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
         stream: Optional[bool] = None,
         **kwargs: Any,
     ) -> ModelResponse:
-        """Processes a list of messages to construct a payload for the OpenAI
-        API call. It then makes a request to the OpenAI API and returns the
-        response. This method also updates monitoring metrics based on the
-        API response.
+        """Deepseek API returns openAI compatible response. This method
+        processes  messages to construct a payload for the OpenAI
+        API call. It then makes a request to the DeepSeek API and returns the
+        response. This method will check wether the returned response contains
+        reasoning content. This method also updates monitoring metrics based
+        on the API response.
 
         Each message in the 'messages' list can contain text content and
         optionally an 'image_urls' key. If 'image_urls' is provided,
@@ -317,32 +319,45 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
             reasoning_content = ""
             answer_content = ""
             is_first_text = True
-
-            yield "Reasoning:\n"
+            reasoning_prefix_added = False
 
             for raw_chunk in raw_response:
                 chunk = raw_chunk.model_dump()
 
-                if _verify_text_content_in_openai_delta_response(chunk):
-                    content = chunk["choices"][0]["delta"]["content"]
-                    if is_first_text:
-                        is_first_text = False
-                        # Instead of yielding two separate times, combine them
-                        yield reasoning_content + "\n\nAnswer:\n" + content
-                        answer_content = content
-                    else:
-                        # Normal content accumulation
-                        answer_content += content
-                        yield (
-                            reasoning_content
-                            + "\n\nAnswer:\n"
-                            + answer_content
-                        )
+                if self.is_reasoner:
+                    if _verify_text_content_in_openai_delta_response(chunk):
+                        content = chunk["choices"][0]["delta"]["content"]
+                        if is_first_text:
+                            is_first_text = False
+                            # Instead of yielding two separate times
+                            yield reasoning_content + "\n\nAnswer:\n" + content
+                            answer_content = content
+                        else:
+                            # Normal content accumulation
+                            answer_content += content
+                            yield (
+                                reasoning_content
+                                + "\n\nAnswer:\n"
+                                + answer_content
+                            )
 
-                elif _verify_reasoning_content_in_openai_delta_response(chunk):
-                    current = chunk["choices"][0]["delta"]["reasoning_content"]
-                    reasoning_content += current
-                    yield reasoning_content
+                    elif _verify_reasoning_content_in_openai_delta_response(
+                        chunk,
+                    ):
+                        current = chunk["choices"][0]["delta"][
+                            "reasoning_content"
+                        ]
+                        if not reasoning_prefix_added:
+                            reasoning_content = "Reasoning:\n" + current
+                            reasoning_prefix_added = True
+                        reasoning_content += current
+                        yield reasoning_content
+
+                else:
+                    if _verify_text_content_in_openai_delta_response(chunk):
+                        content = chunk["choices"][0]["delta"]["content"]
+                        answer_content += content
+                        yield answer_content
 
                 # Handle end of stream
                 if chunk.get("choices", []) == [None, []]:
@@ -350,13 +365,20 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
                     chunk["choices"][0]["message"] = {
                         "role": "assistant",
                         "content": answer_content,
-                        "reasoning_content": reasoning_content,
                     }
+                    if self.is_reasoner:
+                        chunk["choices"][0]["message"][
+                            "reasoning_content"
+                        ] = reasoning_content
+
                     self._save_model_invocation_and_update_monitor(
                         kwargs,
                         chunk,
                     )
-                    continue
+                    yield (
+                        f"Reasoning:\n{reasoning_content}"
+                        f"\n\nAnswer:\n{answer_content}"
+                    )
 
         return ModelResponse(stream=generator())
 
