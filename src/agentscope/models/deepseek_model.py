@@ -90,7 +90,7 @@ class DeepSeekWrapperBase(ModelWrapperBase, ABC):
         generate_args: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
-        """Initalize the openai client.
+        """Initalize the deepseek client.
         Args:
             config_name (`str`):
                 The name of the model configuration.
@@ -98,9 +98,11 @@ class DeepSeekWrapperBase(ModelWrapperBase, ABC):
                 The name of the model. If not provided, the default model
                 will be used.
             api_key (`Optional[str]`):
-                The API key for the openai client.
+                The API key for the deepseek client.
+            provider_url (`Optional[str]`):
+                The provider URL for the deepseek model.
             client_args (`Optional[dict]`):
-                The arguments for the openai client.
+                The arguments for the deepseek client.
             generate_args (`Optional[dict]`):
                 The arguments for the generation. e.g. `temperature`,
                 `max_tokens`
@@ -178,7 +180,7 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
         generate_args: Optional[dict] = None,
         **kwargs: Any,
     ) -> None:
-        """Initalize the openai client.
+        """Initalize the deepseek chat client.
 
         Args:
             config_name (`str`):
@@ -187,7 +189,9 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
                 The name of the model. If not provided, the default model
                 will be used.
             api_key (`Optional[str]`):
-                The API key for the openai client.
+                The API key for the deepseek client.
+            provider_url (`Optional[str]`):
+                The provider URL for the deepseek model.
             stream (`bool`, default `True`):
                 If the model should be used in streaming mode.
             generate_args (`Optional[dict]`):
@@ -225,12 +229,6 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
         reasoning content. This method also updates monitoring metrics based
         on the API response.
 
-        Each message in the 'messages' list can contain text content and
-        optionally an 'image_urls' key. If 'image_urls' is provided,
-        it is expected to be a list of strings representing URLs to images.
-        These URLs will be transformed to a suitable format for the OpenAI
-        API, which might involve converting local file paths to data URIs.
-
         Args:
             messages (`list[dict]`):
                 A list of messages, each containing a 'role' and 'content' key.
@@ -238,9 +236,9 @@ class DeepSeekChatWrapper(DeepSeekWrapperBase):
                 Whether to enable stream mode, which will override the
                 `stream` argument in the constructor if provided.
             **kwargs (`Any`):
-                The keyword arguments to OpenAI chat completions API,
+                The keyword arguments to deepseek chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
-                https://platform.openai.com/docs/api-reference/chat/create
+                https://api-docs.deepseek.com/api/create-chat-completion
                 for more detailed arguments.
 
         Returns:
