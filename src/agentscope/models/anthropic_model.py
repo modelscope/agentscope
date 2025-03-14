@@ -2,14 +2,8 @@
 """The Anthropic model wrapper for AgentScope."""
 from typing import Optional, Union, Generator, Any, Sequence
 
-from ..manager import FileManager
 from ..message import Msg
 from .model import ModelWrapperBase, ModelResponse
-from ..utils.common import (
-    _guess_type_by_extension,
-    _is_web_url,
-    _get_base64_from_image_path,
-)
 
 
 class AnthropicChatWrapper(ModelWrapperBase):
@@ -76,74 +70,6 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 A list of formatted messages.
         """
         return ModelWrapperBase.format_for_common_chat_models(*args)
-
-    @staticmethod
-    def _format_msg_with_url(
-        msg: Msg,
-    ) -> dict[str, Union[str, list[dict]]]:
-        """Format a message with image urls into the format that anthropic
-        LLM requires.
-
-        Refer to https://docs.anthropic.com/en/api/messages-examples
-
-        Args:
-            msg (`Msg`):
-                The message object to be formatted
-
-        Returns:
-            `dict[str, Union[str, list[dict]]]`:
-                The message in the required format.
-        """
-        urls = [msg.url] if isinstance(msg.url, str) else msg.url
-
-        image_urls = []
-        for url in urls:
-            if _guess_type_by_extension(url) == "image":
-                image_urls.append(url)
-
-        content = []
-        for image_url in image_urls:
-            extension = image_url.split(".")[-1].lower()
-            extension = "jpeg" if extension == "jpg" else extension
-            if extension not in AnthropicChatWrapper._supported_image_format:
-                raise TypeError(
-                    "Anthropic model only supports image formats "
-                    f"{AnthropicChatWrapper._supported_image_format}, "
-                    f"got {extension}",
-                )
-
-            if _is_web_url(image_url):
-                # Download the image locally
-                file_manager = FileManager.get_instance()
-                image_url = file_manager.save_image(image_url)
-
-            data_base64 = _get_base64_from_image_path(image_url)
-
-            content.append(
-                {
-                    "type": "image",
-                    "source": [
-                        {
-                            "type": "base64",
-                            "media_type": f"image/{extension}",
-                            "data": data_base64,
-                        }
-                        for _ in image_urls
-                    ],
-                },
-            )
-
-        if msg.content is not None:
-            content.append(
-                {
-                    "type": "text",
-                    "text": msg.content,
-                },
-            )
-        return {
-            "role": msg.role,
-            "content": content,
-        }
 
     def __call__(  # pylint: disable=too-many-branches
         self,

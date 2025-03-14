@@ -6,7 +6,6 @@ from typing import (
     Any,
     List,
     Sequence,
-    Dict,
     Optional,
     Generator,
 )
@@ -20,8 +19,7 @@ from ._model_utils import (
 from .model import ModelWrapperBase, ModelResponse
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.common import _convert_to_str, _to_openai_image_url
-
+from ..utils.common import _to_openai_image_url
 from ..utils.token_utils import get_openai_max_length
 
 
@@ -338,78 +336,6 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             )
 
     @staticmethod
-    def _format_msg_with_url(
-        msg: Msg,
-        model_name: str,
-    ) -> Dict:
-        """Format a message with image urls into openai chat format.
-        This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and
-        other vision models.
-        """
-        # Check if the model is a vision model
-        if not any(
-            _ in model_name
-            for _ in OpenAIChatWrapper.substrings_in_vision_models_names
-        ):
-            logger.warning(
-                f"The model {model_name} is not a vision model. "
-                f"Skip the url in the message.",
-            )
-            return {
-                "role": msg.role,
-                "name": msg.name,
-                "content": _convert_to_str(msg.content),
-            }
-
-        # Put all urls into a list
-        urls = [msg.url] if isinstance(msg.url, str) else msg.url
-
-        # Check if the url refers to an image
-        checked_urls = []
-        for url in urls:
-            try:
-                checked_urls.append(_to_openai_image_url(url))
-            except TypeError:
-                logger.warning(
-                    f"The url {url} is not a valid image url for "
-                    f"OpenAI Chat API, skipped.",
-                )
-
-        if len(checked_urls) == 0:
-            # If no valid image url is provided, return the normal message dict
-            return {
-                "role": msg.role,
-                "name": msg.name,
-                "content": _convert_to_str(msg.content),
-            }
-        else:
-            # otherwise, use the vision format message
-            returned_msg = {
-                "role": msg.role,
-                "name": msg.name,
-                "content": [
-                    {
-                        "type": "text",
-                        "text": _convert_to_str(msg.content),
-                    },
-                ],
-            }
-
-            image_dicts = [
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": _,
-                    },
-                }
-                for _ in checked_urls
-            ]
-
-            returned_msg["content"].extend(image_dicts)
-
-            return returned_msg
-
-    @staticmethod
     def static_format(
         *args: Union[Msg, Sequence[Msg]],
         model_name: str,
@@ -431,38 +357,75 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 required.
         """
         messages = []
-        for arg in args:
-            if arg is None:
+        for msg in args:
+            if msg is None:
                 continue
-            if isinstance(arg, Msg):
-                if arg.url is not None:
-                    # Format the message according to the model type
-                    # (vision/non-vision)
-                    formatted_msg = OpenAIChatWrapper._format_msg_with_url(
-                        arg,
-                        model_name,
-                    )
-                    messages.append(formatted_msg)
-                else:
+
+            if isinstance(msg, Msg):
+                content_blocks: list[dict] = []
+                for block in msg.content:
+                    typ = block.get("type")
+                    if typ == "text":
+                        content_blocks.append({**block})
+
+                    elif typ == "tool_use":
+                        content_blocks.append(
+                            {
+                                "id": block.get("id"),
+                                "type": "function",
+                                "function": {
+                                    "name": block.get("name"),
+                                    "arguments": block.get("input"),
+                                },
+                            },
+                        )
+
+                    elif typ == "tool_result":
+                        messages.append(
+                            {
+                                "role": "tool",
+                                "tool_call_id": block.get("id"),
+                                "content": block.get("output"),
+                            },
+                        )
+
+                    elif typ == "image":
+                        content_blocks.append(
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": _to_openai_image_url(
+                                        str(block.get("url")),
+                                    ),
+                                },
+                            },
+                        )
+
+                    else:
+                        logger.warning(
+                            f"Unsupported block type {typ} in the message, "
+                            f"skipped.",
+                        )
+
                     messages.append(
                         {
-                            "role": arg.role,
-                            "name": arg.name,
-                            "content": _convert_to_str(arg.content),
+                            "role": msg.role,
+                            "name": msg.name,
+                            "content": content_blocks,
                         },
                     )
 
-            elif isinstance(arg, list):
+            elif isinstance(msg, list):
                 messages.extend(
                     OpenAIChatWrapper.static_format(
-                        *arg,
+                        *msg,
                         model_name=model_name,
                     ),
                 )
             else:
                 raise TypeError(
                     f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(arg)}.",
+                    f"of Msg objects, got {type(msg)}.",
                 )
 
         return messages

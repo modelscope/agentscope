@@ -15,7 +15,7 @@ from ..exception import ResponseParsingError
 from ..manager import FileManager
 from ..manager import MonitorManager
 from ..message import Msg
-from ..utils.common import _get_timestamp, _convert_to_str
+from ..utils.common import _get_timestamp
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -152,6 +152,24 @@ class ModelWrapperBase:
         )
 
     @staticmethod
+    def check_and_flat_messages(msgs: list) -> list[Msg]:
+        """Check the input messages."""
+        input_msgs = []
+        for _ in msgs:
+            if _ is None:
+                continue
+            if isinstance(_, Msg):
+                input_msgs.append(_)
+            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
+                input_msgs.extend(_)
+            else:
+                raise TypeError(
+                    f"The input should be a Msg object or a list "
+                    f"of Msg objects, got {type(_)}.",
+                )
+        return input_msgs
+
+    @staticmethod
     def format_for_common_chat_models(
         *args: Union[Msg, Sequence[Msg]],
     ) -> List[dict]:
@@ -227,32 +245,23 @@ class ModelWrapperBase:
             )
 
         # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
+        input_msgs = ModelWrapperBase.check_and_flat_messages(list(args))
 
         # record dialog history as a list of strings
         dialogue = []
         sys_prompt = None
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
+        for i, msg in enumerate(input_msgs):
+            if i == 0 and msg.role == "system":
                 # if system prompt is available, place it at the beginning
-                sys_prompt = _convert_to_str(unit.content)
+                sys_prompt = msg.get_text_content()
+
             else:
                 # Merge all messages into a conversation history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
+                text_content = msg.get_text_content()
+                if text_content is not None:
+                    dialogue.append(
+                        f"{msg.name}: {msg.content}",
+                    )
 
         content_components = []
 

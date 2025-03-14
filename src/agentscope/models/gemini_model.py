@@ -9,7 +9,6 @@ from loguru import logger
 
 from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
-from ..utils.common import _convert_to_str
 
 try:
     import google.generativeai as genai
@@ -350,19 +349,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 "list is not allowed.",
             )
 
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
+        input_msgs = ModelWrapperBase.check_and_flat_messages(list(args))
 
         # record dialog history as a list of strings
         sys_prompt = None
@@ -370,12 +357,14 @@ class GeminiChatWrapper(GeminiWrapperBase):
         for i, unit in enumerate(input_msgs):
             if i == 0 and unit.role == "system":
                 # system prompt
-                sys_prompt = _convert_to_str(unit.content)
+                sys_prompt = unit.get_text_content()
             else:
                 # Merge all messages into a conversation history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
+                text_content = unit.get_text_content()
+                if text_content is not None:
+                    dialogue.append(
+                        f"{unit.name}: {text_content}",
+                    )
 
         prompt_components = []
         if sys_prompt is not None:
