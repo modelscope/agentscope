@@ -7,6 +7,7 @@ from typing import Any, Union, List, Sequence, Optional, Generator
 
 from loguru import logger
 
+from ..formatters import CommonFormatter
 from ..manager import FileManager
 from ..message import Msg
 from ..utils.common import _convert_to_str, _guess_type_by_extension
@@ -72,7 +73,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -331,7 +332,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
         input messages into a user message.
@@ -389,7 +390,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -399,7 +400,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 The formatted messages.
         """
 
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+        return CommonFormatter.format_multi_agent(*args)
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
@@ -785,7 +786,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> List:
         """Format the messages for DashScope Multimodal API.
 
@@ -866,7 +867,7 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             "file://", which will be attached in this format function.
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.

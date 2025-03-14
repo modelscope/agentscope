@@ -21,6 +21,7 @@ class ModelResponse:
         raw: Any = None,
         parsed: Any = None,
         stream: Optional[Generator[str, None, None]] = None,
+        tool_calls: Optional[list[dict]] = None,
     ) -> None:
         """Initialize the model response.
 
@@ -37,6 +38,8 @@ class ModelResponse:
                 The parsed data returned by the model.
             stream (`Generator`, optional):
                 The stream data returned by the model.
+            tool_calls (`Optional[list[dict]]`, defaults to `None`):
+                The tool calls made by the model.
         """
         self._text = text
         self.embedding = embedding
@@ -44,6 +47,7 @@ class ModelResponse:
         self.raw = raw
         self.parsed = parsed
         self._stream = stream
+        self.tool_calls = tool_calls
         self._is_stream_exhausted = False
 
     @property

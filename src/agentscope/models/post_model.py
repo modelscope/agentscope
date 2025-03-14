@@ -8,11 +8,11 @@ from typing import Any, Union, Sequence, List, Optional
 import requests
 from loguru import logger
 
-from .openai_model import OpenAIChatWrapper
 from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
+from ..formatters import OpenAIFormatter, GeminiFormatter, CommonFormatter
 from ..message import Msg
 
 
@@ -195,14 +195,14 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> Union[List[dict]]:
         """Format the input messages into a list of dict according to the model
         name. For example, if the model name is prefixed with "gpt-", the
         input messages will be formatted for OpenAI models.
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -218,22 +218,17 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         )
 
         # OpenAI
-        if model_name and model_name.startswith("gpt-"):
-            return OpenAIChatWrapper.static_format(
-                *args,
-                model_name=model_name,
-            )
+        if OpenAIFormatter.is_supported_model(model_name or ""):
+            return OpenAIFormatter.format_multi_agent(*args)
 
         # Gemini
-        elif model_name and model_name.startswith("gemini"):
-            from .gemini_model import GeminiChatWrapper
-
-            return GeminiChatWrapper.format(*args)
+        if GeminiFormatter.is_supported_model(model_name or ""):
+            return GeminiFormatter.format_multi_agent(*args)
 
         # Include DashScope, ZhipuAI, Ollama, the other models supported by
         # litellm and unknown models
         else:
-            return ModelWrapperBase.format_for_common_chat_models(*args)
+            return CommonFormatter.format_multi_agent(*args)
 
 
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):

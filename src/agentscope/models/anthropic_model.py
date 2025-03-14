@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """The Anthropic model wrapper for AgentScope."""
-from typing import Optional, Union, Generator, Any, Sequence
+from typing import Optional, Union, Generator, Any
 
+from ..formatters import AnthropicFormatter
 from ..message import Msg
 from .model import ModelWrapperBase, ModelResponse
 
@@ -55,11 +56,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> list[dict[str, object]]:
         """Format the messages for anthropic model input.
-
-        TODO: Add support for multimodal input.
 
         Args:
             *args (`Union[Msg, list[Msg]]`):
@@ -69,9 +68,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
             `list[dict[str, object]]`:
                 A list of formatted messages.
         """
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+        return AnthropicFormatter.format_multi_agent(*args)
 
-    def __call__(  # pylint: disable=too-many-branches
+    def __call__(  # pylint: disable=too-many-branches too-many-statements
         self,
         messages: list[dict[str, Union[str, list[dict]]]],
         stream: Optional[bool] = None,
@@ -219,18 +218,20 @@ class AnthropicChatWrapper(ModelWrapperBase):
             )
 
             texts = []
+            tool_calls = []
             # Gather text from content blocks
             for block in response.get("content", []):
-                if (
-                    isinstance(block, dict)
-                    and block.get("type", None) == "text"
-                ):
+                typ = block.get("type", None)
+                if isinstance(block, dict) and typ == "text":
                     texts.append(block.get("text", ""))
+                elif typ == "tool_use":
+                    tool_calls.append(block)
 
             # Return the response
             return ModelResponse(
                 text="\n".join(texts),
                 raw=response,
+                tool_calls=tool_calls if tool_calls else None,
             )
 
     def _save_model_invocation_and_update_monitor(

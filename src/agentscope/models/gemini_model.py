@@ -7,6 +7,7 @@ from typing import Sequence, Union, Any, List, Optional, Generator
 
 from loguru import logger
 
+from ..formatters import GeminiFormatter
 from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
 
@@ -343,50 +344,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
             `List[dict]`:
                 A list with one user message.
         """
-        if len(args) == 0:
-            raise ValueError(
-                "At least one message should be provided. An empty message "
-                "list is not allowed.",
-            )
-
-        input_msgs = ModelWrapperBase.check_and_flat_messages(list(args))
-
-        # record dialog history as a list of strings
-        sys_prompt = None
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                sys_prompt = unit.get_text_content()
-            else:
-                # Merge all messages into a conversation history prompt
-                text_content = unit.get_text_content()
-                if text_content is not None:
-                    dialogue.append(
-                        f"{unit.name}: {text_content}",
-                    )
-
-        prompt_components = []
-        if sys_prompt is not None:
-            if not sys_prompt.endswith("\n"):
-                sys_prompt += "\n"
-            prompt_components.append(sys_prompt)
-
-        if len(dialogue) > 0:
-            prompt_components.extend(["## Conversation History"] + dialogue)
-
-        user_prompt = "\n".join(prompt_components)
-
-        messages = [
-            {
-                "role": "user",
-                "parts": [
-                    user_prompt,
-                ],
-            },
-        ]
-
-        return messages
+        return GeminiFormatter.format_multi_agent(*args)
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for ZhipuAI models"""
 from abc import ABC
-from typing import Union, Any, List, Sequence, Optional, Generator
+from typing import Union, Any, List, Optional, Generator
 
 from loguru import logger
 
 from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
+from ..formatters import CommonFormatter
 from ..message import Msg
 
 try:
@@ -69,7 +70,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -296,7 +297,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
         input messages into a user message.
@@ -354,7 +355,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
 
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
@@ -364,7 +365,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
                 The formatted messages.
         """
 
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+        return CommonFormatter.format_multi_agent(*args)
 
 
 class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):

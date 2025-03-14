@@ -5,7 +5,7 @@ from __future__ import annotations
 import inspect
 import time
 from functools import wraps
-from typing import Sequence, Any, Callable, Union, List, Optional
+from typing import Any, Callable, Union, List, Optional
 
 from loguru import logger
 
@@ -142,7 +142,7 @@ class ModelWrapperBase:
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
     ) -> Union[List[dict], str]:
         """Format the input messages into the format that the model
         API required."""
@@ -150,137 +150,6 @@ class ModelWrapperBase:
             f"Model Wrapper [{type(self).__name__}]"
             f" is missing the required `format` method",
         )
-
-    @staticmethod
-    def check_and_flat_messages(msgs: list) -> list[Msg]:
-        """Check the input messages."""
-        input_msgs = []
-        for _ in msgs:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-        return input_msgs
-
-    @staticmethod
-    def format_for_common_chat_models(
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> List[dict]:
-        """A common format strategy for chat models, which will format the
-        input messages into a system message (if provided) and a user message.
-
-        Note this strategy maybe not suitable for all scenarios,
-        and developers are encouraged to implement their own prompt
-        engineering strategies.
-
-        The following is an example:
-
-        .. code-block:: python
-
-            prompt1 = model.format(
-                Msg("system", "You're a helpful assistant", role="system"),
-                Msg("Bob", "Hi, how can I help you?", role="assistant"),
-                Msg("user", "What's the date today?", role="user")
-            )
-
-            prompt2 = model.format(
-                Msg("Bob", "Hi, how can I help you?", role="assistant"),
-                Msg("user", "What's the date today?", role="user")
-            )
-
-        The prompt will be as follows:
-
-        .. code-block:: python
-
-            # prompt1
-            [
-                {
-                    "role": "system",
-                    "content": "You're a helpful assistant"
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        "## Conversation History\\n"
-                        "Bob: Hi, how can I help you?\\n"
-                        "user: What's the date today?"
-                    )
-                }
-            ]
-
-            # prompt2
-            [
-                {
-                    "role": "user",
-                    "content": (
-                        "## Conversation History\\n"
-                        "Bob: Hi, how can I help you?\\n"
-                        "user: What's the date today?"
-                    )
-                }
-            ]
-
-
-        Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
-
-        Returns:
-            `List[dict]`:
-                The formatted messages.
-        """
-        if len(args) == 0:
-            raise ValueError(
-                "At least one message should be provided. An empty message "
-                "list is not allowed.",
-            )
-
-        # Parse all information into a list of messages
-        input_msgs = ModelWrapperBase.check_and_flat_messages(list(args))
-
-        # record dialog history as a list of strings
-        dialogue = []
-        sys_prompt = None
-        for i, msg in enumerate(input_msgs):
-            if i == 0 and msg.role == "system":
-                # if system prompt is available, place it at the beginning
-                sys_prompt = msg.get_text_content()
-
-            else:
-                # Merge all messages into a conversation history prompt
-                text_content = msg.get_text_content()
-                if text_content is not None:
-                    dialogue.append(
-                        f"{msg.name}: {msg.content}",
-                    )
-
-        content_components = []
-
-        # The conversation history is added to the user message if not empty
-        if len(dialogue) > 0:
-            content_components.extend(["## Conversation History"] + dialogue)
-
-        messages = [
-            {
-                "role": "user",
-                "content": "\n".join(content_components),
-            },
-        ]
-
-        # Add system prompt at the beginning if provided
-        if sys_prompt is not None:
-            messages = [{"role": "system", "content": sys_prompt}] + messages
-
-        return messages
 
     def _save_model_invocation(
         self,
