@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """The base class for message unit"""
 import datetime
+import json
 import uuid
 from typing import (
     Literal,
     Union,
     List,
     Optional,
+    Dict,
+    Any,
 )
 
 from loguru import logger
@@ -25,26 +28,43 @@ from ..utils.common import (
 )
 
 
+JSONSerializable = Union[
+    str,
+    int,
+    float,
+    bool,
+    None,
+    List[Any],
+    Dict[str, Any],
+]
+
+
 class Msg(BaseModel):
     """The message class in AgentScope."""
 
     id: str = Field(default_factory=lambda: uuid.uuid4().hex)
+    """The unique identity of the message."""
     name: str
+    """The name of the message sender."""
     role: Literal["system", "user", "assistant"]
+    """The role of the message sender."""
     content: Union[str, list[ContentBlock]]
-    metadata: Union[None, dict] = Field(default=None)
+    """The content of the message."""
+    metadata: JSONSerializable = Field(default=None)
+    """The additional metadata stored in the message."""
     timestamp: str = Field(
         default_factory=lambda: datetime.datetime.now().strftime(
             "%Y-%m-%d %H:%M:%S",
         ),
     )
+    """The timestamp of the message."""
 
     def __init__(
         self,
         name: str,
         content: Union[str, list[ContentBlock]],
         role: Literal["system", "user", "assistant"],
-        metadata: Union[None, dict] = None,
+        metadata: JSONSerializable = None,
         echo: bool = False,
         url: Optional[Union[str, List[str]]] = None,
     ) -> None:
@@ -126,6 +146,16 @@ class Msg(BaseModel):
                             url=_,
                         ),
                     )
+
+        # Check if the metadata is JSON serializable
+        if isinstance(metadata, (Dict, List)):
+            try:
+                json.dumps(metadata)
+            except Exception as e:
+                raise TypeError(
+                    "The metadata should be JSON serializable, "
+                    f"got {type(metadata)}.",
+                ) from e
 
         super().__init__(
             name=name,
