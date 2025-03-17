@@ -412,7 +412,10 @@ class ServiceToolkit:
                     self._tools_execution_format.format(
                         index=i + 1,
                         function_name=_["name"],
-                        arguments=json.dumps(tool_calls[i]["input"]),
+                        arguments=json.dumps(
+                            tool_calls[i]["input"],
+                            ensure_ascii=False,
+                        ),
                         result=_["output"],
                     )
                     for i, _ in enumerate(tool_results)

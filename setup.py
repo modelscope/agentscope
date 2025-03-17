@@ -35,6 +35,7 @@ minimal_requires = [
     "flask_sqlalchemy",
     "flake8",
     "psutil",
+    "shortuuid",
     "scipy",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
