@@ -12,7 +12,7 @@ from ..utils.common import _to_anthropic_image_url
 class AnthropicFormatter(FormatterBase):
     """The formatter for Anthropic models."""
 
-    supported_model_names: list[str] = [
+    supported_model_regexes: list[str] = [
         "claude-3-5.*",
         "claude-3-7.*",
     ]
@@ -35,7 +35,7 @@ class AnthropicFormatter(FormatterBase):
         formatted_msgs = []
         for msg in msgs:
             content = []
-            for block in msg.content:
+            for block in msg.get_block_content():
                 if block.get("type") == "text":
                     content.append(
                         {
@@ -100,10 +100,9 @@ class AnthropicFormatter(FormatterBase):
             if i == 0 and msg.role == "system":
                 # if system prompt is available, place it at the beginning
                 sys_prompt = msg.get_text_content()
-
             else:
                 # Merge all messages into a conversation history prompt
-                for block in msg.content:
+                for block in msg.get_block_content():
                     typ = block.get("type")
                     if typ == "text":
                         dialogue.append(

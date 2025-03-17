@@ -31,7 +31,7 @@ class Msg(BaseModel):
     id: str = Field(default_factory=lambda: uuid.uuid4().hex)
     name: str
     role: Literal["system", "user", "assistant"]
-    content: List[ContentBlock]
+    content: Union[str, list[ContentBlock]]
     metadata: Union[None, dict] = Field(default=None)
     timestamp: str = Field(
         default_factory=lambda: datetime.datetime.now().strftime(
@@ -75,15 +75,7 @@ class Msg(BaseModel):
                 The url of the message.
         """
 
-        if isinstance(content, str):
-            content = [
-                TextBlock(
-                    type="text",
-                    text=content,
-                ),
-            ]
-
-        assert isinstance(content, list), (
+        assert isinstance(content, (str, list)), (
             "The content should be a string or a list or ContentBlock, "
             f"got {type(content)}."
         )
@@ -95,6 +87,11 @@ class Msg(BaseModel):
                 "using the ContentBlock instead to attach files to the "
                 "message",
             )
+
+            if isinstance(content, str):
+                content = [
+                    TextBlock(type="text", text=content),
+                ]
 
             if isinstance(url, str):
                 url = [url]
@@ -184,6 +181,9 @@ class Msg(BaseModel):
 
     def get_text_content(self) -> Union[str, None]:
         """Get the pure text content of the message."""
+        if isinstance(self.content, str):
+            return self.content
+
         gathered_text = None
         for block in self.content:
             if block.get("type") == "text":
@@ -192,3 +192,10 @@ class Msg(BaseModel):
                 else:
                     gathered_text += block.get("text")
         return gathered_text
+
+    def get_block_content(self) -> list[ContentBlock]:
+        """Get the content in block format. If the content is a string,
+        it will be converted to a text block."""
+        if isinstance(self.content, str):
+            return [TextBlock(type="text", text=self.content)]
+        return self.content

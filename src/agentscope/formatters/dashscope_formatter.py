@@ -69,7 +69,7 @@ class DashScopeFormatter(FormatterBase):
         formatted_msgs: list[dict] = []
         for msg in input_msgs:
             content = []
-            for block in msg.content:
+            for block in msg.get_block_content():
                 typ = block.get("type")
                 if typ in ["text", "image", "audio"]:
                     content.append(
@@ -106,7 +106,12 @@ class DashScopeFormatter(FormatterBase):
                             "name": block.get("name"),
                         },
                     )
-                # TODO: tool use
+                else:
+                    logger.warning(
+                        f"Unsupported block type {typ} in the message, "
+                        f"skipped.",
+                    )
+
             formatted_msgs.append(
                 {
                     "role": msg.role,
@@ -130,25 +135,25 @@ class DashScopeFormatter(FormatterBase):
         # record dialog history as a list of strings
         dialogue = []
         image_or_audio_dicts = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
+        for i, msg in enumerate(input_msgs):
+            if i == 0 and msg.role == "system":
                 # system prompt
-                content = cls._convert_url(unit.url)
-                content.append({"text": unit.content})
+                content = cls._convert_url(msg.url)
+                content.append({"text": msg.get_text_content()})
 
                 messages.append(
                     {
-                        "role": unit.role,
+                        "role": msg.role,
                         "content": content,
                     },
                 )
             else:
                 # text message
                 dialogue.append(
-                    f"{unit.name}: {unit.content}",
+                    f"{msg.name}: {msg.get_text_content()}",
                 )
                 # image and audio
-                image_or_audio_dicts.extend(cls._convert_url(unit.url))
+                image_or_audio_dicts.extend(cls._convert_url(msg.url))
 
         dialogue_history = "\n".join(dialogue)
 

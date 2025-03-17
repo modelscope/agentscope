@@ -9,8 +9,8 @@ from agentscope.message import Msg
 class GeminiFormatter(FormatterBase):
     """The formatter for Gemini models."""
 
-    supported_model_prefixes: list[str] = [
-        "gemini-",
+    supported_model_regexes: list[str] = [
+        "gemini-.*",
     ]
 
     @classmethod

@@ -56,7 +56,7 @@ class OpenAIFormatter(FormatterBase):
 
             if isinstance(msg, Msg):
                 content_blocks = []
-                for block in msg.content:
+                for block in msg.get_block_content():
                     typ = block.get("type")
                     if typ == "text":
                         content_blocks.append({**block})

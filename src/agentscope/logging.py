@@ -64,7 +64,7 @@ def _formatted_str(msg: Msg, colored: bool = False) -> str:
 
     colored_strs = []
 
-    for block in msg.content:
+    for block in msg.get_block_content():
         if block["type"] == "text":
             colored_strs.append(f"{name}: {block.get('text')}")
         elif block["type"] in ["audio", "image", "video", "file"]:
