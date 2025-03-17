@@ -143,6 +143,7 @@ class ModelWrapperBase:
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict], str]:
         """Format the input messages into the format that the model
         API required."""

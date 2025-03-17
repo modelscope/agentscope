@@ -3,7 +3,7 @@
 import json
 import time
 from abc import ABC
-from typing import Any, Union, Sequence, List, Optional
+from typing import Any, Union, List, Optional
 
 import requests
 from loguru import logger
@@ -179,6 +179,17 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                 f"Failed to call the model with {response.json()}",
             )
 
+    def format(
+        self,
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
+    ) -> Union[List[dict], str]:
+        raise RuntimeError(
+            f"Model Wrapper [{type(self).__name__}] doesn't "
+            f"need to format the input. Please try to use the "
+            f"model wrapper directly.",
+        )
+
 
 class PostAPIChatWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai chat, e.g., vLLM,
@@ -196,6 +207,7 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict]]:
         """Format the input messages into a list of dict according to the model
         name. For example, if the model name is prefixed with "gpt-", the
@@ -206,6 +218,10 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `Union[List[dict]]`:
@@ -246,16 +262,6 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
             raise ValueError(f"Error in API call:\n{error_msg}")
         urls = [img["url"] for img in response["data"]["response"]["data"]]
         return ModelResponse(image_urls=urls)
-
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
 
 
 class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
@@ -305,14 +311,4 @@ class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
         return ModelResponse(
             embedding=embeddings,
             raw=response,
-        )
-
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
         )

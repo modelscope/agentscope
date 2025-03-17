@@ -307,6 +307,7 @@ class GeminiChatWrapper(GeminiWrapperBase):
     @staticmethod
     def format(
         *args: Union[Msg, Sequence[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """This function provide a basic prompting strategy for Gemini Chat
         API in multi-party conversation, which combines all input into a
@@ -339,12 +340,18 @@ class GeminiChatWrapper(GeminiWrapperBase):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
                 A list with one user message.
         """
-        return GeminiFormatter.format_multi_agent(*args)
+        if multi_agent_mode:
+            return GeminiFormatter.format_multi_agent(*args)
+        return GeminiFormatter.format_chat(*args)
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):

@@ -71,6 +71,7 @@ class ZhipuAIWrapperBase(ModelWrapperBase, ABC):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -298,6 +299,7 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
         input messages into a user message.
@@ -359,13 +361,18 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
-
-        return CommonFormatter.format_multi_agent(*args)
+        if multi_agent_mode:
+            return CommonFormatter.format_multi_agent(*args)
+        return CommonFormatter.format_chat(*args)
 
 
 class ZhipuAIEmbeddingWrapper(ZhipuAIWrapperBase):

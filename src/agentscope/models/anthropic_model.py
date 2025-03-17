@@ -57,18 +57,25 @@ class AnthropicChatWrapper(ModelWrapperBase):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> list[dict[str, object]]:
         """Format the messages for anthropic model input.
 
         Args:
             *args (`Union[Msg, list[Msg]]`):
                 The message(s) to be formatted.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `list[dict[str, object]]`:
                 A list of formatted messages.
         """
-        return AnthropicFormatter.format_multi_agent(*args)
+        if multi_agent_mode:
+            return AnthropicFormatter.format_multi_agent(*args)
+        return AnthropicFormatter.format_chat(*args)
 
     def __call__(  # pylint: disable=too-many-branches too-many-statements
         self,

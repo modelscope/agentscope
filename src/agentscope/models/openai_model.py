@@ -120,6 +120,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -351,6 +352,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
         OpenAI Chat API required. If you're using a OpenAI-compatible model
@@ -362,6 +364,10 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
@@ -369,11 +375,19 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 required.
         """
 
-        # Format messages according to the model name
-        if OpenAIFormatter.is_supported_model(self.model_name):
-            return OpenAIFormatter.format_multi_agent(*args)
+        # Multi agent scenario
+        if multi_agent_mode:
+            # Format messages according to the model name
+            if OpenAIFormatter.is_supported_model(self.model_name):
+                return OpenAIFormatter.format_multi_agent(*args)
 
-        return CommonFormatter.format_multi_agent(*args)
+            return CommonFormatter.format_multi_agent(*args)
+
+        # Chat scenario
+        if OpenAIFormatter.is_supported_model(self.model_name):
+            return OpenAIFormatter.format_chat(*args)
+
+        return CommonFormatter.format_chat(*args)
 
 
 class OpenAIDALLEWrapper(OpenAIWrapperBase):

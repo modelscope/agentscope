@@ -7,9 +7,9 @@ from typing import Any, Union, List, Optional, Generator
 from loguru import logger
 
 from ..formatters import CommonFormatter
+from ..formatters.dashscope_formatter import DashScopeFormatter
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.common import _convert_to_str
 
 try:
     import dashscope
@@ -73,6 +73,7 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict], str]:
         raise RuntimeError(
             f"Model Wrapper [{type(self).__name__}] doesn't "
@@ -332,6 +333,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
         input messages into a user message.
@@ -393,13 +395,18 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
-
-        return CommonFormatter.format_multi_agent(*args)
+        if multi_agent_mode:
+            return CommonFormatter.format_multi_agent(*args)
+        return CommonFormatter.format_chat(*args)
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
@@ -786,7 +793,8 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
     def format(
         self,
         *args: Union[Msg, list[Msg]],
-    ) -> List:
+        multi_agent_mode: bool = True,
+    ) -> list[dict]:
         """Format the messages for DashScope Multimodal API.
 
         The multimodal API has the following requirements:
@@ -870,69 +878,16 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
-            `List[dict]`:
+            `list[dict]`:
                 The formatted messages.
         """
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        messages = []
-
-        # record dialog history as a list of strings
-        dialogue = []
-        image_or_audio_dicts = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                content = self.convert_url(unit.url)
-                content.append({"text": _convert_to_str(unit.content)})
-
-                messages.append(
-                    {
-                        "role": unit.role,
-                        "content": content,
-                    },
-                )
-            else:
-                # text message
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-                # image and audio
-                image_or_audio_dicts.extend(self.convert_url(unit.url))
-
-        dialogue_history = "\n".join(dialogue)
-
-        user_content_template = "## Conversation History\n{dialogue_history}"
-
-        messages.append(
-            {
-                "role": "user",
-                "content": [
-                    # Place the image or audio before the conversation history
-                    *image_or_audio_dicts,
-                    {
-                        "text": user_content_template.format(
-                            dialogue_history=dialogue_history,
-                        ),
-                    },
-                ],
-            },
-        )
-
-        return messages
+        if not multi_agent_mode:
+            return DashScopeFormatter.format_multi_agent(*args)
+        return DashScopeFormatter.format_chat(*args)
