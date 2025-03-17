@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """The formatter for OpenAI models."""
+import json
 from typing import Union
 
 from loguru import logger
@@ -10,7 +11,8 @@ from agentscope.utils.common import _to_openai_image_url
 
 
 class OpenAIFormatter(FormatterBase):
-    """The formatter for OpenAI models."""
+    """The formatter for OpenAI models, which is responsible for formatting
+    messages, JSON schemas description of the tool functions."""
 
     supported_model_regexes: list[str] = [
         "gpt-.*",
@@ -66,7 +68,10 @@ class OpenAIFormatter(FormatterBase):
                                 "type": "function",
                                 "function": {
                                     "name": block.get("name"),
-                                    "arguments": block.get("input"),
+                                    "arguments": json.dumps(
+                                        block.get("input", {}),
+                                        ensure_ascii=False,
+                                    ),
                                 },
                             },
                         )
@@ -77,6 +82,7 @@ class OpenAIFormatter(FormatterBase):
                                 "role": "tool",
                                 "tool_call_id": block.get("id"),
                                 "content": block.get("output"),
+                                "name": block.get("name"),
                             },
                         )
 
@@ -119,3 +125,73 @@ class OpenAIFormatter(FormatterBase):
                 )
 
         return messages
+
+    @classmethod
+    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        OpenAI API expects. This function will take the parsed JSON schema
+        from `agentscope.service.ServiceToolkit` as input and return
+        the formatted JSON schema.
+
+        Note:
+            An example of the input tool JSON schema
+
+            ..code-block:: json
+
+                [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                ]
+
+        Args:
+            schemas (`list[dict]`):
+                The JSON schema of the tool functions.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schema.
+        """
+
+        # The schemas from ServiceToolkit is exactly the same with the format
+        # that OpenAI API expects, so we just return the input schemas.
+
+        assert isinstance(
+            schemas,
+            list,
+        ), f"Expect list of schemas, got {type(schemas)}."
+
+        for schema in schemas:
+            assert isinstance(
+                schema,
+                dict,
+            ), f"Expect dict schema, got {type(schema)}."
+
+            assert (
+                "type" in schema and "function" in schema
+            ), f"Invalid schema: {schema}, expect keys 'type' and 'function'."
+
+            assert (
+                schema["type"] == "function"
+            ), f"Invalid schema type: {schema['type']}, expect 'function'."
+
+            assert "name" in schema["function"], (
+                f"Invalid schema: {schema}, "
+                f"expect key 'name' in 'function' field."
+            )
+
+        return schemas

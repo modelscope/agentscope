@@ -2,7 +2,7 @@
 # pylint: disable=too-many-ancestors
 """The content blocks of messages"""
 from typing import Literal, Union
-from typing_extensions import TypedDict, Required
+from typing_extensions import TypedDict, Required, Optional
 
 
 class ToolUseBlock(TypedDict, total=False):
@@ -26,6 +26,8 @@ class ToolResultBlock(TypedDict, total=False):
     """The identity of the tool call result"""
     output: Required[object]
     """The output of the tool function"""
+    name: Optional[str]
+    """The name of the tool function"""
 
 
 class TextBlock(TypedDict, total=False):

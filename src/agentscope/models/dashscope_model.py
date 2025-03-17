@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
-import os
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence, Optional, Generator
+from typing import Any, Union, List, Optional, Generator
 
 from loguru import logger
 
 from ..formatters import CommonFormatter
 from ..manager import FileManager
 from ..message import Msg
-from ..utils.common import _convert_to_str, _guess_type_by_extension
+from ..utils.common import _convert_to_str
 
 try:
     import dashscope
@@ -937,43 +936,3 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
         )
 
         return messages
-
-    def convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
-        """Convert the url to the format of DashScope API. Note for local
-        files, a prefix "file://" will be added.
-
-        Args:
-            url (`Union[str, Sequence[str], None]`):
-                A string of url of a list of urls to be converted.
-
-        Returns:
-            `List[dict]`:
-                A list of dictionaries with key as the type of the url
-                and value as the url. Only "image" and "audio" are supported.
-        """
-        if url is None:
-            return []
-
-        if isinstance(url, str):
-            url_type = _guess_type_by_extension(url)
-            if url_type in ["audio", "image"]:
-                # Add prefix for local files
-                if os.path.exists(url):
-                    url = "file://" + url
-                return [{url_type: url}]
-            else:
-                # skip unsupported url
-                logger.warning(
-                    f"Skip unsupported url ({url_type}), "
-                    f"expect image or audio.",
-                )
-                return []
-        elif isinstance(url, list):
-            dicts = []
-            for _ in url:
-                dicts.extend(self.convert_url(_))
-            return dicts
-        else:
-            raise TypeError(
-                f"Unsupported url type {type(url)}, " f"str or list expected.",
-            )

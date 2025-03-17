@@ -73,7 +73,7 @@ class GeminiFormatter(FormatterBase):
                 "list is not allowed.",
             )
 
-        input_msgs = cls.check_and_flat_messages(list(msgs))
+        input_msgs = cls.check_and_flat_messages(*msgs)
 
         # record dialog history as a list of strings
         sys_prompt = None
@@ -111,3 +111,14 @@ class GeminiFormatter(FormatterBase):
         ]
 
         return messages
+
+    @classmethod
+    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        Gemini API expects.
+
+        TODO: Implement this function.
+        """
+        raise NotImplementedError(
+            "The format_tools_json_schemas function is not implemented yet.",
+        )

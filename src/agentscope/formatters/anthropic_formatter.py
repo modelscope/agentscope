@@ -13,8 +13,8 @@ class AnthropicFormatter(FormatterBase):
     """The formatter for Anthropic models."""
 
     supported_model_names: list[str] = [
-        "claude-3-5",
-        "claude-3-7",
+        "claude-3-5.*",
+        "claude-3-7.*",
     ]
 
     @classmethod
@@ -151,3 +151,91 @@ class AnthropicFormatter(FormatterBase):
             messages = [{"role": "system", "content": sys_prompt}] + messages
 
         return messages
+
+    @classmethod
+    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        Anthropic API expects. This function will take the parsed JSON schema
+        from `agentscope.service.ServiceToolkit` as input and return the
+        formatted JSON schema.
+
+        Note:
+            An example of the input tool JSON schema
+
+            ..code-block:: json
+
+                [
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                ]
+
+            The formatted JSON schema will be like:
+
+            ..code-block:: json
+
+                [
+                    {
+                        "name": "bing_search",
+                        "description": "Search the web using Bing.",
+                        "input_schema": {
+                            "type": "object",
+                            "properties": {
+                                "query": {
+                                    "type": "string",
+                                    "description": "The search query.",
+                                }
+                            },
+                            "required": ["query"],
+                        }
+                    }
+                ]
+
+        Args:
+            schemas (`list[dict]`):
+                The JSON schema of the tool functions.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schema.
+        """
+
+        assert isinstance(
+            schemas,
+            list,
+        ), f"Expect list of schemas, got {type(schemas)}."
+
+        formatted_schemas = []
+        for schema in schemas:
+            assert (
+                "function" in schema
+            ), f"Invalid schema: {schema}, expect key 'function'."
+
+            assert "name" in schema["function"], (
+                f"Invalid schema: {schema}, "
+                "expect key 'name' in 'function' field."
+            )
+
+            formatted_schemas.append(
+                {
+                    "name": schema["function"]["name"],
+                    "description": schema["function"].get("description", ""),
+                    "input_schema": schema["function"].get("parameters", {}),
+                },
+            )
+
+        return formatted_schemas

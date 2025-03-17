@@ -202,7 +202,7 @@ class FormatterBase:
                 text_content = msg.get_text_content()
                 if text_content is not None:
                     dialogue.append(
-                        f"{msg.name}: {msg.content}",
+                        f"{msg.name}: {msg.get_text_content()}",
                     )
 
         content_components = []
@@ -225,7 +225,7 @@ class FormatterBase:
         return messages
 
     @staticmethod
-    def check_and_flat_messages(msgs: Union[Msg, list[Msg]]) -> list[Msg]:
+    def check_and_flat_messages(*msgs: Union[Msg, list[Msg]]) -> list[Msg]:
         """Check the input messages."""
         input_msgs = []
         for _ in msgs:
@@ -241,3 +241,9 @@ class FormatterBase:
                     f"of Msg objects, got {type(_)}.",
                 )
         return input_msgs
+
+    @classmethod
+    @abstractmethod
+    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        API provider expects."""
