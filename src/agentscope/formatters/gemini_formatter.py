@@ -2,8 +2,8 @@
 """The gemini formatter class."""
 from typing import Union
 
-from agentscope.formatters import FormatterBase
-from agentscope.message import Msg
+from .formatter_base import FormatterBase
+from ..message import Msg
 
 
 class GeminiFormatter(FormatterBase):

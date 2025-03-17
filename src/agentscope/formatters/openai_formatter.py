@@ -5,9 +5,9 @@ from typing import Union
 
 from loguru import logger
 
-from agentscope.formatters import FormatterBase
-from agentscope.message import Msg
-from agentscope.utils.common import _to_openai_image_url
+from .formatter_base import FormatterBase
+from ..message import Msg
+from ..utils.common import _to_openai_image_url
 
 
 class OpenAIFormatter(FormatterBase):

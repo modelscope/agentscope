@@ -4,6 +4,7 @@ rather than assembling the prompt manually."""
 from typing import Union, Optional
 
 from .agent import AgentBase
+from ..manager import ModelManager
 from ..message import Msg, ToolUseBlock, TextBlock, ContentBlock
 from ..service import ServiceToolkit, ServiceResponse, ServiceExecStatus
 
@@ -21,15 +22,39 @@ class ReActAgentV2(AgentBase):
     def __init__(
         self,
         name: str,
+        model_config_name: str,
         service_toolkit: ServiceToolkit,
         sys_prompt: str = "You're a helpful assistant named {name}.",
         max_iters: int = 10,
         verbose: bool = True,
     ) -> None:
         """Initial the ReAct agent with the given name, model config name and
-        tools."""
-        self.name = name
+        tools.
+
+        Args:
+            name (`str`):
+                The name of the agent.
+            model_config_name (`str`):
+                The name of the model config, which is used to load model from
+                configuration.
+            service_toolkit (`ServiceToolkit`):
+                The service toolkit object that contains the tool functions.
+            sys_prompt (`str`):
+                The system prompt of the agent.
+            max_iters (`int`, defaults to `10`):
+                The maximum number of iterations of the reasoning-acting loops.
+            verbose (`bool`, defaults to `True`):
+                Whether to print the detailed information during reasoning and
+                acting steps. If `False`, only the content in speak field will
+                be print out.
+        """
+        super().__init__(name=name)
+
         self.sys_prompt: str = sys_prompt.format(name=self.name)
+
+        self.model = ModelManager.get_instance().get_model_by_config_name(
+            model_config_name,
+        )
 
         self.service_toolkit = service_toolkit
         self.service_toolkit.add(self.finish)

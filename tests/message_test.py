@@ -13,7 +13,7 @@ class MessageTest(unittest.TestCase):
         """Test the basic attributes in Msg object."""
         msg = Msg(name="A", content="B", role="assistant")
         self.assertEqual(msg.name, "A")
-        self.assertEqual(msg.content, [{"type": "text", "text": "B"}])
+        self.assertEqual(msg.content, "B")
         self.assertEqual(msg.role, "assistant")
         self.assertEqual(msg.metadata, None)
 

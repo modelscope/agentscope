@@ -28,7 +28,7 @@ class SerializationTest(unittest.TestCase):
             {
                 "id": msg1.id,
                 "name": "A",
-                "content": [{"type": "text", "text": "A"}],
+                "content": "A",
                 "role": "assistant",
                 "timestamp": msg1.timestamp,
                 "metadata": None,
@@ -53,7 +53,7 @@ class SerializationTest(unittest.TestCase):
                 {
                     "id": msg1.id,
                     "name": "A",
-                    "content": [{"type": "text", "text": "A"}],
+                    "content": "A",
                     "role": "assistant",
                     "timestamp": msg1.timestamp,
                     "metadata": None,
@@ -63,7 +63,7 @@ class SerializationTest(unittest.TestCase):
                 {
                     "id": msg2.id,
                     "name": "B",
-                    "content": [{"type": "text", "text": "B"}],
+                    "content": "B",
                     "role": "assistant",
                     "timestamp": msg2.timestamp,
                     "metadata": None,
