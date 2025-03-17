@@ -48,7 +48,6 @@ from .multi_modality.openai_services import (
 
 from .service_response import ServiceResponse
 from .service_toolkit import ServiceToolkit
-from .service_toolkit import ServiceFactory
 from .retrieval.similarity import cos_sim
 from .text_processing.summarization import summarization
 from .retrieval.retrieval_from_list import retrieve_from_list
@@ -125,6 +124,4 @@ __all__ = [
     "tripadvisor_search_location_details",
     "WebBrowser",
     "WebElementInfo",
-    # to be deprecated
-    "ServiceFactory",
 ]

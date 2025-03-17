@@ -33,7 +33,7 @@ class AnthropicFormatter(FormatterBase):
         msgs = cls.check_and_flat_messages(*msgs)
 
         formatted_msgs = []
-        for msg in msgs:
+        for index, msg in enumerate(msgs):
             content = []
             for block in msg.get_block_content():
                 if block.get("type") == "text":
@@ -67,9 +67,16 @@ class AnthropicFormatter(FormatterBase):
                         f"Unsupported block type: {block.get('type')}",
                         "skipped",
                     )
+
+            # Claude only allow the first message to be system message
+            if msg.role == "system" and index != 0:
+                role = "user"
+            else:
+                role = msg.role
+
             formatted_msgs.append(
                 {
-                    "role": msg.role,
+                    "role": role,
                     "content": content,
                 },
             )
@@ -152,7 +159,7 @@ class AnthropicFormatter(FormatterBase):
         return messages
 
     @classmethod
-    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+    def format_tools_json_schemas(cls, schemas: dict[str, dict]) -> list[dict]:
         """Format the JSON schemas of the tool functions to the format that
         Anthropic API expects. This function will take the parsed JSON schema
         from `agentscope.service.ServiceToolkit` as input and return the
@@ -163,8 +170,8 @@ class AnthropicFormatter(FormatterBase):
 
             ..code-block:: json
 
-                [
-                    {
+                {
+                    "bing_search": {
                         "type": "function",
                         "function": {
                             "name": "bing_search",
@@ -181,7 +188,7 @@ class AnthropicFormatter(FormatterBase):
                             }
                         }
                     }
-                ]
+                }
 
             The formatted JSON schema will be like:
 
@@ -205,8 +212,9 @@ class AnthropicFormatter(FormatterBase):
                 ]
 
         Args:
-            schemas (`list[dict]`):
-                The JSON schema of the tool functions.
+            schemas (`dict[str, dict]`):
+                The JSON schema of the tool functions, where the key is the
+                function name, and the value is the schema.
 
         Returns:
             `list[dict]`:
@@ -215,11 +223,11 @@ class AnthropicFormatter(FormatterBase):
 
         assert isinstance(
             schemas,
-            list,
-        ), f"Expect list of schemas, got {type(schemas)}."
+            dict,
+        ), f"Expect a dict of schemas, got {type(schemas)}."
 
         formatted_schemas = []
-        for schema in schemas:
+        for schema in schemas.values():
             assert (
                 "function" in schema
             ), f"Invalid schema: {schema}, expect key 'function'."

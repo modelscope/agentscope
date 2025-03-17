@@ -2,13 +2,13 @@
 """The base class for formatters."""
 import collections
 import re
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from typing import Union, Any
 
 from ..message import Msg
 
 
-class FormatterBase:
+class FormatterBase(ABC):
     """The base class for formatters."""
 
     supported_model_regexes: list[str]
@@ -243,7 +243,10 @@ class FormatterBase:
         return input_msgs
 
     @classmethod
-    @abstractmethod
-    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+    def format_tools_json_schemas(cls, schemas: dict[str, dict]) -> list[dict]:
         """Format the JSON schemas of the tool functions to the format that
         API provider expects."""
+        raise NotImplementedError(
+            f"The method `format_tools_json_schemas` is not implemented yet "
+            f"in {cls.__name__}.",
+        )

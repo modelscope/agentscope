@@ -150,6 +150,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         self,
         messages: list,
         stream: Optional[bool] = None,
+        tools: list[dict] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the
@@ -169,6 +170,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             stream (`Optional[bool]`, default `None`):
                 The stream flag to control the response format, which will
                 overwrite the stream flag in the constructor.
+            tools (`list[dict]`, default `None`):
+                The tools JSON schemas that the model can use.
             **kwargs (`Any`):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -227,6 +230,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 "stream": stream,
             },
         )
+
+        if tools:
+            kwargs["tools"] = tools
 
         # Switch to the incremental_output mode
         if stream:
@@ -396,6 +402,49 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         if multi_agent_mode:
             return CommonFormatter.format_multi_agent(*args)
         return CommonFormatter.format_chat(*args)
+
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+        return DashScopeFormatter.format_tools_json_schemas(schemas)
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):

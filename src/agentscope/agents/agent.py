@@ -174,6 +174,8 @@ class AgentBase(Operator, metaclass=RpcMeta):
             for last, text_chunk in content:
                 msg.content = text_chunk
                 log_stream_msg(msg, last=last)
+        elif content is None:
+            pass
         else:
             raise TypeError(
                 "From version 0.0.5, the speak method only accepts str or Msg "

@@ -4,6 +4,7 @@
 from __future__ import annotations
 import inspect
 import time
+from abc import ABC, abstractmethod
 from functools import wraps
 from typing import Any, Callable, Union, List, Optional
 
@@ -87,7 +88,7 @@ def _response_parse_decorator(
     return checking_wrapper
 
 
-class ModelWrapperBase:
+class ModelWrapperBase(ABC):
     """The base class for model wrapper."""
 
     model_type: str
@@ -132,6 +133,7 @@ class ModelWrapperBase:
 
         logger.debug(f"Initialize model by configuration [{config_name}]")
 
+    @abstractmethod
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
         raise NotImplementedError(
@@ -148,8 +150,55 @@ class ModelWrapperBase:
         """Format the input messages into the format that the model
         API required."""
         raise NotImplementedError(
-            f"Model Wrapper [{type(self).__name__}]"
-            f" is missing the required `format` method",
+            f"The method `format` is not implemented for model wrapper "
+            f"[{type(self).__name__}].",
+        )
+
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+
+        raise NotImplementedError(
+            f"The method `format_tools_json_schemas` is not implemented "
+            f"for model wrapper [{type(self).__name__}].",
         )
 
     def _save_model_invocation(

@@ -9,6 +9,7 @@ class ToolUseBlock(TypedDict, total=False):
     """The tool use block."""
 
     type: Required[Literal["tool_use"]]
+    """The type of the block, must be `tool_use`"""
     id: Required[str]
     """The identity of the tool call"""
     name: Required[str]

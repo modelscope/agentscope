@@ -82,6 +82,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
         messages: list[dict[str, Union[str, list[dict]]]],
         stream: Optional[bool] = None,
         max_tokens: int = 2048,
+        tools: list[dict] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Call the Anthropic model.
@@ -98,6 +99,8 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 Enable streaming mode or not.
             max_tokens (`int`, defaults to `2048`):
                 The max tokens in generation.
+            tools (`list[dict]`, defaults to `None`):
+                The tool functions to be used in the model.
             **kwargs (`Any`):
                 The additional keyword arguments for the model.
 
@@ -145,6 +148,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 "max_tokens": max_tokens,
             },
         )
+
+        if tools:
+            kwargs["tools"] = tools
 
         # Extract the system message
         if messages[0]["role"] == "system":
@@ -258,3 +264,46 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 prompt_tokens=usage.get("input_tokens", 0),
                 completion_tokens=usage.get("output_tokens", 0),
             )
+
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+        return AnthropicFormatter.format_tools_json_schemas(schemas)

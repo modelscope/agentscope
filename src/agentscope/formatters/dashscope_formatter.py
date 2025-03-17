@@ -177,7 +177,7 @@ class DashScopeFormatter(FormatterBase):
         return messages
 
     @classmethod
-    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
+    def format_tools_json_schemas(cls, schemas: dict[str, dict]) -> list[dict]:
         """Format the JSON schemas of the tool functions to the format that
         DashScope API expects. This function will take the parsed JSON schema
         from `agentscope.service.ServiceToolkit` as input and return
@@ -188,8 +188,8 @@ class DashScopeFormatter(FormatterBase):
 
             ..code-block:: json
 
-                [
-                    {
+                {
+                    "bing_search": {
                         "type": "function",
                         "function": {
                             "name": "bing_search",
@@ -206,10 +206,10 @@ class DashScopeFormatter(FormatterBase):
                             }
                         }
                     }
-                ]
+                }
 
         Args:
-            schemas (`list[dict]`):
+            schemas (`dict[str, dict]`):
                 The JSON schema of the tool functions.
 
         Returns:
@@ -222,10 +222,10 @@ class DashScopeFormatter(FormatterBase):
 
         assert isinstance(
             schemas,
-            list,
-        ), f"Expect list of schemas, got {type(schemas)}."
+            dict,
+        ), f"Expect dict of schemas, got {type(schemas)}."
 
-        for schema in schemas:
+        for schema in schemas.values():
             assert isinstance(
                 schema,
                 dict,
@@ -244,4 +244,4 @@ class DashScopeFormatter(FormatterBase):
                 f"expect key 'name' in 'function' field."
             )
 
-        return schemas
+        return list(schemas.values())

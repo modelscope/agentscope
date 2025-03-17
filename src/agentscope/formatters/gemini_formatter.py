@@ -111,14 +111,3 @@ class GeminiFormatter(FormatterBase):
         ]
 
         return messages
-
-    @classmethod
-    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
-        """Format the JSON schemas of the tool functions to the format that
-        Gemini API expects.
-
-        TODO: Implement this function.
-        """
-        raise NotImplementedError(
-            "The format_tools_json_schemas function is not implemented yet.",
-        )

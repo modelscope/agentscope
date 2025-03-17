@@ -59,13 +59,3 @@ class CommonFormatter(FormatterBase):
             "The CommonFormatter is used a backend solution for common chat "
             "LLMs, so it does not support the `is_supported_model` method.",
         )
-
-    @classmethod
-    def format_tools_json_schemas(cls, schemas: list[dict]) -> list[dict]:
-        """Format the JSON schemas of the tool functions to the format that
-        LLM API provider expects.
-        """
-        raise NotImplementedError(
-            "Due to unknown LLM providers, the `format_tools_json_schemas` "
-            "of the CommonFormatter is not implemented.",
-        )

@@ -172,6 +172,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         self,
         messages: list[dict],
         stream: Optional[bool] = None,
+        tools: Optional[list[dict]] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
@@ -191,6 +192,8 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             stream (`Optional[bool]`, defaults to `None`)
                 Whether to enable stream mode, which will override the
                 `stream` argument in the constructor if provided.
+            tools (`Optional[list[dict]]`, defaults to `None`):
+                The tool JSON schemas that the model can use.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -242,6 +245,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 "stream": stream,
             },
         )
+
+        if tools:
+            kwargs["tools"] = tools
 
         if stream:
             kwargs["stream_options"] = {"include_usage": True}
@@ -377,6 +383,49 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             return OpenAIFormatter.format_chat(*args)
 
         return CommonFormatter.format_chat(*args)
+
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+        return OpenAIFormatter.format_tools_json_schemas(schemas)
 
 
 class OpenAIDALLEWrapper(OpenAIWrapperBase):
