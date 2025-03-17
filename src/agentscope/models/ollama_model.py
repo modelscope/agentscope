@@ -73,17 +73,6 @@ class OllamaWrapperBase(ModelWrapperBase, ABC):
 
         self.client = ollama.Client(host=host, **kwargs)
 
-    def format(
-        self,
-        *args: Union[Msg, list[Msg]],
-        multi_agent_mode: bool = True,
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
-
 
 class OllamaChatWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama chat API.

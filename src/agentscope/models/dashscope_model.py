@@ -70,17 +70,6 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
         self.api_key = api_key
         self.max_length = None
 
-    def format(
-        self,
-        *args: Union[Msg, list[Msg]],
-        multi_agent_mode: bool = True,
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
-
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
     """The model wrapper for DashScope's chat API, refer to

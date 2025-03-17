@@ -56,17 +56,6 @@ class LiteLLMWrapperBase(ModelWrapperBase, ABC):
 
         self.generate_args = generate_args or {}
 
-    def format(
-        self,
-        *args: Union[Msg, list[Msg]],
-        multi_agent_mode: bool = True,
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
-
 
 class LiteLLMChatWrapper(LiteLLMWrapperBase):
     """The model wrapper based on litellm chat API.

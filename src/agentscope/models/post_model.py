@@ -179,17 +179,6 @@ class PostAPIModelWrapperBase(ModelWrapperBase, ABC):
                 f"Failed to call the model with {response.json()}",
             )
 
-    def format(
-        self,
-        *args: Union[Msg, list[Msg]],
-        multi_agent_mode: bool = True,
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
-
 
 class PostAPIChatWrapper(PostAPIModelWrapperBase):
     """A post api model wrapper compatible with openai chat, e.g., vLLM,
