@@ -13,6 +13,7 @@ from typing import Any, Optional
 
 from loguru import logger
 from mcp import ClientSession, StdioServerParameters
+from mcp.client.sse import sse_client
 from mcp.client.stdio import stdio_client
 
 
@@ -76,31 +77,37 @@ class Server:
         """Initialize the server connection."""
         command = (
             shutil.which("npx")
-            if self.config["command"] == "npx"
-            else self.config["command"]
-        )
-        if command is None:
-            raise ValueError(
-                "The command must be a valid string and cannot be None.",
-            )
-
-        server_params = StdioServerParameters(
-            command=command,
-            args=self.config["args"],
-            env={**os.environ, **self.config["env"]}
-            if self.config.get("env")
-            else None,
+            if self.config.get("command") == "npx"
+            else self.config.get("command")
         )
         try:
-            stdio_transport = await self.exit_stack.enter_async_context(
-                stdio_client(server_params),
-            )
-            read, write = stdio_transport
-            session = await self.exit_stack.enter_async_context(
-                ClientSession(read, write),
-            )
-            await session.initialize()
-            self.session = session
+            if command is None:
+                # Suppose an SSE server
+                streams = await self.exit_stack.enter_async_context(
+                    sse_client(url=self.config["url"]),
+                )
+                session = await self.exit_stack.enter_async_context(
+                    ClientSession(*streams),
+                )
+                await session.initialize()
+                self.session = session
+            else:
+                server_params = StdioServerParameters(
+                    command=command,
+                    args=self.config["args"],
+                    env={**os.environ, **self.config["env"]}
+                    if self.config.get("env")
+                    else None,
+                )
+                stdio_transport = await self.exit_stack.enter_async_context(
+                    stdio_client(server_params),
+                )
+                read, write = stdio_transport
+                session = await self.exit_stack.enter_async_context(
+                    ClientSession(read, write),
+                )
+                await session.initialize()
+                self.session = session
         except Exception as e:
             logger.error(f"Error initializing server {self.name}: {e}")
             await self.cleanup()
