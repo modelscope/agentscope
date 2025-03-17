@@ -104,13 +104,13 @@ class OpenAIFormatter(FormatterBase):
                             f"skipped.",
                         )
 
-                    messages.append(
-                        {
-                            "role": msg.role,
-                            "name": msg.name,
-                            "content": content_blocks,
-                        },
-                    )
+                messages.append(
+                    {
+                        "role": msg.role,
+                        "name": msg.name,
+                        "content": content_blocks,
+                    },
+                )
 
             elif isinstance(msg, list):
                 messages.extend(
