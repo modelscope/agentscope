@@ -167,7 +167,7 @@ class LlamaIndexAgent(AgentBase):
             Msg(
                 name="system",
                 role="system",
-                content=self.sys_prompt,
+                content=str(self.sys_prompt),
             ),
             # {"role": "system", "content": retrieved_docs_to_string},
             self.memory.get_memory(
