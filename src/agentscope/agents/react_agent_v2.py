@@ -57,7 +57,7 @@ class ReActAgentV2(AgentBase):
         )
 
         self.service_toolkit = service_toolkit
-        self.service_toolkit.add(self.finish)
+        self.service_toolkit.add(self.generate_response)
 
         # Obtain the JSON schemas of the tool functions
         # Also, you can parse it in the _reasoning method for dynamic tool
@@ -81,9 +81,9 @@ class ReActAgentV2(AgentBase):
                 continue
 
             # Acting based on the tool calls
-            msg_finish = self._acting(tool_calls)
-            if msg_finish:
-                return msg_finish
+            msg_response = self._acting(tool_calls)
+            if msg_response:
+                return msg_response
 
         # Generate a response when exceeding the maximum iterations
         return self._summarizing()
@@ -130,7 +130,8 @@ class ReActAgentV2(AgentBase):
 
     def _acting(self, tool_calls: list[ToolUseBlock]) -> Union[None, Msg]:
         """The acting process of the agent, which takes a tool use block as
-        input, execute the function and return a message if the `finish`
+        input, execute the function and return a message if the
+        `generate_response`
         function is called.
 
         Args:
@@ -139,10 +140,10 @@ class ReActAgentV2(AgentBase):
 
         Returns:
             `Union[None, Msg]`:
-                Return `None` if the function is not `finish`, otherwise return
-                a message to the user.
+                Return `None` if the function is not `generate_response`,
+                otherwise return a message to the user.
         """
-        msg_finish: Union[None, Msg] = None
+        msg_response: Union[None, Msg] = None
         for tool_call in tool_calls:
             msg_execution = self.service_toolkit.parse_and_call_func(
                 tool_call,
@@ -152,14 +153,15 @@ class ReActAgentV2(AgentBase):
                 self.speak(msg_execution)
             self.memory.add(msg_execution)
 
-            if tool_call["name"] == "finish":
-                msg_finish = Msg(
+            if tool_call["name"] == "generate_response":
+                msg_response = Msg(
                     self.name,
                     str(tool_call["input"]["response"]),
                     "assistant",
+                    echo=True,
                 )
 
-        return msg_finish
+        return msg_response
 
     def _summarizing(self) -> Msg:
         """Generate a response when the agent fails to solve the problem in
@@ -184,15 +186,18 @@ class ReActAgentV2(AgentBase):
         return res_msg
 
     @staticmethod
-    def finish(response: str) -> ServiceResponse:
-        """Generate a response to the user. This function is the only way to
-        interact with the user.
+    def generate_response(
+        response: str,  # pylint: disable=unused-argument
+    ) -> ServiceResponse:
+        """Generate a response. You must call this function to interact with
+        others (e.g., users).
 
         Args:
             response (`str`):
                 The response to the user.
         """
+
         return ServiceResponse(
             status=ServiceExecStatus.SUCCESS,
-            content=response,
+            content="Success",
         )

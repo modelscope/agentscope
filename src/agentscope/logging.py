@@ -78,9 +78,10 @@ def _formatted_str(msg: Msg, colored: bool = False) -> str:
 
     # Tool use block
     tool_calls = msg.get_content_blocks("tool_use")
-    colored_strs.append(
-        f"{name}: {json.dumps(tool_calls, indent=4, ensure_ascii=False)}",
-    )
+    if tool_calls:
+        colored_strs.append(
+            f"{name}: {json.dumps(tool_calls, indent=4, ensure_ascii=False)}",
+        )
 
     return "\n".join(colored_strs)
 
