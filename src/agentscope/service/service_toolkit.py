@@ -236,7 +236,10 @@ class ServiceToolkit:
         Add mcp servers to the toolkit.
         """
         if MCPSessionHandler is None:
-            raise NotImplementedError("Please install MCP first")
+            raise ImportError(
+                "MCPSessionHandler is not available. Please ensure that MCP "
+                "is installed and that you are using Python 3.10 or higher.",
+            )
 
         new_servers = [
             MCPSessionHandler(name, config)
