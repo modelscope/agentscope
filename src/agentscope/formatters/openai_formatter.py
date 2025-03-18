@@ -51,78 +51,68 @@ class OpenAIFormatter(FormatterBase):
 
         messages = []
         for msg in msgs:
-            if msg is None:
-                continue
+            content_blocks = []
+            tool_calls = []
+            for block in msg.get_content_blocks():
+                typ = block.get("type")
+                if typ == "text":
+                    content_blocks.append({**block})
 
-            if isinstance(msg, Msg):
-                content_blocks = []
-                for block in msg.get_block_content():
-                    typ = block.get("type")
-                    if typ == "text":
-                        content_blocks.append({**block})
-
-                    elif typ == "tool_use":
-                        content_blocks.append(
-                            {
-                                "id": block.get("id"),
-                                "type": "function",
-                                "function": {
-                                    "name": block.get("name"),
-                                    "arguments": json.dumps(
-                                        block.get("input", {}),
-                                        ensure_ascii=False,
-                                    ),
-                                },
-                            },
-                        )
-
-                    elif typ == "tool_result":
-                        messages.append(
-                            {
-                                "role": "tool",
-                                "tool_call_id": block.get("id"),
-                                "content": block.get("output"),
+                elif typ == "tool_use":
+                    tool_calls.append(
+                        {
+                            "id": block.get("id"),
+                            "type": "function",
+                            "function": {
                                 "name": block.get("name"),
+                                "arguments": json.dumps(
+                                    block.get("input", {}),
+                                    ensure_ascii=False,
+                                ),
                             },
-                        )
+                        },
+                    )
 
-                    elif typ == "image":
-                        content_blocks.append(
-                            {
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": _to_openai_image_url(
-                                        str(block.get("url")),
-                                    ),
-                                },
+                elif typ == "tool_result":
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": block.get("id"),
+                            "content": block.get("output"),
+                            "name": block.get("name"),
+                        },
+                    )
+
+                elif typ == "image":
+                    content_blocks.append(
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": _to_openai_image_url(
+                                    str(block.get("url")),
+                                ),
                             },
-                        )
+                        },
+                    )
 
-                    else:
-                        logger.warning(
-                            f"Unsupported block type {typ} in the message, "
-                            f"skipped.",
-                        )
+                else:
+                    logger.warning(
+                        f"Unsupported block type {typ} in the message, "
+                        f"skipped.",
+                    )
 
-                messages.append(
-                    {
-                        "role": msg.role,
-                        "name": msg.name,
-                        "content": content_blocks,
-                    },
-                )
+            msg_openai = {
+                "role": msg.role,
+                "name": msg.name,
+                "content": content_blocks or None,
+            }
 
-            elif isinstance(msg, list):
-                messages.extend(
-                    cls.format_multi_agent(
-                        *msg,
-                    ),
-                )
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(msg)}.",
-                )
+            if tool_calls:
+                msg_openai["tool_calls"] = tool_calls
+
+            # When both content and tool_calls are None, skipped
+            if msg_openai["content"] or msg_openai.get("tool_calls"):
+                messages.append(msg_openai)
 
         return messages
 

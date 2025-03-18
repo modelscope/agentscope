@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
+import json
 from abc import ABC
 from typing import (
     Union,
@@ -290,7 +291,10 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 response,
             )
 
-            if _verify_text_content_in_openai_message_response(response):
+            if _verify_text_content_in_openai_message_response(
+                response,
+                allow_content_none=True,
+            ):
                 tool_calls = response["choices"][0]["message"].get(
                     "tool_calls",
                     None,
@@ -302,7 +306,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                             type="tool_use",
                             id=_["id"],
                             name=_["function"]["name"],
-                            input=_["function"]["arguments"],
+                            input=json.loads(_["function"]["arguments"]),
                         )
                         for _ in tool_calls
                     ]

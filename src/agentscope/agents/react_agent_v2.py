@@ -107,7 +107,10 @@ class ReActAgentV2(AgentBase):
 
         raw_response = self.model(prompt, tools=self.tools)
         if self.verbose:
-            self.speak(raw_response.stream or raw_response.text)
+            self.speak(
+                raw_response.stream or raw_response.text,
+                tool_calls=raw_response.tool_calls,
+            )
 
         # Prepare the content for the msg
         content: list[ContentBlock] = []
@@ -141,7 +144,10 @@ class ReActAgentV2(AgentBase):
         """
         msg_finish: Union[None, Msg] = None
         for tool_call in tool_calls:
-            msg_execution = self.service_toolkit.parse_and_call_func(tool_call)
+            msg_execution = self.service_toolkit.parse_and_call_func(
+                tool_call,
+                transform_blocks_to_str=False,
+            )
             if self.verbose:
                 self.speak(msg_execution)
             self.memory.add(msg_execution)

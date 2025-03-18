@@ -69,7 +69,7 @@ class DashScopeFormatter(FormatterBase):
         formatted_msgs: list[dict] = []
         for msg in input_msgs:
             content = []
-            for block in msg.get_block_content():
+            for block in msg.get_content_blocks():
                 typ = block.get("type")
                 if typ in ["text", "image", "audio"]:
                     content.append(

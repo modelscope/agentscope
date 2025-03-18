@@ -35,7 +35,7 @@ class AnthropicFormatter(FormatterBase):
         formatted_msgs = []
         for index, msg in enumerate(msgs):
             content = []
-            for block in msg.get_block_content():
+            for block in msg.get_content_blocks():
                 if block.get("type") == "text":
                     content.append(
                         {
@@ -109,7 +109,7 @@ class AnthropicFormatter(FormatterBase):
                 sys_prompt = msg.get_text_content()
             else:
                 # Merge all messages into a conversation history prompt
-                for block in msg.get_block_content():
+                for block in msg.get_content_blocks():
                     typ = block.get("type")
                     if typ == "text":
                         dialogue.append(

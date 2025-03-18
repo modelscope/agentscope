@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Logging utilities."""
+import json
 import os
 import sys
 from typing import Optional, Literal, Any
@@ -64,20 +65,22 @@ def _formatted_str(msg: Msg, colored: bool = False) -> str:
 
     colored_strs = []
 
-    for block in msg.get_block_content():
+    for block in msg.get_content_blocks():
         if block["type"] == "text":
             colored_strs.append(f"{name}: {block.get('text')}")
         elif block["type"] in ["audio", "image", "video", "file"]:
             colored_strs.append(f"{name}: {block.get('url')}")
-        elif block["type"] == "tool_use":
-            kwargs = ",\n".join(
-                [f"\t{k}={v}" for k, v in block.get("input", {}).items()],
-            )
-            colored_strs.append(
-                f"{name}: {block.get('name')}(" f"{kwargs}" f")",
-            )
         elif block["type"] == "tool_result":
-            colored_strs.append(f"{name}: {block['output']}")
+            colored_strs.append(
+                f"{name}: Execute function {block['name']}:\n"
+                f"{block['output']}",
+            )
+
+    # Tool use block
+    tool_calls = msg.get_content_blocks("tool_use")
+    colored_strs.append(
+        f"{name}: {json.dumps(tool_calls, indent=4, ensure_ascii=False)}",
+    )
 
     return "\n".join(colored_strs)
 

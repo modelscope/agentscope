@@ -210,7 +210,7 @@ class Msg(BaseModel):
         return msg
 
     def get_text_content(self) -> Union[str, None]:
-        """Get the pure text content of the message."""
+        """Get the pure text blocks from the message content."""
         if isinstance(self.content, str):
             return self.content
 
@@ -223,9 +223,42 @@ class Msg(BaseModel):
                     gathered_text += block.get("text")
         return gathered_text
 
-    def get_block_content(self) -> list[ContentBlock]:
+    def get_content_blocks(
+        self,
+        block_type: Optional[
+            Literal[
+                "text",
+                "tool_use",
+                "tool_result",
+                "image",
+                "audio",
+                "video",
+                "file",
+            ]
+        ] = None,
+    ) -> list[ContentBlock]:
         """Get the content in block format. If the content is a string,
-        it will be converted to a text block."""
+        it will be converted to a text block.
+
+        Args:
+            block_type (`Optional[Literal["text", "tool_use", "tool_result",
+                "image", "audio", "video", "file"]]`, defaults to `None`):
+                The type of the block to be extracted. If `None`, all blocks
+                will be returned.
+
+        Returns:
+            `list[ContentBlock]`:
+                The content blocks.
+        """
+        blocks: list[ContentBlock] = []
         if isinstance(self.content, str):
-            return [TextBlock(type="text", text=self.content)]
-        return self.content
+            blocks.append(
+                TextBlock(type="text", text=self.content),
+            )
+        else:
+            blocks = self.content
+
+        if block_type is not None:
+            blocks = [_ for _ in blocks if _["type"] == block_type]
+
+        return blocks
