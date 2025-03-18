@@ -36,6 +36,7 @@ minimal_requires = [
     "flake8",
     "psutil",
     "scipy",
+    "mcp",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
     "dashscope>=1.19.0",
