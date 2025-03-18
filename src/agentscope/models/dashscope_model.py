@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
+import json
 from abc import ABC
 from http import HTTPStatus
 from typing import Any, Union, List, Optional, Generator
@@ -9,7 +10,7 @@ from loguru import logger
 from ..formatters import CommonFormatter
 from ..formatters.dashscope_formatter import DashScopeFormatter
 from ..manager import FileManager
-from ..message import Msg
+from ..message import Msg, ToolUseBlock
 
 try:
     import dashscope
@@ -291,8 +292,31 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 response,
             )
 
+            response_message = response.output["choices"][0]["message"]
+            blocks = None
+            if "tool_calls" in response_message:
+                tool_calls = response_message["tool_calls"]
+                blocks = []
+                for tool_call in tool_calls:
+                    blocks.append(
+                        ToolUseBlock(
+                            type="tool_use",
+                            id=tool_call["id"],
+                            name=tool_call["function"]["name"],
+                            input=json.loads(
+                                tool_call["function"]["arguments"],
+                            ),
+                        ),
+                    )
+
+            if response_message["content"] == "":
+                text = None
+            else:
+                text = response_message["content"]
+
             return ModelResponse(
-                text=response.output["choices"][0]["message"]["content"],
+                text=text,
+                tool_calls=blocks,
                 raw=response,
             )
 

@@ -142,6 +142,8 @@ class ReActAgentV2(AgentBase):
         msg_finish: Union[None, Msg] = None
         for tool_call in tool_calls:
             msg_execution = self.service_toolkit.parse_and_call_func(tool_call)
+            if self.verbose:
+                self.speak(msg_execution)
             self.memory.add(msg_execution)
 
             if tool_call["name"] == "finish":
@@ -177,7 +179,8 @@ class ReActAgentV2(AgentBase):
 
     @staticmethod
     def finish(response: str) -> ServiceResponse:
-        """Call this function to generate a response to the user.
+        """Generate a response to the user. This function is the only way to
+        interact with the user.
 
         Args:
             response (`str`):

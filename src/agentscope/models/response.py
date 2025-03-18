@@ -3,6 +3,7 @@
 import json
 from typing import Optional, Sequence, Any, Generator, Union, Tuple
 
+from ..message import ToolUseBlock
 from ..utils.common import _is_json_serializable
 
 
@@ -21,7 +22,7 @@ class ModelResponse:
         raw: Any = None,
         parsed: Any = None,
         stream: Optional[Generator[str, None, None]] = None,
-        tool_calls: Optional[list[dict]] = None,
+        tool_calls: Optional[list[ToolUseBlock]] = None,
     ) -> None:
         """Initialize the model response.
 

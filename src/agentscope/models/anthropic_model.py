@@ -3,7 +3,7 @@
 from typing import Optional, Union, Generator, Any
 
 from ..formatters import AnthropicFormatter
-from ..message import Msg
+from ..message import Msg, ToolUseBlock
 from .model import ModelWrapperBase, ModelResponse
 
 
@@ -238,7 +238,14 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 if isinstance(block, dict) and typ == "text":
                     texts.append(block.get("text", ""))
                 elif typ == "tool_use":
-                    tool_calls.append(block)
+                    tool_calls.append(
+                        ToolUseBlock(
+                            type="tool_use",
+                            id=block.get("id"),
+                            name=block.get("name"),
+                            input=block.get("input", {}),
+                        ),
+                    )
 
             # Return the response
             return ModelResponse(
