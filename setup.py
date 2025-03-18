@@ -36,7 +36,6 @@ minimal_requires = [
     "flake8",
     "psutil",
     "scipy",
-    "mcp",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
     "dashscope>=1.19.0",
@@ -54,6 +53,7 @@ extra_service_requires = [
     "nbformat",
     "playwright",
     "markdownify",
+    "mcp",  # python>=3.10
 ]
 
 extra_distribute_requires = [

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# mypy: disable-error-code="misc"
 """Service Toolkit for service function usage."""
 import json
 from functools import partial
@@ -25,7 +26,11 @@ from ..exception import (
 )
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
-from .mcp_manager import MCPSessionHandler
+
+try:
+    from .mcp_manager import MCPSessionHandler
+except Exception:
+    MCPSessionHandler = None
 from ..message import Msg
 
 try:
@@ -230,6 +235,9 @@ class ServiceToolkit:
         """
         Add mcp servers to the toolkit.
         """
+        if MCPSessionHandler is None:
+            raise NotImplementedError("Please install MCP first")
+
         new_servers = [
             MCPSessionHandler(name, config)
             for name, config in server_configs["mcpServers"].items()
