@@ -3,7 +3,7 @@
 rather than assembling the prompt manually."""
 from typing import Union, Optional
 
-from .agent import AgentBase
+from ._agent import AgentBase
 from ..manager import ModelManager
 from ..message import Msg, ToolUseBlock, TextBlock, ContentBlock
 from ..service import ServiceToolkit, ServiceResponse, ServiceExecStatus

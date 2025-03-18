@@ -2,7 +2,7 @@
 """The gemini formatter class."""
 from typing import Union
 
-from .formatter_base import FormatterBase
+from ._formatter_base import FormatterBase
 from ..message import Msg
 
 

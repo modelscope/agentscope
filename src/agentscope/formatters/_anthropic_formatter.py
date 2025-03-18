@@ -4,7 +4,7 @@ from typing import Union
 
 from loguru import logger
 
-from .formatter_base import FormatterBase
+from ._formatter_base import FormatterBase
 from ..message import Msg
 from ..utils.common import _to_anthropic_image_url
 

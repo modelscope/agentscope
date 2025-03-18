@@ -11,7 +11,7 @@ import json
 import uuid
 from loguru import logger
 
-from agentscope.agents.operator import Operator
+from agentscope.agents._operator import Operator
 from agentscope.rpc.rpc_config import DistConf
 from agentscope.rpc.rpc_meta import RpcMeta, async_func, sync_func
 from agentscope.logging import log_stream_msg, log_msg

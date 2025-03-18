@@ -5,7 +5,7 @@ from typing import Optional, Union, Sequence, Any
 from loguru import logger
 
 from ..message import Msg
-from .agent import AgentBase
+from ._agent import AgentBase
 
 
 class DialogAgent(AgentBase):

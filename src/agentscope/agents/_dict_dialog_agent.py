@@ -3,7 +3,7 @@
 from typing import Optional, Union, Sequence
 
 from ..message import Msg
-from .agent import AgentBase
+from ._agent import AgentBase
 from ..parsers import ParserBase
 
 

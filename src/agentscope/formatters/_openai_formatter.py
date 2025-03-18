@@ -5,7 +5,7 @@ from typing import Union
 
 from loguru import logger
 
-from .formatter_base import FormatterBase
+from ._formatter_base import FormatterBase
 from ..message import Msg
 from ..utils.common import _to_openai_image_url
 
@@ -78,7 +78,7 @@ class OpenAIFormatter(FormatterBase):
                         {
                             "role": "tool",
                             "tool_call_id": block.get("id"),
-                            "content": block.get("output"),
+                            "content": str(block.get("output")),
                             "name": block.get("name"),
                         },
                     )

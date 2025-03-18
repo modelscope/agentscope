@@ -17,7 +17,7 @@ from .functional import (
     forlooppipeline,
     whilelooppipeline,
 )
-from ..agents.operator import Operator
+from ..agents._operator import Operator
 
 
 class PipelineBase(Operator):

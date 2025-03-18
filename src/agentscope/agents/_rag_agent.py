@@ -9,7 +9,7 @@ import json
 from typing import Any, Optional, Union, Sequence
 from loguru import logger
 
-from agentscope.agents.agent import AgentBase
+from agentscope.agents._agent import AgentBase
 from agentscope.message import Msg
 from agentscope.rag import Knowledge
 
