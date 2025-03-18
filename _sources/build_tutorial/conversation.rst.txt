@@ -109,23 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: Hello! It looks like your message might have been cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! I'm Monster, your helpful assistant. It seems there might have been a bit of a mix-up, as I don't see any previous message from you that was cut off. Could you please tell me what you need help with or what you'd like to discuss?
-    Angel: Hello Monster! It seems there's a bit of confusion here. I'm Angel, and I'm here to assist you. Could you please let me know what you need help with or what you'd like to discuss?
-    Monster: Oh, I see! My apologies for the confusion, Angel. It’s nice to meet you. I thought I was here to assist, but I’m happy to chat or get help from you as well. Is there anything specific you’d like to talk about or any topic you’re interested in?
-    Angel: Hello Monster! It's great to meet you too. It seems we both got a little mixed up, but no worries at all. 😊
-
-    Since we're both here to help and chat, how about we make the most of it? Is there anything on your mind that you'd like to discuss or any topic you're particularly interested in? If not, I can suggest a few things we could talk about!
-    Monster: Hello Angel! It’s great to meet you, and I appreciate the friendly approach. Since we’re both here to chat and help, how about we talk about something fun or interesting? 
-
-    I’m open to a wide range of topics. For example, we could discuss:
-    - A favorite book, movie, or TV show
-    - Travel destinations you’ve enjoyed or would like to visit
-    - Hobbies or interests you have
-    - Any recent news or trends that caught your attention
-    - Or, if you prefer, we can play a game or solve a puzzle together
-
-    What do you think? Is there anything in particular that stands out to you, or do you have another idea?
+    Angel: Hello! It seems like your message may have been cut off. How can I assist you today?
+    Monster: Hello Angel! It looks like there might be a bit of confusion. I'm Monster, your helpful assistant. How can I assist you today?
+    Angel: Hello! It looks like there was a mix-up. I'm Angel, and I'm here to help you. How can I assist you today?
+    Monster: Hello! I see there's been a bit of a mix-up with the names. I'm Monster, and I'm here to assist you. How can I help you today?
+    Angel: Hello! It seems there's been a little confusion. I'm Angel, and I'm here to assist you. How can I help you today?
+    Monster: Hello! It looks like there's been a bit of back-and-forth with the names. I'm Monster, and I'm here to assist you. How can I help you today?
 
 
 
@@ -245,7 +234,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -289,7 +278,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -303,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 41.971 seconds)
+   **Total running time of the script:** (0 minutes 19.212 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

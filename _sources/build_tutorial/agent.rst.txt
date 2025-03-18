@@ -209,7 +209,7 @@ management, including adding, deleting and getting memory.
 
  .. code-block:: none
 
-    The current memory: [<agentscope.message.msg.Msg object at 0x7f0e5bcb5cd0>, <agentscope.message.msg.Msg object at 0x7f0e5bcb5310>, <agentscope.message.msg.Msg object at 0x7f0e5bcb5a90>]
+    The current memory: [<agentscope.message.msg.Msg object at 0x7fdad7cd1f10>, <agentscope.message.msg.Msg object at 0x7fdad7cd1730>, <agentscope.message.msg.Msg object at 0x7fdad7cd18e0>]
     The current size: 3
 
 
@@ -265,7 +265,7 @@ Delete the first message within the memory.
 
  .. code-block:: none
 
-    The memory after deletion: [<agentscope.message.msg.Msg object at 0x7f0e5bcb5310>, <agentscope.message.msg.Msg object at 0x7f0e5bcb5a90>]
+    The memory after deletion: [<agentscope.message.msg.Msg object at 0x7fdad7cd1730>, <agentscope.message.msg.Msg object at 0x7fdad7cd18e0>]
     The size after deletion: 2
 
 
@@ -332,7 +332,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.685 seconds)
+   **Total running time of the script:** (0 minutes 1.694 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_agent.py:
