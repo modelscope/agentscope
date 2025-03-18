@@ -238,7 +238,8 @@ class ServiceToolkit:
         if MCPSessionHandler is None:
             raise ImportError(
                 "MCPSessionHandler is not available. Please ensure that MCP "
-                "is installed and that you are using Python 3.10 or higher.",
+                "is installed via `pip install mcp` and that you are using "
+                "Python 3.10 or higher.",
             )
 
         new_servers = [
