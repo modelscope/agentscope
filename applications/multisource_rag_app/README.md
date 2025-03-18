@@ -5,7 +5,7 @@ KIMAs stands for <ins>k</ins>nowledge <ins>i</ins>ntegrated <ins>m</ins>ulti-<in
 
 For more details about the design, please refer to [this paper](https://arxiv.org/abs/2502.09596). If you want to take a try, welcome to join the following AgentScope QA DingTalk group and ask the bot by "@AgentScope答疑机器人 {YOUR QUESTION}".
 
-<img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100">
+<img src="https://img.alicdn.com/imgextra/i1/O1CN01LxzZha1thpIN2cc2E_!!6000000005934-2-tps-497-477.png" width="100" height="100">
 
 ## Key components
 
