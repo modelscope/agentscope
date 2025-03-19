@@ -52,6 +52,7 @@ print(toolkit.tools_instruction)
 # -------------------------------
 # AgentScope 支持集成 MCP (Model Context Protocol) 服务器，使模型和工具具有增强的功能。
 # 您可以使用 `add_mcp_servers` 方法将 MCP 服务器添加到 `ServiceToolkit` 中，并在其中指定每个服务器的配置。
+# 请注意，MCP 要求 Python 版本>=3.10。
 
 configs = {
     "mcpServers": {

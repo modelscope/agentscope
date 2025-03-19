@@ -56,6 +56,7 @@ print(toolkit.tools_instruction)
 # servers, enabling enhanced capabilities for models and tools. You can add
 # MCP servers to the `ServiceToolkit` using the `add_mcp_servers` method,
 # where you specify the configurations for each server.
+# Please note that MCP requires Python version >= 3.10.
 
 configs = {
     "mcpServers": {
