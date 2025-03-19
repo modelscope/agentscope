@@ -5,7 +5,6 @@ within an asynchronous context. It includes functionality to create, manage,
 and close sessions, as well as execute various tools provided by an MCP server.
 """
 import asyncio
-import atexit
 import os
 import shutil
 import traceback
@@ -84,7 +83,7 @@ class MCPSessionHandler:
         self.config: dict[str, Any] = config
         self.session: Optional[ClientSession] = None
         self.stdio_transport = None
-        self._cleanup_lock: asyncio.Lock = asyncio.Lock()
+        self._session_lock: asyncio.Lock = asyncio.Lock()
         # Manage session context
         self._session_exit_stack: AsyncExitStack = AsyncExitStack()
         # Manage stdio server context
@@ -106,8 +105,6 @@ class MCPSessionHandler:
                 self._stdio_exit_stack.enter_async_context,
                 stdio_client(server_params),
             )
-
-        atexit.register(self.sync_cleanup)
 
     async def create_session(self) -> None:
         """Create a session connection."""
@@ -133,28 +130,13 @@ class MCPSessionHandler:
 
     async def close_session(self) -> None:
         """Clean up session resources."""
-        async with self._cleanup_lock:
+        async with self._session_lock:
             try:
                 await self._session_exit_stack.aclose()
                 self.session = None
             except Exception as e:
-                # TODO: fix Attempted to exit cancel scope in a different
-                #  task than it was entered in
                 logger.error(
-                    f"Error during cleanup of session {self.name}: {e}",
-                )
-
-    async def cleanup(self) -> None:
-        """Clean up stdio resources."""
-        async with self._cleanup_lock:
-            try:
-                # Run the asynchronous cleanup
-                # sync_exec(self._session_exit_stack.aclose)
-                await self._stdio_exit_stack.aclose()
-                self.session = None
-            except Exception as e:
-                logger.error(
-                    f"Error during cleanup of stdio {self.name}: {e}",
+                    f"Error during closing session {self.name}: {e}",
                 )
 
     @session_decorator
@@ -186,10 +168,6 @@ class MCPSessionHandler:
         logger.info(f"Executing {tool_name}...")
         result = await self.session.call_tool(tool_name, arguments)
         return result
-
-    def sync_cleanup(self) -> None:
-        """Synchronously call cleanup."""
-        sync_exec(self.cleanup)
 
     def sync_list_tools(self) -> list[Any]:
         """Synchronously list available tools."""
