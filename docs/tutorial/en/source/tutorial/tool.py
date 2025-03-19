@@ -50,6 +50,32 @@ print("The tools instruction:")
 print(toolkit.tools_instruction)
 
 # %%
+# Using MCP with ServiceToolkit
+# -------------------------------
+# AgentScope provides support for integrating MCP (Model Context Protocol)
+# servers, enabling enhanced capabilities for models and tools. You can add
+# MCP servers to the `ServiceToolkit` using the `add_mcp_servers` method,
+# where you specify the configurations for each server.
+
+configs = {
+    "mcpServers": {
+        "xxxx": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/xxxx",
+            ],
+        },
+        "yyyy": {
+            "url": "http://xxx.xxx.xxx.xxx:xxxx/sse",
+        },
+    },
+}
+
+# Add MCP server configurations to the ServiceToolkit
+toolkit.add_mcp_servers(server_configs=configs)
+
+# %%
 # The built-in default calling format:
 
 print(toolkit.tools_calling_format)
