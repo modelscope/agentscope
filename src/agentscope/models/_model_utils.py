@@ -27,7 +27,7 @@ def _verify_text_content_in_openai_delta_response(response: dict) -> bool:
 
 
 def _verify_text_content_in_openai_message_response(response: dict) -> bool:
-    """Verify if the text content exists in the openai streaming response
+    """Verify if the text content exists in the openai message response
 
     Args:
         response (`dict`):

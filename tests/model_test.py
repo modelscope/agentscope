@@ -28,6 +28,7 @@ from agentscope.models import (
     OpenAIChatWrapper,
     PostAPIChatWrapper,
     AnthropicChatWrapper,
+    DeepSeekChatWrapper,
 )
 
 
@@ -79,6 +80,7 @@ class BasicModelTest(unittest.TestCase):
                 "litellm_chat": LiteLLMChatWrapper,
                 "yi_chat": YiChatWrapper,
                 "anthropic_chat": AnthropicChatWrapper,
+                "deepseek_chat": DeepSeekChatWrapper,
             },
         )
 

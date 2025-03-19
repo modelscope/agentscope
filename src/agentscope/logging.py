@@ -54,9 +54,7 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
     """
     global _PREFIX_DICT
 
-    # Print msg to terminal
     formatted_str = msg.formatted_str(colored=True)
-
     print_str = formatted_str[_PREFIX_DICT.get(msg.id, 0) :]
 
     if last:
@@ -68,7 +66,7 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
         # Update the prefix in the dictionary
         _PREFIX_DICT[msg.id] = len(formatted_str)
 
-        print(print_str, end="")
+        print(print_str, end="", flush=True)
 
     # Push msg to studio if it is active
     if _studio_client.active:
