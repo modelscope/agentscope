@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# mypy: disable-error-code="misc"
 """Service Toolkit for service function usage."""
 import json
 from functools import partial
@@ -27,10 +26,7 @@ from ..exception import (
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
 
-try:
-    from .mcp_manager import MCPSessionHandler
-except Exception:
-    MCPSessionHandler = None
+from .mcp_manager import MCPSessionHandler
 from ..message import Msg
 
 try:
@@ -234,14 +230,40 @@ class ServiceToolkit:
     def add_mcp_servers(self, server_configs: Dict) -> None:
         """
         Add mcp servers to the toolkit.
-        """
-        if MCPSessionHandler is None:
-            raise ImportError(
-                "MCPSessionHandler is not available. Please ensure that MCP "
-                "is installed via `pip install mcp` and that you are using "
-                "Python 3.10 or higher.",
-            )
 
+        Parameters:
+            server_configs (Dict): A dictionary containing the configuration
+                for MCP servers. The configuration follows the Model Context
+                Protocol specification and can be defined in TypeScript,
+                but is available as JSON Schema for wider compatibility.
+
+                Fields:
+                   - "mcpServers": A dictionary where each key is the server
+                   name and the value is its configuration.
+
+                Field Details:
+                   - "command": Specifies the command to execute,
+                   which follows the stdio protocol for communication.
+                   - "args": A list of arguments to be passed to the command.
+                   - "url": Specifies the server's URL, which follows the
+                   Server-Sent Events (SSE) protocol for data transmission.
+
+                Example:
+                    configs = {
+                        "mcpServers": {
+                            "xxxx": {
+                                "command": "npx",
+                                "args": [
+                                    "-y",
+                                    "@modelcontextprotocol/xxxx"
+                                ]
+                            },
+                            "yyyy": {
+                                "url": "http://xxx.xxx.xxx.xxx:xxxx/sse"
+                            }
+                        }
+                    }
+        """
         new_servers = [
             MCPSessionHandler(name, config)
             for name, config in server_configs["mcpServers"].items()

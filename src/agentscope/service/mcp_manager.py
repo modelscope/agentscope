@@ -14,9 +14,12 @@ from typing import Any, Optional, Callable
 
 from loguru import logger
 
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.sse import sse_client
-from mcp.client.stdio import stdio_client
+try:
+    import mcp
+    from mcp.client.sse import sse_client
+
+except ImportError:
+    mcp = None
 
 from .service_response import ServiceResponse, ServiceExecStatus
 
@@ -79,9 +82,45 @@ class MCPSessionHandler:
     """Handles MCP session connections and tool execution."""
 
     def __init__(self, name: str, config: dict[str, Any]) -> None:
+        """
+        Initialize an MCPSessionHandler instance.
+
+        Parameters:
+        name (str): The unique name of the MCP server. This identifies the
+            server within the toolkit and is used to distinguish between
+            different server configurations.
+
+        config (dict[str, Any]): A dictionary containing the configuration
+            details for the MCP server. This configuration includes
+            protocol-specific settings required to establish and manage
+            communication with the server.
+
+            Example structure:
+            {
+                "command": "npx",
+                "args": ["-y", "@modelcontextprotocol/xxxx"],
+            } or
+            {
+                "url": "http://xxx.xxx.xxx.xxx:xxxx/sse"
+            }
+
+            - "command": (Optional) A string indicating the command to be
+                executed, following the stdio protocol for communication.
+            - "args": (Optional) A list of arguments for the command.
+            - "url": (Optional) A string representing the server's endpoint,
+                which follows the Server-Sent Events (SSE) protocol for data
+                transmission.
+        """
+        if mcp is None:
+            raise ModuleNotFoundError(
+                "MCP is not available. Please ensure that MCP "
+                "is installed via `pip install mcp` and that you are using "
+                "Python 3.10 or higher.",
+            )
+
         self.name: str = name
         self.config: dict[str, Any] = config
-        self.session: Optional[ClientSession] = None
+        self.session: Optional[mcp.ClientSession] = None
         self.stdio_transport = None
         self._session_lock: asyncio.Lock = asyncio.Lock()
         # Manage session context
@@ -96,14 +135,18 @@ class MCPSessionHandler:
             else self.config.get("command")
         )
         if command is not None:
-            server_params = StdioServerParameters(
+            server_params = mcp.StdioServerParameters(
                 command=command,
                 args=self.config["args"],
                 env={**os.environ, **self.config.get("env", {})},
             )
+            # Note: the `AsyncExitStack` will manage the life circle if
+            # `stdio_client`, which means it will be closed when the main
+            # process is finished or terminated. See
+            # `AsyncExitStack.__aexit__` for details.
             self.stdio_transport = sync_exec(
                 self._stdio_exit_stack.enter_async_context,
-                stdio_client(server_params),
+                mcp.client.stdio.stdio_client(server_params),
             )
 
     async def create_session(self) -> None:
@@ -112,14 +155,14 @@ class MCPSessionHandler:
             if self.stdio_transport:
                 read, write = self.stdio_transport
                 session = await self._session_exit_stack.enter_async_context(
-                    ClientSession(read, write),
+                    mcp.ClientSession(read, write),
                 )
             else:
                 streams = await self._session_exit_stack.enter_async_context(
                     sse_client(url=self.config["url"]),
                 )
                 session = await self._session_exit_stack.enter_async_context(
-                    ClientSession(*streams),
+                    mcp.ClientSession(*streams),
                 )
             await session.initialize()
             self.session = session
