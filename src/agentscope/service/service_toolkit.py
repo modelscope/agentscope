@@ -26,7 +26,7 @@ from ..exception import (
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
 
-from .mcp_manager import MCPSessionHandler
+from .mcp_manager import MCPSessionHandler, sync_exec
 from ..message import Msg
 
 try:
@@ -271,7 +271,7 @@ class ServiceToolkit:
 
         # register the service function
         for sever in new_servers:
-            for tool in sever.sync_list_tools():
+            for tool in sync_exec(sever.list_tools):
                 name = tool.name
                 if name in self.service_funcs:
                     logger.warning(
@@ -299,9 +299,13 @@ class ServiceToolkit:
                     }
                     self.service_funcs[tool.name] = ServiceFunction(
                         name=tool.name,
-                        original_func=sever.sync_execute_tool,
+                        original_func=partial(
+                            sync_exec,
+                            sever.execute_tool,
+                        ),
                         processed_func=partial(
-                            sever.sync_execute_tool,
+                            sync_exec,
+                            sever.execute_tool,
                             tool.name,
                         ),
                         json_schema=json_schema,

@@ -202,31 +202,26 @@ class MCPSessionHandler:
     async def execute_tool(
         self,
         tool_name: str,
-        arguments: dict[str, Any],
+        arguments: dict[str, Any] = None,
     ) -> Any:
-        """Execute a tool with retry mechanism."""
+        """Execute a tool and return ServiceResponse"""
         if not self.session:
             raise RuntimeError(f"Session {self.name} not initialized")
 
         logger.info(f"Executing {tool_name}...")
-        result = await self.session.call_tool(tool_name, arguments)
-        return result
 
-    def sync_list_tools(self) -> list[Any]:
-        """Synchronously list available tools."""
-        return sync_exec(self.list_tools)
-
-    def sync_execute_tool(
-        self,
-        tool_name: str,
-        arguments: dict[str, Any] = None,
-    ) -> Any:
-        """Synchronously execute a tool with given arguments."""
         try:
-            result = sync_exec(self.execute_tool, tool_name, arguments)
+            result = await self.session.call_tool(tool_name, arguments)
+            content, is_error = result.content, result.isError
+
+            if is_error:
+                return ServiceResponse(
+                    status=ServiceExecStatus.ERROR,
+                    content=content,
+                )
             return ServiceResponse(
                 status=ServiceExecStatus.SUCCESS,
-                content=result,
+                content=content,
             )
         except Exception as e:
             return ServiceResponse(
@@ -235,3 +230,5 @@ class MCPSessionHandler:
                 f"Traceback:\n"
                 f"{traceback.format_exc()}",
             )
+
+        return result
