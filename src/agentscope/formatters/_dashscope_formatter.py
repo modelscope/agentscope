@@ -68,35 +68,31 @@ class DashScopeFormatter(FormatterBase):
 
         formatted_msgs: list[dict] = []
         for msg in input_msgs:
-            content = []
+            content_blocks = []
+            tool_calls = []
             for block in msg.get_content_blocks():
                 typ = block.get("type")
                 if typ in ["text", "image", "audio"]:
-                    content.append(
+                    content_blocks.append(
                         {
                             typ: block.get("text", block.get("url")),
                         },
                     )
                 elif typ == "tool_use":
-                    formatted_msgs.append(
+                    tool_calls.append(
                         {
-                            "role": "assistant",
-                            "content": "",
-                            "tool_calls": [
-                                {
-                                    "id": block.get("id"),
-                                    "type": "function",
-                                    "function": {
-                                        "name": block.get("name"),
-                                        "arguments": json.dumps(
-                                            block.get("input", {}),
-                                            ensure_ascii=False,
-                                        ),
-                                    },
-                                },
-                            ],
+                            "id": block.get("id"),
+                            "type": "function",
+                            "function": {
+                                "name": block.get("name"),
+                                "arguments": json.dumps(
+                                    block.get("input", {}),
+                                    ensure_ascii=False,
+                                ),
+                            },
                         },
                     )
+
                 elif typ == "tool_result":
                     formatted_msgs.append(
                         {
@@ -112,12 +108,17 @@ class DashScopeFormatter(FormatterBase):
                         f"skipped.",
                     )
 
-            formatted_msgs.append(
-                {
-                    "role": msg.role,
-                    "content": content,
-                },
-            )
+            msg_dashscope = {
+                "role": msg.role,
+                "content": content_blocks or None,
+            }
+
+            if tool_calls:
+                msg_dashscope["tool_calls"] = tool_calls
+
+            if msg_dashscope["content"] or msg_dashscope.get("tool_calls"):
+                formatted_msgs.append(msg_dashscope)
+
         return formatted_msgs
 
     @classmethod
@@ -136,11 +137,9 @@ class DashScopeFormatter(FormatterBase):
         dialogue = []
         image_or_audio_dicts = []
         for i, msg in enumerate(input_msgs):
-            if i == 0 and msg.role == "system":
+            if i == 0 and msg.role == "system" and msg.get_text_content():
                 # system prompt
-                content = cls._convert_url(msg.url)
-                content.append({"text": msg.get_text_content()})
-
+                content = [{"text": msg.get_text_content()}]
                 messages.append(
                     {
                         "role": msg.role,
@@ -149,11 +148,16 @@ class DashScopeFormatter(FormatterBase):
                 )
             else:
                 # text message
-                dialogue.append(
-                    f"{msg.name}: {msg.get_text_content()}",
-                )
+                if msg.get_text_content():
+                    dialogue.append(
+                        f"{msg.name}: {msg.get_text_content()}",
+                    )
                 # image and audio
-                image_or_audio_dicts.extend(cls._convert_url(msg.url))
+                for block in msg.get_content_blocks():
+                    if block.get("type") in ["image", "audio"]:
+                        image_or_audio_dicts.extend(
+                            cls._convert_url(str(block.get("url"))),
+                        )
 
         dialogue_history = "\n".join(dialogue)
 

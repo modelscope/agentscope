@@ -310,7 +310,7 @@ def _to_openai_image_url(url: str) -> str:
             mime_type = f"image/{extension}"
             return f"data:{mime_type};base64,{base64_image}"
 
-    raise TypeError(f"{url} should be end with {support_image_extensions}.")
+    raise TypeError(f'"{url}" should end with {support_image_extensions}.')
 
 
 def _to_anthropic_image_url(url: str) -> Union[str, dict]:

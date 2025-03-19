@@ -147,7 +147,7 @@ class ReActAgentV2(AgentBase):
         for tool_call in tool_calls:
             msg_execution = self.service_toolkit.parse_and_call_func(
                 tool_call,
-                transform_blocks_to_str=False,
+                tools_api_mode=True,
             )
             if self.verbose:
                 self.speak(msg_execution)

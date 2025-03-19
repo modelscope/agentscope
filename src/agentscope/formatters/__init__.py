@@ -5,6 +5,7 @@ from ._common_formatter import CommonFormatter
 from ._anthropic_formatter import AnthropicFormatter
 from ._gemini_formatter import GeminiFormatter
 from ._openai_formatter import OpenAIFormatter
+from ._dashscope_formatter import DashScopeFormatter
 
 __all__ = [
     "FormatterBase",
@@ -12,4 +13,5 @@ __all__ = [
     "OpenAIFormatter",
     "CommonFormatter",
     "GeminiFormatter",
+    "DashScopeFormatter",
 ]

@@ -5,8 +5,19 @@ from unittest import mock
 from unittest.mock import MagicMock, patch
 
 import agentscope
-from agentscope.formatters import CommonFormatter
-from agentscope.message import Msg, TextBlock, AudioBlock
+from agentscope.formatters import (
+    CommonFormatter,
+    OpenAIFormatter,
+    DashScopeFormatter,
+    AnthropicFormatter,
+)
+from agentscope.message import (
+    Msg,
+    TextBlock,
+    AudioBlock,
+    ToolUseBlock,
+    ToolResultBlock,
+)
 from agentscope.models import (
     OpenAIChatWrapper,
     OllamaChatWrapper,
@@ -65,6 +76,63 @@ class FormatTest(unittest.TestCase):
             [
                 "What is the weather today?",
                 Msg("assistant", "It is sunny today", role="assistant"),
+            ],
+        ]
+
+        self.inputs_with_tools = [
+            Msg("system", "You are a helpful assistant", role="system"),
+            [
+                Msg("user", "What is the weather today?", role="user"),
+                Msg(
+                    "assistant",
+                    [
+                        TextBlock(type="text", text="Let's try bing search"),
+                        ToolUseBlock(
+                            type="tool_use",
+                            id="xxx",
+                            name="bing_search",
+                            input={"query": "Beijing weather"},
+                        ),
+                    ],
+                    "assistant",
+                ),
+                Msg(
+                    "system",
+                    [
+                        ToolResultBlock(
+                            type="tool_result",
+                            id="xxx",
+                            name="bing_search",
+                            output="It is sunny today",
+                        ),
+                    ],
+                    "system",
+                ),
+                Msg(
+                    "assistant",
+                    [
+                        TextBlock(type="text", text="Now google search"),
+                        ToolUseBlock(
+                            type="tool_use",
+                            id="xxx",
+                            name="google_search",
+                            input={"query": "Beijing weather"},
+                        ),
+                    ],
+                    "assistant",
+                ),
+                Msg(
+                    "system",
+                    [
+                        ToolResultBlock(
+                            type="tool_result",
+                            id="xxx",
+                            name="google_search",
+                            output="It is rainy today",
+                        ),
+                    ],
+                    "system",
+                ),
             ],
         ]
 
@@ -549,6 +617,241 @@ class FormatTest(unittest.TestCase):
         # wrong format
         with self.assertRaises(TypeError):
             model.format(*self.wrong_inputs)
+
+    def test_openai_with_tools(self) -> None:
+        """Unit test for OpenAI Formatter with tools calling"""
+        prompt = OpenAIFormatter.format_chat(
+            *self.inputs_with_tools,
+        )
+        ground_truth = [
+            {
+                "role": "system",
+                "name": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "You are a helpful assistant",
+                    },
+                ],
+            },
+            {
+                "role": "user",
+                "name": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "What is the weather today?",
+                    },
+                ],
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Let's try bing search",
+                    },
+                ],
+                "tool_calls": [
+                    {
+                        "id": "xxx",
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "arguments": '{"query": "Beijing weather"}',
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "xxx",
+                "content": "It is sunny today",
+                "name": "bing_search",
+            },
+            {
+                "role": "assistant",
+                "name": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Now google search",
+                    },
+                ],
+                "tool_calls": [
+                    {
+                        "id": "xxx",
+                        "type": "function",
+                        "function": {
+                            "name": "google_search",
+                            "arguments": '{"query": "Beijing weather"}',
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "xxx",
+                "content": "It is rainy today",
+                "name": "google_search",
+            },
+        ]
+        self.assertListEqual(prompt, ground_truth)
+
+    def test_dashscope_with_tools(self) -> None:
+        """Unittest for DashScope Formatter with tools calling"""
+        prompt = DashScopeFormatter.format_chat(
+            *self.inputs_with_tools,
+        )
+        ground_truth = [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "text": "You are a helpful assistant",
+                    },
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "text": "What is the weather today?",
+                    },
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "text": "Let's try bing search",
+                    },
+                ],
+                "tool_calls": [
+                    {
+                        "id": "xxx",
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "arguments": '{"query": "Beijing weather"}',
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "xxx",
+                "content": "It is sunny today",
+                "name": "bing_search",
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "text": "Now google search",
+                    },
+                ],
+                "tool_calls": [
+                    {
+                        "id": "xxx",
+                        "type": "function",
+                        "function": {
+                            "name": "google_search",
+                            "arguments": '{"query": "Beijing weather"}',
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "xxx",
+                "content": "It is rainy today",
+                "name": "google_search",
+            },
+        ]
+        self.assertListEqual(prompt, ground_truth)
+
+    def test_anthropic_with_tools(self) -> None:
+        """Unittest for Anthropic Formatter with tools calling"""
+        prompt = AnthropicFormatter.format_chat(
+            *self.inputs_with_tools,
+        )
+        ground_truth = [
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "You are a helpful assistant",
+                    },
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "What is the weather today?",
+                    },
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Let's try bing search",
+                    },
+                    {
+                        "type": "tool_use",
+                        "id": "xxx",
+                        "name": "bing_search",
+                        "input": {
+                            "query": "Beijing weather",
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": "xxx",
+                        "content": "It is sunny today",
+                    },
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Now google search",
+                    },
+                    {
+                        "type": "tool_use",
+                        "id": "xxx",
+                        "name": "google_search",
+                        "input": {
+                            "query": "Beijing weather",
+                        },
+                    },
+                ],
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": "xxx",
+                        "content": "It is rainy today",
+                    },
+                ],
+            },
+        ]
+        self.assertListEqual(prompt, ground_truth)
 
 
 if __name__ == "__main__":

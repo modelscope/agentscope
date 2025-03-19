@@ -95,10 +95,13 @@ class Msg(BaseModel):
                 The url of the message.
         """
 
-        assert isinstance(content, (str, list)), (
-            "The content should be a string or a list or ContentBlock, "
-            f"got {type(content)}."
-        )
+        if not isinstance(content, (str, list)):
+            logger.warning(
+                f"The content should be a string or a list of content blocks."
+                f"The input content {type(content)} is converted to a string "
+                f"automatically.",
+            )
+            content = str(content)
 
         # Deal with the deprecated url argument
         if url is not None:

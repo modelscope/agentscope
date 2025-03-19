@@ -346,7 +346,7 @@ class ServiceToolkit:
     def parse_and_call_func(
         self,
         tool_calls: Union[ToolUseBlock, list[ToolUseBlock]],
-        transform_blocks_to_str: bool = True,
+        tools_api_mode: bool = False,
         raise_exception: bool = False,
     ) -> Msg:
         """Execute the tool functions with the given arguments, and return the
@@ -355,11 +355,10 @@ class ServiceToolkit:
         Args:
             tool_calls (`Union[ToolUseBlock, list[ToolUseBlock]]`):
                 A or a list of tool use blocks indicating the function calls.
-            transform_blocks_to_str (`bool`, defaults to `True`):
-                If transform the tool result block into string format. When you
-                are managing the tool calling prompt by yourself, you need to
-                transform blocks into a string to avoid formatting it into a
-                tool_result block in the format function.
+            tools_api_mode (`bool`, defaults to `False`):
+                If `False`, the execution results will be combined into a
+                string content. If `True`, the results will be `ContentBlock`
+                objects.
             raise_exception (`bool`, defaults to `False`):
                 Whether to raise exceptions when the function call fails. If
                 set to `False`, the error message will be wrapped in the
@@ -401,7 +400,7 @@ class ServiceToolkit:
                     ),
                 )
 
-        if transform_blocks_to_str:
+        if not tools_api_mode:
             # When you're managing tools calling prompt manually, the blocks
             # should be transformed into string format. So that in the format
             # function (both chat and multi-agent scenarios) it will be
