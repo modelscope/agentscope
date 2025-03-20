@@ -176,7 +176,6 @@ class MCPSessionHandler:
         """
         Initialize `stdio_transport`
         """
-        self._stdio_exit_stack = AsyncExitStack()
         command = (
             shutil.which("npx")
             if self.config.get("command") == "npx"
