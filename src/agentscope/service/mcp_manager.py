@@ -213,7 +213,7 @@ class MCPSessionHandler:
         This method attempts to close resources across different threads and
         event loops. While it may raise a RuntimeError due to task/event
         loop boundary crossing, the underlying AsyncExitStack mechanism
-        ensures resource cleanup.
+        ensures resource cleanup. Please use `self.close()` in async mode.
 
         Behavior:
         - Attempts to synchronously execute the async close method
