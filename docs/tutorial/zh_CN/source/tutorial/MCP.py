@@ -42,13 +42,13 @@ local_configs = {
 }
 
 # %%
-# 初始化 ServiceToolkit 并添加 MCP 服务器配置
+# 初始化 ServiceToolkit 并添加 MCP 服务器配置 （在自己的环境中取消注释下面的代码）
 toolkit = ServiceToolkit()
-# `toolkit.add_mcp_servers(server_configs=local_configs)`
+# toolkit.add_mcp_servers(server_configs=local_configs)
 
 # %%
 # 输出工具配置的指令以验证设置
-# `print(toolkit.tools_instruction)`
+print(toolkit.tools_instruction)
 
 # %%
 # 如果你需要使用HTTP协议连接在远程的服务器（或者是在本地其他进程启动SSE协议的MCP服务器），你可以参考以下配置进行连接。
