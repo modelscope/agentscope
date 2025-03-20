@@ -43,12 +43,13 @@ local_configs = {
 
 # %%
 # Initialize ServiceToolkit and add MCP server configuration
+
 toolkit = ServiceToolkit()
-toolkit.add_mcp_servers(server_configs=local_configs)
+# `toolkit.add_mcp_servers(server_configs=local_configs)`
 
 # %%
 # Output tool configuration instructions to verify settings
-print(toolkit.tools_instruction)
+# `print(toolkit.tools_instruction)`
 
 # %%
 # If you need to use the HTTP protocol to connect to a remote server (or an MCP server running locally in another process using the SSE protocol), you can refer to the following configuration for the connection.

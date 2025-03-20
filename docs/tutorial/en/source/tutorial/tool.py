@@ -68,8 +68,7 @@ configs = {
 }
 
 # Add MCP server configurations to the ServiceToolkit
-toolkit.add_mcp_servers(server_configs=configs)
-print(toolkit.tools_instruction)
+# `toolkit.add_mcp_servers(server_configs=configs)`
 
 # %%
 # The built-in default calling format:

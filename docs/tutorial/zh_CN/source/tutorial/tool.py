@@ -64,8 +64,7 @@ configs = {
 }
 
 # 将 MCP 服务器配置添加到 ServiceToolkit
-toolkit.add_mcp_servers(server_configs=configs)
-print(toolkit.tools_instruction)
+# `toolkit.add_mcp_servers(server_configs=configs)`
 
 # %%
 # 内置的默认调用格式:
