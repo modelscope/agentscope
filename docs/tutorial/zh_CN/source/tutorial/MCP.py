@@ -61,13 +61,15 @@ remote_configs = {
     },
 }
 
+# 回收toolkit实例
+del toolkit
+
 # %%
 # 将基于AgentScope创建的多智能体应用添加到自己的MCP服务器
 # --------------------------
 # 你可以通过MCP官方提供的Python SDK轻松地将多智能体应用添加到自己的MCP服务器。以下是一个示例代码，演示如何使用AgentScope和MCP库来实现这一目的。
 
 import agentscope
-import mcp
 
 from agentscope.agents import DialogAgent
 from agentscope.message import Msg

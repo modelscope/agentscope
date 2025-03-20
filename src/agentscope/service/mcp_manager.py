@@ -29,6 +29,9 @@ except ImportError:
 from .service_response import ServiceResponse, ServiceExecStatus
 
 
+COROUTINE_TIMEOUT_SECONDS = 60
+
+
 def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
     """
     Execute a function synchronously.
@@ -52,10 +55,17 @@ def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
             raise
 
     if loop.is_running():
+        logger.warning(
+            "Event loop is running, using "
+            "`run_coroutine_threadsafe`, which will block the "
+            f"process until the func `{func.__name__}` is finished. "
+            f"This operation has a timeout of {COROUTINE_TIMEOUT_SECONDS} "
+            "seconds and might not work as expected in Jupyter Notebook.",
+        )
         results = asyncio.run_coroutine_threadsafe(
             func(*args, **kwargs),
             loop,
-        ).result()
+        ).result(timeout=COROUTINE_TIMEOUT_SECONDS)
     else:
         results = loop.run_until_complete(func(*args, **kwargs))
     return results
@@ -235,6 +245,13 @@ class MCPSessionHandler:
         Do not modify this method without careful consideration of its
         subtle resource management implications.
         """
+        if asyncio.get_event_loop is None:
+            # When the code is executed directly at the top level in a script,
+            # the `asyncio` will recycle before the instance. In such case,
+            # when the function is triggered by `__del__`, there is nothing to
+            # delete. Unless you call `del` in the end.
+            return
+
         if self._stdio_exit_stack and self.stdio_transport:
             sync_exec(self.close)
 

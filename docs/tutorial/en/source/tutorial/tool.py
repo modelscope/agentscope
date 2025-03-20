@@ -110,6 +110,9 @@ msg_task = Msg("user", "Help me to calculate 1615114134*4343434343", "user")
 
 res = agent(msg_task)
 
+# Recycle the toolkit instance
+del toolkit
+
 
 # %%
 # Creating Custom Tools

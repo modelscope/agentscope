@@ -105,6 +105,9 @@ msg_task = Msg("user", "帮我计算一下 1615114134*4343434343", "user")
 
 res = agent(msg_task)
 
+# 回收toolkit实例
+del toolkit
+
 
 # %%
 # 创建工具函数

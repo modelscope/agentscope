@@ -61,13 +61,15 @@ remote_configs = {
     },
 }
 
+# Recycle the toolkit instance
+del toolkit
+
 # %%
 # Adding multi-agent applications created with AgentScope to your own MCP server
 # --------------------------
 # You can easily add multi-agent applications to your own MCP server using the official MCP Python SDK. The following example code demonstrates how to achieve this purpose using AgentScope and the MCP library.
 
 import agentscope
-import mcp
 
 from agentscope.agents import DialogAgent
 from agentscope.message import Msg
