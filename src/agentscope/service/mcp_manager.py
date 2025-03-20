@@ -288,7 +288,7 @@ class MCPSessionHandler:
         self,
         tool_name: str,
         arguments: dict[str, Any] = None,
-    ) -> Any:
+    ) -> ServiceResponse:
         """Execute a tool and return ServiceResponse"""
         if not self.session:
             raise RuntimeError(f"Session {self.name} not initialized")
@@ -315,5 +315,3 @@ class MCPSessionHandler:
                 f"Traceback:\n"
                 f"{traceback.format_exc()}",
             )
-
-        return result
