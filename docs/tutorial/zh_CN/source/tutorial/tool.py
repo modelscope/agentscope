@@ -56,21 +56,16 @@ print(toolkit.tools_instruction)
 
 configs = {
     "mcpServers": {
-        "xxxx": {
+        "puppeteer": {
             "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/xxxx",
-            ],
-        },
-        "yyyy": {
-            "url": "http://xxx.xxx.xxx.xxx:xxxx/sse",
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
         },
     },
 }
 
 # 将 MCP 服务器配置添加到 ServiceToolkit
 toolkit.add_mcp_servers(server_configs=configs)
+print(toolkit.tools_instruction)
 
 # %%
 # 内置的默认调用格式:

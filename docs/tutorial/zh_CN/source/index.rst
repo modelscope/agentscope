@@ -35,6 +35,7 @@ Welcome to AgentScope's documentation!
    build_tutorial/monitor
    build_tutorial/tool
    build_tutorial/rag
+   build_tutorial/MCP
    build_tutorial/distribution
    build_tutorial/prompt_optimization
    build_tutorial/web_browser

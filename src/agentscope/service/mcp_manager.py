@@ -181,6 +181,10 @@ class MCPSessionHandler:
                 args=args,
                 env={**os.environ, **env},
             )
+            # If an error happens in the process after `anyio.open_process`
+            # in `stdio_client`, it might not raise an exception, please
+            # make sure your mcp server is well-configured and the command is
+            # correct before you using this function.
             stdio_transport = await self._stdio_exit_stack.enter_async_context(
                 stdio_client(server_params),
             )

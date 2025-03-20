@@ -60,21 +60,16 @@ print(toolkit.tools_instruction)
 
 configs = {
     "mcpServers": {
-        "xxxx": {
+        "puppeteer": {
             "command": "npx",
-            "args": [
-                "-y",
-                "@modelcontextprotocol/xxxx",
-            ],
-        },
-        "yyyy": {
-            "url": "http://xxx.xxx.xxx.xxx:xxxx/sse",
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
         },
     },
 }
 
 # Add MCP server configurations to the ServiceToolkit
 toolkit.add_mcp_servers(server_configs=configs)
+print(toolkit.tools_instruction)
 
 # %%
 # The built-in default calling format:
@@ -85,7 +80,6 @@ print(toolkit.tools_calling_format)
 # The JSON Schema description of the tool functions:
 
 print(json.dumps(toolkit.json_schemas, indent=2))
-
 
 # %%
 
