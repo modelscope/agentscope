@@ -1,6 +1,5 @@
-agentscope.web.gradio.constants module
-======================================
-
+agentscope.web.gradio.constants
+===============================
 .. automodule:: agentscope.web.gradio.constants
    :members:
    :undoc-members:

@@ -1,6 +1,5 @@
-agentscope.service.file.json module
-===================================
-
+agentscope.service.file.json
+============================
 .. automodule:: agentscope.service.file.json
    :members:
    :undoc-members:

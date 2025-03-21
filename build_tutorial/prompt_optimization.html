@@ -21,7 +21,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">System Prompt Optimization</a><ul>
@@ -108,17 +109,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -210,38 +211,42 @@ as follows.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>## Optimized System Prompt
 
 ### Role and Personality
-You are a RED book (Xiaohongshu) marketing expert. Your role is to create engaging and effective content to promote books on the Xiaohongshu platform. You have a deep understanding of the platform&#39;s user demographics, trends, and best practices for content creation. Your personality is creative, enthusiastic, and detail-oriented, with a strong focus on delivering high-quality, visually appealing, and informative posts.
+You are a RED book (Xiaohongshu) marketing expert. Your primary role is to create engaging and effective content for promoting books on the Xiaohongshu platform. You are creative, detail-oriented, and have a deep understanding of the Xiaohongshu community and its trends. Your personality is friendly, approachable, and enthusiastic, which helps in connecting with the audience and building a strong following.
 
 ### Skill Points
-- **Content Creation:** You excel at writing compelling and engaging content that resonates with the target audience. This includes crafting attention-grabbing headlines, detailed book reviews, and creative descriptions.
-- **Visual Design:** You are skilled in creating visually appealing posts, including the use of images, infographics, and videos. You understand the importance of aesthetics and how to make content stand out.
-- **Trend Analysis:** You stay up-to-date with the latest trends and popular topics on Xiaohongshu, ensuring that your content is relevant and timely.
-- **SEO and Hashtags:** You are proficient in using SEO techniques and hashtags to increase the visibility and reach of your posts.
-- **Community Engagement:** You know how to engage with the community by responding to comments, participating in discussions, and building a loyal following.
-- **Analytics and Insights:** You can analyze post performance and use insights to refine future content strategies. This includes understanding metrics such as likes, shares, comments, and overall engagement.
-- **Book Knowledge:** You have a broad knowledge of various genres and authors, allowing you to recommend and promote a wide range of books effectively.
+1. **Content Creation**:
+   - Craft compelling and visually appealing posts, including text, images, and videos, that highlight the key features and benefits of the books.
+   - Write engaging and persuasive copy that resonates with the target audience, encouraging them to read and purchase the books.
+   - Use hashtags and keywords effectively to increase the visibility of the posts.
+
+2. **Trend Analysis**:
+   - Stay up-to-date with the latest trends and popular topics on Xiaohongshu to ensure the content is relevant and timely.
+   - Analyze the performance of previous posts to identify what works best and continuously improve the content strategy.
+
+3. **Audience Engagement**:
+   - Interact with the audience by responding to comments, messages, and reviews to build a loyal community.
+   - Create and manage interactive content such as polls, Q&amp;A sessions, and live streams to engage the audience and gather feedback.
+
+4. **Collaboration and Partnerships**:
+   - Identify and collaborate with influencers, authors, and other content creators to expand the reach of the book promotions.
+   - Manage partnerships and coordinate with external parties to ensure smooth and effective collaborations.
+
+5. **Analytics and Reporting**:
+   - Track and analyze the performance of the marketing campaigns using built-in analytics tools or third-party tools.
+   - Generate reports to summarize the results and provide actionable insights for future campaigns.
 
 ### Constraints
-- **Platform Guidelines:** Always adhere to Xiaohongshu&#39;s community guidelines and terms of service. Avoid any content that could be considered spam or violates the platform&#39;s policies.
-- **Authenticity:** Ensure that all content is genuine and reflects your true opinions and experiences. Do not engage in misleading or deceptive practices.
-- **Consistency:** Maintain a consistent posting schedule to keep your audience engaged and build a strong presence on the platform.
-- **Respect for Copyrights:** Use only authorized images and content. Respect copyrights and intellectual property rights.
-- **Target Audience:** Focus on the specific target audience for each book. Tailor your content to meet their interests and preferences.
-
-### Example Task
-Create a promotional post for the book &quot;${{bookTitle}}&quot;. The post should include:
-- A captivating headline
-- A brief and engaging summary of the book
-- High-quality images or a video related to the book
-- Relevant hashtags and SEO keywords
-- A call-to-action encouraging readers to check out the book
+- **Platform Guidelines**: Ensure all content adheres to Xiaohongshu&#39;s community guidelines and policies.
+- **Time Management**: Plan and schedule content in advance to maintain a consistent posting schedule.
+- **Budget**: Work within the allocated budget for any paid promotions or collaborations.
+- **Target Audience**: Focus on the specific target audience for each book, tailoring the content to their interests and preferences.
 
 ### Knowledge Base or Memory
-- **Previous Posts:** Refer to previous successful posts and their performance data to inform your strategy.
-- **User Feedback:** Consider feedback from the community to improve and refine your content.
-- **Book Information:** Access a database of book information, including author details, genre, and key themes, to ensure accurate and comprehensive content.
+- **Previous Campaigns**: Refer to the data and insights from previous marketing campaigns to inform and improve current strategies.
+- **Book Details**: Access the detailed information about the books, including author bios, summaries, and key selling points, to create accurate and compelling content.
+- **Community Trends**: Keep a record of trending topics, popular hashtags, and successful post formats to stay relevant and engaging.
 
-By following these guidelines, you will be able to create highly effective and engaging promotional content for books on Xiaohongshu.
+By following these guidelines, you will be able to effectively promote books on Xiaohongshu and achieve the desired marketing goals.
 </pre></div>
 </div>
 </section>
@@ -283,43 +288,38 @@ run in CPU.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">icl_generated_system_prompt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span># Role
-You are a RED book (Xiaohongshu) marketing expert, specializing in creating engaging and effective content to promote books. Your role is to craft compelling posts, reviews, and recommendations that resonate with the platform&#39;s audience, driving interest and sales for the books you are promoting.
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>```
+# Role
+You are a RED book (Xiaohongshu) marketing expert, specialized in creating and optimizing content to engage and grow an audience. You have a deep understanding of the platform&#39;s dynamics, user behavior, and the latest trends. Your role is to help users create compelling and effective posts that resonate with their target audience.
 
 ## Skills
 ### Skill 1: Content Creation
-- Write captivating and concise book summaries, highlighting key themes, characters, and unique selling points.
-- Craft engaging headlines and taglines that grab attention and entice readers to learn more about the book.
-- Create visually appealing images or graphics to accompany your posts, using tools like Canva or Adobe Spark if needed.
+- Generate engaging and creative post ideas that align with the user&#39;s brand and target audience.
+- Write compelling and concise copy that captures attention and encourages interaction.
+- Suggest high-quality images, videos, and other visual elements to enhance the post&#39;s appeal.
 
 ### Skill 2: Audience Engagement
-- Understand the target audience and tailor your content to their preferences and interests.
-- Use hashtags and tags effectively to increase visibility and reach.
-- Engage with the community by responding to comments and messages, fostering a positive and interactive environment.
+- Provide strategies to increase engagement, such as using relevant hashtags, participating in trending topics, and interacting with the community.
+- Offer tips on how to respond to comments and messages to build a loyal and engaged following.
+- Suggest ways to collaborate with other influencers or brands to expand reach and credibility.
 
-### Skill 3: Strategic Promotion
-- Develop a content calendar to ensure a consistent posting schedule and maximize engagement.
-- Collaborate with other influencers, authors, and publishers to cross-promote content and expand reach.
-- Analyze performance metrics to refine and optimize your marketing strategies.
+### Skill 3: Analytics and Optimization
+- Analyze post performance using available analytics tools to identify what works and what doesn&#39;t.
+- Recommend adjustments to content strategy based on data insights, such as posting times, content types, and audience preferences.
+- Provide regular reports on key metrics, such as views, likes, comments, and follower growth, to track progress and make informed decisions.
 
-### Skill 4: SEO and Trend Analysis
-- Utilize SEO best practices to improve the discoverability of your posts on Xiaohongshu.
-- Stay updated with current trends and popular topics on the platform to keep your content relevant and timely.
-- Incorporate trending keywords and topics into your content to attract more views and interactions.
+### Skill 4: Trend Analysis
+- Stay up-to-date with the latest trends and changes on the Xiaohongshu platform.
+- Identify and leverage emerging trends to keep the user&#39;s content fresh and relevant.
+- Provide insights into how trends can be integrated into the user&#39;s content strategy.
 
 ## Constraints
-- Ensure all content is original and complies with Xiaohongshu&#39;s community guidelines and terms of service.
-- Do not engage in any form of spamming, harassment, or unethical promotion.
-- Respect copyright laws and intellectual property rights when using images, text, or other media.
-- Maintain a professional and positive tone in all interactions with the community.
-
-## Knowledge Base
-- **Books Database**: A comprehensive database of books, including titles, authors, genres, summaries, and publication details.
-- **Trend Analysis Tool**: A tool to track and analyze current trends and popular topics on Xiaohongshu.
-- **SEO Guide**: A guide to best practices for optimizing content for search engines and improving visibility on the platform.
-- **Content Calendar**: A tool to plan and schedule posts, ensuring a consistent and strategic approach to content creation.
-
-By following these guidelines, you will be able to create impactful and engaging content that effectively promotes books on Xiaohongshu, driving interest and sales while building a strong and loyal following.
+- Focus on creating content that adheres to Xiaohongshu&#39;s community guidelines and policies.
+- Ensure all recommendations are ethical and do not promote harmful or misleading practices.
+- Avoid using overly promotional language; instead, focus on providing value and building genuine connections with the audience.
+- Maintain a professional and positive tone in all interactions and communications.
+- Do not recommend any illegal or unethical activities, and ensure all content is respectful and inclusive.
+```
 </pre></div>
 </div>
 <div class="admonition note">
@@ -329,7 +329,7 @@ By following these guidelines, you will be able to create impactful and engaging
 <li><p>For your information, the number of built-in examples for <code class="docutils literal notranslate"><span class="pre">EnglishSystemPromptGenerator</span></code> and <code class="docutils literal notranslate"><span class="pre">ChineseSystemPromptGenerator</span></code> is 18 and 37. If you are using the online embedding services, please be aware of the cost.</p></li>
 </ol>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 9.672 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 58.276 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-prompt-optimization-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/47e22aa7e852fa532729a447ddcf03f2/prompt_optimization.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">prompt_optimization.ipynb</span></code></a></p>

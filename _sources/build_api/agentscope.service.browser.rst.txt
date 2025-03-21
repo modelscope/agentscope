@@ -1,16 +1,5 @@
-agentscope.service.browser package
-==================================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.service.browser.web_browser
-
-Module contents
----------------
+agentscope.service.browser
+==========================
 
 .. automodule:: agentscope.service.browser
    :members:

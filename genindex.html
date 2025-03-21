@@ -20,7 +20,7 @@
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/language_switch.js?v=6d1ec912"></script>
     <script src="_static/js/theme.js"></script>
@@ -83,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
@@ -99,17 +100,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_api/agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -208,6 +209,8 @@
         <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.Env.add_listener">(Env method)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.Env.add_listener">[1]</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.service.html#agentscope.service.ServiceToolkit.add_mcp_servers">add_mcp_servers() (ServiceToolkit method)</a>, <a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.add_mcp_servers">[1]</a>
+</li>
       <li><a href="build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server">add_RpcAgentServicer_to_server() (in module agentscope.rpc.rpc_agent_pb2_grpc)</a>
 </li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.AGENT">AGENT (WorkflowNodeType attribute)</a>
@@ -740,6 +743,13 @@
 </li>
       </ul></li>
       <li>
+    agentscope.service.mcp_manager
+
+      <ul>
+        <li><a href="build_api/agentscope.service.mcp_manager.html#module-agentscope.service.mcp_manager">module</a>
+</li>
+      </ul></li>
+      <li>
     agentscope.service.multi_modality
 
       <ul>
@@ -1156,7 +1166,13 @@
         <li><a href="build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.clone_agent">(RpcAgentServicer method)</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebBrowser.close">close() (WebBrowser method)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebBrowser.close">[1]</a>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler.close">close() (MCPSessionHandler method)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebBrowser.close">(WebBrowser method)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebBrowser.close">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler.close_session">close_session() (MCPSessionHandler method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.code_dir">code_dir (FileManager property)</a>
 </li>
@@ -1318,6 +1334,8 @@
         <li><a href="build_api/agentscope.service.file.common.html#agentscope.service.file.common.create_file">(in module agentscope.service.file.common)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler.create_session">create_session() (MCPSessionHandler method)</a>
+</li>
       <li><a href="build_api/agentscope.utils.common.html#agentscope.utils.common.create_tempdir">create_tempdir() (in module agentscope.utils.common)</a>
 </li>
       <li><a href="build_api/agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.cycle_dots">cycle_dots() (in module agentscope.web.gradio.utils)</a>
@@ -1566,6 +1584,8 @@
         <li><a href="build_api/agentscope.service.execute_code.exec_shell.html#agentscope.service.execute_code.exec_shell.execute_shell_command">(in module agentscope.service.execute_code.exec_shell)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler.execute_tool">execute_tool() (MCPSessionHandler method)</a>
+</li>
       <li><a href="build_api/agentscope.memory.html#agentscope.memory.MemoryBase.export">export() (MemoryBase method)</a>, <a href="build_api/agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.export">[1]</a>
 
       <ul>
@@ -2006,6 +2026,8 @@
       </ul></li>
       <li><a href="build_api/agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiWrapperBase.list_models">list_models() (GeminiWrapperBase method)</a>
 </li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler.list_tools">list_tools() (MCPSessionHandler method)</a>
+</li>
       <li><a href="build_api/agentscope.models.html#agentscope.models.LiteLLMChatWrapper">LiteLLMChatWrapper (class in agentscope.models)</a>
 
       <ul>
@@ -2090,6 +2112,8 @@
         <li><a href="build_api/agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser">(class in agentscope.parsers.json_object_parser)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler">MCPSessionHandler (class in agentscope.service.mcp_manager)</a>
+</li>
       <li><a href="build_api/agentscope.memory.html#agentscope.memory.MemoryBase">MemoryBase (class in agentscope.memory)</a>
 
       <ul>
@@ -2383,6 +2407,8 @@
         <li><a href="build_api/agentscope.service.file.json.html#module-agentscope.service.file.json">agentscope.service.file.json</a>
 </li>
         <li><a href="build_api/agentscope.service.file.text.html#module-agentscope.service.file.text">agentscope.service.file.text</a>
+</li>
+        <li><a href="build_api/agentscope.service.mcp_manager.html#module-agentscope.service.mcp_manager">agentscope.service.mcp_manager</a>
 </li>
         <li><a href="build_api/agentscope.service.multi_modality.html#module-agentscope.service.multi_modality">agentscope.service.multi_modality</a>
 </li>
@@ -3089,6 +3115,8 @@
         <li><a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit">(class in agentscope.service.service_toolkit)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.session_decorator">session_decorator() (in module agentscope.service.mcp_manager)</a>
+</li>
       <li><a href="build_api/agentscope.server.async_result_pool.html#agentscope.server.async_result_pool.AsyncResultPool.set">set() (AsyncResultPool method)</a>
 
       <ul>
@@ -3200,6 +3228,8 @@
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode">SwitchPipelineNode (class in agentscope.web.workstation.workflow_node)</a>
+</li>
+      <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.sync_exec">sync_exec() (in module agentscope.service.mcp_manager)</a>
 </li>
       <li><a href="build_api/agentscope.rpc.html#agentscope.rpc.sync_func">sync_func() (in module agentscope.rpc)</a>
 

@@ -1,6 +1,5 @@
-agentscope.web.workstation.workflow module
-==========================================
-
+agentscope.web.workstation.workflow
+===================================
 .. automodule:: agentscope.web.workstation.workflow
    :members:
    :undoc-members:

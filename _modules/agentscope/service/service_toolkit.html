@@ -20,7 +20,7 @@
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -83,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
@@ -99,17 +100,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -153,6 +154,7 @@ from typing import (
     get_args,
     get_origin,
     List,
+    Dict,
 )
 from loguru import logger
 
@@ -164,6 +166,8 @@ from ..exception import (
 )
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
+
+from .mcp_manager import MCPSessionHandler, sync_exec
 from ..message import Msg
 
 try:
@@ -370,6 +374,93 @@ class ServiceToolkit:
                 processed_func=processed_func,
                 json_schema=json_schema,
             )</div>
+
+
+<div class="viewcode-block" id="ServiceToolkit.add_mcp_servers">
+<a class="viewcode-back" href="../../../build_api/agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.add_mcp_servers">[docs]</a>
+    def add_mcp_servers(self, server_configs: Dict) -&gt; None:
+        &quot;&quot;&quot;
+        Add mcp servers to the toolkit.
+
+        Parameters:
+            server_configs (Dict): A dictionary containing the configuration
+                for MCP servers. The configuration follows the Model Context
+                Protocol specification and can be defined in TypeScript,
+                but is available as JSON Schema for wider compatibility.
+
+                Fields:
+                   - &quot;mcpServers&quot;: A dictionary where each key is the server
+                   name and the value is its configuration.
+
+                Field Details:
+                   - &quot;command&quot;: Specifies the command to execute,
+                   which follows the stdio protocol for communication.
+                   - &quot;args&quot;: A list of arguments to be passed to the command.
+                   - &quot;url&quot;: Specifies the server&#39;s URL, which follows the
+                   Server-Sent Events (SSE) protocol for data transmission.
+
+                Example:
+                    configs = {
+                        &quot;mcpServers&quot;: {
+                            &quot;xxxx&quot;: {
+                                &quot;command&quot;: &quot;npx&quot;,
+                                &quot;args&quot;: [
+                                    &quot;-y&quot;,
+                                    &quot;@modelcontextprotocol/xxxx&quot;
+                                ]
+                            },
+                            &quot;yyyy&quot;: {
+                                &quot;url&quot;: &quot;http://xxx.xxx.xxx.xxx:xxxx/sse&quot;
+                            }
+                        }
+                    }
+        &quot;&quot;&quot;
+        new_servers = [
+            MCPSessionHandler(name, config)
+            for name, config in server_configs[&quot;mcpServers&quot;].items()
+        ]
+
+        # register the service function
+        for sever in new_servers:
+            for tool in sync_exec(sever.list_tools):
+                name = tool.name
+                if name in self.service_funcs:
+                    logger.warning(
+                        f&quot;Service function `{name}` already exists, &quot;
+                        f&quot;skip adding it.&quot;,
+                    )
+                else:
+                    json_schema = {
+                        &quot;type&quot;: &quot;function&quot;,
+                        &quot;function&quot;: {
+                            &quot;name&quot;: tool.name,
+                            &quot;description&quot;: tool.description,
+                            &quot;parameters&quot;: {
+                                &quot;type&quot;: &quot;object&quot;,
+                                &quot;properties&quot;: tool.inputSchema.get(
+                                    &quot;properties&quot;,
+                                    {},
+                                ),
+                                &quot;required&quot;: tool.inputSchema.get(
+                                    &quot;required&quot;,
+                                    [],
+                                ),
+                            },
+                        },
+                    }
+                    self.service_funcs[tool.name] = ServiceFunction(
+                        name=tool.name,
+                        original_func=partial(
+                            sync_exec,
+                            sever.execute_tool,
+                        ),
+                        processed_func=partial(
+                            sync_exec,
+                            sever.execute_tool,
+                            tool.name,
+                        ),
+                        json_schema=json_schema,
+                    )</div>
 
 
     @property

@@ -1,6 +1,5 @@
-agentscope.models.litellm\_model module
-=======================================
-
+agentscope.models.litellm_model
+===============================
 .. automodule:: agentscope.models.litellm_model
    :members:
    :undoc-members:

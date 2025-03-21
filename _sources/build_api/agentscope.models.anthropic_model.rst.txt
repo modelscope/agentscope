@@ -1,6 +1,5 @@
-agentscope.models.anthropic\_model module
-=========================================
-
+agentscope.models.anthropic_model
+=================================
 .. automodule:: agentscope.models.anthropic_model
    :members:
    :undoc-members:

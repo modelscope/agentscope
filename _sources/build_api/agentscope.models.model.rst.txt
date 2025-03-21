@@ -1,6 +1,5 @@
-agentscope.models.model module
-==============================
-
+agentscope.models.model
+=======================
 .. automodule:: agentscope.models.model
    :members:
    :undoc-members:

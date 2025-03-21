@@ -1,6 +1,5 @@
-agentscope.models.dashscope\_model module
-=========================================
-
+agentscope.models.dashscope_model
+=================================
 .. automodule:: agentscope.models.dashscope_model
    :members:
    :undoc-members:

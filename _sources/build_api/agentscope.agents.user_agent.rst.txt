@@ -1,6 +1,5 @@
-agentscope.agents.user\_agent module
-====================================
-
+agentscope.agents.user_agent
+============================
 .. automodule:: agentscope.agents.user_agent
    :members:
    :undoc-members:

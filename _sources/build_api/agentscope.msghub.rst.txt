@@ -1,6 +1,5 @@
-agentscope.msghub module
-========================
-
+agentscope.msghub
+=================
 .. automodule:: agentscope.msghub
    :members:
    :undoc-members:

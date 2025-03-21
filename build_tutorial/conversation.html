@@ -21,7 +21,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
@@ -106,17 +107,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -192,12 +193,14 @@ to download the full example code.</p>
     <span class="n">msg</span> <span class="o">=</span> <span class="n">monster</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message may have been cut off. How can I assist you today?
-Monster: Hello Angel! It looks like there might be a bit of confusion. I&#39;m Monster, your helpful assistant. How can I assist you today?
-Angel: Hello! It looks like there was a mix-up. I&#39;m Angel, and I&#39;m here to help you. How can I assist you today?
-Monster: Hello! I see there&#39;s been a bit of a mix-up with the names. I&#39;m Monster, and I&#39;m here to assist you. How can I help you today?
-Angel: Hello! It seems there&#39;s been a little confusion. I&#39;m Angel, and I&#39;m here to assist you. How can I help you today?
-Monster: Hello! It looks like there&#39;s been a bit of back-and-forth with the names. I&#39;m Monster, and I&#39;m here to assist you. How can I help you today?
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message was cut off. Could you please provide more details so I can assist you better?
+Monster: Hello Angel! I&#39;m Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I don&#39;t see any previous message from you that was cut off. Could you please share what you need help with or any specific details? I&#39;m here to assist you!
+Angel: Hello Monster! It looks like there&#39;s a bit of confusion here. I&#39;m Angel, and I&#39;m here to help. Could you please let me know what you need assistance with? Feel free to share any details or questions you have!
+Monster: Hello Angel! It’s nice to meet you. I see we both got a bit mixed up. I’m here to help with any questions or tasks you might have. If you have any specific requests or if there’s anything you’d like to discuss, please let me know!
+Angel: Hello Monster! It&#39;s great to meet you, and I appreciate your willingness to help. However, it looks like we might be in a bit of a loop here. I&#39;m Angel, and I&#39;m here to assist with any questions or tasks you have. Could you please let me know what you need help with? If you have any specific requests or topics you&#39;d like to discuss, feel free to share! 😊
+Monster: Hello Angel! It’s great to meet you, and I appreciate your patience. It seems we both are here to help, which is wonderful! Since we’re both assistants, let’s make sure we don’t get in each other’s way.
+
+If you have any specific questions or tasks that you need assistance with, please feel free to share them. I’m here to support you in any way I can. If there’s anything you’d like to discuss or if you need help with a particular topic, just let me know! 😊
 </pre></div>
 </div>
 <p>If you want to participate in the conversation, just instantiate a built-in <cite>UserAgent</cite> to type messages to the agents.</p>
@@ -271,7 +274,7 @@ Bob: 2
 Charlie: 3
 Alice: 4
 Bob: 5
-Charlie: 1
+Charlie: 4
 </pre></div>
 </div>
 <p>Now we print the memory of Alice and Bob to check if the operation is successful.</p>
@@ -298,13 +301,13 @@ user: Now you three count off each other from 1, and just report the number with
 Alice: 1
 Bob: 2
 Charlie: 3
-Charlie: 1
+Charlie: 4
 </pre></div>
 </div>
 <p>In the above example, Charlie left the conversation after the first round without receiving “4” and “5” from Alice and Bob.
 Therefore, it reported “4” in the second round.
 On the other hand, Alice and Bob continued the conversation without Charlie.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 19.212 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 35.478 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-conversation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e45033d54e8ac8fc32ecea3c60595825/conversation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">conversation.ipynb</span></code></a></p>

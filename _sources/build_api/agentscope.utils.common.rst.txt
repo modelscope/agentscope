@@ -1,6 +1,5 @@
-agentscope.utils.common module
-==============================
-
+agentscope.utils.common
+=======================
 .. automodule:: agentscope.utils.common
    :members:
    :undoc-members:

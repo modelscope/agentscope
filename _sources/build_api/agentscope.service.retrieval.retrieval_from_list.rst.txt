@@ -1,6 +1,5 @@
-agentscope.service.retrieval.retrieval\_from\_list module
-=========================================================
-
+agentscope.service.retrieval.retrieval_from_list
+================================================
 .. automodule:: agentscope.service.retrieval.retrieval_from_list
    :members:
    :undoc-members:

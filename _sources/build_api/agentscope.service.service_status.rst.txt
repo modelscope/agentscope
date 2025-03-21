@@ -1,6 +1,5 @@
-agentscope.service.service\_status module
-=========================================
-
+agentscope.service.service_status
+=================================
 .. automodule:: agentscope.service.service_status
    :members:
    :undoc-members:

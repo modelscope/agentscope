@@ -1,6 +1,5 @@
-agentscope.web.gradio.studio module
-===================================
-
+agentscope.web.gradio.studio
+============================
 .. automodule:: agentscope.web.gradio.studio
    :members:
    :undoc-members:

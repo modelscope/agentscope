@@ -1,6 +1,5 @@
-agentscope.rpc.rpc\_async module
-================================
-
+agentscope.rpc.rpc_async
+========================
 .. automodule:: agentscope.rpc.rpc_async
    :members:
    :undoc-members:

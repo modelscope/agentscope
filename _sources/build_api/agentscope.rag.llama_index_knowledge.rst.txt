@@ -1,6 +1,5 @@
-agentscope.rag.llama\_index\_knowledge module
-=============================================
-
+agentscope.rag.llama_index_knowledge
+====================================
 .. automodule:: agentscope.rag.llama_index_knowledge
    :members:
    :undoc-members:

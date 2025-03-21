@@ -1,6 +1,5 @@
-agentscope.models.gemini\_model module
-======================================
-
+agentscope.models.gemini_model
+==============================
 .. automodule:: agentscope.models.gemini_model
    :members:
    :undoc-members:

@@ -1,6 +1,5 @@
-agentscope.service.service\_response module
-===========================================
-
+agentscope.service.service_response
+===================================
 .. automodule:: agentscope.service.service_response
    :members:
    :undoc-members:

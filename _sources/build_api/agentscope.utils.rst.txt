@@ -1,17 +1,5 @@
-agentscope.utils package
-========================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.utils.common
-   agentscope.utils.token_utils
-
-Module contents
----------------
+agentscope.utils
+================
 
 .. automodule:: agentscope.utils
    :members:

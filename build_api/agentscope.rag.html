@@ -7,7 +7,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.rag package &mdash; AgentScope Doc  documentation</title>
+  <title>agentscope.rag &mdash; AgentScope Doc  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
@@ -21,7 +21,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
@@ -29,8 +29,8 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="agentscope.rag.knowledge module" href="agentscope.rag.knowledge.html" />
-    <link rel="prev" title="agentscope.prompt package" href="agentscope.prompt.html" /> 
+    <link rel="next" title="agentscope.service" href="agentscope.service.html" />
+    <link rel="prev" title="agentscope.parsers" href="agentscope.parsers.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
@@ -102,57 +103,48 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.rag package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html">agentscope.rag.knowledge module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html">agentscope.rag.knowledge_bank module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html">agentscope.rag.llama_index_knowledge module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.rag</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.rag.Knowledge"><code class="docutils literal notranslate"><span class="pre">Knowledge</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.Knowledge.build_knowledge_instance"><code class="docutils literal notranslate"><span class="pre">Knowledge.build_knowledge_instance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.Knowledge.default_config"><code class="docutils literal notranslate"><span class="pre">Knowledge.default_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.Knowledge.post_processing"><code class="docutils literal notranslate"><span class="pre">Knowledge.post_processing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.Knowledge.retrieve"><code class="docutils literal notranslate"><span class="pre">Knowledge.retrieve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.Knowledge.knowledge_type"><code class="docutils literal notranslate"><span class="pre">Knowledge.knowledge_type</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-agentscope.rag">Module contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.Knowledge"><code class="docutils literal notranslate"><span class="pre">Knowledge</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.Knowledge.build_knowledge_instance"><code class="docutils literal notranslate"><span class="pre">Knowledge.build_knowledge_instance()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.Knowledge.default_config"><code class="docutils literal notranslate"><span class="pre">Knowledge.default_config()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.Knowledge.post_processing"><code class="docutils literal notranslate"><span class="pre">Knowledge.post_processing()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.Knowledge.retrieve"><code class="docutils literal notranslate"><span class="pre">Knowledge.retrieve()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.Knowledge.knowledge_type"><code class="docutils literal notranslate"><span class="pre">Knowledge.knowledge_type</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.rag.KnowledgeBank"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.add_data_as_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.add_data_as_knowledge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.equip"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.get_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.get_knowledge()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.register_knowledge_type"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.register_knowledge_type()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.KnowledgeBank"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.add_data_as_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.add_data_as_knowledge()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.equip"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.get_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.get_knowledge()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.KnowledgeBank.register_knowledge_type"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.register_knowledge_type()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.score"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.content"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.metadata"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.embedding"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.hash"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.hash</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.to_dict"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.to_dict()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.hash</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.rag.RetrievedChunk"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.score"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.content"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.metadata"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.embedding"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.hash"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.hash</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.rag.RetrievedChunk.to_dict"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.hash</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -169,8 +161,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
-      <li class="breadcrumb-item active">agentscope.rag package</li>
+      <li class="breadcrumb-item active">agentscope.rag</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/build_api/agentscope.rag.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -180,63 +171,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="agentscope-rag-package">
-<h1>agentscope.rag package<a class="headerlink" href="#agentscope-rag-package" title="Link to this heading"></a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.knowledge.html">agentscope.rag.knowledge module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge"><code class="docutils literal notranslate"><span class="pre">Knowledge</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.build_knowledge_instance"><code class="docutils literal notranslate"><span class="pre">Knowledge.build_knowledge_instance()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.default_config"><code class="docutils literal notranslate"><span class="pre">Knowledge.default_config()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.post_processing"><code class="docutils literal notranslate"><span class="pre">Knowledge.post_processing()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.retrieve"><code class="docutils literal notranslate"><span class="pre">Knowledge.retrieve()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.Knowledge.knowledge_type"><code class="docutils literal notranslate"><span class="pre">Knowledge.knowledge_type</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.score"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.content"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.metadata"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.embedding"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.hash"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.hash</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.to_dict"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#id0"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.content</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#id1"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.embedding</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#id2"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.hash</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#id3"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.metadata</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge.html#id4"><code class="docutils literal notranslate"><span class="pre">RetrievedChunk.score</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.knowledge_bank.html">agentscope.rag.knowledge_bank module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.add_data_as_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.add_data_as_knowledge()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.equip"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.equip()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.get_knowledge"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.get_knowledge()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.knowledge_bank.html#agentscope.rag.knowledge_bank.KnowledgeBank.register_knowledge_type"><code class="docutils literal notranslate"><span class="pre">KnowledgeBank.register_knowledge_type()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html">agentscope.rag.llama_index_knowledge module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge"><code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.build_knowledge_instance"><code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge.build_knowledge_instance()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.default_config"><code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge.default_config()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.refresh_index"><code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge.refresh_index()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.retrieve"><code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge.retrieve()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge.knowledge_type"><code class="docutils literal notranslate"><span class="pre">LlamaIndexKnowledge.knowledge_type</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="module-agentscope.rag">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.rag" title="Link to this heading"></a></h2>
+  <section id="module-agentscope.rag">
+<span id="agentscope-rag"></span><h1>agentscope.rag<a class="headerlink" href="#module-agentscope.rag" title="Link to this heading"></a></h1>
 <p>Import RAG related modules in the package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.rag.Knowledge">
@@ -524,14 +460,13 @@ with the same name.</p></li>
 </dd></dl>
 
 </section>
-</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.prompt.html" class="btn btn-neutral float-left" title="agentscope.prompt package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.rag.knowledge.html" class="btn btn-neutral float-right" title="agentscope.rag.knowledge module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="agentscope.parsers.html" class="btn btn-neutral float-left" title="agentscope.parsers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agentscope.service.html" class="btn btn-neutral float-right" title="agentscope.service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

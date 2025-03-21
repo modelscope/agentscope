@@ -1,0 +1,303 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCP &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Retrieval Augmentation Generation (RAG)" href="rag.html" />
+    <link rel="prev" title="Tools" href="tool.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MCP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-mcp">What is MCP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#add-mcp-server-to-servicetoolkit">Add MCP Server to <cite>ServiceToolkit</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-multi-agent-app-to-mcp-server">Adding multi-agent App to MCP server</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MCP</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/MCP.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-mcp-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="mcp">
+<span id="sphx-glr-build-tutorial-mcp-py"></span><span id="id1"></span><h1>MCP<a class="headerlink" href="#mcp" title="Link to this heading"></a></h1>
+<p>In this tutorial, we will briefly introduce what MCP is and show how to use MCP in AgentScope. We will also demonstrate how to configure an existing AgentScope multi-agent application as an MCP server. Finally, to help advanced developers gain a deeper understanding, we will discuss how MCP integrates with AgentScope.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>Before reading this chapter, please read the “Tools” chapter to understand the basic usage of the <cite>ServiceToolkit</cite> module.</p></li>
+<li><p>Using MCP in AgentScope requires your Python version to be at least 3.10, and you must have installed the <cite>agentscope[service]</cite> version.</p></li>
+</ol>
+</div>
+<section id="what-is-mcp">
+<h2>What is MCP<a class="headerlink" href="#what-is-mcp" title="Link to this heading"></a></h2>
+<p>MCP (Model Context Protocol) is an open standard introduced by Anthropic, aimed at standardizing communication between large language models and external data sources and tools, enabling AI models to fully realize their potential.
+Through MCP, AI applications can securely access and manipulate local and remote data, providing a connection method similar to a “USB-C interface” for AI applications.
+This standard not only facilitates API development by service providers but also avoids developers rebuilding basic functions, allowing existing MCP services to enhance the capabilities of intelligent agents. For example, MCP servers can provide predefined prompt templates for generating email drafts or optimizing code comments, thereby improving application development efficiency and quality.</p>
+<p>MCP supports two communication protocols: Standard Input/Output (STDIO) and HTTP Server-Sent Events (SSE).
+- The STDIO protocol is used for local communication, involving message transmission through standard input and output (i.e., the MCP Server is also started locally). This method typically involves parsing and processing messages line by line, suitable for communication between clients and servers running in the same computing environment.
+- The HTTP protocol is used for remote communication (i.e., the MCP Server is started remotely), encapsulating JSON-RPC messages as SSE events. This mechanism allows the server to push events to the client via a continuously open HTTP connection.</p>
+</section>
+<section id="add-mcp-server-to-servicetoolkit">
+<h2>Add MCP Server to <cite>ServiceToolkit</cite><a class="headerlink" href="#add-mcp-server-to-servicetoolkit" title="Link to this heading"></a></h2>
+<p>AgentScope, as an MCP client, supports starting a local MCP server via STDIO protocol and establishing a connection, as well as using the SSE protocol to connect with a remote MCP server. These usage methods are based on the <cite>ServiceToolkit.add_mcp_servers</cite> interface. The following code demonstrates how to start and connect a server providing browser automation functionality via STDIO locally. This server uses Puppeteer, enabling large models to interact with web pages, take screenshots, and execute JavaScript in a real browser environment. Note that before using the following MCP server, ensure that <cite>Node.js</cite> is installed on your system to ensure the <cite>npx</cite> command runs properly.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span>
+
+<span class="n">local_configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mcpServers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;puppeteer&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;@modelcontextprotocol/server-puppeteer&quot;</span><span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Initialize ServiceToolkit and add MCP server configuration (uncomment the
+code lines below)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
+<span class="c1"># toolkit.add_mcp_servers(server_configs=local_configs)</span>
+</pre></div>
+</div>
+<p>Output tool configuration instructions to verify settings</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_instruction</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you need to use the HTTP protocol to connect to a remote server (or an MCP server running locally in another process using the SSE protocol), you can refer to the following configuration for the connection.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">remote_configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mcpServers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;puppeteer&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://127.0.0.1:8000/sse&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># Recycle the toolkit instance</span>
+<span class="k">del</span> <span class="n">toolkit</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-multi-agent-app-to-mcp-server">
+<h2>Adding multi-agent App to MCP server<a class="headerlink" href="#adding-multi-agent-app-to-mcp-server" title="Link to this heading"></a></h2>
+<p>You can easily add multi-agent applications to your own MCP server using the official MCP Python SDK. The following example code demonstrates how to achieve this purpose using AgentScope and the MCP library.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mcp.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="s2">&quot;My MCP Server&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use the &#64;mcp.tool() decorator to define tools; here we create a joke-telling tool using AgentScope’s <cite>DialogAgent</cite>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tell_a_joke</span><span class="p">(</span>
+    <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The topic of a joke&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a joke based on the given topic&quot;&quot;&quot;</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;FunnyBot&quot;</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You are a witty comedian tasked with creating a joke about the given topic.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">msg_task</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg_task</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">content</span>
+</pre></div>
+</div>
+<p>Save the above code to the file <cite>my_mcp_server.py</cite>.
+Then, run the following command in the terminal to start the server:
+<cite>mcp run my_mcp_server.py -t sse</cite>
+This command starts the MCP server and transmits the results of tool calls via Server-Sent Events (SSE).
+This way, you can access and use the multi-agent application through the configured MCP server.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.028 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-mcp-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/71be83ced3fac208fc77b6f198a8cb17/MCP.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">MCP.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/f23cb41cfb359a054d0616496b9f834c/MCP.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">MCP.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/d89ab81f7fbac508a05c6225c25ad589/MCP.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">MCP.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tool.html" class="btn btn-neutral float-left" title="Tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rag.html" class="btn btn-neutral float-right" title="Retrieval Augmentation Generation (RAG)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,17 +1,5 @@
-agentscope.environment package
-==============================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.environment.env
-   agentscope.environment.event
-
-Module contents
----------------
+agentscope.environment
+======================
 
 .. automodule:: agentscope.environment
    :members:

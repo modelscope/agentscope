@@ -1,6 +1,5 @@
-agentscope.rag.knowledge module
-===============================
-
+agentscope.rag.knowledge
+========================
 .. automodule:: agentscope.rag.knowledge
    :members:
    :undoc-members:

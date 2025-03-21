@@ -1,6 +1,5 @@
-agentscope.service.web.web\_digest module
-=========================================
-
+agentscope.service.web.web_digest
+=================================
 .. automodule:: agentscope.service.web.web_digest
    :members:
    :undoc-members:

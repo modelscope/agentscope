@@ -1,6 +1,5 @@
-agentscope.service.file.common module
-=====================================
-
+agentscope.service.file.common
+==============================
 .. automodule:: agentscope.service.file.common
    :members:
    :undoc-members:

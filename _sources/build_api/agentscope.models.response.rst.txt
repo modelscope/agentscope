@@ -1,6 +1,5 @@
-agentscope.models.response module
-=================================
-
+agentscope.models.response
+==========================
 .. automodule:: agentscope.models.response
    :members:
    :undoc-members:

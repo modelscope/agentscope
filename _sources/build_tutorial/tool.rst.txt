@@ -125,11 +125,45 @@ They can be registered to the `ServiceToolkit` by calling the `add` method.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-54
+.. GENERATED FROM PYTHON SOURCE LINES 53-60
+
+Using MCP with ServiceToolkit
+-------------------------------
+AgentScope provides support for integrating MCP (Model Context Protocol)
+servers, enabling enhanced capabilities for models and tools. You can add
+MCP servers to the `ServiceToolkit` using the `add_mcp_servers` method,
+where you specify the configurations for each server.
+Please note that MCP requires Python version >= 3.10.
+
+.. GENERATED FROM PYTHON SOURCE LINES 60-73
+
+.. code-block:: Python
+
+
+    configs = {
+        "mcpServers": {
+            "puppeteer": {
+                "command": "npx",
+                "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+            },
+        },
+    }
+
+    # Add MCP server configurations to the ServiceToolkit
+    # `toolkit.add_mcp_servers(server_configs=configs)`
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 74-75
 
 The built-in default calling format:
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-57
+.. GENERATED FROM PYTHON SOURCE LINES 75-78
 
 .. code-block:: Python
 
@@ -149,17 +183,16 @@ The built-in default calling format:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-59
+.. GENERATED FROM PYTHON SOURCE LINES 79-80
 
 The JSON Schema description of the tool functions:
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-63
+.. GENERATED FROM PYTHON SOURCE LINES 80-83
 
 .. code-block:: Python
 
 
     print(json.dumps(toolkit.json_schemas, indent=2))
-
 
 
 
@@ -218,14 +251,14 @@ The JSON Schema description of the tool functions:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-70
+.. GENERATED FROM PYTHON SOURCE LINES 86-90
 
 After assembling the `ServiceToolkit`, you can integrate it into agent.
 In AgentScope, we provide a `ReActAgent` to handle the tool usage, you can
 directly pass the `ServiceToolkit` object into this agent.
 Refer to [] for implementation details of this agent.
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-93
+.. GENERATED FROM PYTHON SOURCE LINES 90-116
 
 .. code-block:: Python
 
@@ -251,6 +284,9 @@ Refer to [] for implementation details of this agent.
 
     res = agent(msg_task)
 
+    # Recycle the toolkit instance
+    del toolkit
+
 
 
 
@@ -266,12 +302,12 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>I need to calculate the product of 1615114134 and 4343434343. I can use a shell command to perform this calculation.</thought>
+    Friday: <thought>I need to calculate the multiplication of 1615114134 and 4343434343. I can use the execute_shell_command function to perform this calculation using a shell command.</thought>
     <function>execute_shell_command</function>
-    <command>expr 1615114134 \* 4343434343</command>
+    <command>echo $((1615114134*4343434343))</command>
     system: 1. Execute function execute_shell_command
        [ARGUMENTS]:
-           command: expr 1615114134 \* 4343434343
+           command: echo $((1615114134*4343434343))
        [STATUS]: SUCCESS
        [RESULT]: 7015142197480303962
 
@@ -281,14 +317,14 @@ Refer to [] for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The calculation has been successfully performed, and the result is 7015142197480303962. I can now provide the user with this information.</thought>
+    Friday: <thought>The multiplication of 1615114134 and 4343434343 has been calculated to be 7015142197480303962. I can now provide this result to the user.</thought>
     <function>finish</function>
-    <response>The product of 1615114134 and 4343434343 is 7015142197480303962.</response>
+    <response>The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.</response>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-101
+.. GENERATED FROM PYTHON SOURCE LINES 117-124
 
 Creating Custom Tools
 --------------------------
@@ -298,7 +334,7 @@ A custom tool function must follow these rules:
 - Well-written docstring in Google style
 - The return of the function must be wrapped by `ServiceResponse`
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-116
+.. GENERATED FROM PYTHON SOURCE LINES 124-139
 
 .. code-block:: Python
 
@@ -327,7 +363,7 @@ A custom tool function must follow these rules:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 11.479 seconds)
+   **Total running time of the script:** (0 minutes 11.768 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

@@ -1,6 +1,5 @@
-agentscope.parsers.json\_object\_parser module
-==============================================
-
+agentscope.parsers.json_object_parser
+=====================================
 .. automodule:: agentscope.parsers.json_object_parser
    :members:
    :undoc-members:

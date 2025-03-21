@@ -1,8 +1,5 @@
-agentscope.manager package
-==========================
-
-Module contents
----------------
+agentscope.manager
+==================
 
 .. automodule:: agentscope.manager
    :members:

@@ -1,6 +1,5 @@
-agentscope.service.browser.web\_browser module
-==============================================
-
+agentscope.service.browser.web_browser
+======================================
 .. automodule:: agentscope.service.browser.web_browser
    :members:
    :undoc-members:

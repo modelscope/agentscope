@@ -1,6 +1,5 @@
-agentscope.studio.utils module
-==============================
-
+agentscope.studio.utils
+=======================
 .. automodule:: agentscope.studio.utils
    :members:
    :undoc-members:

@@ -21,7 +21,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Distribution" href="distribution.html" />
-    <link rel="prev" title="Tools" href="tool.html" /> 
+    <link rel="prev" title="MCP" href="MCP.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Retrieval Augmentation Generation (RAG)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#create-and-use-knowledge-instances">Create and Use Knowledge Instances</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#create-a-llamaindexknowledge-instance">Create a <cite>LlamaIndexKnowledge</cite> instance</a></li>
@@ -110,17 +111,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -205,33 +206,29 @@ There are three parameters need to be passed to the function.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">The retrieved content:</span><span class="se">\n</span><span class="si">{</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[nltk_data] Downloading package punkt_tab to
-[nltk_data]     /opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/s
-[nltk_data]     ite-packages/llama_index/core/_static/nltk_cache...
-[nltk_data]   Unzipping tokenizers/punkt_tab.zip.
-
-Parsing nodes:   0%|          | 0/17 [00:00&lt;?, ?it/s]
-Parsing nodes: 100%|██████████| 17/17 [00:00&lt;00:00, 3276.95it/s]
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Parsing nodes:   0%|          | 0/17 [00:00&lt;?, ?it/s]
+Parsing nodes: 100%|██████████| 17/17 [00:00&lt;00:00, 3346.78it/s]
 
 Generating embeddings:   0%|          | 0/17 [00:00&lt;?, ?it/s]
-Generating embeddings:   6%|▌         | 1/17 [00:00&lt;00:12,  1.23it/s]
-Generating embeddings:  12%|█▏        | 2/17 [00:01&lt;00:11,  1.28it/s]
-Generating embeddings:  18%|█▊        | 3/17 [00:02&lt;00:10,  1.38it/s]
-Generating embeddings:  24%|██▎       | 4/17 [00:02&lt;00:09,  1.42it/s]
-Generating embeddings:  29%|██▉       | 5/17 [00:03&lt;00:08,  1.37it/s]
-Generating embeddings:  35%|███▌      | 6/17 [00:04&lt;00:08,  1.36it/s]
-Generating embeddings:  41%|████      | 7/17 [00:05&lt;00:07,  1.34it/s]
-Generating embeddings:  47%|████▋     | 8/17 [00:05&lt;00:06,  1.36it/s]
-Generating embeddings:  53%|█████▎    | 9/17 [00:06&lt;00:05,  1.35it/s]
-Generating embeddings:  59%|█████▉    | 10/17 [00:07&lt;00:05,  1.31it/s]
-Generating embeddings:  65%|██████▍   | 11/17 [00:08&lt;00:04,  1.25it/s]
-Generating embeddings:  71%|███████   | 12/17 [00:09&lt;00:03,  1.29it/s]
-Generating embeddings:  76%|███████▋  | 13/17 [00:09&lt;00:03,  1.27it/s]
-Generating embeddings:  82%|████████▏ | 14/17 [00:10&lt;00:02,  1.24it/s]
-Generating embeddings:  88%|████████▊ | 15/17 [00:11&lt;00:01,  1.24it/s]
-Generating embeddings:  94%|█████████▍| 16/17 [00:12&lt;00:00,  1.25it/s]
-Generating embeddings: 100%|██████████| 17/17 [00:13&lt;00:00,  1.30it/s]
-Generating embeddings: 100%|██████████| 17/17 [00:13&lt;00:00,  1.31it/s]
+Generating embeddings:   6%|▌         | 1/17 [00:00&lt;00:13,  1.17it/s]
+Generating embeddings:  12%|█▏        | 2/17 [00:01&lt;00:13,  1.14it/s]
+Generating embeddings:  18%|█▊        | 3/17 [00:02&lt;00:13,  1.07it/s]
+Generating embeddings:  24%|██▎       | 4/17 [00:03&lt;00:12,  1.05it/s]
+Generating embeddings:  29%|██▉       | 5/17 [00:04&lt;00:11,  1.08it/s]
+Generating embeddings:  35%|███▌      | 6/17 [00:05&lt;00:10,  1.07it/s]
+Generating embeddings:  41%|████      | 7/17 [00:06&lt;00:09,  1.03it/s]
+Generating embeddings:  47%|████▋     | 8/17 [00:07&lt;00:09,  1.00s/it]
+Generating embeddings:  53%|█████▎    | 9/17 [00:08&lt;00:07,  1.02it/s]
+Generating embeddings:  59%|█████▉    | 10/17 [00:09&lt;00:06,  1.02it/s]
+Generating embeddings:  65%|██████▍   | 11/17 [00:10&lt;00:05,  1.03it/s]
+Generating embeddings:  71%|███████   | 12/17 [00:11&lt;00:04,  1.02it/s]
+Generating embeddings:  76%|███████▋  | 13/17 [00:12&lt;00:03,  1.03it/s]
+Generating embeddings:  82%|████████▏ | 14/17 [00:13&lt;00:03,  1.02s/it]
+Generating embeddings:  88%|████████▊ | 15/17 [00:14&lt;00:02,  1.02s/it]
+Generating embeddings:  94%|█████████▍| 16/17 [00:15&lt;00:00,  1.03it/s]
+Generating embeddings: 100%|██████████| 17/17 [00:16&lt;00:00,  1.03it/s]
+Generating embeddings: 100%|██████████| 17/17 [00:16&lt;00:00,  1.03it/s]
+[03/21/25 04:17:47] DEBUG    Building index from IDs objects     __init__.py:362
 
 The retrieved content:
 About Agents
@@ -297,27 +294,28 @@ As for the data preprocessing, developers can choose different LlamaIndex <a cla
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Parsing nodes:   0%|          | 0/17 [00:00&lt;?, ?it/s]
-Parsing nodes: 100%|██████████| 17/17 [00:00&lt;00:00, 2886.65it/s]
+Parsing nodes: 100%|██████████| 17/17 [00:00&lt;00:00, 3380.42it/s]
 
 Generating embeddings:   0%|          | 0/17 [00:00&lt;?, ?it/s]
-Generating embeddings:   6%|▌         | 1/17 [00:00&lt;00:13,  1.20it/s]
-Generating embeddings:  12%|█▏        | 2/17 [00:01&lt;00:12,  1.18it/s]
-Generating embeddings:  18%|█▊        | 3/17 [00:02&lt;00:10,  1.31it/s]
-Generating embeddings:  24%|██▎       | 4/17 [00:03&lt;00:10,  1.23it/s]
-Generating embeddings:  29%|██▉       | 5/17 [00:03&lt;00:09,  1.27it/s]
-Generating embeddings:  35%|███▌      | 6/17 [00:04&lt;00:08,  1.35it/s]
-Generating embeddings:  41%|████      | 7/17 [00:05&lt;00:07,  1.40it/s]
-Generating embeddings:  47%|████▋     | 8/17 [00:06&lt;00:06,  1.31it/s]
-Generating embeddings:  53%|█████▎    | 9/17 [00:06&lt;00:05,  1.34it/s]
-Generating embeddings:  59%|█████▉    | 10/17 [00:07&lt;00:05,  1.26it/s]
-Generating embeddings:  65%|██████▍   | 11/17 [00:08&lt;00:05,  1.20it/s]
-Generating embeddings:  71%|███████   | 12/17 [00:09&lt;00:03,  1.27it/s]
-Generating embeddings:  76%|███████▋  | 13/17 [00:10&lt;00:03,  1.33it/s]
-Generating embeddings:  82%|████████▏ | 14/17 [00:10&lt;00:02,  1.29it/s]
-Generating embeddings:  88%|████████▊ | 15/17 [00:11&lt;00:01,  1.30it/s]
-Generating embeddings:  94%|█████████▍| 16/17 [00:12&lt;00:00,  1.21it/s]
-Generating embeddings: 100%|██████████| 17/17 [00:13&lt;00:00,  1.23it/s]
-Generating embeddings: 100%|██████████| 17/17 [00:13&lt;00:00,  1.27it/s]
+Generating embeddings:   6%|▌         | 1/17 [00:00&lt;00:14,  1.13it/s]
+Generating embeddings:  12%|█▏        | 2/17 [00:01&lt;00:13,  1.13it/s]
+Generating embeddings:  18%|█▊        | 3/17 [00:02&lt;00:12,  1.11it/s]
+Generating embeddings:  24%|██▎       | 4/17 [00:03&lt;00:11,  1.10it/s]
+Generating embeddings:  29%|██▉       | 5/17 [00:04&lt;00:11,  1.06it/s]
+Generating embeddings:  35%|███▌      | 6/17 [00:05&lt;00:10,  1.06it/s]
+Generating embeddings:  41%|████      | 7/17 [00:06&lt;00:09,  1.02it/s]
+Generating embeddings:  47%|████▋     | 8/17 [00:07&lt;00:08,  1.01it/s]
+Generating embeddings:  53%|█████▎    | 9/17 [00:08&lt;00:07,  1.01it/s]
+Generating embeddings:  59%|█████▉    | 10/17 [00:09&lt;00:06,  1.05it/s]
+Generating embeddings:  65%|██████▍   | 11/17 [00:10&lt;00:05,  1.08it/s]
+Generating embeddings:  71%|███████   | 12/17 [00:11&lt;00:04,  1.08it/s]
+Generating embeddings:  76%|███████▋  | 13/17 [00:12&lt;00:03,  1.06it/s]
+Generating embeddings:  82%|████████▏ | 14/17 [00:13&lt;00:02,  1.07it/s]
+Generating embeddings:  88%|████████▊ | 15/17 [00:14&lt;00:01,  1.08it/s]
+Generating embeddings:  94%|█████████▍| 16/17 [00:14&lt;00:00,  1.09it/s]
+Generating embeddings: 100%|██████████| 17/17 [00:15&lt;00:00,  1.11it/s]
+Generating embeddings: 100%|██████████| 17/17 [00:15&lt;00:00,  1.07it/s]
+[03/21/25 04:18:04] DEBUG    Building index from IDs objects     __init__.py:362
 
 The retrieved content:
 About Agents
@@ -465,7 +463,7 @@ In this example, we will use one of the SOTA embedding models, <cite>gte-Qwen2-7
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="s2">&quot;testing&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 30.082 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 36.786 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-rag-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d2c568081e6a4b3dc97dff750041209a/rag.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">rag.ipynb</span></code></a></p>
@@ -485,7 +483,7 @@ In this example, we will use one of the SOTA embedding models, <cite>gte-Qwen2-7
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tool.html" class="btn btn-neutral float-left" title="Tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="MCP.html" class="btn btn-neutral float-left" title="MCP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="distribution.html" class="btn btn-neutral float-right" title="Distribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

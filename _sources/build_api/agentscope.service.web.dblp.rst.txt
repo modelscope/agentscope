@@ -1,6 +1,5 @@
-agentscope.service.web.dblp module
-==================================
-
+agentscope.service.web.dblp
+===========================
 .. automodule:: agentscope.service.web.dblp
    :members:
    :undoc-members:

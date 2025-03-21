@@ -1,6 +1,5 @@
-agentscope.logging module
-=========================
-
+agentscope.logging
+==================
 .. automodule:: agentscope.logging
    :members:
    :undoc-members:

@@ -1,6 +1,5 @@
-agentscope.rpc.retry\_strategy module
-=====================================
-
+agentscope.rpc.retry_strategy
+=============================
 .. automodule:: agentscope.rpc.retry_strategy
    :members:
    :undoc-members:

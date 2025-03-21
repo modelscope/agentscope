@@ -7,7 +7,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>agentscope.rpc package &mdash; AgentScope Doc  documentation</title>
+  <title>agentscope.rpc &mdash; AgentScope Doc  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
@@ -21,16 +21,14 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
     <script type="text/javascript" src="../_static/language_switch.js"></script>
 
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="agentscope.rpc.retry_strategy module" href="agentscope.rpc.retry_strategy.html" />
-    <link rel="prev" title="agentscope.rag.llama_index_knowledge module" href="agentscope.rag.llama_index_knowledge.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
@@ -101,46 +100,18 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="agentscope.html">agentscope package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="agentscope.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.environment.html">agentscope.environment package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.manager.html">agentscope.manager package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.pipelines.html">agentscope.pipelines package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.rpc package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-agentscope.rpc">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.server.html">agentscope.server package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.strategy.html">agentscope.strategy package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.studio.html">agentscope.studio package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.utils.html">agentscope.utils package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.web.html">agentscope.web package</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.html#module-agentscope">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -157,8 +128,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
-      <li class="breadcrumb-item active">agentscope.rpc package</li>
+      <li class="breadcrumb-item active">agentscope.rpc</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/build_api/agentscope.rpc.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -168,123 +138,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="agentscope-rpc-package">
-<h1>agentscope.rpc package<a class="headerlink" href="#agentscope-rpc-package" title="Link to this heading"></a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.retry_strategy.html">agentscope.rpc.retry_strategy module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryBase"><code class="docutils literal notranslate"><span class="pre">RetryBase</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryBase.load_dict"><code class="docutils literal notranslate"><span class="pre">RetryBase.load_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryBase.retry"><code class="docutils literal notranslate"><span class="pre">RetryBase.retry()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExponential"><code class="docutils literal notranslate"><span class="pre">RetryExponential</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryExponential.retry"><code class="docutils literal notranslate"><span class="pre">RetryExponential.retry()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryFixedTimes"><code class="docutils literal notranslate"><span class="pre">RetryFixedTimes</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.retry_strategy.html#agentscope.rpc.retry_strategy.RetryFixedTimes.retry"><code class="docutils literal notranslate"><span class="pre">RetryFixedTimes.retry()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2.html">agentscope.rpc.rpc_agent_pb2 module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html">agentscope.rpc.rpc_agent_pb2_grpc module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent"><code class="docutils literal notranslate"><span class="pre">RpcAgent</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.call_agent_func"><code class="docutils literal notranslate"><span class="pre">RpcAgent.call_agent_func()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.clone_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgent.clone_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.create_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgent.create_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.delete_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgent.delete_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.delete_all_agents"><code class="docutils literal notranslate"><span class="pre">RpcAgent.delete_all_agents()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.download_file"><code class="docutils literal notranslate"><span class="pre">RpcAgent.download_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_agent_list"><code class="docutils literal notranslate"><span class="pre">RpcAgent.get_agent_list()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_agent_memory"><code class="docutils literal notranslate"><span class="pre">RpcAgent.get_agent_memory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.get_server_info"><code class="docutils literal notranslate"><span class="pre">RpcAgent.get_server_info()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.is_alive"><code class="docutils literal notranslate"><span class="pre">RpcAgent.is_alive()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.set_model_configs"><code class="docutils literal notranslate"><span class="pre">RpcAgent.set_model_configs()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.stop"><code class="docutils literal notranslate"><span class="pre">RpcAgent.stop()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.update_placeholder"><code class="docutils literal notranslate"><span class="pre">RpcAgent.update_placeholder()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.call_agent_func"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.call_agent_func()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.clone_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.clone_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.create_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.create_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.delete_agent"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.delete_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.delete_all_agents"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.delete_all_agents()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.download_file"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.download_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_agent_list"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.get_agent_list()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_agent_memory"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.get_agent_memory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.get_server_info"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.get_server_info()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.is_alive"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.is_alive()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.set_model_configs"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.set_model_configs()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.stop"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.stop()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentServicer.update_placeholder"><code class="docutils literal notranslate"><span class="pre">RpcAgentServicer.update_placeholder()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgentStub"><code class="docutils literal notranslate"><span class="pre">RpcAgentStub</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.add_RpcAgentServicer_to_server"><code class="docutils literal notranslate"><span class="pre">add_RpcAgentServicer_to_server()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_async.html">agentscope.rpc.rpc_async module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_async.html#agentscope.rpc.rpc_async.AsyncResult"><code class="docutils literal notranslate"><span class="pre">AsyncResult</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_async.html#agentscope.rpc.rpc_async.AsyncResult.result"><code class="docutils literal notranslate"><span class="pre">AsyncResult.result()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_async.html#agentscope.rpc.rpc_async.AsyncResult.update_value"><code class="docutils literal notranslate"><span class="pre">AsyncResult.update_value()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_client.html">agentscope.rpc.rpc_client module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcAgentClient"><code class="docutils literal notranslate"><span class="pre">RpcAgentClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient"><code class="docutils literal notranslate"><span class="pre">RpcClient</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.call_agent_func"><code class="docutils literal notranslate"><span class="pre">RpcClient.call_agent_func()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.create_agent"><code class="docutils literal notranslate"><span class="pre">RpcClient.create_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.delete_agent"><code class="docutils literal notranslate"><span class="pre">RpcClient.delete_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.delete_all_agent"><code class="docutils literal notranslate"><span class="pre">RpcClient.delete_all_agent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.download_file"><code class="docutils literal notranslate"><span class="pre">RpcClient.download_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.get_agent_list"><code class="docutils literal notranslate"><span class="pre">RpcClient.get_agent_list()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.get_agent_memory"><code class="docutils literal notranslate"><span class="pre">RpcClient.get_agent_memory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.get_server_info"><code class="docutils literal notranslate"><span class="pre">RpcClient.get_server_info()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.is_alive"><code class="docutils literal notranslate"><span class="pre">RpcClient.is_alive()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.set_model_configs"><code class="docutils literal notranslate"><span class="pre">RpcClient.set_model_configs()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.stop"><code class="docutils literal notranslate"><span class="pre">RpcClient.stop()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.update_result"><code class="docutils literal notranslate"><span class="pre">RpcClient.update_result()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_config.html">agentscope.rpc.rpc_config module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_config.html#agentscope.rpc.rpc_config.DistConf"><code class="docutils literal notranslate"><span class="pre">DistConf</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_meta.html">agentscope.rpc.rpc_meta module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.RpcMeta"><code class="docutils literal notranslate"><span class="pre">RpcMeta</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.RpcMeta.get_class"><code class="docutils literal notranslate"><span class="pre">RpcMeta.get_class()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.RpcMeta.register_class"><code class="docutils literal notranslate"><span class="pre">RpcMeta.register_class()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.RpcMeta.to_dist"><code class="docutils literal notranslate"><span class="pre">RpcMeta.to_dist()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.async_func"><code class="docutils literal notranslate"><span class="pre">async_func()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.generate_oid"><code class="docutils literal notranslate"><span class="pre">generate_oid()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.sync_func"><code class="docutils literal notranslate"><span class="pre">sync_func()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="agentscope.rpc.rpc_object.html">agentscope.rpc.rpc_object module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_object.html#agentscope.rpc.rpc_object.RpcObject"><code class="docutils literal notranslate"><span class="pre">RpcObject</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_object.html#agentscope.rpc.rpc_object.RpcObject.create"><code class="docutils literal notranslate"><span class="pre">RpcObject.create()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="agentscope.rpc.rpc_object.html#agentscope.rpc.rpc_object.RpcObject.stop"><code class="docutils literal notranslate"><span class="pre">RpcObject.stop()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="agentscope.rpc.rpc_object.html#agentscope.rpc.rpc_object.get_public_methods"><code class="docutils literal notranslate"><span class="pre">get_public_methods()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="module-agentscope.rpc">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.rpc" title="Link to this heading"></a></h2>
+  <section id="module-agentscope.rpc">
+<span id="agentscope-rpc"></span><h1>agentscope.rpc<a class="headerlink" href="#module-agentscope.rpc" title="Link to this heading"></a></h1>
 <p>Import all rpc related modules in the package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.rpc.AsyncResult">
@@ -624,15 +479,11 @@ started with <cite>__</cite>), you can use <cite>sync_func</cite> to mark them a
 </dd></dl>
 
 </section>
-</section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="agentscope.rag.llama_index_knowledge.html" class="btn btn-neutral float-left" title="agentscope.rag.llama_index_knowledge module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="agentscope.rpc.retry_strategy.html" class="btn btn-neutral float-right" title="agentscope.rpc.retry_strategy module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

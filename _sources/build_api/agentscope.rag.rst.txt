@@ -1,18 +1,5 @@
-agentscope.rag package
-======================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.rag.knowledge
-   agentscope.rag.knowledge_bank
-   agentscope.rag.llama_index_knowledge
-
-Module contents
----------------
+agentscope.rag
+==============
 
 .. automodule:: agentscope.rag
    :members:

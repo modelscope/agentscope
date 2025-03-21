@@ -1,17 +1,5 @@
-agentscope.web package
-======================
-
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.web.gradio
-   agentscope.web.workstation
-
-Module contents
----------------
+agentscope.web
+==============
 
 .. automodule:: agentscope.web
    :members:

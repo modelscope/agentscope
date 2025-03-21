@@ -1,6 +1,5 @@
-agentscope.web.workstation.workflow\_dag module
-===============================================
-
+agentscope.web.workstation.workflow_dag
+=======================================
 .. automodule:: agentscope.web.workstation.workflow_dag
    :members:
    :undoc-members:

@@ -1,6 +1,5 @@
-agentscope.server.launcher module
-=================================
-
+agentscope.server.launcher
+==========================
 .. automodule:: agentscope.server.launcher
    :members:
    :undoc-members:

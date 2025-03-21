@@ -1,20 +1,5 @@
-agentscope.parsers package
-==========================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.parsers.code_block_parser
-   agentscope.parsers.json_object_parser
-   agentscope.parsers.parser_base
-   agentscope.parsers.regex_tagged_content_parser
-   agentscope.parsers.tagged_content_parser
-
-Module contents
----------------
+agentscope.parsers
+==================
 
 .. automodule:: agentscope.parsers
    :members:

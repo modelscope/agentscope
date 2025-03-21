@@ -21,7 +21,7 @@
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/language_switch.js?v=6d1ec912"></script>
     <script src="../_static/js/theme.js"></script>
@@ -29,7 +29,7 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Retrieval Augmentation Generation (RAG)" href="rag.html" />
+    <link rel="next" title="MCP" href="MCP.html" />
     <link rel="prev" title="Configuring and Monitoring" href="monitor.html" /> 
 </head>
 
@@ -87,9 +87,11 @@
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#using-built-in-tools">Using Built-in Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-mcp-with-servicetoolkit">Using MCP with ServiceToolkit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-custom-tools">Creating Custom Tools</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
@@ -106,17 +108,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception</a></li>
 </ul>
 
         </div>
@@ -209,6 +211,27 @@ The following tool functions are available in the format of
         question (string): The search query string.
 </pre></div>
 </div>
+</section>
+<section id="using-mcp-with-servicetoolkit">
+<h2>Using MCP with ServiceToolkit<a class="headerlink" href="#using-mcp-with-servicetoolkit" title="Link to this heading"></a></h2>
+<p>AgentScope provides support for integrating MCP (Model Context Protocol)
+servers, enabling enhanced capabilities for models and tools. You can add
+MCP servers to the <cite>ServiceToolkit</cite> using the <cite>add_mcp_servers</cite> method,
+where you specify the configurations for each server.
+Please note that MCP requires Python version &gt;= 3.10.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mcpServers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;puppeteer&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;@modelcontextprotocol/server-puppeteer&quot;</span><span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># Add MCP server configurations to the ServiceToolkit</span>
+<span class="c1"># `toolkit.add_mcp_servers(server_configs=configs)`</span>
+</pre></div>
+</div>
 <p>The built-in default calling format:</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_calling_format</span><span class="p">)</span>
 </pre></div>
@@ -291,6 +314,9 @@ Refer to [] for implementation details of this agent.</p>
 <span class="n">msg_task</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Help me to calculate 1615114134*4343434343&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
 
 <span class="n">res</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg_task</span><span class="p">)</span>
+
+<span class="c1"># Recycle the toolkit instance</span>
+<span class="k">del</span> <span class="n">toolkit</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>system: Respond with specific tags as outlined below:
@@ -299,12 +325,12 @@ Refer to [] for implementation details of this agent.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;I need to calculate the product of 1615114134 and 4343434343. I can use a shell command to perform this calculation.&lt;/thought&gt;
+Friday: &lt;thought&gt;I need to calculate the multiplication of 1615114134 and 4343434343. I can use the execute_shell_command function to perform this calculation using a shell command.&lt;/thought&gt;
 &lt;function&gt;execute_shell_command&lt;/function&gt;
-&lt;command&gt;expr 1615114134 \* 4343434343&lt;/command&gt;
+&lt;command&gt;echo $((1615114134*4343434343))&lt;/command&gt;
 system: 1. Execute function execute_shell_command
    [ARGUMENTS]:
-       command: expr 1615114134 \* 4343434343
+       command: echo $((1615114134*4343434343))
    [STATUS]: SUCCESS
    [RESULT]: 7015142197480303962
 
@@ -314,9 +340,9 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;The calculation has been successfully performed, and the result is 7015142197480303962. I can now provide the user with this information.&lt;/thought&gt;
+Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been calculated to be 7015142197480303962. I can now provide this result to the user.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The product of 1615114134 and 4343434343 is 7015142197480303962.&lt;/response&gt;
+&lt;response&gt;The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.&lt;/response&gt;
 </pre></div>
 </div>
 </section>
@@ -343,7 +369,7 @@ Friday: &lt;thought&gt;The calculation has been successfully performed, and the 
     <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.479 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.768 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>
@@ -364,7 +390,7 @@ Friday: &lt;thought&gt;The calculation has been successfully performed, and the 
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="monitor.html" class="btn btn-neutral float-left" title="Configuring and Monitoring" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rag.html" class="btn btn-neutral float-right" title="Retrieval Augmentation Generation (RAG)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="MCP.html" class="btn btn-neutral float-right" title="MCP" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,16 +1,5 @@
-agentscope.message package
-==========================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.message.msg
-
-Module contents
----------------
+agentscope.message
+==================
 
 .. automodule:: agentscope.message
    :members:

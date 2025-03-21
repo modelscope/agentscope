@@ -1,6 +1,5 @@
-agentscope.models.yi\_model module
-==================================
-
+agentscope.models.yi_model
+==========================
 .. automodule:: agentscope.models.yi_model
    :members:
    :undoc-members:

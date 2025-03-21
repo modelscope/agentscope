@@ -1,6 +1,5 @@
-agentscope.server.servicer module
-=================================
-
+agentscope.server.servicer
+==========================
 .. automodule:: agentscope.server.servicer
    :members:
    :undoc-members:

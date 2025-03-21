@@ -1,6 +1,5 @@
-agentscope.service.sql\_query.mysql module
-==========================================
-
+agentscope.service.sql_query.mysql
+==================================
 .. automodule:: agentscope.service.sql_query.mysql
    :members:
    :undoc-members:

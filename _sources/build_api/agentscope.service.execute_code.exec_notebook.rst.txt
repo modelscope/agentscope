@@ -1,6 +1,5 @@
-agentscope.service.execute\_code.exec\_notebook module
-======================================================
-
+agentscope.service.execute_code.exec_notebook
+=============================================
 .. automodule:: agentscope.service.execute_code.exec_notebook
    :members:
    :undoc-members:

@@ -1,18 +1,5 @@
-agentscope.server package
-=========================
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   agentscope.server.async_result_pool
-   agentscope.server.launcher
-   agentscope.server.servicer
-
-Module contents
----------------
+agentscope.server
+=================
 
 .. automodule:: agentscope.server
    :members:

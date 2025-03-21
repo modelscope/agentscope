@@ -1,6 +1,5 @@
-agentscope.rpc.rpc\_meta module
-===============================
-
+agentscope.rpc.rpc_meta
+=======================
 .. automodule:: agentscope.rpc.rpc_meta
    :members:
    :undoc-members:

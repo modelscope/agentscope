@@ -1,6 +1,5 @@
-agentscope.serialize module
-===========================
-
+agentscope.serialize
+====================
 .. automodule:: agentscope.serialize
    :members:
    :undoc-members:
