@@ -40,6 +40,7 @@ LLMを活用したマルチエージェントアプリケーションをより�
 ----
 
 ## ニュース
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope はフック関数をサポートしています。詳細は[チュートリアル](https://doc.agentscope.io/build_tutorial/hook.html)を参照してください。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** 私たちの[多情報源RAGアプリケーション](applications/multisource_rag_app/README.md)（DingTalkのQ&Aグループで使用されているチャットボット）がオープンソースになりました！
 
