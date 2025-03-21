@@ -48,6 +48,25 @@ print("工具说明:")
 print(toolkit.tools_instruction)
 
 # %%
+# 在 ServiceToolkit 中使用 MCP
+# -------------------------------
+# AgentScope 支持集成 MCP (Model Context Protocol) 服务器，使模型和工具具有增强的功能。
+# 您可以使用 `add_mcp_servers` 方法将 MCP 服务器添加到 `ServiceToolkit` 中，并在其中指定每个服务器的配置。
+# 请注意，MCP 要求 Python 版本>=3.10。
+
+configs = {
+    "mcpServers": {
+        "puppeteer": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+        },
+    },
+}
+
+# 将 MCP 服务器配置添加到 ServiceToolkit
+# `toolkit.add_mcp_servers(server_configs=configs)`
+
+# %%
 # 内置的默认调用格式:
 #
 
@@ -84,6 +103,9 @@ agent = ReActAgent(
 msg_task = Msg("user", "帮我计算一下 1615114134*4343434343", "user")
 
 res = agent(msg_task)
+
+# 回收toolkit实例
+del toolkit
 
 
 # %%
