@@ -1,0 +1,231 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SWE-Bench &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="agentscope package" href="../build_api/agentscope.html" />
+    <link rel="prev" title="样例" href="../build_tutorial/examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SWE-Bench</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#methodology">Methodology</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#issue-solving-stage">Issue-solving Stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#voting-stage">Voting Stage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#further-discussions">Further Discussions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusions">Conclusions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#acknowledge">Acknowledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-contributors">Main Contributors</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SWE-Bench</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/swe.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="swe-bench">
+<h1>SWE-Bench<a class="headerlink" href="#swe-bench" title="Link to this heading"></a></h1>
+<p>We are pleased to share our recent progress on the SWE-Bench (Verified) benchmark, where we successfully resolved 63.4% of issues with the model <code class="docutils literal notranslate"><span class="pre">claude-3-5-sonnet-20241022</span></code>, a trained <code class="docutils literal notranslate"><span class="pre">Qwen2.5-Coder-Instruct</span></code>, and our multi-agent framework AgentScope. In this blog, we'll give a brief overview of our solution.</p>
+<section id="methodology">
+<h2>Methodology<a class="headerlink" href="#methodology" title="Link to this heading"></a></h2>
+<p>Our solution is a multi-agent approach that involves two stages: issue-solving and voting. In the first stage, we independently resolve the issue four separate times to generate distinct patches. Then, we vote to select the final patch from these candidates. We elaborate on these two stages as follows.</p>
+<section id="issue-solving-stage">
+<h3>Issue-solving Stage<a class="headerlink" href="#issue-solving-stage" title="Link to this heading"></a></h3>
+<p>The solving stage consists of three sequential sections: reproducing, fixing, and testing. Each section is handled by a specialized agent.</p>
+<ul class="simple">
+<li><p>Reproducing section: Given the PR description, reproduce the issue by creating a <code class="docutils literal notranslate"><span class="pre">reproduction_test.py</span></code>file.</p></li>
+<li><p>Fixing section: Fix the issue in the given repository, and run <code class="docutils literal notranslate"><span class="pre">reproduction_test.py</span></code>to ensure the original issue has been properly addressed.</p></li>
+<li><p>Testing section: Identify and execute relevant unit tests in the repository to ensure the fixing doesn't break the original functionality. If any single test fails, the agent continues refining the fix until successful.</p></li>
+</ul>
+<p>In these sections, agents work in a reasoning-acting manner,  equipped with tools like Bash execution, file editor, Git difference viewer, and Git resetor. Specifically, we allow agents to restart their sections by invoking the <code class="docutils literal notranslate"><span class="pre">section_restart</span></code>function when they consider it necessary. To conserve tokens and prevent agents from attempting the same solution repeatedly, at the start of the new section, we will provide a brief summary of the previous attempt. Once the agent completes the tasks within the section, it will call <code class="docutils literal notranslate"><span class="pre">section_complete</span></code> and summarize its trajectory in this section.</p>
+<p>To facilitate agents in evaluating their current actions and aligning them with the intended objectives, we require them to conduct a post Chain-of-Thought (CoT) analysis after receiving the tool execution results. This analysis summarizes how the execution outcomes advance the current goal and outlines the subsequent steps that need to be undertaken. We believe this structured reasoning enables agents to confirm the outcomes of the tool's execution and gain awareness of the progress made on the current task.</p>
+</section>
+<section id="voting-stage">
+<h3>Voting Stage<a class="headerlink" href="#voting-stage" title="Link to this heading"></a></h3>
+<p>In the voting stage, we train a reward model to evaluate the candidate patches. We utilize Qwen2.5-Coder-Instruct as our base model and fine-tune it on datasets like <a class="reference external" href="https://huggingface.co/datasets/nebius/SWE-bench-extra">SWE-bench-extra</a> and <a class="reference external" href="https://github.com/SWE-Gym/SWE-Gym">SWE-Gym</a>. This reward model takes a patch alongside the summarized trajectory as input, and assigns a score. The patch with the highest score is ultimately selected.</p>
+<p>To address potential biases arising from different solution trajectories and enhance our training data, we define a unified format for the trajectory, which contains the relative code span spotted and the final generated model patch.</p>
+<p>In the voting stage, we also try LLM-as-Judge and the generative reward model. However, the performance of LLM-as-Judge is bounded by the base model capability, and it's very difficult to collect training datasets for the generative reward model. The trained score reward model performs better so we use it instead.</p>
+</section>
+<section id="further-discussions">
+<h3>Further Discussions<a class="headerlink" href="#further-discussions" title="Link to this heading"></a></h3>
+<p>Here we provide several insights gained from our hands-on experience with this project.</p>
+<p><strong>While LLMs are powerful, we still have great room to explore their potentials.</strong> We observe in most cases, LLM can quickly identify problems and suggest fixes. However, LLMs struggle to understand and follow the implicit conventions in the target repository, e.g. message format and symmetry of the code. As a result, their fixes often break the original functionalities or fail to pass certain assertions.</p>
+<p><strong>High variance poses a significant challenge in development.</strong> During development, we observe that performance can fluctuate substantially across parallel runs. As a result, it can be rather challenging and costly to precisely assess the effects of added features and enhancement, especially in such a complex decision-making process where minor variations in each step can yield markedly different outcomes. On the other hand, such a high-variance nature provides an alternative rationale for voting-based approaches. By aggregating outputs from multiple runs or models, one can mitigate the impact of individual high-variance instances and achieve more stable and robust results.</p>
+</section>
+</section>
+<section id="conclusions">
+<h2>Conclusions<a class="headerlink" href="#conclusions" title="Link to this heading"></a></h2>
+<p>The above solution represents a preliminary milestone in our ongoing exploration of software engineering tasks with multi-agent systems. We hope that our submission and the methods shared can be helpful to other researchers in the field. We remain committed to pushing technological boundaries and are excited to share our future progress with the research community.</p>
+</section>
+<section id="acknowledge">
+<h2>Acknowledge<a class="headerlink" href="#acknowledge" title="Link to this heading"></a></h2>
+<p>We would like to thank the <a class="reference external" href="https://nebius.com/blog/posts/training-and-search-for-software-engineering-agents">Nebius</a> and <a class="reference external" href="https://github.com/SWE-Gym/SWE-Gym">SWE-Gym</a> teams for open sourcing their datasets, and thank the <a class="reference external" href="https://github.com/swe-bench/SWE-bench">SWE-Bench</a> team for their outstanding contribution in advancing LLM-empowered software engineering.</p>
+</section>
+<section id="main-contributors">
+<h2>Main Contributors<a class="headerlink" href="#main-contributors" title="Link to this heading"></a></h2>
+<p>Wenhao Zhang*, Yuexiang Xie*, Dawei Gao*, Xuchen Pan, Yaliang Li, Bolin Ding, Jingren Zhou</p>
+<p>*Equal contribution. Author ordering is determined by coin flip.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="../build_tutorial/examples.html" class="btn btn-neutral float-left" title="样例" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../build_api/agentscope.html" class="btn btn-neutral float-right" title="agentscope package" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

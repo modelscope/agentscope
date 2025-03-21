@@ -1,0 +1,822 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.models.ollama_model &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.models.ollama_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.models.ollama_model 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Model wrapper for Ollama models.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span>
+
+
+<div class="viewcode-block" id="OllamaWrapperBase">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaWrapperBase">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaWrapperBase</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class for Ollama model wrappers.</span>
+
+<span class="sd">    To use Ollama API, please</span>
+<span class="sd">    1. First install ollama server from https://ollama.com/download and</span>
+<span class="sd">    start the server</span>
+<span class="sd">    2. Pull the model by `ollama pull {model_name}` in terminal</span>
+<span class="sd">    After that, you can use the ollama API.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type of the model wrapper, which is to identify the model wrapper</span>
+<span class="sd">    class in model configuration.&quot;&quot;&quot;</span>
+
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model name used in ollama API.&quot;&quot;&quot;</span>
+
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dict contains the options for ollama generation API,</span>
+<span class="sd">    e.g. {&quot;temperature&quot;: 0, &quot;seed&quot;: 123}&quot;&quot;&quot;</span>
+
+    <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">str</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Controls how long the model will stay loaded into memory following</span>
+<span class="sd">    the request.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the model wrapper for Ollama API.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name (`str`):</span>
+<span class="sd">                The model name used in ollama API.</span>
+<span class="sd">            options (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments used in Ollama api generation,</span>
+<span class="sd">                e.g. `{&quot;temperature&quot;: 0., &quot;seed&quot;: 123}`.</span>
+<span class="sd">            keep_alive (`str`, default `5m`):</span>
+<span class="sd">                Controls how long the model will stay loaded into memory</span>
+<span class="sd">                following the request.</span>
+<span class="sd">            host (`str`, default `None`):</span>
+<span class="sd">                The host port of the ollama server.</span>
+<span class="sd">                Defaults to `None`, which is 127.0.0.1:11434.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">ollama</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;The package ollama is not found. Please install it by &quot;</span>
+                <span class="s1">&#39;running command `pip install &quot;ollama&gt;=0.1.7&quot;`&#39;</span><span class="p">,</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">ollama</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OllamaChatWrapper">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaChatWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama chat API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion</span>
+
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;model&quot;: &quot;registry.ollama.ai/library/llama3:latest&quot;,</span>
+<span class="sd">                &quot;created_at&quot;: &quot;2023-12-12T14:13:43.416799Z&quot;,</span>
+<span class="sd">                &quot;message&quot;: {</span>
+<span class="sd">                    &quot;role&quot;: &quot;assistant&quot;,</span>
+<span class="sd">                    &quot;content&quot;: &quot;Hello! How are you today?&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                &quot;done&quot;: true,</span>
+<span class="sd">                &quot;total_duration&quot;: 5191566416,</span>
+<span class="sd">                &quot;load_duration&quot;: 2154458,</span>
+<span class="sd">                &quot;prompt_eval_count&quot;: 26,</span>
+<span class="sd">                &quot;prompt_eval_duration&quot;: 383809000,</span>
+<span class="sd">                &quot;eval_count&quot;: 298,</span>
+<span class="sd">                &quot;eval_duration&quot;: 4799921000</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_chat&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_alive</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;5m&quot;</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the model wrapper for Ollama API.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name (`str`):</span>
+<span class="sd">                The model name used in ollama API.</span>
+<span class="sd">            stream (`bool`, default `False`):</span>
+<span class="sd">                Whether to enable stream mode.</span>
+<span class="sd">            options (`dict`, default `None`):</span>
+<span class="sd">                The extra keyword arguments used in Ollama api generation,</span>
+<span class="sd">                e.g. `{&quot;temperature&quot;: 0., &quot;seed&quot;: 123}`.</span>
+<span class="sd">            keep_alive (`str`, default `5m`):</span>
+<span class="sd">                Controls how long the model will stay loaded into memory</span>
+<span class="sd">                following the request.</span>
+<span class="sd">            host (`str`, default `None`):</span>
+<span class="sd">                The host port of the ollama server.</span>
+<span class="sd">                Defaults to `None`, which is 127.0.0.1:11434.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">config_name</span><span class="o">=</span><span class="n">config_name</span><span class="p">,</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+            <span class="n">keep_alive</span><span class="o">=</span><span class="n">keep_alive</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_alive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate response from the given messages.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            messages (`Sequence[dict]`):</span>
+<span class="sd">                A list of messages, each message is a dict contains the `role`</span>
+<span class="sd">                and `content` of the message.</span>
+<span class="sd">            stream (`bool`, default `None`):</span>
+<span class="sd">                Whether to enable stream mode, which will override the `stream`</span>
+<span class="sd">                input in the constructor.</span>
+<span class="sd">            options (`dict`, default `None`):</span>
+<span class="sd">                The extra arguments used in ollama chat API, which takes</span>
+<span class="sd">                effect only on this call, and will be merged with the</span>
+<span class="sd">                `options` input in the constructor,</span>
+<span class="sd">                e.g. `{&quot;temperature&quot;: 0., &quot;seed&quot;: 123}`.</span>
+<span class="sd">            keep_alive (`str`, default `None`):</span>
+<span class="sd">                How long the model will stay loaded into memory following</span>
+<span class="sd">                the request, which takes effect only on this call, and will</span>
+<span class="sd">                override the `keep_alive` input in the constructor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response text in `text` field, and the raw response in</span>
+<span class="sd">                `raw` field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: prepare parameters accordingly</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">}</span>
+
+        <span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span>
+
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+                <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="n">stream</span><span class="p">,</span>
+                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">,</span>
+                <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="n">keep_alive</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">generator</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+                <span class="n">last_chunk</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="n">chunk</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                    <span class="k">yield</span> <span class="n">text</span>
+                    <span class="n">last_chunk</span> <span class="o">=</span> <span class="n">chunk</span>
+
+                <span class="c1"># Replace the last chunk with the full text</span>
+                <span class="n">last_chunk</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                    <span class="n">kwargs</span><span class="p">,</span>
+                    <span class="n">last_chunk</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">stream</span><span class="o">=</span><span class="n">generator</span><span class="p">(),</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># step3: save model invocation and update monitor</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+                <span class="n">kwargs</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># step4: return response</span>
+            <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">],</span>
+                <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the model invocation and update the monitor accordingly.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs (`dict`):</span>
+<span class="sd">                The keyword arguments to the DashScope chat API.</span>
+<span class="sd">            response (`dict`):</span>
+<span class="sd">                The response object returned by the DashScope chat API.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prompt_eval_count</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">eval_count</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">prompt_eval_count</span><span class="p">,</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">eval_count</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="OllamaChatWrapper.format">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper.format">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for ollama Chat API.</span>
+
+<span class="sd">        All messages will be formatted into a single system message with</span>
+<span class="sd">        system prompt and conversation history.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">        1. This strategy maybe not suitable for all scenarios,</span>
+<span class="sd">        and developers are encouraged to implement their own prompt</span>
+<span class="sd">        engineering strategies.</span>
+<span class="sd">        2. For ollama chat api, the content field shouldn&#39;t be empty string.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            prompt = model.format(</span>
+<span class="sd">                Msg(&quot;system&quot;, &quot;You&#39;re a helpful assistant&quot;, role=&quot;system&quot;),</span>
+<span class="sd">                Msg(&quot;Bob&quot;, &quot;Hi, how can I help you?&quot;, role=&quot;assistant&quot;),</span>
+<span class="sd">                Msg(&quot;user&quot;, &quot;What&#39;s the date today?&quot;, role=&quot;user&quot;)</span>
+<span class="sd">            )</span>
+
+<span class="sd">        The prompt will be as follows:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;role&quot;: &quot;system&quot;,</span>
+<span class="sd">                    &quot;content&quot;: &quot;You&#39;re a helpful assistant&quot;</span>
+<span class="sd">                },</span>
+<span class="sd">                {</span>
+<span class="sd">                    &quot;role&quot;: &quot;user&quot;,</span>
+<span class="sd">                    &quot;content&quot;: (</span>
+<span class="sd">                        &quot;## Conversation History\\n&quot;</span>
+<span class="sd">                        &quot;Bob: Hi, how can I help you?\\n&quot;</span>
+<span class="sd">                        &quot;user: What&#39;s the date today?&quot;</span>
+<span class="sd">                    )</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
+<span class="sd">                In distribution, placeholder is also allowed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                The formatted messages.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Parse all information into a list of messages</span>
+        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># record dialog history as a list of strings</span>
+        <span class="n">system_prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">history_content_template</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># TODO: here we default the url links to images</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
+                <span class="c1"># system prompt</span>
+                <span class="n">system_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Merge all messages into a conversation history prompt</span>
+                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
+
+            <span class="n">history_content_template</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;## Conversation History&quot;</span><span class="p">,</span> <span class="n">dialogue_history</span><span class="p">],</span>
+            <span class="p">)</span>
+
+        <span class="n">history_content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">history_content_template</span><span class="p">)</span>
+
+        <span class="c1"># The conversation history message</span>
+        <span class="n">history_message</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">history_content</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">history_message</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">images</span>
+
+        <span class="k">if</span> <span class="n">system_prompt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">history_message</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">system_prompt</span><span class="p">},</span>
+            <span class="n">history_message</span><span class="p">,</span>
+        <span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OllamaEmbeddingWrapper">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaEmbeddingWrapper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaEmbeddingWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama embedding API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - Refer to</span>
+<span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings</span>
+
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;model&quot;: &quot;all-minilm&quot;,</span>
+<span class="sd">                &quot;embeddings&quot;: [[</span>
+<span class="sd">                    0.010071029, -0.0017594862, 0.05007221, 0.04692972,</span>
+<span class="sd">                    0.008599704, 0.105441414, -0.025878139, 0.12958129,</span>
+<span class="sd">                ]]</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_embedding&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_alive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate embedding from the given prompt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prompt (`str`):</span>
+<span class="sd">                The prompt to generate response.</span>
+<span class="sd">            options (`dict`, default `None`):</span>
+<span class="sd">                The extra arguments used in ollama embedding API, which takes</span>
+<span class="sd">                effect only on this call, and will be merged with the</span>
+<span class="sd">                `options` input in the constructor,</span>
+<span class="sd">                e.g. `{&quot;temperature&quot;: 0., &quot;seed&quot;: 123}`.</span>
+<span class="sd">            keep_alive (`str`, default `None`):</span>
+<span class="sd">                How long the model will stay loaded into memory following</span>
+<span class="sd">                the request, which takes effect only on this call, and will</span>
+<span class="sd">                override the `keep_alive` input in the constructor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response embedding in `embedding` field, and the raw</span>
+<span class="sd">                response in `raw` field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: prepare parameters accordingly</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">}</span>
+
+        <span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">embeddings</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+            <span class="n">keep_alive</span><span class="o">=</span><span class="n">keep_alive</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step3: record the api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">,</span>
+                <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="n">keep_alive</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step4: monitor the response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step5: return response</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="p">[</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]],</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="OllamaEmbeddingWrapper.format">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaEmbeddingWrapper.format">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OllamaGenerationWrapper">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaGenerationWrapper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OllamaGenerationWrapper</span><span class="p">(</span><span class="n">OllamaWrapperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The model wrapper for Ollama generation API.</span>
+
+<span class="sd">    Response:</span>
+<span class="sd">        - From</span>
+<span class="sd">        https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-completion</span>
+
+<span class="sd">        .. code-block:: json</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;model&quot;: &quot;llama3&quot;,</span>
+<span class="sd">                &quot;created_at&quot;: &quot;2023-08-04T19:22:45.499127Z&quot;,</span>
+<span class="sd">                &quot;response&quot;: &quot;The sky is blue because it is the color of  sky.&quot;,</span>
+<span class="sd">                &quot;done&quot;: true,</span>
+<span class="sd">                &quot;context&quot;: [1, 2, 3],</span>
+<span class="sd">                &quot;total_duration&quot;: 5043500667,</span>
+<span class="sd">                &quot;load_duration&quot;: 5025959,</span>
+<span class="sd">                &quot;prompt_eval_count&quot;: 26,</span>
+<span class="sd">                &quot;prompt_eval_duration&quot;: 325953000,</span>
+<span class="sd">                &quot;eval_count&quot;: 290,</span>
+<span class="sd">                &quot;eval_duration&quot;: 4709213000</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ollama_generate&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_alive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate response from the given prompt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prompt (`str`):</span>
+<span class="sd">                The prompt to generate response.</span>
+<span class="sd">            options (`dict`, default `None`):</span>
+<span class="sd">                The extra arguments used in ollama generation API, which takes</span>
+<span class="sd">                effect only on this call, and will be merged with the</span>
+<span class="sd">                `options` input in the constructor,</span>
+<span class="sd">                e.g. `{&quot;temperature&quot;: 0., &quot;seed&quot;: 123}`.</span>
+<span class="sd">            keep_alive (`str`, default `None`):</span>
+<span class="sd">                How long the model will stay loaded into memory following</span>
+<span class="sd">                the request, which takes effect only on this call, and will</span>
+<span class="sd">                override the `keep_alive` input in the constructor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `ModelResponse`:</span>
+<span class="sd">                The response text in `text` field, and the raw response in</span>
+<span class="sd">                `raw` field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># step1: prepare parameters accordingly</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">}</span>
+
+        <span class="n">keep_alive</span> <span class="o">=</span> <span class="n">keep_alive</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span>
+
+        <span class="c1"># step2: forward to generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+            <span class="n">keep_alive</span><span class="o">=</span><span class="n">keep_alive</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step3: record the api invocation if needed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="s2">&quot;prompt&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">,</span>
+                <span class="s2">&quot;keep_alive&quot;</span><span class="p">:</span> <span class="n">keep_alive</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step4: monitor the response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">update_text_and_embedding_tokens</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+            <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">completion_tokens</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># step5: return response</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">],</span>
+            <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="OllamaGenerationWrapper.format">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaGenerationWrapper.format">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward the input to the model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input arguments to be formatted, where each argument</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
+<span class="sd">                In distribution, placeholder is also allowed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `str`:</span>
+<span class="sd">                The formatted string prompt.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
+                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">sys_prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
+                <span class="c1"># system prompt</span>
+                <span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Merge all messages into a conversation history prompt</span>
+                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prompt_template</span> <span class="o">=</span> <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prompt_template</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{system_prompt}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">system_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
+            <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

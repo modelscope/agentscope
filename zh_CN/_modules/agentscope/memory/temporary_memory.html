@@ -1,0 +1,554 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.memory.temporary_memory &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">提示工程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.memory.temporary_memory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.memory.temporary_memory 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Memory module for conversation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemoryBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service.retrieval.retrieval_from_list</span><span class="w"> </span><span class="kn">import</span> <span class="n">retrieve_from_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..service.retrieval.similarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncResult</span>
+
+
+<div class="viewcode-block" id="TemporaryMemory">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TemporaryMemory</span><span class="p">(</span><span class="n">MemoryBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    In-memory memory module, not writing to hard disk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Temporary memory module for conversation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embedding_model (Union[str, Callable])</span>
+<span class="sd">                if the temporary memory needs to be embedded,</span>
+<span class="sd">                then either pass the name of embedding model or</span>
+<span class="sd">                the embedding model itself.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># prepare embedding model if needed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
+                <span class="n">embedding_model</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
+
+<div class="viewcode-block" id="TemporaryMemory.add">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.add">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">embed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adding new memory fragment, depending on how the memory are stored</span>
+<span class="sd">        Args:</span>
+<span class="sd">            memories (`Union[Sequence[Msg], Msg, None]`):</span>
+<span class="sd">                Memories to be added.</span>
+<span class="sd">            embed (`bool`):</span>
+<span class="sd">                Whether to generate embedding for the new added memories</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">memories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="n">record_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">memories</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">record_memories</span> <span class="o">=</span> <span class="n">memories</span>
+
+        <span class="c1"># FIXME: a single message may be inserted multiple times</span>
+        <span class="c1"># Assert the message types</span>
+        <span class="n">memories_idx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">memory_unit</span> <span class="ow">in</span> <span class="n">record_memories</span><span class="p">:</span>
+            <span class="c1"># in case this is a PlaceholderMessage, try to update</span>
+            <span class="c1"># the values first</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">AsyncResult</span><span class="p">):</span>
+                <span class="n">memory_unit</span> <span class="o">=</span> <span class="n">memory_unit</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot add </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">)</span><span class="si">}</span><span class="s2"> to memory, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;must be a Msg object.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Add to memory if it&#39;s new</span>
+            <span class="k">if</span> <span class="n">memory_unit</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">memories_idx</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">embed</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">:</span>
+                        <span class="c1"># TODO: embed only content or its string representation</span>
+                        <span class="n">memory_unit</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">(</span>
+                            <span class="p">[</span><span class="n">memory_unit</span><span class="p">],</span>
+                            <span class="n">return_embedding_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Embedding model is not provided.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.delete">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.delete">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete memory fragment, depending on how the memory are stored</span>
+<span class="sd">        and matched</span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (Union[Iterable, int]):</span>
+<span class="sd">                indices of the memory fragments to delete</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The memory is empty, and the delete operation is &quot;</span>
+                <span class="s2">&quot;skipping.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="n">invalid_index</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">index</span> <span class="k">if</span> <span class="n">_</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="ow">or</span> <span class="n">_</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">invalid_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Skip delete operation for the invalid &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;index </span><span class="si">{</span><span class="n">invalid_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">_</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;index type only supports {None, int, list}&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.export">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.export">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">to_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export memory, depending on how the memory are stored</span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (Optional[str]):</span>
+<span class="sd">                file path to save the memory to. The messages will</span>
+<span class="sd">                be serialized and written to the file.</span>
+<span class="sd">            to_mem (Optional[str]):</span>
+<span class="sd">                if True, just return the list of messages in memory</span>
+<span class="sd">        Notice: this method prevents file_path is None when to_mem</span>
+<span class="sd">        is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">to_mem</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span>
+
+        <span class="k">if</span> <span class="n">to_mem</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;file type only supports &quot;</span>
+                <span class="s2">&quot;{json, yaml, pkl}, default is json&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.load">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.load">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">memories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="n">Msg</span><span class="p">],</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load memory, depending on how the memory are passed, design to load</span>
+<span class="sd">        from both file or dict</span>
+<span class="sd">        Args:</span>
+<span class="sd">            memories (Union[str, list[Msg], Msg]):</span>
+<span class="sd">                memories to be loaded.</span>
+<span class="sd">                If it is in str type, it will be first checked if it is a</span>
+<span class="sd">                file; otherwise it will be deserialized as messages.</span>
+<span class="sd">                Otherwise, memories must be either in message type or list</span>
+<span class="sd">                 of messages.</span>
+<span class="sd">            overwrite (bool):</span>
+<span class="sd">                if True, clear the current memory before loading the new ones;</span>
+<span class="sd">                if False, memories will be appended to the old one at the end.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">memories</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_memories</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="n">load_memories</span><span class="p">,</span>
+                        <span class="nb">list</span><span class="p">,</span>
+                    <span class="p">):</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;The memory loaded by json.loads is &quot;</span>
+                            <span class="s2">&quot;neither a dict nor a list, which may &quot;</span>
+                            <span class="s2">&quot;cause unpredictable errors.&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cannot load [</span><span class="si">{</span><span class="n">memories</span><span class="si">}</span><span class="s2">] via &quot;</span> <span class="sa">f</span><span class="s2">&quot;json.loads.&quot;</span><span class="p">,</span>
+                        <span class="n">e</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+                        <span class="n">e</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                    <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">memories</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Expect a list of Msg objects, but get </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;instead.&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="n">load_memories</span> <span class="o">=</span> <span class="n">memories</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+            <span class="n">load_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">memories</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The type of memories to be loaded is not supported. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Expect str, list[Msg], or Msg, but get </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># overwrite the original memories after loading the new ones</span>
+        <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">load_memories</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.clear">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.clear">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean memory, depending on how the memory are stored&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.size">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.size">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of memory segments in memory.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.retrieve_by_embedding">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.retrieve_by_embedding">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_by_embedding</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Embedding</span><span class="p">],</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Embedding</span><span class="p">,</span> <span class="n">Embedding</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">preserve_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span> <span class="n">Embedding</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve memory by their embeddings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query (`Union[str, Embedding]`):</span>
+<span class="sd">                Query string or embedding.</span>
+<span class="sd">            metric (`Callable[[Embedding, Embedding], float]`):</span>
+<span class="sd">                A metric to compute the relevance between embeddings of query</span>
+<span class="sd">                and memory. In default, higher relevance means better match,</span>
+<span class="sd">                and you can set `reverse` to `True` to reverse the order.</span>
+<span class="sd">            top_k (`int`, defaults to `1`):</span>
+<span class="sd">                The number of memory units to retrieve.</span>
+<span class="sd">            preserve_order (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether to preserve the original order of the retrieved memory</span>
+<span class="sd">                units.</span>
+<span class="sd">            embedding_model (`Callable[[Union[str, dict]], Embedding]`, \</span>
+<span class="sd">                defaults to `None`):</span>
+<span class="sd">                A callable object to embed the memory unit. If not provided, it</span>
+<span class="sd">                will use the default embedding model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list[dict]`: a list of retrieved memory units in</span>
+<span class="sd">            specific order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">retrieved_items</span> <span class="o">=</span> <span class="n">retrieve_from_list</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_embeddings</span><span class="p">(</span><span class="n">embedding_model</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">),</span>
+            <span class="n">metric</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">,</span>
+            <span class="n">preserve_order</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">content</span>
+
+        <span class="c1"># obtain the corresponding memory item</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">retrieved_items</span><span class="p">:</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
+                    <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span>
+                    <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.get_embeddings">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.get_embeddings">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_embeddings</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]],</span> <span class="n">Embedding</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get embeddings of all memory units. If `embedding_model` is</span>
+<span class="sd">        provided, the memory units that doesn&#39;t have `embedding` attribute</span>
+<span class="sd">        will be embedded. Otherwise, its embedding will be `None`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embedding_model</span>
+<span class="sd">                (`Callable[[Union[str, dict]], Embedding]`, defaults to</span>
+<span class="sd">                `None`):</span>
+<span class="sd">                Embedding model or embedding vector.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list[Union[Embedding, None]]`: List of embeddings or None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">memory_unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">memory_unit</span><span class="o">.</span><span class="n">embedding</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">embedding_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># embedding</span>
+                <span class="c1"># TODO: embed only content or its string representation</span>
+                <span class="n">memory_unit</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">embedding_model</span><span class="p">(</span><span class="n">memory_unit</span><span class="p">)</span>
+            <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">memory_unit</span><span class="o">.</span><span class="n">embedding</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">embeddings</span></div>
+
+
+<div class="viewcode-block" id="TemporaryMemory.get_memory">
+<a class="viewcode-back" href="../../../build_api/agentscope.memory.temporary_memory.html#agentscope.memory.TemporaryMemory.get_memory">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_memory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">recent_n</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">filter_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve memory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            recent_n (`Optional[int]`, default `None`):</span>
+<span class="sd">                The last number of memories to return.</span>
+<span class="sd">            filter_func</span>
+<span class="sd">                (`Callable[[int, dict], bool]`, default to `None`):</span>
+<span class="sd">                The function to filter memories, which take the index and</span>
+<span class="sd">                memory unit as input, and return a boolean value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># extract the recent `recent_n` entries in memories</span>
+        <span class="k">if</span> <span class="n">recent_n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">memories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">recent_n</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;The retrieved number of memories </span><span class="si">{}</span><span class="s2"> is &quot;</span>
+                    <span class="s2">&quot;greater than the total number of memories {&quot;</span>
+                    <span class="s2">&quot;}&quot;</span><span class="p">,</span>
+                    <span class="n">recent_n</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span>
+                <span class="p">)</span>
+            <span class="n">memories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="p">[</span><span class="o">-</span><span class="n">recent_n</span><span class="p">:]</span>
+
+        <span class="c1"># filter the memories</span>
+        <span class="k">if</span> <span class="n">filter_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span> <span class="k">if</span> <span class="n">filter_func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">_</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">memories</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
