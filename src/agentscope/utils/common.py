@@ -314,7 +314,7 @@ def _to_openai_image_url(url: str) -> str:
 
 
 def _to_anthropic_image_url(url: str) -> Union[str, dict]:
-    """Convert an image url to openai format. If the given url is a local
+    """Convert an image url to anthropic format. If the given url is a local
     file, it will be converted to base64 format. Otherwise, it will be
     returned directly.
 

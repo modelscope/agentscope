@@ -8,7 +8,7 @@ from typing import Any, Union, List, Optional, Generator
 from loguru import logger
 
 from ..formatters import CommonFormatter
-from ..formatters._dashscope_formatter import DashScopeFormatter
+from ..formatters import DashScopeFormatter
 from ..manager import FileManager
 from ..message import Msg, ToolUseBlock
 
