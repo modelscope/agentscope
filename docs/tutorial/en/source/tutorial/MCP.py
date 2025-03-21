@@ -25,7 +25,7 @@ In this tutorial, we will briefly introduce what MCP is and show how to use MCP 
 # - The HTTP protocol is used for remote communication (i.e., the MCP Server is started remotely), encapsulating JSON-RPC messages as SSE events. This mechanism allows the server to push events to the client via a continuously open HTTP connection.
 
 # %%
-# Using MCP as a tool for agents in AgentScope
+# Add MCP Server to `ServiceToolkit`
 # --------------------------
 # AgentScope, as an MCP client, supports starting a local MCP server via STDIO protocol and establishing a connection, as well as using the SSE protocol to connect with a remote MCP server. These usage methods are based on the `ServiceToolkit.add_mcp_servers` interface. The following code demonstrates how to start and connect a server providing browser automation functionality via STDIO locally. This server uses Puppeteer, enabling large models to interact with web pages, take screenshots, and execute JavaScript in a real browser environment. Note that before using the following MCP server, ensure that `Node.js` is installed on your system to ensure the `npx` command runs properly.
 
@@ -67,7 +67,7 @@ remote_configs = {
 del toolkit
 
 # %%
-# Adding multi-agent applications created with AgentScope to your own MCP server
+# Adding multi-agent App to MCP server
 # --------------------------
 # You can easily add multi-agent applications to your own MCP server using the official MCP Python SDK. The following example code demonstrates how to achieve this purpose using AgentScope and the MCP library.
 
@@ -119,7 +119,7 @@ def tell_a_joke(
 # This way, you can access and use the multi-agent application through the configured MCP server.
 
 # %%
-# Principle of AgentScope integrating MCP
+# Advanced: Principle of AgentScope integrating MCP
 # --------------------------
 # Since the client interface provided by the MCP Python SDK is asynchronous, the developers of AgentScope have encapsulated synchronous interfaces for user convenience.
 # Through this encapsulation, users can call asynchronous methods in a synchronous environment, thus improving the usability and readability of the code.

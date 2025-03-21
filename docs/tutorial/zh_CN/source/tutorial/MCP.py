@@ -25,7 +25,7 @@ MCP
 # - HTTP 协议则用于远程通信（即，MCP Server启动在远端），通过将 JSON-RPC 消息封装为 SSE 事件来实现。这种机制允许服务器通过持续开放的 HTTP 连接将事件推送到客户端。
 
 # %%
-# 在 AgentScope 中使用 MCP 作为智能体的工具
+# 把MCP服务器添加到`ServiceToolkit`
 # --------------------------
 # AgentScope作为MCP客户端，支持一键启动本地的 MCP 服务器并建立基于 STDIO 协议的连接，也支持使用 SSE 协议与远程的 MCP 服务器建立会话。这些使用方式均基于`ServiceToolkit.add_mcp_servers`的接口。以下代码展示了如何通过 STDIO 在本地启动并连接一个提供浏览器自动化功能的服务器。该服务器使用 Puppeteer，使得大模型能够与网页互动、截取屏幕截图以及在真实的浏览器环境中执行 JavaScript。请注意，在使用以下 MCP 服务器之前，请确保在您的系统中安装了 `Node.js` 以确保 `npx` 命令可以正常运行。
 
@@ -65,7 +65,7 @@ remote_configs = {
 del toolkit
 
 # %%
-# 将基于AgentScope创建的多智能体应用添加到自己的MCP服务器
+# 把多智能体应用添加到MCP服务器
 # --------------------------
 # 你可以通过MCP官方提供的Python SDK轻松地将多智能体应用添加到自己的MCP服务器。以下是一个示例代码，演示如何使用AgentScope和MCP库来实现这一目的。
 
@@ -117,7 +117,7 @@ def tell_a_joke(
 # 这样，就可以通过配置的 MCP 服务器来访问和使用这一多智能体应用。
 
 # %%
-# AgentScope集成MCP原理
+# 进阶：AgentScope集成MCP原理
 # --------------------------
 # 由于 MCP Python SDK 提供的客户端接口为异步接口，因此 AgentScope 的开发者为了方便用户使用，做了同步接口的封装。
 # 通过这种封装，用户可以在同步环境中调用异步方法，从而提高代码的易用性和可读性。
