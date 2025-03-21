@@ -14,14 +14,14 @@ from agentscope.agents import (
 )
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.pipelines import (
-    SequentialPipeline,
-    ForLoopPipeline,
-    WhileLoopPipeline,
-    IfElsePipeline,
-    SwitchPipeline,
+from agentscope.pipelines import SequentialPipeline
+from agentscope.web.workstation._utils import (
+    _ForLoopPipeline,
+    _WhileLoopPipeline,
+    _IfElsePipeline,
+    _SwitchPipeline,
+    _placeholder,
 )
-from agentscope.pipelines.functional import placeholder
 from agentscope.web.workstation.workflow_utils import (
     kwarg_converter,
     deps_converter,
@@ -374,9 +374,9 @@ class PlaceHolderNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.pipeline = placeholder
+        self.pipeline = _placeholder
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Msg = None) -> Msg:
         return self.pipeline(x)
 
     def compile(self) -> dict:
@@ -443,7 +443,7 @@ class ForLoopPipelineNode(WorkflowNode):
         assert (
             len(self.dep_opts) == 1
         ), "ForLoopPipelineNode can only contain one PipelineNode."
-        self.pipeline = ForLoopPipeline(
+        self.pipeline = _ForLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
         )
@@ -467,7 +467,7 @@ class WhileLoopPipelineNode(WorkflowNode):
     """
     A node representing a while-loop structure in a workflow.
 
-    WhileLoopPipelineNode enables conditional repeated execution of a node
+    WhileLoopPipelineNode enables conditional repeated execution of a
     node based on a specified condition.
     """
 
@@ -484,7 +484,7 @@ class WhileLoopPipelineNode(WorkflowNode):
         assert (
             len(self.dep_opts) == 1
         ), "WhileLoopPipelineNode can only contain one PipelineNode."
-        self.pipeline = WhileLoopPipeline(
+        self.pipeline = _WhileLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
         )
@@ -526,12 +526,12 @@ class IfElsePipelineNode(WorkflowNode):
             0 < len(self.dep_opts) <= 2
         ), "IfElsePipelineNode must contain one or two PipelineNode."
         if len(self.dep_opts) == 1:
-            self.pipeline = IfElsePipeline(
+            self.pipeline = _IfElsePipeline(
                 if_body_operators=self.dep_opts[0],
                 **self.opt_kwargs,
             )
         elif len(self.dep_opts) == 2:
-            self.pipeline = IfElsePipeline(
+            self.pipeline = _IfElsePipeline(
                 if_body_operators=self.dep_opts[0],
                 else_body_operators=self.dep_opts[1],
                 **self.opt_kwargs,
@@ -587,7 +587,7 @@ class SwitchPipelineNode(WorkflowNode):
 
         if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
             # No default_operators provided
-            default_operators = placeholder
+            default_operators = _placeholder
             self.default_var_name = "placeholder"
         elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
             # default_operators provided
@@ -608,7 +608,7 @@ class SwitchPipelineNode(WorkflowNode):
             self.case_operators_var[key] = var
         self.opt_kwargs.pop("cases")
         self.source_kwargs.pop("cases")
-        self.pipeline = SwitchPipeline(
+        self.pipeline = _SwitchPipeline(
             case_operators=case_operators,
             default_operators=default_operators,  # type: ignore[arg-type]
             **self.opt_kwargs,

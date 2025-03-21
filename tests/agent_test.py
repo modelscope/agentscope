@@ -4,8 +4,10 @@ Unit tests for agent classes and functions
 """
 
 import unittest
+from typing import Optional, Union
 
 from agentscope.agents import AgentBase
+from agentscope.message import Msg
 
 
 class TestAgent(AgentBase):
@@ -27,6 +29,9 @@ class TestAgent(AgentBase):
                 kwargs["use_memory"] if "use_memory" in kwargs else None
             ),
         )
+
+    def reply(self, x: Optional[Union[Msg, list[Msg]]] = None) -> Msg:
+        return x
 
 
 class TestAgentCopy(TestAgent):

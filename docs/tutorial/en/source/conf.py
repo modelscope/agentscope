@@ -69,11 +69,7 @@ python_display_short_literal_types = True
 
 
 def skip_member(app, what, name, obj, skip, options):
-    if name in [
-        "Operator",
-        "ServiceFactory",
-        "",
-    ]:
+    if name in []:
         return True
 
     return skip

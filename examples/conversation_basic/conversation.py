@@ -3,7 +3,7 @@
 import agentscope
 from agentscope.agents import DialogAgent
 from agentscope.agents.user_agent import UserAgent
-from agentscope.pipelines.functional import sequentialpipeline
+from agentscope.pipelines import sequential_pipeline
 
 
 def main() -> None:
@@ -43,7 +43,7 @@ def main() -> None:
     # start the conversation between user and assistant
     x = None
     while x is None or x.content != "exit":
-        x = sequentialpipeline([dialog_agent, user_agent], x)
+        x = sequential_pipeline([dialog_agent, user_agent], x)
 
 
 if __name__ == "__main__":

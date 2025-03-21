@@ -1,32 +1,10 @@
 # -*- coding: utf-8 -*-
 """ Import all pipeline related modules in the package. """
-from .pipeline import (
-    PipelineBase,
-    SequentialPipeline,
-    IfElsePipeline,
-    SwitchPipeline,
-    ForLoopPipeline,
-    WhileLoopPipeline,
-)
+from ._class import SequentialPipeline
 
-from .functional import (
-    sequentialpipeline,
-    ifelsepipeline,
-    switchpipeline,
-    forlooppipeline,
-    whilelooppipeline,
-)
+from ._functional import sequential_pipeline
 
 __all__ = [
-    "PipelineBase",
     "SequentialPipeline",
-    "IfElsePipeline",
-    "SwitchPipeline",
-    "ForLoopPipeline",
-    "WhileLoopPipeline",
-    "sequentialpipeline",
-    "ifelsepipeline",
-    "switchpipeline",
-    "forlooppipeline",
-    "whilelooppipeline",
+    "sequential_pipeline",
 ]

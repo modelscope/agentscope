@@ -21,7 +21,7 @@ from agentscope.server import RpcAgentServerLauncher
 from agentscope.rpc import AsyncResult, RpcObject, DistConf
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from agentscope.pipelines import sequentialpipeline
+from agentscope.pipelines import sequential_pipeline
 from agentscope.rpc import RpcClient, async_func
 from agentscope.exception import (
     AgentCallError,
@@ -472,7 +472,7 @@ class BasicRpcAgentTest(unittest.TestCase):
             self.assertGreaterEqual(x_b.content["mem_size"], 6)
             x_c = agent_c(x_b)
             self.assertGreaterEqual(x_c.content["mem_size"], 7)
-            x_c = sequentialpipeline(participants, x_c)
+            x_c = sequential_pipeline(participants, x_c)
             self.assertGreaterEqual(x_c.content["mem_size"], 10)
 
     def test_multi_agent_in_same_server(self) -> None:
