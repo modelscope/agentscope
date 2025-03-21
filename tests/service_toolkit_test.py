@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Unit test for service toolkit. """
 import json
+import os
+import sys
 import unittest
 from typing import Literal
 
@@ -309,6 +311,49 @@ we use the embedding model to embed the query.""",
         self.assertDictEqual(
             doc_dict,
             self.json_schema_summarization,
+        )
+
+    def test_mcp_tool(self) -> None:
+        """Test the mcp tool with ServiceToolkit."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool` is skipped for Python versions < 3.10",
+            )
+
+        service_toolkit = ServiceToolkit()
+        server_path = os.path.abspath(
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                "custom",
+                "echo_mcp_server.py",
+            ),
+        )
+        service_toolkit.add_mcp_servers(
+            server_configs={
+                "mcpServers": {
+                    "echo": {
+                        "command": "python",
+                        "args": [
+                            server_path,
+                        ],
+                    },
+                },
+            },
+        )
+        self.assertEqual(
+            service_toolkit.tools_instruction,
+            """## Tool Functions:
+The following tool functions are available in the format of
+```
+{index}. {function name}: {function description}
+{argument1 name} ({argument type}): {argument description}
+{argument2 name} ({argument type}): {argument description}
+...
+```
+
+1. echo: Echo the input text
+	text (string): Input text
+""",  # noqa
         )
 
     def test_service_toolkit(self) -> None:

@@ -13,6 +13,7 @@ from typing import (
     get_args,
     get_origin,
     List,
+    Dict,
 )
 from loguru import logger
 
@@ -24,6 +25,8 @@ from ..exception import (
 )
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
+
+from .mcp_manager import MCPSessionHandler, sync_exec
 from ..message import Msg
 
 try:
@@ -223,6 +226,90 @@ class ServiceToolkit:
                 processed_func=processed_func,
                 json_schema=json_schema,
             )
+
+    def add_mcp_servers(self, server_configs: Dict) -> None:
+        """
+        Add mcp servers to the toolkit.
+
+        Parameters:
+            server_configs (Dict): A dictionary containing the configuration
+                for MCP servers. The configuration follows the Model Context
+                Protocol specification and can be defined in TypeScript,
+                but is available as JSON Schema for wider compatibility.
+
+                Fields:
+                   - "mcpServers": A dictionary where each key is the server
+                   name and the value is its configuration.
+
+                Field Details:
+                   - "command": Specifies the command to execute,
+                   which follows the stdio protocol for communication.
+                   - "args": A list of arguments to be passed to the command.
+                   - "url": Specifies the server's URL, which follows the
+                   Server-Sent Events (SSE) protocol for data transmission.
+
+                Example:
+                    configs = {
+                        "mcpServers": {
+                            "xxxx": {
+                                "command": "npx",
+                                "args": [
+                                    "-y",
+                                    "@modelcontextprotocol/xxxx"
+                                ]
+                            },
+                            "yyyy": {
+                                "url": "http://xxx.xxx.xxx.xxx:xxxx/sse"
+                            }
+                        }
+                    }
+        """
+        new_servers = [
+            MCPSessionHandler(name, config)
+            for name, config in server_configs["mcpServers"].items()
+        ]
+
+        # register the service function
+        for sever in new_servers:
+            for tool in sync_exec(sever.list_tools):
+                name = tool.name
+                if name in self.service_funcs:
+                    logger.warning(
+                        f"Service function `{name}` already exists, "
+                        f"skip adding it.",
+                    )
+                else:
+                    json_schema = {
+                        "type": "function",
+                        "function": {
+                            "name": tool.name,
+                            "description": tool.description,
+                            "parameters": {
+                                "type": "object",
+                                "properties": tool.inputSchema.get(
+                                    "properties",
+                                    {},
+                                ),
+                                "required": tool.inputSchema.get(
+                                    "required",
+                                    [],
+                                ),
+                            },
+                        },
+                    }
+                    self.service_funcs[tool.name] = ServiceFunction(
+                        name=tool.name,
+                        original_func=partial(
+                            sync_exec,
+                            sever.execute_tool,
+                        ),
+                        processed_func=partial(
+                            sync_exec,
+                            sever.execute_tool,
+                            tool.name,
+                        ),
+                        json_schema=json_schema,
+                    )
 
     @property
     def json_schemas(self) -> dict:
