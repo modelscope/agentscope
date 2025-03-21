@@ -14,14 +14,7 @@ from agentscope.agents import (
 )
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.pipelines import (
-    SequentialPipeline,
-    ForLoopPipeline,
-    WhileLoopPipeline,
-    IfElsePipeline,
-    SwitchPipeline,
-)
-from agentscope.pipelines.functional import placeholder
+from agentscope.pipelines import SequentialPipeline
 from agentscope.web.workstation.workflow_utils import (
     kwarg_converter,
     deps_converter,
@@ -374,7 +367,7 @@ class PlaceHolderNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.pipeline = placeholder
+        self.pipeline = None
 
     def __call__(self, x: dict = None) -> dict:
         return self.pipeline(x)

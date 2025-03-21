@@ -11,7 +11,6 @@ import json
 import uuid
 from loguru import logger
 
-from agentscope.agents.operator import Operator
 from agentscope.rpc.rpc_config import DistConf
 from agentscope.rpc.rpc_meta import RpcMeta, async_func, sync_func
 from agentscope.logging import log_stream_msg, log_msg
@@ -20,7 +19,7 @@ from agentscope.message import Msg
 from agentscope.memory import TemporaryMemory
 
 
-class AgentBase(Operator, metaclass=RpcMeta):
+class AgentBase(metaclass=RpcMeta):
     """Base class for all agents.
 
     All agents should inherit from this class and implement the `reply`

@@ -13,7 +13,7 @@ from werewolf_utils import (
 )
 from agentscope.message import Msg
 from agentscope.msghub import msghub
-from agentscope.pipelines.functional import sequentialpipeline
+from agentscope.pipelines import sequential_pipeline
 import agentscope
 
 
@@ -42,7 +42,7 @@ def main() -> None:
         with msghub(wolves, announcement=hint) as hub:
             set_parsers(wolves, Prompts.wolves_discuss_parser)
             for _ in range(MAX_WEREWOLF_DISCUSSION_ROUND):
-                x = sequentialpipeline(wolves)
+                x = sequential_pipeline(wolves)
                 if x.metadata.get("finish_discussion", False):
                     break
 
@@ -120,7 +120,7 @@ def main() -> None:
         with msghub(survivors, announcement=hints) as hub:
             # discuss
             set_parsers(survivors, Prompts.survivors_discuss_parser)
-            x = sequentialpipeline(survivors)
+            x = sequential_pipeline(survivors)
 
             # vote
             set_parsers(survivors, Prompts.survivors_vote_parser)
