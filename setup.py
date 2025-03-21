@@ -40,6 +40,7 @@ minimal_requires = [
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
     "dashscope>=1.19.0",
+    "nest_asyncio",
 ]
 
 extra_service_requires = [
@@ -54,6 +55,7 @@ extra_service_requires = [
     "nbformat",
     "playwright",
     "markdownify",
+    "mcp; python_version>='3.10'",
 ]
 
 extra_distribute_requires = [

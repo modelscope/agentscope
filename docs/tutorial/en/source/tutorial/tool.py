@@ -227,6 +227,27 @@ print(json.dumps(formatted_msgs, indent=4, ensure_ascii=False))
 # agent.
 
 # %%
+# Using MCP with ServiceToolkit
+# -------------------------------
+# AgentScope provides support for integrating MCP (Model Context Protocol)
+# servers, enabling enhanced capabilities for models and tools. You can add
+# MCP servers to the `ServiceToolkit` using the `add_mcp_servers` method,
+# where you specify the configurations for each server.
+# Please note that MCP requires Python version >= 3.10.
+
+configs = {
+    "mcpServers": {
+        "puppeteer": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+        },
+    },
+}
+
+# %%
+# Add MCP server configurations to the ServiceToolkit
+# `toolkit.add_mcp_servers(server_configs=configs)`
+#
 # Creating Custom Tools
 # --------------------------
 # A custom tool function must follow these rules:

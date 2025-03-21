@@ -35,12 +35,14 @@
 
 | [Discord](https://discord.gg/eYMpfnkG8h) | 钉钉群 |
 |---------|----------|
-| <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
+| <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i1/O1CN01LxzZha1thpIN2cc2E_!!6000000005934-2-tps-497-477.png" width="100" height="100"> |
 
 ----
 
 ## 新闻
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScope 已支持 OpenAI，Anthropic, DashScope API 的工具 API 调用，请参考 [教程](https://doc.agentscope.io/build_tutorial/tool.html).
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscope现已支持[MCP Server](https://github.com/modelcontextprotocol/servers)！您可以通过[此教程](https://doc.agentscope.io/build_tutorial/mcp.html)学习如何使用。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** 我们的[多信息源RAG应用](applications/multisource_rag_app/README.md)（钉钉答疑群中的机器人）已开源!
 
