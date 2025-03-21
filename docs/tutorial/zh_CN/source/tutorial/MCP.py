@@ -115,33 +115,3 @@ def tell_a_joke(
 # `mcp run my_mcp_server.py -t sse`
 # 此命令会启动 MCP 服务器，并将工具调用结果以服务器推送事件（SSE）的方式进行传输。
 # 这样，就可以通过配置的 MCP 服务器来访问和使用这一多智能体应用。
-
-# %%
-# 进阶：AgentScope集成MCP原理
-# --------------------------
-# 由于 MCP Python SDK 提供的客户端接口为异步接口，因此 AgentScope 的开发者为了方便用户使用，做了同步接口的封装。
-# 通过这种封装，用户可以在同步环境中调用异步方法，从而提高代码的易用性和可读性。
-
-# %%
-from agentscope.service.mcp_manager import sync_exec
-
-# %%
-# `sync_exec` 函数，用于同步执行一个异步函数。它通过检查当前的事件循环进行处理：
-# - 如果事件循环正在运行，则通过`asyncio.run_coroutine_threadsafe`在不同线程中运行协程。
-# - 如果事件循环未运行，则创建一个新的事件循环并运行协程。
-# 这种机制允许在同步代码中调用异步函数，适用于希望隐藏异步复杂性的场景。
-
-# %%
-from agentscope.service.mcp_manager import MCPSessionHandler
-
-# %%
-# `MCPSessionHandler`模块通过管理MCP会话和工具执行，为用户提供了与MCP服务器进行交互的机制。
-# 它包括创建、管理、关闭会话的功能，以及执行MCP服务器提供的各种工具。
-
-# %%
-# `MCPSessionHandler.__del__`方法：
-# 由于STDIO服务器的拉起是在子进程中进行，且官方提供的接口为异步读写流，因此我们需要使用`AsyncExitStack`来管理启动的STDIO服务器。
-# 来保证STDIO服务器在主进程或主线程结束后的资源得到正确回收。
-# `AsyncExitStack`能够确保在异步环境中正确处理上下文的进入和退出，以便在服务器启动后能够安全地关闭和清理资源。即使在执行过程中主进程或主线程出现异常，`AsyncExitStack`也会确保所有资源被正确释放。
-# 然而，当 STDIO 服务器在子进程中出现异常时，读写流不会中断，因此主进程会发生阻塞，导致资源无法正常释放，可能出现资源泄漏或阻塞问题。
-# 因此我们推荐使用 HTTP SSE 的方式在独立进程中启动 MCP 服务器。这种方法可以避免由于子进程异常导致的读写流阻塞问题，并且提供了更加可靠的资源管理机制。

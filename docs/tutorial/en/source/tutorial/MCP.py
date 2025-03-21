@@ -117,33 +117,3 @@ def tell_a_joke(
 # `mcp run my_mcp_server.py -t sse`
 # This command starts the MCP server and transmits the results of tool calls via Server-Sent Events (SSE).
 # This way, you can access and use the multi-agent application through the configured MCP server.
-
-# %%
-# Advanced: Principle of AgentScope integrating MCP
-# --------------------------
-# Since the client interface provided by the MCP Python SDK is asynchronous, the developers of AgentScope have encapsulated synchronous interfaces for user convenience.
-# Through this encapsulation, users can call asynchronous methods in a synchronous environment, thus improving the usability and readability of the code.
-
-# %%
-from agentscope.service.mcp_manager import sync_exec
-
-# %%
-# The `sync_exec` function is used to synchronously execute an asynchronous function. It processes by checking the current event loop:
-# - If the event loop is running, it runs the coroutine in a different thread using `asyncio.run_coroutine_threadsafe`.
-# - If the event loop is not running, it creates a new event loop and runs the coroutine.
-# This mechanism allows calling asynchronous functions in synchronous code, suitable for scenarios where the complexity of asynchronous operations is hidden.
-
-# %%
-from agentscope.service.mcp_manager import MCPSessionHandler
-
-# %%
-# The `MCPSessionHandler` module manages MCP sessions and tool execution, providing users with mechanisms to interact with MCP servers.
-# It includes functions for creating, managing, and closing sessions, as well as executing various tools provided by the MCP server.
-
-# %%
-# `MCPSessionHandler.__del__` method:
-# Since the STDIO server is launched in a subprocess and the official interface provides asynchronous read/write streams, we need to use `AsyncExitStack` to manage the STDIO server startup.
-# This ensures that resources of the STDIO server are correctly reclaimed after the main process or main thread ends.
-# `AsyncExitStack` ensures correct handling of context entry and exit in asynchronous environments, ensuring safe shutdown and cleanup of resources after server startup. Even if the main process or main thread encounters an exception during execution, `AsyncExitStack` ensures all resources are properly released.
-# However, when the STDIO server encounters an exception in the subprocess, the read/write stream does not interrupt, causing the main process to block, leading to resource leakage or blocking issues.
-# Therefore, we recommend using the HTTP SSE method to start the MCP server in an independent process. This approach avoids read/write stream blocking caused by subprocess exceptions and provides a more reliable resource management mechanism.
