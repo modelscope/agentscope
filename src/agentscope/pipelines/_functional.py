@@ -17,7 +17,7 @@ def sequential_pipeline(
         ]
     ],
     x: Optional[Union[Msg, list[Msg]]] = None,
-) -> Union[None, Msg]:
+) -> Union[None, Msg, list[Msg]]:
     """A syntactic sugar pipeline that executes a sequence of operators
     sequentially. The output of the previous operator will be passed as the
     input to the next operator. The final output will be the output of the
@@ -47,7 +47,7 @@ def sequential_pipeline(
             The initial input that will be passed to the first operator.
 
     Returns:
-        `Msg`:
+        `Union[None, Msg, list[Msg]]`:
             The output of the last operator in the sequence.
     """
     if len(operators) == 0:
