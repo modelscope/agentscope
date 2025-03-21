@@ -83,15 +83,13 @@ class AsyncResult:
     def _check_and_download_files(self) -> None:
         """Check whether the urls are accessible. If not, download them
         from rpc server."""
-        if isinstance(self._data, Msg) and self._data.url:
-            checked_urls = []
-            if isinstance(self._data.url, str):
-                self._data.url = self._download(self._data.url)
-            else:
-                checked_urls = []
-                for url in self._data.url:
-                    checked_urls.append(self._download(url))
-                self._data.url = checked_urls
+        if isinstance(self._data, Msg):
+            if isinstance(self._data.content, list):
+                for i, block in enumerate(self._data.content):
+                    if block["type"] in ["image", "audio", "video", "file"]:
+                        self._data.content[i]["url"] = self._download(
+                            block["url"],
+                        )
 
     def result(self) -> Any:
         """Get the result."""

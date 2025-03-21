@@ -7,9 +7,9 @@ from typing import Sequence, Union, Any, List, Optional, Generator
 
 from loguru import logger
 
+from ..formatters import GeminiFormatter
 from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
-from ..utils.common import _convert_to_str
 
 try:
     import google.generativeai as genai
@@ -306,7 +306,8 @@ class GeminiChatWrapper(GeminiWrapperBase):
 
     @staticmethod
     def format(
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """This function provide a basic prompting strategy for Gemini Chat
         API in multi-party conversation, which combines all input into a
@@ -335,69 +336,22 @@ class GeminiChatWrapper(GeminiWrapperBase):
         https://github.com/agentscope/agentscope!
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
                 A list with one user message.
         """
-        if len(args) == 0:
-            raise ValueError(
-                "At least one message should be provided. An empty message "
-                "list is not allowed.",
-            )
-
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        # record dialog history as a list of strings
-        sys_prompt = None
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                sys_prompt = _convert_to_str(unit.content)
-            else:
-                # Merge all messages into a conversation history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        prompt_components = []
-        if sys_prompt is not None:
-            if not sys_prompt.endswith("\n"):
-                sys_prompt += "\n"
-            prompt_components.append(sys_prompt)
-
-        if len(dialogue) > 0:
-            prompt_components.extend(["## Conversation History"] + dialogue)
-
-        user_prompt = "\n".join(prompt_components)
-
-        messages = [
-            {
-                "role": "user",
-                "parts": [
-                    user_prompt,
-                ],
-            },
-        ]
-
-        return messages
+        if multi_agent_mode:
+            return GeminiFormatter.format_multi_agent(*args)
+        return GeminiFormatter.format_chat(*args)
 
 
 class GeminiEmbeddingWrapper(GeminiWrapperBase):

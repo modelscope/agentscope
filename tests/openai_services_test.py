@@ -322,10 +322,12 @@ class TestOpenAIServices(unittest.TestCase):
         formatted_message = mock_wrapper_instance.format.call_args[0][0]
         self.assertEqual(formatted_message.name, "service_call")
         self.assertEqual(formatted_message.role, "user")
-        self.assertEqual(formatted_message.content, "Describe the image")
         self.assertEqual(
-            formatted_message.url,
-            "https://example.com/image.jpg",
+            formatted_message.content,
+            [
+                {"type": "text", "text": "Describe the image"},
+                {"type": "image", "url": "https://example.com/image.jpg"},
+            ],
         )
 
     @patch(

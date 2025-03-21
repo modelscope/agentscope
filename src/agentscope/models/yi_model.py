@@ -4,7 +4,6 @@ import json
 from typing import (
     List,
     Union,
-    Sequence,
     Optional,
     Generator,
 )
@@ -16,6 +15,7 @@ from ._model_utils import (
     _verify_text_content_in_openai_delta_response,
 )
 from .model import ModelWrapperBase, ModelResponse
+from ..formatters import CommonFormatter
 from ..message import Msg
 
 
@@ -207,7 +207,8 @@ class YiChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """Format the messages into the required format of Yi Chat API.
 
@@ -246,10 +247,14 @@ class YiChatWrapper(ModelWrapperBase):
             ]
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
@@ -263,7 +268,9 @@ class YiChatWrapper(ModelWrapperBase):
                 "please format the messages manually.",
             )
 
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+        if multi_agent_mode:
+            return CommonFormatter.format_multi_agent(*args)
+        return CommonFormatter.format_chat(*args)
 
     def _save_model_invocation_and_update_monitor(
         self,

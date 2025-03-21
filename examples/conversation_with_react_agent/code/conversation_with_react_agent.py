@@ -4,7 +4,7 @@ import sys
 import io
 
 from agentscope.agents import UserAgent
-from agentscope.agents.react_agent import ReActAgent
+from agentscope.agents import ReActAgent
 from agentscope.service import (
     bing_search,  # or google_search,
     read_text_file,
@@ -42,7 +42,8 @@ def execute_python_code(code: str) -> ServiceResponse:  # pylint: disable=C0301
 
     try:
         # Using `exec` to execute code
-        exec(code)
+        namespace = {}
+        exec(code, namespace)
     except Exception as e:
         # If an exception occurs, capture the exception information
         output = str(e)

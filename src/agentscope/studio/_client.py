@@ -160,7 +160,6 @@ class StudioClient:
                 "content": str(message.content),
                 "timestamp": message.timestamp,
                 "metadata": message.metadata,
-                "url": message.url,
             },
             timeout=10,
         )

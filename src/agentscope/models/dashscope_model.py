@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for DashScope models"""
-import os
+import json
 from abc import ABC
 from http import HTTPStatus
-from typing import Any, Union, List, Sequence, Optional, Generator
+from typing import Any, Union, List, Optional, Generator
 
 from loguru import logger
 
+from ..formatters import CommonFormatter
+from ..formatters import DashScopeFormatter
 from ..manager import FileManager
-from ..message import Msg
-from ..utils.common import _convert_to_str, _guess_type_by_extension
+from ..message import Msg, ToolUseBlock
 
 try:
     import dashscope
@@ -69,16 +70,6 @@ class DashScopeWrapperBase(ModelWrapperBase, ABC):
 
         self.api_key = api_key
         self.max_length = None
-
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
 
 
 class DashScopeChatWrapper(DashScopeWrapperBase):
@@ -160,6 +151,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         self,
         messages: list,
         stream: Optional[bool] = None,
+        tools: list[dict] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the
@@ -179,6 +171,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             stream (`Optional[bool]`, default `None`):
                 The stream flag to control the response format, which will
                 overwrite the stream flag in the constructor.
+            tools (`list[dict]`, default `None`):
+                The tools JSON schemas that the model can use.
             **kwargs (`Any`):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -238,6 +232,9 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             },
         )
 
+        if tools:
+            kwargs["tools"] = tools
+
         # Switch to the incremental_output mode
         if stream:
             kwargs["incremental_output"] = True
@@ -295,8 +292,31 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 response,
             )
 
+            response_message = response.output["choices"][0]["message"]
+            blocks = None
+            if "tool_calls" in response_message:
+                tool_calls = response_message["tool_calls"]
+                blocks = []
+                for tool_call in tool_calls:
+                    blocks.append(
+                        ToolUseBlock(
+                            type="tool_use",
+                            id=tool_call["id"],
+                            name=tool_call["function"]["name"],
+                            input=json.loads(
+                                tool_call["function"]["arguments"],
+                            ),
+                        ),
+                    )
+
+            if response_message["content"] == "":
+                text = None
+            else:
+                text = response_message["content"]
+
             return ModelResponse(
-                text=response.output["choices"][0]["message"]["content"],
+                text=text,
+                tool_calls=blocks,
                 raw=response,
             )
 
@@ -331,7 +351,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """A common format strategy for chat models, which will format the
         input messages into a user message.
@@ -389,17 +410,65 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
+        if multi_agent_mode:
+            return CommonFormatter.format_multi_agent(*args)
+        return CommonFormatter.format_chat(*args)
 
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+        return DashScopeFormatter.format_tools_json_schemas(schemas)
 
 
 class DashScopeImageSynthesisWrapper(DashScopeWrapperBase):
@@ -785,8 +854,9 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> List:
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
+    ) -> list[dict]:
         """Format the messages for DashScope Multimodal API.
 
         The multimodal API has the following requirements:
@@ -866,113 +936,20 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             "file://", which will be attached in this format function.
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
-            `List[dict]`:
+            `list[dict]`:
                 The formatted messages.
         """
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        messages = []
-
-        # record dialog history as a list of strings
-        dialogue = []
-        image_or_audio_dicts = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                content = self.convert_url(unit.url)
-                content.append({"text": _convert_to_str(unit.content)})
-
-                messages.append(
-                    {
-                        "role": unit.role,
-                        "content": content,
-                    },
-                )
-            else:
-                # text message
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-                # image and audio
-                image_or_audio_dicts.extend(self.convert_url(unit.url))
-
-        dialogue_history = "\n".join(dialogue)
-
-        user_content_template = "## Conversation History\n{dialogue_history}"
-
-        messages.append(
-            {
-                "role": "user",
-                "content": [
-                    # Place the image or audio before the conversation history
-                    *image_or_audio_dicts,
-                    {
-                        "text": user_content_template.format(
-                            dialogue_history=dialogue_history,
-                        ),
-                    },
-                ],
-            },
-        )
-
-        return messages
-
-    def convert_url(self, url: Union[str, Sequence[str], None]) -> List[dict]:
-        """Convert the url to the format of DashScope API. Note for local
-        files, a prefix "file://" will be added.
-
-        Args:
-            url (`Union[str, Sequence[str], None]`):
-                A string of url of a list of urls to be converted.
-
-        Returns:
-            `List[dict]`:
-                A list of dictionaries with key as the type of the url
-                and value as the url. Only "image" and "audio" are supported.
-        """
-        if url is None:
-            return []
-
-        if isinstance(url, str):
-            url_type = _guess_type_by_extension(url)
-            if url_type in ["audio", "image"]:
-                # Add prefix for local files
-                if os.path.exists(url):
-                    url = "file://" + url
-                return [{url_type: url}]
-            else:
-                # skip unsupported url
-                logger.warning(
-                    f"Skip unsupported url ({url_type}), "
-                    f"expect image or audio.",
-                )
-                return []
-        elif isinstance(url, list):
-            dicts = []
-            for _ in url:
-                dicts.extend(self.convert_url(_))
-            return dicts
-        else:
-            raise TypeError(
-                f"Unsupported url type {type(url)}, " f"str or list expected.",
-            )
+        if not multi_agent_mode:
+            return DashScopeFormatter.format_multi_agent(*args)
+        return DashScopeFormatter.format_chat(*args)

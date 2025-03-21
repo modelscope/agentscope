@@ -7,7 +7,7 @@ from searcher_agent import SearcherAgent
 from answerer_agent import AnswererAgent
 
 import agentscope
-from agentscope.agents.user_agent import UserAgent
+from agentscope.agents import UserAgent
 from agentscope.message import Msg
 
 

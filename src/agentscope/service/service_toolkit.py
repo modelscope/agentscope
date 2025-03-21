@@ -12,7 +12,6 @@ from typing import (
     Literal,
     get_args,
     get_origin,
-    List,
     Dict,
 )
 from loguru import logger
@@ -25,9 +24,13 @@ from ..exception import (
 )
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
-
 from .mcp_manager import MCPSessionHandler, sync_exec
-from ..message import Msg
+from ..message import (
+    Msg,
+    ToolUseBlock,
+    ToolResultBlock,
+    ContentBlock,
+)
 
 try:
     from docstring_parser import parse
@@ -143,7 +146,6 @@ class ServiceToolkit:
         "{index}. Execute function {function_name}\n"
         "   [ARGUMENTS]:\n"
         "       {arguments}\n"
-        "   [STATUS]: {status}\n"
         "   [RESULT]: {result}\n"
     )
     """The prompt template for the execution results."""
@@ -355,180 +357,175 @@ class ServiceToolkit:
                 {"function_prompt": tools_description},
             )
 
-    def _parse_and_check_text(  # pylint: disable=too-many-branches
+    def _check_tool_use_block(
         self,
-        cmd: Union[list[dict], str],
-    ) -> List[dict]:
+        tool_call: ToolUseBlock,
+    ) -> None:
         """Parsing and check the format of the function calling text."""
-
-        # Record the error
-        error_info = []
-
-        if isinstance(cmd, str):
-            # --- Syntax check: if the input can be loaded by JSON
-            try:
-                processed_text = cmd.strip()
-
-                # complete "[" and "]" if they are missing
-                index_start = processed_text.find("[")
-                index_end = processed_text.rfind("]")
-
-                if index_start == -1:
-                    index_start = 0
-                    error_info.append('Missing "[" at the beginning.')
-
-                if index_end == -1:
-                    index_end = len(processed_text)
-                    error_info.append('Missing "]" at the end.')
-
-                # remove the unnecessary prefix before "[" and suffix after "]"
-                processed_text = processed_text[
-                    index_start : index_end + 1  # noqa: E203
-                ]
-
-                cmds = json.loads(processed_text)
-            except json.JSONDecodeError:
-                # Since we have processed the text, here we can only report
-                # the JSON parsing error
-                raise JsonParsingError(
-                    f"Except a list of dictionaries in JSON format, "
-                    f"like: {self.tools_calling_format}",
-                ) from None
-        else:
-            cmds = cmd
-
         # --- Semantic Check: if the input is a list of dicts with
         # required fields
-
-        # Handle the case when the input is a single dictionary
-        if isinstance(cmds, dict):
-            # The error info is already recorded in error_info
-            cmds = [cmds]
-
-        if not isinstance(cmds, list):
+        if not isinstance(tool_call, dict):
             # Not list, raise parsing error
             raise JsonParsingError(
-                f"Except a list of dictionaries in JSON format "
-                f"like: {self.tools_calling_format}",
+                f"tool_call should be a dict, but got {tool_call}.",
             )
 
         # --- Check the format of the command ---
-        for sub_cmd in cmds:
-            if not isinstance(sub_cmd, dict):
-                raise JsonParsingError(
-                    f"Except a JSON list of dictionaries, but got"
-                    f" {type(sub_cmd)} instead.",
+        if "name" not in tool_call:
+            raise FunctionCallFormatError(
+                "The field 'name' is required in the dictionary.",
+            )
+
+        # Obtain the service function
+        func_name = tool_call["name"]
+
+        # Cannot find the service function
+        if func_name not in self.service_funcs:
+            raise FunctionNotFoundError(
+                f"Cannot find a tool function named `{func_name}`.",
+            )
+
+        # If it is json(str) convert to json(dict)
+        if isinstance(tool_call["input"], str):
+            try:
+                tool_call["input"] = json.loads(tool_call["input"])
+            except json.decoder.JSONDecodeError:
+                logger.debug(
+                    f"Fail to parse the arguments: {tool_call['input']}",
                 )
 
-            if "name" not in sub_cmd:
-                raise FunctionCallFormatError(
-                    "The field 'name' is required in the dictionary.",
-                )
+        # Type error for the arguments
+        if not isinstance(tool_call["input"], dict):
+            raise FunctionCallFormatError(
+                "Except a dictionary for the arguments, but got "
+                f"{type(tool_call['input'])} instead.",
+            )
 
-            # Obtain the service function
-            func_name = sub_cmd["name"]
+        # Leaving the type checking and required checking to the runtime
+        # error reporting during execution
 
-            # Cannot find the service function
-            if func_name not in self.service_funcs:
-                raise FunctionNotFoundError(
-                    f"Cannot find a tool function named `{func_name}`.",
-                )
-
-            # If it is json(str) convert to json(dict)
-            if isinstance(sub_cmd["arguments"], str):
-                try:
-                    sub_cmd["arguments"] = json.loads(sub_cmd["arguments"])
-                except json.decoder.JSONDecodeError:
-                    logger.debug(
-                        f"Fail to parse the argument: {sub_cmd['arguments']}",
-                    )
-
-            # Type error for the arguments
-            if not isinstance(sub_cmd["arguments"], dict):
-                raise FunctionCallFormatError(
-                    "Except a dictionary for the arguments, but got "
-                    f"{type(sub_cmd['arguments'])} instead.",
-                )
-
-            # Leaving the type checking and required checking to the runtime
-            # error reporting during execution
-        return cmds
-
-    def _execute_func(self, cmds: List[dict]) -> str:
+    def _execute_func(self, tool_call: ToolUseBlock) -> ToolResultBlock:
         """Execute the function with the arguments.
 
         Args:
-            cmds (`List[dict]`):
-                A list of dictionaries, where each dictionary contains the
-                name of the function and its arguments, e.g. {"name": "func1",
-                "arguments": {"arg1": 1, "arg2": 2}}.
+            tool_call (`ToolUseBlock`):
+                A tool use block indicating the called function and arguments.
 
         Returns:
-            `str`: The prompt of the execution results.
+            `ToolResultBlock`:
+                The result block of the function execution.
         """
 
-        execute_results = []
-        for i, cmd in enumerate(cmds):
-            service_func = self.service_funcs[cmd["name"]]
-            kwargs = cmd.get("arguments", {})
+        func = self.service_funcs[tool_call["name"]]
+        kwargs = tool_call["input"]
 
-            # Execute the function
-            try:
-                func_res = service_func.processed_func(**kwargs)
-            except Exception as e:
-                func_res = ServiceResponse(
-                    status=ServiceExecStatus.ERROR,
-                    content=str(e),
-                )
-
-            status = (
-                "SUCCESS"
-                if func_res.status == ServiceExecStatus.SUCCESS
-                else "FAILED"
+        try:
+            func_res = func.processed_func(**kwargs)
+        except Exception as e:
+            func_res = ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=str(e),
             )
 
-            arguments = [f"{k}: {v}" for k, v in kwargs.items()]
-
-            execute_res = self._tools_execution_format.format_map(
-                {
-                    "index": i + 1,
-                    "function_name": cmd["name"],
-                    "arguments": "\n\t\t".join(arguments),
-                    "status": status,
-                    "result": func_res.content,
-                },
-            )
-
-            execute_results.append(execute_res)
-
-        execute_results_prompt = "\n".join(execute_results)
-
-        return execute_results_prompt
+        return ToolResultBlock(
+            type="tool_result",
+            id=tool_call["id"],
+            name=tool_call["name"],
+            output=func_res.content,
+        )
 
     def parse_and_call_func(
         self,
-        text_cmd: Union[list[dict], str],
+        tool_calls: Union[ToolUseBlock, list[ToolUseBlock]],
+        tools_api_mode: bool = False,
         raise_exception: bool = False,
     ) -> Msg:
-        """Parse, check the text and call the function."""
+        """Execute the tool functions with the given arguments, and return the
+        execution results.
 
-        try:
-            # --- Step 1: Parse the text according to the tools_call_format
-            cmds = self._parse_and_check_text(text_cmd)
+        Args:
+            tool_calls (`Union[ToolUseBlock, list[ToolUseBlock]]`):
+                A or a list of tool use blocks indicating the function calls.
+            tools_api_mode (`bool`, defaults to `False`):
+                If `False`, the execution results will be combined into a
+                string content. If `True`, the results will be `ContentBlock`
+                objects.
+            raise_exception (`bool`, defaults to `False`):
+                Whether to raise exceptions when the function call fails. If
+                set to `False`, the error message will be wrapped in the
+                `ToolResultBlock` and returned.
 
-            # --- Step 2: Call the service function ---
+        Returns:
+            `list[ToolResultBlock]`:
+                A list of tool result blocks indicating the results of the
+                function calls.
+        """
+        if isinstance(tool_calls, dict):
+            tool_calls = [tool_calls]
 
-            execute_results_prompt = self._execute_func(cmds)
+        assert isinstance(tool_calls, list) and all(
+            isinstance(_, dict) for _ in tool_calls
+        ), f"tool_calls should be a list of dict, but got {tool_calls}."
 
-        except FunctionCallError as e:
-            # Catch the function calling error that can be handled by
-            # the model
-            if raise_exception:
-                raise e from None
+        tool_results: list[ContentBlock] = []
+        for tool_call in tool_calls:
+            try:
+                # --- Step 1: Parse the text according to the tools_call_format
+                self._check_tool_use_block(tool_call)
 
-            execute_results_prompt = str(e)
+                # --- Step 2: Call the service function ---
+                tool_results.append(
+                    self._execute_func(tool_call),
+                )
 
-        return Msg("system", execute_results_prompt, "system")
+            except FunctionCallError as e:
+                if raise_exception:
+                    raise e from None
+
+                tool_results.append(
+                    ToolResultBlock(
+                        type="tool_result",
+                        id=str(tool_call["id"]),
+                        name=str(tool_call["name"]),
+                        output=str(e),
+                    ),
+                )
+
+        if not tools_api_mode:
+            # When you're managing tools calling prompt manually, the blocks
+            # should be transformed into string format. So that in the format
+            # function (both chat and multi-agent scenarios) it will be
+            # displayed as a string.
+
+            content = "\n".join(
+                [
+                    self._tools_execution_format.format(
+                        index=i + 1,
+                        function_name=_["name"],
+                        arguments=json.dumps(
+                            tool_calls[i]["input"],
+                            ensure_ascii=False,
+                        ),
+                        result=_["output"],
+                    )
+                    for i, _ in enumerate(tool_results)
+                ],
+            )
+
+            return Msg(
+                "system",
+                content=content,
+                role="system",
+            )
+        else:
+            # When you're using tools API, you need to keep the blocks in the
+            # content. So that in the format function, the blocks will be
+            # formatted to the required dictionary format.
+            return Msg(
+                "system",
+                content=tool_results,
+                role="system",
+            )
 
     @classmethod
     def get(
@@ -668,164 +665,6 @@ class ServiceToolkit:
             "function": {
                 "name": service_func.__name__,
                 "description": func_description.strip(),
-                "parameters": {
-                    "type": "object",
-                    "properties": properties_field,
-                    "required": args_required,
-                },
-            },
-        }
-
-        return tool_func, func_dict
-
-
-class ServiceFactory:
-    """A service factory class that turns service function into string
-    prompt format."""
-
-    @classmethod
-    def get(
-        cls,
-        service_func: Callable[..., Any],
-        **kwargs: Any,
-    ) -> Tuple[Callable[..., Any], dict]:
-        """Convert a service function into a tool function that agent can
-        use, and generate a dictionary in JSON Schema format that can be
-        used in OpenAI API directly. While for open-source model, developers
-        should handle the conversation from json dictionary to prompt.
-
-        Args:
-            service_func (`Callable[..., Any]`):
-                The service function to be called.
-            kwargs (`Any`):
-                The arguments to be passed to the service function.
-
-        Returns:
-            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
-            a dict in JSON Schema format to describe the function.
-
-        Note:
-            The description of the function and arguments are extracted from
-            its docstring automatically, which should be well-formatted in
-            **Google style**. Otherwise, their descriptions in the returned
-            dictionary will be empty.
-
-        Suggestions:
-            1. The name of the service function should be self-explanatory,
-            so that the agent can understand the function and use it properly.
-            2. The typing of the arguments should be provided when defining
-            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
-            the agent can specify the arguments properly.
-
-        Example:
-
-            .. code-block:: python
-
-                def bing_search(query: str, api_key: str, num_results: int=10):
-                    '''Search the query in Bing search engine.
-
-                    Args:
-                        query (str):
-                            The string query to search.
-                        api_key (str):
-                            The API key for Bing search.
-                        num_results (int):
-                            The number of results to return, default to 10.
-                    '''
-                    pass
-
-
-        """
-        logger.warning(
-            "The service factory will be deprecated in the future."
-            " Try to use the `ServiceToolkit` class instead.",
-        )
-
-        # Get the function for agent to use
-        tool_func = partial(service_func, **kwargs)
-
-        # Obtain all arguments of the service function
-        argsspec = inspect.getfullargspec(service_func)
-
-        # Construct the mapping from arguments to their typings
-        if parse is None:
-            raise ImportError(
-                "Missing required package `docstring_parser`"
-                "Please install it by "
-                "`pip install docstring_parser`.",
-            )
-
-        docstring = parse(service_func.__doc__)
-
-        # Function description
-        short_description = docstring.short_description or ""
-        long_description = docstring.long_description or ""
-        func_description = "\n".join([short_description, long_description])
-
-        # The arguments that requires the agent to specify
-        # we remove the self argument, for class methods
-        args_agent = set(argsspec.args) - set(kwargs.keys()) - {"self", "cls"}
-
-        # Check if the arguments from agent have descriptions in docstring
-        args_description = {
-            _.arg_name: _.description for _ in docstring.params
-        }
-
-        # Prepare default values
-        if argsspec.defaults is None:
-            args_defaults = {}
-        else:
-            args_defaults = dict(
-                zip(
-                    reversed(argsspec.args),
-                    reversed(argsspec.defaults),  # type: ignore
-                ),
-            )
-
-        args_required = sorted(
-            list(set(args_agent) - set(args_defaults.keys())),
-        )
-
-        # Prepare types of the arguments, remove the return type
-        args_types = {
-            k: v for k, v in argsspec.annotations.items() if k != "return"
-        }
-
-        # Prepare argument dictionary
-        properties_field = {}
-        for key in args_agent:
-            arg_property = {}
-            # type
-            if key in args_types:
-                try:
-                    required_type = _get_type_str(args_types[key])
-                    arg_property["type"] = required_type
-                except Exception:
-                    logger.warning(
-                        f"Fail and skip to get the type of the "
-                        f"argument `{key}`.",
-                    )
-
-                # For Literal type, add enum field
-                if get_origin(args_types[key]) is Literal:
-                    arg_property["enum"] = list(args_types[key].__args__)
-
-            # description
-            if key in args_description:
-                arg_property["description"] = args_description[key]
-
-            # default
-            if key in args_defaults and args_defaults[key] is not None:
-                arg_property["default"] = args_defaults[key]
-
-            properties_field[key] = arg_property
-
-        # Construct the JSON Schema for the service function
-        func_dict = {
-            "type": "function",
-            "function": {
-                "name": service_func.__name__,
-                "description": func_description,
                 "parameters": {
                     "type": "object",
                     "properties": properties_field,

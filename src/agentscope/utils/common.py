@@ -310,6 +310,53 @@ def _to_openai_image_url(url: str) -> str:
             mime_type = f"image/{extension}"
             return f"data:{mime_type};base64,{base64_image}"
 
+    raise TypeError(f'"{url}" should end with {support_image_extensions}.')
+
+
+def _to_anthropic_image_url(url: str) -> Union[str, dict]:
+    """Convert an image url to anthropic format. If the given url is a local
+    file, it will be converted to base64 format. Otherwise, it will be
+    returned directly.
+
+    Args:
+        url (`str`):
+            The local or public url of the image.
+    """
+    # See https://platform.openai.com/docs/guides/vision for details of
+    # support image extensions.
+    support_image_extensions = (
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+    )
+
+    parsed_url = urlparse(url)
+
+    lower_url = url.lower()
+
+    # Online web url
+    if not os.path.exists(url) and parsed_url.scheme != "":
+        if any(lower_url.endswith(_) for _ in support_image_extensions):
+            return url
+
+    # Check if it is a local file
+    elif os.path.exists(url) and os.path.isfile(url):
+        if any(lower_url.endswith(_) for _ in support_image_extensions):
+            with open(url, "rb") as image_file:
+                base64_image = base64.b64encode(image_file.read()).decode(
+                    "utf-8",
+                )
+            extension = parsed_url.path.lower().split(".")[-1]
+            if extension == "jpg":
+                extension = "jpeg"
+            mime_type = f"image/{extension}"
+            return {
+                "type": "base64",
+                "media_type": f"image/{extension}",
+                "data": f"data:{mime_type};base64,{base64_image}",
+            }
+
     raise TypeError(f"{url} should be end with {support_image_extensions}.")
 
 

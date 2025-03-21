@@ -5,7 +5,7 @@ from typing import Optional, Union, Sequence, Any
 from loguru import logger
 
 from ..message import Msg
-from .agent import AgentBase
+from ._agent import AgentBase
 
 
 class DialogAgent(AgentBase):
@@ -25,7 +25,7 @@ class DialogAgent(AgentBase):
         Arguments:
             name (`str`):
                 The name of the agent.
-            sys_prompt (`Optional[str]`):
+            sys_prompt (`str`):
                 The system prompt of the agent, which can be passed by args
                 or hard-coded in the agent.
             model_config_name (`str`):
@@ -66,7 +66,13 @@ class DialogAgent(AgentBase):
 
         # prepare prompt
         prompt = self.model.format(
-            Msg("system", self.sys_prompt, role="system"),
+            Msg(
+                "system",
+                self.sys_prompt,
+                role="system",
+            )
+            if self.sys_prompt
+            else None,
             self.memory
             and self.memory.get_memory()
             or x,  # type: ignore[arg-type]

@@ -3,16 +3,16 @@
 import json
 import time
 from abc import ABC
-from typing import Any, Union, Sequence, List, Optional
+from typing import Any, Union, List, Optional
 
 import requests
 from loguru import logger
 
-from .openai_model import OpenAIChatWrapper
 from .model import ModelWrapperBase, ModelResponse
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_MESSAGES_KEY
 from ..constants import _DEFAULT_RETRY_INTERVAL
+from ..formatters import OpenAIFormatter, GeminiFormatter, CommonFormatter
 from ..message import Msg
 
 
@@ -195,17 +195,22 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict]]:
         """Format the input messages into a list of dict according to the model
         name. For example, if the model name is prefixed with "gpt-", the
         input messages will be formatted for OpenAI models.
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `Union[List[dict]]`:
@@ -218,22 +223,17 @@ class PostAPIChatWrapper(PostAPIModelWrapperBase):
         )
 
         # OpenAI
-        if model_name and model_name.startswith("gpt-"):
-            return OpenAIChatWrapper.static_format(
-                *args,
-                model_name=model_name,
-            )
+        if OpenAIFormatter.is_supported_model(model_name or ""):
+            return OpenAIFormatter.format_multi_agent(*args)
 
         # Gemini
-        elif model_name and model_name.startswith("gemini"):
-            from .gemini_model import GeminiChatWrapper
-
-            return GeminiChatWrapper.format(*args)
+        if GeminiFormatter.is_supported_model(model_name or ""):
+            return GeminiFormatter.format_multi_agent(*args)
 
         # Include DashScope, ZhipuAI, Ollama, the other models supported by
         # litellm and unknown models
         else:
-            return ModelWrapperBase.format_for_common_chat_models(*args)
+            return CommonFormatter.format_multi_agent(*args)
 
 
 class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
@@ -251,16 +251,6 @@ class PostAPIDALLEWrapper(PostAPIModelWrapperBase):
             raise ValueError(f"Error in API call:\n{error_msg}")
         urls = [img["url"] for img in response["data"]["response"]["data"]]
         return ModelResponse(image_urls=urls)
-
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
 
 
 class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
@@ -310,14 +300,4 @@ class PostAPIEmbeddingWrapper(PostAPIModelWrapperBase):
         return ModelResponse(
             embedding=embeddings,
             raw=response,
-        )
-
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
         )

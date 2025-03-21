@@ -3,6 +3,7 @@
 import json
 from typing import Optional, Sequence, Any, Generator, Union, Tuple
 
+from ..message import ToolUseBlock
 from ..utils.common import _is_json_serializable
 
 
@@ -15,12 +16,13 @@ class ModelResponse:
 
     def __init__(
         self,
-        text: str = None,
-        embedding: Sequence = None,
-        image_urls: Sequence[str] = None,
+        text: Optional[str] = None,
+        embedding: Optional[Sequence] = None,
+        image_urls: Optional[Sequence[str]] = None,
         raw: Any = None,
-        parsed: Any = None,
+        parsed: Optional[Any] = None,
         stream: Optional[Generator[str, None, None]] = None,
+        tool_calls: Optional[list[ToolUseBlock]] = None,
     ) -> None:
         """Initialize the model response.
 
@@ -37,6 +39,8 @@ class ModelResponse:
                 The parsed data returned by the model.
             stream (`Generator`, optional):
                 The stream data returned by the model.
+            tool_calls (`Optional[list[dict]]`, defaults to `None`):
+                The tool calls made by the model.
         """
         self._text = text
         self.embedding = embedding
@@ -44,10 +48,11 @@ class ModelResponse:
         self.raw = raw
         self.parsed = parsed
         self._stream = stream
+        self.tool_calls = tool_calls
         self._is_stream_exhausted = False
 
     @property
-    def text(self) -> str:
+    def text(self) -> Union[str, None]:
         """Return the text field. If the stream field is available, the text
         field will be updated accordingly."""
         if self._text is None:

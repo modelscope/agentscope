@@ -5,9 +5,11 @@ https://arxiv.org/abs/2210.03629.
 """
 from typing import Optional, Union, Sequence
 
+from shortuuid import uuid
+
 from agentscope.exception import ResponseParsingError
 from agentscope.agents import AgentBase
-from agentscope.message import Msg
+from agentscope.message import Msg, ToolUseBlock
 from agentscope.parsers import RegexTaggedContentParser
 from agentscope.service import (
     ServiceToolkit,
@@ -125,54 +127,28 @@ class ReActAgent(AgentBase):
 
         for _ in range(self.max_iters):
             # Step 1: Reasoning: decide what function to call
-            function_call = self._reasoning()
+            tool_call = self._reasoning()
 
-            if function_call is None:
+            if tool_call is None:
                 # Meet parsing error, skip acting to reason the parsing error,
                 # which has been stored in memory
                 continue
 
-            # Return the response directly if calling `finish` function.
-            # If the argument "response" doesn't exist, we leave the error
-            # handling in the acting step.
-            if (
-                function_call["function"] == "finish"
-                and "response" in function_call
-            ):
-                return Msg(
-                    self.name,
-                    function_call["response"],
-                    "assistant",
-                    echo=not self.verbose,
-                )
-
             # Step 2: Acting: execute the function accordingly
-            self._acting(function_call)
+            msg_finish = self._acting(tool_call)
+            if msg_finish:
+                return msg_finish
 
-        # When exceeding the max iterations
-        hint_msg = Msg(
-            "system",
-            "You have failed to generate response within the maximum "
-            "iterations. Now respond directly by summarizing the current "
-            "situation.",
-            role="system",
-            echo=self.verbose,
-        )
+        # Generate a response when exceeding the maximum iterations
+        return self._summarizing()
 
-        # Generate a reply by summarizing the current situation
-        prompt = self.model.format(self.memory.get_memory(), hint_msg)
-        res = self.model(prompt)
-        self.speak(res.stream or res.text)
-        res_msg = Msg(self.name, res.text, "assistant")
-        return res_msg
-
-    def _reasoning(self) -> Union[dict, None]:
+    def _reasoning(self) -> Union[ToolUseBlock, None]:
         """The reasoning process of the agent.
 
         Returns:
-            `Union[dict, None]`:
-                Return `None` if meet parsing error, otherwise return the
-                parsed function call dictionary.
+            `Union[ToolUseBlock, None]`:
+                Return `None` if no tool is used, otherwise return the tool use
+                block.
         """
         # Assemble the prompt
         prompt = self.model.format(
@@ -192,10 +168,23 @@ class ReActAgent(AgentBase):
             self.speak(raw_response.stream or raw_response.text)
         self.memory.add(Msg(self.name, raw_response.text, role="assistant"))
 
-        # Try to parse the response into function calling commands
+        # Try to parse the response into tool use block
         try:
             res = self.parser.parse(raw_response)
-            return res.parsed
+            # Compose into a tool use block
+            function_name: str = res.parsed["function"]
+            input_ = {
+                k: v
+                for k, v in res.parsed.items()
+                if k not in ["function", "thought"]
+            }
+
+            return ToolUseBlock(
+                type="tool_use",
+                id=uuid,
+                name=function_name,
+                input=input_,
+            )
 
         except ResponseParsingError as e:
             # When failed to parse the response, return the error message to
@@ -203,31 +192,56 @@ class ReActAgent(AgentBase):
             self.memory.add(Msg("system", str(e), "system", echo=self.verbose))
             return None
 
-    def _acting(self, function_call: dict) -> None:
-        """The acting process of the agent."""
+    def _acting(self, tool_call: ToolUseBlock) -> Union[None, Msg]:
+        """The acting process of the agent, which takes a tool use block as
+        input, execute the function and return a message if the `finish`
+        function is called.
 
-        # Assemble the function call into the format that the toolkit requires
-        function_name = function_call["function"]
-        arguments = {
-            k: v
-            for k, v in function_call.items()
-            if k not in ["function", "thought"]
-        }
+        Args:
+            tool_call (`ToolUseBlock`):
+                The tool use block to be executed.
 
-        formatted_function_call = [
-            {
-                "name": function_name,
-                "arguments": arguments,
-            },
-        ]
-
+        Returns:
+            `Union[None, Msg]`:
+                Return `None` if the function is not `finish`, otherwise return
+                a message to the user.
+        """
         # The execution message, may be execution output or error information
-        msg_execution = self.service_toolkit.parse_and_call_func(
-            formatted_function_call,
-        )
+        msg_execution = self.service_toolkit.parse_and_call_func(tool_call)
+
         if self.verbose:
             self.speak(msg_execution)
         self.memory.add(msg_execution)
+
+        if tool_call["name"] == "finish":
+            return Msg(
+                self.name,
+                str(tool_call["input"]["response"]),
+                "assistant",
+            )
+        return None
+
+    def _summarizing(self) -> Msg:
+        """Generate a response when the agent fails to solve the problem in
+        the maximum iterations."""
+        hint_msg = Msg(
+            "user",
+            "You have failed to generate response within the maximum "
+            "iterations. Now respond directly by summarizing the current "
+            "situation.",
+            role="user",
+            echo=self.verbose,
+        )
+
+        # Generate a reply by summarizing the current situation
+        prompt = self.model.format(
+            self.memory.get_memory(),
+            hint_msg,
+        )
+        res = self.model(prompt)
+        self.speak(res.stream or res.text)
+        res_msg = Msg(self.name, res.text, "assistant")
+        return res_msg
 
     @staticmethod
     def finish(response: str) -> ServiceResponse:

@@ -31,21 +31,28 @@ class TestRetrieval(unittest.TestCase):
 
         dummy_model = DummyModel()
 
-        query = Msg(name="Lora", content="test query", role="assistant")
-        query.embedding = [0, 1]
+        query = Msg(
+            name="Lora",
+            content="test query",
+            role="assistant",
+            metadata=[0, 1],
+        )
         query.timestamp = "2023-12-18 21:40:59"
-        m1 = Msg(name="env", content="test", role="assistant")
-        m1.embedding = [1, 0]
+        m1 = Msg(name="env", content="test", role="assistant", metadata=[1, 0])
         m1.timestamp = "2023-12-18 21:45:59"
-        m2 = Msg(name="env", content="test2", role="assistant")
-        m2.embedding = [0.5, 0.5]
+        m2 = Msg(
+            name="env",
+            content="test2",
+            role="assistant",
+            metadata=[0.5, 0.5],
+        )
         m2.timestamp = "2023-12-18 21:50:59"
         memory = TemporaryMemory(embedding_model=dummy_model)
         memory.add(m1)
         memory.add(m2)
 
         def score_func(m1: Msg, m2: Msg) -> float:
-            relevance = cos_sim(m1.embedding, m2.embedding).content
+            relevance = cos_sim(m1.metadata, m2.metadata).content
             time_gap = (
                 datetime.strptime(m1.timestamp, "%Y-%m-%d %H:%M:%S")
                 - datetime.strptime(m2.timestamp, "%Y-%m-%d %H:%M:%S")

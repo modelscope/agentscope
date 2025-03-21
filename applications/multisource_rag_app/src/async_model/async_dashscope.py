@@ -21,6 +21,7 @@ class AsyncDashScopeChatWrapper(DashScopeChatWrapper):
         self,
         messages: list,
         stream: Optional[bool] = False,
+        tools: Optional[list[dict]] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """

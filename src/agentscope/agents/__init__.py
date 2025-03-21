@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """ Import all agent related modules in the package. """
-from .agent import AgentBase
-from .operator import Operator
-from .dialog_agent import DialogAgent
-from .dict_dialog_agent import DictDialogAgent
-from .user_agent import UserAgent
-from .react_agent import ReActAgent
-from .rag_agent import LlamaIndexAgent
+from ._agent import AgentBase
+from ._operator import Operator
+from ._dialog_agent import DialogAgent
+from ._dict_dialog_agent import DictDialogAgent
+from ._user_agent import UserAgent
+from ._react_agent import ReActAgent
+from ._react_agent_v2 import ReActAgentV2
+from ._rag_agent import LlamaIndexAgent
 
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "DictDialogAgent",
     "UserAgent",
     "ReActAgent",
+    "ReActAgentV2",
     "LlamaIndexAgent",
 ]
