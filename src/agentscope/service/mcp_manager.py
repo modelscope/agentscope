@@ -7,10 +7,12 @@ and close sessions, as well as execute various tools provided by an MCP server.
 import asyncio
 import os
 import shutil
+import sys
 import traceback
 from contextlib import AsyncExitStack
 from functools import wraps
 from typing import Any, Optional, Callable, Tuple
+import nest_asyncio
 
 from anyio.streams.memory import (
     MemoryObjectReceiveStream,
@@ -54,21 +56,34 @@ def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
         else:
             raise
 
+    # Apply nest_asyncio in Jupyter environments to allow nested event loops
+    if "ipykernel" in sys.modules:
+        nest_asyncio.apply(loop)
+
     if loop.is_running():
-        logger.warning(
-            "Event loop is running, using "
-            "`run_coroutine_threadsafe`, which will block the "
-            f"process until the func `{func.__name__}` is finished. "
-            f"This operation has a timeout of {COROUTINE_TIMEOUT_SECONDS} "
-            "seconds and might not work as expected in Jupyter Notebook.",
-        )
-        results = asyncio.run_coroutine_threadsafe(
-            func(*args, **kwargs),
-            loop,
-        ).result(timeout=COROUTINE_TIMEOUT_SECONDS)
+        # Attempt to run directly after applying nest_asyncio
+        try:
+            result = loop.run_until_complete(func(*args, **kwargs))
+        except RuntimeError as e:
+            if "This event loop is already running" in str(e):
+                logger.warning(
+                    "Event loop is running, using "
+                    "`run_coroutine_threadsafe`, which will block the "
+                    f"process until the func `{func.__name__}` is finished. "
+                    f"This operation has a timeout of"
+                    f" {COROUTINE_TIMEOUT_SECONDS} seconds.",
+                )
+
+                # Fallback to thread-safe execution with timeout
+                result = asyncio.run_coroutine_threadsafe(
+                    func(*args, **kwargs),
+                    loop,
+                ).result(timeout=COROUTINE_TIMEOUT_SECONDS)
+            else:
+                raise
     else:
-        results = loop.run_until_complete(func(*args, **kwargs))
-    return results
+        result = loop.run_until_complete(func(*args, **kwargs))
+    return result
 
 
 def session_decorator(func: Callable) -> Callable:
