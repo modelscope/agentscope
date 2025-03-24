@@ -381,9 +381,10 @@ class PlaceHolderNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines.functional import "
-            "placeholder",
-            "inits": f"{self.var_name} = placeholder",
+            "imports": (
+                "from agentscope.web.workstation._utils import _placeholder"
+            ),
+            "inits": f"{self.var_name} = _placeholder",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
@@ -453,8 +454,11 @@ class ForLoopPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines import ForLoopPipeline",
-            "inits": f"{self.var_name} = ForLoopPipeline("
+            "imports": (
+                "from agentscope.web.workstation._utils import "
+                "_ForLoopPipeline"
+            ),
+            "inits": f"{self.var_name} = _ForLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
             f" {kwarg_converter(self.source_kwargs)})",
@@ -494,8 +498,11 @@ class WhileLoopPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines import WhileLoopPipeline",
-            "inits": f"{self.var_name} = WhileLoopPipeline("
+            "imports": (
+                "from agentscope.web.workstation._utils import "
+                "_WhileLoopPipeline"
+            ),
+            "inits": f"{self.var_name} = _WhileLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
             f" {kwarg_converter(self.source_kwargs)})",
@@ -541,19 +548,21 @@ class IfElsePipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        imports = "from agentscope.pipelines import IfElsePipeline"
+        imports = (
+            "from agentscope.web.workstation._utils import _IfElsePipeline"
+        )
         execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         if len(self.dep_vars) == 1:
             return {
                 "imports": imports,
-                "inits": f"{self.var_name} = IfElsePipeline("
+                "inits": f"{self.var_name} = _IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]})",
                 "execs": execs,
             }
         elif len(self.dep_vars) == 2:
             return {
                 "imports": imports,
-                "inits": f"{self.var_name} = IfElsePipeline("
+                "inits": f"{self.var_name} = _IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]}, "
                 f"else_body_operators={self.dep_vars[1]})",
                 "execs": execs,
@@ -588,7 +597,7 @@ class SwitchPipelineNode(WorkflowNode):
         if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
             # No default_operators provided
             default_operators = _placeholder
-            self.default_var_name = "placeholder"
+            self.default_var_name = "_placeholder"
         elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
             # default_operators provided
             default_operators = self.dep_opts.pop(-1)
@@ -619,13 +628,13 @@ class SwitchPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         imports = (
-            "from agentscope.pipelines import SwitchPipeline\n"
-            "from agentscope.pipelines.functional import placeholder"
+            "from agentscope.web.workstation._utils import _SwitchPipeline\n"
+            "from agentscope.web.workstation._utils import _placeholder"
         )
         execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         return {
             "imports": imports,
-            "inits": f"{self.var_name} = SwitchPipeline(case_operators="
+            "inits": f"{self.var_name} = _SwitchPipeline(case_operators="
             f"{dict_converter(self.case_operators_var)}, "
             f"default_operators={self.default_var_name},"
             f" {kwarg_converter(self.source_kwargs)})",
