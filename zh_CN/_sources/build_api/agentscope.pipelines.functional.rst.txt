@@ -1,7 +1,0 @@
-agentscope.pipelines.functional module
-======================================
-
-.. automodule:: agentscope.pipelines.functional
-   :members:
-   :undoc-members:
-   :show-inheritance:

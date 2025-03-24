@@ -7,7 +7,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prompt Engineering &mdash; AgentScope Doc  documentation</title>
+  <title>Prompt Formatting &mdash; AgentScope Doc  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
@@ -78,9 +78,9 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Prompt Engineering</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#using-built-in-strategy">Using Built-in Strategy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#non-vision-models">Non-Vision Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Prompt Formatting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#model-agnostic-formatting">Model-Agnostic Formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-specific-formatting">Model-Specific Formatting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#vision-models">Vision Models</a></li>
 </ul>
 </li>
@@ -135,7 +135,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Prompt Engineering</li>
+      <li class="breadcrumb-item active">Prompt Formatting</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/build_tutorial/prompt.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -150,35 +150,63 @@
 <p><a class="reference internal" href="#sphx-glr-download-build-tutorial-prompt-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="prompt-engineering">
-<span id="sphx-glr-build-tutorial-prompt-py"></span><span id="id1"></span><h1>Prompt Engineering<a class="headerlink" href="#prompt-engineering" title="Link to this heading"></a></h1>
-<p>The prompt engineering is a crucial part of LLM-empowered applications,
-especially for the multi-agent ones.
-However, most API providers focus on the chatting scenario, where a user and
-an assistant speak alternately.</p>
-<p>To support multi-agent applications, AgentScope builds different prompt
-strategies to convert a list of <cite>Msg</cite> objects to the required format.</p>
+<section class="sphx-glr-example-title" id="prompt-formatting">
+<span id="prompt-engineering"></span><span id="sphx-glr-build-tutorial-prompt-py"></span><h1>Prompt Formatting<a class="headerlink" href="#prompt-formatting" title="Link to this heading"></a></h1>
+<p>AgentScope supports developers to build prompt that fits different model APIs
+by providing a set of built-in strategies for both chat and multi-agent
+scenarios.</p>
+<p>Specifically, AgentScope supports both model-specific and model-agnostic
+formatting.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Chat scenario</strong> refers to the conversation between a user and an
+assistant, while <strong>multi-agent scenario</strong> involves multiple agents with
+different names (though their roles are all “assistant”).</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>There is no <strong>one-size-fits-all</strong> solution for prompt crafting.
+<p>Currently, most LLM API providers only support chat scenario. For
+example, only two roles (user and assistant) are involved in the conversation
+and sometimes they must speak alternatively.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no <strong>one-size-fits-all</strong> solution for prompt formatting.
 The goal of built-in strategies is to <strong>enable beginners to smoothly invoke
-the model API, rather than achieve the best performance</strong>.
+the model API, rather than achieving the best performance</strong>.
 For advanced users, we highly recommend developers to customize prompts
 according to their needs and model API requirements.</p>
 </div>
-<section id="using-built-in-strategy">
-<h2>Using Built-in Strategy<a class="headerlink" href="#using-built-in-strategy" title="Link to this heading"></a></h2>
-<p>The built-in prompt strategies are implemented in the <cite>format</cite> method of the
-model objects. Taking DashScope Chat API as an example:</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
+<section id="model-agnostic-formatting">
+<h2>Model-Agnostic Formatting<a class="headerlink" href="#model-agnostic-formatting" title="Link to this heading"></a></h2>
+<p>When you want your application to work with different model APIs
+simultaneously, the model-agnostic formatting is a good idea.</p>
+<p>AgentScope achieves model-agnostic formatting by supporting to load the model
+from configuration, and presets a collection of built-in formatting strategies
+for different model APIs and scenarios (chat or multi-agent) in the
+model wrapper class.</p>
+<p>You can directly use the <cite>format</cite> method of the model object to format the
+input messages without knowing the details of the model API. Taking DashScope
+Chat API as an example:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
-    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+<span class="c1"># Load the model configuration</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_qwen&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
 <span class="p">)</span>
+
+<span class="c1"># Get the model object from model manager</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span><span class="s2">&quot;my_qwen&quot;</span><span class="p">)</span>
 
 <span class="c1"># `Msg` objects or a list of `Msg` objects can be passed to the `format` method</span>
 <span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -187,6 +215,7 @@ model objects. Taking DashScope Chat API as an example:</p>
         <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
         <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Nice to meet you!&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">),</span>
     <span class="p">],</span>
+    <span class="n">multi_agent_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
@@ -198,8 +227,12 @@ model objects. Taking DashScope Chat API as an example:</p>
         &quot;content&quot;: &quot;You&#39;re a helpful assistant.&quot;
     },
     {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;content&quot;: &quot;Hi!&quot;
+    },
+    {
         &quot;role&quot;: &quot;user&quot;,
-        &quot;content&quot;: &quot;## Conversation History\nassistant: Hi!\nuser: Nice to meet you!&quot;
+        &quot;content&quot;: &quot;Nice to meet you!&quot;
     }
 ]
 </pre></div>
@@ -214,93 +247,448 @@ object.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Nice to meet you too! How can I assist you today?
 </pre></div>
 </div>
-</section>
-<section id="non-vision-models">
-<h2>Non-Vision Models<a class="headerlink" href="#non-vision-models" title="Link to this heading"></a></h2>
-<p>In the following table, we list the built-in prompt strategies, as well as
-the prefix of supported LLMs.</p>
-<p>Taking the following messages as an example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
-<span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
-<span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Nice to meet you!&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<p>Also, you can use format the messages in the multi-agent scenario by
+setting <cite>multi_agent_mode=True</cite>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
+    <span class="p">[</span>
+        <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+        <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Nice to meet you!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">multi_agent_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 </pre></div>
 </div>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>LLMs</p></th>
-<th class="head"><p><cite>model_name</cite></p></th>
-<th class="head"><p>Constructed Prompt</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>OpenAI LLMs</p></td>
-<td><p><cite>gpt-</cite></p></td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi!&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bob&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Nice to meet you!&quot;</span>
-    <span class="p">}</span>
-<span class="p">]</span>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;content&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;## Conversation History\nAlice: Hi!\nBob: Nice to meet you!&quot;
+    }
+]
 </pre></div>
 </div>
-</td>
-</tr>
-<tr class="row-odd"><td><p>Gemini LLMs</p></td>
-<td><p><cite>gemini-</cite></p></td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;You&#39;re a helpful assistant named Alice.</span><span class="se">\\</span><span class="s2">n## Conversation History</span><span class="se">\\</span><span class="s2">nAlice: Hi!</span><span class="se">\\</span><span class="s2">nBob: Nice to meet you!&quot;</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">]</span>
+<p>Within the agent, the model-agnostic formatting is achieved as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">model_config_name</span><span class="o">=</span><span class="n">model_config_name</span><span class="p">)</span>
+
+        <span class="c1"># ...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="c1"># ...</span>
+
+        <span class="c1"># Format the messages without knowing the model API</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;{your system prompt}&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+            <span class="n">multi_agent_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># ...</span>
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</td>
-</tr>
-<tr class="row-even"><td><p>All other LLMs</p>
-<p>(e.g. DashScope, ZhipuAI …)</p>
-</td>
-<td></td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;## Conversation History</span><span class="se">\\</span><span class="s2">nAlice: Hi!</span><span class="se">\\</span><span class="s2">nBob: Nice to meet you!&quot;</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Considering some API libraries can support different LLMs (such as OpenAI Python library), AgentScope uses the <cite>model_name</cite> field to distinguish different models and decides the used strategy.</p>
+<p>All the formatting strategies are implemented under</p>
 </div>
+<p><cite>agentscope.formatter</cite> module. The model wrapper decides which strategy to
+use based on the model name.</p>
+</section>
+<section id="model-specific-formatting">
+<h2>Model-Specific Formatting<a class="headerlink" href="#model-specific-formatting" title="Link to this heading"></a></h2>
+<p>The <cite>agentscope.formatter</cite> module implements the built-in formatting
+strategies for different model APIs and scenarios. They provide
+<cite>format_chat</cite> and <cite>format_multi_agent</cite> methods, as well as a <cite>format_auto</cite>
+function that automatically selects the appropriate method based on the
+input messages.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIFormatter</span>
+
+<span class="n">multi_agent_messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Nice to meet you!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Charlie&quot;</span><span class="p">,</span> <span class="s2">&quot;Nice to meet you, too!&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">chat_messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Nice to meet you!&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi! How can I help you?&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Multi-agent scenario:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">formatted_multi_agent</span> <span class="o">=</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span>
+    <span class="n">multi_agent_messages</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">formatted_multi_agent</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;name&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Alice&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Hi!&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Bob&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Nice to meet you!&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;name&quot;: &quot;Charlie&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Nice to meet you, too!&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<p>Chat scenario:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">formatted_chat</span> <span class="o">=</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span>
+    <span class="n">chat_messages</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">formatted_chat</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;name&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;name&quot;: &quot;Bob&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Nice to meet you!&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Alice&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Hi! How can I help you?&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<p>Auto formatting when only two entities are involved:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">formatted_auto_chat</span> <span class="o">=</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_auto</span><span class="p">(</span>
+    <span class="n">chat_messages</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">formatted_auto_chat</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;name&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;name&quot;: &quot;Bob&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Nice to meet you!&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Alice&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Hi! How can I help you?&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<p>Auto formatting when more than two entities (multi-agent) are involved:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">formatted_auto_multi_agent</span> <span class="o">=</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_auto</span><span class="p">(</span>
+    <span class="n">multi_agent_messages</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">formatted_auto_multi_agent</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;name&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Alice&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Hi!&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Bob&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Nice to meet you!&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;name&quot;: &quot;Charlie&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Nice to meet you, too!&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<p>The available formatter classes are:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.formatters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CommonFormatter</span><span class="p">,</span>
+    <span class="n">AnthropicFormatter</span><span class="p">,</span>
+    <span class="n">OpenAIFormatter</span><span class="p">,</span>
+    <span class="n">GeminiFormatter</span><span class="p">,</span>
+    <span class="n">DashScopeFormatter</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>CommonFormatter</cite> is a basic formatter for common chat LLMs, such as
+ZhipuAI API, Yi API, ollama, LiteLLM, etc.</p>
 </section>
 <section id="vision-models">
 <h2>Vision Models<a class="headerlink" href="#vision-models" title="Link to this heading"></a></h2>
-<p>For vision models, AgentScope currently supports OpenAI vision models and
-Dashscope multi modal API.
-The more supported APIs will be added in the future.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.589 seconds)</p>
+<p>For vision models, AgentScope currently supports OpenAI, DashScope and
+Anthropic vision models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextBlock</span><span class="p">,</span> <span class="n">ImageBlock</span>
+
+<span class="c1"># we create a fake image locally</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./image.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;fake image&quot;</span><span class="p">)</span>
+
+<span class="n">multi_modal_messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span>
+        <span class="s2">&quot;Alice&quot;</span><span class="p">,</span>
+        <span class="p">[</span>
+            <span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Help me to describe the two images?&quot;</span><span class="p">),</span>
+            <span class="n">ImageBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="p">),</span>
+            <span class="n">ImageBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;./image.jpg&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Sure!&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OpenAI prompt:&quot;</span><span class="p">)</span>
+<span class="n">openai_prompt</span> <span class="o">=</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="n">multi_modal_messages</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">openai_prompt</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>OpenAI prompt:
+[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;name&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;name&quot;: &quot;Alice&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Help me to describe the two images?&quot;
+            },
+            {
+                &quot;type&quot;: &quot;image_url&quot;,
+                &quot;image_url&quot;: {
+                    &quot;url&quot;: &quot;https://example.com/image.jpg&quot;
+                }
+            },
+            {
+                &quot;type&quot;: &quot;image_url&quot;,
+                &quot;image_url&quot;: {
+                    &quot;url&quot;: &quot;data:image/jpg;base64,ZmFrZSBpbWFnZQ==&quot;
+                }
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;name&quot;: &quot;Bob&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Sure!&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Dashscope prompt:&quot;</span><span class="p">)</span>
+<span class="n">dashscope_prompt</span> <span class="o">=</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="n">multi_modal_messages</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dashscope_prompt</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Dashscope prompt:
+[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;Help me to describe the two images?&quot;
+            },
+            {
+                &quot;image&quot;: &quot;https://example.com/image.jpg&quot;
+            },
+            {
+                &quot;image&quot;: &quot;./image.jpg&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;Sure!&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Anthropic prompt:&quot;</span><span class="p">)</span>
+<span class="n">anthropic_prompt</span> <span class="o">=</span> <span class="n">AnthropicFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="n">multi_modal_messages</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">anthropic_prompt</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Anthropic prompt:
+[
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Help me to describe the two images?&quot;
+            },
+            {
+                &quot;type&quot;: &quot;image&quot;,
+                &quot;source&quot;: &quot;https://example.com/image.jpg&quot;
+            },
+            {
+                &quot;type&quot;: &quot;image&quot;,
+                &quot;source&quot;: {
+                    &quot;type&quot;: &quot;base64&quot;,
+                    &quot;media_type&quot;: &quot;image/jpeg&quot;,
+                    &quot;data&quot;: &quot;data:image/jpeg;base64,ZmFrZSBpbWFnZQ==&quot;
+                }
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Sure!&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.369 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-prompt-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/65eb3332c49c4dfa3245de4159147f79/prompt.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">prompt.ipynb</span></code></a></p>

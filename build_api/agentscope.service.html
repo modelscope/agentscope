@@ -78,7 +78,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -526,8 +526,29 @@ the agent can specify the arguments properly.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.service.ServiceToolkit.parse_and_call_func">
-<span class="sig-name descname"><span class="pre">parse_and_call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.parse_and_call_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit.parse_and_call_func" title="Link to this definition"></a></dt>
-<dd><p>Parse, check the text and call the function.</p>
+<span class="sig-name descname"><span class="pre">parse_and_call_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tool_calls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tools_api_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.parse_and_call_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.ServiceToolkit.parse_and_call_func" title="Link to this definition"></a></dt>
+<dd><p>Execute the tool functions with the given arguments, and return the
+execution results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tool_calls</strong> (<cite>Union[ToolUseBlock, list[ToolUseBlock]]</cite>) – A or a list of tool use blocks indicating the function calls.</p></li>
+<li><p><strong>tools_api_mode</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – If <cite>False</cite>, the execution results will be combined into a
+string content. If <cite>True</cite>, the results will be <cite>ContentBlock</cite>
+objects.</p></li>
+<li><p><strong>raise_exception</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to raise exceptions when the function call fails. If
+set to <cite>False</cite>, the error message will be wrapped in the
+<cite>ToolResultBlock</cite> and returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of tool result blocks indicating the results of the
+function calls.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[ToolResultBlock]</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">

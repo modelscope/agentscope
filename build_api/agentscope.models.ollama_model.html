@@ -76,7 +76,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -172,7 +172,7 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for ollama Chat API.</p>
 <p>All messages will be formatted into a single system message with
 system prompt and conversation history.</p>
@@ -208,9 +208,14 @@ engineering strategies.
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
@@ -277,13 +282,6 @@ e.g. {“temperature”: 0, “seed”: 123}</p>
 </div>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaEmbeddingWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaEmbeddingWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaEmbeddingWrapper.format" title="Link to this definition"></a></dt>
-<dd><p>Format the input messages into the format that the model
-API required.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaEmbeddingWrapper.config_name">
 <span class="sig-name descname"><span class="pre">config_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.ollama_model.OllamaEmbeddingWrapper.config_name" title="Link to this definition"></a></dt>
@@ -346,25 +344,6 @@ e.g. {“temperature”: 0, “seed”: 123}</p>
 </div>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaGenerationWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaGenerationWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ollama_model.OllamaGenerationWrapper.format" title="Link to this definition"></a></dt>
-<dd><p>Forward the input to the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
-should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The formatted string prompt.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>str</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.ollama_model.OllamaGenerationWrapper.config_name">
 <span class="sig-name descname"><span class="pre">config_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.ollama_model.OllamaGenerationWrapper.config_name" title="Link to this definition"></a></dt>

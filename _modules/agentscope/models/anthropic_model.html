@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -140,16 +140,11 @@
   <h1>Source code for agentscope.models.anthropic_model</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The Anthropic model wrapper for AgentScope.&quot;&quot;&quot;</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Any</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnthropicFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">ToolUseBlock</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">_guess_type_by_extension</span><span class="p">,</span>
-    <span class="n">_is_web_url</span><span class="p">,</span>
-    <span class="n">_get_base64_from_image_path</span><span class="p">,</span>
-<span class="p">)</span>
 
 
 <div class="viewcode-block" id="AnthropicChatWrapper">
@@ -205,96 +200,34 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.anthropic_model.html#agentscope.models.AnthropicChatWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for anthropic model input.</span>
-
-<span class="sd">        TODO: Add support for multimodal input.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            *args (`Union[Msg, list[Msg]]`):</span>
 <span class="sd">                The message(s) to be formatted.</span>
+<span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
+<span class="sd">                the messages will be formatted in chat mode, where only a user</span>
+<span class="sd">                and an assistant roles are involved.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `list[dict[str, object]]`:</span>
 <span class="sd">                A list of formatted messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">format_for_common_chat_models</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">multi_agent_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">AnthropicFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AnthropicFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_format_msg_with_url</span><span class="p">(</span>
-        <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a message with image urls into the format that anthropic</span>
-<span class="sd">        LLM requires.</span>
-
-<span class="sd">        Refer to https://docs.anthropic.com/en/api/messages-examples</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            msg (`Msg`):</span>
-<span class="sd">                The message object to be formatted</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `dict[str, Union[str, list[dict]]]`:</span>
-<span class="sd">                The message in the required format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">url</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">msg</span><span class="o">.</span><span class="n">url</span>
-
-        <span class="n">image_urls</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">_guess_type_by_extension</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
-                <span class="n">image_urls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-
-        <span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">image_url</span> <span class="ow">in</span> <span class="n">image_urls</span><span class="p">:</span>
-            <span class="n">extension</span> <span class="o">=</span> <span class="n">image_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-            <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;jpeg&quot;</span> <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;jpg&quot;</span> <span class="k">else</span> <span class="n">extension</span>
-            <span class="k">if</span> <span class="n">extension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AnthropicChatWrapper</span><span class="o">.</span><span class="n">_supported_image_format</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Anthropic model only supports image formats &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AnthropicChatWrapper</span><span class="o">.</span><span class="n">_supported_image_format</span><span class="si">}</span><span class="s2">, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">_is_web_url</span><span class="p">(</span><span class="n">image_url</span><span class="p">):</span>
-                <span class="c1"># Download the image locally</span>
-                <span class="n">file_manager</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
-                <span class="n">image_url</span> <span class="o">=</span> <span class="n">file_manager</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
-
-            <span class="n">data_base64</span> <span class="o">=</span> <span class="n">_get_base64_from_image_path</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
-
-            <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="p">{</span>
-                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;base64&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;media_type&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;image/</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data_base64</span><span class="p">,</span>
-                        <span class="p">}</span>
-                        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">image_urls</span>
-                    <span class="p">],</span>
-                <span class="p">},</span>
-            <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
-                <span class="p">},</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches too-many-statements</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]]],</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2048</span><span class="p">,</span>
+        <span class="n">tools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the Anthropic model.</span>
@@ -311,6 +244,8 @@
 <span class="sd">                Enable streaming mode or not.</span>
 <span class="sd">            max_tokens (`int`, defaults to `2048`):</span>
 <span class="sd">                The max tokens in generation.</span>
+<span class="sd">            tools (`list[dict]`, defaults to `None`):</span>
+<span class="sd">                The tool functions to be used in the model.</span>
 <span class="sd">            **kwargs (`Any`):</span>
 <span class="sd">                The additional keyword arguments for the model.</span>
 
@@ -358,6 +293,9 @@
                 <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="n">max_tokens</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tools</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tools&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span>
 
         <span class="c1"># Extract the system message</span>
         <span class="k">if</span> <span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
@@ -438,18 +376,27 @@
             <span class="p">)</span>
 
             <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">tool_calls</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="c1"># Gather text from content blocks</span>
             <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="p">[]):</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span>
-                <span class="p">):</span>
+                <span class="n">typ</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
                     <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+                    <span class="n">tool_calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">ToolUseBlock</span><span class="p">(</span>
+                            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;tool_use&quot;</span><span class="p">,</span>
+                            <span class="nb">id</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                            <span class="nb">input</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
 
             <span class="c1"># Return the response</span>
             <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
                 <span class="n">text</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">texts</span><span class="p">),</span>
                 <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                <span class="n">tool_calls</span><span class="o">=</span><span class="n">tool_calls</span> <span class="k">if</span> <span class="n">tool_calls</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation_and_update_monitor</span><span class="p">(</span>
@@ -468,7 +415,53 @@
                 <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
                 <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                 <span class="n">completion_tokens</span><span class="o">=</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="AnthropicChatWrapper.format_tools_json_schemas">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.anthropic_model.html#agentscope.models.AnthropicChatWrapper.format_tools_json_schemas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_tools_json_schemas</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">schemas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the JSON schemas of the tool functions to the format that</span>
+<span class="sd">        the model API provider expects.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            An example of the input schemas parsed from the service toolkit</span>
+
+<span class="sd">            ..code-block:: json</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &quot;bing_search&quot;: {</span>
+<span class="sd">                        &quot;type&quot;: &quot;function&quot;,</span>
+<span class="sd">                        &quot;function&quot;: {</span>
+<span class="sd">                            &quot;name&quot;: &quot;bing_search&quot;,</span>
+<span class="sd">                            &quot;description&quot;: &quot;Search the web using Bing.&quot;,</span>
+<span class="sd">                            &quot;parameters&quot;: {</span>
+<span class="sd">                                &quot;type&quot;: &quot;object&quot;,</span>
+<span class="sd">                                &quot;properties&quot;: {</span>
+<span class="sd">                                    &quot;query&quot;: {</span>
+<span class="sd">                                        &quot;type&quot;: &quot;string&quot;,</span>
+<span class="sd">                                        &quot;description&quot;: &quot;The search query.&quot;,</span>
+<span class="sd">                                    }</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &quot;required&quot;: [&quot;query&quot;],</span>
+<span class="sd">                            }</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            schemas (`dict[str, dict]`):</span>
+<span class="sd">                The tools JSON schemas parsed from the service toolkit module,</span>
+<span class="sd">                which can be accessed by `service_toolkit.json_schemas`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list[dict]`:</span>
+<span class="sd">                The formatted JSON schemas of the tool functions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">AnthropicFormatter</span><span class="o">.</span><span class="n">format_tools_json_schemas</span><span class="p">(</span><span class="n">schemas</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
 

@@ -209,7 +209,7 @@ management, including adding, deleting and getting memory.
 
  .. code-block:: none
 
-    The current memory: [<agentscope.message.msg.Msg object at 0x7f7e58de6c20>, <agentscope.message.msg.Msg object at 0x7f7e58de6f50>, <agentscope.message.msg.Msg object at 0x7f7e58de7040>]
+    The current memory: [Msg(id='9a9e77781a4c4037a71ea7903e20c7a2', name='system', role='system', content="You're a helpful assistant named Jarvis.", metadata=None, timestamp='2025-03-24 06:14:08'), Msg(id='a6bf4b25457b4b2cb399af483ddb1985', name='Stank', role='user', content='Hi!', metadata=None, timestamp='2025-03-24 06:14:08'), Msg(id='9324b0d7e3374eedad3f9d9bb2bb7c96', name='Jarvis', role='assistant', content='How can I help you?', metadata=None, timestamp='2025-03-24 06:14:08')]
     The current size: 3
 
 
@@ -265,7 +265,7 @@ Delete the first message within the memory.
 
  .. code-block:: none
 
-    The memory after deletion: [<agentscope.message.msg.Msg object at 0x7f7e58de6f50>, <agentscope.message.msg.Msg object at 0x7f7e58de7040>]
+    The memory after deletion: [Msg(id='a6bf4b25457b4b2cb399af483ddb1985', name='Stank', role='user', content='Hi!', metadata=None, timestamp='2025-03-24 06:14:08'), Msg(id='9324b0d7e3374eedad3f9d9bb2bb7c96', name='Jarvis', role='assistant', content='How can I help you?', metadata=None, timestamp='2025-03-24 06:14:08')]
     The size after deletion: 2
 
 
@@ -332,7 +332,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.919 seconds)
+   **Total running time of the script:** (0 minutes 1.209 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_agent.py:

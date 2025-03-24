@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -207,6 +207,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ModelResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the response text to a json object, and fill it in the parsed</span>
 <span class="sd">        field in the response object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Raise this error to the developer</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The text field of the response is `None`&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="c1"># extract the content and try to fix the missing tags by hand</span>
         <span class="k">try</span><span class="p">:</span>
@@ -223,10 +228,10 @@
                 <span class="c1"># Fix the missing tags</span>
                 <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">missing_begin_tag</span><span class="p">:</span>
                     <span class="n">response_copy</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">tag_begin</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">response_copy</span><span class="o">.</span><span class="n">text</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">tag_begin</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">response_copy</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">missing_end_tag</span><span class="p">:</span>
-                    <span class="n">response_copy</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">response_copy</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_end</span>
+                    <span class="n">response_copy</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">response_copy</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_end</span>
 
                 <span class="c1"># Try again to extract the content</span>
                 <span class="n">extract_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_first_content_by_tag</span><span class="p">(</span>
@@ -415,7 +420,7 @@
             <span class="k">raise</span> <span class="n">JsonTypeError</span><span class="p">(</span>
                 <span class="s2">&quot;A JSON dictionary object is wanted, &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead.&quot;</span><span class="p">,</span>
-                <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="c1"># Requirement checking by Pydantic</span>
@@ -427,7 +432,7 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">JsonParsingError</span><span class="p">(</span>
                     <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
-                    <span class="n">raw_response</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                    <span class="n">raw_response</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
                 <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
         <span class="c1"># Check if the required keys exist</span>
@@ -442,7 +447,7 @@
                 <span class="sa">f</span><span class="s2">&quot;field</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">keys_missing</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;s&#39;</span><span class="si">}</span><span class="s2"> &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_join_str_with_comma_and</span><span class="p">(</span><span class="n">keys_missing</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the JSON &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;dictionary object.&quot;</span><span class="p">,</span>
-                <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">response</span></div>

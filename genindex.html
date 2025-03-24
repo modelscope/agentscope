@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -161,6 +161,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#Y"><strong>Y</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
@@ -217,14 +218,10 @@
 </li>
       <li><a href="build_api/agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.agent_exists">agent_exists() (AgentServerServicer method)</a>
 </li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.agent_id">agent_id (AgentBase property)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.agent_id">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.agent_id">agent_id (AgentBase property)</a>
 </li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase">AgentBase (class in agentscope.agents)</a>
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase">(class in agentscope.agents.agent)</a>
 </li>
-      </ul></li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.AgentCallError">AgentCallError</a>
 </li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.AgentCreationError">AgentCreationError</a>
@@ -241,55 +238,6 @@
 
       <ul>
         <li><a href="build_api/agentscope.agents.html#module-agentscope.agents">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.agent
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.agent.html#module-agentscope.agents.agent">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.dialog_agent
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.dialog_agent.html#module-agentscope.agents.dialog_agent">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.dict_dialog_agent
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.dict_dialog_agent.html#module-agentscope.agents.dict_dialog_agent">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.operator
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.operator.html#module-agentscope.agents.operator">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.rag_agent
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.rag_agent.html#module-agentscope.agents.rag_agent">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.react_agent
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.react_agent.html#module-agentscope.agents.react_agent">module</a>
-</li>
-      </ul></li>
-      <li>
-    agentscope.agents.user_agent
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.user_agent.html#module-agentscope.agents.user_agent">module</a>
 </li>
       </ul></li>
       <li>
@@ -325,6 +273,13 @@
 
       <ul>
         <li><a href="build_api/agentscope.exception.html#module-agentscope.exception">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.formatters
+
+      <ul>
+        <li><a href="build_api/agentscope.formatters.html#module-agentscope.formatters">module</a>
 </li>
       </ul></li>
       <li>
@@ -367,6 +322,13 @@
 
       <ul>
         <li><a href="build_api/agentscope.message.html#module-agentscope.message">module</a>
+</li>
+      </ul></li>
+      <li>
+    agentscope.message.block
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#module-agentscope.message.block">module</a>
 </li>
       </ul></li>
       <li>
@@ -628,8 +590,6 @@
         <li><a href="build_api/agentscope.rpc.rpc_object.html#module-agentscope.rpc.rpc_object">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.serialize
 
@@ -658,6 +618,8 @@
         <li><a href="build_api/agentscope.server.launcher.html#module-agentscope.server.launcher">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     agentscope.server.servicer
 
@@ -1050,6 +1012,8 @@
         <li><a href="build_api/agentscope.models.anthropic_model.html#agentscope.models.anthropic_model.AnthropicChatWrapper">(class in agentscope.models.anthropic_model)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.AnthropicFormatter">AnthropicFormatter (class in agentscope.formatters)</a>
+</li>
       <li><a href="build_api/agentscope.environment.event.html#agentscope.environment.event.Event.args">args (Event property)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.Event.args">[1]</a>
 </li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.ArgumentNotFoundError">ArgumentNotFoundError</a>
@@ -1094,6 +1058,12 @@
 </li>
       <li><a href="build_api/agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.audio2text">audio2text() (in module agentscope.web.gradio.utils)</a>
 </li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.AudioBlock">AudioBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.AudioBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1146,6 +1116,8 @@
       </ul></li>
       <li><a href="build_api/agentscope.service.execute_code.exec_notebook.html#agentscope.service.execute_code.exec_notebook.NoteBookExecutor.cells_length">cells_length (NoteBookExecutor property)</a>, <a href="build_api/agentscope.service.html#agentscope.service.NoteBookExecutor.cells_length">[1]</a>
 </li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.check_and_flat_messages">check_and_flat_messages() (FormatterBase static method)</a>
+</li>
       <li><a href="build_api/agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.check_uuid">check_uuid() (in module agentscope.web.gradio.utils)</a>
 </li>
       <li><a href="build_api/agentscope.prompt.html#agentscope.prompt.ChineseSystemPromptGenerator">ChineseSystemPromptGenerator (class in agentscope.prompt)</a>
@@ -1156,7 +1128,7 @@
         <li><a href="build_api/agentscope.memory.html#agentscope.memory.TemporaryMemory.clear">(TemporaryMemory method)</a>, <a href="build_api/agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.clear">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.clear_audience">clear_audience() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_audience">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_audience">clear_audience() (AgentBase method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.ModelManager.clear_model_configs">clear_model_configs() (ModelManager method)</a>
 </li>
@@ -1175,6 +1147,8 @@
       <li><a href="build_api/agentscope.service.mcp_manager.html#agentscope.service.mcp_manager.MCPSessionHandler.close_session">close_session() (MCPSessionHandler method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.code_dir">code_dir (FileManager property)</a>
+</li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.CommonFormatter">CommonFormatter (class in agentscope.formatters)</a>
 </li>
       <li><a href="build_api/agentscope.prompt.html#agentscope.prompt.SystemPromptComparer.compare_in_dialog">compare_in_dialog() (SystemPromptComparer method)</a>
 </li>
@@ -1270,7 +1244,7 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.content">content (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.content">[1]</a>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.content">content (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.content">[1]</a>
 
       <ul>
         <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.content">(RetrievedChunk attribute)</a>, <a href="build_api/agentscope.rag.html#id0">[1]</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.content">[2]</a>, <a href="build_api/agentscope.rag.knowledge.html#id0">[3]</a>
@@ -1286,8 +1260,6 @@
         <li><a href="build_api/agentscope.parsers.html#agentscope.parsers.TaggedContent.content_hint">(TaggedContent attribute)</a>, <a href="build_api/agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.content_hint">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.convert_url">convert_url() (DashScopeMultiModalWrapper method)</a>, <a href="build_api/agentscope.models.html#agentscope.models.DashScopeMultiModalWrapper.convert_url">[1]</a>
-</li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.COPY">COPY (WorkflowNodeType attribute)</a>
 </li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.CopyNode">CopyNode (class in agentscope.web.workstation.workflow_node)</a>
@@ -1370,6 +1342,8 @@
         <li><a href="build_api/agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper">(class in agentscope.models.dashscope_model)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter">DashScopeFormatter (class in agentscope.formatters)</a>
+</li>
       <li><a href="build_api/agentscope.models.html#agentscope.models.DashScopeImageSynthesisWrapper">DashScopeImageSynthesisWrapper (class in agentscope.models)</a>
 
       <ul>
@@ -1469,21 +1443,13 @@
       <li><a href="build_api/agentscope.serialize.html#agentscope.serialize.deserialize">deserialize() (in module agentscope.serialize)</a>
 </li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.DialogAgent">DialogAgent (class in agentscope.agents)</a>
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.dialog_agent.html#agentscope.agents.dialog_agent.DialogAgent">(class in agentscope.agents.dialog_agent)</a>
 </li>
-      </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DialogAgentNode">DialogAgentNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
       <li><a href="build_api/agentscope.web.workstation.workflow_utils.html#agentscope.web.workstation.workflow_utils.dict_converter">dict_converter() (in module agentscope.web.workstation.workflow_utils)</a>
 </li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent">DictDialogAgent (class in agentscope.agents)</a>
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent">(class in agentscope.agents.dict_dialog_agent)</a>
 </li>
-      </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.DictDialogAgentNode">DictDialogAgentNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
       <li><a href="build_api/agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin">DictFilterMixin (class in agentscope.parsers.parser_base)</a>
@@ -1602,9 +1568,15 @@
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.file_dir">file_dir (FileManager property)</a>
 </li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.FileBlock">FileBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.FileBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager">FileManager (class in agentscope.manager)</a>
 </li>
-      <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent.finish">finish() (ReActAgent static method)</a>, <a href="build_api/agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.finish">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent.finish">finish() (ReActAgent static method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.ASManager.flush">flush() (ASManager method)</a>
 
@@ -1639,43 +1611,41 @@
 </li>
         <li><a href="build_api/agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeMultiModalWrapper.format">(DashScopeMultiModalWrapper method)</a>, <a href="build_api/agentscope.models.html#agentscope.models.DashScopeMultiModalWrapper.format">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeWrapperBase.format">(DashScopeWrapperBase method)</a>
-</li>
         <li><a href="build_api/agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiChatWrapper.format">(GeminiChatWrapper static method)</a>, <a href="build_api/agentscope.models.html#agentscope.models.GeminiChatWrapper.format">[1]</a>
 </li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.LiteLLMChatWrapper.format">(LiteLLMChatWrapper method)</a>, <a href="build_api/agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMChatWrapper.format">[1]</a>
-</li>
-        <li><a href="build_api/agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase.format">(LiteLLMWrapperBase method)</a>
 </li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.ModelWrapperBase.format">(ModelWrapperBase method)</a>, <a href="build_api/agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.format">[1]</a>
 </li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.OllamaChatWrapper.format">(OllamaChatWrapper method)</a>, <a href="build_api/agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaChatWrapper.format">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.models.html#agentscope.models.OllamaEmbeddingWrapper.format">(OllamaEmbeddingWrapper method)</a>, <a href="build_api/agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaEmbeddingWrapper.format">[1]</a>
-</li>
-        <li><a href="build_api/agentscope.models.html#agentscope.models.OllamaGenerationWrapper.format">(OllamaGenerationWrapper method)</a>, <a href="build_api/agentscope.models.ollama_model.html#agentscope.models.ollama_model.OllamaGenerationWrapper.format">[1]</a>
-</li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.OpenAIChatWrapper.format">(OpenAIChatWrapper method)</a>, <a href="build_api/agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.format">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.models.html#agentscope.models.OpenAIWrapperBase.format">(OpenAIWrapperBase method)</a>, <a href="build_api/agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIWrapperBase.format">[1]</a>
-</li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.PostAPIChatWrapper.format">(PostAPIChatWrapper method)</a>, <a href="build_api/agentscope.models.post_model.html#agentscope.models.post_model.PostAPIChatWrapper.format">[1]</a>
-</li>
-        <li><a href="build_api/agentscope.models.post_model.html#agentscope.models.post_model.PostAPIDALLEWrapper.format">(PostAPIDALLEWrapper method)</a>
-</li>
-        <li><a href="build_api/agentscope.models.post_model.html#agentscope.models.post_model.PostAPIEmbeddingWrapper.format">(PostAPIEmbeddingWrapper method)</a>
 </li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.YiChatWrapper.format">(YiChatWrapper method)</a>, <a href="build_api/agentscope.models.yi_model.html#agentscope.models.yi_model.YiChatWrapper.format">[1]</a>
 </li>
         <li><a href="build_api/agentscope.models.html#agentscope.models.ZhipuAIChatWrapper.format">(ZhipuAIChatWrapper method)</a>, <a href="build_api/agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIChatWrapper.format">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIWrapperBase.format">(ZhipuAIWrapperBase method)</a>
+      </ul></li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.format_auto">format_auto() (FormatterBase class method)</a>
+</li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.AnthropicFormatter.format_chat">format_chat() (AnthropicFormatter class method)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.CommonFormatter.format_chat">(CommonFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.format_chat">(DashScopeFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.format_chat">(FormatterBase class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.GeminiFormatter.format_chat">(GeminiFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.OpenAIFormatter.format_chat">(OpenAIFormatter class method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="build_api/agentscope.models.html#agentscope.models.ModelWrapperBase.format_for_common_chat_models">format_for_common_chat_models() (ModelWrapperBase static method)</a>, <a href="build_api/agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.format_for_common_chat_models">[1]</a>
-</li>
       <li><a href="build_api/agentscope.parsers.code_block_parser.html#agentscope.parsers.code_block_parser.MarkdownCodeBlockParser.format_instruction">format_instruction (MarkdownCodeBlockParser attribute)</a>, <a href="build_api/agentscope.parsers.html#agentscope.parsers.MarkdownCodeBlockParser.format_instruction">[1]</a>
 
       <ul>
@@ -1688,7 +1658,39 @@
         <li><a href="build_api/agentscope.parsers.html#agentscope.parsers.RegexTaggedContentParser.format_instruction">(RegexTaggedContentParser property)</a>, <a href="build_api/agentscope.parsers.regex_tagged_content_parser.html#agentscope.parsers.regex_tagged_content_parser.RegexTaggedContentParser.format_instruction">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.formatted_str">formatted_str() (Msg method)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.formatted_str">[1]</a>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.AnthropicFormatter.format_multi_agent">format_multi_agent() (AnthropicFormatter class method)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.CommonFormatter.format_multi_agent">(CommonFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.format_multi_agent">(DashScopeFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.format_multi_agent">(FormatterBase class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.GeminiFormatter.format_multi_agent">(GeminiFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.OpenAIFormatter.format_multi_agent">(OpenAIFormatter class method)</a>
+</li>
+      </ul></li>
+      <li><a href="build_api/agentscope.models.anthropic_model.html#agentscope.models.anthropic_model.AnthropicChatWrapper.format_tools_json_schemas">format_tools_json_schemas() (AnthropicChatWrapper method)</a>, <a href="build_api/agentscope.models.html#agentscope.models.AnthropicChatWrapper.format_tools_json_schemas">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.AnthropicFormatter.format_tools_json_schemas">(AnthropicFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.models.dashscope_model.html#agentscope.models.dashscope_model.DashScopeChatWrapper.format_tools_json_schemas">(DashScopeChatWrapper method)</a>, <a href="build_api/agentscope.models.html#agentscope.models.DashScopeChatWrapper.format_tools_json_schemas">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.format_tools_json_schemas">(DashScopeFormatter class method)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.format_tools_json_schemas">(FormatterBase class method)</a>
+</li>
+        <li><a href="build_api/agentscope.models.html#agentscope.models.ModelWrapperBase.format_tools_json_schemas">(ModelWrapperBase method)</a>, <a href="build_api/agentscope.models.model.html#agentscope.models.model.ModelWrapperBase.format_tools_json_schemas">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.models.html#agentscope.models.OpenAIChatWrapper.format_tools_json_schemas">(OpenAIChatWrapper method)</a>, <a href="build_api/agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.format_tools_json_schemas">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.OpenAIFormatter.format_tools_json_schemas">(OpenAIFormatter class method)</a>
+</li>
+      </ul></li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase">FormatterBase (class in agentscope.formatters)</a>
 </li>
       <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.from_dict">from_dict() (Msg class method)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.from_dict">[1]</a>
 </li>
@@ -1716,11 +1718,13 @@
         <li><a href="build_api/agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiEmbeddingWrapper">(class in agentscope.models.gemini_model)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.GeminiFormatter">GeminiFormatter (class in agentscope.formatters)</a>
+</li>
       <li><a href="build_api/agentscope.models.gemini_model.html#agentscope.models.gemini_model.GeminiWrapperBase">GeminiWrapperBase (class in agentscope.models.gemini_model)</a>
 </li>
       <li><a href="build_api/agentscope.prompt.html#agentscope.prompt.SystemPromptGeneratorBase.generate">generate() (SystemPromptGeneratorBase method)</a>
 </li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.generate_agent_id">generate_agent_id() (AgentBase class method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.generate_agent_id">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.generate_agent_id">generate_agent_id() (AgentBase class method)</a>
 </li>
       <li><a href="build_api/agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.generate_image_from_name">generate_image_from_name() (in module agentscope.web.gradio.utils)</a>
 </li>
@@ -1729,6 +1733,8 @@
       <li><a href="build_api/agentscope.prompt.html#agentscope.prompt.SystemPromptOptimizer.generate_notes">generate_notes() (SystemPromptOptimizer method)</a>
 </li>
       <li><a href="build_api/agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.generate_oid">generate_oid() (in module agentscope.rpc.rpc_meta)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2.generate_response">generate_response() (ReActAgentV2 static method)</a>
 </li>
       <li><a href="build_api/agentscope.server.html#agentscope.server.RpcAgentServerLauncher.generate_server_id">generate_server_id() (RpcAgentServerLauncher class method)</a>, <a href="build_api/agentscope.server.launcher.html#agentscope.server.launcher.RpcAgentServerLauncher.generate_server_id">[1]</a>
 </li>
@@ -1788,6 +1794,8 @@
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.ModelManager.get_config_by_name">get_config_by_name() (ModelManager method)</a>
 </li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.get_content_blocks">get_content_blocks() (Msg method)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.get_content_blocks">[1]</a>
+</li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.get_current_directory">get_current_directory() (in module agentscope.service)</a>
 
       <ul>
@@ -1846,6 +1854,8 @@
         <li><a href="build_api/agentscope.rpc.html#agentscope.rpc.RpcClient.get_server_info">(RpcClient method)</a>, <a href="build_api/agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.get_server_info">[1]</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.get_text_content">get_text_content() (Msg method)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.get_text_content">[1]</a>
+</li>
       <li><a href="build_api/agentscope.environment.event.html#agentscope.environment.event.Getable">Getable (class in agentscope.environment.event)</a>
 </li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.google_search">google_search() (in module agentscope.service)</a>
@@ -1880,8 +1890,14 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.id">id (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.id">[1]</a>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.id">id (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.id">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolResultBlock.id">(ToolResultBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolResultBlock.id">[1]</a>
 </li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolUseBlock.id">(ToolUseBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolUseBlock.id">[1]</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.pipelines.html#agentscope.pipelines.IfElsePipeline">IfElsePipeline (class in agentscope.pipelines)</a>
 
       <ul>
@@ -1896,6 +1912,12 @@
       </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode">IfElsePipelineNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.ImageBlock">ImageBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ImageBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.import_function_from_path">import_function_from_path() (in module agentscope.web.gradio.studio)</a>
 </li>
       <li><a href="build_api/agentscope.utils.common.html#agentscope.utils.common.ImportErrorReporter">ImportErrorReporter (class in agentscope.utils.common)</a>
@@ -1926,6 +1948,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.inner_text">inner_text (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.inner_text">[1]</a>
 </li>
+      <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolUseBlock.input">input (ToolUseBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolUseBlock.input">[1]</a>
+</li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.FileManager.invoke_dir">invoke_dir (FileManager property)</a>
 </li>
       <li><a href="build_api/agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.is_alive">is_alive() (AgentServerServicer method)</a>
@@ -1948,6 +1972,12 @@
 </li>
       <li><a href="build_api/agentscope.models.html#agentscope.models.ModelResponse.is_stream_exhausted">is_stream_exhausted (ModelResponse property)</a>, <a href="build_api/agentscope.models.response.html#agentscope.models.response.ModelResponse.is_stream_exhausted">[1]</a>
 </li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.CommonFormatter.is_supported_model">is_supported_model() (CommonFormatter class method)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.is_supported_model">(FormatterBase class method)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.service.web.web_digest.html#agentscope.service.web.web_digest.is_valid_url">is_valid_url() (in module agentscope.service.web.web_digest)</a>
 </li>
   </ul></td>
@@ -2037,11 +2067,7 @@
       <li><a href="build_api/agentscope.models.litellm_model.html#agentscope.models.litellm_model.LiteLLMWrapperBase">LiteLLMWrapperBase (class in agentscope.models.litellm_model)</a>
 </li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.LlamaIndexAgent">LlamaIndexAgent (class in agentscope.agents)</a>
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent">(class in agentscope.agents.rag_agent)</a>
 </li>
-      </ul></li>
       <li><a href="build_api/agentscope.rag.llama_index_knowledge.html#agentscope.rag.llama_index_knowledge.LlamaIndexKnowledge">LlamaIndexKnowledge (class in agentscope.rag.llama_index_knowledge)</a>
 </li>
       <li><a href="build_api/agentscope.memory.html#agentscope.memory.MemoryBase.load">load() (MemoryBase method)</a>, <a href="build_api/agentscope.memory.memory.html#agentscope.memory.memory.MemoryBase.load">[1]</a>
@@ -2126,7 +2152,7 @@
 </li>
       <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.meta_data">meta_data (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.meta_data">[1]</a>
 </li>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.metadata">metadata (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.metadata">[1]</a>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.metadata">metadata (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.metadata">[1]</a>
 
       <ul>
         <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.metadata">(RetrievedChunk attribute)</a>, <a href="build_api/agentscope.rag.html#id3">[1]</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.metadata">[2]</a>, <a href="build_api/agentscope.rag.knowledge.html#id3">[3]</a>
@@ -2144,8 +2170,12 @@
       </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WorkflowNodeType.MODEL">MODEL (WorkflowNodeType attribute)</a>
 </li>
-      <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.model_config">model_config (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.model_config">[1]</a>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.model_config">model_config (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.model_config">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.model_config">(WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.model_config">[1]</a>
 </li>
+      </ul></li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.ModelManager.model_configs">model_configs (ModelManager attribute)</a>
 </li>
       <li><a href="build_api/agentscope.models.anthropic_model.html#agentscope.models.anthropic_model.AnthropicChatWrapper.model_name">model_name (AnthropicChatWrapper attribute)</a>
@@ -2266,20 +2296,6 @@
 </li>
         <li><a href="build_api/agentscope.agents.html#module-agentscope.agents">agentscope.agents</a>
 </li>
-        <li><a href="build_api/agentscope.agents.agent.html#module-agentscope.agents.agent">agentscope.agents.agent</a>
-</li>
-        <li><a href="build_api/agentscope.agents.dialog_agent.html#module-agentscope.agents.dialog_agent">agentscope.agents.dialog_agent</a>
-</li>
-        <li><a href="build_api/agentscope.agents.dict_dialog_agent.html#module-agentscope.agents.dict_dialog_agent">agentscope.agents.dict_dialog_agent</a>
-</li>
-        <li><a href="build_api/agentscope.agents.operator.html#module-agentscope.agents.operator">agentscope.agents.operator</a>
-</li>
-        <li><a href="build_api/agentscope.agents.rag_agent.html#module-agentscope.agents.rag_agent">agentscope.agents.rag_agent</a>
-</li>
-        <li><a href="build_api/agentscope.agents.react_agent.html#module-agentscope.agents.react_agent">agentscope.agents.react_agent</a>
-</li>
-        <li><a href="build_api/agentscope.agents.user_agent.html#module-agentscope.agents.user_agent">agentscope.agents.user_agent</a>
-</li>
         <li><a href="build_api/agentscope.constants.html#module-agentscope.constants">agentscope.constants</a>
 </li>
         <li><a href="build_api/agentscope.environment.html#module-agentscope.environment">agentscope.environment</a>
@@ -2289,6 +2305,8 @@
         <li><a href="build_api/agentscope.environment.event.html#module-agentscope.environment.event">agentscope.environment.event</a>
 </li>
         <li><a href="build_api/agentscope.exception.html#module-agentscope.exception">agentscope.exception</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#module-agentscope.formatters">agentscope.formatters</a>
 </li>
         <li><a href="build_api/agentscope.logging.html#module-agentscope.logging">agentscope.logging</a>
 </li>
@@ -2301,6 +2319,8 @@
         <li><a href="build_api/agentscope.memory.temporary_memory.html#module-agentscope.memory.temporary_memory">agentscope.memory.temporary_memory</a>
 </li>
         <li><a href="build_api/agentscope.message.html#module-agentscope.message">agentscope.message</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#module-agentscope.message.block">agentscope.message.block</a>
 </li>
         <li><a href="build_api/agentscope.message.msg.html#module-agentscope.message.msg">agentscope.message.msg</a>
 </li>
@@ -2558,11 +2578,15 @@
 </li>
         <li><a href="build_api/agentscope.parsers.html#agentscope.parsers.MarkdownJsonObjectParser.name">(MarkdownJsonObjectParser attribute)</a>, <a href="build_api/agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonObjectParser.name">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.name">(Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.name">[1]</a>
+        <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.name">(Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.name">[1]</a>
 </li>
         <li><a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.name">(ServiceFunction attribute)</a>
 </li>
         <li><a href="build_api/agentscope.parsers.html#agentscope.parsers.TaggedContent.name">(TaggedContent attribute)</a>, <a href="build_api/agentscope.parsers.tagged_content_parser.html#agentscope.parsers.tagged_content_parser.TaggedContent.name">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolResultBlock.name">(ToolResultBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolResultBlock.name">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolUseBlock.name">(ToolUseBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolUseBlock.name">[1]</a>
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.node_name">node_name (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.node_name">[1]</a>
@@ -2631,7 +2655,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.observe">observe() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.observe">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.observe">observe() (AgentBase method)</a>
 </li>
       <li><a href="build_api/agentscope.models.html#agentscope.models.OllamaChatWrapper">OllamaChatWrapper (class in agentscope.models)</a>
 
@@ -2709,6 +2733,8 @@
         <li><a href="build_api/agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIEmbeddingWrapper">(class in agentscope.models.openai_model)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.OpenAIFormatter">OpenAIFormatter (class in agentscope.formatters)</a>
+</li>
       <li><a href="build_api/agentscope.models.html#agentscope.models.OpenAIWrapperBase">OpenAIWrapperBase (class in agentscope.models)</a>
 
       <ul>
@@ -2730,6 +2756,8 @@
       <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.origin_y">origin_y (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.origin_y">[1]</a>
 </li>
       <li><a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.original_func">original_func (ServiceFunction attribute)</a>
+</li>
+      <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolResultBlock.output">output (ToolResultBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolResultBlock.output">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2866,12 +2894,10 @@
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.ResponseParsingError.raw_response">raw_response (ResponseParsingError attribute)</a>
 </li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent">ReActAgent (class in agentscope.agents)</a>
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent">(class in agentscope.agents.react_agent)</a>
 </li>
-      </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ReActAgentNode">ReActAgentNode (class in agentscope.web.workstation.workflow_node)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2">ReActAgentV2 (class in agentscope.agents)</a>
 </li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.read_json_file">read_json_file() (in module agentscope.service)</a>
 
@@ -2927,18 +2953,20 @@
         <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.Env.remove_listener">(Env method)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.Env.remove_listener">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.reply">reply() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.reply">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.reply">reply() (AgentBase method)</a>
 
       <ul>
-        <li><a href="build_api/agentscope.agents.dialog_agent.html#agentscope.agents.dialog_agent.DialogAgent.reply">(DialogAgent method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.DialogAgent.reply">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.DialogAgent.reply">(DialogAgent method)</a>
 </li>
-        <li><a href="build_api/agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.reply">(DictDialogAgent method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent.reply">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent.reply">(DictDialogAgent method)</a>
 </li>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.LlamaIndexAgent.reply">(LlamaIndexAgent method)</a>, <a href="build_api/agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent.reply">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.LlamaIndexAgent.reply">(LlamaIndexAgent method)</a>
 </li>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent.reply">(ReActAgent method)</a>, <a href="build_api/agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.reply">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent.reply">(ReActAgent method)</a>
 </li>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.reply">(UserAgent method)</a>, <a href="build_api/agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.reply">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2.reply">(ReActAgentV2 method)</a>
+</li>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.reply">(UserAgent method)</a>
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.require_args">require_args (ServiceFunction attribute)</a>
@@ -2947,7 +2975,7 @@
 </li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.RequiredFieldNotFoundError">RequiredFieldNotFoundError</a>
 </li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.reset_audience">reset_audience() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.reset_audience">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.reset_audience">reset_audience() (AgentBase method)</a>
 </li>
       <li><a href="build_api/agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.reset_glb_var">reset_glb_var() (in module agentscope.web.gradio.studio)</a>
 </li>
@@ -2999,11 +3027,11 @@
 </li>
       <li><a href="build_api/agentscope.environment.event.html#agentscope.environment.event.Event.returns">returns (Event property)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.Event.returns">[1]</a>
 </li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.rm_audience">rm_audience() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.rm_audience">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.rm_audience">rm_audience() (AgentBase method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.MonitorManager.rm_database">rm_database() (MonitorManager method)</a>
 </li>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.role">role (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.role">[1]</a>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.role">role (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.role">[1]</a>
 </li>
       <li><a href="build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent">RpcAgent (class in agentscope.rpc.rpc_agent_pb2_grpc)</a>
 </li>
@@ -3139,16 +3167,16 @@
         <li><a href="build_api/agentscope.rpc.html#agentscope.rpc.RpcClient.set_model_configs">(RpcClient method)</a>, <a href="build_api/agentscope.rpc.rpc_client.html#agentscope.rpc.rpc_client.RpcClient.set_model_configs">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.set_parser">set_parser() (DictDialogAgent method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent.set_parser">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent.set_parser">set_parser() (DictDialogAgent method)</a>
 </li>
       <li><a href="build_api/agentscope.environment.event.html#agentscope.environment.event.Setable">Setable (class in agentscope.environment.event)</a>
 </li>
       <li><a href="build_api/agentscope.logging.html#agentscope.logging.setup_logger">setup_logger() (in module agentscope.logging)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.MonitorManager.show_image_tokens">show_image_tokens() (MonitorManager method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.MonitorManager.show_text_and_embedding_tokens">show_text_and_embedding_tokens() (MonitorManager method)</a>
 </li>
       <li><a href="build_api/agentscope.constants.html#agentscope.constants.ShrinkPolicy">ShrinkPolicy (class in agentscope.constants)</a>
@@ -3161,10 +3189,10 @@
         <li><a href="build_api/agentscope.memory.html#agentscope.memory.TemporaryMemory.size">(TemporaryMemory method)</a>, <a href="build_api/agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.size">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.speak">speak() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.speak">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.speak">speak() (AgentBase method)</a>
 
       <ul>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.speak">(UserAgent method)</a>, <a href="build_api/agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.speak">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.speak">(UserAgent method)</a>
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.start_workflow">start_workflow() (in module agentscope.web.workstation.workflow)</a>
@@ -3181,8 +3209,6 @@
         <li><a href="build_api/agentscope.manager.html#agentscope.manager.MonitorManager.state_dict">(MonitorManager method)</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.models.html#agentscope.models.OpenAIChatWrapper.static_format">static_format() (OpenAIChatWrapper static method)</a>, <a href="build_api/agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.static_format">[1]</a>
-</li>
       <li><a href="build_api/agentscope.server.servicer.html#agentscope.server.servicer.AgentServerServicer.stop">stop() (AgentServerServicer method)</a>
 
       <ul>
@@ -3201,8 +3227,6 @@
 </li>
       <li><a href="build_api/agentscope.exception.html#agentscope.exception.StudioRegisterError">StudioRegisterError</a>
 </li>
-      <li><a href="build_api/agentscope.models.html#agentscope.models.OpenAIChatWrapper.substrings_in_vision_models_names">substrings_in_vision_models_names (OpenAIChatWrapper attribute)</a>, <a href="build_api/agentscope.models.openai_model.html#agentscope.models.openai_model.OpenAIChatWrapper.substrings_in_vision_models_names">[1]</a>
-</li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.ServiceExecStatus.SUCCESS">SUCCESS (ServiceExecStatus attribute)</a>, <a href="build_api/agentscope.service.service_status.html#agentscope.service.service_status.ServiceExecStatus.SUCCESS">[1]</a>
 </li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.summarization">summarization() (in module agentscope.service)</a>
@@ -3213,6 +3237,18 @@
       </ul></li>
       <li><a href="build_api/agentscope.constants.html#agentscope.constants.ShrinkPolicy.SUMMARIZE">SUMMARIZE (ShrinkPolicy attribute)</a>
 </li>
+      <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.AnthropicFormatter.supported_model_regexes">supported_model_regexes (AnthropicFormatter attribute)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.supported_model_regexes">(DashScopeFormatter attribute)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.supported_model_regexes">(FormatterBase attribute)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.GeminiFormatter.supported_model_regexes">(GeminiFormatter attribute)</a>
+</li>
+        <li><a href="build_api/agentscope.formatters.html#agentscope.formatters.OpenAIFormatter.supported_model_regexes">(OpenAIFormatter attribute)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.tokens.html#agentscope.tokens.supported_models">supported_models() (in module agentscope.tokens)</a>
 </li>
       <li><a href="build_api/agentscope.pipelines.html#agentscope.pipelines.SwitchPipeline">SwitchPipeline (class in agentscope.pipelines)</a>
@@ -3290,10 +3326,20 @@
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.models.html#agentscope.models.ModelResponse.text">text (ModelResponse property)</a>, <a href="build_api/agentscope.models.response.html#agentscope.models.response.ModelResponse.text">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.TextBlock.text">(TextBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.TextBlock.text">[1]</a>
 </li>
+      </ul></li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.TextBlock">TextBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.TextBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.utils.common.html#agentscope.utils.common.timer">timer() (in module agentscope.utils.common)</a>
 </li>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.timestamp">timestamp (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.timestamp">[1]</a>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.timestamp">timestamp (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.timestamp">[1]</a>
 </li>
       <li><a href="build_api/agentscope.parsers.parser_base.html#agentscope.parsers.parser_base.DictFilterMixin.to_content">to_content() (DictFilterMixin method)</a>
 </li>
@@ -3303,24 +3349,26 @@
         <li><a href="build_api/agentscope.rag.html#agentscope.rag.RetrievedChunk.to_dict">(RetrievedChunk method)</a>, <a href="build_api/agentscope.rag.knowledge.html#agentscope.rag.knowledge.RetrievedChunk.to_dict">[1]</a>
 </li>
       </ul></li>
-      <li><a href="build_api/agentscope.agents.agent.html#agentscope.agents.agent.AgentBase.to_dist">to_dist() (AgentBase method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.to_dist">[1]</a>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.to_dist">to_dist() (AgentBase method)</a>
 
       <ul>
         <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.BasicEnv.to_dist">(BasicEnv method)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.BasicEnv.to_dist">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.agents.dialog_agent.html#agentscope.agents.dialog_agent.DialogAgent.to_dist">(DialogAgent method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.DialogAgent.to_dist">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.DialogAgent.to_dist">(DialogAgent method)</a>
 </li>
-        <li><a href="build_api/agentscope.agents.dict_dialog_agent.html#agentscope.agents.dict_dialog_agent.DictDialogAgent.to_dist">(DictDialogAgent method)</a>, <a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent.to_dist">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.DictDialogAgent.to_dist">(DictDialogAgent method)</a>
 </li>
         <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.Env.to_dist">(Env method)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.Env.to_dist">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.LlamaIndexAgent.to_dist">(LlamaIndexAgent method)</a>, <a href="build_api/agentscope.agents.rag_agent.html#agentscope.agents.rag_agent.LlamaIndexAgent.to_dist">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.LlamaIndexAgent.to_dist">(LlamaIndexAgent method)</a>
 </li>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent.to_dist">(ReActAgent method)</a>, <a href="build_api/agentscope.agents.react_agent.html#agentscope.agents.react_agent.ReActAgent.to_dist">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgent.to_dist">(ReActAgent method)</a>
+</li>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2.to_dist">(ReActAgentV2 method)</a>
 </li>
         <li><a href="build_api/agentscope.rpc.html#agentscope.rpc.RpcMeta.to_dist">(RpcMeta static method)</a>, <a href="build_api/agentscope.rpc.rpc_meta.html#agentscope.rpc.rpc_meta.RpcMeta.to_dist">[1]</a>
 </li>
-        <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.to_dist">(UserAgent method)</a>, <a href="build_api/agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent.to_dist">[1]</a>
+        <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.to_dist">(UserAgent method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -3331,10 +3379,22 @@
 </li>
       <li><a href="build_api/agentscope.utils.common.html#agentscope.utils.common.to_openai_dict">to_openai_dict() (in module agentscope.utils.common)</a>
 </li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.ToolResultBlock">ToolResultBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolResultBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.ServiceToolkit.tools_calling_format">tools_calling_format (ServiceToolkit property)</a>, <a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_calling_format">[1]</a>
 </li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.ServiceToolkit.tools_instruction">tools_instruction (ServiceToolkit property)</a>, <a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceToolkit.tools_instruction">[1]</a>
 </li>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.ToolUseBlock">ToolUseBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolUseBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
       <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.trigger_listener">trigger_listener() (in module agentscope.environment.env)</a>
 </li>
       <li><a href="build_api/agentscope.service.html#agentscope.service.tripadvisor_search">tripadvisor_search() (in module agentscope.service)</a>
@@ -3357,8 +3417,24 @@
       </ul></li>
       <li><a href="build_api/agentscope.constants.html#agentscope.constants.ShrinkPolicy.TRUNCATE">TRUNCATE (ShrinkPolicy attribute)</a>
 </li>
-      <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.type">type (WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.type">[1]</a>
+      <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.AudioBlock.type">type (AudioBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.AudioBlock.type">[1]</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.FileBlock.type">(FileBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.FileBlock.type">[1]</a>
 </li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ImageBlock.type">(ImageBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ImageBlock.type">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.TextBlock.type">(TextBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.TextBlock.type">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolResultBlock.type">(ToolResultBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolResultBlock.type">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ToolUseBlock.type">(ToolUseBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ToolUseBlock.type">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.VideoBlock.type">(VideoBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.VideoBlock.type">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebElementInfo.type">(WebElementInfo attribute)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebElementInfo.type">[1]</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -3379,26 +3455,40 @@
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.MonitorManager.update_text_and_embedding_tokens">update_text_and_embedding_tokens() (MonitorManager method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.rpc.html#agentscope.rpc.AsyncResult.update_value">update_value() (AsyncResult method)</a>, <a href="build_api/agentscope.rpc.rpc_async.html#agentscope.rpc.rpc_async.AsyncResult.update_value">[1]</a>
 </li>
-      <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.url">url (Msg property)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.url">[1]</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.AudioBlock.url">url (AudioBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.AudioBlock.url">[1]</a>
 
       <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.FileBlock.url">(FileBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.FileBlock.url">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.ImageBlock.url">(ImageBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.ImageBlock.url">[1]</a>
+</li>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.VideoBlock.url">(VideoBlock attribute)</a>, <a href="build_api/agentscope.message.html#agentscope.message.VideoBlock.url">[1]</a>
+</li>
         <li><a href="build_api/agentscope.service.browser.web_browser.html#agentscope.service.browser.web_browser.WebBrowser.url">(WebBrowser property)</a>, <a href="build_api/agentscope.service.html#agentscope.service.WebBrowser.url">[1]</a>
 </li>
       </ul></li>
       <li><a href="build_api/agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.user_input">user_input() (in module agentscope.web.gradio.utils)</a>
 </li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent">UserAgent (class in agentscope.agents)</a>
-
-      <ul>
-        <li><a href="build_api/agentscope.agents.user_agent.html#agentscope.agents.user_agent.UserAgent">(class in agentscope.agents.user_agent)</a>
 </li>
-      </ul></li>
       <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.UserAgentNode">UserAgentNode (class in agentscope.web.workstation.workflow_node)</a>
 </li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="build_api/agentscope.message.html#agentscope.message.VideoBlock">VideoBlock (class in agentscope.message)</a>
+
+      <ul>
+        <li><a href="build_api/agentscope.message.block.html#agentscope.message.block.VideoBlock">(class in agentscope.message.block)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

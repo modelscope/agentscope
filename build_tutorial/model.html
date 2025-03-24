@@ -29,7 +29,7 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Prompt Engineering" href="prompt.html" />
+    <link rel="next" title="Prompt Formatting" href="prompt.html" />
     <link rel="prev" title="FQA" href="../tutorial/faq.html" /> 
 </head>
 
@@ -89,7 +89,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#further-reading">Further Reading</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
@@ -163,7 +163,7 @@ to download the full example code.</p>
 <p class="admonition-title">Note</p>
 <ol class="arabic simple">
 <li><p>The text-to-speech (TTS) and speech-to-text (STT) APIs are not included in this list. You can refer to the section <a class="reference internal" href="tool.html#tools"><span class="std std-ref">Tools</span></a>.</p></li>
-<li><p>The section only introduces how to use or integrate different model APIs in AgentScope. The prompt requirements and prompt engineering strategies are left in the section <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Engineering</span></a>.</p></li>
+<li><p>The section only introduces how to use or integrate different model APIs in AgentScope. The prompt requirements and prompt engineering strategies are left in the section <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Formatting</span></a>.</p></li>
 </ol>
 </div>
 <table class="docutils align-default">
@@ -342,7 +342,7 @@ AnthropicChatWrapper
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Text: Hello! How can I assist you today?
 Embedding: None
 Image URLs: None
-Raw: {&quot;status_code&quot;: 200, &quot;request_id&quot;: &quot;93ae2d05-b4fa-993e-a10b-469461f25d80&quot;, &quot;code&quot;: &quot;&quot;, &quot;message&quot;: &quot;&quot;, &quot;output&quot;: {&quot;text&quot;: null, &quot;finish_reason&quot;: null, &quot;choices&quot;: [{&quot;finish_reason&quot;: &quot;stop&quot;, &quot;message&quot;: {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Hello! How can I assist you today?&quot;}}]}, &quot;usage&quot;: {&quot;input_tokens&quot;: 10, &quot;output_tokens&quot;: 9, &quot;prompt_tokens_details&quot;: {&quot;cached_tokens&quot;: 0}, &quot;total_tokens&quot;: 19}}
+Raw: {&quot;status_code&quot;: 200, &quot;request_id&quot;: &quot;2fed2c5c-bd31-9822-8170-03b5b01ce73b&quot;, &quot;code&quot;: &quot;&quot;, &quot;message&quot;: &quot;&quot;, &quot;output&quot;: {&quot;text&quot;: null, &quot;finish_reason&quot;: null, &quot;choices&quot;: [{&quot;finish_reason&quot;: &quot;stop&quot;, &quot;message&quot;: {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Hello! How can I assist you today?&quot;}}]}, &quot;usage&quot;: {&quot;input_tokens&quot;: 10, &quot;output_tokens&quot;: 9, &quot;prompt_tokens_details&quot;: {&quot;cached_tokens&quot;: 0}, &quot;total_tokens&quot;: 19}}
 Parsed: None
 Stream: None
 </pre></div>
@@ -510,18 +510,18 @@ its <a class="reference external" href="https://github.com/vllm-project/vllm?tab
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Optionally, you can implement a format method to format the prompt before sending it to the model API.
-Refer to <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Engineering</span></a> for more details.</p>
+Refer to <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Formatting</span></a> for more details.</p>
 </div>
 </section>
 </section>
 <section id="further-reading">
 <h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Engineering</span></a></p></li>
+<li><p><a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt Formatting</span></a></p></li>
 <li><p><a class="reference internal" href="streaming.html#streaming"><span class="std std-ref">Streaming Mode</span></a></p></li>
 <li><p><a class="reference internal" href="structured_output.html#structured-output"><span class="std std-ref">Structured Output</span></a></p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.890 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.393 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-model-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e2a1f6cdcb82f601c32184bb959ee0c3/model.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">model.ipynb</span></code></a></p>
@@ -542,7 +542,7 @@ Refer to <a class="reference internal" href="prompt.html#prompt-engineering"><sp
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../tutorial/faq.html" class="btn btn-neutral float-left" title="FQA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="prompt.html" class="btn btn-neutral float-right" title="Prompt Engineering" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="prompt.html" class="btn btn-neutral float-right" title="Prompt Formatting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

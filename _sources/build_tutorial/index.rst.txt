@@ -113,40 +113,6 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="The prompt engineering is a crucial part of LLM-empowered applications, especially for the multi-agent ones. However, most API providers focus on the chatting scenario, where a user and an assistant speak alternately.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_prompt_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_prompt.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Prompt Engineering</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Message is a specialized data structure for information exchange. In AgentScope, we use message to communicate among agents.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_message_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_message.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Message</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports streaming output for the following APIs in both terminal and AgentScope Studio.">
 
 .. only:: html
@@ -198,6 +164,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Message is a specialized data structure for information exchange. In AgentScope, we use message to communicate among agents.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_message_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_message.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Message</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial, we will briefly introduce what MCP is and show how to use MCP in AgentScope. We will also demonstrate how to configure an existing AgentScope multi-agent application as an MCP server. Finally, to help advanced developers gain a deeper understanding, we will discuss how MCP integrates with AgentScope.">
 
 .. only:: html
@@ -227,23 +210,6 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Configuring and Monitoring</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial we show how to use the built-in tools in AgentScope and how to create custom tools.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_tool_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_tool.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Tools</div>
     </div>
 
 
@@ -300,6 +266,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Background --------------------">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_tool_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_tool.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Tools</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="AgentScope builds in several agent class to support different scenarios and show how to build agents with AgentScope.">
 
 .. only:: html
@@ -329,6 +312,23 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Model APIs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports developers to build prompt that fits different model APIs by providing a set of built-in strategies for both chat and multi-agent scenarios.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_prompt_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_prompt.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Prompt Formatting</div>
     </div>
 
 
@@ -365,19 +365,19 @@
    /build_tutorial/distribution
    /build_tutorial/web_browser
    /build_tutorial/quickstart
-   /build_tutorial/prompt
-   /build_tutorial/message
    /build_tutorial/streaming
    /build_tutorial/multimodality
    /build_tutorial/prompt_optimization
+   /build_tutorial/message
    /build_tutorial/MCP
    /build_tutorial/monitor
-   /build_tutorial/tool
    /build_tutorial/rag
    /build_tutorial/conversation
    /build_tutorial/agent
+   /build_tutorial/tool
    /build_tutorial/builtin_agent
    /build_tutorial/model
+   /build_tutorial/prompt
    /build_tutorial/structured_output
 
 

@@ -82,7 +82,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
@@ -193,14 +193,12 @@ to download the full example code.</p>
     <span class="n">msg</span> <span class="o">=</span> <span class="n">monster</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message was cut off. Could you please provide more details so I can assist you better?
-Monster: Hello Angel! I&#39;m Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I don&#39;t see any previous message from you that was cut off. Could you please share what you need help with or any specific details? I&#39;m here to assist you!
-Angel: Hello Monster! It looks like there&#39;s a bit of confusion here. I&#39;m Angel, and I&#39;m here to help. Could you please let me know what you need assistance with? Feel free to share any details or questions you have!
-Monster: Hello Angel! It’s nice to meet you. I see we both got a bit mixed up. I’m here to help with any questions or tasks you might have. If you have any specific requests or if there’s anything you’d like to discuss, please let me know!
-Angel: Hello Monster! It&#39;s great to meet you, and I appreciate your willingness to help. However, it looks like we might be in a bit of a loop here. I&#39;m Angel, and I&#39;m here to assist with any questions or tasks you have. Could you please let me know what you need help with? If you have any specific requests or topics you&#39;d like to discuss, feel free to share! 😊
-Monster: Hello Angel! It’s great to meet you, and I appreciate your patience. It seems we both are here to help, which is wonderful! Since we’re both assistants, let’s make sure we don’t get in each other’s way.
-
-If you have any specific questions or tasks that you need assistance with, please feel free to share them. I’m here to support you in any way I can. If there’s anything you’d like to discuss or if you need help with a particular topic, just let me know! 😊
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
+Monster: Hello Angel! I&#39;m Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I didn&#39;t send a previous message. How can I assist you today?
+Angel: Hello! I&#39;m Angel, and it looks like there was a bit of confusion. I&#39;m here to help you. How can I assist you today?
+Monster: Hello Angel! It&#39;s nice to meet you. I&#39;m here to help as well. It seems like we both got a bit mixed up with the roles. Is there anything specific you need assistance with, or did you have a question for me?
+Angel: Hello! It’s great to meet you, Monster. It seems like we both are here to help, which is wonderful! Since I’m Angel and I’m here to assist, how can I help you today? If you have any questions or need any information, feel free to let me know!
+Monster: Hello Angel! It&#39;s great to meet you too. Since we&#39;re both here to help, let&#39;s make sure we&#39;re on the same page. If you have any specific questions or need information on a particular topic, I&#39;m here to assist you. Alternatively, if there&#39;s anything you&#39;d like to discuss or explore, just let me know! How can I be of assistance today?
 </pre></div>
 </div>
 <p>If you want to participate in the conversation, just instantiate a built-in <cite>UserAgent</cite> to type messages to the agents.</p>
@@ -307,7 +305,7 @@ Charlie: 4
 <p>In the above example, Charlie left the conversation after the first round without receiving “4” and “5” from Alice and Bob.
 Therefore, it reported “4” in the second round.
 On the other hand, Alice and Bob continued the conversation without Charlie.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 35.478 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 23.879 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-conversation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e45033d54e8ac8fc32ecea3c60595825/conversation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">conversation.ipynb</span></code></a></p>

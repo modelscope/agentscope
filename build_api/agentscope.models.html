@@ -78,7 +78,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -108,11 +108,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.AnthropicChatWrapper"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.AnthropicChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.AnthropicChatWrapper.format_tools_json_schemas"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper.format_tools_json_schemas()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.AnthropicChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper.model_type</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper.format_tools_json_schemas"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format_tools_json_schemas()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.model_type</span></code></a></li>
 </ul>
 </li>
@@ -121,7 +123,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeMultiModalWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeMultiModalWrapper.convert_url"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.convert_url()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeMultiModalWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.format()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeMultiModalWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">DashScopeMultiModalWrapper.model_type</span></code></a></li>
 </ul>
@@ -153,7 +154,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.format_for_common_chat_models"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format_for_common_chat_models()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.format_tools_json_schemas"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format_tools_json_schemas()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.config_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.config_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.model_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.model_type"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_type</span></code></a></li>
@@ -165,20 +166,17 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OllamaEmbeddingWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OllamaEmbeddingWrapper.format"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.format()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OllamaEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaEmbeddingWrapper.model_type</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OllamaGenerationWrapper"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OllamaGenerationWrapper.format"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.format()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OllamaGenerationWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OllamaGenerationWrapper.model_type</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper.static_format"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.static_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper.format_tools_json_schemas"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.format_tools_json_schemas()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.model_type</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIChatWrapper.substrings_in_vision_models_names"><code class="docutils literal notranslate"><span class="pre">OpenAIChatWrapper.substrings_in_vision_models_names</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIDALLEWrapper"><code class="docutils literal notranslate"><span class="pre">OpenAIDALLEWrapper</span></code></a><ul>
@@ -189,10 +187,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIEmbeddingWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">OpenAIEmbeddingWrapper.model_type</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIWrapperBase"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.OpenAIWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase.format()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.OpenAIWrapperBase"><code class="docutils literal notranslate"><span class="pre">OpenAIWrapperBase</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.PostAPIChatWrapper"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.PostAPIChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper.format()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.PostAPIChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">PostAPIChatWrapper.model_type</span></code></a></li>
@@ -262,18 +257,77 @@
 <p>The Anthropic model wrapper for AgentScope.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.AnthropicChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/anthropic_model.html#AnthropicChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.AnthropicChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/anthropic_model.html#AnthropicChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.AnthropicChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for anthropic model input.</p>
-<p>TODO: Add support for multimodal input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The message(s) to be formatted.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The message(s) to be formatted.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of formatted messages.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list[dict[str, object]]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.AnthropicChatWrapper.format_tools_json_schemas">
+<span class="sig-name descname"><span class="pre">format_tools_json_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/anthropic_model.html#AnthropicChatWrapper.format_tools_json_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.AnthropicChatWrapper.format_tools_json_schemas" title="Link to this definition"></a></dt>
+<dd><p>Format the JSON schemas of the tool functions to the format that
+the model API provider expects.</p>
+<p class="rubric">Example</p>
+<p>An example of the input schemas parsed from the service toolkit</p>
+<p>..code-block:: json</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“bing_search”: {</dt><dd><p>“type”: “function”,
+“function”: {</p>
+<blockquote>
+<div><p>“name”: “bing_search”,
+“description”: “Search the web using Bing.”,
+“parameters”: {</p>
+<blockquote>
+<div><p>“type”: “object”,
+“properties”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“query”: {</dt><dd><p>“type”: “string”,
+“description”: “The search query.”,</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“required”: [“query”],</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schemas</strong> (<cite>dict[str, dict]</cite>) – The tools JSON schemas parsed from the service toolkit module,
+which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted JSON schemas of the tool functions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[dict]</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -328,7 +382,7 @@ class in model configuration.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>A common format strategy for chat models, which will format the
 input messages into a user message.</p>
 <p>Note this strategy maybe not suitable for all scenarios,
@@ -379,15 +433,75 @@ engineering strategies.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>List[dict]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.DashScopeChatWrapper.format_tools_json_schemas">
+<span class="sig-name descname"><span class="pre">format_tools_json_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeChatWrapper.format_tools_json_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeChatWrapper.format_tools_json_schemas" title="Link to this definition"></a></dt>
+<dd><p>Format the JSON schemas of the tool functions to the format that
+the model API provider expects.</p>
+<p class="rubric">Example</p>
+<p>An example of the input schemas parsed from the service toolkit</p>
+<p>..code-block:: json</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“bing_search”: {</dt><dd><p>“type”: “function”,
+“function”: {</p>
+<blockquote>
+<div><p>“name”: “bing_search”,
+“description”: “Search the web using Bing.”,
+“parameters”: {</p>
+<blockquote>
+<div><p>“type”: “object”,
+“properties”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“query”: {</dt><dd><p>“type”: “string”,
+“description”: “The search query.”,</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“required”: [“query”],</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schemas</strong> (<cite>dict[str, dict]</cite>) – The tools JSON schemas parsed from the service toolkit module,
+which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted JSON schemas of the tool functions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[dict]</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -495,27 +609,8 @@ class in model configuration.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.DashScopeMultiModalWrapper.convert_url">
-<span class="sig-name descname"><span class="pre">convert_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.convert_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeMultiModalWrapper.convert_url" title="Link to this definition"></a></dt>
-<dd><p>Convert the url to the format of DashScope API. Note for local
-files, a prefix “<a class="reference external" href="file://">file://</a>” will be added.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>url</strong> (<cite>Union[str, Sequence[str], None]</cite>) – A string of url of a list of urls to be converted.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of dictionaries with key as the type of the url
-and value as the url. Only “image” and “audio” are supported.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>List[dict]</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.DashScopeMultiModalWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/dashscope_model.html#DashScopeMultiModalWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.DashScopeMultiModalWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for DashScope Multimodal API.</p>
 <p>The multimodal API has the following requirements:</p>
 <ul class="simple">
@@ -608,15 +703,20 @@ implement their own prompt engineering strategies.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>List[dict]</cite></p>
+<dd class="field-odd"><p><cite>list[dict]</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -679,7 +779,7 @@ class in model configuration.</p>
 <p>The wrapper for Google Gemini chat model, e.g. gemini-pro</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.GeminiChatWrapper.format">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/gemini_model.html#GeminiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.GeminiChatWrapper.format" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/gemini_model.html#GeminiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.GeminiChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>This function provide a basic prompting strategy for Gemini Chat
 API in multi-party conversation, which combines all input into a
 single string, and wrap it into a user message.</p>
@@ -702,9 +802,14 @@ discussion are welcome in our GitHub repository
 <a class="reference external" href="https://github.com/agentscope/agentscope">https://github.com/agentscope/agentscope</a>!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list with one user message.</p>
@@ -807,7 +912,7 @@ e.g. models/embedding-001</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.LiteLLMChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.LiteLLMChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/litellm_model.html#LiteLLMChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.LiteLLMChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>A common format strategy for chat models, which will format the
 input messages into a user message.</p>
 <p>Note this strategy maybe not suitable for all scenarios,
@@ -858,9 +963,14 @@ engineering strategies.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
@@ -882,7 +992,7 @@ class in model configuration.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.ModelResponse">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ModelResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parsed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/models/response.html#ModelResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelResponse" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ModelResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parsed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_calls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/models/response.html#ModelResponse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelResponse" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Encapsulation of data returned by the model.</p>
 <p>The main purpose of this class is to align the return formats of different
@@ -901,7 +1011,7 @@ models and act as a bridge between models and agents.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="agentscope.models.ModelResponse.text">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.models.ModelResponse.text" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.models.ModelResponse.text" title="Link to this definition"></a></dt>
 <dd><p>Return the text field. If the stream field is available, the text
 field will be updated accordingly.</p>
 </dd></dl>
@@ -911,77 +1021,66 @@ field will be updated accordingly.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ModelWrapperBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>The base class for model wrapper.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input messages into the format that the model
 API required.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.format_for_common_chat_models">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">format_for_common_chat_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.format_for_common_chat_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format_for_common_chat_models" title="Link to this definition"></a></dt>
-<dd><p>A common format strategy for chat models, which will format the
-input messages into a system message (if provided) and a user message.</p>
-<p>Note this strategy maybe not suitable for all scenarios,
-and developers are encouraged to implement their own prompt
-engineering strategies.</p>
-<p>The following is an example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">),</span>
-    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi, how can I help you?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
-    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;What&#39;s the date today?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-
-<span class="n">prompt2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Hi, how can I help you?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">),</span>
-    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;What&#39;s the date today?&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>The prompt will be as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># prompt1</span>
-<span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You&#39;re a helpful assistant&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Bob: Hi, how can I help you?</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;user: What&#39;s the date today?&quot;</span>
-        <span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-
-<span class="c1"># prompt2</span>
-<span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;Bob: Hi, how can I help you?</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;user: What&#39;s the date today?&quot;</span>
-        <span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.format_tools_json_schemas">
+<span class="sig-name descname"><span class="pre">format_tools_json_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.format_tools_json_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format_tools_json_schemas" title="Link to this definition"></a></dt>
+<dd><p>Format the JSON schemas of the tool functions to the format that
+the model API provider expects.</p>
+<p class="rubric">Example</p>
+<p>An example of the input schemas parsed from the service toolkit</p>
+<p>..code-block:: json</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“bing_search”: {</dt><dd><p>“type”: “function”,
+“function”: {</p>
+<blockquote>
+<div><p>“name”: “bing_search”,
+“description”: “Search the web using Bing.”,
+“parameters”: {</p>
+<blockquote>
+<div><p>“type”: “object”,
+“properties”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“query”: {</dt><dd><p>“type”: “string”,
+“description”: “The search query.”,</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“required”: [“query”],</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
-should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+<dd class="field-odd"><p><strong>schemas</strong> (<cite>dict[str, dict]</cite>) – The tools JSON schemas parsed from the service toolkit module,
+which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The formatted messages.</p>
+<dd class="field-even"><p>The formatted JSON schemas of the tool functions.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>List[dict]</cite></p>
+<dd class="field-odd"><p><cite>list[dict]</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1038,7 +1137,7 @@ class in model configuration.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OllamaChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for ollama Chat API.</p>
 <p>All messages will be formatted into a single system message with
 system prompt and conversation history.</p>
@@ -1074,9 +1173,14 @@ engineering strategies.
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
@@ -1117,13 +1221,6 @@ class in model configuration.</p>
 </div>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.OllamaEmbeddingWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaEmbeddingWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaEmbeddingWrapper.format" title="Link to this definition"></a></dt>
-<dd><p>Format the input messages into the format that the model
-API required.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OllamaEmbeddingWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ollama_embedding'</span></em><a class="headerlink" href="#agentscope.models.OllamaEmbeddingWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1160,25 +1257,6 @@ class in model configuration.</p>
 </div>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.OllamaGenerationWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/ollama_model.html#OllamaGenerationWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OllamaGenerationWrapper.format" title="Link to this definition"></a></dt>
-<dd><p>Forward the input to the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
-should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The formatted string prompt.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>str</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OllamaGenerationWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ollama_generate'</span></em><a class="headerlink" href="#agentscope.models.OllamaGenerationWrapper.model_type" title="Link to this definition"></a></dt>
@@ -1195,39 +1273,20 @@ class in model configuration.</p>
 <p>The model wrapper for OpenAI’s chat API.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input string and dictionary into the format that
 OpenAI Chat API required. If you’re using a OpenAI-compatible model
 without a prefix “gpt-” in its name, the format method will
 automatically format the input messages into the required format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
-should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The formatted messages in the format that OpenAI Chat API
-required.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>List[dict]</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.static_format">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">static_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.static_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.static_format" title="Link to this definition"></a></dt>
-<dd><p>A static version of the format method, which can be used without
-initializing the OpenAIChatWrapper object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
 In distribution, placeholder is also allowed.</p></li>
-<li><p><strong>model_name</strong> (<cite>str</cite>) – The name of the model to use in OpenAI API.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1240,17 +1299,66 @@ required.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.format_tools_json_schemas">
+<span class="sig-name descname"><span class="pre">format_tools_json_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/openai_model.html#OpenAIChatWrapper.format_tools_json_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.format_tools_json_schemas" title="Link to this definition"></a></dt>
+<dd><p>Format the JSON schemas of the tool functions to the format that
+the model API provider expects.</p>
+<p class="rubric">Example</p>
+<p>An example of the input schemas parsed from the service toolkit</p>
+<p>..code-block:: json</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“bing_search”: {</dt><dd><p>“type”: “function”,
+“function”: {</p>
+<blockquote>
+<div><p>“name”: “bing_search”,
+“description”: “Search the web using Bing.”,
+“parameters”: {</p>
+<blockquote>
+<div><p>“type”: “object”,
+“properties”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“query”: {</dt><dd><p>“type”: “string”,
+“description”: “The search query.”,</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“required”: [“query”],</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schemas</strong> (<cite>dict[str, dict]</cite>) – The tools JSON schemas parsed from the service toolkit module,
+which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted JSON schemas of the tool functions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[dict]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.model_type">
 <span class="sig-name descname"><span class="pre">model_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'openai_chat'</span></em><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.model_type" title="Link to this definition"></a></dt>
 <dd><p>The type of the model wrapper, which is to identify the model wrapper
 class in model configuration.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="agentscope.models.OpenAIChatWrapper.substrings_in_vision_models_names">
-<span class="sig-name descname"><span class="pre">substrings_in_vision_models_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['gpt-4-turbo',</span> <span class="pre">'vision',</span> <span class="pre">'gpt-4o']</span></em><a class="headerlink" href="#agentscope.models.OpenAIChatWrapper.substrings_in_vision_models_names" title="Link to this definition"></a></dt>
-<dd><p>The substrings in the model names of vision models.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1367,13 +1475,6 @@ class in model configuration.</p>
 </div>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.models.OpenAIWrapperBase.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/openai_model.html#OpenAIWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.OpenAIWrapperBase.format" title="Link to this definition"></a></dt>
-<dd><p>Format the input messages into the format that the model
-API required.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -1384,15 +1485,20 @@ API required.</p>
 FastChat.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.PostAPIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/post_model.html#PostAPIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.PostAPIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/post_model.html#PostAPIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.PostAPIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input messages into a list of dict according to the model
 name. For example, if the model name is prefixed with “gpt-”, the
 input messages will be formatted for OpenAI models.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
@@ -1462,7 +1568,7 @@ class in model configuration.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.YiChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/yi_model.html#YiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.YiChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/yi_model.html#YiChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.YiChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages into the required format of Yi Chat API.</p>
 <p>Note this strategy maybe not suitable for all scenarios,
 and developers are encouraged to implement their own prompt
@@ -1495,9 +1601,14 @@ engineering strategies.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>
@@ -1553,7 +1664,7 @@ class in model configuration.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ZhipuAIChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ZhipuAIChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/zhipu_model.html#ZhipuAIChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ZhipuAIChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>A common format strategy for chat models, which will format the
 input messages into a user message.</p>
 <p>Note this strategy maybe not suitable for all scenarios,
@@ -1604,9 +1715,14 @@ engineering strategies.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<cite>Union[Msg, Sequence[Msg]]</cite>) – The input arguments to be formatted, where each argument
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The input arguments to be formatted, where each argument
 should be a <cite>Msg</cite> object, or a list of <cite>Msg</cite> objects.
-In distribution, placeholder is also allowed.</p>
+In distribution, placeholder is also allowed.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The formatted messages.</p>

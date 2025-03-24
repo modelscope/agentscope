@@ -1,6 +1,0 @@
-agentscope.agents.user_agent
-============================
-.. automodule:: agentscope.agents.user_agent
-   :members:
-   :undoc-members:
-   :show-inheritance:

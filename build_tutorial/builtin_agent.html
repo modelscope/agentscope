@@ -78,7 +78,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Built-in Agents</a><ul>
@@ -262,7 +262,7 @@ dialog agent <cite>alice</cite>.</p>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>User input:
 Bob: Do you know me?
-Alice: Hello Bob! I don&#39;t have any specific information about you other than what you&#39;ve shared in our conversation. I&#39;m here to help with any questions or topics you&#39;d like to discuss, though!
+Alice: I don&#39;t have any specific information about you, Bob. I&#39;m just an AI assistant, and I only know what you tell me during our conversation. Is there anything in particular you&#39;d like to chat about or any way I can help you today?
 </pre></div>
 </div>
 </section>
@@ -288,21 +288,22 @@ Alice: Hello Bob! I don&#39;t have any specific information about you other than
         <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;what you speak&quot;</span><span class="p">,</span>
         <span class="s2">&quot;decision&quot;</span><span class="p">:</span> <span class="s2">&quot;your final decision, true/false&quot;</span><span class="p">,</span>
     <span class="p">},</span>
+    <span class="n">keys_to_metadata</span><span class="o">=</span><span class="s2">&quot;decision&quot;</span><span class="p">,</span>
     <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;speak&quot;</span><span class="p">,</span> <span class="s2">&quot;decision&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">charles</span><span class="o">.</span><span class="n">set_parser</span><span class="p">(</span><span class="n">parser1</span><span class="p">)</span>
 <span class="n">msg1</span> <span class="o">=</span> <span class="n">charles</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Is it a good idea to go out in the rain?&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">))</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The content field: </span><span class="si">{</span><span class="n">msg1</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The type of content field: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">msg1</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The metadata field: </span><span class="si">{</span><span class="n">msg1</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The type of metadata field: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">msg1</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Going out in the rain can be refreshing and fun, but it also depends on the temperature, if you have proper gear, and if there&#39;s a risk of thunderstorms. It&#39;s important to consider these factors before deciding.&quot;, &quot;speak&quot;: &quot;It could be nice to go out in the rain, especially if you have the right clothing. Just make sure to check if it&#39;s safe and comfortable for you. Do you have an umbrella or a raincoat?&quot;, &quot;decision&quot;: false}
+{&quot;thought&quot;: &quot;Going out in the rain can be refreshing and fun, but it also depends on the temperature, if you have proper gear, and if there&#39;s a risk of lightning or other severe weather conditions. It&#39;s important to consider these factors before deciding.&quot;, &quot;speak&quot;: &quot;It can be nice to go out in the rain, especially if you&#39;re dressed for it. Just make sure to check if the weather is safe, and you have an umbrella or a raincoat. Do you need help checking the weather forecast?&quot;, &quot;decision&quot;: false}
 ```
-The content field: {&#39;thought&#39;: &quot;Going out in the rain can be refreshing and fun, but it also depends on the temperature, if you have proper gear, and if there&#39;s a risk of thunderstorms. It&#39;s important to consider these factors before deciding.&quot;, &#39;speak&#39;: &quot;It could be nice to go out in the rain, especially if you have the right clothing. Just make sure to check if it&#39;s safe and comfortable for you. Do you have an umbrella or a raincoat?&quot;, &#39;decision&#39;: False}
-The type of content field: &lt;class &#39;dict&#39;&gt;
+The metadata field: False
+The type of metadata field: &lt;class &#39;bool&#39;&gt;
 </pre></div>
 </div>
 <p>Then, we ask the agent to pick a number from 1 to 10.</p>
@@ -312,18 +313,22 @@ The type of content field: &lt;class &#39;dict&#39;&gt;
         <span class="s2">&quot;speak&quot;</span><span class="p">:</span> <span class="s2">&quot;what you speak&quot;</span><span class="p">,</span>
         <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="s2">&quot;the number you choose&quot;</span><span class="p">,</span>
     <span class="p">},</span>
+    <span class="n">keys_to_metadata</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+    <span class="n">keys_to_content</span><span class="o">=</span><span class="s2">&quot;speak&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">charles</span><span class="o">.</span><span class="n">set_parser</span><span class="p">(</span><span class="n">parser2</span><span class="p">)</span>
 <span class="n">msg2</span> <span class="o">=</span> <span class="n">charles</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;Bob&quot;</span><span class="p">,</span> <span class="s2">&quot;Pick a number from 1 to 10.&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">))</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The content of the response message: </span><span class="si">{</span><span class="n">msg2</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The metadata of the response message: </span><span class="si">{</span><span class="n">msg2</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;I need to pick a number between 1 and 10. I&#39;ll choose a number at random.&quot;, &quot;speak&quot;: &quot;Sure, I can do that. My number is 7. What about you, do you have a favorite number in this range?&quot;, &quot;number&quot;: &quot;7&quot;}
+{&quot;thought&quot;: &quot;I need to pick a random number between 1 and 10 as requested by Bob. There&#39;s no specific reason for any particular number, so I&#39;ll just choose one.&quot;, &quot;speak&quot;: &quot;Sure, I&#39;ll pick a number. How about 7?&quot;, &quot;number&quot;: &quot;7&quot;}
 ```
-The content of the response message: {&#39;thought&#39;: &quot;I need to pick a number between 1 and 10. I&#39;ll choose a number at random.&quot;, &#39;speak&#39;: &#39;Sure, I can do that. My number is 7. What about you, do you have a favorite number in this range?&#39;, &#39;number&#39;: &#39;7&#39;}
+The content of the response message: Sure, I&#39;ll pick a number. How about 7?
+The metadata of the response message: 7
 </pre></div>
 </div>
 <p>The next question is how to post-process the structured output.
@@ -353,12 +358,12 @@ while the <cite>speak</cite> field should be displayed to the user, and the <cit
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;I need to pick a number between 20 and 30. I&#39;ll choose a number at random.&quot;, &quot;speak&quot;: &quot;Sure, I can do that. My number is 24. Do you have a favorite number in this range?&quot;, &quot;number&quot;: &quot;24&quot;}
+{&quot;thought&quot;: &quot;I need to pick a random number between 20 and 30 as requested by Bob. I&#39;ll choose one without any specific preference.&quot;, &quot;speak&quot;: &quot;Sure, let&#39;s go with 25. How does that sound?&quot;, &quot;number&quot;: &quot;25&quot;}
 ```
-The content field: Sure, I can do that. My number is 24. Do you have a favorite number in this range?
+The content field: Sure, let&#39;s go with 25. How does that sound?
 The type of content field: &lt;class &#39;str&#39;&gt;
 
-The metadata field: 24
+The metadata field: 25
 The type of metadata field: &lt;class &#39;str&#39;&gt;
 </pre></div>
 </div>
@@ -408,13 +413,12 @@ loop manner.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;To calculate the multiplication of 151513434 and 54353453453, I can use the execute_python_code function to run a simple Python code that performs this calculation.&lt;/thought&gt;
+David: &lt;thought&gt;I need to use the execute_python_code function to perform the multiplication of the two numbers provided by Bob.&lt;/thought&gt;
 &lt;function&gt;execute_python_code&lt;/function&gt;
-&lt;code&gt;151513434 * 54353453453&lt;/code&gt;
+&lt;code&gt;151513434*54353453453&lt;/code&gt;
 system: 1. Execute function execute_python_code
    [ARGUMENTS]:
-       code: 151513434 * 54353453453
-   [STATUS]: SUCCESS
+       {&quot;code&quot;: &quot;151513434*54353453453&quot;}
    [RESULT]:
 
 system: Respond with specific tags as outlined below:
@@ -423,16 +427,20 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;The multiplication result is 8217675892789403402. Now I should inform Bob of the calculation result.&lt;/thought&gt;
+David: &lt;thought&gt;The multiplication has been performed, and I now have the result. Next, I need to provide the answer to Bob using the finish function.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The result of 151513434 * 54353453453 is 8217675892789403402.&lt;/response&gt;
+&lt;response&gt;The result of 151513434 multiplied by 54353453453 is 821070986694876502.&lt;/response&gt;
+system: 1. Execute function finish
+   [ARGUMENTS]:
+       {&quot;response&quot;: &quot;The result of 151513434 multiplied by 54353453453 is 821070986694876502.&quot;}
+   [RESULT]: The result of 151513434 multiplied by 54353453453 is 821070986694876502.
 </pre></div>
 </div>
 </section>
 <section id="llamaindexagent">
 <h2>LlamaIndexAgent<a class="headerlink" href="#llamaindexagent" title="Link to this heading"></a></h2>
 <p>Refer to the RAG Section for more details.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 33.339 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 27.509 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-builtin-agent-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/46ed2b57b0b63e420edd471093498f41/builtin_agent.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">builtin_agent.ipynb</span></code></a></p>

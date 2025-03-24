@@ -76,7 +76,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
@@ -156,12 +156,6 @@
 </div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope requires Python 3.9 or higher. You can install from source or pypi."><img alt="" src="../_images/sphx_glr_quickstart_thumb.png" />
 <p><a class="reference internal" href="quickstart.html#sphx-glr-build-tutorial-quickstart-py"><span class="std std-ref">Quick Start</span></a></p>
   <div class="sphx-glr-thumbnail-title">Quick Start</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="The prompt engineering is a crucial part of LLM-empowered applications, especially for the multi-agent ones. However, most API providers focus on the chatting scenario, where a user and an assistant speak alternately."><img alt="" src="../_images/sphx_glr_prompt_thumb.png" />
-<p><a class="reference internal" href="prompt.html#sphx-glr-build-tutorial-prompt-py"><span class="std std-ref">Prompt Engineering</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Prompt Engineering</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Message is a specialized data structure for information exchange. In AgentScope, we use message to communicate among agents."><img alt="" src="../_images/sphx_glr_message_thumb.png" />
-<p><a class="reference internal" href="message.html#sphx-glr-build-tutorial-message-py"><span class="std std-ref">Message</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Message</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports streaming output for the following APIs in both terminal and AgentScope Studio."><img alt="" src="../_images/sphx_glr_streaming_thumb.png" />
 <p><a class="reference internal" href="streaming.html#sphx-glr-build-tutorial-streaming-py"><span class="std std-ref">Streaming Mode</span></a></p>
   <div class="sphx-glr-thumbnail-title">Streaming Mode</div>
@@ -171,15 +165,15 @@
 </div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope implements a module for optimizing Agent System Prompts."><img alt="" src="../_images/sphx_glr_prompt_optimization_thumb.png" />
 <p><a class="reference internal" href="prompt_optimization.html#sphx-glr-build-tutorial-prompt-optimization-py"><span class="std std-ref">System Prompt Optimization</span></a></p>
   <div class="sphx-glr-thumbnail-title">System Prompt Optimization</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Message is a specialized data structure for information exchange. In AgentScope, we use message to communicate among agents."><img alt="" src="../_images/sphx_glr_message_thumb.png" />
+<p><a class="reference internal" href="message.html#sphx-glr-build-tutorial-message-py"><span class="std std-ref">Message</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Message</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial, we will briefly introduce what MCP is and show how to use MCP in AgentScope. We will also demonstrate how to configure an existing AgentScope multi-agent application as an MCP server. Finally, to help advanced developers gain a deeper understanding, we will discuss how MCP integrates with AgentScope."><img alt="" src="../_images/sphx_glr_MCP_thumb.png" />
 <p><a class="reference internal" href="MCP.html#sphx-glr-build-tutorial-mcp-py"><span class="std std-ref">MCP</span></a></p>
   <div class="sphx-glr-thumbnail-title">MCP</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="The main entry of AgentScope is agentscope.init, where you can configure your application."><img alt="" src="../_images/sphx_glr_monitor_thumb.png" />
 <p><a class="reference internal" href="monitor.html#sphx-glr-build-tutorial-monitor-py"><span class="std std-ref">Configuring and Monitoring</span></a></p>
   <div class="sphx-glr-thumbnail-title">Configuring and Monitoring</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial we show how to use the built-in tools in AgentScope and how to create custom tools."><img alt="" src="../_images/sphx_glr_tool_thumb.png" />
-<p><a class="reference internal" href="tool.html#sphx-glr-build-tutorial-tool-py"><span class="std std-ref">Tools</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Tools</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Agentscope has built-in supports for the retrieval augmentation generation (RAG). There are two key modules related to RAG in AgentScope: Knowledge and KnowledgeBank."><img alt="" src="../_images/sphx_glr_rag_thumb.png" />
 <p><a class="reference internal" href="rag.html#sphx-glr-build-tutorial-rag-py"><span class="std std-ref">Retrieval Augmentation Generation (RAG)</span></a></p>
   <div class="sphx-glr-thumbnail-title">Retrieval Augmentation Generation (RAG)</div>
@@ -189,12 +183,18 @@
 </div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports to build LLM-empowered agents by providing a basic agent class agentscope.agents.AgentBase."><img alt="" src="../_images/sphx_glr_agent_thumb.png" />
 <p><a class="reference internal" href="agent.html#sphx-glr-build-tutorial-agent-py"><span class="std std-ref">Build Agent</span></a></p>
   <div class="sphx-glr-thumbnail-title">Build Agent</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Background --------------------"><img alt="" src="../_images/sphx_glr_tool_thumb.png" />
+<p><a class="reference internal" href="tool.html#sphx-glr-build-tutorial-tool-py"><span class="std std-ref">Tools</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Tools</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope builds in several agent class to support different scenarios and show how to build agents with AgentScope."><img alt="" src="../_images/sphx_glr_builtin_agent_thumb.png" />
 <p><span class="xref std std-ref">sphx_glr_build_tutorial_builtin_agent.py</span></p>
   <div class="sphx-glr-thumbnail-title">Built-in Agents</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope has integrated many popular model API libraries with different modalities."><img alt="" src="../_images/sphx_glr_model_thumb.png" />
 <p><a class="reference internal" href="model.html#sphx-glr-build-tutorial-model-py"><span class="std std-ref">Model APIs</span></a></p>
   <div class="sphx-glr-thumbnail-title">Model APIs</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports developers to build prompt that fits different model APIs by providing a set of built-in strategies for both chat and multi-agent scenarios."><img alt="" src="../_images/sphx_glr_prompt_thumb.png" />
+<p><a class="reference internal" href="prompt.html#sphx-glr-build-tutorial-prompt-py"><span class="std std-ref">Prompt Formatting</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Prompt Formatting</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial, we will be building a simple agent that outputs structured data in JSON dictionary format using the agentscope.parsers module."><img alt="" src="../_images/sphx_glr_structured_output_thumb.png" />
 <p><a class="reference internal" href="structured_output.html#sphx-glr-build-tutorial-structured-output-py"><span class="std std-ref">Structured Output</span></a></p>
   <div class="sphx-glr-thumbnail-title">Structured Output</div>

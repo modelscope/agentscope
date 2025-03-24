@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -143,9 +143,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Generator</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommonFormatter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span>
 
 
 <div class="viewcode-block" id="OllamaWrapperBase">
@@ -410,7 +410,8 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaChatWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for ollama Chat API.</span>
 
@@ -454,75 +455,22 @@
 
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">            args (`Union[Msg, list[Msg]]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
 <span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
 <span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
+<span class="sd">                the messages will be formatted in chat mode, where only a user</span>
+<span class="sd">                and an assistant roles are involved.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `List[dict]`:</span>
 <span class="sd">                The formatted messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Parse all information into a list of messages</span>
-        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="c1"># record dialog history as a list of strings</span>
-        <span class="n">system_prompt</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">history_content_template</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># TODO: here we default the url links to images</span>
-        <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
-                <span class="c1"># system prompt</span>
-                <span class="n">system_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Merge all messages into a conversation history prompt</span>
-                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
-
-            <span class="n">history_content_template</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;## Conversation History&quot;</span><span class="p">,</span> <span class="n">dialogue_history</span><span class="p">],</span>
-            <span class="p">)</span>
-
-        <span class="n">history_content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">history_content_template</span><span class="p">)</span>
-
-        <span class="c1"># The conversation history message</span>
-        <span class="n">history_message</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">history_content</span><span class="p">,</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">history_message</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">images</span>
-
-        <span class="k">if</span> <span class="n">system_prompt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">history_message</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">system_prompt</span><span class="p">},</span>
-            <span class="n">history_message</span><span class="p">,</span>
-        <span class="p">]</span></div>
+        <span class="k">if</span> <span class="n">multi_agent_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </div>
 
 
@@ -615,20 +563,7 @@
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
             <span class="n">embedding</span><span class="o">=</span><span class="p">[</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]],</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="OllamaEmbeddingWrapper.format">
-<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaEmbeddingWrapper.format">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
-</div>
 
 
 
@@ -728,66 +663,7 @@
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
             <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">],</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="OllamaGenerationWrapper.format">
-<a class="viewcode-back" href="../../../build_api/agentscope.models.ollama_model.html#agentscope.models.OllamaGenerationWrapper.format">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward the input to the model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
-<span class="sd">                The input arguments to be formatted, where each argument</span>
-<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
-<span class="sd">                In distribution, placeholder is also allowed.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `str`:</span>
-<span class="sd">                The formatted string prompt.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="n">sys_prompt</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
-                <span class="c1"># system prompt</span>
-                <span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Merge all messages into a conversation history prompt</span>
-                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">sys_prompt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">prompt_template</span> <span class="o">=</span> <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">prompt_template</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">{system_prompt}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">system_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
-            <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
         <span class="p">)</span></div>
-</div>
 
 </pre></div>
 

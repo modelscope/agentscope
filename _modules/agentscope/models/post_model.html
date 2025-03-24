@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -143,16 +143,16 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.openai_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span><span class="p">,</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DEFAULT_MAX_RETRIES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DEFAULT_MESSAGES_KEY</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_DEFAULT_RETRY_INTERVAL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIFormatter</span><span class="p">,</span> <span class="n">GeminiFormatter</span><span class="p">,</span> <span class="n">CommonFormatter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 
 
@@ -342,17 +342,22 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.post_model.html#agentscope.models.PostAPIChatWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the input messages into a list of dict according to the model</span>
 <span class="sd">        name. For example, if the model name is prefixed with &quot;gpt-&quot;, the</span>
 <span class="sd">        input messages will be formatted for OpenAI models.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">            args (`Union[Msg, list[Msg]]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
 <span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
 <span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
+<span class="sd">                the messages will be formatted in chat mode, where only a user</span>
+<span class="sd">                and an assistant roles are involved.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `Union[List[dict]]`:</span>
@@ -365,22 +370,17 @@
         <span class="p">)</span>
 
         <span class="c1"># OpenAI</span>
-        <span class="k">if</span> <span class="n">model_name</span> <span class="ow">and</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gpt-&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">static_format</span><span class="p">(</span>
-                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-                <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="n">model_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">OpenAIFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Gemini</span>
-        <span class="k">elif</span> <span class="n">model_name</span> <span class="ow">and</span> <span class="n">model_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;gemini&quot;</span><span class="p">):</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">.gemini_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeminiChatWrapper</span>
-
-            <span class="k">return</span> <span class="n">GeminiChatWrapper</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">GeminiFormatter</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="n">model_name</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">GeminiFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Include DashScope, ZhipuAI, Ollama, the other models supported by</span>
         <span class="c1"># litellm and unknown models</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">format_for_common_chat_models</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </div>
 
 
@@ -401,20 +401,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in API call:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in API call:</span><span class="se">\n</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">image_urls</span><span class="o">=</span><span class="n">urls</span><span class="p">)</span>
-
-<div class="viewcode-block" id="PostAPIDALLEWrapper.format">
-<a class="viewcode-back" href="../../../build_api/agentscope.models.post_model.html#agentscope.models.PostAPIDALLEWrapper.format">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
-</div>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span><span class="n">image_urls</span><span class="o">=</span><span class="n">urls</span><span class="p">)</span></div>
 
 
 
@@ -467,20 +454,7 @@
         <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
             <span class="n">embedding</span><span class="o">=</span><span class="n">embeddings</span><span class="p">,</span>
             <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="PostAPIEmbeddingWrapper.format">
-<a class="viewcode-back" href="../../../build_api/agentscope.models.post_model.html#agentscope.models.PostAPIEmbeddingWrapper.format">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
-</div>
 
 </pre></div>
 

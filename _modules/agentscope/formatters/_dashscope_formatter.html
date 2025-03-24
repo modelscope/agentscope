@@ -1,0 +1,433 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.formatters._dashscope_formatter &mdash; AgentScope Doc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">Message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">Build Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">Build Conversation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">FQA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Formatting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">MultiModality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">Visual Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">Configuring and Monitoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">Low-code Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">agentscope.formatters._dashscope_formatter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for agentscope.formatters._dashscope_formatter</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;The dashscope formatter class.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatterBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_guess_type_by_extension</span>
+
+
+<div class="viewcode-block" id="DashScopeFormatter">
+<a class="viewcode-back" href="../../../build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DashScopeFormatter</span><span class="p">(</span><span class="n">FormatterBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The DashScope formatter, which is responsible for formatting messages,</span>
+<span class="sd">    JSON schemas description of the tool functions.&quot;&quot;&quot;</span>
+
+    <span class="n">supported_model_regexes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;qwen-.*&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the url to the format of DashScope API. Note for local</span>
+<span class="sd">        files, a prefix &quot;file://&quot; will be added.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (`Union[str, Sequence[str], None]`):</span>
+<span class="sd">                A string of url of a list of urls to be converted.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `List[dict]`:</span>
+<span class="sd">                A list of dictionaries with key as the type of the url</span>
+<span class="sd">                and value as the url. Only &quot;image&quot; and &quot;audio&quot; are supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">url_type</span> <span class="o">=</span> <span class="n">_guess_type_by_extension</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">url_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">]:</span>
+                <span class="c1"># Add prefix for local files</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+                    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;file://&quot;</span> <span class="o">+</span> <span class="n">url</span>
+                <span class="k">return</span> <span class="p">[{</span><span class="n">url_type</span><span class="p">:</span> <span class="n">url</span><span class="p">}]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># skip unsupported url</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Skip unsupported url (</span><span class="si">{</span><span class="n">url_type</span><span class="si">}</span><span class="s2">), &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;expect image or audio.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported url type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;str or list expected.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="DashScopeFormatter.format_chat">
+<a class="viewcode-back" href="../../../build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.format_chat">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_chat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages in chat scenario, where only one user and</span>
+<span class="sd">        one assistant are involved.</span>
+
+<span class="sd">        The current format function supports:</span>
+<span class="sd">            - [x] image</span>
+<span class="sd">            - [x] audio</span>
+<span class="sd">            - [x] text</span>
+<span class="sd">            - [x] tool_use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">input_msgs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">check_and_flat_messages</span><span class="p">(</span><span class="o">*</span><span class="n">msgs</span><span class="p">)</span>
+
+        <span class="n">formatted_msgs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">input_msgs</span><span class="p">:</span>
+            <span class="n">content_blocks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">tool_calls</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">():</span>
+                <span class="n">typ</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">typ</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">]:</span>
+                    <span class="n">content_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="n">typ</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">)),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;tool_use&quot;</span><span class="p">:</span>
+                    <span class="n">tool_calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
+                                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                                <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                                    <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+                                    <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">},</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;tool_result&quot;</span><span class="p">:</span>
+                    <span class="n">formatted_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;tool&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;tool_call_id&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span>
+                            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">),</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unsupported block type </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s2"> in the message, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;skipped.&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="n">msg_dashscope</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content_blocks</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="n">tool_calls</span><span class="p">:</span>
+                <span class="n">msg_dashscope</span><span class="p">[</span><span class="s2">&quot;tool_calls&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tool_calls</span>
+
+            <span class="k">if</span> <span class="n">msg_dashscope</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">msg_dashscope</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tool_calls&quot;</span><span class="p">):</span>
+                <span class="n">formatted_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg_dashscope</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">formatted_msgs</span></div>
+
+
+<div class="viewcode-block" id="DashScopeFormatter.format_multi_agent">
+<a class="viewcode-back" href="../../../build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.format_multi_agent">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_multi_agent</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages in multi-agent scenario, where multiple agents</span>
+<span class="sd">        are involved.&quot;&quot;&quot;</span>
+
+        <span class="n">input_msgs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">check_and_flat_messages</span><span class="p">(</span><span class="o">*</span><span class="n">msgs</span><span class="p">)</span>
+
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># record dialog history as a list of strings</span>
+        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_or_audio_dicts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">msg</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span> <span class="ow">and</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">():</span>
+                <span class="c1"># system prompt</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()}]</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
+                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># text message</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">():</span>
+                    <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="c1"># image and audio</span>
+                <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;audio&quot;</span><span class="p">]:</span>
+                        <span class="n">image_or_audio_dicts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                            <span class="bp">cls</span><span class="o">.</span><span class="n">_convert_url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">))),</span>
+                        <span class="p">)</span>
+
+        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
+
+        <span class="n">user_content_template</span> <span class="o">=</span> <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="c1"># Place the image or audio before the conversation history</span>
+                    <span class="o">*</span><span class="n">image_or_audio_dicts</span><span class="p">,</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">user_content_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">messages</span></div>
+
+
+<div class="viewcode-block" id="DashScopeFormatter.format_tools_json_schemas">
+<a class="viewcode-back" href="../../../build_api/agentscope.formatters.html#agentscope.formatters.DashScopeFormatter.format_tools_json_schemas">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_tools_json_schemas</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">schemas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the JSON schemas of the tool functions to the format that</span>
+<span class="sd">        DashScope API expects. This function will take the parsed JSON schema</span>
+<span class="sd">        from `agentscope.service.ServiceToolkit` as input and return</span>
+<span class="sd">        the formatted JSON schema.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            An example of the input/output tool JSON schema</span>
+
+<span class="sd">            ..code-block:: json</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &quot;bing_search&quot;: {</span>
+<span class="sd">                        &quot;type&quot;: &quot;function&quot;,</span>
+<span class="sd">                        &quot;function&quot;: {</span>
+<span class="sd">                            &quot;name&quot;: &quot;bing_search&quot;,</span>
+<span class="sd">                            &quot;description&quot;: &quot;Search the web using Bing.&quot;,</span>
+<span class="sd">                            &quot;parameters&quot;: {</span>
+<span class="sd">                                &quot;type&quot;: &quot;object&quot;,</span>
+<span class="sd">                                &quot;properties&quot;: {</span>
+<span class="sd">                                    &quot;query&quot;: {</span>
+<span class="sd">                                        &quot;type&quot;: &quot;string&quot;,</span>
+<span class="sd">                                        &quot;description&quot;: &quot;The search query.&quot;,</span>
+<span class="sd">                                    }</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &quot;required&quot;: [&quot;query&quot;],</span>
+<span class="sd">                            }</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            schemas (`dict[str, dict]`):</span>
+<span class="sd">                The JSON schema of the tool functions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list[dict]`:</span>
+<span class="sd">                The formatted JSON schema.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># The schemas from ServiceToolkit is exactly the same with the format</span>
+        <span class="c1"># that DashScope API expects, so we just return the input schemas.</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">schemas</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">,</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expect dict of schemas, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">schemas</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="k">for</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">schemas</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">schema</span><span class="p">,</span>
+                <span class="nb">dict</span><span class="p">,</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expect dict schema, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">schema</span> <span class="ow">and</span> <span class="s2">&quot;function&quot;</span> <span class="ow">in</span> <span class="n">schema</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid schema: </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s2">, expect keys &#39;type&#39; and &#39;function&#39;.&quot;</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid schema type: </span><span class="si">{</span><span class="n">schema</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, expect &#39;function&#39;.&quot;</span>
+
+            <span class="k">assert</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">],</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid schema: </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;expect key &#39;name&#39; in &#39;function&#39; field.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">schemas</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Alibaba.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

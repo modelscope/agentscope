@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -140,6 +140,7 @@
   <h1>Source code for agentscope.logging</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Logging utilities.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Any</span>
@@ -150,7 +151,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_guess_type_by_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_map_string_to_color_mark</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.web.gradio.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">generate_image_from_name</span><span class="p">,</span>
     <span class="n">send_msg</span><span class="p">,</span>
@@ -181,6 +184,50 @@
 <span class="n">_PREFIX_DICT</span> <span class="o">=</span> <span class="p">{}</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">colored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the formatted string of the message. If the message has an</span>
+<span class="sd">    url, the url will be appended to the content.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message object to be formatted.</span>
+<span class="sd">        colored (`bool`, defaults to `False`):</span>
+<span class="sd">            Whether to color the name of the message</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `str`: The formatted string of the message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">colored</span><span class="p">:</span>
+        <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">_map_string_to_color_mark</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}{</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="n">m2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">colored_strs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;tool_result&quot;</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: Execute function </span><span class="si">{</span><span class="n">block</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">block</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Tool use block</span>
+    <span class="n">tool_calls</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">(</span><span class="s2">&quot;tool_use&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tool_calls</span><span class="p">:</span>
+        <span class="n">tool_calls_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">colored_strs</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tool_calls_str</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">tool_calls_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colored_strs</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="log_stream_msg">
 <a class="viewcode-back" href="../../build_api/agentscope.logging.html#agentscope.logging.log_stream_msg">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">log_stream_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -197,7 +244,7 @@
     <span class="k">global</span> <span class="n">_PREFIX_DICT</span>
 
     <span class="c1"># Print msg to terminal</span>
-    <span class="n">formatted_str</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">formatted_str</span> <span class="o">=</span> <span class="n">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">print_str</span> <span class="o">=</span> <span class="n">formatted_str</span><span class="p">[</span><span class="n">_PREFIX_DICT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:]</span>
 
@@ -238,7 +285,7 @@
         <span class="c1"># Not initialize yet</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
             <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
-            <span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
@@ -256,7 +303,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">, expect Msg object.&quot;</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">formatted_str</span><span class="p">(</span><span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
     <span class="c1"># Push msg to studio if it is active</span>
     <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
@@ -288,25 +335,23 @@
             <span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">content</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="n">flushing</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">url</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">urls</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">url</span>
-
-            <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
-                <span class="n">typ</span> <span class="o">=</span> <span class="n">_guess_type_by_extension</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
-                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;img src=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39;/&gt;&quot;</span>
-                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span>
-                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;audio src=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/audio&gt;&quot;</span>
-                <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span><span class="p">:</span>
-                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;video src=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/video&gt;&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;a href=&#39;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&lt;/a&gt;&quot;</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;img src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;/&gt;&quot;</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;audio src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/audio&gt;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;video src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/video&gt;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;a href=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/a&gt;&quot;</span>
+                <span class="p">)</span>
 
         <span class="n">send_msg</span><span class="p">(</span>
             <span class="n">content</span><span class="p">,</span>

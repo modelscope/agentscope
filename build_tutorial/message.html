@@ -69,6 +69,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Message</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#create-a-message">Create a Message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multimodal-message">Multimodal Message</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#serialize">Serialize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deserialize">Deserialize</a></li>
 </ul>
@@ -83,7 +84,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
@@ -154,12 +155,19 @@ to download the full example code.</p>
 <span id="sphx-glr-build-tutorial-message-py"></span><span id="id1"></span><h1>Message<a class="headerlink" href="#message" title="Link to this heading"></a></h1>
 <p>Message is a specialized data structure for information exchange.
 In AgentScope, we use message to communicate among agents.</p>
-<p>The most important fields of a message are: <cite>name</cite>, <cite>role</cite>, and <cite>content</cite>.
-The <cite>name and `role</cite> fields identify the sender of the message, and the
-<cite>content</cite> field contains the actual information.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <cite>role</cite> field must be chosen from <cite>“system”</cite>, <cite>“assistant”</cite> and <cite>“user”</cite>.</p>
+<p>A message consists of four fields: <cite>name</cite>, <cite>role</cite>, <cite>content</cite>, and <cite>metadata</cite>.
+The types and meanings of these fields are as follows:</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In multi-agent systems, when the <cite>role</cite> field is “user” or
+“assistant”, the <cite>name</cite> field can have different values to distinguish
+different identities. When the <cite>role</cite> field is “system”, the <cite>name</cite> field is
+usually fixed, such as “system”.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When the data in the message is used for controlling the flow
+or structured output, it is recommended to use the <cite>metadata</cite> field.</p>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
@@ -185,6 +193,75 @@ The content of the message: &quot;Hi! How can I help you?&quot;
 </pre></div>
 </div>
 </section>
+<section id="multimodal-message">
+<h2>Multimodal Message<a class="headerlink" href="#multimodal-message" title="Link to this heading"></a></h2>
+<p>The <cite>content</cite> field also supports multimodal content, such as text, image,
+audio, and video.
+AgentScope uses the concept of block to represent the content of a message.
+A block is a dictionary containing the type and content of the message,
+and the specific supported types are as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TextBlock</p></td>
+<td><p>Text block</p></td>
+<td><p><cite>TextBlock(type=”text”, text=”你好”)</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p>ImageBlock</p></td>
+<td><p>Image block</p></td>
+<td><p><cite>ImageBlock(type=”image”, url=”https://example.com/image.jpg”)</cite></p></td>
+</tr>
+<tr class="row-even"><td><p>AudioBlock</p></td>
+<td><p>Audio block</p></td>
+<td><p><cite>AudioBlock(type=”audio”, url=”https://example.com/audio.mp3”)</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p>VideoBlock</p></td>
+<td><p>Video block</p></td>
+<td><p><cite>VideoBlock(type=”video”, url=”https://example.com/video.mp4”)</cite></p></td>
+</tr>
+<tr class="row-even"><td><p>FileBlock</p></td>
+<td><p>File block</p></td>
+<td><p><cite>FileBlock(type=”file”, url=”https://example.com/file.zip”)</cite></p></td>
+</tr>
+</tbody>
+</table>
+<p>The usage is as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TextBlock</span><span class="p">,</span>
+    <span class="n">ImageBlock</span><span class="p">,</span>
+    <span class="n">AudioBlock</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msg_image</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Stank&quot;</span><span class="p">,</span>
+    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">content</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Describe this image for me.&quot;</span><span class="p">),</span>
+        <span class="n">ImageBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">msg_audio</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Stank&quot;</span><span class="p">,</span>
+    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">content</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Listen to this audio.&quot;</span><span class="p">),</span>
+        <span class="n">AudioBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://example.com/audio.mp3&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For tools API, there are two additional blocks: <cite>ToolUseBlock</cite> and
+<cite>ToolResultBlock</cite>. Further reading refer to <a class="reference internal" href="tool.html#tools"><span class="std std-ref">Tools</span></a>.</p>
+</div>
+</section>
 <section id="serialize">
 <h2>Serialize<a class="headerlink" href="#serialize" title="Link to this heading"></a></h2>
 <p>Message can be serialized to a string in JSON format.</p>
@@ -198,13 +275,12 @@ The content of the message: &quot;Hi! How can I help you?&quot;
 {
     &quot;__module__&quot;: &quot;agentscope.message.msg&quot;,
     &quot;__name__&quot;: &quot;Msg&quot;,
-    &quot;id&quot;: &quot;67a77719788545959bce7d4c4835378d&quot;,
-    &quot;timestamp&quot;: &quot;2025-03-21 04:16:01&quot;,
+    &quot;id&quot;: &quot;fb35b79b3f3943d3903a11f32fce1fd6&quot;,
+    &quot;name&quot;: &quot;Jarvis&quot;,
     &quot;role&quot;: &quot;assistant&quot;,
-    &quot;url&quot;: null,
-    &quot;metadata&quot;: null,
     &quot;content&quot;: &quot;Hi! How can I help you?&quot;,
-    &quot;name&quot;: &quot;Jarvis&quot;
+    &quot;metadata&quot;: null,
+    &quot;timestamp&quot;: &quot;2025-03-24 06:13:04&quot;
 }
 </pre></div>
 </div>
@@ -220,7 +296,7 @@ The content of the message: &quot;Hi! How can I help you?&quot;
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The content of the message: &quot;</span><span class="si">{</span><span class="n">new_msg</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;agentscope.message.msg.Msg object at 0x7f7e6c27c3a0&gt;
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id=&#39;fb35b79b3f3943d3903a11f32fce1fd6&#39; name=&#39;Jarvis&#39; role=&#39;assistant&#39; content=&#39;Hi! How can I help you?&#39; metadata=None timestamp=&#39;2025-03-24 06:13:04&#39;
 The sender of the message: &quot;Jarvis&quot;
 The role of the sender: &quot;assistant&quot;
 The content of the message: &quot;Hi! How can I help you?&quot;

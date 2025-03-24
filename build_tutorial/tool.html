@@ -78,7 +78,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
@@ -86,7 +86,10 @@
 <li class="toctree-l1"><a class="reference internal" href="visual.html">Visual Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-built-in-tools">Using Built-in Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prompt-based-tool-calling">Prompt-based Tool Calling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-based-tool-calling">API-based Tool Calling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-mcp-with-servicetoolkit">Using MCP with ServiceToolkit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-custom-tools">Creating Custom Tools</a></li>
 </ul>
@@ -152,21 +155,31 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="tools">
 <span id="sphx-glr-build-tutorial-tool-py"></span><span id="id1"></span><h1>Tools<a class="headerlink" href="#tools" title="Link to this heading"></a></h1>
-<p>In this tutorial we show how to use the built-in tools in AgentScope and
-how to create custom tools.</p>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
+<p>There are two ways to call tools in LLM-empowered multi-agent applications.</p>
+<a class="reference internal image-reference" href="https://img.alicdn.com/imgextra/i3/O1CN01iizvjY1UjKCE3q5FR_!!6000000002553-0-tps-1830-792.jpg"><img alt="Two ways for tool calling" class="align-center" src="https://img.alicdn.com/imgextra/i3/O1CN01iizvjY1UjKCE3q5FR_!!6000000002553-0-tps-1830-792.jpg" style="width: 80%;" />
+</a>
+<ul class="simple">
+<li><p>Prompt-based tool calling: Developers introduce tools in the prompt and extract tool calls from the LLM response.</p></li>
+<li><p>API-based tool calling: Developers provide tools description in JSON schema format. The LLM API will directly return the tool calls in their specific format.</p></li>
+</ul>
+<p>AgentScope supports both ways. In this tutorial, we will introduce how to use
+the built-in tools and how to create custom tools.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeChatWrapper</span>
 </pre></div>
 </div>
+</section>
 <section id="using-built-in-tools">
 <h2>Using Built-in Tools<a class="headerlink" href="#using-built-in-tools" title="Link to this heading"></a></h2>
-<p>AgentScope provides a <cite>ServiceToolkit</cite> module that supports</p>
+<p>AgentScope provides a <cite>ServiceToolkit</cite> module that supports to</p>
 <ul class="simple">
-<li><p>tool introduction generation,</p></li>
-<li><p>a default call format,</p></li>
-<li><p>response parsing, tools calling and agent-oriented error handling.</p></li>
+<li><p>parse tools into JSON schemas automatically</p></li>
+<li><p>check arguments and call functions</p></li>
 </ul>
 <p>Before using <cite>ServiceToolkit</cite>, we can take a look at the available tools in
 the <cite>agentscope.service</cite> module.</p>
@@ -176,19 +189,21 @@ the <cite>agentscope.service</cite> module.</p>
 </pre></div>
 </div>
 <p>All above functions are implemented as Python functions.
-They can be registered to the <cite>ServiceToolkit</cite> by calling the <cite>add</cite> method.</p>
+They can be registered to the <cite>ServiceToolkit</cite> by calling the <cite>add</cite> method.
+The <cite>ServiceToolkit</cite> will parse the tool functions into JSON schema
+automatically.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">bing_search</span><span class="p">,</span> <span class="n">execute_shell_command</span>
 
 <span class="n">toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
 <span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">execute_shell_command</span><span class="p">)</span>
-
-<span class="c1"># Note some parameters of the tool functions (e.g. api_key) should be handled</span>
-<span class="c1"># by developers.</span>
-<span class="c1"># You can directly pass these parameters as keyword arguments in the add</span>
-<span class="c1"># method as follows, the reserved parameters will be left to the agent to fill.</span>
-
-<span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bing_search</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note some parameters of the tool functions (e.g. api_key) should be handled
+by developers.
+You can directly pass these parameters as keyword arguments in the add
+method as follows, the reserved parameters will be left to the agent to fill.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bing_search</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The tools instruction:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">toolkit</span><span class="o">.</span><span class="n">tools_instruction</span><span class="p">)</span>
@@ -207,29 +222,8 @@ The following tool functions are available in the format of
 1. execute_shell_command: Executes a given shell command.
         command (string): The shell command to execute.
 2. bing_search: Search question in Bing Search API and return the searching results
-        num_results (number): The number of search results to return.
         question (string): The search query string.
-</pre></div>
-</div>
-</section>
-<section id="using-mcp-with-servicetoolkit">
-<h2>Using MCP with ServiceToolkit<a class="headerlink" href="#using-mcp-with-servicetoolkit" title="Link to this heading"></a></h2>
-<p>AgentScope provides support for integrating MCP (Model Context Protocol)
-servers, enabling enhanced capabilities for models and tools. You can add
-MCP servers to the <cite>ServiceToolkit</cite> using the <cite>add_mcp_servers</cite> method,
-where you specify the configurations for each server.
-Please note that MCP requires Python version &gt;= 3.10.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;mcpServers&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;puppeteer&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;npx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;@modelcontextprotocol/server-puppeteer&quot;</span><span class="p">],</span>
-        <span class="p">},</span>
-    <span class="p">},</span>
-<span class="p">}</span>
-
-<span class="c1"># Add MCP server configurations to the ServiceToolkit</span>
-<span class="c1"># `toolkit.add_mcp_servers(server_configs=configs)`</span>
+        num_results (number): The number of search results to return.
 </pre></div>
 </div>
 <p>The built-in default calling format:</p>
@@ -271,14 +265,14 @@ Please note that MCP requires Python version &gt;= 3.10.</p>
       &quot;parameters&quot;: {
         &quot;type&quot;: &quot;object&quot;,
         &quot;properties&quot;: {
+          &quot;question&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;The search query string.&quot;
+          },
           &quot;num_results&quot;: {
             &quot;type&quot;: &quot;number&quot;,
             &quot;description&quot;: &quot;The number of search results to return.&quot;,
             &quot;default&quot;: 10
-          },
-          &quot;question&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;description&quot;: &quot;The search query string.&quot;
           }
         },
         &quot;required&quot;: [
@@ -290,10 +284,35 @@ Please note that MCP requires Python version &gt;= 3.10.</p>
 }
 </pre></div>
 </div>
-<p>After assembling the <cite>ServiceToolkit</cite>, you can integrate it into agent.
-In AgentScope, we provide a <cite>ReActAgent</cite> to handle the tool usage, you can
+</section>
+<section id="prompt-based-tool-calling">
+<h2>Prompt-based Tool Calling<a class="headerlink" href="#prompt-based-tool-calling" title="Link to this heading"></a></h2>
+<p>In prompt-based tool calling, developers need to
+- introduce the tools and call format in prompt
+- parse and extract the tool calls from the LLM response.</p>
+<p>You can use the parsers in <a class="reference internal" href="structured_output.html#structured-output"><span class="std std-ref">Structured Output</span></a> section to parse the LLM
+response and extract the tool calls.
+The tool call format of <cite>ServiceToolkit</cite> is as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolUseBlock</span>
+
+<span class="n">tool_call</span> <span class="o">=</span> <span class="n">ToolUseBlock</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;tool_use&quot;</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;bing_search&quot;</span><span class="p">,</span>
+    <span class="nb">input</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;AgentScope&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>After assembling the <cite>ServiceToolkit</cite>, you can integrate it into agent.</p>
+<p>In AgentScope, we provide a <cite>ReActAgent</cite> to handle the tool usage, you can
 directly pass the <cite>ServiceToolkit</cite> object into this agent.
-Refer to [] for implementation details of this agent.</p>
+Refer to <span class="xref std std-ref">builtin-agent</span> for implementation details of this agent.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>ReActAgent</cite> constructs the prompt and parses the tools locally,
+rather than through the tools API provided by the model API. For using the
+tools API, please refer to <span class="xref std std-ref">tools-api</span>.</p>
+</div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReActAgent</span>
 
 <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
@@ -311,12 +330,13 @@ Refer to [] for implementation details of this agent.</p>
     <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You&#39;re a helpful assistant named Friday.&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">msg_task</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Help me to calculate 1615114134*4343434343&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<span class="n">msg_task</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Help me to calculate 1615114134*4343434343&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">res</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg_task</span><span class="p">)</span>
-
-<span class="c1"># Recycle the toolkit instance</span>
-<span class="k">del</span> <span class="n">toolkit</span>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>system: Respond with specific tags as outlined below:
@@ -325,13 +345,12 @@ Refer to [] for implementation details of this agent.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;I need to calculate the multiplication of 1615114134 and 4343434343. I can use the execute_shell_command function to perform this calculation using a shell command.&lt;/thought&gt;
+Friday: &lt;thought&gt;I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using a shell command.&lt;/thought&gt;
 &lt;function&gt;execute_shell_command&lt;/function&gt;
-&lt;command&gt;echo $((1615114134*4343434343))&lt;/command&gt;
+&lt;command&gt;expr 1615114134 \* 4343434343&lt;/command&gt;
 system: 1. Execute function execute_shell_command
    [ARGUMENTS]:
-       command: echo $((1615114134*4343434343))
-   [STATUS]: SUCCESS
+       {&quot;command&quot;: &quot;expr 1615114134 \\* 4343434343&quot;}
    [RESULT]: 7015142197480303962
 
 system: Respond with specific tags as outlined below:
@@ -340,11 +359,192 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been calculated to be 7015142197480303962. I can now provide this result to the user.&lt;/thought&gt;
+Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been calculated successfully, and the result is 7015142197480303962. I can now provide this result to the user.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.&lt;/response&gt;
+&lt;response&gt;The result of 1615114134 * 4343434343 is 7015142197480303962.&lt;/response&gt;
+system: 1. Execute function finish
+   [ARGUMENTS]:
+       {&quot;response&quot;: &quot;The result of 1615114134 * 4343434343 is 7015142197480303962.&quot;}
+   [RESULT]: The result of 1615114134 * 4343434343 is 7015142197480303962.
 </pre></div>
 </div>
+</section>
+<section id="api-based-tool-calling">
+<h2>API-based Tool Calling<a class="headerlink" href="#api-based-tool-calling" title="Link to this heading"></a></h2>
+<p>In API-based tool calling, developers only need to prepare the tools
+description in JSON schema format. However, different APIs differ in
+- the format of the tool description, and
+- how to construct the prompt with tool calls and execution results.</p>
+<a class="reference internal image-reference" href="https://img.alicdn.com/imgextra/i4/O1CN01HIHrnw21LrDxzrB4a_!!6000000006969-0-tps-1920-1080.jpg"><img alt="API-based tool calling" class="align-center" src="https://img.alicdn.com/imgextra/i4/O1CN01HIHrnw21LrDxzrB4a_!!6000000006969-0-tps-1920-1080.jpg" style="width: 100%;" />
+</a>
+<p>The above figure takes OpenAI as an example to show how API-based tool
+calling works in AgentScope. We block API-specific requirements by
+<cite>agentscope.formatter</cite> and <cite>ModelResponse</cite> modules. All developers need to
+know is</p>
+<ol class="arabic simple">
+<li><p><cite>ServiceToolkit</cite> will parse the tool functions into standard JSON schema automatically</p></li>
+<li><p><cite>Formatter</cite> class will transform the JSON schemas and messages into the required format</p></li>
+<li><p>The tool calls are all unified into the same format (<cite>ToolUseBlock</cite>) within <cite>ModelResponse</cite></p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>A new agent class <cite>ReActAgentV2</cite> is added for API-based tools calling!</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, only the <cite>format_chat</cite> method supports tools API. The
+<cite>format_multi_agent</cite> method will be supported in the future.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>API-based tool calling does not support streaming return yet, and
+the related functionality is under development.</p>
+</div>
+<p>Here we take DashScope as an example to show how to use the tools API.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextBlock</span><span class="p">,</span> <span class="n">ToolUseBlock</span><span class="p">,</span> <span class="n">ToolResultBlock</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Step 3 -&gt; 4 in the figure, formating messages and JSON schemas:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">msgs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Help me to execute shell cmd &#39;whoami&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">formatted_msgs</span> <span class="o">=</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
+<span class="n">formatted_schemas</span> <span class="o">=</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_tools_json_schemas</span><span class="p">(</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">formatted_msgs</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;Help me to execute shell cmd &#39;whoami&#39;&quot;
+            }
+        ]
+    }
+]
+</pre></div>
+</div>
+<p>Step 5 -&gt; 6 -&gt; 7 in the figure, getting the model response:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">formatted_msgs</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">formatted_schemas</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tool_calls:&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>tool_calls: [
+    {
+        &quot;type&quot;: &quot;tool_use&quot;,
+        &quot;id&quot;: &quot;call_1d78f16459264adaa6e73f&quot;,
+        &quot;name&quot;: &quot;execute_shell_command&quot;,
+        &quot;input&quot;: {
+            &quot;command&quot;: &quot;whoami&quot;
+        }
+    }
+]
+</pre></div>
+</div>
+<p>Step 8, creating a new message with the tool calls:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new msg with the tool calls</span>
+<span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+    <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+    <span class="n">content</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">)</span>
+<span class="n">msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># execute the tool calls</span>
+<span class="n">msg_execution</span> <span class="o">=</span> <span class="n">toolkit</span><span class="o">.</span><span class="n">parse_and_call_func</span><span class="p">(</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">,</span>
+    <span class="n">tools_api_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Must be ture for tools API</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>assistant: [
+    {
+        &quot;type&quot;: &quot;tool_use&quot;,
+        &quot;id&quot;: &quot;call_1d78f16459264adaa6e73f&quot;,
+        &quot;name&quot;: &quot;execute_shell_command&quot;,
+        &quot;input&quot;: {
+            &quot;command&quot;: &quot;whoami&quot;
+        }
+    }
+]
+</pre></div>
+</div>
+<p>Step 9, adding the execution results to the message list:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg_execution</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, let’s try to format the new message list with tool calls and result
+again!</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">formatted_msgs</span> <span class="o">=</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">formatted_msgs</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;Help me to execute shell cmd &#39;whoami&#39;&quot;
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;assistant&quot;,
+        &quot;content&quot;: null,
+        &quot;tool_calls&quot;: [
+            {
+                &quot;id&quot;: &quot;call_1d78f16459264adaa6e73f&quot;,
+                &quot;type&quot;: &quot;function&quot;,
+                &quot;function&quot;: {
+                    &quot;name&quot;: &quot;execute_shell_command&quot;,
+                    &quot;arguments&quot;: &quot;{\&quot;command\&quot;: \&quot;whoami\&quot;}&quot;
+                }
+            }
+        ]
+    },
+    {
+        &quot;role&quot;: &quot;tool&quot;,
+        &quot;tool_call_id&quot;: &quot;call_1d78f16459264adaa6e73f&quot;,
+        &quot;content&quot;: &quot;runner&quot;,
+        &quot;name&quot;: &quot;execute_shell_command&quot;
+    }
+]
+</pre></div>
+</div>
+<p>Up to now, we have already finished the API-based tool calling process.
+The whole process refers to the implementation of
+<cite>agentscope.agents.ReActAgentV2</cite> class. You can also directly use this
+agent.</p>
+</section>
+<section id="using-mcp-with-servicetoolkit">
+<h2>Using MCP with ServiceToolkit<a class="headerlink" href="#using-mcp-with-servicetoolkit" title="Link to this heading"></a></h2>
+<p>AgentScope provides support for integrating MCP (Model Context Protocol)
+servers, enabling enhanced capabilities for models and tools. You can add
+MCP servers to the <cite>ServiceToolkit</cite> using the <cite>add_mcp_servers</cite> method,
+where you specify the configurations for each server.
+Please note that MCP requires Python version &gt;= 3.10.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mcpServers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;puppeteer&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;@modelcontextprotocol/server-puppeteer&quot;</span><span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Add MCP server configurations to the ServiceToolkit
+<cite>toolkit.add_mcp_servers(server_configs=configs)</cite></p>
 </section>
 <section id="creating-custom-tools">
 <h2>Creating Custom Tools<a class="headerlink" href="#creating-custom-tools" title="Link to this heading"></a></h2>
@@ -354,6 +554,8 @@ Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been 
 <li><p>Well-written docstring in Google style</p></li>
 <li><p>The return of the function must be wrapped by <cite>ServiceResponse</cite></p></li>
 </ul>
+<p>After calling the <cite>toolkit.add</cite> function, the tool function will be parsed
+automatically and registered to the <cite>ServiceToolkit</cite>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">new_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A brief introduction of this function in one line.</span>
 
@@ -369,7 +571,7 @@ Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been 
     <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.768 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.078 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>

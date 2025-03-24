@@ -75,7 +75,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -140,16 +140,17 @@
   <h1>Source code for agentscope.models.dashscope_model</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Model wrapper for DashScope models&quot;&quot;&quot;</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPStatus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommonFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">DashScopeFormatter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_convert_to_str</span><span class="p">,</span> <span class="n">_guess_type_by_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">ToolUseBlock</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">dashscope</span>
@@ -210,20 +211,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">generate_args</span> <span class="o">=</span> <span class="n">generate_args</span> <span class="ow">or</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span>
-
-<div class="viewcode-block" id="DashScopeWrapperBase.format">
-<a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeWrapperBase.format">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Model Wrapper [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] doesn&#39;t &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;need to format the input. Please try to use the &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;model wrapper directly.&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
@@ -308,6 +296,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the</span>
@@ -327,6 +316,8 @@
 <span class="sd">            stream (`Optional[bool]`, default `None`):</span>
 <span class="sd">                The stream flag to control the response format, which will</span>
 <span class="sd">                overwrite the stream flag in the constructor.</span>
+<span class="sd">            tools (`list[dict]`, default `None`):</span>
+<span class="sd">                The tools JSON schemas that the model can use.</span>
 <span class="sd">            **kwargs (`Any`):</span>
 <span class="sd">                The keyword arguments to DashScope chat completions API,</span>
 <span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please</span>
@@ -386,6 +377,9 @@
             <span class="p">},</span>
         <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">tools</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tools&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span>
+
         <span class="c1"># Switch to the incremental_output mode</span>
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;incremental_output&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -443,8 +437,31 @@
                 <span class="n">response</span><span class="p">,</span>
             <span class="p">)</span>
 
+            <span class="n">response_message</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+            <span class="n">blocks</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="s2">&quot;tool_calls&quot;</span> <span class="ow">in</span> <span class="n">response_message</span><span class="p">:</span>
+                <span class="n">tool_calls</span> <span class="o">=</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;tool_calls&quot;</span><span class="p">]</span>
+                <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">tool_call</span> <span class="ow">in</span> <span class="n">tool_calls</span><span class="p">:</span>
+                    <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">ToolUseBlock</span><span class="p">(</span>
+                            <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;tool_use&quot;</span><span class="p">,</span>
+                            <span class="nb">id</span><span class="o">=</span><span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                            <span class="n">name</span><span class="o">=</span><span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                            <span class="nb">input</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+                                <span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;arguments&quot;</span><span class="p">],</span>
+                            <span class="p">),</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+
             <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
-                <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span><span class="s2">&quot;content&quot;</span><span class="p">],</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+                <span class="n">tool_calls</span><span class="o">=</span><span class="n">blocks</span><span class="p">,</span>
                 <span class="n">raw</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -481,7 +498,8 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A common format strategy for chat models, which will format the</span>
 <span class="sd">        input messages into a user message.</span>
@@ -539,17 +557,68 @@
 
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">            args (`Union[Msg, list[Msg]]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
 <span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
 <span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
+<span class="sd">                the messages will be formatted in chat mode, where only a user</span>
+<span class="sd">                and an assistant roles are involved.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `List[dict]`:</span>
 <span class="sd">                The formatted messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">multi_agent_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CommonFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
-        <span class="k">return</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">format_for_common_chat_models</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DashScopeChatWrapper.format_tools_json_schemas">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.format_tools_json_schemas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_tools_json_schemas</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">schemas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the JSON schemas of the tool functions to the format that</span>
+<span class="sd">        the model API provider expects.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            An example of the input schemas parsed from the service toolkit</span>
+
+<span class="sd">            ..code-block:: json</span>
+
+<span class="sd">                {</span>
+<span class="sd">                    &quot;bing_search&quot;: {</span>
+<span class="sd">                        &quot;type&quot;: &quot;function&quot;,</span>
+<span class="sd">                        &quot;function&quot;: {</span>
+<span class="sd">                            &quot;name&quot;: &quot;bing_search&quot;,</span>
+<span class="sd">                            &quot;description&quot;: &quot;Search the web using Bing.&quot;,</span>
+<span class="sd">                            &quot;parameters&quot;: {</span>
+<span class="sd">                                &quot;type&quot;: &quot;object&quot;,</span>
+<span class="sd">                                &quot;properties&quot;: {</span>
+<span class="sd">                                    &quot;query&quot;: {</span>
+<span class="sd">                                        &quot;type&quot;: &quot;string&quot;,</span>
+<span class="sd">                                        &quot;description&quot;: &quot;The search query.&quot;,</span>
+<span class="sd">                                    }</span>
+<span class="sd">                                },</span>
+<span class="sd">                                &quot;required&quot;: [&quot;query&quot;],</span>
+<span class="sd">                            }</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            schemas (`dict[str, dict]`):</span>
+<span class="sd">                The tools JSON schemas parsed from the service toolkit module,</span>
+<span class="sd">                which can be accessed by `service_toolkit.json_schemas`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `list[dict]`:</span>
+<span class="sd">                The formatted JSON schemas of the tool functions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_tools_json_schemas</span><span class="p">(</span><span class="n">schemas</span><span class="p">)</span></div>
 </div>
 
 
@@ -947,8 +1016,9 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for DashScope Multimodal API.</span>
 
 <span class="sd">        The multimodal API has the following requirements:</span>
@@ -1028,119 +1098,23 @@
 <span class="sd">            &quot;file://&quot;, which will be attached in this format function.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">            args (`Union[Msg, list[Msg]]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
 <span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
 <span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
+<span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
+<span class="sd">                the messages will be formatted in chat mode, where only a user</span>
+<span class="sd">                and an assistant roles are involved.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            `List[dict]`:</span>
+<span class="sd">            `list[dict]`:</span>
 <span class="sd">                The formatted messages.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Parse all information into a list of messages</span>
-        <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">Msg</span><span class="p">)</span> <span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">_</span><span class="p">):</span>
-                <span class="n">input_msgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The input should be a Msg object or a list &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;of Msg objects, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-
-        <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="c1"># record dialog history as a list of strings</span>
-        <span class="n">dialogue</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">image_or_audio_dicts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_msgs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
-                <span class="c1"># system prompt</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_url</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
-                <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)})</span>
-
-                <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">{</span>
-                        <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">unit</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
-                        <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># text message</span>
-                <span class="n">dialogue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">_convert_to_str</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="c1"># image and audio</span>
-                <span class="n">image_or_audio_dicts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_url</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
-
-        <span class="n">dialogue_history</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dialogue</span><span class="p">)</span>
-
-        <span class="n">user_content_template</span> <span class="o">=</span> <span class="s2">&quot;## Conversation History</span><span class="se">\n</span><span class="si">{dialogue_history}</span><span class="s2">&quot;</span>
-
-        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="c1"># Place the image or audio before the conversation history</span>
-                    <span class="o">*</span><span class="n">image_or_audio_dicts</span><span class="p">,</span>
-                    <span class="p">{</span>
-                        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">user_content_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                            <span class="n">dialogue_history</span><span class="o">=</span><span class="n">dialogue_history</span><span class="p">,</span>
-                        <span class="p">),</span>
-                    <span class="p">},</span>
-                <span class="p">],</span>
-            <span class="p">},</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">messages</span></div>
-
-
-<div class="viewcode-block" id="DashScopeMultiModalWrapper.convert_url">
-<a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper.convert_url">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">convert_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the url to the format of DashScope API. Note for local</span>
-<span class="sd">        files, a prefix &quot;file://&quot; will be added.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            url (`Union[str, Sequence[str], None]`):</span>
-<span class="sd">                A string of url of a list of urls to be converted.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `List[dict]`:</span>
-<span class="sd">                A list of dictionaries with key as the type of the url</span>
-<span class="sd">                and value as the url. Only &quot;image&quot; and &quot;audio&quot; are supported.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">url_type</span> <span class="o">=</span> <span class="n">_guess_type_by_extension</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">url_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">]:</span>
-                <span class="c1"># Add prefix for local files</span>
-                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
-                    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;file://&quot;</span> <span class="o">+</span> <span class="n">url</span>
-                <span class="k">return</span> <span class="p">[{</span><span class="n">url_type</span><span class="p">:</span> <span class="n">url</span><span class="p">}]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># skip unsupported url</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Skip unsupported url (</span><span class="si">{</span><span class="n">url_type</span><span class="si">}</span><span class="s2">), &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;expect image or audio.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">return</span> <span class="p">[]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">dicts</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
-                <span class="n">dicts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_url</span><span class="p">(</span><span class="n">_</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">dicts</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unsupported url type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;str or list expected.&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">multi_agent_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_multi_agent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DashScopeFormatter</span><span class="o">.</span><span class="n">format_chat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

@@ -76,7 +76,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -148,18 +148,77 @@
 <p>The Anthropic model wrapper for AgentScope.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.anthropic_model.AnthropicChatWrapper.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/anthropic_model.html#AnthropicChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.anthropic_model.AnthropicChatWrapper.format" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/anthropic_model.html#AnthropicChatWrapper.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.anthropic_model.AnthropicChatWrapper.format" title="Link to this definition"></a></dt>
 <dd><p>Format the messages for anthropic model input.</p>
-<p>TODO: Add support for multimodal input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The message(s) to be formatted.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<cite>Union[Msg, list[Msg]]</cite>) – The message(s) to be formatted.</p></li>
+<li><p><strong>multi_agent_mode</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – Formatting the messages in multi-agent mode or not. If false,
+the messages will be formatted in chat mode, where only a user
+and an assistant roles are involved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of formatted messages.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list[dict[str, object]]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.anthropic_model.AnthropicChatWrapper.format_tools_json_schemas">
+<span class="sig-name descname"><span class="pre">format_tools_json_schemas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schemas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/models/anthropic_model.html#AnthropicChatWrapper.format_tools_json_schemas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.anthropic_model.AnthropicChatWrapper.format_tools_json_schemas" title="Link to this definition"></a></dt>
+<dd><p>Format the JSON schemas of the tool functions to the format that
+the model API provider expects.</p>
+<p class="rubric">Example</p>
+<p>An example of the input schemas parsed from the service toolkit</p>
+<p>..code-block:: json</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl>
+<dt>“bing_search”: {</dt><dd><p>“type”: “function”,
+“function”: {</p>
+<blockquote>
+<div><p>“name”: “bing_search”,
+“description”: “Search the web using Bing.”,
+“parameters”: {</p>
+<blockquote>
+<div><p>“type”: “object”,
+“properties”: {</p>
+<blockquote>
+<div><dl class="simple">
+<dt>“query”: {</dt><dd><p>“type”: “string”,
+“description”: “The search query.”,</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>},
+“required”: [“query”],</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schemas</strong> (<cite>dict[str, dict]</cite>) – The tools JSON schemas parsed from the service toolkit module,
+which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The formatted JSON schemas of the tool functions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list[dict]</cite></p>
 </dd>
 </dl>
 </dd></dl>

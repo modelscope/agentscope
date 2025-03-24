@@ -187,7 +187,7 @@ dialog agent `alice`.
 
     User input: 
     Bob: Do you know me?
-    Alice: Hello Bob! I don't have any specific information about you other than what you've shared in our conversation. I'm here to help with any questions or topics you'd like to discuss, though!
+    Alice: I don't have any specific information about you, Bob. I'm just an AI assistant, and I only know what you tell me during our conversation. Is there anything in particular you'd like to chat about or any way I can help you today?
 
 
 
@@ -202,7 +202,7 @@ The `DictDialogAgent` supports structured output and automatic post-processing b
 We first initialize a `DictDialogAgent` object, and switch between different outputs by changing the parser.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-134
+.. GENERATED FROM PYTHON SOURCE LINES 106-135
 
 .. code-block:: Python
 
@@ -225,14 +225,15 @@ We first initialize a `DictDialogAgent` object, and switch between different out
             "speak": "what you speak",
             "decision": "your final decision, true/false",
         },
+        keys_to_metadata="decision",
         required_keys=["thought", "speak", "decision"],
     )
 
     charles.set_parser(parser1)
     msg1 = charles(Msg("Bob", "Is it a good idea to go out in the rain?", "user"))
 
-    print(f"The content field: {msg1.content}")
-    print(f"The type of content field: {type(msg1.content)}")
+    print(f"The metadata field: {msg1.metadata}")
+    print(f"The type of metadata field: {type(msg1.metadata)}")
 
 
 
@@ -243,19 +244,19 @@ We first initialize a `DictDialogAgent` object, and switch between different out
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the temperature, if you have proper gear, and if there's a risk of thunderstorms. It's important to consider these factors before deciding.", "speak": "It could be nice to go out in the rain, especially if you have the right clothing. Just make sure to check if it's safe and comfortable for you. Do you have an umbrella or a raincoat?", "decision": false}
+    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the temperature, if you have proper gear, and if there's a risk of lightning or other severe weather conditions. It's important to consider these factors before deciding.", "speak": "It can be nice to go out in the rain, especially if you're dressed for it. Just make sure to check if the weather is safe, and you have an umbrella or a raincoat. Do you need help checking the weather forecast?", "decision": false}
     ```
-    The content field: {'thought': "Going out in the rain can be refreshing and fun, but it also depends on the temperature, if you have proper gear, and if there's a risk of thunderstorms. It's important to consider these factors before deciding.", 'speak': "It could be nice to go out in the rain, especially if you have the right clothing. Just make sure to check if it's safe and comfortable for you. Do you have an umbrella or a raincoat?", 'decision': False}
-    The type of content field: <class 'dict'>
+    The metadata field: False
+    The type of metadata field: <class 'bool'>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 135-136
+.. GENERATED FROM PYTHON SOURCE LINES 136-137
 
 Then, we ask the agent to pick a number from 1 to 10.
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-150
+.. GENERATED FROM PYTHON SOURCE LINES 137-154
 
 .. code-block:: Python
 
@@ -266,12 +267,15 @@ Then, we ask the agent to pick a number from 1 to 10.
             "speak": "what you speak",
             "number": "the number you choose",
         },
+        keys_to_metadata="number",
+        keys_to_content="speak",
     )
 
     charles.set_parser(parser2)
     msg2 = charles(Msg("Bob", "Pick a number from 1 to 10.", "user"))
 
     print(f"The content of the response message: {msg2.content}")
+    print(f"The metadata of the response message: {msg2.metadata}")
 
 
 
@@ -282,21 +286,22 @@ Then, we ask the agent to pick a number from 1 to 10.
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a number between 1 and 10. I'll choose a number at random.", "speak": "Sure, I can do that. My number is 7. What about you, do you have a favorite number in this range?", "number": "7"}
+    {"thought": "I need to pick a random number between 1 and 10 as requested by Bob. There's no specific reason for any particular number, so I'll just choose one.", "speak": "Sure, I'll pick a number. How about 7?", "number": "7"}
     ```
-    The content of the response message: {'thought': "I need to pick a number between 1 and 10. I'll choose a number at random.", 'speak': 'Sure, I can do that. My number is 7. What about you, do you have a favorite number in this range?', 'number': '7'}
+    The content of the response message: Sure, I'll pick a number. How about 7?
+    The metadata of the response message: 7
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 151-155
+.. GENERATED FROM PYTHON SOURCE LINES 155-159
 
 The next question is how to post-process the structured output.
 For example, the `thought` field should be stored in memory without being exposed to the others,
 while the `speak` field should be displayed to the user, and the `decision` field should be easily accessible in the response message object.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-179
+.. GENERATED FROM PYTHON SOURCE LINES 159-183
 
 .. code-block:: Python
 
@@ -333,18 +338,18 @@ while the `speak` field should be displayed to the user, and the `decision` fiel
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a number between 20 and 30. I'll choose a number at random.", "speak": "Sure, I can do that. My number is 24. Do you have a favorite number in this range?", "number": "24"}
+    {"thought": "I need to pick a random number between 20 and 30 as requested by Bob. I'll choose one without any specific preference.", "speak": "Sure, let's go with 25. How does that sound?", "number": "25"}
     ```
-    The content field: Sure, I can do that. My number is 24. Do you have a favorite number in this range?
+    The content field: Sure, let's go with 25. How does that sound?
     The type of content field: <class 'str'>
 
-    The metadata field: 24
+    The metadata field: 25
     The type of metadata field: <class 'str'>
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-189
+.. GENERATED FROM PYTHON SOURCE LINES 184-193
 
 .. hint:: More advanced usage of structured output, and more different parsers refer to the section :ref:`structured-output`.
 
@@ -356,7 +361,7 @@ loop manner.
 First we prepare a tool function for the agent.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-202
+.. GENERATED FROM PYTHON SOURCE LINES 193-206
 
 .. code-block:: Python
 
@@ -380,12 +385,12 @@ First we prepare a tool function for the agent.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 203-205
+.. GENERATED FROM PYTHON SOURCE LINES 207-209
 
 Then we initialize a `ReActAgent` to solve the given problem.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 205-222
+.. GENERATED FROM PYTHON SOURCE LINES 209-226
 
 .. code-block:: Python
 
@@ -420,13 +425,12 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>To calculate the multiplication of 151513434 and 54353453453, I can use the execute_python_code function to run a simple Python code that performs this calculation.</thought>
+    David: <thought>I need to use the execute_python_code function to perform the multiplication of the two numbers provided by Bob.</thought>
     <function>execute_python_code</function>
-    <code>151513434 * 54353453453</code>
+    <code>151513434*54353453453</code>
     system: 1. Execute function execute_python_code
        [ARGUMENTS]:
-           code: 151513434 * 54353453453
-       [STATUS]: SUCCESS
+           {"code": "151513434*54353453453"}
        [RESULT]: 
 
     system: Respond with specific tags as outlined below:
@@ -435,14 +439,19 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>The multiplication result is 8217675892789403402. Now I should inform Bob of the calculation result.</thought>
+    David: <thought>The multiplication has been performed, and I now have the result. Next, I need to provide the answer to Bob using the finish function.</thought>
     <function>finish</function>
-    <response>The result of 151513434 * 54353453453 is 8217675892789403402.</response>
+    <response>The result of 151513434 multiplied by 54353453453 is 821070986694876502.</response>
+    system: 1. Execute function finish
+       [ARGUMENTS]:
+           {"response": "The result of 151513434 multiplied by 54353453453 is 821070986694876502."}
+       [RESULT]: The result of 151513434 multiplied by 54353453453 is 821070986694876502.
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 223-227
+
+.. GENERATED FROM PYTHON SOURCE LINES 227-231
 
 LlamaIndexAgent
 ----------------------------
@@ -452,7 +461,7 @@ Refer to the RAG Section for more details.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 33.339 seconds)
+   **Total running time of the script:** (0 minutes 27.509 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_builtin_agent.py:

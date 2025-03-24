@@ -78,7 +78,7 @@
 <p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">Model APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">Structured Output</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">Streaming Mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">Built-in Agents</a></li>
@@ -105,17 +105,57 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.message</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.AudioBlock"><code class="docutils literal notranslate"><span class="pre">AudioBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.AudioBlock.type"><code class="docutils literal notranslate"><span class="pre">AudioBlock.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.AudioBlock.url"><code class="docutils literal notranslate"><span class="pre">AudioBlock.url</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.FileBlock"><code class="docutils literal notranslate"><span class="pre">FileBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.FileBlock.type"><code class="docutils literal notranslate"><span class="pre">FileBlock.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.FileBlock.url"><code class="docutils literal notranslate"><span class="pre">FileBlock.url</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.ImageBlock"><code class="docutils literal notranslate"><span class="pre">ImageBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ImageBlock.type"><code class="docutils literal notranslate"><span class="pre">ImageBlock.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ImageBlock.url"><code class="docutils literal notranslate"><span class="pre">ImageBlock.url</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.message.Msg"><code class="docutils literal notranslate"><span class="pre">Msg</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.formatted_str"><code class="docutils literal notranslate"><span class="pre">Msg.formatted_str()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.from_dict"><code class="docutils literal notranslate"><span class="pre">Msg.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.get_content_blocks"><code class="docutils literal notranslate"><span class="pre">Msg.get_content_blocks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.get_text_content"><code class="docutils literal notranslate"><span class="pre">Msg.get_text_content()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.to_dict"><code class="docutils literal notranslate"><span class="pre">Msg.to_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.content"><code class="docutils literal notranslate"><span class="pre">Msg.content</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.id"><code class="docutils literal notranslate"><span class="pre">Msg.id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.metadata"><code class="docutils literal notranslate"><span class="pre">Msg.metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.model_config"><code class="docutils literal notranslate"><span class="pre">Msg.model_config</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.name"><code class="docutils literal notranslate"><span class="pre">Msg.name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.role"><code class="docutils literal notranslate"><span class="pre">Msg.role</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.timestamp"><code class="docutils literal notranslate"><span class="pre">Msg.timestamp</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.Msg.url"><code class="docutils literal notranslate"><span class="pre">Msg.url</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.TextBlock"><code class="docutils literal notranslate"><span class="pre">TextBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.TextBlock.text"><code class="docutils literal notranslate"><span class="pre">TextBlock.text</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.TextBlock.type"><code class="docutils literal notranslate"><span class="pre">TextBlock.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.ToolResultBlock"><code class="docutils literal notranslate"><span class="pre">ToolResultBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolResultBlock.id"><code class="docutils literal notranslate"><span class="pre">ToolResultBlock.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolResultBlock.name"><code class="docutils literal notranslate"><span class="pre">ToolResultBlock.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolResultBlock.output"><code class="docutils literal notranslate"><span class="pre">ToolResultBlock.output</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolResultBlock.type"><code class="docutils literal notranslate"><span class="pre">ToolResultBlock.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.ToolUseBlock"><code class="docutils literal notranslate"><span class="pre">ToolUseBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolUseBlock.id"><code class="docutils literal notranslate"><span class="pre">ToolUseBlock.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolUseBlock.input"><code class="docutils literal notranslate"><span class="pre">ToolUseBlock.input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolUseBlock.name"><code class="docutils literal notranslate"><span class="pre">ToolUseBlock.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.ToolUseBlock.type"><code class="docutils literal notranslate"><span class="pre">ToolUseBlock.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.message.VideoBlock"><code class="docutils literal notranslate"><span class="pre">VideoBlock</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.VideoBlock.type"><code class="docutils literal notranslate"><span class="pre">VideoBlock.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.message.VideoBlock.url"><code class="docutils literal notranslate"><span class="pre">VideoBlock.url</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -159,47 +199,74 @@
 <span id="agentscope-message"></span><h1>agentscope.message<a class="headerlink" href="#module-agentscope.message" title="Link to this heading"></a></h1>
 <p>The message module of AgentScope.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="agentscope.message.Msg">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'system'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'assistant'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/message/msg.html#Msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Msg" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The message class for AgentScope, which is responsible for storing
-the information of a message, including</p>
-<ul class="simple">
-<li><p>id:           the identity of the message</p></li>
-<li><p>name:         who sends the message</p></li>
-<li><p>content:      the message content</p></li>
-<li><p>role:         the sender role chosen from ‘system’, ‘user’, ‘assistant’</p></li>
-<li><p>url:          the url(s) refers to multimodal content</p></li>
-<li><p>metadata:     some additional information</p></li>
-<li><p>timestamp:    when the message is created</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.message.Msg.formatted_str">
-<span class="sig-name descname"><span class="pre">formatted_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colored</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/message/msg.html#Msg.formatted_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Msg.formatted_str" title="Link to this definition"></a></dt>
-<dd><p>Return the formatted string of the message. If the message has an
-url, the url will be appended to the content.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>colored</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to color the name of the message</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The formatted string of the message.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>str</cite></p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="agentscope.message.AudioBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AudioBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#AudioBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.AudioBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The audio block</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.AudioBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'audio'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.AudioBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.AudioBlock.url">
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.AudioBlock.url" title="Link to this definition"></a></dt>
+<dd><p>The url of the audio</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.FileBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FileBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#FileBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.FileBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The file block</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.FileBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'file'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.FileBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.FileBlock.url">
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.FileBlock.url" title="Link to this definition"></a></dt>
+<dd><p>The url of the file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.ImageBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ImageBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#ImageBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.ImageBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The image block</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ImageBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'image'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ImageBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ImageBlock.url">
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.ImageBlock.url" title="Link to this definition"></a></dt>
+<dd><p>The url of the image</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.Msg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolResultBlock" title="agentscope.message.block.ToolResultBlock"><span class="pre">ToolResultBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.TextBlock" title="agentscope.message.block.TextBlock"><span class="pre">TextBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ImageBlock" title="agentscope.message.block.ImageBlock"><span class="pre">ImageBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.AudioBlock" title="agentscope.message.block.AudioBlock"><span class="pre">AudioBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.VideoBlock" title="agentscope.message.block.VideoBlock"><span class="pre">VideoBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.FileBlock" title="agentscope.message.block.FileBlock"><span class="pre">FileBlock</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'system'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'assistant'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/message/msg.html#Msg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Msg" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>The message class in AgentScope.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.message.Msg.from_dict">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serialized_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></span><a class="reference internal" href="../_modules/agentscope/message/msg.html#Msg.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Msg.from_dict" title="Link to this definition"></a></dt>
 <dd><p>Deserialize the dictionary to a Msg object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>serialized_dict</strong> (<cite>dict</cite>) – A dictionary that must contain the keys in
-<cite>Msg.__serialized_attrs</cite>, and the keys <cite>__module__</cite> and
-<cite>__name__</cite>.</p>
+<dd class="field-odd"><p><strong>serialized_dict</strong> (<cite>dict</cite>) – A dictionary that must contain the keys</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A Msg object.</p>
@@ -208,6 +275,48 @@ url, the url will be appended to the content.</p>
 <dd class="field-odd"><p><cite>Msg</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.message.Msg.get_content_blocks">
+<span class="sig-name descname"><span class="pre">get_content_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'text'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tool_use'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tool_result'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'image'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'audio'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'video'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'file'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolResultBlock" title="agentscope.message.block.ToolResultBlock"><span class="pre">ToolResultBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.TextBlock" title="agentscope.message.block.TextBlock"><span class="pre">TextBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ImageBlock" title="agentscope.message.block.ImageBlock"><span class="pre">ImageBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.AudioBlock" title="agentscope.message.block.AudioBlock"><span class="pre">AudioBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.VideoBlock" title="agentscope.message.block.VideoBlock"><span class="pre">VideoBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.FileBlock" title="agentscope.message.block.FileBlock"><span class="pre">FileBlock</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/message/msg.html#Msg.get_content_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Msg.get_content_blocks" title="Link to this definition"></a></dt>
+<dd><p>Get the content in block format. If the content is a string,
+it will be converted to a text block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Optional</strong><strong>[</strong><strong>Literal</strong><strong>[</strong><strong>&quot;text&quot;</strong> (<em>block_type</em>) – <p>”image”, “audio”, “video”, “file”]]`, defaults to <cite>None</cite>):
+The type of the block to be extracted. If <cite>None</cite>, all blocks
+will be returned.</p>
+</p></li>
+<li><p><strong>&quot;tool_use&quot;</strong> – “image”, “audio”, “video”, “file”]]`, defaults to <cite>None</cite>):
+The type of the block to be extracted. If <cite>None</cite>, all blocks
+will be returned.</p></li>
+<li><p><strong>&quot;tool_result&quot;</strong> – “image”, “audio”, “video”, “file”]]`, defaults to <cite>None</cite>):
+The type of the block to be extracted. If <cite>None</cite>, all blocks
+will be returned.</p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>:param<span class="classifier">“image”, “audio”, “video”, “file”]]`, defaults to <cite>None</cite>):</span></dt><dd><p>The type of the block to be extracted. If <cite>None</cite>, all blocks
+will be returned.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The content blocks.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>list[ContentBlock]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.message.Msg.get_text_content">
+<span class="sig-name descname"><span class="pre">get_text_content</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/message/msg.html#Msg.get_text_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.Msg.get_text_content" title="Link to this definition"></a></dt>
+<dd><p>Get the pure text blocks from the message content.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -225,48 +334,146 @@ deserialized by calling the <cite>from_dict</cite> function.</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.message.Msg.content">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#agentscope.message.Msg.content" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolResultBlock" title="agentscope.message.block.ToolResultBlock"><span class="pre">ToolResultBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.TextBlock" title="agentscope.message.block.TextBlock"><span class="pre">TextBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ImageBlock" title="agentscope.message.block.ImageBlock"><span class="pre">ImageBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.AudioBlock" title="agentscope.message.block.AudioBlock"><span class="pre">AudioBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.VideoBlock" title="agentscope.message.block.VideoBlock"><span class="pre">VideoBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.FileBlock" title="agentscope.message.block.FileBlock"><span class="pre">FileBlock</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.Msg.content" title="Link to this definition"></a></dt>
 <dd><p>The content of the message.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.message.Msg.id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.Msg.id" title="Link to this definition"></a></dt>
-<dd><p>The identity of the message.</p>
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.Msg.id" title="Link to this definition"></a></dt>
+<dd><p>The unique identity of the message.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.message.Msg.metadata">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.message.Msg.metadata" title="Link to this definition"></a></dt>
-<dd><p>The metadata of the message, which can store some additional
-information.</p>
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.Msg.metadata" title="Link to this definition"></a></dt>
+<dd><p>The additional metadata stored in the message.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.Msg.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.message.Msg.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.message.Msg.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.Msg.name" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.Msg.name" title="Link to this definition"></a></dt>
 <dd><p>The name of the message sender.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.message.Msg.role">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'system'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'assistant'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.Msg.role" title="Link to this definition"></a></dt>
-<dd><p>The role of the message sender, chosen from ‘system’, ‘user’,
-‘assistant’.</p>
+<span class="sig-name descname"><span class="pre">role</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'system'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'assistant'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.Msg.role" title="Link to this definition"></a></dt>
+<dd><p>The role of the message sender.</p>
 </dd></dl>
 
-<dl class="py property">
+<dl class="py attribute">
 <dt class="sig sig-object py" id="agentscope.message.Msg.timestamp">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.Msg.timestamp" title="Link to this definition"></a></dt>
-<dd><p>The timestamp when the message is created.</p>
+<span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.Msg.timestamp" title="Link to this definition"></a></dt>
+<dd><p>The timestamp of the message.</p>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="agentscope.message.Msg.url">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.message.Msg.url" title="Link to this definition"></a></dt>
-<dd><p>A URL string or a list of URL strings.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.TextBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TextBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#TextBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.TextBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The text block.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.TextBlock.text">
+<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.TextBlock.text" title="Link to this definition"></a></dt>
+<dd><p>The text content</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.TextBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'text'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.TextBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.ToolResultBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ToolResultBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#ToolResultBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.ToolResultBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The tool result block.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolResultBlock.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolResultBlock.id" title="Link to this definition"></a></dt>
+<dd><p>The identity of the tool call result</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolResultBlock.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.message.ToolResultBlock.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the tool function</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolResultBlock.output">
+<span class="sig-name descname"><span class="pre">output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolResultBlock.output" title="Link to this definition"></a></dt>
+<dd><p>The output of the tool function</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolResultBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'tool_result'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolResultBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.ToolUseBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ToolUseBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#ToolUseBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.ToolUseBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The tool use block.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolUseBlock.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolUseBlock.id" title="Link to this definition"></a></dt>
+<dd><p>The identity of the tool call</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolUseBlock.input">
+<span class="sig-name descname"><span class="pre">input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolUseBlock.input" title="Link to this definition"></a></dt>
+<dd><p>The input of the tool</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolUseBlock.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolUseBlock.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the tool</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.ToolUseBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'tool_use'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.ToolUseBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block, must be <cite>tool_use</cite></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.message.VideoBlock">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoBlock</span></span><a class="reference internal" href="../_modules/agentscope/message/block.html#VideoBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.message.VideoBlock" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<p>The video block</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.VideoBlock.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Required</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'video'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.message.VideoBlock.type" title="Link to this definition"></a></dt>
+<dd><p>The type of the block</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.message.VideoBlock.url">
+<span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#agentscope.message.VideoBlock.url" title="Link to this definition"></a></dt>
+<dd><p>The url of the video</p>
 </dd></dl>
 
 </dd></dl>

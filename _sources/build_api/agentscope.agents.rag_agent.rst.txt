@@ -1,6 +1,0 @@
-agentscope.agents.rag_agent
-===========================
-.. automodule:: agentscope.agents.rag_agent
-   :members:
-   :undoc-members:
-   :show-inheritance:
