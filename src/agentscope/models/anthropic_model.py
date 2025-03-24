@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 """The Anthropic model wrapper for AgentScope."""
-from typing import Optional, Union, Generator, Any, Sequence
+from typing import Optional, Union, Generator, Any
 
-from ..manager import FileManager
-from ..message import Msg
+from ..formatters import AnthropicFormatter
+from ..message import Msg, ToolUseBlock
 from .model import ModelWrapperBase, ModelResponse
-from ..utils.common import (
-    _guess_type_by_extension,
-    _is_web_url,
-    _get_base64_from_image_path,
-)
 
 
 class AnthropicChatWrapper(ModelWrapperBase):
@@ -61,95 +56,33 @@ class AnthropicChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> list[dict[str, object]]:
         """Format the messages for anthropic model input.
-
-        TODO: Add support for multimodal input.
 
         Args:
             *args (`Union[Msg, list[Msg]]`):
                 The message(s) to be formatted.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `list[dict[str, object]]`:
                 A list of formatted messages.
         """
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+        if multi_agent_mode:
+            return AnthropicFormatter.format_multi_agent(*args)
+        return AnthropicFormatter.format_chat(*args)
 
-    @staticmethod
-    def _format_msg_with_url(
-        msg: Msg,
-    ) -> dict[str, Union[str, list[dict]]]:
-        """Format a message with image urls into the format that anthropic
-        LLM requires.
-
-        Refer to https://docs.anthropic.com/en/api/messages-examples
-
-        Args:
-            msg (`Msg`):
-                The message object to be formatted
-
-        Returns:
-            `dict[str, Union[str, list[dict]]]`:
-                The message in the required format.
-        """
-        urls = [msg.url] if isinstance(msg.url, str) else msg.url
-
-        image_urls = []
-        for url in urls:
-            if _guess_type_by_extension(url) == "image":
-                image_urls.append(url)
-
-        content = []
-        for image_url in image_urls:
-            extension = image_url.split(".")[-1].lower()
-            extension = "jpeg" if extension == "jpg" else extension
-            if extension not in AnthropicChatWrapper._supported_image_format:
-                raise TypeError(
-                    "Anthropic model only supports image formats "
-                    f"{AnthropicChatWrapper._supported_image_format}, "
-                    f"got {extension}",
-                )
-
-            if _is_web_url(image_url):
-                # Download the image locally
-                file_manager = FileManager.get_instance()
-                image_url = file_manager.save_image(image_url)
-
-            data_base64 = _get_base64_from_image_path(image_url)
-
-            content.append(
-                {
-                    "type": "image",
-                    "source": [
-                        {
-                            "type": "base64",
-                            "media_type": f"image/{extension}",
-                            "data": data_base64,
-                        }
-                        for _ in image_urls
-                    ],
-                },
-            )
-
-        if msg.content is not None:
-            content.append(
-                {
-                    "type": "text",
-                    "text": msg.content,
-                },
-            )
-        return {
-            "role": msg.role,
-            "content": content,
-        }
-
-    def __call__(  # pylint: disable=too-many-branches
+    def __call__(  # pylint: disable=too-many-branches too-many-statements
         self,
         messages: list[dict[str, Union[str, list[dict]]]],
         stream: Optional[bool] = None,
         max_tokens: int = 2048,
+        tools: list[dict] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Call the Anthropic model.
@@ -166,6 +99,8 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 Enable streaming mode or not.
             max_tokens (`int`, defaults to `2048`):
                 The max tokens in generation.
+            tools (`list[dict]`, defaults to `None`):
+                The tool functions to be used in the model.
             **kwargs (`Any`):
                 The additional keyword arguments for the model.
 
@@ -213,6 +148,9 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 "max_tokens": max_tokens,
             },
         )
+
+        if tools:
+            kwargs["tools"] = tools
 
         # Extract the system message
         if messages[0]["role"] == "system":
@@ -293,18 +231,27 @@ class AnthropicChatWrapper(ModelWrapperBase):
             )
 
             texts = []
+            tool_calls = []
             # Gather text from content blocks
             for block in response.get("content", []):
-                if (
-                    isinstance(block, dict)
-                    and block.get("type", None) == "text"
-                ):
+                typ = block.get("type", None)
+                if isinstance(block, dict) and typ == "text":
                     texts.append(block.get("text", ""))
+                elif typ == "tool_use":
+                    tool_calls.append(
+                        ToolUseBlock(
+                            type="tool_use",
+                            id=block.get("id"),
+                            name=block.get("name"),
+                            input=block.get("input", {}),
+                        ),
+                    )
 
             # Return the response
             return ModelResponse(
                 text="\n".join(texts),
                 raw=response,
+                tool_calls=tool_calls if tool_calls else None,
             )
 
     def _save_model_invocation_and_update_monitor(
@@ -324,3 +271,46 @@ class AnthropicChatWrapper(ModelWrapperBase):
                 prompt_tokens=usage.get("input_tokens", 0),
                 completion_tokens=usage.get("output_tokens", 0),
             )
+
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+        return AnthropicFormatter.format_tools_json_schemas(schemas)

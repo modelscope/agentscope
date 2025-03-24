@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """Model wrapper for OpenAI models"""
+import json
 from abc import ABC
 from typing import (
     Union,
     Any,
     List,
-    Sequence,
-    Dict,
     Optional,
     Generator,
 )
@@ -18,10 +17,9 @@ from ._model_utils import (
     _verify_text_content_in_openai_message_response,
 )
 from .model import ModelWrapperBase, ModelResponse
+from ..formatters import OpenAIFormatter, CommonFormatter
 from ..manager import FileManager
-from ..message import Msg
-from ..utils.common import _convert_to_str, _to_openai_image_url
-
+from ..message import Msg, ToolUseBlock
 from ..utils.token_utils import get_openai_max_length
 
 
@@ -120,24 +118,11 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
             )
             self.max_length = None
 
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
-
 
 class OpenAIChatWrapper(OpenAIWrapperBase):
     """The model wrapper for OpenAI's chat API."""
 
     model_type: str = "openai_chat"
-
-    substrings_in_vision_models_names = ["gpt-4-turbo", "vision", "gpt-4o"]
-    """The substrings in the model names of vision models."""
 
     def __init__(
         self,
@@ -188,6 +173,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         self,
         messages: list[dict],
         stream: Optional[bool] = None,
+        tools: Optional[list[dict]] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
@@ -207,6 +193,8 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             stream (`Optional[bool]`, defaults to `None`)
                 Whether to enable stream mode, which will override the
                 `stream` argument in the constructor if provided.
+            tools (`Optional[list[dict]]`, defaults to `None`):
+                The tool JSON schemas that the model can use.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -259,6 +247,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             },
         )
 
+        if tools:
+            kwargs["tools"] = tools
+
         if stream:
             kwargs["stream_options"] = {"include_usage": True}
 
@@ -300,11 +291,31 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 response,
             )
 
-            if _verify_text_content_in_openai_message_response(response):
+            if _verify_text_content_in_openai_message_response(
+                response,
+                allow_content_none=True,
+            ):
+                tool_calls = response["choices"][0]["message"].get(
+                    "tool_calls",
+                    None,
+                )
+
+                if tool_calls is not None:
+                    tool_calls = [
+                        ToolUseBlock(
+                            type="tool_use",
+                            id=_["id"],
+                            name=_["function"]["name"],
+                            input=json.loads(_["function"]["arguments"]),
+                        )
+                        for _ in tool_calls
+                    ]
+
                 # return response
                 return ModelResponse(
                     text=response["choices"][0]["message"]["content"],
                     raw=response,
+                    tool_calls=tool_calls,
                 )
             else:
                 raise RuntimeError(
@@ -337,139 +348,10 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 completion_tokens=usage.get("completion_tokens", 0),
             )
 
-    @staticmethod
-    def _format_msg_with_url(
-        msg: Msg,
-        model_name: str,
-    ) -> Dict:
-        """Format a message with image urls into openai chat format.
-        This format method is used for gpt-4o, gpt-4-turbo, gpt-4-vision and
-        other vision models.
-        """
-        # Check if the model is a vision model
-        if not any(
-            _ in model_name
-            for _ in OpenAIChatWrapper.substrings_in_vision_models_names
-        ):
-            logger.warning(
-                f"The model {model_name} is not a vision model. "
-                f"Skip the url in the message.",
-            )
-            return {
-                "role": msg.role,
-                "name": msg.name,
-                "content": _convert_to_str(msg.content),
-            }
-
-        # Put all urls into a list
-        urls = [msg.url] if isinstance(msg.url, str) else msg.url
-
-        # Check if the url refers to an image
-        checked_urls = []
-        for url in urls:
-            try:
-                checked_urls.append(_to_openai_image_url(url))
-            except TypeError:
-                logger.warning(
-                    f"The url {url} is not a valid image url for "
-                    f"OpenAI Chat API, skipped.",
-                )
-
-        if len(checked_urls) == 0:
-            # If no valid image url is provided, return the normal message dict
-            return {
-                "role": msg.role,
-                "name": msg.name,
-                "content": _convert_to_str(msg.content),
-            }
-        else:
-            # otherwise, use the vision format message
-            returned_msg = {
-                "role": msg.role,
-                "name": msg.name,
-                "content": [
-                    {
-                        "type": "text",
-                        "text": _convert_to_str(msg.content),
-                    },
-                ],
-            }
-
-            image_dicts = [
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": _,
-                    },
-                }
-                for _ in checked_urls
-            ]
-
-            returned_msg["content"].extend(image_dicts)
-
-            return returned_msg
-
-    @staticmethod
-    def static_format(
-        *args: Union[Msg, Sequence[Msg]],
-        model_name: str,
-    ) -> List[dict]:
-        """A static version of the format method, which can be used without
-        initializing the OpenAIChatWrapper object.
-
-        Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
-            model_name (`str`):
-                The name of the model to use in OpenAI API.
-
-        Returns:
-            `List[dict]`:
-                The formatted messages in the format that OpenAI Chat API
-                required.
-        """
-        messages = []
-        for arg in args:
-            if arg is None:
-                continue
-            if isinstance(arg, Msg):
-                if arg.url is not None:
-                    # Format the message according to the model type
-                    # (vision/non-vision)
-                    formatted_msg = OpenAIChatWrapper._format_msg_with_url(
-                        arg,
-                        model_name,
-                    )
-                    messages.append(formatted_msg)
-                else:
-                    messages.append(
-                        {
-                            "role": arg.role,
-                            "name": arg.name,
-                            "content": _convert_to_str(arg.content),
-                        },
-                    )
-
-            elif isinstance(arg, list):
-                messages.extend(
-                    OpenAIChatWrapper.static_format(
-                        *arg,
-                        model_name=model_name,
-                    ),
-                )
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(arg)}.",
-                )
-
-        return messages
-
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """Format the input string and dictionary into the format that
         OpenAI Chat API required. If you're using a OpenAI-compatible model
@@ -477,10 +359,14 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         automatically format the input messages into the required format.
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg]]`):
                 The input arguments to be formatted, where each argument
                 should be a `Msg` object, or a list of `Msg` objects.
                 In distribution, placeholder is also allowed.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
@@ -488,15 +374,62 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 required.
         """
 
-        # Format messages according to the model name
-        if self.model_name.startswith("gpt-"):
-            return OpenAIChatWrapper.static_format(
-                *args,
-                model_name=self.model_name,
-            )
-        else:
-            # The OpenAI library maybe re-used to support other models
-            return ModelWrapperBase.format_for_common_chat_models(*args)
+        # Multi agent scenario
+        if multi_agent_mode:
+            # Format messages according to the model name
+            if OpenAIFormatter.is_supported_model(self.model_name):
+                return OpenAIFormatter.format_multi_agent(*args)
+
+            return CommonFormatter.format_multi_agent(*args)
+
+        # Chat scenario
+        if OpenAIFormatter.is_supported_model(self.model_name):
+            return OpenAIFormatter.format_chat(*args)
+
+        return CommonFormatter.format_chat(*args)
+
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
+
+        Example:
+            An example of the input schemas parsed from the service toolkit
+
+            ..code-block:: json
+
+                {
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
+                }
+
+        Args:
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
+
+        Returns:
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
+        """
+        return OpenAIFormatter.format_tools_json_schemas(schemas)
 
 
 class OpenAIDALLEWrapper(OpenAIWrapperBase):

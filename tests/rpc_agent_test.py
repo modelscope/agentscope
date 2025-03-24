@@ -54,7 +54,7 @@ class DemoRpcAgentAdd(AgentBase):
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """add the value, wait 1s"""
-        x.content["value"] += 1
+        x.metadata["value"] += 1
         time.sleep(1)
         return x
 
@@ -64,7 +64,7 @@ class DemoLocalAgentAdd(AgentBase):
 
     def reply(self, x: Optional[Union[Msg, Sequence[Msg]]] = None) -> Msg:
         """add the value, wait 1s"""
-        x.content["value"] += 1
+        x.metadata["value"] += 1
         time.sleep(1)
         return x
 
@@ -76,7 +76,8 @@ class DemoRpcAgentWithMemory(AgentBase):
         self.memory.add(x)
         msg = Msg(
             name=self.name,
-            content={"mem_size": self.memory.size()},
+            content="",
+            metadata={"mem_size": self.memory.size()},
             role="assistant",
         )
         self.memory.add(msg)
@@ -92,14 +93,14 @@ class DemoRpcAgentWithMonitor(AgentBase):
         try:
             monitor.update({"msg_num": 1})
         except QuotaExceededError:
-            x.content["quota_exceeded"] = True
+            x.metadata["quota_exceeded"] = True
             logger.chat(
                 Msg(self.name, "quota_exceeded", "assistant"),
             )
             return x
-        x.content["msg_num"] = monitor.get_value("msg_num")
+        x.metadata["msg_num"] = monitor.get_value("msg_num")
         logger.chat(
-            Msg(self.name, f"msg_num {x.content['msg_num']}", "assistant"),
+            Msg(self.name, f"msg_num {x.metadata['msg_num']}", "assistant"),
         )
         time.sleep(0.2)
         return x
@@ -117,7 +118,8 @@ class DemoGeneratorAgent(AgentBase):
         return Msg(
             name=self.name,
             role="assistant",
-            content={
+            content="",
+            metadata={
                 "value": self.value,
             },
         )
@@ -142,12 +144,13 @@ class DemoGatherAgent(AgentBase):
             result.append(agent())
         value = 0
         for r in result:
-            value += r.content["value"]
+            value += r.metadata["value"]
         etime = time.time()
         return Msg(
             name=self.name,
             role="assistant",
-            content={
+            content="",
+            metadata={
                 "value": value,
                 "time": etime - stime,
             },
@@ -269,7 +272,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         self.assertIsNotNone(agent_a)
         msg = Msg(
             name="System",
-            content={"text": "hello world"},
+            content="",
+            metadata={"text": "hello world"},
             role="system",
         )
         result = agent_a(msg)
@@ -333,7 +337,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         msg = Msg(
             name="System",
-            content={"text": "hello world"},
+            content="",
+            metadata={"text": "hello world"},
             role="system",
         )
         result = agent_a(msg)
@@ -344,7 +349,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         # test dict usage
         msg = Msg(
             name="System",
-            content={"text": "hi world"},
+            content="",
+            metadata={"text": "hi world"},
             role="system",
         )
         result = agent_a(msg)
@@ -355,11 +361,12 @@ class BasicRpcAgentTest(unittest.TestCase):
         # test to_str
         msg = Msg(
             name="System",
-            content={"text": "test"},
+            content="",
+            metadata={"text": "test"},
             role="system",
         )
         result = agent_a(msg)
-        self.assertEqual(result.formatted_str(), "System: {'text': 'test'}")
+        self.assertDictEqual(result.metadata, {"text": "test"})
         launcher.shutdown()
 
     def test_multi_rpc_agent(self) -> None:
@@ -377,7 +384,8 @@ class BasicRpcAgentTest(unittest.TestCase):
         # test sequential
         msg = Msg(
             name="System",
-            content={"value": 0},
+            content="",
+            metadata={"value": 0},
             role="system",
         )
         start_time = time.time()
@@ -390,7 +398,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         return_time = time.time()
         # should return directly
         self.assertTrue((return_time - start_time) < 1)
-        self.assertEqual(msg.content["value"], 3)
+        self.assertEqual(msg.metadata["value"], 3)
         end_time = time.time()
         # need at least 3s to finish
         self.assertTrue((end_time - start_time) >= 3)
@@ -398,16 +406,17 @@ class BasicRpcAgentTest(unittest.TestCase):
         # test parallel
         msg = Msg(
             name="System",
-            content={"value": -1},
+            content="",
+            metadata={"value": -1},
             role="system",
         )
         start_time = time.time()
         msg_a = agent_a(msg)
         msg_b = agent_b(msg)
         msg_c = agent_c(msg)
-        self.assertEqual(msg_a.content["value"], 0)
-        self.assertEqual(msg_b.content["value"], 0)
-        self.assertEqual(msg_c.content["value"], 0)
+        self.assertEqual(msg_a.metadata["value"], 0)
+        self.assertEqual(msg_b.metadata["value"], 0)
+        self.assertEqual(msg_c.metadata["value"], 0)
         end_time = time.time()
         # need 1s to finish
         self.assertTrue((end_time - start_time) < 1.5)
@@ -428,15 +437,16 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         msg = Msg(
             name="System",
-            content={"value": 0},
+            content="",
+            metadata={"value": 0},
             role="system",
         )
 
-        while msg.content["value"] < 4:
+        while msg.metadata["value"] < 4:
             msg = agent_a(msg)
             msg = agent_b(msg)
             msg = agent_c(msg)
-        self.assertEqual(msg.content["value"], 6)
+        self.assertEqual(msg.metadata["value"], 6)
 
     def test_msghub_compatibility(self) -> None:
         """test compatibility with msghub"""
@@ -463,17 +473,17 @@ class BasicRpcAgentTest(unittest.TestCase):
             x_a = agent_a()
             x_b = agent_b(x_a)
             x_c = agent_c(x_b)
-            self.assertGreaterEqual(x_a.content["mem_size"], 2)
-            self.assertGreaterEqual(x_b.content["mem_size"], 3)
-            self.assertGreaterEqual(x_c.content["mem_size"], 4)
+            self.assertGreaterEqual(x_a.metadata["mem_size"], 2)
+            self.assertGreaterEqual(x_b.metadata["mem_size"], 3)
+            self.assertGreaterEqual(x_c.metadata["mem_size"], 4)
             x_a = agent_a(x_c)
-            self.assertGreaterEqual(x_a.content["mem_size"], 5)
+            self.assertGreaterEqual(x_a.metadata["mem_size"], 5)
             x_b = agent_b(x_a)
-            self.assertGreaterEqual(x_b.content["mem_size"], 6)
+            self.assertGreaterEqual(x_b.metadata["mem_size"], 6)
             x_c = agent_c(x_b)
-            self.assertGreaterEqual(x_c.content["mem_size"], 7)
+            self.assertGreaterEqual(x_c.metadata["mem_size"], 7)
             x_c = sequentialpipeline(participants, x_c)
-            self.assertGreaterEqual(x_c.content["mem_size"], 10)
+            self.assertGreaterEqual(x_c.metadata["mem_size"], 10)
 
     def test_multi_agent_in_same_server(self) -> None:
         """test agent server with multi-agent"""
@@ -517,28 +527,28 @@ class BasicRpcAgentTest(unittest.TestCase):
             role="system",
         )
         res1 = agent1(msg1)
-        self.assertEqual(res1.content["mem_size"], 1)
+        self.assertEqual(res1.metadata["mem_size"], 1)
         msg2 = Msg(
             name="System",
             content="First Msg for agent2",
             role="system",
         )
         res2 = agent2(msg2)
-        self.assertEqual(res2.content["mem_size"], 1)
+        self.assertEqual(res2.metadata["mem_size"], 1)
         msg3 = Msg(
             name="System",
             content="First Msg for agent3",
             role="system",
         )
         res3 = agent3(msg3)
-        self.assertEqual(res3.content["mem_size"], 3)
+        self.assertEqual(res3.metadata["mem_size"], 3)
         msg4 = Msg(
             name="System",
             content="Second Msg for agent2",
             role="system",
         )
         res4 = agent2(msg4)
-        self.assertEqual(res4.content["mem_size"], 3)
+        self.assertEqual(res4.metadata["mem_size"], 3)
         # delete existing agent
         agent2.client.delete_agent(agent2._oid)
         msg2 = Msg(
@@ -563,7 +573,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         res5 = agent4(msg5)
         self.assertEqual(res5.name, "b")
-        self.assertEqual(res5.content["mem_size"], 1)
+        self.assertEqual(res5.metadata["mem_size"], 1)
         launcher.shutdown()
 
     def test_error_handling(self) -> None:
@@ -626,10 +636,10 @@ class BasicRpcAgentTest(unittest.TestCase):
         )
         r1 = gather1()
         r2 = gather2()
-        self.assertEqual(r1.content["value"], 6)
-        self.assertEqual(r2.content["value"], 22)
-        self.assertTrue(0.5 < r1.content["time"] < 2)
-        self.assertTrue(0.5 < r2.content["time"] < 2)
+        self.assertEqual(r1.metadata["value"], 6)
+        self.assertEqual(r2.metadata["value"], 22)
+        self.assertTrue(0.5 < r1.metadata["time"] < 2)
+        self.assertTrue(0.5 < r2.metadata["time"] < 2)
         launcher1.shutdown()
         launcher2.shutdown()
 
@@ -656,8 +666,9 @@ class BasicRpcAgentTest(unittest.TestCase):
         resp._fetch_result()
         memory = client.get_agent_memory(memory_agent._oid)
         self.assertEqual(len(memory), 2)
+        print(memory)
         self.assertEqual(memory[0]["content"], "first msg")
-        self.assertEqual(memory[1]["content"]["mem_size"], 1)
+        self.assertEqual(memory[1]["metadata"]["mem_size"], 1)
         agent_lists = client.get_agent_list()
         self.assertEqual(len(agent_lists), 1)
         self.assertEqual(agent_lists[0]["agent_id"], memory_agent._oid)
@@ -682,7 +693,10 @@ class BasicRpcAgentTest(unittest.TestCase):
                 "image.png",
             ),
         )
-        local_file_path = file.url
+        for block in file.content:
+            if block["type"] == "image":
+                local_file_path = block["url"]
+                break
         self.assertNotEqual(remote_file_path, local_file_path)
         with open(remote_file_path, "rb") as rf:
             remote_content = rf.read()
@@ -694,7 +708,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # test existing model config
         DialogAgent(
             name="dialogue",
-            sys_prompt="You are a helful assistant.",
+            sys_prompt="You are a helpful assistant.",
             model_config_name="qwen",
             to_dist={
                 "host": "localhost",
@@ -704,7 +718,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # model not exists error
         dialog = DialogAgent(  # pylint: disable=E1123
             name="dialogue",
-            sys_prompt="You are a helful assistant.",
+            sys_prompt="You are a helpful assistant.",
             model_config_name="my_openai",
             to_dist={
                 "host": "localhost",
@@ -736,7 +750,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         # create agent after set model configs
         dia_agent = DialogAgent(  # pylint: disable=E1123
             name="dialogue",
-            sys_prompt="You are a helful assistant.",
+            sys_prompt="You are a helpful assistant.",
             model_config_name="my_openai",
             to_dist={
                 "host": "localhost",
@@ -844,7 +858,7 @@ class BasicRpcAgentTest(unittest.TestCase):
         msg = agent.reply()
         self.assertEqual(msg.content, "Hello")
         r = agent.custom_func_with_msg(msg)
-        self.assertEqual(r["content"], msg.content)
+        self.assertEqual(r.content, msg.content)
         r = agent.custom_func_with_basic(1)
         self.assertFalse(agent.custom_judge_func("diuafhsua$FAIL$"))
         self.assertTrue(agent.custom_judge_func("72354rfv$PASS$"))
