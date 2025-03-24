@@ -28,6 +28,8 @@ class AgentBase(metaclass=RpcMeta):
 
     _version: int = 1
 
+    _audience: Optional[list] = None
+
     def __init__(
         self,
         name: str,

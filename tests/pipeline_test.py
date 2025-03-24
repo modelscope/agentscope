@@ -33,7 +33,7 @@ class MultAgent(AgentBase):
         self.value = value
 
     def reply(self, x: Msg) -> Msg:
-        x.metadata += self.value
+        x.metadata *= self.value
         return x
 
 
