@@ -60,7 +60,7 @@ class Msg(BaseModel):
     )
     """The timestamp of the message."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-branches
         self,
         name: str,
         content: Union[str, Sequence[ContentBlock], None],
@@ -84,8 +84,9 @@ class Msg(BaseModel):
         Args:
             name (`str`):
                 The name of who generates the message.
-            content (`Union[str, list[ContentBlock]]`):
-                The content of the message.
+            content (`Union[str, list[ContentBlock], None]`):
+                The content of the message. If `None` provided, the content
+                will be initialized as an empty list.
             role (`Union[str, Literal["system", "user", "assistant"]]`):
                 The role of the message sender.
             metadata (`Optional[Union[dict, str]]`, defaults to `None`):
@@ -104,9 +105,7 @@ class Msg(BaseModel):
                 f"The input content {type(content)} is converted to a string "
                 f"automatically.",
             )
-            content = [
-                TextBlock(type="text", text=str(content)),
-            ]
+            content = str(content)
 
         # Deal with the deprecated url argument
         if url is not None:
@@ -115,6 +114,11 @@ class Msg(BaseModel):
                 "using the ContentBlock instead to attach files to the "
                 "message",
             )
+
+            if isinstance(content, str):
+                content = [
+                    TextBlock(type="text", text=content),
+                ]
 
             if isinstance(url, str):
                 url = [url]
