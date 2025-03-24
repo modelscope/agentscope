@@ -1,7 +1,5 @@
 # Roadmap
 
----
-
 ## Long-term Goals
 
 Offering **agent-oriented programming (AOP)** as a new programming model to organize the design and implementation of next-generation LLM-empowered applications.
@@ -12,20 +10,21 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 2. Support tools API.
 3. Refactor the current AgentScope studio, including Dashboard and Workstation.
 4. Improve the current RAG module.
+5. Re-factor the `AgentBase` class to support more flexible serialization.
 
 ## Task
 
 1. Documentation
 
- - 🚧 Re-write the tutorial.
+ - ✅ Re-write the tutorial.
  - 📝 Correct the typographical errors in API documents.
- - 📝 Refine the README.md.
+ - 🚧 Refine the README.md.
 
 2. Tools Calling
 
  - ✅ Add Support for Anthropic API.
 
- - 🚧 Support tools calling in user-assistant conversations.
+ - ✅ Support tools calling in user-assistant conversations.
    - OpenAI API
    - DashScope API
    - Anthropic API
@@ -61,3 +60,10 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
  - 🚧 Provide a set of query rewrite strategies for retrieval.
  - 📝 Support online search engine (Google/Bing search) based RAG.
  - 📝 Support multi-RAG agent routing efficiently.
+
+5. AgentBase
+
+ - 🚧 Decouple the data and service layer of the `MemoryBase` class to support more customized implementations.
+ - 📝 Provide a new base class `Serializable` to
+   - support automatic serialization/deserialization of agents.
+   - support state registration
