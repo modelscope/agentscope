@@ -40,6 +40,8 @@
 ----
 
 ## 新闻
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope 已支持钩子函数，详细使用请参考 [tutorial](https://doc.agentscope.io/build_tutorial/hook.html)
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScope 已支持 OpenAI，Anthropic, DashScope API 的工具 API 调用，请参考 [教程](https://doc.agentscope.io/build_tutorial/tool.html).
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscope现已支持[MCP Server](https://github.com/modelcontextprotocol/servers)！您可以通过[此教程](https://doc.agentscope.io/build_tutorial/mcp.html)学习如何使用。

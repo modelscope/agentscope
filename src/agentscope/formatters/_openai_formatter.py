@@ -24,7 +24,7 @@ class OpenAIFormatter(FormatterBase):
     @classmethod
     def format_chat(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the messages in chat scenario, where only one user and one
         assistant are involved.
@@ -38,7 +38,7 @@ class OpenAIFormatter(FormatterBase):
     @classmethod
     def format_multi_agent(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the messages in multi-agent scenario, where multiple agents
         are involved.

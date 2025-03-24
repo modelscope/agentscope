@@ -10,6 +10,7 @@ from typing import (
     Optional,
     Dict,
     Any,
+    Sequence,
 )
 
 from loguru import logger
@@ -59,10 +60,10 @@ class Msg(BaseModel):
     )
     """The timestamp of the message."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-branches
         self,
         name: str,
-        content: Union[str, list[ContentBlock]],
+        content: Union[str, Sequence[ContentBlock], None],
         role: Literal["system", "user", "assistant"],
         metadata: JSONSerializable = None,
         echo: bool = False,
@@ -83,8 +84,9 @@ class Msg(BaseModel):
         Args:
             name (`str`):
                 The name of who generates the message.
-            content (`Union[str, list[ContentBlock]]`):
-                The content of the message.
+            content (`Union[str, list[ContentBlock], None]`):
+                The content of the message. If `None` provided, the content
+                will be initialized as an empty list.
             role (`Union[str, Literal["system", "user", "assistant"]]`):
                 The role of the message sender.
             metadata (`Optional[Union[dict, str]]`, defaults to `None`):
@@ -94,6 +96,8 @@ class Msg(BaseModel):
             url (`Optional[Union[str, List[str]]`, defaults to `None`):
                 The url of the message.
         """
+        if content is None:
+            content = []
 
         if not isinstance(content, (str, list)):
             logger.warning(
@@ -151,7 +155,7 @@ class Msg(BaseModel):
                     )
 
         # Check if the metadata is JSON serializable
-        if isinstance(metadata, (Dict, List)):
+        if metadata is not None:
             try:
                 json.dumps(metadata)
             except Exception as e:

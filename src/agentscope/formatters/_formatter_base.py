@@ -60,7 +60,7 @@ class FormatterBase(ABC):
     @classmethod
     def _format_chat_for_common_models(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
         require_alternative: bool = False,
         require_user_last: bool = False,
     ) -> list[dict]:
@@ -74,8 +74,9 @@ class FormatterBase(ABC):
         message.
 
         Args:
-            msgs (`Union[Msg, list[Msg]]`):
-                The message(s) to be formatted.
+            msgs (`Union[Msg, list[Msg], None]`):
+                The message(s) to be formatted. The `None` input will be
+                ignored.
             require_alternative (`bool`, optional):
                 If the model API requires the roles to be "user" and "model"
                 alternatively.
@@ -113,7 +114,7 @@ class FormatterBase(ABC):
     @classmethod
     def _format_multi_agent_for_common_models(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """A common format strategy for chat models, which will format the
         input messages into a system message (if provided) and a user message.
@@ -171,10 +172,10 @@ class FormatterBase(ABC):
 
 
         Args:
-            msgs (`Union[Msg, Sequence[Msg]]`):
+            msgs (`Union[Msg, list[Msg], None]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
+                should be a `Msg` object, or a list of `Msg` objects. The
+                `None` input will be ignored.
 
         Returns:
             `List[dict]`:
@@ -225,7 +226,9 @@ class FormatterBase(ABC):
         return messages
 
     @staticmethod
-    def check_and_flat_messages(*msgs: Union[Msg, list[Msg]]) -> list[Msg]:
+    def check_and_flat_messages(
+        *msgs: Union[Msg, list[Msg], None],
+    ) -> list[Msg]:
         """Check the input messages."""
         input_msgs = []
         for _ in msgs:

@@ -16,7 +16,7 @@ class GeminiFormatter(FormatterBase):
     @classmethod
     def format_chat(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the messages in chat scenario, where only a user and an
         assistant is involved (maybe with system in the beginning)."""
@@ -46,7 +46,7 @@ class GeminiFormatter(FormatterBase):
     @classmethod
     def format_multi_agent(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the messages in multi-agent scenario, where multiple agents
         are involved.

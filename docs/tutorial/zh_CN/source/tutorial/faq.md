@@ -35,6 +35,10 @@ _**Q**：如何在 AgentScope 中使用智能体？_
 <br/>
 **A**：您可以使用 AgentScope 中内置的智能体，或开发自己的智能体。详情请参考 [内置智能体](builtin_agent) 一节。
 
+_**Q** 如何将智能体的（流式）输出转发/到自己的前端或应用程序？_
+<br/>
+**A** 可以的！可以使用智能体中 `Speak` 函数的钩子来实现，详细请参考 [钩子函数](hook) 一节。
+
 ## 关于 GUI
 
 _**Q**：AgentScope 提供了哪些 GUI？_
@@ -49,10 +53,10 @@ _**Q**：AgentScope 中的低代码开发是什么？_
 
 ## 关于报告漏洞
 
-_**问**：我如何报告 AgentScope 中的漏洞？_
+_**Q**：我如何报告 AgentScope 中的漏洞？_
 <br/>
-**答**：如果您在使用 AgentScope 时遇到漏洞，请通过在我们的 GitHub 仓库中创建问题来报告。
+**A**：如果您在使用 AgentScope 时遇到漏洞，请通过在我们的 GitHub 仓库中创建问题来报告。
 
-_**问**：我如何报告 AgentScope 中的安全漏洞？_
+_**Q**：我如何报告 AgentScope 中的安全漏洞？_
 <br/>
-**答**：如果您发现 AgentScope 中的安全问题，请通过[阿里巴巴安全响应中心 (ASRC)](https://security.alibaba.com/)报告给我们。
+**A**：如果您发现 AgentScope 中的安全问题，请通过[阿里巴巴安全响应中心 (ASRC)](https://security.alibaba.com/)报告给我们。

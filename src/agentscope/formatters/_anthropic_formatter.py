@@ -20,14 +20,15 @@ class AnthropicFormatter(FormatterBase):
     @classmethod
     def format_chat(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the messages in chat scenario, where only one user and
         one assistant are involved.
 
         Args:
-            msgs (`Union[Msg, list[Msg]]`):
-                The message(s) to be formatted.
+            msgs (`Union[Msg, list[Msg], None]`):
+                The message(s) to be formatted. The `None` input will be
+                ignored.
         """
 
         msgs = cls.check_and_flat_messages(*msgs)
@@ -85,7 +86,7 @@ class AnthropicFormatter(FormatterBase):
     @classmethod
     def format_multi_agent(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the messages in multi-agent scenario, where multiple agents
         are involved."""
