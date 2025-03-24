@@ -4,8 +4,9 @@
 from __future__ import annotations
 import inspect
 import time
+from abc import ABC, abstractmethod
 from functools import wraps
-from typing import Sequence, Any, Callable, Union, List, Optional
+from typing import Any, Callable, Union, List, Optional
 
 from loguru import logger
 
@@ -15,7 +16,7 @@ from ..exception import ResponseParsingError
 from ..manager import FileManager
 from ..manager import MonitorManager
 from ..message import Msg
-from ..utils.common import _get_timestamp, _convert_to_str
+from ..utils.common import _get_timestamp
 from ..constants import _DEFAULT_MAX_RETRIES
 from ..constants import _DEFAULT_RETRY_INTERVAL
 
@@ -87,7 +88,7 @@ def _response_parse_decorator(
     return checking_wrapper
 
 
-class ModelWrapperBase:
+class ModelWrapperBase(ABC):
     """The base class for model wrapper."""
 
     model_type: str
@@ -132,6 +133,7 @@ class ModelWrapperBase:
 
         logger.debug(f"Initialize model by configuration [{config_name}]")
 
+    @abstractmethod
     def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
         """Processing input with the model."""
         raise NotImplementedError(
@@ -142,136 +144,62 @@ class ModelWrapperBase:
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg]],
+        multi_agent_mode: bool = True,
     ) -> Union[List[dict], str]:
         """Format the input messages into the format that the model
         API required."""
         raise NotImplementedError(
-            f"Model Wrapper [{type(self).__name__}]"
-            f" is missing the required `format` method",
+            f"The method `format` is not implemented for model wrapper "
+            f"[{type(self).__name__}].",
         )
 
-    @staticmethod
-    def format_for_common_chat_models(
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> List[dict]:
-        """A common format strategy for chat models, which will format the
-        input messages into a system message (if provided) and a user message.
+    def format_tools_json_schemas(
+        self,
+        schemas: dict[str, dict],
+    ) -> list[dict]:
+        """Format the JSON schemas of the tool functions to the format that
+        the model API provider expects.
 
-        Note this strategy maybe not suitable for all scenarios,
-        and developers are encouraged to implement their own prompt
-        engineering strategies.
+        Example:
+            An example of the input schemas parsed from the service toolkit
 
-        The following is an example:
+            ..code-block:: json
 
-        .. code-block:: python
-
-            prompt1 = model.format(
-                Msg("system", "You're a helpful assistant", role="system"),
-                Msg("Bob", "Hi, how can I help you?", role="assistant"),
-                Msg("user", "What's the date today?", role="user")
-            )
-
-            prompt2 = model.format(
-                Msg("Bob", "Hi, how can I help you?", role="assistant"),
-                Msg("user", "What's the date today?", role="user")
-            )
-
-        The prompt will be as follows:
-
-        .. code-block:: python
-
-            # prompt1
-            [
                 {
-                    "role": "system",
-                    "content": "You're a helpful assistant"
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        "## Conversation History\\n"
-                        "Bob: Hi, how can I help you?\\n"
-                        "user: What's the date today?"
-                    )
+                    "bing_search": {
+                        "type": "function",
+                        "function": {
+                            "name": "bing_search",
+                            "description": "Search the web using Bing.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The search query.",
+                                    }
+                                },
+                                "required": ["query"],
+                            }
+                        }
+                    }
                 }
-            ]
-
-            # prompt2
-            [
-                {
-                    "role": "user",
-                    "content": (
-                        "## Conversation History\\n"
-                        "Bob: Hi, how can I help you?\\n"
-                        "user: What's the date today?"
-                    )
-                }
-            ]
-
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
+            schemas (`dict[str, dict]`):
+                The tools JSON schemas parsed from the service toolkit module,
+                which can be accessed by `service_toolkit.json_schemas`.
 
         Returns:
-            `List[dict]`:
-                The formatted messages.
+            `list[dict]`:
+                The formatted JSON schemas of the tool functions.
         """
-        if len(args) == 0:
-            raise ValueError(
-                "At least one message should be provided. An empty message "
-                "list is not allowed.",
-            )
 
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        # record dialog history as a list of strings
-        dialogue = []
-        sys_prompt = None
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # if system prompt is available, place it at the beginning
-                sys_prompt = _convert_to_str(unit.content)
-            else:
-                # Merge all messages into a conversation history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        content_components = []
-
-        # The conversation history is added to the user message if not empty
-        if len(dialogue) > 0:
-            content_components.extend(["## Conversation History"] + dialogue)
-
-        messages = [
-            {
-                "role": "user",
-                "content": "\n".join(content_components),
-            },
-        ]
-
-        # Add system prompt at the beginning if provided
-        if sys_prompt is not None:
-            messages = [{"role": "system", "content": sys_prompt}] + messages
-
-        return messages
+        raise NotImplementedError(
+            f"The method `format_tools_json_schemas` is not implemented "
+            f"for model wrapper [{type(self).__name__}].",
+        )
 
     def _save_model_invocation(
         self,

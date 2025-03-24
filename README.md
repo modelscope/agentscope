@@ -40,6 +40,8 @@ Start building LLM-empowered multi-agent applications in an easier way.
 ----
 
 ## News
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScope supports tools API now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/tool.html).
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscope now supports [MCP Server](https://github.com/modelcontextprotocol/servers)! You can learn how to use it by following this [tutorial](https://doc.agentscope.io/build_tutorial/mcp.html).
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** Our [multi-source RAG Application](applications/multisource_rag_app/README.md) (the chatbot used in our Q&A DingTalk group) is open-source now!

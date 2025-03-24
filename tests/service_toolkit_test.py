@@ -7,14 +7,13 @@ import unittest
 from typing import Literal
 
 import agentscope
-from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.models import ModelResponse
 from agentscope.parsers import MultiTaggedContentParser, TaggedContent
 from agentscope.service import (
     bing_search,
     execute_python_code,
     retrieve_from_list,
     query_mysql,
-    summarization,
 )
 from agentscope.service import ServiceToolkit
 
@@ -293,24 +292,6 @@ we use the embedding model to embed the query.""",
         self.assertDictEqual(
             doc_dict,
             self.json_schema_query_mysql,
-        )
-
-    def test_summary(self) -> None:
-        """Test summarization in service toolkit."""
-        _, doc_dict = ServiceToolkit.get(
-            summarization,
-            model=ModelWrapperBase("abc", "model_name"),
-            system_prompt="",
-            summarization_prompt="",
-            max_return_token=-1,
-            token_limit_prompt="",
-        )
-
-        print(json.dumps(doc_dict, indent=4))
-
-        self.assertDictEqual(
-            doc_dict,
-            self.json_schema_summarization,
         )
 
     def test_mcp_tool(self) -> None:

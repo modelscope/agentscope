@@ -9,9 +9,9 @@ import json
 from typing import Any, Optional, Union, Sequence
 from loguru import logger
 
-from agentscope.agents.agent import AgentBase
-from agentscope.message import Msg
-from agentscope.rag import Knowledge
+from ..agents._agent import AgentBase
+from ..message.msg import Msg
+from ..rag.knowledge import Knowledge
 
 CHECKING_PROMPT = """
                 Is the retrieved content relevant to the query?
@@ -167,7 +167,7 @@ class LlamaIndexAgent(AgentBase):
             Msg(
                 name="system",
                 role="system",
-                content=self.sys_prompt,
+                content=str(self.sys_prompt),
             ),
             # {"role": "system", "content": retrieved_docs_to_string},
             self.memory.get_memory(
