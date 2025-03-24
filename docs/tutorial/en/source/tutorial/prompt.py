@@ -42,7 +42,7 @@ input messages without knowing the details of the model API. Taking DashScope
 Chat API as an example:
 
 """
-from typing import Union
+from typing import Union, Optional
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -102,12 +102,12 @@ print(json.dumps(prompt, indent=4, ensure_ascii=False))
 
 
 class MyAgent(AgentBase):
-    def __init__(self, model_config_name: str, **kwargs) -> None:
-        super().__init__(model_config_name=model_config_name)
+    def __init__(self, name: str, model_config_name: str, **kwargs) -> None:
+        super().__init__(name=name, model_config_name=model_config_name)
 
         # ...
 
-    def reply(self, x: Union[Msg, list[Msg]]) -> Msg:
+    def reply(self, x: Optional[Union[Msg, list[Msg]]] = None) -> Msg:
         # ...
 
         # Format the messages without knowing the model API

@@ -36,7 +36,7 @@ AgentScope 通过支持从配置中加载模型，并在 model wrapper 类中内
  API 的细节。以 DashScope Chat API 为例：
 
 """
-from typing import Union
+from typing import Union, Optional
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -95,12 +95,12 @@ print(json.dumps(prompt, indent=4, ensure_ascii=False))
 
 
 class MyAgent(AgentBase):
-    def __init__(self, model_config_name: str, **kwargs) -> None:
-        super().__init__(model_config_name=model_config_name)
+    def __init__(self, name: str, model_config_name: str, **kwargs) -> None:
+        super().__init__(name=name, model_config_name=model_config_name)
 
         # ...
 
-    def reply(self, x: Union[Msg, list[Msg]]) -> Msg:
+    def reply(self, x: Optional[Union[Msg, list[Msg]]] = None) -> Msg:
         # ...
 
         # 在模型类型未知的情况下，可以直接进行格式化

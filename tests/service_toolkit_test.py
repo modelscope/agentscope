@@ -333,7 +333,7 @@ The following tool functions are available in the format of
 ```
 
 1. echo: Echo the input text
-    text (string): Input text
+        text (string): Input text
 """,  # noqa
         )
 

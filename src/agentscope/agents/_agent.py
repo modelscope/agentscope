@@ -16,7 +16,7 @@ from agentscope.rpc.rpc_config import DistConf
 from agentscope.rpc.rpc_meta import RpcMeta, async_func, sync_func
 from agentscope.logging import log_stream_msg, log_msg
 from agentscope.manager import ModelManager
-from agentscope.message import Msg, ToolUseBlock
+from agentscope.message import Msg, ToolUseBlock, TextBlock
 from agentscope.memory import TemporaryMemory
 
 
@@ -146,7 +146,6 @@ class AgentBase(Operator, metaclass=RpcMeta):
             str,
             Msg,
             Generator[Tuple[bool, str], None, None],
-            list[ToolUseBlock],
         ],
         tool_calls: Optional[list[ToolUseBlock]] = None,
     ) -> None:
@@ -169,7 +168,7 @@ class AgentBase(Operator, metaclass=RpcMeta):
                 in the content field of the Msg object.
         """
         if isinstance(content, str):
-            content = [{"type": "text", "text": content}]
+            content = [TextBlock(type="text", text=content)]
             if tool_calls:
                 content.extend(tool_calls)
             log_msg(
@@ -205,8 +204,8 @@ class AgentBase(Operator, metaclass=RpcMeta):
                 log_stream_msg(msg, last=last)
         else:
             raise TypeError(
-                "From version 0.0.5, the speak method only accepts str or Msg "
-                f"object, got {type(content)} instead.",
+                "From version 0.0.5, the speak method only accepts str, Msg "
+                "object and Generator, got {type(content)} instead.",
             )
 
     def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
