@@ -24,7 +24,6 @@ from .block import (
     VideoBlock,
     FileBlock,
 )
-from ..logging import log_msg
 from ..utils.common import (
     _guess_type_by_extension,
 )
@@ -169,7 +168,7 @@ class Msg(BaseModel):
         )
 
         if echo:
-            log_msg(self)
+            logger.chat(self)
 
     def to_dict(self) -> dict:
         """Serialize the message into a dictionary, which can be
