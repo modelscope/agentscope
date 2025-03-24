@@ -113,6 +113,9 @@ msg_audio = Msg(
 
 
 # %%
+# .. tip:: 使用 tools API 时，`content` 字段支持额外的两个 block 类型，分别是
+# `ToolUseBlock` 和 `ToolResultBlock`。更多内容请参考 :ref:`tools`。
+#
 # 序列化
 # ----------------
 # 消息可以序列化为 JSON 格式的字符串。

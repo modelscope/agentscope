@@ -8,11 +8,38 @@ Message
 Message is a specialized data structure for information exchange.
 In AgentScope, we use message to communicate among agents.
 
-The most important fields of a message are: `name`, `role`, and `content`.
-The `name and `role` fields identify the sender of the message, and the
-`content` field contains the actual information.
+A message consists of four fields: `name`, `role`, `content`, and `metadata`.
+The types and meanings of these fields are as follows:
 
-.. Note:: The `role` field must be chosen from `"system"`, `"assistant"` and `"user"`.
+.. list-table::
+    :header-rows: 1
+
+    * - Field
+    - Type
+    - Description
+    * - name
+    - `str`
+    - The name of the message sender
+    * - role
+    - `Literal["system", "assistant", "user"]`
+    - The role of the message sender, which must be one of "system", "assistant", or "user".
+        "system" is commonly used for system prompt or system messages (e.g., tool execution);
+        "assistant" is usually LLM-empowered agents; "user" is for users.
+    * - content
+    - `Union[str, list[ContentBlock]]`
+    - The specific content of the message, which can be a string or a list of `ContentBlock`.
+        `ContentBlock` is a dictionary.
+    * - metadata
+    - `JSONSerializable`
+    - Used to store structured data, which can be any serializable object, such as structured output of agents.
+
+.. tip:: In multi-agent systems, when the `role` field is "user" or
+ "assistant", the `name` field can have different values to distinguish
+ different identities. When the `role` field is "system", the `name` field is
+ usually fixed, such as "system".
+
+.. tip:: When the data in the message is used for controlling the flow
+ or structured output, it is recommended to use the `metadata` field.
 """
 
 from agentscope.message import Msg
@@ -92,6 +119,9 @@ msg_audio = Msg(
 )
 
 # %%
+# .. tip:: For tools API, there are two additional blocks: `ToolUseBlock` and
+#  `ToolResultBlock`. Further reading refer to :ref:`tools`.
+#
 # Serialize
 # ----------------
 # Message can be serialized to a string in JSON format.
