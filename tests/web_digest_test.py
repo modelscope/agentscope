@@ -85,7 +85,7 @@ class TestWebDigest(unittest.TestCase):
 
             def format(
                 self,
-                *args: Union[Msg, Sequence[Msg]],
+                *args: Union[Msg, Sequence[Msg], None],
             ) -> Union[List[dict], str]:
                 return str(args)
 

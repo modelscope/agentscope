@@ -14,7 +14,7 @@ class CommonFormatter(FormatterBase):
     @classmethod
     def format_chat(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
         require_alternative: bool = False,
         require_user_last: bool = False,
     ) -> list[dict]:
@@ -28,8 +28,9 @@ class CommonFormatter(FormatterBase):
         message.
 
         Args:
-            msgs (`Union[Msg, list[Msg]]`):
-                The message(s) to be formatted.
+            msgs (`Union[Msg, list[Msg], None]`):
+                The message(s) to be formatted. The `None` input will be
+                ignored.
             require_alternative (`bool`, optional):
                 If the model API requires the roles to be "user" and "model"
                 alternatively.
@@ -46,7 +47,7 @@ class CommonFormatter(FormatterBase):
     @classmethod
     def format_multi_agent(
         cls,
-        *msgs: Union[Msg, list[Msg]],
+        *msgs: Union[Msg, list[Msg], None],
     ) -> list[dict]:
         """Format the multi-agent messages, where more than two agents are
         involved."""

@@ -158,8 +158,7 @@ class LlamaIndexAgent(AgentBase):
                 msg = self.model.format(msg)
                 checking = self.model(msg)
                 logger.info(checking)
-                checking = checking.text.lower()
-                if "no" in checking:
+                if "no" in checking.text.lower():
                     retrieved_docs_to_string = "EMPTY"
 
         # prepare prompt

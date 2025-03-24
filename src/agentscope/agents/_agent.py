@@ -289,6 +289,7 @@ class AgentBase(Operator, metaclass=_AgentMeta):
             str,
             Msg,
             Generator[Tuple[bool, str], None, None],
+            None,
         ],
         tool_calls: Optional[list[ToolUseBlock]] = None,
     ) -> None:
@@ -298,7 +299,8 @@ class AgentBase(Operator, metaclass=_AgentMeta):
 
         Args:
             content
-             (`Union[str, Msg, Generator[Tuple[bool, str], None, None]]`):
+             (`Union[str, Msg, Generator[Tuple[bool, str], None, None],
+             None]`):
                 The content of the message to be spoken out. If a string is
                 given, a Msg object will be created with the agent's name, role
                 as "assistant", and the given string as the content.
@@ -371,6 +373,13 @@ class AgentBase(Operator, metaclass=_AgentMeta):
                 "From version 0.0.5, the speak method only accepts str, Msg "
                 "object and Generator, got {type(content)} instead.",
             )
+
+        if msg_to_speak is None:
+            logger.warning(
+                "The content and tool_calls cannot be `None` at the same "
+                "time, skip the speak function.",
+            )
+            return
 
         # Call the hooks
         msg_hook = _call_pre_speak_hooks(msg_to_speak, stream=False, last=True)

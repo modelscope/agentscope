@@ -56,14 +56,15 @@ class AnthropicChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, list[Msg]],
+        *args: Union[Msg, list[Msg], None],
         multi_agent_mode: bool = True,
     ) -> list[dict[str, object]]:
         """Format the messages for anthropic model input.
 
         Args:
-            *args (`Union[Msg, list[Msg]]`):
-                The message(s) to be formatted.
+            *args (`Union[Msg, list[Msg], None]`):
+                The message(s) to be formatted. The `None` input will be
+                ignored.
             multi_agent_mode (`bool`, defaults to `True`):
                 Formatting the messages in multi-agent mode or not. If false,
                 the messages will be formatted in chat mode, where only a user

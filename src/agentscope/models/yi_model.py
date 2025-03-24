@@ -207,7 +207,7 @@ class YiChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, list[Msg]],
+        *args: Union[Msg, list[Msg], None],
         multi_agent_mode: bool = True,
     ) -> List[dict]:
         """Format the messages into the required format of Yi Chat API.
@@ -247,10 +247,10 @@ class YiChatWrapper(ModelWrapperBase):
             ]
 
         Args:
-            args (`Union[Msg, list[Msg]]`):
+            args (`Union[Msg, list[Msg], None]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
+                should be a `Msg` object, or a list of `Msg` objects. The
+                `None` input will be ignored.
             multi_agent_mode (`bool`, defaults to `True`):
                 Formatting the messages in multi-agent mode or not. If false,
                 the messages will be formatted in chat mode, where only a user

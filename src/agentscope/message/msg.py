@@ -10,6 +10,7 @@ from typing import (
     Optional,
     Dict,
     Any,
+    Sequence,
 )
 
 from loguru import logger
@@ -23,6 +24,7 @@ from .block import (
     VideoBlock,
     FileBlock,
 )
+from ..logging import log_msg
 from ..utils.common import (
     _guess_type_by_extension,
 )
@@ -62,7 +64,7 @@ class Msg(BaseModel):
     def __init__(
         self,
         name: str,
-        content: Union[str, list[ContentBlock]],
+        content: Union[str, Sequence[ContentBlock], None],
         role: Literal["system", "user", "assistant"],
         metadata: JSONSerializable = None,
         echo: bool = False,
@@ -94,6 +96,8 @@ class Msg(BaseModel):
             url (`Optional[Union[str, List[str]]`, defaults to `None`):
                 The url of the message.
         """
+        if content is None:
+            content = []
 
         if not isinstance(content, (str, list)):
             logger.warning(
@@ -101,7 +105,9 @@ class Msg(BaseModel):
                 f"The input content {type(content)} is converted to a string "
                 f"automatically.",
             )
-            content = str(content)
+            content = [
+                TextBlock(type="text", text=str(content)),
+            ]
 
         # Deal with the deprecated url argument
         if url is not None:
@@ -110,11 +116,6 @@ class Msg(BaseModel):
                 "using the ContentBlock instead to attach files to the "
                 "message",
             )
-
-            if isinstance(content, str):
-                content = [
-                    TextBlock(type="text", text=content),
-                ]
 
             if isinstance(url, str):
                 url = [url]
@@ -151,7 +152,7 @@ class Msg(BaseModel):
                     )
 
         # Check if the metadata is JSON serializable
-        if isinstance(metadata, (Dict, List)):
+        if metadata is not None:
             try:
                 json.dumps(metadata)
             except Exception as e:
@@ -168,7 +169,7 @@ class Msg(BaseModel):
         )
 
         if echo:
-            logger.chat(self)
+            log_msg(self)
 
     def to_dict(self) -> dict:
         """Serialize the message into a dictionary, which can be
