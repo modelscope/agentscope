@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/hook.html">Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -498,7 +499,7 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeChatWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A common format strategy for chat models, which will format the</span>
@@ -557,10 +558,10 @@
 
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, list[Msg]]`):</span>
+<span class="sd">            args (`Union[Msg, list[Msg], None]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
-<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
-<span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects. The</span>
+<span class="sd">                `None` object will be ignored.</span>
 <span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
 <span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
 <span class="sd">                the messages will be formatted in chat mode, where only a user</span>
@@ -1016,7 +1017,7 @@
 <a class="viewcode-back" href="../../../build_api/agentscope.models.dashscope_model.html#agentscope.models.DashScopeMultiModalWrapper.format">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">multi_agent_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the messages for DashScope Multimodal API.</span>
@@ -1098,10 +1099,10 @@
 <span class="sd">            &quot;file://&quot;, which will be attached in this format function.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            args (`Union[Msg, list[Msg]]`):</span>
+<span class="sd">            args (`Union[Msg, list[Msg], None]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
-<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
-<span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects. The</span>
+<span class="sd">                `None` input will be ignored.</span>
 <span class="sd">            multi_agent_mode (`bool`, defaults to `True`):</span>
 <span class="sd">                Formatting the messages in multi-agent mode or not. If false,</span>
 <span class="sd">                the messages will be formatted in chat mode, where only a user</span>

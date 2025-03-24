@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tool.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook.html">Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web_browser.html">Web Browser Control</a></li>
@@ -194,11 +195,13 @@ to download the full example code.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Angel: Hello! It seems like your message got cut off. Could you please provide more details so I can assist you better?
-Monster: Hello Angel! I&#39;m Monster, your helpful assistant. It looks like there might have been a bit of a mix-up, as I didn&#39;t send a previous message. How can I assist you today?
-Angel: Hello! I&#39;m Angel, and it looks like there was a bit of confusion. I&#39;m here to help you. How can I assist you today?
-Monster: Hello Angel! It&#39;s nice to meet you. I&#39;m here to help as well. It seems like we both got a bit mixed up with the roles. Is there anything specific you need assistance with, or did you have a question for me?
-Angel: Hello! It’s great to meet you, Monster. It seems like we both are here to help, which is wonderful! Since I’m Angel and I’m here to assist, how can I help you today? If you have any questions or need any information, feel free to let me know!
-Monster: Hello Angel! It&#39;s great to meet you too. Since we&#39;re both here to help, let&#39;s make sure we&#39;re on the same page. If you have any specific questions or need information on a particular topic, I&#39;m here to assist you. Alternatively, if there&#39;s anything you&#39;d like to discuss or explore, just let me know! How can I be of assistance today?
+Monster: Hello Angel! I&#39;m Monster, your helpful assistant. It looks like there might have been a bit of confusion, as I didn&#39;t send a previous message. How can I assist you today?
+Angel: Hello! It looks like there was a bit of a mix-up. I&#39;m Angel, and I&#39;m here to help you. How can I assist you today?
+Monster: Hello Angel! It&#39;s nice to meet you. I&#39;m Monster, and I&#39;m here to help as well. It seems we both got a bit mixed up with the roles here. How can I assist you or is there something specific you&#39;d like to discuss?
+Angel: Hello! It&#39;s great to meet you, Monster. It seems we both are here to help, which is wonderful! Since we&#39;re both assistants, let&#39;s make sure we don&#39;t overlap. If you have any specific questions or need assistance with something, feel free to let me know. How can I help you today?
+Monster: Hello Angel! It&#39;s indeed a pleasure to meet another helpful assistant. Since we&#39;re both here to assist, let&#39;s make sure we can collaborate effectively. If you have any specific areas or topics you specialize in, feel free to share. That way, if someone needs help, we can direct them to the best resource.
+
+Is there anything in particular you&#39;d like to discuss or any way I can support you?
 </pre></div>
 </div>
 <p>If you want to participate in the conversation, just instantiate a built-in <cite>UserAgent</cite> to type messages to the agents.</p>
@@ -305,7 +308,7 @@ Charlie: 4
 <p>In the above example, Charlie left the conversation after the first round without receiving “4” and “5” from Alice and Bob.
 Therefore, it reported “4” in the second round.
 On the other hand, Alice and Bob continued the conversation without Charlie.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 23.879 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 27.127 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-conversation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/e45033d54e8ac8fc32ecea3c60595825/conversation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">conversation.ipynb</span></code></a></p>

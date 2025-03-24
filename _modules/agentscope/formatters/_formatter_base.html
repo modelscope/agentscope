@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/hook.html">Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -214,7 +215,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_chat_for_common_models</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">require_alternative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">require_user_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
@@ -228,8 +229,9 @@
 <span class="sd">        message.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            msgs (`Union[Msg, list[Msg]]`):</span>
-<span class="sd">                The message(s) to be formatted.</span>
+<span class="sd">            msgs (`Union[Msg, list[Msg], None]`):</span>
+<span class="sd">                The message(s) to be formatted. The `None` input will be</span>
+<span class="sd">                ignored.</span>
 <span class="sd">            require_alternative (`bool`, optional):</span>
 <span class="sd">                If the model API requires the roles to be &quot;user&quot; and &quot;model&quot;</span>
 <span class="sd">                alternatively.</span>
@@ -267,7 +269,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_multi_agent_for_common_models</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+        <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A common format strategy for chat models, which will format the</span>
 <span class="sd">        input messages into a system message (if provided) and a user message.</span>
@@ -325,10 +327,10 @@
 
 
 <span class="sd">        Args:</span>
-<span class="sd">            msgs (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">            msgs (`Union[Msg, list[Msg], None]`):</span>
 <span class="sd">                The input arguments to be formatted, where each argument</span>
-<span class="sd">                should be a `Msg` object, or a list of `Msg` objects.</span>
-<span class="sd">                In distribution, placeholder is also allowed.</span>
+<span class="sd">                should be a `Msg` object, or a list of `Msg` objects. The</span>
+<span class="sd">                `None` input will be ignored.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `List[dict]`:</span>
@@ -381,7 +383,9 @@
 <div class="viewcode-block" id="FormatterBase.check_and_flat_messages">
 <a class="viewcode-back" href="../../../build_api/agentscope.formatters.html#agentscope.formatters.FormatterBase.check_and_flat_messages">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">check_and_flat_messages</span><span class="p">(</span><span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_and_flat_messages</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">msgs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the input messages.&quot;&quot;&quot;</span>
         <span class="n">input_msgs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">:</span>

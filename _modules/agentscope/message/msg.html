@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/hook.html">Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -150,6 +151,7 @@
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Dict</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
@@ -201,10 +203,10 @@
     <span class="p">)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The timestamp of the message.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-branches</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">ContentBlock</span><span class="p">]],</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ContentBlock</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">role</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">],</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="n">JSONSerializable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">echo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -225,8 +227,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            name (`str`):</span>
 <span class="sd">                The name of who generates the message.</span>
-<span class="sd">            content (`Union[str, list[ContentBlock]]`):</span>
-<span class="sd">                The content of the message.</span>
+<span class="sd">            content (`Union[str, list[ContentBlock], None]`):</span>
+<span class="sd">                The content of the message. If `None` provided, the content</span>
+<span class="sd">                will be initialized as an empty list.</span>
 <span class="sd">            role (`Union[str, Literal[&quot;system&quot;, &quot;user&quot;, &quot;assistant&quot;]]`):</span>
 <span class="sd">                The role of the message sender.</span>
 <span class="sd">            metadata (`Optional[Union[dict, str]]`, defaults to `None`):</span>
@@ -236,6 +239,8 @@
 <span class="sd">            url (`Optional[Union[str, List[str]]`, defaults to `None`):</span>
 <span class="sd">                The url of the message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -293,7 +298,7 @@
                     <span class="p">)</span>
 
         <span class="c1"># Check if the metadata is JSON serializable</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="p">(</span><span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>

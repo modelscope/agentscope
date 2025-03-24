@@ -349,6 +349,23 @@
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Core Functions ------------- AgentScope implements hooks around three core agent functions:">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_hook_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_hook.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Hooks are extension points in AgentScope that allow developers to customize agent behaviors at specific execution points. They provide a flexible way to modify or extend the agent's functionality without changing its core implementation.</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -379,6 +396,7 @@
    /build_tutorial/model
    /build_tutorial/prompt
    /build_tutorial/structured_output
+   /build_tutorial/hook
 
 
 

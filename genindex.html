@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/tool.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/rag.html">Retrieval Augmentation Generation (RAG)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_tutorial/hook.html">Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/distribution.html">Distribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/prompt_optimization.html">System Prompt Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_tutorial/web_browser.html">Web Browser Control</a></li>
@@ -1128,9 +1129,23 @@
         <li><a href="build_api/agentscope.memory.html#agentscope.memory.TemporaryMemory.clear">(TemporaryMemory method)</a>, <a href="build_api/agentscope.memory.temporary_memory.html#agentscope.memory.temporary_memory.TemporaryMemory.clear">[1]</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_all_hooks">clear_all_hooks() (AgentBase method)</a>
+</li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_audience">clear_audience() (AgentBase method)</a>
 </li>
       <li><a href="build_api/agentscope.manager.html#agentscope.manager.ModelManager.clear_model_configs">clear_model_configs() (ModelManager method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_post_observe_hooks">clear_post_observe_hooks() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_post_reply_hooks">clear_post_reply_hooks() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_post_speak_hooks">clear_post_speak_hooks() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_pre_observe_hooks">clear_pre_observe_hooks() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_pre_reply_hooks">clear_pre_reply_hooks() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_pre_speak_hooks">clear_pre_speak_hooks() (AgentBase method)</a>
 </li>
       <li><a href="build_api/agentscope.rpc.rpc_agent_pb2_grpc.html#agentscope.rpc.rpc_agent_pb2_grpc.RpcAgent.clone_agent">clone_agent() (RpcAgent static method)</a>
 
@@ -1198,6 +1213,8 @@
         <li><a href="build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WriteTextServiceNode.compile">(WriteTextServiceNode method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.web.workstation.workflow.html#agentscope.web.workstation.workflow.compile_workflow">compile_workflow() (in module agentscope.web.workstation.workflow)</a>
 </li>
       <li><a href="build_api/agentscope.models.anthropic_model.html#agentscope.models.anthropic_model.AnthropicChatWrapper.config_name">config_name (AnthropicChatWrapper attribute)</a>
@@ -1242,8 +1259,6 @@
         <li><a href="build_api/agentscope.models.zhipu_model.html#agentscope.models.zhipu_model.ZhipuAIEmbeddingWrapper.config_name">(ZhipuAIEmbeddingWrapper attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.message.html#agentscope.message.Msg.content">content (Msg attribute)</a>, <a href="build_api/agentscope.message.msg.html#agentscope.message.msg.Msg.content">[1]</a>
 
       <ul>
@@ -2935,6 +2950,18 @@
         <li><a href="build_api/agentscope.manager.html#agentscope.manager.ModelManager.register_model_wrapper_class">(ModelManager method)</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_post_observe_hook">register_post_observe_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_post_reply_hook">register_post_reply_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_post_speak_hook">register_post_speak_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_pre_observe_hook">register_pre_observe_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_pre_reply_hook">register_pre_reply_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_pre_speak_hook">register_pre_speak_hook() (AgentBase method)</a>
+</li>
       <li><a href="build_api/agentscope.environment.event.html#agentscope.environment.event.Holdable.release">release() (Holdable method)</a>
 </li>
       <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.BasicEnv.remove_child">remove_child() (BasicEnv method)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.BasicEnv.remove_child">[1]</a>
@@ -2953,6 +2980,18 @@
         <li><a href="build_api/agentscope.environment.env.html#agentscope.environment.env.Env.remove_listener">(Env method)</a>, <a href="build_api/agentscope.environment.html#agentscope.environment.Env.remove_listener">[1]</a>
 </li>
       </ul></li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_post_observe_hook">remove_post_observe_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_post_reply_hook">remove_post_reply_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_post_speak_hook">remove_post_speak_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_pre_observe_hook">remove_pre_observe_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_pre_reply_hook">remove_pre_reply_hook() (AgentBase method)</a>
+</li>
+      <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_pre_speak_hook">remove_pre_speak_hook() (AgentBase method)</a>
+</li>
       <li><a href="build_api/agentscope.agents.html#agentscope.agents.AgentBase.reply">reply() (AgentBase method)</a>
 
       <ul>
@@ -2969,6 +3008,8 @@
         <li><a href="build_api/agentscope.agents.html#agentscope.agents.UserAgent.reply">(UserAgent method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.service.service_toolkit.html#agentscope.service.service_toolkit.ServiceFunction.require_args">require_args (ServiceFunction attribute)</a>
 </li>
       <li><a href="build_api/agentscope.parsers.html#agentscope.parsers.MarkdownJsonDictParser.required_keys">required_keys (MarkdownJsonDictParser attribute)</a>, <a href="build_api/agentscope.parsers.json_object_parser.html#agentscope.parsers.json_object_parser.MarkdownJsonDictParser.required_keys">[1]</a>
@@ -2979,8 +3020,6 @@
 </li>
       <li><a href="build_api/agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.reset_glb_var">reset_glb_var() (in module agentscope.web.gradio.studio)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="build_api/agentscope.service.execute_code.exec_notebook.html#agentscope.service.execute_code.exec_notebook.NoteBookExecutor.reset_notebook">reset_notebook() (NoteBookExecutor method)</a>, <a href="build_api/agentscope.service.html#agentscope.service.NoteBookExecutor.reset_notebook">[1]</a>
 </li>
       <li><a href="build_api/agentscope.web.gradio.utils.html#agentscope.web.gradio.utils.ResetException">ResetException</a>
