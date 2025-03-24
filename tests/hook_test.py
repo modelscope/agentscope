@@ -118,7 +118,7 @@ class AgentHooksTest(unittest.TestCase):
         # Test with no input
         self.agent()
 
-    @patch("agentscope.agents.agent.log_msg")  # 这里是函数被使用的位置
+    @patch("agentscope.agents.agent.log_msg")
     def test_speak_hook(self, mock_log_msg: MagicMock) -> None:
         """Test the speak hook."""
 
