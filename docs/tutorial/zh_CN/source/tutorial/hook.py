@@ -20,7 +20,7 @@ AgentScope 围绕三个核心智能体函数实现了钩子函数：
 
 - `pre_reply_hook` / `post_reply_hook`
 - `pre_speak_hook` / `post_speak_hook`
-- `pre_listen_hook` / `post_listen_hook`
+- `pre_observe_hook` / `post_observe_hook`
 
 例如，您可以使用 `pre_speak_hook` 将消息重定向到不同的输出，如 Web 界面或外部应用程序。
 
@@ -34,12 +34,12 @@ AgentScope 围绕三个核心智能体函数实现了钩子函数：
  - 钩子按注册顺序执行
  - 多个钩子函数可以链接在一起
 
-3. **Return Value Handling**
 3. **返回值处理**
  - 对于前置钩子：非 None 返回值会传递给下一个钩子或目标函数
- - 当钩子返回 None 时，下一个钩子将使用前面钩子的最近非 None 返回值
- - 如果所有前面的钩子返回 None，则下一个钩子将接收原始参数的副本
- - 最终的非 None 返回值（或者如果所有钩子返回 None，则原始参数）将传递给目标函数
+  - 当钩子返回 None 时，下一个钩子将使用前面钩子的最近非 None 返回值
+  - 如果所有前面的钩子返回 None，则下一个钩子将接收原始参数的副本
+  - 最终的非 None 返回值（或者如果所有钩子返回 None，则原始参数）将传递给目标函数
+ - 对于后置钩子： 只有 `post-reply` 钩子拥有返回值，工作方式与前置钩子相同
 
 4. **重要提示**：永远不要在钩子函数中调用目标函数（reply/speak/observe）以避免无限循环
 

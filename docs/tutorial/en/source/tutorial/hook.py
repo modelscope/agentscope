@@ -20,7 +20,7 @@ Each core function has corresponding pre- and post-execution hooks:
 
 - `pre_reply_hook` / `post_reply_hook`
 - `pre_speak_hook` / `post_speak_hook`
-- `pre_listen_hook` / `post_listen_hook`
+- `pre_observe_hook` / `post_observe_hook`
 
 For example, you can use `pre_speak_hook` to redirect messages to different outputs like web interfaces or external applications.
 
@@ -36,9 +36,10 @@ When working with hooks, keep these important rules in mind:
 
 3. **Return Value Handling**
  - For pre-hooks: Non-None return values are passed to the next hook or target function
- - When a hook returns None, the next hook will use the most recent non-None return value from previous hooks
- - If all previous hooks return None, the next hook receives a copy of the original arguments
- - The final non-None return value (or original arguments if all hooks return None) is passed to the target function
+  - When a hook returns None, the next hook will use the most recent non-None return value from previous hooks
+  - If all previous hooks return None, the next hook receives a copy of the original arguments
+  - The final non-None return value (or original arguments if all hooks return None) is passed to the target function
+ - For post-hooks: Only the `post-reply` hook has a return value, which works the same way as pre-hooks.
 
 4. **Important**: Never call the target function (reply/speak/observe) within a hook to avoid infinite loops
 
