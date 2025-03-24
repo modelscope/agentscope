@@ -1,0 +1,557 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.manager._monitor &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.manager._monitor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.manager._monitor 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;The manager of monitor module.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.declarative</span><span class="w"> </span><span class="kn">import</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">DeclarativeMeta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">sessionmaker</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">_is_windows</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_DEFAULT_SQLITE_DB_NAME</span><span class="p">,</span>
+    <span class="n">_DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING</span><span class="p">,</span>
+    <span class="n">_DEFAULT_TABLE_NAME_FOR_IMAGE</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_Base</span><span class="p">:</span> <span class="n">DeclarativeMeta</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ModelTable</span><span class="p">(</span><span class="n">_Base</span><span class="p">):</span>  <span class="c1"># mypy: ignore</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The table for invocation records of chat and embedding models.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="n">_DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+    <span class="n">prompt_tokens</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">completion_tokens</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">total_tokens</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ImageModelTable</span><span class="p">(</span><span class="n">_Base</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The table for invocation records of image models.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="n">_DEFAULT_TABLE_NAME_FOR_IMAGE</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+    <span class="n">resolution</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">59</span><span class="p">))</span>
+    <span class="n">image_count</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MonitorManager">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MonitorManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The manager of monitor module.&quot;&quot;&quot;</span>
+
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a singleton instance.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">MonitorManager</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The monitor manager has been initialized. Try to use &quot;</span>
+                <span class="s2">&quot;MonitorManager.get_instance() to get the instance.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">path_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The path to the database&quot;&quot;&quot;</span>
+        <span class="n">run_dir</span> <span class="o">=</span> <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">run_dir</span>
+        <span class="k">if</span> <span class="n">run_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">_DEFAULT_SQLITE_DB_NAME</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the monitor manager.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># The name of the views</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_chat_and_embedding</span> <span class="o">=</span> <span class="s2">&quot;view_chat_and_embedding&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span> <span class="o">=</span> <span class="s2">&quot;view_image&quot;</span>
+
+<div class="viewcode-block" id="MonitorManager.initialize">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.initialize">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_monitor</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the monitor manager.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            use_monitor (`bool`):</span>
+<span class="sd">                Whether to use the monitor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span> <span class="o">=</span> <span class="n">use_monitor</span>
+
+        <span class="k">if</span> <span class="n">use_monitor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_monitor_db</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.get_instance">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.get_instance">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MonitorManager&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the instance of the singleton class.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;AgentScope hasn&#39;t been initialized. Please call &quot;</span>
+                <span class="s2">&quot;`agentscope.init` function first.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">usage</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the table data.&quot;&quot;&quot;</span>
+        <span class="c1"># TODO: use a better way to display the table data</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">usage</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">print_usage</span> <span class="o">=</span> <span class="n">usage</span> <span class="o">+</span> <span class="p">[[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="mi">0</span><span class="p">]))]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_usage</span> <span class="o">=</span> <span class="n">usage</span>
+
+        <span class="n">max_len_col</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">print_usage</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">max_len_col</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">print_usage</span><span class="p">))</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">print_usage</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">max_len</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">max_len</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">max_len_col</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_monitor_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the database.&quot;&quot;&quot;</span>
+        <span class="c1"># To avoid path error in windows</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;The run_dir in file manager is not initialized.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_db</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">_is_windows</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create tables</span>
+        <span class="n">_Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="c1"># Create view for chat and embedding models</span>
+            <span class="n">create_view_sql</span> <span class="o">=</span> <span class="n">text</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                CREATE VIEW IF NOT EXISTS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">view_chat_and_embedding</span><span class="si">}</span><span class="s2"> AS</span>
+<span class="s2">                SELECT</span>
+<span class="s2">                    model_name,</span>
+<span class="s2">                    COUNT(*) AS times,</span>
+<span class="s2">                    SUM(prompt_tokens) AS prompt_tokens,</span>
+<span class="s2">                    SUM(completion_tokens) AS completion_tokens,</span>
+<span class="s2">                    SUM(total_tokens) AS total_tokens</span>
+<span class="s2">                FROM</span>
+<span class="s2">                    </span><span class="si">{</span><span class="n">_ModelTable</span><span class="o">.</span><span class="n">__tablename__</span><span class="si">}</span>
+<span class="s2">                GROUP BY</span>
+<span class="s2">                    model_name;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">create_view_sql</span><span class="p">)</span>
+
+            <span class="c1"># Create new for text-to-image models</span>
+            <span class="n">create_view_sql</span> <span class="o">=</span> <span class="n">text</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                CREATE VIEW IF NOT EXISTS </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="si">}</span><span class="s2"> AS</span>
+<span class="s2">                SELECT</span>
+<span class="s2">                    model_name,</span>
+<span class="s2">                    resolution,</span>
+<span class="s2">                    COUNT(*) AS times,</span>
+<span class="s2">                    SUM(image_count) AS image_count</span>
+<span class="s2">                FROM</span>
+<span class="s2">                    </span><span class="si">{</span><span class="n">_ImageModelTable</span><span class="o">.</span><span class="n">__tablename__</span><span class="si">}</span>
+<span class="s2">                GROUP BY</span>
+<span class="s2">                    model_name, resolution;</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">create_view_sql</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_close_monitor_db</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the monitor database to avoid file occupation error in</span>
+<span class="sd">        windows.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close_all</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MonitorManager.update_image_tokens">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.update_image_tokens">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_image_tokens</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">resolution</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">image_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the record of the image models.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The DB session in monitor is not initialized.&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+            <span class="n">new_record</span> <span class="o">=</span> <span class="n">_ImageModelTable</span><span class="p">(</span>
+                <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span>
+                <span class="n">image_count</span><span class="o">=</span><span class="n">image_count</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">sess</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_record</span><span class="p">)</span>
+            <span class="n">sess</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.update_text_and_embedding_tokens">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.update_text_and_embedding_tokens">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_text_and_embedding_tokens</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">prompt_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">completion_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">total_tokens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the tokens of a given model.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The DB session in monitor is not initialized.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">total_tokens</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">total_tokens</span> <span class="o">==</span> <span class="n">prompt_tokens</span> <span class="o">+</span> <span class="n">completion_tokens</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+            <span class="n">new_record</span> <span class="o">=</span> <span class="n">_ModelTable</span><span class="p">(</span>
+                <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+                <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">prompt_tokens</span><span class="p">,</span>
+                <span class="n">completion_tokens</span><span class="o">=</span><span class="n">completion_tokens</span><span class="p">,</span>
+                <span class="n">total_tokens</span><span class="o">=</span><span class="n">total_tokens</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="n">prompt_tokens</span> <span class="o">+</span> <span class="n">completion_tokens</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">sess</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_record</span><span class="p">)</span>
+            <span class="n">sess</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.print_llm_usage">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.print_llm_usage">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_llm_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print the usage of all different model APIs.&quot;&quot;&quot;</span>
+        <span class="n">text_and_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_text_and_embedding_tokens</span><span class="p">()</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_image_tokens</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;text_and_embedding&quot;</span><span class="p">:</span> <span class="n">text_and_embedding</span><span class="p">,</span>
+            <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">image</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.show_image_tokens">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.show_image_tokens">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_image_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show the tokens of all image models.&quot;&quot;&quot;</span>
+        <span class="n">usage</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+                <span class="n">usage</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">view_image</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;MODEL NAME&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RESOLUTION&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TIMES&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;IMAGE COUNT&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">usage</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_table</span><span class="p">(</span><span class="s2">&quot;Image Model:&quot;</span><span class="p">,</span> <span class="n">usage</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;image_count&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.show_text_and_embedding_tokens">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.show_text_and_embedding_tokens">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_text_and_embedding_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show the tokens of all models.&quot;&quot;&quot;</span>
+        <span class="n">usage</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+                <span class="n">usage</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">view_chat_and_embedding</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;MODEL NAME&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TIMES&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PROMPT TOKENS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;COMPLETION TOKENS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;TOTAL TOKENS&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">usage</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_table</span><span class="p">(</span><span class="s2">&quot;Text &amp; Embedding Model:&quot;</span><span class="p">,</span> <span class="n">usage</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s2">&quot;prompt_tokens&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s2">&quot;completion_tokens&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s2">&quot;total_tokens&quot;</span><span class="p">:</span> <span class="n">_</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.rm_database">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.rm_database">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rm_database</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the database.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_db</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_db</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.state_dict">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.state_dict">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize the monitor manager into a dict.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;use_monitor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span><span class="p">,</span>
+            <span class="s2">&quot;path_db&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_db</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.load_dict">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.load_dict">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the monitor manager from a dict.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;use_monitor&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Key &#39;use_monitor&#39; not found in data.&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;use_monitor&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MonitorManager.flush">
+<a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.MonitorManager.flush">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush the monitor manager.&quot;&quot;&quot;</span>
+        <span class="c1"># Close the database before flushing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_close_monitor_db</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_monitor</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># The name of the views</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_chat_and_embedding</span> <span class="o">=</span> <span class="s2">&quot;view_chat_and_embedding&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view_image</span> <span class="o">=</span> <span class="s2">&quot;view_image&quot;</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

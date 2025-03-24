@@ -1,0 +1,279 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>低代码开发 &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="样例" href="examples.html" />
+    <link rel="prev" title="浏览器控制" href="web_browser.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">低代码开发</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#workstation">Workstation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">启动 Workstation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">内置示例</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">构建应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">运行应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">导入/导出应用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">检查应用</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">低代码开发</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/low_code.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">备注</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-low-code-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="low-code">
+<span id="sphx-glr-build-tutorial-low-code-py"></span><span id="id1"></span><h1>低代码开发<a class="headerlink" href="#low-code" title="Link to this heading"></a></h1>
+<p>本教程介绍如何在AgentScope Workstation中通过拖拽界面构建多智能体应用程序。</p>
+<section id="workstation">
+<h2>Workstation<a class="headerlink" href="#workstation" title="Link to this heading"></a></h2>
+<p>Workstation现已集成在 <span class="xref std std-ref">agentscope-studio</span> 中。
+它为零代码用户提供了一种更简单的方式来构建多智能体应用程序。</p>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>Workstation 正处于快速迭代开发中，将会频繁更新。</p>
+</div>
+</section>
+<section id="id2">
+<h2>启动 Workstation<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>首先确保您已安装最新版本的 AgentScope。</p>
+<p>执行以下Python代码来启动 AgentScope Studio：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>或在终端中运行以下 bash 命令：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_studio
+</pre></div>
+</div>
+<p>然后访问 <cite>https://127.0.0.1:5000</cite> 进入 AgentScope Studio，并点击侧边栏中的 Workstation 图标进入。</p>
+<ul class="simple">
+<li><p><strong>中央工作区</strong>：您可以在这个主要区域拖拽组件来构建应用程序。</p></li>
+<li><p><strong>顶部工具箱</strong>：用于导入、导出、检查和运行您的应用程序。</p></li>
+</ul>
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" src="https://img.alicdn.com/imgextra/i1/O1CN01RXAVVn1zUtjXVvuqS_!!6000000006718-1-tps-3116-1852.gif" />
+<section id="id3">
+<h3>内置示例<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>对于初学者，我们强烈建议从预构建的示例开始。您可以直接单击示例将其导入到中央工作区。或者，为了获得更加结构化的学习体验，您也可以选择跟随每个示例链接的教程。这些教程将一步步指导如何在 AgentScope Workstation 上构建多智能体应用。</p>
+</section>
+<section id="id4">
+<h3>构建应用<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>要构建应用程序，请执行以下步骤：</p>
+<ul class="simple">
+<li><p>选择并拖拽组件：从侧边栏中单击并拖拽所选组件到中央工作区。</p></li>
+<li><p>连接节点：大多数节点都有输入和输出点。单击一个组件的输出点并拖拽到另一个组件的输入点，以创建消息流管道。这样不同的节点就可以传递消息。</p></li>
+<li><p>配置节点：将节点放入工作区后，单击任意一个节点来填写其配置设置。您可以自定义提示、参数和其他属性。</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>运行应用<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>构建完应用程序后，单击&quot;运行&quot;按钮。在运行之前，Workstation会检查应用程序中是否有任何错误。如果有错误，系统会提示您在继续之前进行修正。之后，您的应用程序将在与AgentScope Studio相同的Python环境中执行，您可以在Dashboard中找到它。</p>
+</section>
+<section id="id6">
+<h3>导入/导出应用<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>Workstation支持导入和导出您的应用程序。单击&quot;导出HTML&quot;或&quot;导出Python&quot;按钮可生成代码，您可以将其分发给社区或本地保存。如果要将导出的代码转换为Python代码，可以使用以下命令将JSON配置编译为Python代码：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 编译</span>
+as_workflow<span class="w"> </span>config.json<span class="w"> </span>--compile<span class="w"> </span><span class="si">${</span><span class="nv">YOUR_PYTHON_SCRIPT_NAME</span><span class="si">}</span>.py
+</pre></div>
+</div>
+<p>如果您想直接运行本地配置，可以使用以下命令：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 运行</span>
+as_gradio<span class="w"> </span>config.json
+</pre></div>
+</div>
+<p>想要进一步编辑您的应用程序吗？只需单击&quot;导入HTML&quot;按钮，将以前导出的HTML代码重新上传到AgentScope Workstation即可。</p>
+</section>
+<section id="id7">
+<h3>检查应用<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>构建应用程序后，您可以单击&quot;检查&quot;按钮来验证应用程序结构的正确性。将执行以下检查规则：</p>
+<ul class="simple">
+<li><p>模型和智能体存在检查：每个应用程序必须至少包含一个模型节点和一个智能体节点。</p></li>
+<li><p>单连接策略：每个组件的每个输入不应该有多于一个连接。</p></li>
+<li><p>必填字段验证：所有必填输入字段都必须填写，以确保每个节点都有正确运行所需的参数。</p></li>
+<li><p>配置命名一致性：智能体节点使用的&quot;模型配置名称&quot;必须与模型节点中定义的&quot;配置名称&quot;相对应。</p></li>
+<li><p>适当的节点嵌套：像ReActAgent这样的节点应该只包含工具节点。同样，像IfElsePipeline这样的管道节点应该包含正确数量的元素（不超过2个），而ForLoopPipeline、WhileLoopPipeline和MsgHub应该遵守只有一个元素的规则（必须是SequentialPipeline作为子节点）。</p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-low-code-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c0be78656f865663187ed65c3e10334a/low_code.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">low_code.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/93f7e31c676d414474242d0dfaff119f/low_code.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">low_code.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/87945884ef2a8769be2b2148600f164a/low_code.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">low_code.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="web_browser.html" class="btn btn-neutral float-left" title="浏览器控制" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="样例" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

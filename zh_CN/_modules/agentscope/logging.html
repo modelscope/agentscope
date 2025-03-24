@@ -1,0 +1,469 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.logging &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.logging</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.logging 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Logging utilities.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serialize</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_map_string_to_color_mark</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.web.gradio.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">generate_image_from_name</span><span class="p">,</span>
+    <span class="n">send_msg</span><span class="p">,</span>
+    <span class="n">get_reset_msg</span><span class="p">,</span>
+    <span class="n">thread_local_data</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
+    <span class="s2">&quot;TRACE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">LEVEL_SAVE_LOG</span> <span class="o">=</span> <span class="s2">&quot;SAVE_LOG&quot;</span>
+<span class="n">LEVEL_SAVE_MSG</span> <span class="o">=</span> <span class="s2">&quot;SAVE_MSG&quot;</span>
+
+<span class="n">_DEFAULT_LOG_FORMAT</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;&lt;green&gt;{time:YYYY-MM-DD HH:mm:ss}&lt;/green&gt; | &lt;level&gt;{&quot;</span>
+    <span class="s2">&quot;level: &lt;8}&lt;/level&gt; | &lt;cyan&gt;</span><span class="si">{name}</span><span class="s2">&lt;/cyan&gt;:&lt;cyan&gt;{&quot;</span>
+    <span class="s2">&quot;function}&lt;/cyan&gt;:&lt;cyan&gt;</span><span class="si">{line}</span><span class="s2">&lt;/cyan&gt; - &lt;level&gt;{&quot;</span>
+    <span class="s2">&quot;message}&lt;/level&gt;&quot;</span>
+<span class="p">)</span>
+
+<span class="n">_PREFIX_DICT</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">colored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the formatted string of the message. If the message has an</span>
+<span class="sd">    url, the url will be appended to the content.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message object to be formatted.</span>
+<span class="sd">        colored (`bool`, defaults to `False`):</span>
+<span class="sd">            Whether to color the name of the message</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `str`: The formatted string of the message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">colored</span><span class="p">:</span>
+        <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">_map_string_to_color_mark</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m1</span><span class="si">}{</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="n">m2</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">colored_strs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;tool_result&quot;</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: Execute function </span><span class="si">{</span><span class="n">block</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">block</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Tool use block</span>
+    <span class="n">tool_calls</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_content_blocks</span><span class="p">(</span><span class="s2">&quot;tool_use&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tool_calls</span><span class="p">:</span>
+        <span class="n">tool_calls_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">colored_strs</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tool_calls_str</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">colored_strs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">tool_calls_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colored_strs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="log_stream_msg">
+<a class="viewcode-back" href="../../build_api/agentscope.logging.html#agentscope.logging.log_stream_msg">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_stream_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the message in different streams, including terminal, studio, and</span>
+<span class="sd">    gradio if it is active.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message object to be printed.</span>
+<span class="sd">        last (`bool`, defaults to `True`):</span>
+<span class="sd">            True if this is the last message in the stream or a single message.</span>
+<span class="sd">            Otherwise, False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_PREFIX_DICT</span>
+
+    <span class="c1"># Print msg to terminal</span>
+    <span class="n">formatted_str</span> <span class="o">=</span> <span class="n">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">print_str</span> <span class="o">=</span> <span class="n">formatted_str</span><span class="p">[</span><span class="n">_PREFIX_DICT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">last</span><span class="p">:</span>
+        <span class="c1"># Remove the prefix from the dictionary</span>
+        <span class="k">del</span> <span class="n">_PREFIX_DICT</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">print_str</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Update the prefix in the dictionary</span>
+        <span class="n">_PREFIX_DICT</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">formatted_str</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">print_str</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Push msg to studio if it is active</span>
+    <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+        <span class="n">_studio_client</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Print to gradio if it is active</span>
+    <span class="k">if</span> <span class="n">last</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">):</span>
+        <span class="n">log_gradio</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">last</span><span class="p">:</span>
+        <span class="c1"># Save msg into chat file</span>
+        <span class="n">_save_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the message into `logging.chat` and `logging.log` files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message object to be saved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Unified into a manager rather than an indicated attribute here</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
+        <span class="c1"># Not initialize yet</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span>
+            <span class="n">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
+            <span class="n">serialize</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="log_msg">
+<a class="viewcode-back" href="../../build_api/agentscope.logging.html#agentscope.logging.log_msg">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">disable_gradio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the message and save it into files. Note the message should be a</span>
+<span class="sd">    Msg object.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Get type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">, expect Msg object.&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">_formatted_str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">colored</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="c1"># Push msg to studio if it is active</span>
+    <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+        <span class="n">_studio_client</span><span class="o">.</span><span class="n">push_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Print to gradio if it is active</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thread_local_data</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">disable_gradio</span><span class="p">:</span>
+        <span class="n">log_gradio</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">thread_local_data</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="c1"># Save msg into chat file</span>
+    <span class="n">_save_msg</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="log_gradio">
+<a class="viewcode-back" href="../../build_api/agentscope.logging.html#agentscope.logging.log_gradio">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_gradio</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send chat message to studio.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msg (`Msg`):</span>
+<span class="sd">            The message to be logged.</span>
+<span class="sd">        uid (`str`):</span>
+<span class="sd">            The local value &#39;uid&#39; of the thread.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">uid</span><span class="p">:</span>
+        <span class="n">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">avatar</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;avatar&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">generate_image_from_name</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">content</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">flushing</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;img src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;/&gt;&quot;</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;audio src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/audio&gt;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;video src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&lt;/video&gt;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;a href=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&gt;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/a&gt;&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">send_msg</span><span class="p">(</span>
+            <span class="n">content</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+            <span class="n">flushing</span><span class="o">=</span><span class="n">flushing</span><span class="p">,</span>
+            <span class="n">avatar</span><span class="o">=</span><span class="n">avatar</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_level_format</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Format the log record.&quot;&quot;&quot;</span>
+    <span class="c1"># Display the chat message</span>
+    <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">LEVEL_SAVE_LOG</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{message}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_DEFAULT_LOG_FORMAT</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+
+<div class="viewcode-block" id="setup_logger">
+<a class="viewcode-back" href="../../build_api/agentscope.logging.html#agentscope.logging.setup_logger">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_logger</span><span class="p">(</span>
+    <span class="n">path_log</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Setup `loguru.logger` and redirect stderr to logging.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_log (`str`, defaults to `&quot;&quot;`):</span>
+<span class="sd">            The directory of log files.</span>
+<span class="sd">        level (`str`, defaults to `&quot;INFO&quot;`):</span>
+<span class="sd">            The logging level, which is one of the following: `&quot;TRACE&quot;`,</span>
+<span class="sd">            `&quot;DEBUG&quot;`, `&quot;INFO&quot;`, `&quot;SUCCESS&quot;`, `&quot;WARNING&quot;`, `&quot;ERROR&quot;`,</span>
+<span class="sd">            `&quot;CRITICAL&quot;`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set logging level</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+
+    <span class="c1"># avoid reinit in subprocess</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;chat&quot;</span><span class="p">):</span>
+        <span class="c1"># add chat function for logger</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+
+        <span class="c1"># save chat message into file</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="mi">53</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">chat</span> <span class="o">=</span> <span class="n">log_msg</span>
+
+        <span class="c1"># standard output for all logging except chat</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+            <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">LEVEL_SAVE_LOG</span><span class="p">,</span> <span class="n">LEVEL_SAVE_MSG</span><span class="p">],</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">_DEFAULT_LOG_FORMAT</span><span class="p">,</span>
+            <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path_log</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">path_log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_log</span><span class="p">,</span> <span class="s2">&quot;logging.log&quot;</span><span class="p">)</span>
+        <span class="n">path_chat_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">path_log</span><span class="p">,</span>
+            <span class="s2">&quot;logging.chat&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># save all logging except LEVEL_SAVE_MSG into logging.log</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">path_log_file</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;level&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">_level_format</span><span class="p">,</span>
+            <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># save chat message into logging.chat</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">path_chat_file</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{message}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">LEVEL_SAVE_MSG</span><span class="p">,</span>  <span class="c1"># The highest level to filter out all</span>
+            <span class="c1"># other logs</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

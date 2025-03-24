@@ -1,0 +1,377 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分布式 &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="系统提示优化" href="prompt_optimization.html" />
+    <link rel="prev" title="MCP" href="MCP.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">分布式</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">基本使用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">高级用法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">基本概念</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">使用独立进程模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">避免重复初始化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">分布式</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/distribution.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">备注</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-distribution-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="distribution">
+<span id="sphx-glr-build-tutorial-distribution-py"></span><span id="id1"></span><h1>分布式<a class="headerlink" href="#distribution" title="Link to this heading"></a></h1>
+<p>本节介绍 AgentScope 分布式的使用方法。AgentScope 原生提供了基于 gRPC 的分布式模式，
+在这种模式下，一个应用程序中的多个智能体可以部署到不同的进程或者甚至不同的机器上，从而充分利用计算资源，提高效率。</p>
+<section id="id2">
+<h2>基本使用<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>与传统模式相比，AgentScope 的分布式模式不需要修改主进程代码。只需在初始化智能体时调用 <cite>to_dist</cite> 函数。</p>
+<p>本节将展示如何使用 AgentScope 的分布式模式进行网页搜索。
+为了展示 AgentScope 分布式模式带来的加速效果，示例中将自定义一个 <cite>WebAgent</cite> 类，在该类型将等待5秒来模拟抓取网页和从中寻找答案的过程。</p>
+<p>执行搜索的过程是 <cite>run</cite> 函数。传统模式和分布式模式之间唯一的区别在于初始化阶段，即 <cite>init_without_dist</cite> 和 <cite>init_with_dist</cite>。
+在分布式模式下，您需要调用 <cite>to_dist</cite> 函数，将原始智能体转换为对应的分布式版本。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 请勿在jupyter notebook中运行此代码。</span>
+<span class="c1"># 请将代码复制到 `dist_main.py` 文件中，并使用 `python dist_main.py` 命令运行此代码。</span>
+<span class="c1"># 在运行此代码之前，请安装分布式版本的 agentscope。</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WebAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;来自 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 的答案&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_answer</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+
+
+<span class="n">QUERY</span> <span class="o">=</span> <span class="s2">&quot;示例查询&quot;</span>
+<span class="n">URLS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;页面_1&quot;</span><span class="p">,</span> <span class="s2">&quot;页面_2&quot;</span><span class="p">,</span> <span class="s2">&quot;页面_3&quot;</span><span class="p">,</span> <span class="s2">&quot;页面_4&quot;</span><span class="p">,</span> <span class="s2">&quot;页面_5&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_without_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">agents</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">URLS</span><span class="p">):</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">QUERY</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="p">))</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">simple_agents</span> <span class="o">=</span> <span class="n">init_without_dist</span><span class="p">()</span>
+    <span class="n">dist_agents</span> <span class="o">=</span> <span class="n">init_with_dist</span><span class="p">()</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;初始化时间：</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;无分布式模式下的运行时间：</span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">simple_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;分布式模式下的运行时间：</span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">dist_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>运行此示例的输出如下：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>初始化时间：16.50428819656372
+来自 W0 的答案
+来自 W1 的答案
+来自 W2 的答案
+来自 W3 的答案
+来自 W4 的答案
+无分布式模式下的运行时间：25.034368991851807
+来自 W0 的答案
+来自 W1 的答案
+来自 W3 的答案
+来自 W2 的答案
+来自 W4 的答案
+分布式模式下的运行时间：5.0517587661743164
+</pre></div>
+</div>
+<p>从上面的示例输出中，我们可以观察到在采用分布式模式后（25秒-&gt;5秒），运行速度显著提高。</p>
+<p>上面的示例是AgentScope分布式模式最常见的使用场景。当不追求极端性能时，建议直接使用这种方法。
+如果您需要进一步优化性能，则需要对AgentScope分布式模式有更深入的了解。
+下面将介绍AgentScope分布式模式的高级用法。</p>
+</section>
+<section id="id3">
+<h2>高级用法<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>本节将介绍 AgentScope 分布式模式的高级使用方法，以进一步提高操作效率。</p>
+<section id="id4">
+<h3>基本概念<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>在深入学习高级用法之前，我们必须先了解AgentScope分布式模式的一些基本概念。</p>
+<ul class="simple">
+<li><p><strong>主进程</strong>：AgentScope应用程序所在的进程被称为主进程。例如，上一节中的 <cite>run</cite> 函数就是在主进程中运行的。每个 AgentScope 应用程序只有一个主进程。</p></li>
+<li><p><strong>智能体服务器进程</strong>：AgentScope智能体服务器进程是智能体在分布式模式下运行的进程。例如，在上一节中，<cite>dist_agents</cite> 中的所有智能体都在智能体服务器进程中运行。可以有多个AgentScope智能体服务器进程。这些进程可以运行在任何可网络访问的机器上，每个智能体服务器进程中可以同时运行多个智能体。</p></li>
+<li><p><strong>子进程模式</strong>：在子进程模式下，智能体服务器进程由主进程启动为子进程。例如，在上一节中，<cite>dist_agents</cite> 中的每个智能体实际上都是主进程的一个子进程。这是默认模式，也就是说，如果您直接调用 <cite>to_dist</cite> 函数而不传入任何参数，它将使用此模式。</p></li>
+<li><p><strong>独立进程模式</strong>：在独立进程模式下，智能体服务器与主进程无关，需要预先在机器上启动。需要向 <cite>to_dist</cite> 函数传递特定参数，具体用法将在下一节中介绍。</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>使用独立进程模式<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>与子进程模式相比，独立进程模式可以避免初始化子进程的开销，从而减少执行开始时的延迟。这可以有效地提高多次调用 <cite>to_dist</cite> 的程序的效率。</p>
+<p>在独立进程模式下，您需要预先在机器上启动智能体服务器进程，并向 <cite>to_dist</cite> 函数传递特定参数。这里，我们将继续使用基本用法一节中的示例，假设基本用法的代码文件为 <cite>dist_main.py</cite>。然后，创建并单独运行以下脚本。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 请勿在jupyter notebook中运行此代码。</span>
+<span class="c1"># 将此代码复制到名为 `dist_server.py` 的文件中，并使用命令 `python dist_server.py` 运行。</span>
+<span class="c1"># 在运行此代码之前，请安装分布式版本的 agentscope。</span>
+<span class="c1"># pip install agentscope[distributed]</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dist_main</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">assistant_server_launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+        <span class="n">custom_agent_classes</span><span class="o">=</span><span class="p">[</span><span class="n">WebAgent</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">assistant_server_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">in_subprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assistant_server_launcher</span><span class="o">.</span><span class="n">wait_until_terminate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>该脚本在 <cite>dist_server.py</cite> 文件中启动AgentScope智能体服务器进程，该文件位于与基本用法中的 <cite>dist_main.py</cite> 文件相同的目录下。此外，我们还需要对 <cite>dist_main.py</cite> 文件做一些小的修改，添加一个新的 <cite>init_with_dist_independent</cite> 函数，并用这个新函数替换对 <cite>init_with_dist</cite> 的调用。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist_independent</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dist</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">simple_agents</span> <span class="o">=</span> <span class="n">init_without_dist</span><span class="p">()</span>
+    <span class="n">dist_agents</span> <span class="o">=</span> <span class="n">init_with_dist_independent</span><span class="p">()</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;初始化所需时间：</span><span class="si">{</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;无分布式模式下的运行时间：</span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">simple_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;分布式模式下的运行时间：</span><span class="si">{</span><span class="n">run</span><span class="p">(</span><span class="n">dist_agents</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>完成修改后，打开一个命令提示符并运行 <cite>dist_server.py</cite> 文件。一旦成功启动，再打开另一个命令提示符并运行 <cite>dist_main.py</cite> 文件。</p>
+<p>此时，<cite>dist_main.py</cite> 的输出中初始化时间将显著减少。例如，这里的初始化时间仅为0.02秒。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>初始化所需时间：0.018129825592041016
+...
+</pre></div>
+</div>
+<p>需要注意的是，上面的示例中使用了 <cite>host=&quot;localhost&quot;</cite> 和 <cite>port=12345</cite> ，并且 <cite>dist_main.py</cite> 和 <cite>dist_server.py</cite> 都在同一台机器上运行。在实际使用时，<cite>dist_server.py`可以运行在不同的机器上。此时，`host</cite> 应该设置为运行 <cite>dist_server.py</cite> 的机器的 IP 地址，而 <cite>port</cite> 应该设置为任何可用端口，确保不同机器可以通过网络进行通信。</p>
+</section>
+<section id="id6">
+<h3>避免重复初始化<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>在上面的代码中，<cite>to_dist</cite> 函数是在已经初始化过的智能体上调用的。<cite>to_dist</cite> 的本质是将原始智能体克隆到智能体服务器进程中，同时在主进程中保留一个 <cite>RpcAgent</cite> 作为原始智能体的代理。对这个 <cite>RpcAgent</cite> 的调用将被转发到智能体服务器进程中对应的智能体。</p>
+<p>这种做法存在一个潜在问题：原始智能体会被初始化两次——一次在主进程中，一次在智能体服务器进程中，而且这两次初始化是按顺序执行的，无法通过并行来加速。对于初始化成本较低的智能体，直接调用 <cite>to_dist</cite> 函数不会对性能造成显著影响。但是对于初始化成本较高的智能体，避免冗余初始化就很重要。因此，AgentScope分布式模式提供了一种分布式模式初始化的替代方法，允许直接在任何智能体的初始化函数中传递 <cite>to_dist</cite> 参数，如下面修改后的示例所示：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_with_dist_independent</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">WebAgent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;W</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_dist</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="s2">&quot;12345&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">URLS</span><span class="p">))]</span>
+</pre></div>
+</div>
+<p>对于子进程模式，您只需在初始化函数中传递 <cite>to_dist=True</cite> 即可。对于独立进程模式，则需要将原本传递给 <cite>to_dist</cite> 函数的参数以字典形式传递给 <cite>to_dist</cite> 字段。</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-distribution-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/91915400c2174a1cf3b27144bd97a7bb/distribution.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">distribution.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/bc2ad1f644cee06b7ae14ff530961e15/distribution.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">distribution.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c847816e21879543a3e38cd7fa2c2219/distribution.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">distribution.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="MCP.html" class="btn btn-neutral float-left" title="MCP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="prompt_optimization.html" class="btn btn-neutral float-right" title="系统提示优化" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
