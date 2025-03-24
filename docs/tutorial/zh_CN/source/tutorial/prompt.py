@@ -5,10 +5,6 @@
 Prompt 格式化
 ================================
 
-AgentScope supports developers to build prompt that fits different model APIs
-by providing a set of built-in strategies for both chat and multi-agent
-scenarios.
-
 智能体应用中，重要的一点是构建符合模型 API 要求的输入（prompt）。AgentScope 中，我们为开
 发者提供了一些列的内置策略，以支持不同的模型 API 和场景（chat 和 multi-agent）。
 
