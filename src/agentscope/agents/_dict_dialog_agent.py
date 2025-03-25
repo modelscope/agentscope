@@ -3,7 +3,7 @@
 from typing import Optional, Union, Sequence
 
 from ..message import Msg
-from .agent import AgentBase
+from ._agent import AgentBase
 from ..parsers import ParserBase
 
 
@@ -87,7 +87,13 @@ class DictDialogAgent(AgentBase):
 
         # prepare prompt
         prompt = self.model.format(
-            Msg("system", self.sys_prompt, role="system"),
+            Msg(
+                "system",
+                self.sys_prompt,
+                role="system",
+            )
+            if self.sys_prompt
+            else None,
             self.memory
             and self.memory.get_memory()
             or x,  # type: ignore[arg-type]
