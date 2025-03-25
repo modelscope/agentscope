@@ -16,7 +16,6 @@ import json
 import uuid
 from loguru import logger
 
-from ._operator import Operator
 from ..rpc.rpc_config import DistConf
 from ..rpc.rpc_meta import RpcMeta, async_func, sync_func
 from ..logging import log_stream_msg, log_msg
@@ -100,7 +99,7 @@ class _AgentMeta(_HooksMeta, RpcMeta):
         return RpcMeta.__new__(mcs, name, bases, attrs)
 
 
-class AgentBase(Operator, metaclass=_AgentMeta):
+class AgentBase(metaclass=_AgentMeta):
     """Base class for all agents.
 
     All agents should inherit from this class and implement the `reply`
