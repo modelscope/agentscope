@@ -4,7 +4,7 @@
 from tools import load_txt, extract_scenario_and_participants
 import agentscope
 from agentscope.agents import DialogAgent
-from agentscope.pipelines.functional import sequentialpipeline
+from agentscope.pipelines._functional import sequential_pipeline
 from agentscope.message import Msg
 
 model_configs = [
@@ -70,4 +70,4 @@ agents = [
 # begin discussion
 msg = Msg("user", f"let's discuss to solve the question: {query}", role="user")
 for i in range(max_round):
-    msg = sequentialpipeline(agents, msg)
+    msg = sequential_pipeline(agents, msg)
