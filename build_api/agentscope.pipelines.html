@@ -143,210 +143,66 @@
 <span id="agentscope-pipelines"></span><h1>agentscope.pipelines<a class="headerlink" href="#module-agentscope.pipelines" title="Link to this heading"></a></h1>
 <p>Import all pipeline related modules in the package.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="agentscope.pipelines.ForLoopPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ForLoopPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">loop_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator],</span> <span class="pre">max_loop:</span> <span class="pre">int,</span> <span class="pre">break_func:</span> <span class="pre">~typing.Callable[[dict],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">ForLoopPipeline.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/pipelines/pipeline.html#ForLoopPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.ForLoopPipeline" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase" title="agentscope.pipelines.pipeline.PipelineBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PipelineBase</span></code></a></p>
-<p>A template pipeline for implementing control flow like for-loop</p>
-<p>ForLoopPipeline(loop_body_operators, max_loop) represents the following
-workflow:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_loop</span><span class="p">):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">loop_body_operators</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>ForLoopPipeline(loop_body_operators, max_loop, break_func)
-represents the following workflow:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_loop</span><span class="p">):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">loop_body_operators</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">break_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">break</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="agentscope.pipelines.IfElsePipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IfElsePipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">condition_func:</span> <span class="pre">~typing.Callable[[dict],</span> <span class="pre">bool],</span> <span class="pre">if_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator],</span> <span class="pre">else_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">placeholder&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/pipelines/pipeline.html#IfElsePipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.IfElsePipeline" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase" title="agentscope.pipelines.pipeline.PipelineBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PipelineBase</span></code></a></p>
-<p>A template pipeline for implementing control flow like if-else.</p>
-<p>IfElsePipeline(condition_func, if_body_operators, else_body_operators)
-represents the following workflow:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">condition_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">if_body_operators</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">else_body_operators</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="agentscope.pipelines.PipelineBase">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PipelineBase</span></span><a class="reference internal" href="../_modules/agentscope/pipelines/pipeline.html#PipelineBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.PipelineBase" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></p>
-<p>Base interface of all pipelines.</p>
-<p>The pipeline is a special kind of operator that includes
-multiple operators and the interaction logic among them.</p>
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="agentscope.pipelines.SequentialPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SequentialPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Operator</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/pipelines/pipeline.html#SequentialPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.SequentialPipeline" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase" title="agentscope.pipelines.pipeline.PipelineBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PipelineBase</span></code></a></p>
-<p>A template pipeline for implementing sequential logic.</p>
-<p>Sequential(operators) represents the following workflow:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">operators</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
-<span class="o">...</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">operators</span><span class="p">[</span><span class="n">n</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SequentialPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/pipelines/_class.html#SequentialPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.SequentialPipeline" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A sequential pipeline class, which executes a sequence of operators
+sequentially. Compared with functional pipeline, this class can be
+re-used.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.pipelines.sequential_pipeline">
+<span class="sig-name descname"><span class="pre">sequential_pipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/pipelines/_functional.html#sequential_pipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.sequential_pipeline" title="Link to this definition"></a></dt>
+<dd><p>A syntactic sugar pipeline that executes a sequence of operators
+sequentially. The output of the previous operator will be passed as the
+input to the next operator. The final output will be the output of the
+last operator.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">agent1</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">agent2</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">agent3</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="n">msg_input</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+<span class="n">msg_output</span> <span class="o">=</span> <span class="n">sequential_pipeline</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">agent1</span><span class="p">,</span> <span class="n">agent2</span><span class="p">,</span> <span class="n">agent3</span><span class="p">],</span>
+    <span class="n">msg_input</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="agentscope.pipelines.SwitchPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SwitchPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">condition_func:</span> <span class="pre">~typing.Callable[[dict],</span> <span class="pre">~typing.Any],</span> <span class="pre">case_operators:</span> <span class="pre">~typing.Mapping[~typing.Any,</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator]],</span> <span class="pre">default_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">placeholder&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/pipelines/pipeline.html#SwitchPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.SwitchPipeline" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase" title="agentscope.pipelines.pipeline.PipelineBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PipelineBase</span></code></a></p>
-<p>A template pipeline for implementing control flow like switch-case.</p>
-<p>SwitchPipeline(condition_func, case_operators, default_operators)
-represents the following workflow:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">switch</span> <span class="n">condition_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">case</span> <span class="n">k1</span><span class="p">:</span> <span class="k">return</span> <span class="n">case_operators</span><span class="p">[</span><span class="n">k1</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">case</span> <span class="n">k2</span><span class="p">:</span> <span class="k">return</span> <span class="n">case_operators</span><span class="p">[</span><span class="n">k2</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
-    <span class="o">...</span>
-    <span class="n">default</span><span class="p">:</span> <span class="k">return</span> <span class="n">default_operators</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="agentscope.pipelines.WhileLoopPipeline">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WhileLoopPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">loop_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator],</span> <span class="pre">condition_func:</span> <span class="pre">~typing.Callable[[int,</span> <span class="pre">dict],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">WhileLoopPipeline.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/pipelines/pipeline.html#WhileLoopPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.WhileLoopPipeline" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="agentscope.pipelines.pipeline.html#agentscope.pipelines.pipeline.PipelineBase" title="agentscope.pipelines.pipeline.PipelineBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">PipelineBase</span></code></a></p>
-<p>A template pipeline for implementing control flow like while-loop</p>
-<p>WhileLoopPipeline(loop_body_operators, condition_operator, condition_func)
-represents the following workflow:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">while</span> <span class="p">(</span><span class="n">condition_func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">loop_body_operators</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.pipelines.forlooppipeline">
-<span class="sig-name descname"><span class="pre">forlooppipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">loop_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator],</span> <span class="pre">max_loop:</span> <span class="pre">int,</span> <span class="pre">break_func:</span> <span class="pre">~typing.Callable[[dict],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">x:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/pipelines/functional.html#forlooppipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.forlooppipeline" title="Link to this definition"></a></dt>
-<dd><p>Functional version of ForLoopPipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loop_body_operators</strong> (<cite>Operators</cite>) – Operators executed as the body of the loop.</p></li>
-<li><p><strong>max_loop</strong> (<cite>int</cite>) – maximum number of loop executions.</p></li>
-<li><p><strong>break_func</strong> (<cite>Callable[[dict], bool]</cite>) – A function used to determine whether to break out of the loop
-based on the output of the loop_body_operator, defaults to
-<cite>lambda _: False</cite></p></li>
-<li><p><strong>x</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The input dictionary.</p></li>
+<li><p><strong>(</strong><strong>`list</strong><strong>[</strong><strong>Callable</strong><strong>[</strong><strong>[</strong><strong>Union</strong><strong>[</strong><strong>None</strong> (<em>operators</em>) – </p></li>
+<li><p><strong>Msg</strong></p></li>
+<li><p><strong>list</strong><strong>[</strong><strong>Msg</strong><strong>]</strong><strong>]</strong><strong>]</strong></p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The output dictionary.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.pipelines.ifelsepipeline">
-<span class="sig-name descname"><span class="pre">ifelsepipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">condition_func:</span> <span class="pre">~typing.Callable,</span> <span class="pre">if_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator],</span> <span class="pre">else_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">placeholder&gt;,</span> <span class="pre">x:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/pipelines/functional.html#ifelsepipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.ifelsepipeline" title="Link to this definition"></a></dt>
-<dd><p>Functional version of IfElsePipeline.</p>
+<p>:param :
+:param Union[None: A list of operators, which can be agent, pipeline or any callable</p>
+<blockquote>
+<div><p>that takes <cite>Msg</cite> object(s) as input and returns <cite>Msg</cite> object or
+<cite>None</cite></p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>condition_func</strong> (<cite>Callable</cite>) – A function that determines whether to execute <cite>if_body_operator</cite>
-or <cite>else_body_operator</cite> based on x.</p></li>
-<li><p><strong>if_body_operator</strong> (<cite>Operators</cite>) – Operators executed when <cite>condition_func</cite> returns True.</p></li>
-<li><p><strong>else_body_operator</strong> (<cite>Operators</cite>, defaults to <cite>placeholder</cite>) – Operators executed when condition_func returns False,
-does nothing and just return the input by default.</p></li>
-<li><p><strong>x</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The input dictionary.</p></li>
+<li><p><strong>Msg</strong> – A list of operators, which can be agent, pipeline or any callable
+that takes <cite>Msg</cite> object(s) as input and returns <cite>Msg</cite> object or
+<cite>None</cite></p></li>
+<li><p><strong>list</strong><strong>[</strong><strong>Msg</strong><strong>]</strong><strong>]</strong><strong>]</strong><strong>`</strong><strong>)</strong> – A list of operators, which can be agent, pipeline or any callable
+that takes <cite>Msg</cite> object(s) as input and returns <cite>Msg</cite> object or
+<cite>None</cite></p></li>
+<li><p><strong>x</strong> (<cite>Optional[Union[Msg, list[Msg]]]</cite>, defaults to <cite>None</cite>) – The initial input that will be passed to the first operator.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the output dictionary.</p>
+<dd class="field-even"><p>The output of the last operator in the sequence.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.pipelines.sequentialpipeline">
-<span class="sig-name descname"><span class="pre">sequentialpipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operators</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Operator</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/pipelines/functional.html#sequentialpipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.sequentialpipeline" title="Link to this definition"></a></dt>
-<dd><p>Functional version of SequentialPipeline.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>operators</strong> (<cite>Sequence[Operator]</cite>) – Participating operators.</p></li>
-<li><p><strong>x</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The input dictionary.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the output dictionary.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.pipelines.switchpipeline">
-<span class="sig-name descname"><span class="pre">switchpipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">condition_func:</span> <span class="pre">~typing.Callable[[~typing.Any],</span> <span class="pre">~typing.Any],</span> <span class="pre">case_operators:</span> <span class="pre">~typing.Mapping[~typing.Any,</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator]],</span> <span class="pre">default_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">placeholder&gt;,</span> <span class="pre">x:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/pipelines/functional.html#switchpipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.switchpipeline" title="Link to this definition"></a></dt>
-<dd><p>Functional version of SwitchPipeline.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>condition_func</strong> (<cite>Callable[[Any], Any]</cite>) – A function that determines which case_operator to execute based
-on the input x.</p></li>
-<li><p><strong>case_operators</strong> (<cite>Mapping[Any, Operator]</cite>) – A dictionary containing multiple operators and their
-corresponding trigger conditions.</p></li>
-<li><p><strong>default_operators</strong> (<cite>Operators</cite>, defaults to <cite>placeholder</cite>) – Operators that are executed when the actual condition do not
-meet any of the case_operators, does nothing and just return the
-input by default.</p></li>
-<li><p><strong>x</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The input dictionary.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the output dictionary.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="agentscope.pipelines.whilelooppipeline">
-<span class="sig-name descname"><span class="pre">whilelooppipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">loop_body_operators:</span> <span class="pre">~agentscope.agents._operator.Operator</span> <span class="pre">|</span> <span class="pre">~typing.Sequence[~agentscope.agents._operator.Operator],</span> <span class="pre">condition_func:</span> <span class="pre">~typing.Callable[[int,</span> <span class="pre">~typing.Any],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">x:</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/agentscope/pipelines/functional.html#whilelooppipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.pipelines.whilelooppipeline" title="Link to this definition"></a></dt>
-<dd><p>Functional version of WhileLoopPipeline.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>loop_body_operators</strong> (<cite>Operators</cite>) – Operators executed as the body of
-the loop.</p></li>
-<li><p><strong>condition_func</strong> (<cite>Callable[[int, Any], bool]</cite>, optional) – A function
-that determines whether to continue executing the loop body based
-on the current loop number and output of the loop_body_operator,
-defaults to <cite>lambda _,__: False</cite></p></li>
-<li><p><strong>x</strong> (<cite>Optional[dict]</cite>, defaults to <cite>None</cite>) – The input dictionary.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the output dictionary.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
+<dd class="field-odd"><p><cite>Union[None, Msg, list[Msg]]</cite></p>
 </dd>
 </dl>
 </dd></dl>

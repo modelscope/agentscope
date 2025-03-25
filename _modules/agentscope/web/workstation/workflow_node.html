@@ -155,14 +155,14 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SequentialPipeline</span><span class="p">,</span>
-    <span class="n">ForLoopPipeline</span><span class="p">,</span>
-    <span class="n">WhileLoopPipeline</span><span class="p">,</span>
-    <span class="n">IfElsePipeline</span><span class="p">,</span>
-    <span class="n">SwitchPipeline</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequentialPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.web.workstation._utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_ForLoopPipeline</span><span class="p">,</span>
+    <span class="n">_WhileLoopPipeline</span><span class="p">,</span>
+    <span class="n">_IfElsePipeline</span><span class="p">,</span>
+    <span class="n">_SwitchPipeline</span><span class="p">,</span>
+    <span class="n">_placeholder</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.pipelines.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">placeholder</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.web.workstation.workflow_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">kwarg_converter</span><span class="p">,</span>
     <span class="n">deps_converter</span><span class="p">,</span>
@@ -568,18 +568,19 @@
         <span class="n">dep_opts</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">node_id</span><span class="p">,</span> <span class="n">opt_kwargs</span><span class="p">,</span> <span class="n">source_kwargs</span><span class="p">,</span> <span class="n">dep_opts</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">placeholder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">_placeholder</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PlaceHolderNode.compile">
 <a class="viewcode-back" href="../../../../build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.PlaceHolderNode.compile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines.functional import &quot;</span>
-            <span class="s2">&quot;placeholder&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = placeholder&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;from agentscope.web.workstation._utils import _placeholder&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = _placeholder&quot;</span><span class="p">,</span>
             <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">}</span></div>
@@ -649,7 +650,7 @@
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="p">),</span> <span class="s2">&quot;ForLoopPipelineNode can only contain one PipelineNode.&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">ForLoopPipeline</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">_ForLoopPipeline</span><span class="p">(</span>
             <span class="n">loop_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
@@ -661,8 +662,11 @@
 <a class="viewcode-back" href="../../../../build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.ForLoopPipelineNode.compile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines import ForLoopPipeline&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = ForLoopPipeline(&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;from agentscope.web.workstation._utils import &quot;</span>
+                <span class="s2">&quot;_ForLoopPipeline&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = _ForLoopPipeline(&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;loop_body_operators=&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">,&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
@@ -679,7 +683,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A node representing a while-loop structure in a workflow.</span>
 
-<span class="sd">    WhileLoopPipelineNode enables conditional repeated execution of a node</span>
+<span class="sd">    WhileLoopPipelineNode enables conditional repeated execution of a</span>
 <span class="sd">    node based on a specified condition.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -696,7 +700,7 @@
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="p">),</span> <span class="s2">&quot;WhileLoopPipelineNode can only contain one PipelineNode.&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">WhileLoopPipeline</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">_WhileLoopPipeline</span><span class="p">(</span>
             <span class="n">loop_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
@@ -708,8 +712,11 @@
 <a class="viewcode-back" href="../../../../build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.WhileLoopPipelineNode.compile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="s2">&quot;from agentscope.pipelines import WhileLoopPipeline&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = WhileLoopPipeline(&quot;</span>
+            <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;from agentscope.web.workstation._utils import &quot;</span>
+                <span class="s2">&quot;_WhileLoopPipeline&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = _WhileLoopPipeline(&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;loop_body_operators=&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deps_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span><span class="si">}</span><span class="s2">,&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
@@ -744,12 +751,12 @@
             <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span>
         <span class="p">),</span> <span class="s2">&quot;IfElsePipelineNode must contain one or two PipelineNode.&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">IfElsePipeline</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">_IfElsePipeline</span><span class="p">(</span>
                 <span class="n">if_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">IfElsePipeline</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">_IfElsePipeline</span><span class="p">(</span>
                 <span class="n">if_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">else_body_operators</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
@@ -761,19 +768,21 @@
 <div class="viewcode-block" id="IfElsePipelineNode.compile">
 <a class="viewcode-back" href="../../../../build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.IfElsePipelineNode.compile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">imports</span> <span class="o">=</span> <span class="s2">&quot;from agentscope.pipelines import IfElsePipeline&quot;</span>
+        <span class="n">imports</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;from agentscope.web.workstation._utils import _IfElsePipeline&quot;</span>
+        <span class="p">)</span>
         <span class="n">execs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
                 <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="n">imports</span><span class="p">,</span>
-                <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = IfElsePipeline(&quot;</span>
+                <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = _IfElsePipeline(&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;if_body_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="n">execs</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
                 <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="n">imports</span><span class="p">,</span>
-                <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = IfElsePipeline(&quot;</span>
+                <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = _IfElsePipeline(&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;if_body_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;else_body_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;execs&quot;</span><span class="p">:</span> <span class="n">execs</span><span class="p">,</span>
@@ -811,8 +820,8 @@
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;cases&quot;</span><span class="p">]):</span>
             <span class="c1"># No default_operators provided</span>
-            <span class="n">default_operators</span> <span class="o">=</span> <span class="n">placeholder</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">default_var_name</span> <span class="o">=</span> <span class="s2">&quot;placeholder&quot;</span>
+            <span class="n">default_operators</span> <span class="o">=</span> <span class="n">_placeholder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">default_var_name</span> <span class="o">=</span> <span class="s2">&quot;_placeholder&quot;</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">[</span><span class="s2">&quot;cases&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># default_operators provided</span>
             <span class="n">default_operators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dep_opts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -832,7 +841,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">case_operators_var</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cases&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cases&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">SwitchPipeline</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">_SwitchPipeline</span><span class="p">(</span>
             <span class="n">case_operators</span><span class="o">=</span><span class="n">case_operators</span><span class="p">,</span>
             <span class="n">default_operators</span><span class="o">=</span><span class="n">default_operators</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_kwargs</span><span class="p">,</span>
@@ -845,13 +854,13 @@
 <a class="viewcode-back" href="../../../../build_api/agentscope.web.workstation.workflow_node.html#agentscope.web.workstation.workflow_node.SwitchPipelineNode.compile">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="n">imports</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;from agentscope.pipelines import SwitchPipeline</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="s2">&quot;from agentscope.pipelines.functional import placeholder&quot;</span>
+            <span class="s2">&quot;from agentscope.web.workstation._utils import _SwitchPipeline</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;from agentscope.web.workstation._utils import _placeholder&quot;</span>
         <span class="p">)</span>
         <span class="n">execs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">DEFAULT_FLOW_VAR</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;imports&quot;</span><span class="p">:</span> <span class="n">imports</span><span class="p">,</span>
-            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = SwitchPipeline(case_operators=&quot;</span>
+            <span class="s2">&quot;inits&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">var_name</span><span class="si">}</span><span class="s2"> = _SwitchPipeline(case_operators=&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dict_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case_operators_var</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;default_operators=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">default_var_name</span><span class="si">}</span><span class="s2">,&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">kwarg_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
