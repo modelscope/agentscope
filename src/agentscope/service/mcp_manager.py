@@ -322,7 +322,7 @@ class MCPSessionHandler:
     async def execute_tool(
         self,
         tool_name: str,
-        arguments: dict[str, Any] = None,
+        **kwargs: Any,
     ) -> ServiceResponse:
         """Execute a tool and return ServiceResponse"""
         if not self.session:
@@ -331,7 +331,7 @@ class MCPSessionHandler:
         logger.info(f"Executing {tool_name}...")
 
         try:
-            result = await self.session.call_tool(tool_name, arguments)
+            result = await self.session.call_tool(tool_name, kwargs)
             content, is_error = result.content, result.isError
 
             if is_error:
