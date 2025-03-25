@@ -110,11 +110,11 @@ Now, we can start the conversation by exchanging messages between these two agen
  .. code-block:: none
 
     Angel: Hello! It seems like your message was cut off. Could you please provide more details so I can assist you better?
-    Monster: Hello Angel! It looks like there might have been a mix-up, as I didn't send a previous message. How can I assist you today?
-    Angel: Hello! I apologize for the confusion. It looks like there was a small mix-up in the conversation. How can I assist you today?
-    Monster: No problem at all, Angel! It's great to connect with you. How can I assist you today? Do you have any specific questions or topics you'd like to discuss?
-    Angel: Hello! It’s nice to meet you, Monster. I think there was a bit of a mix-up in the roles here. I’m actually here to assist you! Is there anything specific you’d like to talk about or any questions you have?
-    Monster: Ah, I see! My apologies for the confusion. It's great to meet you, Angel. Since you're here to assist, I can certainly think of a few topics or questions we could explore. How about we discuss some interesting facts or trivia? Or perhaps you have a particular area of expertise or interest you'd like to share?
+    Monster: Hello Angel! I apologize for the confusion. It looks like there was a mistake on my part. How can I assist you today? Do you have any specific questions or topics you'd like to discuss?
+    Angel: Hello! No worries at all. It's great to have you here. How can I assist you today? Do you have any specific questions or topics you'd like to discuss?
+    Monster: Hello Angel! It's nice to meet you. I'm here to help with any questions or topics you'd like to discuss. Whether it's about a specific subject, a problem you're facing, or just a casual chat, feel free to let me know how I can assist you today! 😊
+    Angel: Hello! It looks like there might be a bit of a mix-up. I'm Angel, and I'm here to help you. How can I assist you today? Do you have any specific questions or topics you'd like to discuss? 😊
+    Monster: Hello Angel! It's great to meet you. I see we both ended up offering to help each other. 😄 Since you're here to assist, let me step back and ask: Is there anything specific you'd like to talk about or any questions you have? I'm happy to chat about any topic or help with any information you need!
 
 
 
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 24.288 seconds)
+   **Total running time of the script:** (0 minutes 25.826 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
