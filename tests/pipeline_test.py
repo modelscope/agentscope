@@ -18,9 +18,11 @@ class AddAgent(AgentBase):
 
     def __init__(self, value: int) -> None:
         """Initialize the agent"""
+        super().__init__(name="Add")
         self.value = value
 
     def reply(self, x: Msg) -> Msg:
+        """Reply function"""
         x.metadata += self.value
         return x
 
@@ -30,9 +32,11 @@ class MultAgent(AgentBase):
 
     def __init__(self, value: int) -> None:
         """Initialize the agent"""
+        super().__init__(name="Mult")
         self.value = value
 
     def reply(self, x: Msg) -> Msg:
+        """Reply function"""
         x.metadata *= self.value
         return x
 
