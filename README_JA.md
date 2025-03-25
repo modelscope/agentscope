@@ -35,11 +35,18 @@ LLMを活用したマルチエージェントアプリケーションをより�
 
 | [Discord](https://discord.gg/eYMpfnkG8h) | DingTalk |
 |---------|----------|
-| <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i2/O1CN01tuJ5971OmAqNg9cOw_!!6000000001747-0-tps-444-460.jpg" width="100" height="100"> |
+| <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i1/O1CN01LxzZha1thpIN2cc2E_!!6000000005934-2-tps-497-477.png" width="100" height="100"> |
 
 ----
 
 ## ニュース
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope はフック関数をサポートしています。詳細は[チュートリアル](https://doc.agentscope.io/build_tutorial/hook.html)を参照してください。
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScopeは現在、ツールAPIをサポートしています。詳しくは[チュートリアル](https://doc.agentscope.io/build_tutorial/tool.html)をご参照ください。
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[このチュートリアル](https://doc.agentscope.io/build_tutorial/mcp.html)を参考にして使い方を学ぶことができます。
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** 私たちの[多情報源RAGアプリケーション](applications/multisource_rag_app/README.md)（DingTalkのQ&Aグループで使用されているチャットボット）がオープンソースになりました！
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-24]** [中国語版チュートリアル](https://doc.agentscope.io/zh_CN)が公開されました！
 

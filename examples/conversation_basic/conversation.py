@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """A simple example for conversation between user and assistant agent."""
 import agentscope
-from agentscope.agents import DialogAgent
-from agentscope.agents.user_agent import UserAgent
+from agentscope.agents import (
+    DialogAgent,
+    UserAgent,
+)
 from agentscope.pipelines.functional import sequentialpipeline
 
 

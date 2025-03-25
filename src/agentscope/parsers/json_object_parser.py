@@ -63,6 +63,11 @@ class MarkdownJsonObjectParser(ParserBase):
     def parse(self, response: ModelResponse) -> ModelResponse:
         """Parse the response text to a json object, and fill it in the parsed
         field in the response object."""
+        if response.text is None:
+            # Raise this error to the developer
+            raise ValueError(
+                "The text field of the response is `None`",
+            )
 
         # extract the content and try to fix the missing tags by hand
         try:
@@ -79,10 +84,10 @@ class MarkdownJsonObjectParser(ParserBase):
                 # Fix the missing tags
                 if e.missing_begin_tag:
                     response_copy.text = (
-                        self.tag_begin + "\n" + response_copy.text
+                        self.tag_begin + "\n" + str(response_copy.text)
                     )
                 if e.missing_end_tag:
-                    response_copy.text = response_copy.text + self.tag_end
+                    response_copy.text = str(response_copy.text) + self.tag_end
 
                 # Try again to extract the content
                 extract_text = self._extract_first_content_by_tag(
@@ -265,7 +270,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
             raise JsonTypeError(
                 "A JSON dictionary object is wanted, "
                 f"but got {type(response.parsed)} instead.",
-                response.text,
+                str(response.text),
             )
 
         # Requirement checking by Pydantic
@@ -277,7 +282,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
             except Exception as e:
                 raise JsonParsingError(
                     message=str(e),
-                    raw_response=response.text,
+                    raw_response=str(response.text),
                 ) from None
 
         # Check if the required keys exist
@@ -292,7 +297,7 @@ class MarkdownJsonDictParser(MarkdownJsonObjectParser, DictFilterMixin):
                 f"field{'' if len(keys_missing) == 1 else 's'} "
                 f"{_join_str_with_comma_and(keys_missing)} in the JSON "
                 f"dictionary object.",
-                response.text,
+                str(response.text),
             )
 
         return response

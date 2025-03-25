@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 """ Unit test for service toolkit. """
 import json
+import os
+import sys
 import unittest
 from typing import Literal
 
 import agentscope
-from agentscope.models import ModelWrapperBase, ModelResponse
+from agentscope.models import ModelResponse
 from agentscope.parsers import MultiTaggedContentParser, TaggedContent
 from agentscope.service import (
     bing_search,
     execute_python_code,
     retrieve_from_list,
     query_mysql,
-    summarization,
 )
 from agentscope.service import ServiceToolkit
 
@@ -293,22 +294,47 @@ we use the embedding model to embed the query.""",
             self.json_schema_query_mysql,
         )
 
-    def test_summary(self) -> None:
-        """Test summarization in service toolkit."""
-        _, doc_dict = ServiceToolkit.get(
-            summarization,
-            model=ModelWrapperBase("abc", "model_name"),
-            system_prompt="",
-            summarization_prompt="",
-            max_return_token=-1,
-            token_limit_prompt="",
+    def test_mcp_tool(self) -> None:
+        """Test the mcp tool with ServiceToolkit."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool` is skipped for Python versions < 3.10",
+            )
+
+        service_toolkit = ServiceToolkit()
+        server_path = os.path.abspath(
+            os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                "custom",
+                "echo_mcp_server.py",
+            ),
         )
+        service_toolkit.add_mcp_servers(
+            server_configs={
+                "mcpServers": {
+                    "echo": {
+                        "command": "python",
+                        "args": [
+                            server_path,
+                        ],
+                    },
+                },
+            },
+        )
+        self.assertEqual(
+            service_toolkit.tools_instruction,
+            """## Tool Functions:
+The following tool functions are available in the format of
+```
+{index}. {function name}: {function description}
+{argument1 name} ({argument type}): {argument description}
+{argument2 name} ({argument type}): {argument description}
+...
+```
 
-        print(json.dumps(doc_dict, indent=4))
-
-        self.assertDictEqual(
-            doc_dict,
-            self.json_schema_summarization,
+1. echo: Echo the input text
+	text (string): Input text
+""",  # noqa
         )
 
     def test_service_toolkit(self) -> None:

@@ -8,7 +8,7 @@ from typing import (
     Any,
     Mapping,
 )
-from ..agents.operator import Operator
+from ..agents._operator import Operator
 
 # A single Operator or a Sequence of Operators
 Operators = Union[Operator, Sequence[Operator]]
