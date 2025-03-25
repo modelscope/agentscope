@@ -41,6 +41,7 @@ minimal_requires = [
     "openai>=1.3.0",
     "dashscope>=1.19.0",
     "nest_asyncio",
+    "shortuuid",
 ]
 
 extra_service_requires = [
