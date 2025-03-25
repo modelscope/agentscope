@@ -16,6 +16,7 @@ from typing import (
     Dict,
 )
 from loguru import logger
+import requests
 
 from ..exception import (
     JsonParsingError,
@@ -23,11 +24,11 @@ from ..exception import (
     FunctionCallFormatError,
     FunctionCallError,
 )
-from .service_response import ServiceResponse
-from .service_response import ServiceExecStatus
+from .service_response import ServiceResponse, ServiceExecStatus
 
 from .mcp_manager import MCPSessionHandler, sync_exec
 from ..message import Msg
+from ..models import ModelWrapperBase
 
 try:
     from docstring_parser import parse
@@ -677,6 +678,184 @@ class ServiceToolkit:
         }
 
         return tool_func, func_dict
+
+    def search_mcp_server(
+        self,
+        function_keywords: str,
+        size: int = 20,
+        **kwargs: Any,
+    ) -> list[dict]:
+        """
+        Search for appropriate MCP server with function
+        Depend on npm Public Registry API:
+        https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md
+        https://itnext.io/increasing-an-npm-packages-search-score-fb557f859300
+        It is possible to searching MCP with specific authors, maintainer,
+        scope, etc. Deatils can be found in the above websites.
+
+        Args:
+            function_keywords (str): Keywords of the desired function;
+            size (int): Size of the search results;
+            kwargs (Any): Additional keyword for API search, such as
+                quality, popularity, and maintenance score.
+        Returns:
+            `list[dict]`: List of MCP servers with description`
+
+        An example of the return is
+        [
+          {
+            "Name": "@modelcontextprotocol/server-github",
+            "Description": "MCP server for using the GitHub API",
+            "Keywords": ["mcp"],
+            "Downloads": {"monthly": 53055,}
+          },
+          ...
+        ]
+        """
+        search_url = "https://registry.npmjs.org/-/v1/search"
+        if "mcp+server" not in function_keywords.lower():
+            # make search more specific on MCP servers
+            function_keywords += "+mcp+server"
+
+        params = {
+            "text": function_keywords,
+            "size": size,
+        }
+        params.update(kwargs)
+        response = requests.get(search_url, params=params)
+
+        def rule_base_filter(package: dict) -> bool:
+            """Filter those packages that are not MPC server"""
+            pkg = package["package"]
+            if pkg["name"] == "@modelcontextprotocol/sdk":
+                return False
+            elif (
+                "mcp" in pkg["keywords"]
+                or "MCP" in pkg["keywords"]
+                or "modelcontextprotocol" in pkg["keywords"]
+            ):
+                return True
+            elif (
+                "@modelcontextprotocol" in pkg["name"]
+                or "mcp" in pkg["description"]
+                or "MCP" in pkg["description"]
+                or "model context protocol" in pkg["description"].lower()
+            ):
+                return True
+            else:
+                return False
+
+        return_results = []
+        if response.status_code == 200:
+            results = response.json()
+            for package in results["objects"]:
+                if not rule_base_filter(package):
+                    continue
+                pkg = package["package"]
+                return_results.append(
+                    {
+                        "Name": pkg["name"],
+                        "Keywords": pkg["keywords"],
+                        "Description": pkg["description"],
+                        "Downloads": package["downloads"],
+                        "Publisher": pkg["publisher"],
+                    },
+                )
+        return return_results
+
+    def search_and_add_mcp_server(
+        self,
+        task: str,
+        model: ModelWrapperBase,
+        max_retries: int = 3,
+    ) -> None:
+        """
+        Automatically search for appropriate MCP server with the given task.
+        Args:
+            task (str): Task description.
+            model (ModelWrapperBase): LLM model to analysis the task and choose
+                appropriate MCP server.
+            max_retries (int): max number of retries, for example, for LLM
+                choosing invalid package names.
+        """
+        search_sys_prompt = (
+            "You are a helpful assistant that can output a keyword"
+            "to search for software packages that can help solve the task."
+            "ONLY output ONE keyword."
+        )
+        search_usr_prompt = (
+            f"Given task: {task}. \n"
+            f"What are the keywords to search for helpful software packages?"
+        )
+        msgs = model.format(
+            Msg("system", search_sys_prompt, role="system"),
+            Msg("user", search_usr_prompt, role="user"),
+        )
+        function_keywords = model(msgs).text
+
+        avaiable_choices = self.search_mcp_server(function_keywords)
+        logger.info(f"Seach function keywords: {function_keywords}")
+        logger.info(f"Candidate functions: {avaiable_choices}")
+        choose_sys_prompt = (
+            "Given the available software packages and "
+            "the description of task, you need to determine what is the most"
+            "appropriate MCP Server to help solve the task based on the "
+            "description, keyword and download statistics information."
+            "Usually, a package is a MCP server software package  if it has "
+            "at least one of the following properties: "
+            "1. There are keywords 'mcp' or '@modelcontextprotocol' or "
+            "'server' in their Name."
+            "2. There are keywords 'mcp' or 'Model Context protocol' "
+            "in its Description or Keywords."
+            "\n# Requirements:"
+            "1. Make choice based on the name, description and keywords."
+            "2. The selected package must be MCP server."
+            "ONLY output ONE Name of the package.\n\n"
+        )
+        choose_usr_prompt = (
+            f"Available software packages:\n {avaiable_choices}\n"
+            f"Given task: {task} \nWhat is the most appropriate MCP server?\n"
+            "ONLY output ONE Name of the package.\n\n# OUTPUT FORMAT:\n"
+            "THE_PACKAGE_NAME"
+        )
+        init_msgs = [
+            Msg("system", choose_sys_prompt, role="system"),
+            Msg("user", choose_usr_prompt, role="user"),
+        ]
+        for _ in range(max_retries):
+            try:
+                msgs = model.format(*init_msgs)
+                function_name = model(msgs).text
+                init_msgs.append(Msg("system", function_name, role="system"))
+                logger.info(f"Model chooses function: {function_name}")
+                chosen_function = {}
+                for pkg in avaiable_choices:
+                    if pkg["Name"] == function_name:
+                        chosen_function = pkg
+                if len(chosen_function) == 0:
+                    raise ValueError(
+                        "Name does not match any of the available choices.",
+                    )
+            except Exception as e:
+                init_msgs.append(
+                    Msg(
+                        "user",
+                        f"Encounter the following error {e}",
+                        "user",
+                    ),
+                )
+
+        # build an instance
+        config = {
+            "command": "npx",
+            "args": ["-y", chosen_function["Name"]],
+            # TODO: how to know what env variable are required?
+        }
+        self.add_mcp_servers(
+            server_configs={
+                "mcpServers": {chosen_function["Name"]: config},
+            },
+        )
 
 
 class ServiceFactory:
