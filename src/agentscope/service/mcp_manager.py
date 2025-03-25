@@ -259,7 +259,7 @@ class MCPSessionHandler:
         Do not modify this method without careful consideration of its
         subtle resource management implications.
         """
-        if asyncio.get_event_loop is None:
+        if asyncio is None or asyncio.get_event_loop is None:
             # When the code is executed directly at the top level in a script,
             # the `asyncio` will recycle before the instance. In such case,
             # when the function is triggered by `__del__`, there is nothing to
@@ -322,7 +322,7 @@ class MCPSessionHandler:
     async def execute_tool(
         self,
         tool_name: str,
-        arguments: dict[str, Any] = None,
+        **kwargs: Any,
     ) -> ServiceResponse:
         """Execute a tool and return ServiceResponse"""
         if not self.session:
@@ -331,7 +331,7 @@ class MCPSessionHandler:
         logger.info(f"Executing {tool_name}...")
 
         try:
-            result = await self.session.call_tool(tool_name, arguments)
+            result = await self.session.call_tool(tool_name, kwargs)
             content, is_error = result.content, result.isError
 
             if is_error:
