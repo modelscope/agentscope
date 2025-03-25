@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "index": -1,
+    "title": "anriliu's workflow",
+    "author": "anriliu",
+    "description": "",
+    "category": [],
+    "time": "2025-03-25",
+    "thumbnail": ""
+  },
+  "drawflow": {
+    "2": {
+      "data": {
+        "args": {
+          "config_name": "qwen",
+          "messages_key": "input",
+          "model_name": "qwen-max",
+          "model_type": "dashscope_chat",
+          "seed": 0,
+          "temperature": 0
+        }
+      },
+      "inputs": {},
+      "name": "dashscope_chat",
+      "outputs": {}
+    },
+    "3": {
+      "data": {
+        "args": {
+          "name": "User"
+        }
+      },
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "UserAgent",
+      "outputs": {
+        "output_1": {
+          "connections": [
+            {
+              "node": "4",
+              "output": "input_1"
+            }
+          ]
+        }
+      }
+    },
+    "4": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Assistant",
+          "sys_prompt": "You are an assistant"
+        }
+      },
+      "inputs": {
+        "input_1": {
+          "connections": [
+            {
+              "input": "output_1",
+              "node": "3"
+            }
+          ]
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      }
+    }
+  }
+}
