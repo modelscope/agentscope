@@ -96,7 +96,6 @@ def run_async_func_sync(
     return (result, loop) if return_event_loop else result
 
 
-# Now you can define your specific functions using the generic one
 def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
     """
     Execute an asynchronous function synchronously and return the result.
