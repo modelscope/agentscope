@@ -4,6 +4,7 @@ This module manages MCP (ModelContextProtocal) sessions and tool execution
 within an asynchronous context. It includes functionality to create, manage,
 and close sessions, as well as execute various tools provided by an MCP server.
 """
+import atexit
 import asyncio
 import os
 import shutil
@@ -34,17 +35,25 @@ from .service_response import ServiceResponse, ServiceExecStatus
 COROUTINE_TIMEOUT_SECONDS = 60
 
 
-def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
+def run_async_func_sync(
+    func: Callable,
+    *args: Any,
+    return_event_loop: bool = False,
+    **kwargs: Any,
+) -> Any:
     """
-    Execute a function synchronously.
+    Execute an asynchronous function synchronously.
 
     Args:
         func (Callable): The asynchronous function to execute.
         *args (Any): Positional arguments to pass to the function.
+        return_event_loop (bool): Whether to return the event loop with the
+            result.
         **kwargs (Any): Keyword arguments to pass to the function.
 
     Returns:
-        Any: The result of the function execution.
+        Any: The result of the function execution, and optionally the event
+            loop.
     """
     try:
         loop = asyncio.get_event_loop()
@@ -83,7 +92,23 @@ def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
                 raise
     else:
         result = loop.run_until_complete(func(*args, **kwargs))
-    return result
+
+    return (result, loop) if return_event_loop else result
+
+
+# Now you can define your specific functions using the generic one
+def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
+    """
+    Execute an asynchronous function synchronously and return the result.
+    """
+    return run_async_func_sync(func, *args, **kwargs)
+
+
+def sync_exec_with_loop(func: Callable, *args: Any, **kwargs: Any) -> Any:
+    """
+    Execute an asynchronous function synchronously and return event loop.
+    """
+    return run_async_func_sync(func, *args, return_event_loop=True, **kwargs)
 
 
 def session_decorator(func: Callable) -> Callable:
@@ -175,6 +200,7 @@ class MCPSessionHandler:
         self._session_exit_stack: AsyncExitStack = AsyncExitStack()
         # Manage stdio server context
         self._stdio_exit_stack: AsyncExitStack = AsyncExitStack()
+        self.stdio_event_loop = None
 
         # Initialize stdio_transport if necessary
         command = (
@@ -183,7 +209,12 @@ class MCPSessionHandler:
             else self.config.get("command")
         )
         if command is not None and sync:
-            self.stdio_transport = sync_exec(self._initialize_stdio_transport)
+            self.stdio_transport, self.stdio_event_loop = sync_exec_with_loop(
+                self._initialize_stdio_transport,
+            )
+
+        if self.stdio_event_loop:
+            atexit.register(self.stdio_event_loop.close)
 
     async def _initialize_stdio_transport(
         self,
