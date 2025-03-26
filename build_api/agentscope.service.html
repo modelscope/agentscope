@@ -1077,24 +1077,39 @@ the generated audio.</p>
 <li><p><strong>prompt</strong> (<cite>str</cite>) – The text prompt to generate image.</p></li>
 <li><p><strong>api_key</strong> (<cite>str</cite>) – The api key for the dashscope api.</p></li>
 <li><p><strong>n</strong> (<cite>int</cite>, defaults to <cite>1</cite>) – The number of images to generate.</p></li>
-<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;1024*1024&quot;</strong> (<em>size</em>) – </p></li>
-<li><p><strong>&quot;720*1280&quot;</strong></p></li>
-<li><p><strong>&quot;1280*720&quot;</strong><strong>]</strong><strong>`</strong></p></li>
-<li><p><strong>to</strong> (<em>defaults</em>)</p></li>
-<li><p><strong>&quot;1024*1024&quot;</strong><strong>)</strong> – Size of the image.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;1024*1024&quot;</strong> (<em>size</em>) – <dl class="simple">
+<dt><cite>”1024*1024”</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;720*1280&quot;</strong> – <dl class="simple">
+<dt><cite>“1024*1024”</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;1280*720&quot;</strong><strong>]</strong><strong>`</strong> – <dl class="simple">
+<dt><cite>“1024*1024”</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>to</strong> (<em>defaults</em>) – <dl class="simple">
+<dt><cite>“1024*1024”</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
 <li><p><strong>model</strong> (<cite>str</cite>, defaults to ‘“wanx-v1”’) – The model to use.</p></li>
 <li><p><strong>save_dir</strong> (<cite>Optional[str]</cite>, defaults to ‘None’) – The directory to save the generated images. If not specified,
 will return the web urls.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`.
-If <cite>status</cite> is ServiceExecStatus.SUCCESS,
-the <cite>content</cite> is a dict with key ‘fig_paths” and
-value is a list of the paths to the generated images.</p>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`. If
+<cite>status</cite> is ServiceExecStatus.SUCCESS, the <cite>content</cite> is a dict
+with key ‘fig_paths” and value is a list of the paths to the
+generated images.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#agentscope.service.ServiceResponse" title="agentscope.service.ServiceResponse">ServiceResponse</a></p>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
