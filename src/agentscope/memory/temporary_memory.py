@@ -14,6 +14,7 @@ from loguru import logger
 
 from .memory import MemoryBase
 from ..manager import ModelManager
+from ..serialization import SerializeField
 from ..serialize import serialize, deserialize
 from ..service.retrieval.retrieval_from_list import retrieve_from_list
 from ..service.retrieval.similarity import Embedding
@@ -41,7 +42,11 @@ class TemporaryMemory(MemoryBase):
         """
         super().__init__()
 
-        self._content = []
+        self._content = SerializeField(
+            [],
+            serialize_fn=lambda content: [_.to_dict() for _ in content],
+            deserialize_fn=lambda _, data: [Msg.from_dict(_) for _ in data],
+        )
 
         # prepare embedding model if needed
         if isinstance(embedding_model, str):
