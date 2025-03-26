@@ -1,0 +1,1022 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.agents._agent &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.agents._agent</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.agents._agent 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># pylint: disable=protected-access, too-many-public-methods</span>
+<span class="sd">&quot;&quot;&quot; Base class for Agent &quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneratorType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rpc.rpc_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistConf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rpc.rpc_meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcMeta</span><span class="p">,</span> <span class="n">async_func</span><span class="p">,</span> <span class="n">sync_func</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_stream_msg</span><span class="p">,</span> <span class="n">log_msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">ToolUseBlock</span><span class="p">,</span> <span class="n">TextBlock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryMemory</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_HooksMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks metaclass for all agents.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrap the `reply` and `observe` function with hooks.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;reply&quot;</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="n">original_reply</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;reply&quot;</span><span class="p">]</span>
+
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">original_reply</span><span class="p">)</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_reply</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+                <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]:</span>
+                <span class="c1"># Pre hooks</span>
+                <span class="n">current_input</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_pre_reply</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_input</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">current_input</span> <span class="o">=</span> <span class="n">hook_result</span>
+
+                <span class="c1"># Original function</span>
+                <span class="n">reply_result</span> <span class="o">=</span> <span class="n">original_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_input</span><span class="p">)</span>
+
+                <span class="c1"># Post hooks</span>
+                <span class="n">current_output</span> <span class="o">=</span> <span class="n">reply_result</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_post_reply</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_output</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">current_output</span> <span class="o">=</span> <span class="n">hook_result</span>
+
+                <span class="k">return</span> <span class="n">current_output</span>
+
+            <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;reply&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapped_reply</span>
+
+        <span class="k">if</span> <span class="s2">&quot;observe&quot;</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="n">original_observe</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;observe&quot;</span><span class="p">]</span>
+
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">original_observe</span><span class="p">)</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_observe</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+                <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Pre hooks</span>
+                <span class="n">current_input</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_pre_observe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_input</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">current_input</span> <span class="o">=</span> <span class="n">hook_result</span>
+
+                <span class="c1"># Original function</span>
+                <span class="n">original_observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_input</span><span class="p">)</span>
+
+                <span class="c1"># Post hooks</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_post_observe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># type: ignore[call-arg]</span>
+
+            <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;observe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapped_observe</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_AgentMeta</span><span class="p">(</span><span class="n">_HooksMeta</span><span class="p">,</span> <span class="n">RpcMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The combined metaclass for all agents.</span>
+
+<span class="sd">    TODO: The RpcMeta will be deprecated in the future.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">bases</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add hooks to the agent class.&quot;&quot;&quot;</span>
+        <span class="c1"># First apply HooksMeta</span>
+        <span class="n">_HooksMeta</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+        <span class="c1"># Then apply RpcMeta</span>
+        <span class="k">return</span> <span class="n">RpcMeta</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AgentBase">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentBase</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_AgentMeta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all agents.</span>
+
+<span class="sd">    All agents should inherit from this class and implement the `reply`</span>
+<span class="sd">    function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">_hooks_pre_reply</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">AgentBase</span><span class="p">,</span>
+                <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="p">],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks function that will be called before the reply function, which</span>
+<span class="sd">    takes the `self` object and a deep copied input message(s) as input. If</span>
+<span class="sd">    the return of the hook is not `None`, the new output will be passed to the</span>
+<span class="sd">    next hook or the original reply function. Otherwise, the original input</span>
+<span class="sd">    will be passed instead.&quot;&quot;&quot;</span>
+
+    <span class="n">_hooks_post_reply</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Msg</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks function that will be called after the reply function, which</span>
+<span class="sd">    takes the `self` object and a deep copied output message as input. If the</span>
+<span class="sd">    hook returns a message, the new message will be passed to the next hook or</span>
+<span class="sd">    the original reply function. Otherwise, the original output will be passed</span>
+<span class="sd">    instead.&quot;&quot;&quot;</span>
+
+    <span class="n">_hooks_pre_speak</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks function that will be called before printing, which</span>
+<span class="sd">    takes the `self` object, a deep copied printing message, a streaming flag,</span>
+<span class="sd">    and a last flag as input. In streaming mode, the deep copied message will</span>
+<span class="sd">    be a chunk of the original message, the streaming flat will be `True`, and</span>
+<span class="sd">    the last flag will be `False` at the end of the streaming. If the hook</span>
+<span class="sd">    returns a message, the new message will be passed to the next hook or the</span>
+<span class="sd">    original speak function. Otherwise, the original input message will be</span>
+<span class="sd">    passed instead.&quot;&quot;&quot;</span>
+
+    <span class="n">_hooks_post_speak</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks function that will be called after the speak function, which</span>
+<span class="sd">    takes the `self` object as input.&quot;&quot;&quot;</span>
+
+    <span class="n">_hooks_pre_observe</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks function that will be called before the observe function,</span>
+<span class="sd">    which takes the `self` object and a deep copied input message(s) as input.</span>
+<span class="sd">    If the hook returns a new message, the new message will be passed to the</span>
+<span class="sd">    next hook or the original observe function. Otherwise, the original input</span>
+<span class="sd">    will be passed instead.&quot;&quot;&quot;</span>
+
+    <span class="n">_hooks_post_observe</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The hooks function that will be called after the observe function,</span>
+<span class="sd">    which takes the `self` object as input.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_dist</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">DistConf</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize an agent from the given arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of the agent.</span>
+<span class="sd">            sys_prompt (`Optional[str]`):</span>
+<span class="sd">                The system prompt of the agent, which can be passed by args</span>
+<span class="sd">                or hard-coded in the agent.</span>
+<span class="sd">            model_config_name (`str`, defaults to None):</span>
+<span class="sd">                The name of the model config, which is used to load model from</span>
+<span class="sd">                configuration.</span>
+<span class="sd">            use_memory (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the agent has memory.</span>
+<span class="sd">            to_dist (`Optional[Union[DistConf, bool]]`, default to `False`):</span>
+<span class="sd">                The configurations passed to :py:meth:`to_dist` method. Used in</span>
+<span class="sd">                :py:class:`RpcMeta`, when this parameter is provided,</span>
+<span class="sd">                the agent will automatically be converted into its distributed</span>
+<span class="sd">                version. Below are some examples:</span>
+
+<span class="sd">                .. code-block:: python</span>
+
+<span class="sd">                    # run as a sub process</span>
+<span class="sd">                    agent = XXXAgent(</span>
+<span class="sd">                        # ... other parameters</span>
+<span class="sd">                        to_dist=True,</span>
+<span class="sd">                    )</span>
+
+<span class="sd">                    # connect to an existing agent server</span>
+<span class="sd">                    agent = XXXAgent(</span>
+<span class="sd">                        # ... other parameters</span>
+<span class="sd">                        to_dist=DistConf(</span>
+<span class="sd">                            host=&quot;&lt;ip of your server&gt;&quot;,</span>
+<span class="sd">                            port=&lt;port of your server&gt;,</span>
+<span class="sd">                            # other parameters</span>
+<span class="sd">                        ),</span>
+<span class="sd">                    )</span>
+
+<span class="sd">                See :doc:`Tutorial&lt;tutorial/208-distribute&gt;` for detail.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span> <span class="o">=</span> <span class="n">sys_prompt</span>
+
+        <span class="c1"># TODO: support to receive a ModelWrapper instance</span>
+        <span class="k">if</span> <span class="n">model_config_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_manager</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_manager</span><span class="o">.</span><span class="n">get_model_by_config_name</span><span class="p">(</span>
+                <span class="n">model_config_name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">use_memory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">TemporaryMemory</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># The audience of this agent, which means if this agent generates a</span>
+        <span class="c1"># response, it will be passed to all agents in the audience.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># convert to distributed agent, conversion is in `_AgentMeta`</span>
+        <span class="k">if</span> <span class="n">to_dist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">to_dist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Convert </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] into&quot;</span>
+                <span class="s2">&quot; a distributed agent.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="AgentBase.generate_agent_id">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.generate_agent_id">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_agent_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the agent_id of this agent instance&quot;&quot;&quot;</span>
+        <span class="c1"># TODO: change cls.__name__ into a global unique agent_type</span>
+        <span class="k">return</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.reply">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.reply">[文档]</a>
+    <span class="nd">@async_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the actions taken by this agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (`Optional[Union[Msg, list[Msg]]]`, defaults to `None`):</span>
+<span class="sd">                The input message(s) to the agent, which also can be omitted if</span>
+<span class="sd">                the agent doesn&#39;t need any input.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Msg`: The output message generated by the agent.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Given that some agents are in an adversarial environment,</span>
+<span class="sd">            their input doesn&#39;t include the thoughts of other agents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Agent [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] is missing the required &quot;</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;reply&quot; function.&#39;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@async_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calling the reply function, and broadcast the generated</span>
+<span class="sd">        response to all audiences if needed.&quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># broadcast to audiences if needed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_broadcast_to_audience</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="AgentBase.speak">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.speak">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speak</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">Msg</span><span class="p">,</span>
+            <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">tool_calls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ToolUseBlock</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Speak out the message generated by the agent. If a string is given,</span>
+<span class="sd">        a Msg object will be created with the string as the content.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            content</span>
+<span class="sd">             (`Union[str, Msg, Generator[Tuple[bool, str], None, None],</span>
+<span class="sd">             None]`):</span>
+<span class="sd">                The content of the message to be spoken out. If a string is</span>
+<span class="sd">                given, a Msg object will be created with the agent&#39;s name, role</span>
+<span class="sd">                as &quot;assistant&quot;, and the given string as the content.</span>
+<span class="sd">                If the content is a Generator, the agent will speak out the</span>
+<span class="sd">                message chunk by chunk.</span>
+<span class="sd">            tool_calls (`Optional[list[ToolUseBlock]]`, defaults to `None`):</span>
+<span class="sd">                The tool calls generated by the agent. This parameter is only</span>
+<span class="sd">                used when the content is a string or a generator (TODO). When</span>
+<span class="sd">                the content is a Msg object, the tool calls should be included</span>
+<span class="sd">                in the content field of the Msg object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_call_pre_speak_hooks</span><span class="p">(</span>
+            <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+            <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Call the hooks in the speak function.&quot;&quot;&quot;</span>
+            <span class="n">current_input</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_pre_speak</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_input</span><span class="p">),</span> <span class="n">stream</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">current_input</span> <span class="o">=</span> <span class="n">hook_result</span>
+            <span class="k">return</span> <span class="n">current_input</span>
+
+        <span class="c1"># Streaming mode</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+            <span class="c1"># The streaming message must share the same id for displaying in</span>
+            <span class="c1"># the agentscope studio.</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">last</span><span class="p">,</span> <span class="n">text_chunk</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">text_chunk</span>  <span class="c1"># type: ignore[misc]</span>
+                <span class="c1"># Call the hooks</span>
+                <span class="n">new_input</span> <span class="o">=</span> <span class="n">_call_pre_speak_hooks</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="p">,</span>
+                    <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">last</span><span class="o">=</span><span class="n">last</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">log_stream_msg</span><span class="p">(</span><span class="n">new_input</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="n">last</span><span class="p">)</span>
+
+            <span class="c1"># Call the post speak hooks</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_post_speak</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+            <span class="k">return</span>
+        <span class="c1"># Non-streaming mode</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="p">[</span><span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">content</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">tool_calls</span><span class="p">:</span>
+                <span class="n">content</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">)</span>
+            <span class="n">msg_to_speak</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg_to_speak</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Msg</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">content</span><span class="o">=</span><span class="n">tool_calls</span><span class="p">,</span>
+                    <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">tool_calls</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+            <span class="n">msg_to_speak</span> <span class="o">=</span> <span class="n">content</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;From version 0.0.5, the speak method only accepts str, Msg &quot;</span>
+                <span class="s2">&quot;object and Generator, got {type(content)} instead.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">msg_to_speak</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The content and tool_calls cannot be `None` at the same &quot;</span>
+                <span class="s2">&quot;time, skip the speak function.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Call the hooks</span>
+        <span class="n">msg_hook</span> <span class="o">=</span> <span class="n">_call_pre_speak_hooks</span><span class="p">(</span><span class="n">msg_to_speak</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">log_msg</span><span class="p">(</span><span class="n">msg_hook</span><span class="p">)</span>
+
+        <span class="c1"># Call the post speak hooks</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_post_speak</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.observe">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.observe">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Observe the input, store it in memory without response to it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (`Union[Msg, Sequence[Msg]]`):</span>
+<span class="sd">                The input message to be recorded in memory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.reset_audience">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.reset_audience">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_audience</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audience</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the audience of this agent, which means if this agent</span>
+<span class="sd">        generates a response, it will be passed to all audiences.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            audience (`Sequence[AgentBase]`):</span>
+<span class="sd">                The audience of this agent, which will be notified when this</span>
+<span class="sd">                agent generates a response message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: we leave the consideration of nested msghub for future.</span>
+        <span class="c1">#  for now we suppose one agent can only be in one msghub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">audience</span> <span class="k">if</span> <span class="n">_</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_audience">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_audience">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_audience</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the audience of this agent.&quot;&quot;&quot;</span>
+        <span class="c1"># TODO: we leave the consideration of nested msghub for future.</span>
+        <span class="c1">#  for now we suppose one agent can only be in one msghub</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.rm_audience">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.rm_audience">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rm_audience</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">audience</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="n">AgentBase</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the given audience from the Sequence&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">audience</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="n">audience</span> <span class="o">=</span> <span class="p">[</span><span class="n">audience</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">audience</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">agent</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Skip removing agent [</span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] from the &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;audience for its inexistence.&quot;</span><span class="p">,</span>
+                <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_broadcast_to_audience</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Broadcast the input to all audiences.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span><span class="p">:</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="nd">@sync_func</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">serialized_fields</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;sys_prompt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span>
+            <span class="s2">&quot;agent_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_id</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">):</span>
+            <span class="n">serialized_fields</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
+                <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">config_name</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">serialized_fields</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agent_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unique id of this agent.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: agent_id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oid</span>
+
+    <span class="nd">@agent_id</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agent_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the unique id of this agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oid</span> <span class="o">=</span> <span class="n">agent_id</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hooks_attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The universal function to register a hook to the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hooks_attr_name (`str`):</span>
+<span class="sd">                The name of the hooks attribute.</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable`):</span>
+<span class="sd">                The hook function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">hooks_attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_hooks_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">hooks_attr_name</span><span class="p">,</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid hooks attribute name: </span><span class="si">{</span><span class="n">hooks_attr_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">hooks</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hooks_attr_name</span><span class="p">)</span>
+        <span class="n">hooks</span><span class="p">[</span><span class="n">hook_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hooks_attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The universal function to remove a hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hooks_attr_name (`str`):</span>
+<span class="sd">                The name of the hooks attribute.</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">hooks_attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_hooks_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">hooks_attr_name</span><span class="p">,</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid hooks attribute name: </span><span class="si">{</span><span class="n">hooks_attr_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">hooks</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hooks_attr_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hook_name</span> <span class="ow">in</span> <span class="n">hooks</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">hook_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Hook [</span><span class="si">{</span><span class="n">hook_name</span><span class="si">}</span><span class="s2">] not found in </span><span class="si">{</span><span class="n">hooks_attr_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clear_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hooks_attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the specified hooks from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hooks_attr_name (`str`):</span>
+<span class="sd">                The name of the hooks attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">hooks_attr_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_hooks_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">hooks_attr_name</span><span class="p">,</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid hooks attribute name: </span><span class="si">{</span><span class="n">hooks_attr_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">hooks</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hooks_attr_name</span><span class="p">)</span>
+        <span class="n">hooks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AgentBase.register_pre_reply_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_pre_reply_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_pre_reply_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a pre-reply hook to the agent, which will be called</span>
+<span class="sd">        before calling the reply function. If the hook returns messages(s),</span>
+<span class="sd">        the original message(s) will be replaced as the input of the reply</span>
+<span class="sd">        function.</span>
+
+<span class="sd">        Arg:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable[[AgentBase, Optional[Union[Msg, list[Msg]]]],</span>
+<span class="sd">                Union[Union[Msg, list[Msg]], None]`):</span>
+<span class="sd">                The hook function which takes the `self` object and the input</span>
+<span class="sd">                message(s) as input. If the hook returns message(s), the</span>
+<span class="sd">                original message(s) will be replaced as the input of the reply</span>
+<span class="sd">                function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_reply&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.remove_pre_reply_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_pre_reply_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_pre_reply_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the pre reply hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_reply&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_pre_reply_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_pre_reply_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_pre_reply_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all pre reply hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_hooks</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_reply&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.register_post_reply_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_post_reply_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_post_reply_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Msg</span><span class="p">],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a post-reply hook to the agent, which will be called</span>
+<span class="sd">        after calling the reply function. If the hook returns a message, the</span>
+<span class="sd">        original message will be replaced as the output of the reply function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable[[AgentBase, Msg], Union[Msg, None]]`):</span>
+<span class="sd">                The hook function which takes the `self` object and the output</span>
+<span class="sd">                message as input. If the hook returns a message, the original</span>
+<span class="sd">                message will be replaced as the output of the reply function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_post_reply&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.remove_post_reply_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_post_reply_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_post_reply_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the post reply hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_post_reply&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_post_reply_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_post_reply_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_post_reply_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all post reply hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_hooks</span><span class="p">(</span><span class="s2">&quot;_hooks_post_reply&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.register_pre_speak_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_pre_speak_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_pre_speak_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a pre-speak hook to the agent, which will be called</span>
+<span class="sd">        during the speak function. If the hook returns a message, the original</span>
+<span class="sd">        message will be replaced as the input of the speak function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable[[AgentBase, Msg, bool, bool], Union[Msg, None]]`):</span>
+<span class="sd">                The hook function which takes the `self` object, the input</span>
+<span class="sd">                message, a streaming flag, and a last flag as input. Within the</span>
+<span class="sd">                speak function, the streaming message will be split into</span>
+<span class="sd">                multiple sub messages with the same id, and the hook will be</span>
+<span class="sd">                called for each sub message. If the hook returns a message, the</span>
+<span class="sd">                original message will be replaced as the input of the speak</span>
+<span class="sd">                function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_speak&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.remove_pre_speak_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_pre_speak_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_pre_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the pre speak hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_speak&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_pre_speak_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_pre_speak_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_pre_speak_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all pre speak hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_hooks</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_speak&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.register_post_speak_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_post_speak_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_post_speak_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a post-speak hook to the agent, which will be called</span>
+<span class="sd">        after calling the speak function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable[[AgentBase], None]`):</span>
+<span class="sd">                The hook function which takes the `self` object as input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_post_speak&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.remove_post_speak_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_post_speak_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_post_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the post speak hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_post_speak&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_post_speak_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_post_speak_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_post_speak_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all post speak hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_hooks</span><span class="p">(</span><span class="s2">&quot;_hooks_post_speak&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.register_pre_observe_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_pre_observe_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_pre_observe_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a pre-observe hook to the agent, which will be called</span>
+<span class="sd">        before calling the observe function. If the hook returns message(s),</span>
+<span class="sd">        the original message(s) will be replaced as the input of the observe</span>
+<span class="sd">        function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable[[AgentBase, Union[Msg, list[Msg]]],</span>
+<span class="sd">                Union[Union[Msg, list[Msg]], None]`):</span>
+<span class="sd">                The hook function which takes the `self` object and the input</span>
+<span class="sd">                message(s) as input. If the hook returns message(s), the</span>
+<span class="sd">                original message(s) will be replaced as the input of the</span>
+<span class="sd">                observe function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_hook</span><span class="p">(</span>
+            <span class="s2">&quot;_hooks_pre_observe&quot;</span><span class="p">,</span>
+            <span class="n">hook_name</span><span class="p">,</span>
+            <span class="n">hook</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.remove_pre_observe_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_pre_observe_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_pre_observe_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the pre observe hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_observe&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_pre_observe_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_pre_observe_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_pre_observe_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all pre observe hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_hooks</span><span class="p">(</span><span class="s2">&quot;_hooks_pre_observe&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.register_post_observe_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.register_post_observe_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_post_observe_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a post-observe hook to the agent, which will be called</span>
+<span class="sd">        after calling the observe function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook. If the name is already registered, the</span>
+<span class="sd">                hook will be overwritten.</span>
+<span class="sd">            hook (`Callable[[AgentBase], None]`):</span>
+<span class="sd">                The hook function which takes the `self` object as input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_hook</span><span class="p">(</span>
+            <span class="s2">&quot;_hooks_post_observe&quot;</span><span class="p">,</span>
+            <span class="n">hook_name</span><span class="p">,</span>
+            <span class="n">hook</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.remove_post_observe_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.remove_post_observe_hook">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_post_observe_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the post observe hook from the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove_hook</span><span class="p">(</span><span class="s2">&quot;_hooks_post_observe&quot;</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_post_observe_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_post_observe_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_post_observe_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all post observe hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clear_hooks</span><span class="p">(</span><span class="s2">&quot;_hooks_post_observe&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AgentBase.clear_all_hooks">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.clear_all_hooks">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_all_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all hooks from the agent.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_pre_reply_hooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_post_reply_hooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_pre_speak_hooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_post_speak_hooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_pre_observe_hooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_post_observe_hooks</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
