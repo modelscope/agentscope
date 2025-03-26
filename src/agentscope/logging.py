@@ -190,6 +190,10 @@ def log_gradio(msg: Msg, uid: str, **kwargs: Any) -> None:
         content = msg.get_text_content() or ""
         flushing = True
         for block in msg.content:
+            if not isinstance(block, dict):
+                # Block can still be a string
+                continue
+
             if block.get("type") == "image":
                 content += f"\n<img src='{block.get('url')}'/>"
             elif block.get("type") == "audio":
