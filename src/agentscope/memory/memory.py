@@ -13,10 +13,9 @@ from typing import Union
 from typing import Callable
 
 from ..message import Msg
-from ..serialization import Serializable
 
 
-class MemoryBase(Serializable, ABC):
+class MemoryBase(ABC):
     """Base class for memory."""
 
     _version: int = 1

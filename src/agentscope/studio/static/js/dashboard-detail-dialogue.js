@@ -224,7 +224,16 @@ function _addAssistantChatRow(index, pMsg) {
 
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
-    chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
+    if (typeof pMsg.content === "string") {
+        chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
+    } else {
+        for (let i = 0; i < pMsg.content.length; i++) {
+            if (typeof pMsg.content[i] === "object" && "text" in pMsg.content[i]) {
+                chatBubble.innerHTML += marked.parse(pMsg.content[i].text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), marked_options);
+            }
+        }
+    }
+
     chatBubble.innerHTML += _renderMultiModalUrls(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     template

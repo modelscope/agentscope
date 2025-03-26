@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """The client for AgentScope Studio."""
+import json
 from threading import Event
 from typing import Optional, Union
 import requests
@@ -157,7 +158,7 @@ class StudioClient:
                 "id": message.id,
                 "name": message.name,
                 "role": message.role,
-                "content": str(message.content),
+                "content": json.dumps(message.content, ensure_ascii=False),
                 "timestamp": message.timestamp,
                 "metadata": message.metadata,
             },
