@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Unit test for service toolkit. """
+import asyncio
 import json
 import os
 import sys
@@ -379,6 +380,16 @@ The following tool functions are available in the format of
         # Check if the failure event was set
         if failure_event.is_set():
             self.fail("The child thread test failed.")
+
+    async def async_run_mcp_tool_test(self) -> None:
+        """Run the async MCP tool test logic."""
+        # Simulate asynchronous operations with asyncio.sleep
+        await asyncio.sleep(0.1)
+        self.run_mcp_tool_test()
+
+    def test_mcp_tool_async(self) -> None:
+        """Test the mcp tool in the main async context."""
+        asyncio.run(self.async_run_mcp_tool_test())
 
     def test_service_toolkit(self) -> None:
         """Test the object of ServiceToolkit."""
