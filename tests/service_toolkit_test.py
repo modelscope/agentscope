@@ -299,6 +299,11 @@ we use the embedding model to embed the query.""",
 
     def run_mcp_tool_test(self, server: str = "echo_mcp_server.py") -> None:
         """Core logic to test the mcp tool with ServiceToolkit."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool` is skipped for Python versions < 3.10",
+            )
+
         service_toolkit = ServiceToolkit()
         server_path = os.path.abspath(
             os.path.join(
