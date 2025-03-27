@@ -361,9 +361,24 @@ The following tool functions are available in the format of
                 "`test_mcp_tool_main_thread` is skipped for Python versions "
                 "< 3.10",
             )
-        test_thread = threading.Thread(target=self.run_mcp_tool_test)
+        # Use a threading event to signal test failure
+        failure_event = threading.Event()
+
+        def thread_target() -> None:
+            try:
+                self.run_mcp_tool_test()
+            except Exception as e:
+                # Set the failure event if an exception occurs
+                failure_event.set()
+                raise e
+
+        test_thread = threading.Thread(target=thread_target)
         test_thread.start()
         test_thread.join()
+
+        # Check if the failure event was set
+        if failure_event.is_set():
+            self.fail("The child thread test failed.")
 
     def test_service_toolkit(self) -> None:
         """Test the object of ServiceToolkit."""
