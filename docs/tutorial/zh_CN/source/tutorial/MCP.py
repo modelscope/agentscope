@@ -61,9 +61,6 @@ remote_configs = {
     },
 }
 
-# 回收toolkit实例
-del toolkit
-
 # %%
 # 把多智能体应用添加到MCP服务器
 # --------------------------

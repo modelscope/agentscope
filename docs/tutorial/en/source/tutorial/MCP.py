@@ -63,9 +63,6 @@ remote_configs = {
     },
 }
 
-# Recycle the toolkit instance
-del toolkit
-
 # %%
 # Adding multi-agent App to MCP server
 # --------------------------
