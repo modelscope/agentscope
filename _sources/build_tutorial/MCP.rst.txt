@@ -216,7 +216,7 @@ This way, you can access and use the multi-agent application through the configu
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.029 seconds)
+   **Total running time of the script:** (0 minutes 0.031 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_MCP.py:

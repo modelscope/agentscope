@@ -335,12 +335,12 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using the 'bc' command, which is a command-line calculator.</thought>
+    Friday: <thought>I need to calculate the product of 1615114134 and 4343434343. I can use the execute_shell_command function to perform this calculation using a shell command.</thought>
     <function>execute_shell_command</function>
-    <command>echo "1615114134*4343434343" | bc</command>
+    <command>echo $((1615114134*4343434343))</command>
     system: 1. Execute function execute_shell_command
        [ARGUMENTS]:
-           {"command": "echo \"1615114134*4343434343\" | bc"}
+           {"command": "echo $((1615114134*4343434343))"}
        [RESULT]: 7015142197480303962
 
     system: Respond with specific tags as outlined below:
@@ -349,13 +349,13 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The multiplication of 1615114134 and 4343434343 has been calculated successfully, and the result is 7015142197480303962. I will now inform the user of this result.</thought>
+    Friday: <thought>The multiplication of 1615114134 and 4343434343 has been calculated, and the result is 7015142197480303962. I can now provide this result to the user.</thought>
     <function>finish</function>
-    <response>The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.</response>
+    <response>The product of 1615114134 and 4343434343 is 7015142197480303962.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The result of multiplying 1615114134 by 4343434343 is 7015142197480303962."}
-       [RESULT]: The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.
+           {"response": "The product of 1615114134 and 4343434343 is 7015142197480303962."}
+       [RESULT]: The product of 1615114134 and 4343434343 is 7015142197480303962.
 
 
 
@@ -478,7 +478,7 @@ Step 5 -> 6 -> 7 in the figure, getting the model response:
     tool_calls: [
         {
             "type": "tool_use",
-            "id": "call_c19e8f5fafa24f88817fb0",
+            "id": "call_1877616219804674844c9b",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami"
@@ -523,7 +523,7 @@ Step 8, creating a new message with the tool calls:
     assistant: [
         {
             "type": "tool_use",
-            "id": "call_c19e8f5fafa24f88817fb0",
+            "id": "call_1877616219804674844c9b",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami"
@@ -588,7 +588,7 @@ again!
             "content": null,
             "tool_calls": [
                 {
-                    "id": "call_c19e8f5fafa24f88817fb0",
+                    "id": "call_1877616219804674844c9b",
                     "type": "function",
                     "function": {
                         "name": "execute_shell_command",
@@ -599,7 +599,7 @@ again!
         },
         {
             "role": "tool",
-            "tool_call_id": "call_c19e8f5fafa24f88817fb0",
+            "tool_call_id": "call_1877616219804674844c9b",
             "content": "runner",
             "name": "execute_shell_command"
         }
@@ -691,7 +691,7 @@ automatically and registered to the `ServiceToolkit`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.223 seconds)
+   **Total running time of the script:** (0 minutes 14.710 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:
