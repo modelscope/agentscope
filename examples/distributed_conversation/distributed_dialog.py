@@ -70,7 +70,7 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     msg = user_agent()
     while not msg.content.endswith("exit"):
         msg = assistant_agent(msg)
-        logger.chat(msg)
+        logger.chat(msg.result())
         msg = user_agent(msg)
 
 

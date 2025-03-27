@@ -410,7 +410,7 @@ def _push_message() -> Response:
     content = data["content"]
     metadata = data["metadata"]
     timestamp = data["timestamp"]
-    url = data["url"]
+    url = data.get("url", None)
 
     # First check if the message exists in the database, if exists, we update
     # it, otherwise, we add it.
@@ -439,7 +439,7 @@ def _push_message() -> Response:
         "run_id": run_id,
         "name": name,
         "role": role,
-        "content": content,
+        "content": json.loads(content),
         "url": url,
         "metadata": metadata,
         "timestamp": timestamp,
@@ -460,17 +460,22 @@ def _get_messages(run_id: str) -> Response:
     # From registered runtime instances
     if len(_RunTable.query.filter_by(run_id=run_id).all()) > 0:
         messages = _MessageTable.query.filter_by(run_id=run_id).all()
-        msgs = [
-            {
-                "name": message.name,
-                "role": message.role,
-                "content": message.content,
-                "url": json.loads(message.url),
-                "metadata": json.loads(message.meta),
-                "timestamp": message.timestamp,
-            }
-            for message in messages
-        ]
+        msgs = []
+        for _ in messages:
+            try:
+                content = json.loads(_.content)
+            except Exception:
+                content = _.content
+            msgs.append(
+                {
+                    "name": _.name,
+                    "role": _.role,
+                    "content": content,
+                    "url": json.loads(_.url),
+                    "metadata": json.loads(_.meta),
+                    "timestamp": _.timestamp,
+                },
+            )
         return jsonify(msgs)
 
     # From the local file
@@ -860,7 +865,7 @@ def _user_input_ready(data: dict) -> None:
     run_id = data["run_id"]
     agent_id = data["agent_id"]
     content = data["content"]
-    url = data["url"]
+    url = data.get("url", None)
 
     _db.session.query(_RunTable).filter_by(run_id=run_id).update(
         {"status": "running"},
