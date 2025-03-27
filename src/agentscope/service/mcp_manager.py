@@ -4,6 +4,7 @@ This module manages MCP (ModelContextProtocal) sessions and tool execution
 within an asynchronous context. It includes functionality to create, manage,
 and close sessions, as well as execute various tools provided by an MCP server.
 """
+import atexit
 import asyncio
 import os
 import shutil
@@ -139,6 +140,7 @@ class MCPSessionHandler:
         # Initialize
         if sync:
             sync_exec(self.initialize)
+            atexit.register(lambda: sync_exec(self.cleanup))
 
     async def initialize(self) -> None:
         """
