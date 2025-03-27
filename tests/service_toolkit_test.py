@@ -16,6 +16,7 @@ from agentscope.service import (
     query_mysql,
 )
 from agentscope.service import ServiceToolkit
+from agentscope.message import ToolUseBlock
 
 
 class ServiceToolkitTest(unittest.TestCase):
@@ -336,6 +337,17 @@ The following tool functions are available in the format of
 	text (string): Input text
 """,  # noqa
         )
+
+        res = service_toolkit.parse_and_call_func(
+            ToolUseBlock(
+                type="tool_use",
+                id="xxx",
+                name="echo",
+                input={"text": "Hi"},
+            ),
+            tools_api_mode=True,
+        )
+        self.assertEqual(res.content[0]["output"][0].text, "Hi")
 
     def test_service_toolkit(self) -> None:
         """Test the object of ServiceToolkit."""
