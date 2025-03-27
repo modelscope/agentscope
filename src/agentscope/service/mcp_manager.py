@@ -5,6 +5,7 @@ within an asynchronous context. It includes functionality to create, manage,
 and close sessions, as well as execute various tools provided by an MCP server.
 """
 import atexit
+import threading
 import asyncio
 import os
 import shutil
@@ -140,7 +141,10 @@ class MCPSessionHandler:
         # Initialize
         if sync:
             sync_exec(self.initialize)
-            atexit.register(lambda: sync_exec(self.cleanup))
+            if threading.current_thread().name == "MainThread":
+                # No need to do it at subthread, which will block the main
+                # thread
+                atexit.register(lambda: sync_exec(self.cleanup))
 
     async def initialize(self) -> None:
         """
