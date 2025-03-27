@@ -93,7 +93,6 @@ class UserAgent(AgentBase):
             #  quicker than logger.chat
             time.sleep(0.5)
             text_content = user_input(timeout=timeout, prefix=self.input_hint)
-            content = [TextBlock(type="text", text=text_content)]
 
             metadata = {}
             if required_keys is not None:
@@ -108,9 +107,13 @@ class UserAgent(AgentBase):
                 url = input("URL (or Enter to skip): ")
                 if url != "":
                     typ = _guess_type_by_extension(url)
-                    content.append(
+                    content = [
+                        TextBlock(type="text", text=text_content),
                         {"type": typ, "url": url},
-                    )
+                    ]
+            else:
+                # Pure string input
+                content = text_content
 
         # Add additional keys
         msg = Msg(
