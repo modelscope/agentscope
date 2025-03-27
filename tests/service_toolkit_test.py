@@ -297,20 +297,20 @@ we use the embedding model to embed the query.""",
             self.json_schema_query_mysql,
         )
 
-    def run_mcp_tool_test(self) -> None:
+    def run_mcp_tool_test(self, server: str = "echo_mcp_server.py") -> None:
         """Core logic to test the mcp tool with ServiceToolkit."""
         service_toolkit = ServiceToolkit()
         server_path = os.path.abspath(
             os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
                 "custom",
-                "echo_mcp_server.py",
+                server,
             ),
         )
         service_toolkit.add_mcp_servers(
             server_configs={
                 "mcpServers": {
-                    "echo": {
+                    server.split(".")[0]: {
                         "command": "python",
                         "args": [
                             server_path,
@@ -353,7 +353,8 @@ The following tool functions are available in the format of
                 "`test_mcp_tool_main_thread` is skipped for Python versions "
                 "< 3.10",
             )
-        self.run_mcp_tool_test()
+        self.run_mcp_tool_test(server="echo_mcp_server.py")
+        self.run_mcp_tool_test(server="as_mcp_server.py")
 
     def test_mcp_tool_child_thread(self) -> None:
         """Test the mcp tool in a child thread."""
@@ -367,7 +368,8 @@ The following tool functions are available in the format of
 
         def thread_target() -> None:
             try:
-                self.run_mcp_tool_test()
+                self.run_mcp_tool_test(server="echo_mcp_server.py")
+                self.run_mcp_tool_test(server="as_mcp_server.py")
             except Exception as e:
                 # Set the failure event if an exception occurs
                 failure_event.set()
@@ -385,7 +387,8 @@ The following tool functions are available in the format of
         """Run the async MCP tool test logic."""
         # Simulate asynchronous operations with asyncio.sleep
         await asyncio.sleep(0.1)
-        self.run_mcp_tool_test()
+        self.run_mcp_tool_test(server="echo_mcp_server.py")
+        self.run_mcp_tool_test(server="as_mcp_server.py")
 
     def test_mcp_tool_async(self) -> None:
         """Test the mcp tool in the main async context."""
