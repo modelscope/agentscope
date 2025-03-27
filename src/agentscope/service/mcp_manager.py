@@ -109,7 +109,7 @@ class MCPSessionHandler:
         self.config: dict[str, Any] = config
         self.session: Optional[mcp.ClientSession] = None
 
-        self._exit_stack = AsyncExitStack()
+        self._exit_stack: AsyncExitStack = AsyncExitStack()
         self._cleanup_lock: asyncio.Lock = asyncio.Lock()
 
         # Initialize
