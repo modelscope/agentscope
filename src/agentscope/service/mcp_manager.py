@@ -9,7 +9,6 @@ import threading
 import asyncio
 import os
 import shutil
-import sys
 import traceback
 from contextlib import AsyncExitStack
 from typing import Any, Optional, Callable
@@ -27,7 +26,8 @@ except ImportError:
 from .service_response import ServiceResponse, ServiceExecStatus
 
 
-COROUTINE_TIMEOUT_SECONDS = 60
+# Apply nest_asyncio to allow nested event loops
+nest_asyncio.apply()
 
 
 def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
@@ -52,33 +52,7 @@ def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
         else:
             raise
 
-    # Apply nest_asyncio in Jupyter environments to allow nested event loops
-    if "ipykernel" in sys.modules:
-        nest_asyncio.apply(loop)
-
-    if loop.is_running():
-        # Attempt to run directly after applying nest_asyncio
-        try:
-            result = loop.run_until_complete(func(*args, **kwargs))
-        except RuntimeError as e:
-            if "This event loop is already running" in str(e):
-                logger.warning(
-                    "Event loop is running, using "
-                    "`run_coroutine_threadsafe`, which will block the "
-                    f"process until the func `{func.__name__}` is finished. "
-                    f"This operation has a timeout of"
-                    f" {COROUTINE_TIMEOUT_SECONDS} seconds.",
-                )
-
-                # Fallback to thread-safe execution with timeout
-                result = asyncio.run_coroutine_threadsafe(
-                    func(*args, **kwargs),
-                    loop,
-                ).result(timeout=COROUTINE_TIMEOUT_SECONDS)
-            else:
-                raise
-    else:
-        result = loop.run_until_complete(func(*args, **kwargs))
+    result = loop.run_until_complete(func(*args, **kwargs))
     return result
 
 
