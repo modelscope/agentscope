@@ -95,7 +95,7 @@ def tell_a_joke(
     topic: str = Field(
         description="The topic of a joke",
     ),
-) -> int:
+) -> str:
     """Generate a joke based on the given topic"""
     agent = DialogAgent(
         name="FunnyBot",
