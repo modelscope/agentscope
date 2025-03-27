@@ -4,6 +4,7 @@ import json
 import os
 import sys
 import unittest
+import threading
 from typing import Literal
 
 import agentscope
@@ -295,13 +296,8 @@ we use the embedding model to embed the query.""",
             self.json_schema_query_mysql,
         )
 
-    def test_mcp_tool(self) -> None:
-        """Test the mcp tool with ServiceToolkit."""
-        if not sys.version_info >= (3, 10):
-            self.skipTest(
-                "`test_mcp_tool` is skipped for Python versions < 3.10",
-            )
-
+    def run_mcp_tool_test(self) -> None:
+        """Core logic to test the mcp tool with ServiceToolkit."""
         service_toolkit = ServiceToolkit()
         server_path = os.path.abspath(
             os.path.join(
@@ -348,6 +344,26 @@ The following tool functions are available in the format of
             tools_api_mode=True,
         )
         self.assertEqual(res.content[0]["output"][0].text, "Hi")
+
+    def test_mcp_tool_main_thread(self) -> None:
+        """Test the mcp tool in the main process."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool_main_thread` is skipped for Python versions "
+                "< 3.10",
+            )
+        self.run_mcp_tool_test()
+
+    def test_mcp_tool_child_thread(self) -> None:
+        """Test the mcp tool in a child thread."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool_main_thread` is skipped for Python versions "
+                "< 3.10",
+            )
+        test_thread = threading.Thread(target=self.run_mcp_tool_test)
+        test_thread.start()
+        test_thread.join()
 
     def test_service_toolkit(self) -> None:
         """Test the object of ServiceToolkit."""
