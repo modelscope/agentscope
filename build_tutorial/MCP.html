@@ -203,9 +203,6 @@ code lines below)</p>
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">}</span>
-
-<span class="c1"># Recycle the toolkit instance</span>
-<span class="k">del</span> <span class="n">toolkit</span>
 </pre></div>
 </div>
 </section>
@@ -236,7 +233,7 @@ code lines below)</p>
     <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The topic of a joke&quot;</span><span class="p">,</span>
     <span class="p">),</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a joke based on the given topic&quot;&quot;&quot;</span>
     <span class="n">agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;FunnyBot&quot;</span><span class="p">,</span>
@@ -254,7 +251,7 @@ Then, run the following command in the terminal to start the server:
 <cite>mcp run my_mcp_server.py -t sse</cite>
 This command starts the MCP server and transmits the results of tool calls via Server-Sent Events (SSE).
 This way, you can access and use the multi-agent application through the configured MCP server.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.028 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.029 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-mcp-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/71be83ced3fac208fc77b6f198a8cb17/MCP.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">MCP.ipynb</span></code></a></p>

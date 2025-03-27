@@ -114,7 +114,7 @@ Output tool configuration instructions to verify settings
 
 If you need to use the HTTP protocol to connect to a remote server (or an MCP server running locally in another process using the SSE protocol), you can refer to the following configuration for the connection.
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-69
+.. GENERATED FROM PYTHON SOURCE LINES 57-66
 
 .. code-block:: Python
 
@@ -127,8 +127,6 @@ If you need to use the HTTP protocol to connect to a remote server (or an MCP se
         },
     }
 
-    # Recycle the toolkit instance
-    del toolkit
 
 
 
@@ -136,14 +134,13 @@ If you need to use the HTTP protocol to connect to a remote server (or an MCP se
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 70-73
+.. GENERATED FROM PYTHON SOURCE LINES 67-70
 
 Adding multi-agent App to MCP server
 --------------------------
 You can easily add multi-agent applications to your own MCP server using the official MCP Python SDK. The following example code demonstrates how to achieve this purpose using AgentScope and the MCP library.
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-92
+.. GENERATED FROM PYTHON SOURCE LINES 70-89
 
 .. code-block:: Python
 
@@ -173,11 +170,11 @@ You can easily add multi-agent applications to your own MCP server using the off
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-94
+.. GENERATED FROM PYTHON SOURCE LINES 90-91
 
 Use the @mcp.tool() decorator to define tools; here we create a joke-telling tool using AgentScope's `DialogAgent`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-114
+.. GENERATED FROM PYTHON SOURCE LINES 91-111
 
 .. code-block:: Python
 
@@ -188,7 +185,7 @@ Use the @mcp.tool() decorator to define tools; here we create a joke-telling too
         topic: str = Field(
             description="The topic of a joke",
         ),
-    ) -> int:
+    ) -> str:
         """Generate a joke based on the given topic"""
         agent = DialogAgent(
             name="FunnyBot",
@@ -208,7 +205,7 @@ Use the @mcp.tool() decorator to define tools; here we create a joke-telling too
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-120
+.. GENERATED FROM PYTHON SOURCE LINES 112-117
 
 Save the above code to the file `my_mcp_server.py`.
 Then, run the following command in the terminal to start the server:
@@ -219,7 +216,7 @@ This way, you can access and use the multi-agent application through the configu
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.028 seconds)
+   **Total running time of the script:** (0 minutes 0.029 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_MCP.py:

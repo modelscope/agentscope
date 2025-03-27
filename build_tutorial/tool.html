@@ -346,12 +346,12 @@ tools API, please refer to <span class="xref std std-ref">tools-api</span>.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;To calculate the multiplication of 1615114134 and 4343434343, I can use a shell command to perform the calculation.&lt;/thought&gt;
+Friday: &lt;thought&gt;I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using the &#39;bc&#39; command, which is a command-line calculator.&lt;/thought&gt;
 &lt;function&gt;execute_shell_command&lt;/function&gt;
-&lt;command&gt;expr 1615114134 \* 4343434343&lt;/command&gt;
+&lt;command&gt;echo &quot;1615114134*4343434343&quot; | bc&lt;/command&gt;
 system: 1. Execute function execute_shell_command
    [ARGUMENTS]:
-       {&quot;command&quot;: &quot;expr 1615114134 \\* 4343434343&quot;}
+       {&quot;command&quot;: &quot;echo \&quot;1615114134*4343434343\&quot; | bc&quot;}
    [RESULT]: 7015142197480303962
 
 system: Respond with specific tags as outlined below:
@@ -360,7 +360,7 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been calculated successfully. The result is 7015142197480303962. I can now inform the user of this result.&lt;/thought&gt;
+Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 has been calculated successfully, and the result is 7015142197480303962. I will now inform the user of this result.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
 &lt;response&gt;The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.&lt;/response&gt;
 system: 1. Execute function finish
@@ -443,7 +443,7 @@ the related functionality is under development.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>tool_calls: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_721045433a9744b0b05915&quot;,
+        &quot;id&quot;: &quot;call_c19e8f5fafa24f88817fb0&quot;,
         &quot;name&quot;: &quot;execute_shell_command&quot;,
         &quot;input&quot;: {
             &quot;command&quot;: &quot;whoami&quot;
@@ -471,7 +471,7 @@ the related functionality is under development.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>assistant: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_721045433a9744b0b05915&quot;,
+        &quot;id&quot;: &quot;call_c19e8f5fafa24f88817fb0&quot;,
         &quot;name&quot;: &quot;execute_shell_command&quot;,
         &quot;input&quot;: {
             &quot;command&quot;: &quot;whoami&quot;
@@ -504,7 +504,7 @@ again!</p>
         &quot;content&quot;: null,
         &quot;tool_calls&quot;: [
             {
-                &quot;id&quot;: &quot;call_721045433a9744b0b05915&quot;,
+                &quot;id&quot;: &quot;call_c19e8f5fafa24f88817fb0&quot;,
                 &quot;type&quot;: &quot;function&quot;,
                 &quot;function&quot;: {
                     &quot;name&quot;: &quot;execute_shell_command&quot;,
@@ -515,7 +515,7 @@ again!</p>
     },
     {
         &quot;role&quot;: &quot;tool&quot;,
-        &quot;tool_call_id&quot;: &quot;call_721045433a9744b0b05915&quot;,
+        &quot;tool_call_id&quot;: &quot;call_c19e8f5fafa24f88817fb0&quot;,
         &quot;content&quot;: &quot;runner&quot;,
         &quot;name&quot;: &quot;execute_shell_command&quot;
     }
@@ -572,7 +572,7 @@ automatically and registered to the <cite>ServiceToolkit</cite>.</p>
     <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 18.187 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.223 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>
