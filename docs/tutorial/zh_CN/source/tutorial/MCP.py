@@ -61,9 +61,6 @@ remote_configs = {
     },
 }
 
-# 回收toolkit实例
-del toolkit
-
 # %%
 # 把多智能体应用添加到MCP服务器
 # --------------------------
@@ -96,7 +93,7 @@ def tell_a_joke(
     topic: str = Field(
         description="The topic of a joke",
     ),
-) -> int:
+) -> str:
     """Generate a joke based on the given topic"""
     agent = DialogAgent(
         name="FunnyBot",

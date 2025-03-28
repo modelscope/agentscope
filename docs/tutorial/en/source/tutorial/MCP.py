@@ -63,9 +63,6 @@ remote_configs = {
     },
 }
 
-# Recycle the toolkit instance
-del toolkit
-
 # %%
 # Adding multi-agent App to MCP server
 # --------------------------
@@ -98,7 +95,7 @@ def tell_a_joke(
     topic: str = Field(
         description="The topic of a joke",
     ),
-) -> int:
+) -> str:
     """Generate a joke based on the given topic"""
     agent = DialogAgent(
         name="FunnyBot",

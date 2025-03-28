@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+"""
+FastMCP AS Nested Server
+"""
+import os
+from pydantic import Field
+from mcp.server.fastmcp import FastMCP
+
+import agentscope
+
+mcp = FastMCP("Nested Server")
+
+
+@mcp.tool()
+def echo(
+    text: str = Field(
+        description="Input text",
+    ),
+) -> str:
+    """Echo the input text"""
+
+    toolkit = agentscope.service.ServiceToolkit()
+
+    server_path = os.path.abspath(
+        os.path.join(
+            os.path.abspath(os.path.dirname(__file__)),
+            "echo_mcp_server.py",
+        ),
+    )
+
+    toolkit.add_mcp_servers(
+        server_configs={
+            "mcpServers": {
+                "my_echo_server": {
+                    "command": "python",
+                    "args": [
+                        server_path,
+                    ],
+                },
+            },
+        },
+    )
+
+    return text
+
+
+if __name__ == "__main__":
+    mcp.run()

@@ -116,14 +116,15 @@ parser1 = MarkdownJsonDictParser(
         "speak": "你要说的话",
         "decision": "你的最终决定，true/false",
     },
+    keys_to_metadata="decision",
     required_keys=["thought", "speak", "decision"],
 )
 
 charles.set_parser(parser1)
 msg1 = charles(Msg("Bob", "在下雨天外出是个好主意吗？", "user"))
 
-print(f"内容字段: {msg1.content}")
-print(f"内容字段的类型: {type(msg1.content)}")
+print(f"metadata字段: {msg1.metadata}")
+print(f"metadata字段的类型: {type(msg1.metadata)}")
 
 # %%
 # 然后，我们要求智能体从 1 到 10 中选择一个数字。
@@ -135,12 +136,15 @@ parser2 = MarkdownJsonDictParser(
         "speak": "你要说的话",
         "number": "你选择的数字",
     },
+    keys_to_metadata="number",
+    keys_to_content="speak",
 )
 
 charles.set_parser(parser2)
 msg2 = charles(Msg("Bob", "从 1 到 10 中选择一个数字。", "user"))
 
-print(f"响应消息的内容: {msg2.content}")
+print(f"响应消息的content字段: {msg2.content}")
+print(f"响应消息的metadata字段: {msg2.metadata}")
 
 # %%
 # 下一个问题是如何对结构化输出进行后处理。

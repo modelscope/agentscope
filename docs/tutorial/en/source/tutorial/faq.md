@@ -35,6 +35,10 @@ _**Q**: How to use agents in AgentScope?_
 <br/>
 **A**: You can use the built-in agents in AgentScope, or develop your own agents. Refer to Section [Built-in Agents](builtin-agent) for more details.
 
+_**Q** How to forward the (streaming) output of agents to my own frontend or application?_
+<br/>
+**A** Yes! You can use the hook of the `Speak` function in the agent to achieve this. For details, refer to Section [Hook Functions](hook).
+
 ## About GUI
 
 _**Q**: What GUI are provided in AgentScope?_

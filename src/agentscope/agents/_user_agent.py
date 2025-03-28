@@ -7,7 +7,8 @@ from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.studio._client import _studio_client
-from agentscope.message import Msg
+from agentscope.message import Msg, TextBlock
+from agentscope.utils.common import _guess_type_by_extension
 from agentscope.web.gradio.utils import user_input
 
 
@@ -86,35 +87,40 @@ class UserAgent(AgentBase):
             )
 
             content = raw_input["content"]
-            url = raw_input["url"]
-            kwargs = {}
+            metadata = None
         else:
             # TODO: To avoid order confusion, because `input` print much
             #  quicker than logger.chat
             time.sleep(0.5)
-            content = user_input(timeout=timeout, prefix=self.input_hint)
-            kwargs = {}
+            text_content = user_input(timeout=timeout, prefix=self.input_hint)
+
+            metadata = {}
             if required_keys is not None:
                 if isinstance(required_keys, str):
                     required_keys = [required_keys]
 
                 for key in required_keys:
-                    kwargs[key] = input(f"{key}: ")
+                    metadata[key] = input(f"{key}: ")
 
             # Input url of file, image, video, audio or website
-            url = None
             if self.require_url:
                 url = input("URL (or Enter to skip): ")
-                if url == "":
-                    url = None
+                if url != "":
+                    typ = _guess_type_by_extension(url)
+                    content = [
+                        TextBlock(type="text", text=text_content),
+                        {"type": typ, "url": url},
+                    ]
+            else:
+                # Pure string input
+                content = text_content
 
         # Add additional keys
         msg = Msg(
             name=self.name,
             role="user",
             content=content,
-            url=url,
-            **kwargs,  # type: ignore[arg-type]
+            metadata=metadata,
         )
 
         self.speak(msg)
