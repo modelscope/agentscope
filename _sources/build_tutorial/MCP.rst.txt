@@ -73,12 +73,16 @@ AgentScope, as an MCP client, supports starting a local MCP server via STDIO pro
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-47
+.. GENERATED FROM PYTHON SOURCE LINES 45-51
 
 Initialize ServiceToolkit and add MCP server configuration (uncomment the
 code lines below)
+Note: If you need to use the STDIO MCP Server, please ensure that
+the object won't be used across threads. In one thread, the standard
+input/output streams might be reclaimed, leading to potential conflicts
+or unexpected behavior in other threads.
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-51
+.. GENERATED FROM PYTHON SOURCE LINES 51-55
 
 .. code-block:: Python
 
@@ -93,11 +97,11 @@ code lines below)
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-53
+.. GENERATED FROM PYTHON SOURCE LINES 56-57
 
 Output tool configuration instructions to verify settings
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-55
+.. GENERATED FROM PYTHON SOURCE LINES 57-59
 
 .. code-block:: Python
 
@@ -110,11 +114,11 @@ Output tool configuration instructions to verify settings
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-57
+.. GENERATED FROM PYTHON SOURCE LINES 60-61
 
 If you need to use the HTTP protocol to connect to a remote server (or an MCP server running locally in another process using the SSE protocol), you can refer to the following configuration for the connection.
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-66
+.. GENERATED FROM PYTHON SOURCE LINES 61-70
 
 .. code-block:: Python
 
@@ -134,13 +138,13 @@ If you need to use the HTTP protocol to connect to a remote server (or an MCP se
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-70
+.. GENERATED FROM PYTHON SOURCE LINES 71-74
 
 Adding multi-agent App to MCP server
 --------------------------
 You can easily add multi-agent applications to your own MCP server using the official MCP Python SDK. The following example code demonstrates how to achieve this purpose using AgentScope and the MCP library.
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-89
+.. GENERATED FROM PYTHON SOURCE LINES 74-93
 
 .. code-block:: Python
 
@@ -170,11 +174,11 @@ You can easily add multi-agent applications to your own MCP server using the off
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-91
+.. GENERATED FROM PYTHON SOURCE LINES 94-95
 
 Use the @mcp.tool() decorator to define tools; here we create a joke-telling tool using AgentScope's `DialogAgent`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-111
+.. GENERATED FROM PYTHON SOURCE LINES 95-115
 
 .. code-block:: Python
 
@@ -205,7 +209,7 @@ Use the @mcp.tool() decorator to define tools; here we create a joke-telling too
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-117
+.. GENERATED FROM PYTHON SOURCE LINES 116-121
 
 Save the above code to the file `my_mcp_server.py`.
 Then, run the following command in the terminal to start the server:
@@ -213,10 +217,31 @@ Then, run the following command in the terminal to start the server:
 This command starts the MCP server and transmits the results of tool calls via Server-Sent Events (SSE).
 This way, you can access and use the multi-agent application through the configured MCP server.
 
+.. GENERATED FROM PYTHON SOURCE LINES 123-126
+
+If you run the above code in a subprocess (e.g., launch as an STDIO
+server), please add the following statement in the top to ensure that the
+server can be recycled after the subprocess ends.
+
+.. GENERATED FROM PYTHON SOURCE LINES 126-130
+
+.. code-block:: Python
+
+
+    import nest_asyncio
+
+    nest_asyncio.apply()
+
+
+
+
+
+
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.031 seconds)
+   **Total running time of the script:** (0 minutes 0.028 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_MCP.py:

@@ -186,7 +186,11 @@ This standard not only facilitates API development by service providers but also
 </pre></div>
 </div>
 <p>Initialize ServiceToolkit and add MCP server configuration (uncomment the
-code lines below)</p>
+code lines below)
+Note: If you need to use the STDIO MCP Server, please ensure that
+the object won’t be used across threads. In one thread, the standard
+input/output streams might be reclaimed, leading to potential conflicts
+or unexpected behavior in other threads.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
 <span class="c1"># toolkit.add_mcp_servers(server_configs=local_configs)</span>
 </pre></div>
@@ -251,7 +255,15 @@ Then, run the following command in the terminal to start the server:
 <cite>mcp run my_mcp_server.py -t sse</cite>
 This command starts the MCP server and transmits the results of tool calls via Server-Sent Events (SSE).
 This way, you can access and use the multi-agent application through the configured MCP server.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.031 seconds)</p>
+<p>If you run the above code in a subprocess (e.g., launch as an STDIO
+server), please add the following statement in the top to ensure that the
+server can be recycled after the subprocess ends.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">nest_asyncio</span>
+
+<span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.028 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-mcp-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/71be83ced3fac208fc77b6f198a8cb17/MCP.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">MCP.ipynb</span></code></a></p>

@@ -44,6 +44,10 @@ local_configs = {
 # %%
 # Initialize ServiceToolkit and add MCP server configuration (uncomment the
 # code lines below)
+# Note: If you need to use the STDIO MCP Server, please ensure that
+# the object won't be used across threads. In one thread, the standard
+# input/output streams might be reclaimed, leading to potential conflicts
+# or unexpected behavior in other threads.
 
 toolkit = ServiceToolkit()
 # toolkit.add_mcp_servers(server_configs=local_configs)
@@ -114,3 +118,12 @@ def tell_a_joke(
 # `mcp run my_mcp_server.py -t sse`
 # This command starts the MCP server and transmits the results of tool calls via Server-Sent Events (SSE).
 # This way, you can access and use the multi-agent application through the configured MCP server.
+
+# %%
+# If you run the above code in a subprocess (e.g., launch as an STDIO
+# server), please add the following statement in the top to ensure that the
+# server can be recycled after the subprocess ends.
+
+import nest_asyncio
+
+nest_asyncio.apply()

@@ -169,7 +169,12 @@
 
 
 <span class="c1"># Apply nest_asyncio to allow nested event loops</span>
-<span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+<span class="c1"># This step enables running event loops multiple times within the same thread</span>
+<span class="c1"># Note: There is a known issue with uvloop, referenced here:</span>
+<span class="c1"># https://github.com/MagicStack/uvloop/issues/405</span>
+<span class="c1"># Users might encounter conflicts with uvloop when using nested event loops</span>
+<span class="c1"># with the following lines.</span>
+<span class="c1"># nest_asyncio.apply()</span>
 
 
 <div class="viewcode-block" id="sync_exec">
@@ -196,7 +201,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;event loop is already running&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="c1"># Apply nest_asyncio to allow nested event loops</span>
+            <span class="c1"># To support jupyter notebook, etc.</span>
+            <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
 
