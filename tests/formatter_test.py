@@ -392,14 +392,18 @@ class FormatTest(unittest.TestCase):
         ground_truth = [
             {
                 "role": "system",
-                "content": "You are a helpful assistant",
+                "content": [{"text": "You are a helpful assistant"}],
             },
             {
-                "content": (
-                    "## Conversation History\n"
-                    "user: What is the weather today?\n"
-                    "assistant: It is sunny today"
-                ),
+                "content": [
+                    {
+                        "text": (
+                            "## Conversation History\n"
+                            "user: What is the weather today?\n"
+                            "assistant: It is sunny today"
+                        ),
+                    },
+                ],
                 "role": "user",
             },
         ]
