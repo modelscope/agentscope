@@ -228,13 +228,18 @@ function _addAssistantChatRow(index, pMsg) {
         chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
     } else {
         for (let i = 0; i < pMsg.content.length; i++) {
-            if (typeof pMsg.content[i] === "object" && "text" in pMsg.content[i]) {
-                chatBubble.innerHTML += marked.parse(pMsg.content[i].text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), marked_options);
+            if (typeof pMsg.content[i] === "object" ) {
+                if ("text" in pMsg.content[i]) {
+                    chatBubble.innerHTML += marked.parse(pMsg.content[i].text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), marked_options);
+                } else if ("url" in pMsg.content[i]) {
+                    chatBubble.innerHTML += _renderMultiModalUrls(pMsg.content[i].url);
+                } else if ("type" in pMsg.content[i] && pMsg.content[i].type === "tool_use") {
+                    chatBubble.innerHTML += marked.parse("```json\n" + JSON.stringify(pMsg.content[i], null, 4) +"\n```", marked_options)
+                }
             }
         }
     }
 
-    chatBubble.innerHTML += _renderMultiModalUrls(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     template
         .querySelector(".chat-row")
@@ -246,7 +251,24 @@ function _addSystemChatRow(index, pMsg) {
     const template = chatRowSystemTemplate.cloneNode(true);
     template.querySelector(".chat-name").textContent = pMsg.name;
     let chatBubble = template.querySelector(".chat-bubble");
-    chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
+
+    if (typeof pMsg.content === "string") {
+        chatBubble.innerHTML += marked.parse(pMsg.content, marked_options);
+    } else {
+        for (let i = 0; i < pMsg.content.length; i++) {
+            if (typeof pMsg.content[i] === "object" ) {
+                if ("text" in pMsg.content[i]) {
+                    chatBubble.innerHTML += marked.parse(pMsg.content[i].text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), marked_options);
+                } else if ("url" in pMsg.content[i]) {
+                    chatBubble.innerHTML += _renderMultiModalUrls(pMsg.content[i].url);
+                } else if ("type" in pMsg.content[i] && pMsg.content[i].type === "tool_result") {
+                    // Tool use
+                    chatBubble.innerHTML += marked.parse("```json\n" + JSON.stringify(pMsg.content[i], null, 4) +"\n```", marked_options)
+                }
+            }
+        }
+    }
+
     chatBubble.innerHTML += _renderMultiModalUrls(pMsg.url);
     template.querySelector(".chat-row").setAttribute("data-index", index);
     template
