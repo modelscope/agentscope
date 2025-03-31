@@ -102,9 +102,8 @@ class ReActAgentV2(AgentBase):
         """The reasoning process of the agent.
 
         Returns:
-            `Union[ToolUseBlock, None]`:
-                Return `None` if no tool is used, otherwise return the tool use
-                block.
+            `Tuple[Union[list[ToolUseBlock], None], Msg]`:
+                Return the tool calls (`None` if empty) and reasoning message.
         """
         prompt = self.model.format(
             Msg(
