@@ -27,7 +27,12 @@ from .service_response import ServiceResponse, ServiceExecStatus
 
 
 # Apply nest_asyncio to allow nested event loops
-nest_asyncio.apply()
+# This step enables running event loops multiple times within the same thread
+# Note: There is a known issue with uvloop, referenced here:
+# https://github.com/MagicStack/uvloop/issues/405
+# Users might encounter conflicts with uvloop when using nested event loops
+# with the following lines.
+# nest_asyncio.apply()
 
 
 def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
@@ -52,7 +57,16 @@ def sync_exec(func: Callable, *args: Any, **kwargs: Any) -> Any:
         else:
             raise
 
-    result = loop.run_until_complete(func(*args, **kwargs))
+    try:
+        result = loop.run_until_complete(func(*args, **kwargs))
+    except RuntimeError as e:
+        if "event loop is already running" in str(e):
+            # Apply nest_asyncio to allow nested event loops
+            # To support jupyter notebook, etc.
+            nest_asyncio.apply()
+            result = loop.run_until_complete(func(*args, **kwargs))
+        else:
+            raise
     return result
 
 
