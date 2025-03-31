@@ -533,7 +533,7 @@ class FormatTest(unittest.TestCase):
             },
         ]
 
-        prompt = model.format(*multimodal_input)
+        prompt = model.format(*multimodal_input, multi_agent_mode=False)
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
@@ -611,7 +611,7 @@ class FormatTest(unittest.TestCase):
             },
         ]
 
-        prompt = model.format(*multimodal_input)
+        prompt = model.format(*multimodal_input, multi_agent_mode=False)
         self.assertListEqual(prompt, ground_truth)
 
         # wrong format
