@@ -1,0 +1,18 @@
+agentscope.service.browser package
+==================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.browser.web_browser
+
+Module contents
+---------------
+
+.. automodule:: agentscope.service.browser
+   :members:
+   :undoc-members:
+   :show-inheritance:
