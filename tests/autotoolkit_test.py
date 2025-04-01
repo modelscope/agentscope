@@ -43,7 +43,8 @@ class AutoServiceToolkitTest(unittest.TestCase):
         )
         model_config_name = "dummy_test_config"
         agentscope.register_model_wrapper_class(
-            DummyModelForAutoServiceToolkit, exist_ok=True
+            DummyModelForAutoServiceToolkit,
+            exist_ok=True,
         )
         agentscope.init(
             model_configs=[
