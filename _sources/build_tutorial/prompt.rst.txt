@@ -106,15 +106,27 @@ Chat API as an example:
     [
         {
             "role": "system",
-            "content": "You're a helpful assistant."
+            "content": [
+                {
+                    "text": "You're a helpful assistant."
+                }
+            ]
         },
         {
             "role": "assistant",
-            "content": "Hi!"
+            "content": [
+                {
+                    "text": "Hi!"
+                }
+            ]
         },
         {
             "role": "user",
-            "content": "Nice to meet you!"
+            "content": [
+                {
+                    "text": "Nice to meet you!"
+                }
+            ]
         }
     ]
 
@@ -180,11 +192,19 @@ setting `multi_agent_mode=True`.
     [
         {
             "role": "system",
-            "content": "You're a helpful assistant named Alice."
+            "content": [
+                {
+                    "text": "You're a helpful assistant named Alice."
+                }
+            ]
         },
         {
             "role": "user",
-            "content": "## Conversation History\nAlice: Hi!\nBob: Nice to meet you!"
+            "content": [
+                {
+                    "text": "## Conversation History\nAlice: Hi!\nBob: Nice to meet you!"
+                }
+            ]
         }
     ]
 
@@ -777,7 +797,7 @@ Anthropic vision models.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.237 seconds)
+   **Total running time of the script:** (0 minutes 1.754 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_prompt.py:

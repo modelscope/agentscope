@@ -225,15 +225,27 @@ Chat API as an example:</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
     {
         &quot;role&quot;: &quot;system&quot;,
-        &quot;content&quot;: &quot;You&#39;re a helpful assistant.&quot;
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant.&quot;
+            }
+        ]
     },
     {
         &quot;role&quot;: &quot;assistant&quot;,
-        &quot;content&quot;: &quot;Hi!&quot;
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;Hi!&quot;
+            }
+        ]
     },
     {
         &quot;role&quot;: &quot;user&quot;,
-        &quot;content&quot;: &quot;Nice to meet you!&quot;
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;Nice to meet you!&quot;
+            }
+        ]
     }
 ]
 </pre></div>
@@ -265,11 +277,19 @@ setting <cite>multi_agent_mode=True</cite>.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[
     {
         &quot;role&quot;: &quot;system&quot;,
-        &quot;content&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;You&#39;re a helpful assistant named Alice.&quot;
+            }
+        ]
     },
     {
         &quot;role&quot;: &quot;user&quot;,
-        &quot;content&quot;: &quot;## Conversation History\nAlice: Hi!\nBob: Nice to meet you!&quot;
+        &quot;content&quot;: [
+            {
+                &quot;text&quot;: &quot;## Conversation History\nAlice: Hi!\nBob: Nice to meet you!&quot;
+            }
+        ]
     }
 ]
 </pre></div>
@@ -689,7 +709,7 @@ Anthropic vision models.</p>
 ]
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.237 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.754 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-prompt-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/65eb3332c49c4dfa3245de4159147f79/prompt.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">prompt.ipynb</span></code></a></p>

@@ -142,7 +142,7 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The ReAct Agent V2, which use the tools API of the LLM service providers</span>
 <span class="sd">rather than assembling the prompt manually.&quot;&quot;&quot;</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
@@ -170,6 +170,7 @@
         <span class="n">sys_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;You&#39;re a helpful assistant named </span><span class="si">{name}</span><span class="s2">.&quot;</span><span class="p">,</span>
         <span class="n">max_iters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">exit_reply_without_tool_calls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initial the ReAct agent with the given name, model config name and</span>
 <span class="sd">        tools.</span>
@@ -190,6 +191,10 @@
 <span class="sd">                Whether to print the detailed information during reasoning and</span>
 <span class="sd">                acting steps. If `False`, only the content in speak field will</span>
 <span class="sd">                be print out.</span>
+<span class="sd">            exit_reply_without_tool_calls (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether to exit the reply function when no tool calls are</span>
+<span class="sd">                generated. If `True`, the agent is allowed to generate a</span>
+<span class="sd">                response without calling the `generate_response` function.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
@@ -211,6 +216,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span> <span class="o">=</span> <span class="n">max_iters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exit_reply_without_tool_calls</span> <span class="o">=</span> <span class="n">exit_reply_without_tool_calls</span>
 
 <div class="viewcode-block" id="ReActAgentV2.reply">
 <a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2.reply">[docs]</a>
@@ -220,10 +226,14 @@
 
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">):</span>
             <span class="c1"># Reasoning to generate tool calls</span>
-            <span class="n">tool_calls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning</span><span class="p">()</span>
+            <span class="c1"># Note the msg_reasoning is already added to the memory</span>
+            <span class="n">tool_calls</span><span class="p">,</span> <span class="n">msg_reasoning</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="n">tool_calls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit_reply_without_tool_calls</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">msg_reasoning</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
 
             <span class="c1"># Acting based on the tool calls</span>
             <span class="n">msg_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_acting</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">)</span>
@@ -234,13 +244,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summarizing</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_reasoning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ToolUseBlock</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reasoning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ToolUseBlock</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">Msg</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The reasoning process of the agent.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            `Union[ToolUseBlock, None]`:</span>
-<span class="sd">                Return `None` if no tool is used, otherwise return the tool use</span>
-<span class="sd">                block.</span>
+<span class="sd">            `Tuple[Union[list[ToolUseBlock], None], Msg]`:</span>
+<span class="sd">                Return the tool calls (`None` if empty) and reasoning message.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">Msg</span><span class="p">(</span>
@@ -249,6 +258,8 @@
                 <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">(),</span>
+            <span class="c1"># TODO: Support multi-agent mode in the future</span>
+            <span class="n">multi_agent_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">raw_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">)</span>
@@ -264,15 +275,16 @@
             <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">raw_response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">raw_response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
             <span class="n">content</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">raw_response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-            <span class="n">Msg</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">content</span><span class="p">,</span>
-                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="n">msg_reasoning</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">content</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">raw_response</span><span class="o">.</span><span class="n">tool_calls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_reasoning</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">raw_response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">,</span> <span class="n">msg_reasoning</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_acting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_calls</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ToolUseBlock</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The acting process of the agent, which takes a tool use block as</span>
