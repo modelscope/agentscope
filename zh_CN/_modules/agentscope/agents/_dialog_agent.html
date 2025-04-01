@@ -1,0 +1,272 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.agents._dialog_agent &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+      <script src="../../../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../../../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">agentscope.agents._dialog_agent</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>agentscope.agents._dialog_agent 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;A general dialog agent.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+
+
+<div class="viewcode-block" id="DialogAgent">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.DialogAgent">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DialogAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple agent used to perform a dialogue. Your can set its role by</span>
+<span class="sd">    `sys_prompt`.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">use_memory</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the dialog agent.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            name (`str`):</span>
+<span class="sd">                The name of the agent.</span>
+<span class="sd">            sys_prompt (`str`):</span>
+<span class="sd">                The system prompt of the agent, which can be passed by args</span>
+<span class="sd">                or hard-coded in the agent.</span>
+<span class="sd">            model_config_name (`str`):</span>
+<span class="sd">                The name of the model config, which is used to load model from</span>
+<span class="sd">                configuration.</span>
+<span class="sd">            use_memory (`bool`, defaults to `True`):</span>
+<span class="sd">                Whether the agent has memory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">sys_prompt</span><span class="o">=</span><span class="n">sys_prompt</span><span class="p">,</span>
+            <span class="n">model_config_name</span><span class="o">=</span><span class="n">model_config_name</span><span class="p">,</span>
+            <span class="n">use_memory</span><span class="o">=</span><span class="n">use_memory</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unused keyword arguments are provided: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="DialogAgent.reply">
+<a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.DialogAgent.reply">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reply function of the agent. Processes the input data,</span>
+<span class="sd">        generates a prompt using the current dialogue memory and system</span>
+<span class="sd">        prompt, and invokes the language model to produce a response. The</span>
+<span class="sd">        response is then formatted and added to the dialogue memory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (`Optional[Union[Msg, Sequence[Msg]]]`, defaults to `None`):</span>
+<span class="sd">                The input message(s) to the agent, which also can be omitted if</span>
+<span class="sd">                the agent doesn&#39;t need any input.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Msg`: The output message generated by the agent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># record the input if needed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># prepare prompt</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">Msg</span><span class="p">(</span>
+                <span class="s2">&quot;system&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys_prompt</span>
+            <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="n">x</span><span class="p">,</span>  <span class="c1"># type: ignore[arg-type]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># call llm and generate response</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="c1"># Print/speak the message in this agent&#39;s voice</span>
+        <span class="c1"># Support both streaming and non-streaming responses by &quot;or&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">stream</span> <span class="ow">or</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Record the message in memory</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">msg</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

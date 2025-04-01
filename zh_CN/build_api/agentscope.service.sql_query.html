@@ -1,0 +1,223 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.sql_query package &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="agentscope.service.sql_query.mongodb module" href="agentscope.service.sql_query.mongodb.html" />
+    <link rel="prev" title="agentscope.service.retrieval.similarity module" href="agentscope.service.retrieval.similarity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.service.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.browser.html">agentscope.service.browser package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.execute_code.html">agentscope.service.execute_code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.file.html">agentscope.service.file package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.multi_modality.html">agentscope.service.multi_modality package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.retrieval.html">agentscope.service.retrieval package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">agentscope.service.sql_query package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-agentscope.service.sql_query">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.text_processing.html">agentscope.service.text_processing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.web.html">agentscope.service.web package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#module-agentscope.service">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.html">agentscope.service package</a></li>
+      <li class="breadcrumb-item active">agentscope.service.sql_query package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_api/agentscope.service.sql_query.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agentscope-service-sql-query-package">
+<h1>agentscope.service.sql_query package<a class="headerlink" href="#agentscope-service-sql-query-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.sql_query.mongodb.html">agentscope.service.sql_query.mongodb module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.sql_query.mongodb.html#agentscope.service.sql_query.mongodb.query_mongodb"><code class="docutils literal notranslate"><span class="pre">query_mongodb()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.sql_query.mysql.html">agentscope.service.sql_query.mysql module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.sql_query.mysql.html#agentscope.service.sql_query.mysql.query_mysql"><code class="docutils literal notranslate"><span class="pre">query_mysql()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.service.sql_query.sqlite.html">agentscope.service.sql_query.sqlite module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.sql_query.sqlite.html#agentscope.service.sql_query.sqlite.query_sqlite"><code class="docutils literal notranslate"><span class="pre">query_sqlite()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-agentscope.service.sql_query">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-agentscope.service.sql_query" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.service.retrieval.similarity.html" class="btn btn-neutral float-left" title="agentscope.service.retrieval.similarity module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.service.sql_query.mongodb.html" class="btn btn-neutral float-right" title="agentscope.service.sql_query.mongodb module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
