@@ -61,7 +61,7 @@ To ensure AgentScope is installed normally. You can execute the following code:
 
  .. code-block:: none
 
-    0.1.3dev
+    0.1.3
 
 
 
@@ -105,7 +105,7 @@ For Mac and Linux users:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.960 seconds)
+   **Total running time of the script:** (0 minutes 2.321 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_quickstart.py:

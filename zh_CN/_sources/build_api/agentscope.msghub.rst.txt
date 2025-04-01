@@ -1,7 +1,0 @@
-agentscope.msghub module
-========================
-
-.. automodule:: agentscope.msghub
-   :members:
-   :undoc-members:
-   :show-inheritance:
