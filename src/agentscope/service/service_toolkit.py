@@ -229,7 +229,10 @@ class ServiceToolkit:
                 json_schema=json_schema,
             )
 
-    def add_mcp_servers(self, server_configs: Dict) -> None:
+    def add_mcp_servers(
+        self,
+        server_configs: Dict,
+    ) -> tuple[list[MCPSessionHandler], list[dict]]:
         """
         Add mcp servers to the toolkit.
 
@@ -265,11 +268,14 @@ class ServiceToolkit:
                             }
                         }
                     }
+            Return:
+                `list[MCPSessionHandler]`: A list of mcp session handlers.`
         """
         new_servers = [
             MCPSessionHandler(name, config)
             for name, config in server_configs["mcpServers"].items()
         ]
+        new_functions = []
 
         # register the service function
         for sever in new_servers:
@@ -312,6 +318,9 @@ class ServiceToolkit:
                         ),
                         json_schema=json_schema,
                     )
+                    new_functions.append(json_schema)
+
+        return new_servers, new_functions
 
     @property
     def json_schemas(self) -> dict:

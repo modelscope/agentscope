@@ -61,6 +61,7 @@ from .web.wikipedia import (
 )
 
 from .browser.web_browser import WebBrowser, WebElementInfo
+from .auto_service_toolkit import AutoServiceToolkit
 
 
 def get_help() -> None:
@@ -76,6 +77,7 @@ __all__ = [
     "ServiceResponse",
     "ServiceExecStatus",
     "ServiceToolkit",
+    "AutoServiceToolkit",
     "get_help",
     "execute_python_code",
     "execute_shell_command",

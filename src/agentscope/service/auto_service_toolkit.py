@@ -1,81 +1,113 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=R0912
 """ An Enhanced Service Toolkit that can search and auto import MCP servers."""
 import json
 import re
 import os
+from typing import Any, Optional
 import click
-from typing import (
-    Any,
-    Optional,
-    List,
-    Dict,
-)
 from loguru import logger
 import requests
 from rich.console import Console
 
 from ..message import Msg
-from ..models import ModelWrapperBase
 from ..manager import FileManager, ModelManager
 
-from .service_toolkit import ServiceToolkit
-
-try:
-    from docstring_parser import parse
-except ImportError:
-    parse = None
-
+from .service_toolkit import ServiceToolkit, sync_exec
+from .service_response import ServiceResponse, ServiceExecStatus
 
 
 class AutoServiceToolkit(ServiceToolkit):
+    """
+    This is an enhanced Service Toolkit that can search and
+    auto import MCP servers with given functionality keywords.
+    """
 
     llm_max_retries: int = 3
 
     def __init__(
         self,
-        env_file_dir: Optional[str] = None,
-        confirm_install: bool = False,
+        confirm_install: bool = True,
         model_free: bool = False,
         model_config_name: Optional[str] = None,
-        use_console: bool = True,
+        env_file_dir: Optional[str] = None,
     ):
+        """
+        Initialize the AutoServiceToolkit instance.
+        Args:
+            confirm_install (bool): Whether the toolkit requires human confirm
+                before installing MCP server
+            model_free (bool): Whether the toolkit select/recommend the
+                MCP server with LLM or not.
+            model_config_name (str): If the toolkit is model-based,
+                specify which LLM is used for selecting MCP server.
+            env_file_dir (str): directory path for caching environment
+                variables required by MCP servers, so that users do not need
+                to enter those everytime.
+        """
         super().__init__()
         if env_file_dir is None:
             env_file_dir = FileManager.get_instance().cache_dir or "./"
         self.env_file_path = os.path.join(env_file_dir, ".mcp_env.json")
         if not os.path.exists(self.env_file_path):
-            with open(self.env_file_path, mode="w") as env_file:
+            with open(
+                self.env_file_path,
+                mode="w",
+                encoding="utf-8",
+            ) as env_file:
                 json.dump({}, env_file)
-        print(f"cache env  at {self.env_file_path}")
-        if not model_free:
+        logger.info(f"cache env  at {self.env_file_path}")
+        if not model_free and model_config_name is not None:
             model_manager = ModelManager.get_instance()
             self.model = model_manager.get_model_by_config_name(
-                model_config_name
+                model_config_name,
             )
         else:
             self.model = None
 
         self.confirm_install = confirm_install
 
-        if use_console:
-            self.console = Console()
-        else:
-            raise NotImplementedError
+        if not self.confirm_install:
+            logger.warning(
+                "The confirm_install input is set to False, "
+                "which mean the toolkit will be installed without human "
+                "confirm and can have potential risk on install unverified MCP"
+                "server. Besides, it is HIGHLY recommended to turn "
+                "confirm_install when using model-free mode for better "
+                "performance.",
+            )
+
+        self.console = Console()
 
         self.auto_added_mcp_servers = []
 
-    def get_package_details(self, package_name: str) -> Optional[Dict]:
-        """Get detailed package information including environment variables."""
+        # add the auto_add_mcp_servers
+        self.add(self.search_and_add_mcp_server)
+        self.add(self.remove_auto_added_mcp_server)
+
+    @staticmethod
+    def get_package_details(package_name: str) -> Optional[dict]:
+        """
+        Get detailed package information including environment variables.
+        Args:
+            package_name (str): The package name.
+
+        Return:
+            `Dict`: The package information, including all that can obtain
+                from https://registry.npmjs.org
+        """
         try:
-            response = requests.get(f"https://registry.npmjs.org/{package_name}")
+            response = requests.get(
+                f"https://registry.npmjs.org/{package_name}",
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException as e:
             logger.error(f"Error fetching package details: {e}")
             return None
 
+    @staticmethod
     def search_mcp_server(
-        self,
         function_keywords: str,
         size: int = 20,
         **kwargs: Any,
@@ -84,9 +116,9 @@ class AutoServiceToolkit(ServiceToolkit):
         Search for appropriate MCP server with function
         Depend on npm Public Registry API:
         https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md
+        It is possible to search MCP with specific authors, maintainer,
+        scope, etc. Details can be found in the above websites.
         https://itnext.io/increasing-an-npm-packages-search-score-fb557f859300
-        It is possible to searching MCP with specific authors, maintainer,
-        scope, etc. Deatils can be found in the above websites.
 
         Args:
             function_keywords (str): Keywords of the desired function;
@@ -94,15 +126,16 @@ class AutoServiceToolkit(ServiceToolkit):
             kwargs (Any): Additional keyword for API search, such as
                 quality, popularity, and maintenance score.
         Returns:
-            `list[dict]`: List of MCP servers with description`
+            `list[dict]`: List of MCP servers with description. Fields include
+                name, description, keywords, and download statistics
 
         An example of the return is
         [
           {
-            "Name": "@modelcontextprotocol/server-github",
-            "Description": "MCP server for using the GitHub API",
-            "Keywords": ["mcp"],
-            "Downloads": {"monthly": 53055,}
+            "name": "@modelcontextprotocol/server-github",
+            "description": "MCP server for using the GitHub API",
+            "keywords": ["mcp"],
+            "downloads": {"monthly": 53055,}
           },
           ...
         ]
@@ -158,98 +191,112 @@ class AutoServiceToolkit(ServiceToolkit):
                 )
         return return_results
 
-    def _calculate_relevance_score(self, pkg: Dict, query: str) -> float:
-        """Calculate relevance score for a package based on various factors."""
+    @staticmethod
+    def _calculate_relevance_score(
+        pkg: dict,
+        query: str,
+    ) -> float:
+        """
+        Calculate relevance score for a package based on various factors.
+        This is used when the toolkit is in model-free mode.
+        The key idea is to compute an averaged score for
+            1. The overlap degree of the query(functionality) to the name,
+                description and keywords:  the portion of words in query can
+                be found in the name/description/keywords
+            2. The downloaded score normalized by at most 1M
+
+        Args:
+            pkg (dict): Details of a package from search_mcp_server function
+
+        Returns:
+            `float`: the score of the relevance
+        """
 
         # Get package details
         name = pkg.get("name", "").lower()
         description = pkg.get("description", "").lower()
         keywords = [k.lower() for k in pkg.get("keywords", [])]
-        downloads = pkg.get("downloads", {}).get("last-month", 0)
+        downloads = pkg.get("downloads", {}).get("monthly", 0)
 
         # Calculate text relevance
         query_terms = query.lower().split()
         name_score = sum(1 for term in query_terms if term in name) / len(
-            query_terms)
+            query_terms,
+        )
         desc_score = sum(
-            1 for term in query_terms if term in description) / len(
-            query_terms)
-        keyword_score = sum(1 for term in query_terms if
-                            any(term in k for k in keywords)) / len(
-            query_terms)
+            1 for term in query_terms if term in description
+        ) / len(
+            query_terms,
+        )
+        keyword_score = sum(
+            1 for term in query_terms if any(term in k for k in keywords)
+        ) / len(
+            query_terms,
+        )
 
         # Normalize downloads (assuming max downloads is 1M)
         download_score = min(downloads / 1_000_000, 1.0)
 
-        # Weighted scoring (hard-coded)
+        # Weighted scoring (hard-coded for current version)
         weights = {
-            'name': 0.3,
-            'description': 0.2,
-            'keywords': 0.2,
-            'downloads': 0.3
+            "name": 0.3,
+            "description": 0.2,
+            "keywords": 0.2,
+            "downloads": 0.3,
         }
 
         total_score = (
-            name_score * weights['name'] +
-            desc_score * weights['description'] +
-            keyword_score * weights['keywords'] +
-            download_score * weights['downloads']
+            name_score * weights["name"]
+            + desc_score * weights["description"]
+            + keyword_score * weights["keywords"]
+            + download_score * weights["downloads"]
         )
 
         return total_score
 
-    def _model_free_select_and_choose(
+    def _model_free_select(
         self,
-        task: str
-    ) -> Optional[Dict]:
-        packages = self.search_mcp_server(task)
+        functionality: str,
+        available_choices: list[dict],
+    ) -> dict:
+        """
+        Select the best package based on relevance score.
+        Args:
+            functionality (str): The description of the desired functionality
+            available_choices (list[dict]): The list of details of
+                searched MCP servers
 
-        """Select the best package based on relevance score."""
-        if not packages:
-            return None
+        Return:
+            `Dict`: The selected package (and its details)`
+        """
+        if not available_choices:
+            return {}
 
         scored_packages = [
-            (pkg, self._calculate_relevance_score(pkg, task))
-            for pkg in packages
+            (pkg, self._calculate_relevance_score(pkg, functionality))
+            for pkg in available_choices
         ]
 
         # Sort by score in descending order
         scored_packages.sort(key=lambda x: x[1], reverse=True)
-        return scored_packages[0][0], packages
+        return scored_packages[0][0]
 
-
-    def _llm_search_and_choose(
+    def _llm_select(
         self,
-        task: str,
-    ):
+        functionality: str,
+        available_choices: list[dict],
+    ) -> dict:
         """
         Automatically search for appropriate MCP server with the given task.
         Args:
-            task (str): Task description.
-            model (ModelWrapperBase): LLM model to analysis the task and choose
-                appropriate MCP server.
-            max_retries (int): max number of retries, for example, for LLM
-                choosing invalid package names.
-        """
-        search_sys_prompt = (
-            "You are a helpful assistant that can extract a keyword from the task to describe"
-            "the key functionality/software required to solve the task."
-            "ONLY output ONE keyword."
-        )
-        search_usr_prompt = (
-            f"Given task: {task}. \n"
-            f"What are the the key unctionality/software in ONE keyword?"
-        )
-        msgs = self.model.format(
-            Msg("system", search_sys_prompt, role="system"),
-            Msg("user", search_usr_prompt, role="user"),
-        )
-        function_keywords = self.model(msgs).text
-        print(f"keywords: {function_keywords}")
+            functionality (str): The description of the desired functionality
+            available_choices (list[dict]): The list of details of
+                searched MCP servers
 
-        avaiable_choices = self.search_mcp_server(function_keywords)
-        logger.info(f"Search function keywords: {function_keywords}")
-        logger.info(f"Candidate functions: {avaiable_choices}")
+        Return:
+            `Dict`: The selected package (and its details)`
+        """
+        logger.info(f"Candidate functions: {available_choices}")
         choose_sys_prompt = (
             "Given the available software packages and "
             "the description of task, you need to determine what is the most"
@@ -267,12 +314,12 @@ class AutoServiceToolkit(ServiceToolkit):
             "ONLY output ONE name of the package.\n\n"
         )
         choose_usr_prompt = (
-            f"Available software packages:\n {avaiable_choices}\n"
-            f"Given task: {task} \nWhat is the most appropriate MCP server?\n"
+            f"Available software packages:\n {available_choices}\n"
+            f"Given task: {functionality} \n"
+            "What is the most appropriate MCP server?\n"
             "ONLY output ONE name of the package.\n\n# OUTPUT FORMAT:\n"
             "THE_PACKAGE_NAME"
         )
-        print(avaiable_choices)
         init_msgs = [
             Msg("system", choose_sys_prompt, role="system"),
             Msg("user", choose_usr_prompt, role="user"),
@@ -284,7 +331,7 @@ class AutoServiceToolkit(ServiceToolkit):
                 function_name = self.model(msgs).text
                 init_msgs.append(Msg("system", function_name, role="system"))
                 logger.info(f"Model chooses function: {function_name}")
-                for pkg in avaiable_choices:
+                for pkg in available_choices:
                     if pkg["name"] == function_name:
                         chosen_function = pkg
                 if len(chosen_function) == 0:
@@ -303,15 +350,27 @@ class AutoServiceToolkit(ServiceToolkit):
         if len(chosen_function) == 0:
             logger.error(
                 "LLM mode fail to get the best MCP server. "
-                "Try to use model-free model."
+                "Try to use model-free model.",
             )
-            raise ValueError( "LLM mode fails")
+            raise ValueError("LLM mode fails")
 
-        return chosen_function, avaiable_choices
+        return chosen_function
 
-    def _extract_env_info(self, package_details: Dict) -> Dict[str, str]:
+    @staticmethod
+    def _extract_env_info(package_details: dict) -> dict:
         """
         Extract API key information from package readme information.
+        It is expected that there is a `readme` field in the package_details,
+        as specified in
+        https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md
+
+        Args:
+            package_details (dict): The package information, including README.
+
+        Returns:
+            `dict`: The required environment variables mentioned in the README,
+                and its example input.
+
         """
         env_info = {}
         readme = package_details.get("readme", "")
@@ -324,7 +383,7 @@ class AutoServiceToolkit(ServiceToolkit):
             r"(\w+)\s*=\s*['\"]([^'\"]+)['\"]",
             # matching content like "env": {"ENV_VARIABLE": "XXX"}
             r'"env"\s*:\s*\{\s*"([^"]+)"\s*:\s*"([^"]+)"',
-            r"'env'\s*:\s*\{\s*'([^']+)'\s*:\s*'([^']+)'\s*\}"
+            r"'env'\s*:\s*\{\s*'([^']+)'\s*:\s*'([^']+)'\s*\}",
         ]
 
         for pattern in env_var_patterns:
@@ -336,20 +395,28 @@ class AutoServiceToolkit(ServiceToolkit):
                 print(match[0], match[1])
         return env_info
 
-
     def _update_env_variables(
         self,
-        required_envs: Dict
-    ):
+        required_envs: dict,
+    ) -> dict:
+        """
+        Update the required environment variables.
+        Let human to step in to provide the values for environment variables.
+        Args:
+            required_envs (dict): The required environment variables.
+
+        Return:
+            `dict`: The updated environment variables.
+        """
         # prepare the environment variables for the MCP server
         envs = {}
-        with open(self.env_file_path, "r") as f:
+        with open(self.env_file_path, "r", encoding="utf-8") as f:
             stored_envs = json.load(f)
         for env_name, info in required_envs.items():
             if env_name in os.environ:
                 # check if the env has been set in the env
                 envs[env_name] = os.environ[env_name]
-                if not env_name in stored_envs:
+                if env_name not in stored_envs:
                     stored_envs[env_name] = os.environ[env_name]
             elif env_name in stored_envs:
                 # check if the env has been saved in the local file
@@ -364,14 +431,14 @@ class AutoServiceToolkit(ServiceToolkit):
                         "Please enter the value of the environment "
                         "variable below,"
                         f"such as {info['example_value']} . "
-                        f"If you believe this is not environment variable,"
+                        f"If you believe this is not an environment variable,"
                         f"delete the shown default value and press ENTER."
-                        "[/yellow]"
+                        "[/yellow]",
                     )
                 env_value = click.prompt(
                     f"Enter the value for {env_name}",
-                    default=info['example_value'],
-                    show_default=True
+                    default=info["example_value"],
+                    show_default=True,
                 )
                 env_type = type(env_value)
                 env_value = str(env_value).strip()
@@ -379,46 +446,73 @@ class AutoServiceToolkit(ServiceToolkit):
                     envs[env_name] = env_type(env_value)
                     stored_envs[env_name] = env_value
 
-        with open(self.env_file_path, "w") as f:
+        with open(self.env_file_path, "w", encoding="utf-8") as f:
             json.dump(stored_envs, f)
 
         return envs
 
     def _build_server_config(
-        self, chosen_mcp_name: str
-    ) -> List[Dict]:
+        self,
+        chosen_mcp_name: str,
+        skip_modification: bool = False,
+    ) -> dict:
         """
-        Search if there is any
-        Example:
+        Search if there is any server config in README, and generate such
+        configuration but replace the args and env with human input.
+        Example extraction:
+            {
+              "mcpServers": {
+                "github": {
+                  "command": "npx",
+                  "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-github"
+                  ],
+                  "env": {
+                    "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+                  }
+                }
+              }
+            }
+
+        Args:
+            chosen_mcp_name (str): The name of the chosen MCP server.
+            skip_modification (bool): Whether to skip modification of the
+                the configuration. NOTE: Turn `Ture` only when testing.
+
+        Return:
+            `dict`: the updated configuration
         """
         configs = []
-        package_details = self.get_package_details(chosen_mcp_name)
+        package_details = self.get_package_details(chosen_mcp_name) or {}
         readme = package_details.get("readme", "")
 
         # Check for if there is any `mcpServers` config in README
-        config_patterns = []
         pattern = r'"mcpServers"\s*:\s*(\{(?:[^{}]*|\{.*?\})*\})'
         matches = re.findall(pattern, readme, re.DOTALL)
         for idx, match_str in enumerate(matches, 1):
             self.console.print(
-                f"\nExtracted mcpServers JSON #{idx}:\n{match_str}"
+                f"\nExtracted mcpServers JSON #{idx}:\n{match_str}",
             )
             try:
                 config_json = json.loads(match_str)
                 logger.info(
-                    f"\nParsed config into JSON\n"
+                    "\nParsed config into JSON\n",
                 )
                 configs.append(config_json)
             except json.JSONDecodeError as e:
                 logger.error(f"\nError decoding JSON #{idx}:", e)
 
         chosen_config = {}
+        # prefer those with "npx" command
         for config in configs:
-            for key, value in config.items():
+            for key, _ in config.items():
                 if chosen_config.get(key) is None:
                     chosen_config = config
-                elif (config[key]["command"] == "npx" and
-                      chosen_config[key]["command"] != "npx"):
+                elif (
+                    config[key]["command"] == "npx"
+                    and chosen_config[key]["command"] != "npx"
+                ):
                     chosen_config = config
 
         envs_dict = self._extract_env_info(package_details)
@@ -430,92 +524,106 @@ class AutoServiceToolkit(ServiceToolkit):
                     "args": ["-y", chosen_mcp_name],
                     "env": {
                         k: v["example_value"] for k, v in envs_dict.items()
-                    }
-                }
+                    },
+                },
             }
 
         self.console.print(
             "Overall composed config will look like:\n"
-            f"{json.dumps(chosen_config, indent=2)}"
+            f"{json.dumps(chosen_config, indent=2)}",
         )
 
         self.console.print(
             "Need to verify the following MCP server configuration."
-            "Press Enter to use the provided value."
+            "Press Enter to use the provided value.",
         )
+
+        if skip_modification:
+            return chosen_config
 
         name = list(chosen_config.keys())[0]
 
         # update args
         to_be_remove_arg_idx = []
         for i, arg in enumerate(chosen_config[name]["args"]):
-            if arg == "-y" or arg == name or arg == chosen_mcp_name:
+            if arg in ["-y", name, chosen_mcp_name]:
                 continue
             new_arg = click.prompt(
                 f"Update arg: {arg}? "
                 "(press Enter to use default; "
                 "press Space + Enter to remove this arg)",
-                default=arg
+                default=arg,
             )
             arg_type = type(new_arg)
             new_arg = str(new_arg).strip()
             if len(new_arg) > 0:
-                chosen_config[name]['args'][i] = arg_type(new_arg)
+                chosen_config[name]["args"][i] = arg_type(new_arg)
             else:
                 to_be_remove_arg_idx.append(i)
 
         # remove unwanted args
         args_len = len(chosen_config[name]["args"])
         chosen_config[name]["args"] = [
-            chosen_config[name]["args"][i] for i in range(args_len)
+            chosen_config[name]["args"][i]
+            for i in range(args_len)
             if i not in to_be_remove_arg_idx
         ]
 
         # add new args
         while True:
             new_arg = click.prompt(
-                f"Add new arg: {arg}? "
+                "Add new arg? "
                 "(press Space + Enter when you don't need to add more)",
                 default="",
-                show_default=False
+                show_default=False,
             )
             if len(str(new_arg).strip()) == 0:
                 break
             chosen_config[name]["args"].append(new_arg)
 
-
         # update env
         chosen_config[name]["env"] = self._update_env_variables(
-            envs_dict
+            envs_dict,
         )
 
         return chosen_config
 
     def _confirm_chosen_mcp(
         self,
-        default_choice,
-        all_choices
-    ):
+        default_choice: dict,
+        all_choices: list[dict],
+    ) -> dict:
+        """
+        Let user confirm whether the suggested MCP server is what they want.
+        Args:
+            default_choice (dict): The suggested and default
+                MCP server configuration
+            all_choices (dict): All the suggested MCP server
+
+        Return:
+            `dict`: the details of the MCP server confirmed by human.
+        """
         for i, choice in enumerate(all_choices):
             if choice["name"] == default_choice["name"] and i > 0:
                 all_choices[0], all_choices[i] = all_choices[i], all_choices[0]
 
         self.console.print(
-            "The following may be MCP servers that can help you:"
+            "The following may be MCP servers that can help you:",
         )
 
         for idx, choice in enumerate(all_choices):
             if choice == default_choice:
                 self.console.print(
                     f"{idx}. {choice['name']} "
-                    "[bold green](recommended)[/bold green]"
+                    "[bold green](recommended)[/bold green]",
                 )
             else:
                 self.console.print(f"{idx}. {choice['name']}")
 
         user_input = self.console.input(
             "\nEnter choice number or press [bold green]Enter[/bold green] "
-            "to select default: ")
+            "to select default: ",
+        )
 
         if not user_input.strip():
             selected = default_choice
@@ -524,39 +632,107 @@ class AutoServiceToolkit(ServiceToolkit):
                 selected = all_choices[int(user_input)]
             except (ValueError, IndexError):
                 self.console.print(
-                    "[red]Invalid selection, default chosen.[/red]"
+                    "[red]Invalid selection, default chosen.[/red]",
                 )
                 selected = default_choice
         return selected
 
     def search_and_add_mcp_server(
         self,
-        task: str,
-    ) -> None:
-        if self.model:
-            chosen_function, all_choices = self._llm_search_and_choose(task)
-        else:
-            chosen_function, all_choices = self._model_free_select_and_choose(
-                task
-            )
-        # confirm with user before install
-        if self.confirm_install:
-            chosen_function = self._confirm_chosen_mcp(
-                chosen_function, all_choices
-            )
-        config = self._build_server_config(chosen_function["name"])
-        print("--- Final:")
-        print(config)
-        self.add_mcp_servers(
-            server_configs={
-                "mcpServers": config,
-            },
-        )
-        self.auto_added_mcp_servers.append(chosen_function["name"])
+        desired_functionality: str,
+    ) -> ServiceResponse:
+        """
+        Automatically search for appropriate MCP servers as tools to
+        solve the task.
+        Args:
+            desired_functionality (str):
+                One or two keywords for the desired functionality/software.
+                ONLY ONE OR TWO KEYWORD as the functionality.
+                Examples: "web search", "file search", "GitHub access"
 
-    # TODO: re-add mcp server if fail
-    def remove_and_add_mcp_server(
+        Return:
+            `ServiceResponse` : return whether success or fail in installing
+                MCP server/tools.
+        """
+        try:
+            all_choices = self.search_mcp_server(desired_functionality)
+            if self.model:
+                chosen_function = self._llm_select(
+                    desired_functionality,
+                    all_choices,
+                )
+            else:
+                chosen_function = self._model_free_select(
+                    desired_functionality,
+                    all_choices,
+                )
+            # confirm with user before install
+            if self.confirm_install:
+                chosen_function = self._confirm_chosen_mcp(
+                    chosen_function,
+                    all_choices,
+                )
+            config = self._build_server_config(chosen_function["name"])
+            new_servers, new_functions = self.add_mcp_servers(
+                server_configs={
+                    "mcpServers": config,
+                },
+            )
+            self.auto_added_mcp_servers += new_servers
+
+            tools_str = json.dumps(new_functions, ensure_ascii=False, indent=2)
+            return ServiceResponse(
+                status=ServiceExecStatus.SUCCESS,
+                content=(
+                    "Successfully auto added MCP servers. "
+                    "New tools added:\n"
+                    f"{tools_str}"
+                ),
+            )
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=("Fail to add MCP server. " f"Error:\n {e}"),
+            )
+
+    def remove_auto_added_mcp_server(
         self,
-        mcp_name: str,
-    ):
-        pass
+        remove_tool_name: str,
+    ) -> ServiceResponse:
+        """
+        When MCP server or tool usage errors happens, you can consider
+        remove the tool to prevent the error happen again.
+        Args:
+            remove_tool_name (str): Name of tool to remove.
+
+        Return:
+            `ServiceResponse`:return whether success or fail in removing
+                MCP server/tools.
+        """
+        try:
+            all_remove_tools = []
+            for i, server in enumerate(self.auto_added_mcp_servers):
+                for tool in sync_exec(server.list_tools):
+                    if tool.name == remove_tool_name:
+                        all_tools = sync_exec(server.list_tools)
+                        # clean all service functions from the same MCP server
+                        for cur_tool in all_tools:
+                            self.service_funcs.pop(cur_tool.name, None)
+                        all_remove_tools = [tool.name for tool in all_tools]
+                        # delete the server from the list
+                        self.auto_added_mcp_servers.pop(i)
+            return ServiceResponse(
+                status=ServiceExecStatus.SUCCESS,
+                content=(
+                    f"Successfully remove MCP server and "
+                    f"tools {all_remove_tools} "
+                ),
+            )
+
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=(
+                    f"Fail to remove tool {remove_tool_name}. " f"Error:\n {e}"
+                ),
+            )
