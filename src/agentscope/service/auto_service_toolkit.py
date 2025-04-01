@@ -8,7 +8,10 @@ from typing import Any, Optional
 import click
 from loguru import logger
 import requests
-from rich.console import Console
+try:
+    from rich.console import Console
+except ImportError:
+    Console = None
 
 from ..message import Msg
 from ..manager import FileManager, ModelManager
@@ -76,8 +79,10 @@ class AutoServiceToolkit(ServiceToolkit):
                 "confirm_install when using model-free mode for better "
                 "performance.",
             )
-
-        self.console = Console()
+        if Console is not None:
+            self.console_print = Console().print
+        else:
+            self.console_print = print
 
         self.auto_added_mcp_servers = []
 
@@ -423,18 +428,17 @@ class AutoServiceToolkit(ServiceToolkit):
                 envs[env_name] = stored_envs[env_name]
             else:
                 # if no value found, prompt the user to provide necessary value
-                if self.console:
-                    self.console.print(
-                        "[yellow]"
-                        f"This MCP may require {env_name} as "
-                        f"environment variable."
-                        "Please enter the value of the environment "
-                        "variable below,"
-                        f"such as {info['example_value']} . "
-                        f"If you believe this is not an environment variable,"
-                        f"delete the shown default value and press ENTER."
-                        "[/yellow]",
-                    )
+                self.console_print(
+                    "[yellow]"
+                    f"This MCP may require {env_name} as "
+                    f"environment variable."
+                    "Please enter the value of the environment "
+                    "variable below,"
+                    f"such as {info['example_value']} . "
+                    f"If you believe this is not an environment variable,"
+                    f"delete the shown default value and press ENTER."
+                    "[/yellow]",
+                )
                 env_value = click.prompt(
                     f"Enter the value for {env_name}",
                     default=info["example_value"],
@@ -491,7 +495,7 @@ class AutoServiceToolkit(ServiceToolkit):
         pattern = r'"mcpServers"\s*:\s*(\{(?:[^{}]*|\{.*?\})*\})'
         matches = re.findall(pattern, readme, re.DOTALL)
         for idx, match_str in enumerate(matches, 1):
-            self.console.print(
+            self.console_print(
                 f"\nExtracted mcpServers JSON #{idx}:\n{match_str}",
             )
             try:
@@ -528,12 +532,12 @@ class AutoServiceToolkit(ServiceToolkit):
                 },
             }
 
-        self.console.print(
+        self.console_print(
             "Overall composed config will look like:\n"
             f"{json.dumps(chosen_config, indent=2)}",
         )
 
-        self.console.print(
+        self.console_print(
             "Need to verify the following MCP server configuration."
             "Press Enter to use the provided value.",
         )
@@ -607,21 +611,21 @@ class AutoServiceToolkit(ServiceToolkit):
             if choice["name"] == default_choice["name"] and i > 0:
                 all_choices[0], all_choices[i] = all_choices[i], all_choices[0]
 
-        self.console.print(
+        self.console_print(
             "The following may be MCP servers that can help you:",
         )
 
         for idx, choice in enumerate(all_choices):
             if choice == default_choice:
-                self.console.print(
+                self.console_print(
                     f"{idx}. {choice['name']} "
                     "[bold green](recommended)[/bold green]",
                 )
             else:
-                self.console.print(f"{idx}. {choice['name']}")
+                self.console_print(f"{idx}. {choice['name']}")
 
-        user_input = self.console.input(
-            "\nEnter choice number or press [bold green]Enter[/bold green] "
+        user_input = input(
+            "\nEnter choice number or press \"Enter\" "
             "to select default: ",
         )
 
@@ -631,7 +635,7 @@ class AutoServiceToolkit(ServiceToolkit):
             try:
                 selected = all_choices[int(user_input)]
             except (ValueError, IndexError):
-                self.console.print(
+                self.console_print(
                     "[red]Invalid selection, default chosen.[/red]",
                 )
                 selected = default_choice
