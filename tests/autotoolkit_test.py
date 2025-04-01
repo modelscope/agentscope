@@ -13,12 +13,12 @@ from agentscope.models import ModelResponse, OpenAIChatWrapper
 SELECTED_PACKAGE = "@test_mcp_server/test_mcp"
 
 
-class DummyModel(OpenAIChatWrapper):
+class DummyModelForAutoServiceToolkit(OpenAIChatWrapper):
     """
     Dummy model wrapper for testing
     """
 
-    model_type: str = "dummy_test"
+    model_type: str = "dummy_test_for_autoservice_toolkit"
 
     def __init__(self, **kwargs: Any) -> None:
         """dummy init"""
@@ -31,7 +31,7 @@ class DummyModel(OpenAIChatWrapper):
         return ModelResponse(text=SELECTED_PACKAGE)
 
 
-class AutoerviceToolkitTest(unittest.TestCase):
+class AutoServiceToolkitTest(unittest.TestCase):
     """
     Unit test for AutoServiceToolkit.
     """
@@ -42,11 +42,13 @@ class AutoerviceToolkitTest(unittest.TestCase):
             model_free=True,
         )
         model_config_name = "dummy_test_config"
-        agentscope.register_model_wrapper_class(DummyModel, exist_ok=True)
+        agentscope.register_model_wrapper_class(
+            DummyModelForAutoServiceToolkit, exist_ok=True
+        )
         agentscope.init(
             model_configs=[
                 {
-                    "model_type": "dummy_test",
+                    "model_type": "dummy_test_for_autoservice_toolkit",
                     "config_name": model_config_name,
                 },
             ],
