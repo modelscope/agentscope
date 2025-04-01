@@ -317,7 +317,8 @@ class AutoServiceToolkit(ServiceToolkit):
             f"Available software packages:\n {available_choices}\n"
             f"Given task: {functionality} \n"
             "What is the most appropriate MCP server?\n"
-            "ONLY output ONE name of the package.\n\n# OUTPUT FORMAT:\n"
+            "ONLY output ONE name of the package.\n\n"
+            "# OUTPUT FORMAT:\n"
             "THE_PACKAGE_NAME"
         )
         init_msgs = [
@@ -392,7 +393,6 @@ class AutoServiceToolkit(ServiceToolkit):
                 env_info[match[0]] = {
                     "example_value": match[1],
                 }
-                print(match[0], match[1])
         return env_info
 
     def _update_env_variables(
