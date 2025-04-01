@@ -6,29 +6,11 @@ import unittest
 from typing import Any
 from unittest.mock import patch, MagicMock
 
-import agentscope
+from agentscope.manager import ASManager
 from agentscope.service import AutoServiceToolkit
 from agentscope.models import ModelResponse, OpenAIChatWrapper
 
 SELECTED_PACKAGE = "@test_mcp_server/test_mcp"
-
-
-class DummyModelForAutoServiceToolkit(OpenAIChatWrapper):
-    """
-    Dummy model wrapper for testing
-    """
-
-    model_type: str = "dummy_test_for_autoservice_toolkit"
-
-    def __init__(self, **kwargs: Any) -> None:
-        """dummy init"""
-
-    def format(self, *arg: Any, **kwargs: Any) -> str:
-        return str(arg) + str(kwargs)
-
-    def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
-        """dummy call"""
-        return ModelResponse(text=SELECTED_PACKAGE)
 
 
 class AutoServiceToolkitTest(unittest.TestCase):
@@ -36,28 +18,35 @@ class AutoServiceToolkitTest(unittest.TestCase):
     Unit test for AutoServiceToolkit.
     """
 
+    class DummyModelForAutoServiceToolkit(OpenAIChatWrapper):
+        """
+        Dummy model wrapper for testing
+        """
+
+        model_type: str = "dummy_test_for_auto_service_toolkit"
+
+        def __init__(self, **kwargs: Any) -> None:
+            """dummy init"""
+
+        def format(self, *arg: Any, **kwargs: Any) -> str:
+            return str(arg) + str(kwargs)
+
+        def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
+            """dummy call"""
+            return ModelResponse(text=SELECTED_PACKAGE)
+
     def setUp(self) -> None:
         """Init for ExampleTest."""
         self.model_free_toolkit = AutoServiceToolkit(
             model_free=True,
         )
-        model_config_name = "dummy_test_config"
-        agentscope.register_model_wrapper_class(
-            DummyModelForAutoServiceToolkit,
-            exist_ok=True,
-        )
-        agentscope.init(
-            model_configs=[
-                {
-                    "model_type": "dummy_test_for_autoservice_toolkit",
-                    "config_name": model_config_name,
-                },
-            ],
-            disable_saving=True,
-        )
+        # work-around to avoid register new dummy model
         self.model_based_toolkit = AutoServiceToolkit(
-            model_config_name=model_config_name,
+            model_free=True,
+            confirm_install=True,
         )
+        self.model_based_toolkit.model = self.DummyModelForAutoServiceToolkit()
+        self.model_free = False
 
         self.search_response = {
             "objects": [
@@ -174,6 +163,10 @@ class AutoServiceToolkitTest(unittest.TestCase):
             "conditions of the MIT License. For more details, please see the "
             "LICENSE file in the project repository.\n"
         )
+
+    def tearDown(self) -> None:
+        """clear"""
+        ASManager.get_instance().flush()
 
     @patch("requests.get")
     def test_search_and_model_free_select(self, mock_get: MagicMock) -> None:
