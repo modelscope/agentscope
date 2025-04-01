@@ -8,6 +8,7 @@ from typing import Any, Optional
 import click
 from loguru import logger
 import requests
+
 try:
     from rich.console import Console
 except ImportError:
@@ -625,8 +626,7 @@ class AutoServiceToolkit(ServiceToolkit):
                 self.console_print(f"{idx}. {choice['name']}")
 
         user_input = input(
-            "\nEnter choice number or press \"Enter\" "
-            "to select default: ",
+            '\nEnter choice number or press "Enter" to select default: ',
         )
 
         if not user_input.strip():
