@@ -34,7 +34,7 @@ class AutoServiceToolkit(ServiceToolkit):
         confirm_install: bool = True,
         model_free: bool = False,
         model_config_name: Optional[str] = None,
-        env_file_dir: Optional[str] = None,
+        config_file_dir: Optional[str] = None,
     ):
         """
         Initialize the AutoServiceToolkit instance.
@@ -45,22 +45,16 @@ class AutoServiceToolkit(ServiceToolkit):
                 MCP server with LLM or not.
             model_config_name (str): If the toolkit is model-based,
                 specify which LLM is used for selecting MCP server.
-            env_file_dir (str): directory path for caching environment
-                variables required by MCP servers, so that users do not need
+            config_file_dir (str): directory path for caching configuration
+                required by MCP servers, so that users do not need
                 to enter those everytime.
         """
         super().__init__()
-        if env_file_dir is None:
-            env_file_dir = FileManager.get_instance().cache_dir or "./"
-        self.env_file_path = os.path.join(env_file_dir, ".mcp_env.json")
-        if not os.path.exists(self.env_file_path):
-            with open(
-                self.env_file_path,
-                mode="w",
-                encoding="utf-8",
-            ) as env_file:
-                json.dump({}, env_file)
-        logger.info(f"cache env  at {self.env_file_path}")
+        if config_file_dir is None:
+            self.config_file_dir = FileManager.get_instance().cache_dir or "./"
+        else:
+            self.config_file_dir = config_file_dir
+
         if not model_free and model_config_name is not None:
             model_manager = ModelManager.get_instance()
             self.model = model_manager.get_model_by_config_name(
@@ -401,61 +395,6 @@ class AutoServiceToolkit(ServiceToolkit):
                 }
         return env_info
 
-    def _update_env_variables(
-        self,
-        required_envs: dict,
-    ) -> dict:
-        """
-        Update the required environment variables.
-        Let human to step in to provide the values for environment variables.
-        Args:
-            required_envs (dict): The required environment variables.
-
-        Return:
-            `dict`: The updated environment variables.
-        """
-        # prepare the environment variables for the MCP server
-        envs = {}
-        with open(self.env_file_path, "r", encoding="utf-8") as f:
-            stored_envs = json.load(f)
-        for env_name, info in required_envs.items():
-            if env_name in os.environ:
-                # check if the env has been set in the env
-                envs[env_name] = os.environ[env_name]
-                if env_name not in stored_envs:
-                    stored_envs[env_name] = os.environ[env_name]
-            elif env_name in stored_envs:
-                # check if the env has been saved in the local file
-                envs[env_name] = stored_envs[env_name]
-            else:
-                # if no value found, prompt the user to provide necessary value
-                self.console_print(
-                    "[yellow]"
-                    f"This MCP may require {env_name} as "
-                    f"environment variable."
-                    "Please enter the value of the environment "
-                    "variable below,"
-                    f"such as {info['example_value']} . "
-                    f"If you believe this is not an environment variable,"
-                    f"delete the shown default value and press ENTER."
-                    "[/yellow]",
-                )
-                env_value = click.prompt(
-                    f"Enter the value for {env_name}",
-                    default=info["example_value"],
-                    show_default=True,
-                )
-                env_type = type(env_value)
-                env_value = str(env_value).strip()
-                if len(env_value) > 0:
-                    envs[env_name] = env_type(env_value)
-                    stored_envs[env_name] = env_value
-
-        with open(self.env_file_path, "w", encoding="utf-8") as f:
-            json.dump(stored_envs, f)
-
-        return envs
-
     def _build_server_config(
         self,
         chosen_mcp_name: str,
@@ -493,7 +432,7 @@ class AutoServiceToolkit(ServiceToolkit):
         readme = package_details.get("readme", "")
 
         # Check for if there is any `mcpServers` config in README
-        pattern = r'"mcpServers"\s*:\s*(\{(?:[^{}]*|\{.*?\})*\})'
+        pattern = r'"mcpServers"\s*:\s*(\{(?:[^{}]*|\{[^{}]*\})*\})'
         matches = re.findall(pattern, readme, re.DOTALL)
         for idx, match_str in enumerate(matches, 1):
             self.console_print(
@@ -506,7 +445,7 @@ class AutoServiceToolkit(ServiceToolkit):
                 )
                 configs.append(config_json)
             except json.JSONDecodeError as e:
-                logger.error(f"\nError decoding JSON #{idx}:", e)
+                logger.warning(f"Error decoding JSON #{idx}:", e)
 
         chosen_config = {}
         # prefer those with "npx" command
@@ -539,8 +478,10 @@ class AutoServiceToolkit(ServiceToolkit):
         )
 
         self.console_print(
-            "Need to verify the following MCP server configuration."
-            "Press Enter to use the provided value.",
+            "Need to verify the following MCP server configuration.\n"
+            "For more details and instructions, "
+            "you can refer the MCP server's npm webpage: "
+            f"https://www.npmjs.com/package/{chosen_mcp_name}",
         )
 
         if skip_modification:
@@ -548,49 +489,28 @@ class AutoServiceToolkit(ServiceToolkit):
 
         name = list(chosen_config.keys())[0]
 
+        default_config_path = os.path.join(self.config_file_dir, name)
+        if not os.path.exists(default_config_path):
+            with open(default_config_path, "w", encoding="utf-8") as f:
+                json.dump(chosen_config, f, indent=4)
+
         # update args
-        to_be_remove_arg_idx = []
-        for i, arg in enumerate(chosen_config[name]["args"]):
-            if arg in ["-y", name, chosen_mcp_name]:
-                continue
-            new_arg = click.prompt(
-                f"Update arg: {arg}? "
-                "(press Enter to use default; "
-                "press Space + Enter to remove this arg)",
-                default=arg,
-            )
-            arg_type = type(new_arg)
-            new_arg = str(new_arg).strip()
-            if len(new_arg) > 0:
-                chosen_config[name]["args"][i] = arg_type(new_arg)
-            else:
-                to_be_remove_arg_idx.append(i)
-
-        # remove unwanted args
-        args_len = len(chosen_config[name]["args"])
-        chosen_config[name]["args"] = [
-            chosen_config[name]["args"][i]
-            for i in range(args_len)
-            if i not in to_be_remove_arg_idx
-        ]
-
-        # add new args
-        while True:
-            new_arg = click.prompt(
-                "Add new arg? "
-                "(press Space + Enter when you don't need to add more)",
-                default="",
-                show_default=False,
-            )
-            if len(str(new_arg).strip()) == 0:
-                break
-            chosen_config[name]["args"].append(new_arg)
-
-        # update env
-        chosen_config[name]["env"] = self._update_env_variables(
-            envs_dict,
+        config_path = click.prompt(
+            "The configuration is store in the default path "
+            f"({default_config_path}). You can change the default "
+            "configuration by modifying the file, or provide a new "
+            "configuration file path. \n The configuration file MUST be "
+            "in JSON format."
+            "(press Enter )",
+            default=default_config_path,
+            show_default=False,
         )
 
+        if config_path != default_config_path:
+            os.remove(default_config_path)
+
+        with open(config_path, "r", encoding="utf-8") as f:
+            chosen_config = json.load(f)
         return chosen_config
 
     def _confirm_chosen_mcp(
@@ -696,7 +616,7 @@ class AutoServiceToolkit(ServiceToolkit):
         except Exception as e:
             return ServiceResponse(
                 status=ServiceExecStatus.ERROR,
-                content=("Fail to add MCP server. " f"Error:\n {e}"),
+                content="Fail to add MCP server. " f"Error:\n {e}",
             )
 
     def remove_auto_added_mcp_server(
