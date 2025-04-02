@@ -14,14 +14,14 @@ from agentscope.agents import (
 )
 from agentscope.manager import ModelManager
 from agentscope.message import Msg
-from agentscope.pipelines import (
-    SequentialPipeline,
-    ForLoopPipeline,
-    WhileLoopPipeline,
-    IfElsePipeline,
-    SwitchPipeline,
+from agentscope.pipelines import SequentialPipeline
+from agentscope.web.workstation._utils import (
+    _ForLoopPipeline,
+    _WhileLoopPipeline,
+    _IfElsePipeline,
+    _SwitchPipeline,
+    _placeholder,
 )
-from agentscope.pipelines.functional import placeholder
 from agentscope.web.workstation.workflow_utils import (
     kwarg_converter,
     deps_converter,
@@ -374,16 +374,17 @@ class PlaceHolderNode(WorkflowNode):
         dep_opts: list,
     ) -> None:
         super().__init__(node_id, opt_kwargs, source_kwargs, dep_opts)
-        self.pipeline = placeholder
+        self.pipeline = _placeholder
 
-    def __call__(self, x: dict = None) -> dict:
+    def __call__(self, x: Msg = None) -> Msg:
         return self.pipeline(x)
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines.functional import "
-            "placeholder",
-            "inits": f"{self.var_name} = placeholder",
+            "imports": (
+                "from agentscope.web.workstation._utils import _placeholder"
+            ),
+            "inits": f"{self.var_name} = _placeholder",
             "execs": f"{DEFAULT_FLOW_VAR} = {self.var_name}"
             f"({DEFAULT_FLOW_VAR})",
         }
@@ -443,7 +444,7 @@ class ForLoopPipelineNode(WorkflowNode):
         assert (
             len(self.dep_opts) == 1
         ), "ForLoopPipelineNode can only contain one PipelineNode."
-        self.pipeline = ForLoopPipeline(
+        self.pipeline = _ForLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
         )
@@ -453,8 +454,11 @@ class ForLoopPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines import ForLoopPipeline",
-            "inits": f"{self.var_name} = ForLoopPipeline("
+            "imports": (
+                "from agentscope.web.workstation._utils import "
+                "_ForLoopPipeline"
+            ),
+            "inits": f"{self.var_name} = _ForLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
             f" {kwarg_converter(self.source_kwargs)})",
@@ -467,7 +471,7 @@ class WhileLoopPipelineNode(WorkflowNode):
     """
     A node representing a while-loop structure in a workflow.
 
-    WhileLoopPipelineNode enables conditional repeated execution of a node
+    WhileLoopPipelineNode enables conditional repeated execution of a
     node based on a specified condition.
     """
 
@@ -484,7 +488,7 @@ class WhileLoopPipelineNode(WorkflowNode):
         assert (
             len(self.dep_opts) == 1
         ), "WhileLoopPipelineNode can only contain one PipelineNode."
-        self.pipeline = WhileLoopPipeline(
+        self.pipeline = _WhileLoopPipeline(
             loop_body_operators=self.dep_opts[0],
             **self.opt_kwargs,
         )
@@ -494,8 +498,11 @@ class WhileLoopPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         return {
-            "imports": "from agentscope.pipelines import WhileLoopPipeline",
-            "inits": f"{self.var_name} = WhileLoopPipeline("
+            "imports": (
+                "from agentscope.web.workstation._utils import "
+                "_WhileLoopPipeline"
+            ),
+            "inits": f"{self.var_name} = _WhileLoopPipeline("
             f"loop_body_operators="
             f"{deps_converter(self.dep_vars)},"
             f" {kwarg_converter(self.source_kwargs)})",
@@ -526,12 +533,12 @@ class IfElsePipelineNode(WorkflowNode):
             0 < len(self.dep_opts) <= 2
         ), "IfElsePipelineNode must contain one or two PipelineNode."
         if len(self.dep_opts) == 1:
-            self.pipeline = IfElsePipeline(
+            self.pipeline = _IfElsePipeline(
                 if_body_operators=self.dep_opts[0],
                 **self.opt_kwargs,
             )
         elif len(self.dep_opts) == 2:
-            self.pipeline = IfElsePipeline(
+            self.pipeline = _IfElsePipeline(
                 if_body_operators=self.dep_opts[0],
                 else_body_operators=self.dep_opts[1],
                 **self.opt_kwargs,
@@ -541,19 +548,21 @@ class IfElsePipelineNode(WorkflowNode):
         return self.pipeline(x)
 
     def compile(self) -> dict:
-        imports = "from agentscope.pipelines import IfElsePipeline"
+        imports = (
+            "from agentscope.web.workstation._utils import _IfElsePipeline"
+        )
         execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         if len(self.dep_vars) == 1:
             return {
                 "imports": imports,
-                "inits": f"{self.var_name} = IfElsePipeline("
+                "inits": f"{self.var_name} = _IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]})",
                 "execs": execs,
             }
         elif len(self.dep_vars) == 2:
             return {
                 "imports": imports,
-                "inits": f"{self.var_name} = IfElsePipeline("
+                "inits": f"{self.var_name} = _IfElsePipeline("
                 f"if_body_operators={self.dep_vars[0]}, "
                 f"else_body_operators={self.dep_vars[1]})",
                 "execs": execs,
@@ -587,8 +596,8 @@ class SwitchPipelineNode(WorkflowNode):
 
         if len(self.dep_opts) == len(self.opt_kwargs["cases"]):
             # No default_operators provided
-            default_operators = placeholder
-            self.default_var_name = "placeholder"
+            default_operators = _placeholder
+            self.default_var_name = "_placeholder"
         elif len(self.dep_opts) == len(self.opt_kwargs["cases"]) + 1:
             # default_operators provided
             default_operators = self.dep_opts.pop(-1)
@@ -608,7 +617,7 @@ class SwitchPipelineNode(WorkflowNode):
             self.case_operators_var[key] = var
         self.opt_kwargs.pop("cases")
         self.source_kwargs.pop("cases")
-        self.pipeline = SwitchPipeline(
+        self.pipeline = _SwitchPipeline(
             case_operators=case_operators,
             default_operators=default_operators,  # type: ignore[arg-type]
             **self.opt_kwargs,
@@ -619,13 +628,13 @@ class SwitchPipelineNode(WorkflowNode):
 
     def compile(self) -> dict:
         imports = (
-            "from agentscope.pipelines import SwitchPipeline\n"
-            "from agentscope.pipelines.functional import placeholder"
+            "from agentscope.web.workstation._utils import _SwitchPipeline\n"
+            "from agentscope.web.workstation._utils import _placeholder"
         )
         execs = f"{DEFAULT_FLOW_VAR} = {self.var_name}({DEFAULT_FLOW_VAR})"
         return {
             "imports": imports,
-            "inits": f"{self.var_name} = SwitchPipeline(case_operators="
+            "inits": f"{self.var_name} = _SwitchPipeline(case_operators="
             f"{dict_converter(self.case_operators_var)}, "
             f"default_operators={self.default_var_name},"
             f" {kwarg_converter(self.source_kwargs)})",

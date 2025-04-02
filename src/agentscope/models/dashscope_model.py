@@ -7,7 +7,6 @@ from typing import Any, Union, List, Optional, Generator
 
 from loguru import logger
 
-from ..formatters import CommonFormatter
 from ..formatters import DashScopeFormatter
 from ..manager import FileManager
 from ..message import Msg, ToolUseBlock
@@ -424,8 +423,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 The formatted messages.
         """
         if multi_agent_mode:
-            return CommonFormatter.format_multi_agent(*args)
-        return CommonFormatter.format_chat(*args)
+            return DashScopeFormatter.format_multi_agent(*args)
+        return DashScopeFormatter.format_chat(*args)
 
     def format_tools_json_schemas(
         self,
@@ -950,6 +949,6 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                 The formatted messages.
         """
 
-        if not multi_agent_mode:
+        if multi_agent_mode:
             return DashScopeFormatter.format_multi_agent(*args)
         return DashScopeFormatter.format_chat(*args)

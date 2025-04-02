@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The ReAct Agent V2, which use the tools API of the LLM service providers
 rather than assembling the prompt manually."""
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 
 from ._agent import AgentBase
 from ..manager import ModelManager
@@ -27,6 +27,7 @@ class ReActAgentV2(AgentBase):
         sys_prompt: str = "You're a helpful assistant named {name}.",
         max_iters: int = 10,
         verbose: bool = True,
+        exit_reply_without_tool_calls: bool = True,
     ) -> None:
         """Initial the ReAct agent with the given name, model config name and
         tools.
@@ -47,6 +48,10 @@ class ReActAgentV2(AgentBase):
                 Whether to print the detailed information during reasoning and
                 acting steps. If `False`, only the content in speak field will
                 be print out.
+            exit_reply_without_tool_calls (`bool`, defaults to `True`):
+                Whether to exit the reply function when no tool calls are
+                generated. If `True`, the agent is allowed to generate a
+                response without calling the `generate_response` function.
         """
         super().__init__(name=name)
 
@@ -68,6 +73,7 @@ class ReActAgentV2(AgentBase):
 
         self.verbose = verbose
         self.max_iters = max_iters
+        self.exit_reply_without_tool_calls = exit_reply_without_tool_calls
 
     def reply(self, x: Optional[Union[Msg, list[Msg]]] = None) -> Msg:
         """The reply method of the agent."""
@@ -75,10 +81,14 @@ class ReActAgentV2(AgentBase):
 
         for _ in range(self.max_iters):
             # Reasoning to generate tool calls
-            tool_calls = self._reasoning()
+            # Note the msg_reasoning is already added to the memory
+            tool_calls, msg_reasoning = self._reasoning()
 
             if tool_calls is None:
-                continue
+                if self.exit_reply_without_tool_calls:
+                    return msg_reasoning
+                else:
+                    continue
 
             # Acting based on the tool calls
             msg_response = self._acting(tool_calls)
@@ -88,13 +98,12 @@ class ReActAgentV2(AgentBase):
         # Generate a response when exceeding the maximum iterations
         return self._summarizing()
 
-    def _reasoning(self) -> Union[list[ToolUseBlock], None]:
+    def _reasoning(self) -> Tuple[Union[list[ToolUseBlock], None], Msg]:
         """The reasoning process of the agent.
 
         Returns:
-            `Union[ToolUseBlock, None]`:
-                Return `None` if no tool is used, otherwise return the tool use
-                block.
+            `Tuple[Union[list[ToolUseBlock], None], Msg]`:
+                Return the tool calls (`None` if empty) and reasoning message.
         """
         prompt = self.model.format(
             Msg(
@@ -103,6 +112,8 @@ class ReActAgentV2(AgentBase):
                 role="system",
             ),
             self.memory.get_memory(),
+            # TODO: Support multi-agent mode in the future
+            multi_agent_mode=False,
         )
 
         raw_response = self.model(prompt, tools=self.tools)
@@ -118,15 +129,16 @@ class ReActAgentV2(AgentBase):
             content.append(TextBlock(type="text", text=raw_response.text))
         if raw_response.tool_calls:
             content.extend(raw_response.tool_calls)
-        self.memory.add(
-            Msg(
-                self.name,
-                content,
-                role="assistant",
-            ),
+
+        msg_reasoning = Msg(
+            self.name,
+            content,
+            role="assistant",
         )
 
-        return raw_response.tool_calls
+        self.memory.add(msg_reasoning)
+
+        return raw_response.tool_calls, msg_reasoning
 
     def _acting(self, tool_calls: list[ToolUseBlock]) -> Union[None, Msg]:
         """The acting process of the agent, which takes a tool use block as

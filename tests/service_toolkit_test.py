@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """ Unit test for service toolkit. """
+import asyncio
 import json
 import os
 import sys
 import unittest
+import threading
 from typing import Literal
 
 import agentscope
@@ -16,6 +18,7 @@ from agentscope.service import (
     query_mysql,
 )
 from agentscope.service import ServiceToolkit
+from agentscope.message import ToolUseBlock
 
 
 class ServiceToolkitTest(unittest.TestCase):
@@ -294,8 +297,8 @@ we use the embedding model to embed the query.""",
             self.json_schema_query_mysql,
         )
 
-    def test_mcp_tool(self) -> None:
-        """Test the mcp tool with ServiceToolkit."""
+    def run_mcp_tool_test(self, server: str = "echo_mcp_server.py") -> None:
+        """Core logic to test the mcp tool with ServiceToolkit."""
         if not sys.version_info >= (3, 10):
             self.skipTest(
                 "`test_mcp_tool` is skipped for Python versions < 3.10",
@@ -306,13 +309,13 @@ we use the embedding model to embed the query.""",
             os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
                 "custom",
-                "echo_mcp_server.py",
+                server,
             ),
         )
         service_toolkit.add_mcp_servers(
             server_configs={
                 "mcpServers": {
-                    "echo": {
+                    server.split(".")[0]: {
                         "command": "python",
                         "args": [
                             server_path,
@@ -336,6 +339,65 @@ The following tool functions are available in the format of
 	text (string): Input text
 """,  # noqa
         )
+
+        res = service_toolkit.parse_and_call_func(
+            ToolUseBlock(
+                type="tool_use",
+                id="xxx",
+                name="echo",
+                input={"text": "Hi"},
+            ),
+            tools_api_mode=True,
+        )
+        self.assertEqual(res.content[0]["output"][0].text, "Hi")
+
+    def test_mcp_tool_main_thread(self) -> None:
+        """Test the mcp tool in the main process."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool_main_thread` is skipped for Python versions "
+                "< 3.10",
+            )
+        self.run_mcp_tool_test(server="echo_mcp_server.py")
+        self.run_mcp_tool_test(server="as_mcp_server.py")
+
+    def test_mcp_tool_child_thread(self) -> None:
+        """Test the mcp tool in a child thread."""
+        if not sys.version_info >= (3, 10):
+            self.skipTest(
+                "`test_mcp_tool_main_thread` is skipped for Python versions "
+                "< 3.10",
+            )
+        # Use a threading event to signal test failure
+        failure_event = threading.Event()
+
+        def thread_target() -> None:
+            try:
+                self.run_mcp_tool_test(server="echo_mcp_server.py")
+                self.run_mcp_tool_test(server="as_mcp_server.py")
+            except Exception as e:
+                # Set the failure event if an exception occurs
+                failure_event.set()
+                raise e
+
+        test_thread = threading.Thread(target=thread_target)
+        test_thread.start()
+        test_thread.join()
+
+        # Check if the failure event was set
+        if failure_event.is_set():
+            self.fail("The child thread test failed.")
+
+    async def async_run_mcp_tool_test(self) -> None:
+        """Run the async MCP tool test logic."""
+        # Simulate asynchronous operations with asyncio.sleep
+        await asyncio.sleep(0.1)
+        self.run_mcp_tool_test(server="echo_mcp_server.py")
+        self.run_mcp_tool_test(server="as_mcp_server.py")
+
+    def test_mcp_tool_async(self) -> None:
+        """Test the mcp tool in the main async context."""
+        asyncio.run(self.async_run_mcp_tool_test())
 
     def test_service_toolkit(self) -> None:
         """Test the object of ServiceToolkit."""
