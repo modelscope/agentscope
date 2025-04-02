@@ -68,10 +68,11 @@ def pipeline(func: Callable) -> Callable:
             thread.start()
 
             # Yield new Msg instances as they are logged
-            for msg in get_msg_instances(thread_id=thread_id):
+            for msg, msg_len in get_msg_instances(thread_id=thread_id):
                 if msg:
                     yield msg
-                if not thread.is_alive():
+                # Break if the thread is dead and no more messages are expected
+                if not thread.is_alive() and msg_len == 0:
                     break
 
             # Wait for the function to finish

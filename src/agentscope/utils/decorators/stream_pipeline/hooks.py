@@ -82,7 +82,9 @@ def get_msg_instances(thread_id: Optional[str] = None) -> Generator:
     while True:
         with _LOCKS[thread_id]:
             if _MSG_INSTANCE[thread_id]:
-                yield _MSG_INSTANCE[thread_id].pop(0)
+                yield _MSG_INSTANCE[thread_id].pop(0), len(
+                    _MSG_INSTANCE[thread_id],
+                )
             else:
-                yield
+                yield None, None
         time.sleep(0.1)  # Avoid busy waiting
