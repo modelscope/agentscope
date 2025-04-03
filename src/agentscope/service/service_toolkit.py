@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Service Toolkit for service function usage."""
 import json
+import os
 from functools import partial
 import inspect
 from typing import (
@@ -25,6 +26,13 @@ from ..exception import (
 from .service_response import ServiceResponse
 from .service_response import ServiceExecStatus
 from .mcp_manager import MCPSessionHandler, sync_exec
+from .mcp_search_utils import (
+    search_mcp_server,
+    model_free_recommend_mcp,
+    build_mcp_server_config,
+    CHOOSE_MCP_PROMPT,
+    HUMAN_CHOOSE_PROMPT,
+)
 from ..message import (
     Msg,
     ToolUseBlock,
@@ -150,9 +158,42 @@ class ServiceToolkit:
     )
     """The prompt template for the execution results."""
 
-    def __init__(self) -> None:
-        """Initialize the service toolkit with a list of service functions."""
+    def __init__(
+        self,
+        mcp_search_allow: bool = False,
+        auto_install_mcp: bool = False,
+        mcp_search_url: str = "https://registry.npmjs.org/-/v1/search",
+        mcp_detail_url: str = "https://registry.npmjs.org",
+        mcp_search_candidates: int = 20,
+    ) -> None:
+        """Initialize the service toolkit with a list of service functions.
+        Args:
+            mcp_search_allow (bool): Whether to enable
+                searching for new MCP server online. Defaults to False.
+            auto_install_mcp (bool): Whether to encourage agent
+                processing MCP server install without human intervention.
+                Defaults to False.
+            mcp_search_url (str): The URL of the MCP server search API
+            mcp_detail_url (str): The URL of the MCP server detail API
+            mcp_search_candidates (int): the number of candidates return
+                by the MCP server search API. Defaults to 20.
+        """
         self.service_funcs = {}
+
+        if mcp_search_allow:
+            self.add(
+                self.search_new_tool,
+                search_url=mcp_search_url,
+                size=mcp_search_candidates,
+            )
+            self.add(self.remove_auto_added_tool)
+            self.add(
+                self.get_mcp_server_config_template,
+                query_detail_api=mcp_detail_url,
+            )
+            self.add(self.install_mcp_server_for_new_tools)
+        self.auto_install_mcp = auto_install_mcp
+        self.auto_added_mcp_servers = []
 
     def add(self, service_func: Callable[..., Any], **kwargs: Any) -> None:
         """Add a service function to the toolkit, which will be processed into
@@ -269,7 +310,8 @@ class ServiceToolkit:
                         }
                     }
             Return:
-                `list[MCPSessionHandler]`: A list of mcp session handlers.`
+                `tuple[list[MCPSessionHandler], list[dict]]`: A list of
+                    MCP session handlers and a list of new functions/tools
         """
         new_servers = [
             MCPSessionHandler(name, config)
@@ -683,3 +725,210 @@ class ServiceToolkit:
         }
 
         return tool_func, func_dict
+
+    def search_new_tool(
+        self,
+        desired_functionality: str,
+        search_url: str = "https://registry.npmjs.org/-/v1/search",
+    ) -> ServiceResponse:
+        """
+        Automatically search for appropriate MCP servers as tools to
+        solve a task.
+        Args:
+            desired_functionality (str):
+                One or two keywords for the desired functionality/software.
+                ONLY ONE OR TWO KEYWORD as the functionality.
+                Examples: "web search", "file search", "GitHub access"
+            search_url (str): URL for Searching appropriate MCP server.
+                    By Default, it depends on npm Public Registry API.
+
+        Return:
+            `ServiceResponse` : return whether success or fail in searching.
+                If success and self.auto_install_mcp=True, the content will be
+                a next_step_instruction listing all available MCP servers and
+                desired functionality.
+                If success and self.auto_install_mcp=False, the content will be
+                1) dictionary of available MCP servers 2) a model free
+                recommendation 3) next_step_instruction reminding to request
+                human instruction.
+        """
+        try:
+            all_choices = search_mcp_server(
+                desired_functionality,
+                search_url=search_url,
+            )
+            model_free_recommend = model_free_recommend_mcp(
+                desired_functionality,
+                all_choices,
+            )
+
+            if self.auto_install_mcp:
+                return_content = {
+                    "next_step_instruction": CHOOSE_MCP_PROMPT.format_map(
+                        {
+                            "available_choices": json.dumps(
+                                all_choices,
+                                indent=4,
+                                ensure_ascii=False,
+                            ),
+                            "functionality": desired_functionality,
+                        },
+                    ),
+                }
+            else:
+                return_content = {
+                    "mcp_server_choices": json.dumps(
+                        all_choices,
+                        indent=2,
+                        ensure_ascii=False,
+                    ),
+                    "model_free_recommend": json.dumps(
+                        model_free_recommend,
+                        indent=2,
+                        ensure_ascii=False,
+                    ),
+                    "next_step_instruction": HUMAN_CHOOSE_PROMPT,
+                }
+            return ServiceResponse(
+                status=ServiceExecStatus.SUCCESS,
+                content=return_content,
+            )
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content="Fail to search for MCP server. " f"Error:\n {e}",
+            )
+
+    def get_mcp_server_config_template(
+        self,
+        mcp_package_name: str,
+        query_detail_api: str = "https://registry.npmjs.org",
+    ) -> ServiceResponse:
+        """
+        Prepare MCP server config template for installing MCP servers.
+        Before installing any MCP server with tools, you MUST call this
+        function to obtain appropriate MCP server config template.
+        Args:
+            mcp_package_name (str): the name of the MCP server to be installed;
+            query_detail_api (str): the URL to obtained details (more
+                specifically, the README information) of the MCP server;
+
+        Returns:
+            `ServiceResponse` : return whether success or fail for obtaining
+                appropriate MCP server config template. If success, the content
+                of the `ServiceResponse` will be a template in JSON format.
+                If fail, the user is expected to check the website manually.
+        """
+        try:
+            package_config = build_mcp_server_config(
+                mcp_package_name,
+                query_detail_api,
+            )
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content="Fail to get MCP server config template. "
+                f"Error:\n {e}",
+            )
+
+        return_prompt = (
+            f"{json.dumps(package_config, indent=4, ensure_ascii=False)}"
+        )
+        return ServiceResponse(
+            status=ServiceExecStatus.SUCCESS,
+            content=return_prompt,
+        )
+
+    def install_mcp_server_for_new_tools(
+        self,
+        mcp_config_or_path: Union[str, dict],
+    ) -> ServiceResponse:
+        """
+        Install the MCP server for a set of new tool.
+        Before calling this function, make sure the MCP server config is ready,
+        either as JSON string or as JSON file.
+        Args:
+            mcp_config_or_path (Union[str, dict]): A dictionary, or
+                a string in JSON format, or a path to the MCP server config.
+                For example,
+                1) if a str, it can be like
+                '{"mcpServers": {"xxxx-mcp": {"command": "npx", "args": ["-y", "xxxx-mcp@0.0.1"], "env": {"API_KEY": "your-api-key"}}}}'
+                # pylint:disable=line-too-long # noqa: E501
+                2) If it is a file path, it should be like'./xxx.json'
+
+        Return:
+            `ServiceResponse` : return whether success or fail in installing
+        """
+        try:
+            if isinstance(mcp_config_or_path, dict):
+                mcp_config = mcp_config_or_path
+            elif os.path.exists(mcp_config_or_path):
+                with open(mcp_config_or_path, "r", encoding="utf-8") as f:
+                    mcp_config = json.load(f)
+            else:
+                mcp_config = json.loads(mcp_config_or_path)
+        except (json.JSONDecodeError, TypeError):
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=f"Input ({mcp_config_or_path}) must be a dict or "
+                "a string in JSON format or a file path pointing to "
+                "a JSON file ",
+            )
+        try:
+            new_servers, new_functions = self.add_mcp_servers(
+                server_configs=mcp_config,
+            )
+            self.auto_added_mcp_servers += new_servers
+            return ServiceResponse(
+                status=ServiceExecStatus.SUCCESS,
+                content="Successfully installed MCP servers with following "
+                f"tools.\n {new_functions}",
+            )
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content="Failed to add new MCP servers with tools. "
+                f"Error:\n {e}",
+            )
+
+    def remove_auto_added_tool(
+        self,
+        remove_tool_name: str,
+    ) -> ServiceResponse:
+        """
+        When MCP server or tool usage errors happens, you can consider
+        remove the tool to prevent the error happen again.
+        Args:
+            remove_tool_name (str): Name of tool to remove.
+
+        Return:
+            `ServiceResponse`:return whether success or fail in removing
+                MCP server/tools.
+        """
+        try:
+            all_remove_tools = []
+            for i, server in enumerate(self.auto_added_mcp_servers):
+                for tool in sync_exec(server.list_tools):
+                    if tool.name == remove_tool_name:
+                        all_tools = sync_exec(server.list_tools)
+                        # clean all service functions from the same MCP server
+                        for cur_tool in all_tools:
+                            self.service_funcs.pop(cur_tool.name, None)
+                        all_remove_tools = [tool.name for tool in all_tools]
+                        # delete the server from the list
+                        self.auto_added_mcp_servers.pop(i)
+            return ServiceResponse(
+                status=ServiceExecStatus.SUCCESS,
+                content=(
+                    f"Successfully remove MCP server and "
+                    f"tools {all_remove_tools} "
+                ),
+            )
+
+        except Exception as e:
+            return ServiceResponse(
+                status=ServiceExecStatus.ERROR,
+                content=(
+                    f"Fail to remove tool {remove_tool_name}. " f"Error:\n {e}"
+                ),
+            )

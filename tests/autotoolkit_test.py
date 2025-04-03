@@ -3,12 +3,14 @@
 # pylint: disable=W0212
 import json
 import unittest
-from typing import Any
 from unittest.mock import patch, MagicMock
 
 from agentscope.manager import ASManager
-from agentscope.service import AutoServiceToolkit
-from agentscope.models import ModelResponse, OpenAIChatWrapper
+from agentscope.service.mcp_search_utils import (
+    build_mcp_server_config,
+    search_mcp_server,
+    model_free_recommend_mcp,
+)
 
 SELECTED_PACKAGE = "@test_mcp_server/test_mcp"
 
@@ -18,36 +20,8 @@ class AutoServiceToolkitTest(unittest.TestCase):
     Unit test for AutoServiceToolkit.
     """
 
-    class DummyModelForAutoServiceToolkit(OpenAIChatWrapper):
-        """
-        Dummy model wrapper for testing
-        """
-
-        model_type: str = "dummy_test_for_auto_service_toolkit"
-
-        def __init__(self, **kwargs: Any) -> None:
-            """dummy init"""
-
-        def format(self, *arg: Any, **kwargs: Any) -> str:
-            return str(arg) + str(kwargs)
-
-        def __call__(self, *args: Any, **kwargs: Any) -> ModelResponse:
-            """dummy call"""
-            return ModelResponse(text=SELECTED_PACKAGE)
-
     def setUp(self) -> None:
-        """Init for ExampleTest."""
-        self.model_free_toolkit = AutoServiceToolkit(
-            model_free=True,
-        )
-        # work-around to avoid register new dummy model
-        self.model_based_toolkit = AutoServiceToolkit(
-            model_free=True,
-            confirm_install=True,
-        )
-        self.model_based_toolkit.model = self.DummyModelForAutoServiceToolkit()
-        self.model_free = False
-
+        """Init for Test."""
         self.search_response = {
             "objects": [
                 {
@@ -177,24 +151,16 @@ class AutoServiceToolkitTest(unittest.TestCase):
         mock_response.json.return_value = self.search_response
         mock_response.status_code = 200
         mock_get.return_value = mock_response
-        search_result = self.model_free_toolkit.search_mcp_server(
+        search_result = search_mcp_server(
             self.test_query,
         )
 
         self.assertEqual(len(search_result), 2)
         self.assertEqual(search_result, self.desired_search_result)
 
-        selected = self.model_free_toolkit._model_free_select(
+        selected = model_free_recommend_mcp(
             self.test_query,
             search_result,
-        )
-        self.assertEqual(selected, self.desired_search_result[1])
-
-    def test_model_based_select(self) -> None:
-        """Unit test for AutoServiceToolkit._model_based_select."""
-        selected = self.model_based_toolkit._llm_select(
-            self.test_query,
-            self.desired_search_result,
         )
         self.assertEqual(selected, self.desired_search_result[1])
 
@@ -207,20 +173,21 @@ class AutoServiceToolkitTest(unittest.TestCase):
         }
         mock_response.status_code = 200
         mock_get.return_value = mock_response
-        config = self.model_free_toolkit._build_server_config(
+        config = build_mcp_server_config(
             chosen_mcp_name="@modelcontextprotocol/server-github",
-            skip_modification=True,
         )
         s = """{
-            "@modelcontextprotocol/server-github": {
-              "command": "npx",
-              "args": [
-                "-y",
-                "@modelcontextprotocol/server-github"
-              ],
-              "env": {
-                "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
-              }
+            "mcpServers": {
+                "@modelcontextprotocol/server-github": {
+                  "command": "npx",
+                  "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-github"
+                  ],
+                  "env": {
+                    "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+                  }
+                }
             }
         }
         """
