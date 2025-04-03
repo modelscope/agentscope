@@ -6,7 +6,13 @@ import os
 from pydantic import Field
 from mcp.server.fastmcp import FastMCP
 
+import nest_asyncio
 import agentscope
+
+# If you do not want to use nest_asyncio, you can comment out the following
+# line, but might cause some issues, which can be ignored (RuntimeError:
+# Attempted to exit cancel scope in a different task than it was entered in )
+nest_asyncio.apply()
 
 mcp = FastMCP("Nested Server")
 

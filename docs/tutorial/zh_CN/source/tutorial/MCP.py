@@ -43,6 +43,10 @@ local_configs = {
 
 # %%
 # 初始化 ServiceToolkit 并添加 MCP 服务器配置 （在自己的环境中取消注释下面的代码）
+# 注意：如果您需要使用 STDIO MCP Server，请确保对象不会跨线程使用。
+# 因为在一个线程中，标准输入/输出流可能会被回收，
+# 导致潜在的冲突或意外行为。
+
 toolkit = ServiceToolkit()
 # toolkit.add_mcp_servers(server_configs=local_configs)
 
@@ -112,3 +116,10 @@ def tell_a_joke(
 # `mcp run my_mcp_server.py -t sse`
 # 此命令会启动 MCP 服务器，并将工具调用结果以服务器推送事件（SSE）的方式进行传输。
 # 这样，就可以通过配置的 MCP 服务器来访问和使用这一多智能体应用。
+
+# 如果您在子进程中运行上述代码（例如，作为 STDIO 服务器启动），
+# 请在顶部添加以下语句，以确保服务器在子进程结束后可以被回收。
+
+import nest_asyncio
+
+nest_asyncio.apply()
