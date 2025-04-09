@@ -911,13 +911,15 @@ class ServiceToolkit:
         try:
             all_remove_tools = []
             for i, server in enumerate(self.auto_added_mcp_servers):
-                for tool in sync_exec(server.list_tools):
+                server_tools = sync_exec(server.list_tools)
+                for tool in server_tools:
                     if tool.name == remove_tool_name:
-                        all_tools = sync_exec(server.list_tools)
                         # clean all service functions from the same MCP server
-                        for cur_tool in all_tools:
+                        for cur_tool in server_tools:
                             self.service_funcs.pop(cur_tool.name, None)
-                        all_remove_tools = [tool.name for tool in all_tools]
+                        all_remove_tools += [
+                            tool.name for tool in server_tools
+                        ]
                         # delete the server from the list
                         self.auto_added_mcp_servers.pop(i)
             return ServiceResponse(

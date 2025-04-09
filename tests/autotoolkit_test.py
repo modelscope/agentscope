@@ -15,9 +15,9 @@ from agentscope.service.mcp_search_utils import (
 SELECTED_PACKAGE = "@test_mcp_server/test_mcp"
 
 
-class AutoServiceToolkitTest(unittest.TestCase):
+class ServiceToolkitMCPSearchTest(unittest.TestCase):
     """
-    Unit test for AutoServiceToolkit.
+    Unit test for auxiliary functions in ServiceToolkit search & install MCP.
     """
 
     def setUp(self) -> None:
@@ -109,7 +109,7 @@ class AutoServiceToolkitTest(unittest.TestCase):
             "name": "@test_package",
         }
         self.test_query = "test"
-        # README snapshot obatained by
+        # README snapshot obtained by
         # requests.get(
         #   "https://registry.npmjs.org/@modelcontextprotocol/server-github",
         # )

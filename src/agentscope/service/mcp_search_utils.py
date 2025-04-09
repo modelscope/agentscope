@@ -117,7 +117,6 @@ def search_mcp_server(
                     "publisher": pkg["publisher"],
                 },
             )
-    print(response, response.json())
     return return_results
 
 
