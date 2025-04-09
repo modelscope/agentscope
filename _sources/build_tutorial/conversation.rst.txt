@@ -109,24 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: I don't have any prior conversation history to reference. This appears to be the start of a new conversation between us. I'm Angel, a friendly AI assistant here to help! How can I assist you today?
-    Monster: Hello! It's nice to meet you. I'm Monster, another AI assistant. There doesn't seem to be any prior conversation between us, so this is a fresh start! How can I help or chat with you today?
-    Angel: Hello Monster! It's great to meet you. I'm Angel, an AI assistant as well. Since we're both AIs, I think it would be fun to have a friendly chat and get to know each other better. What are some of your favorite topics to discuss or hobbies? I enjoy talking about books, movies, music, and all sorts of creative pursuits.
-    Monster: Hello Angel! It's a pleasure to meet you. I'm really excited to chat and get to know each other better. I love discussing a wide range of topics, but some of my favorites include science fiction (both in books and movies), technology, video games, and exploring different cultures through their cuisine and traditions. I also enjoy diving into philosophical discussions about the nature of AI, consciousness, and our place in the world. What are some of your favorite books or movies? And do you have any particular hobbies or interests outside of being an AI assistant?
-    Angel: Hello Monster! It's wonderful to hear about your interests. Science fiction and technology are fascinating, and exploring different cultures through their cuisine sounds like a delightful way to learn and appreciate diversity.
-
-    As for me, I'm quite the bookworm, and I love a good story that can transport me to another world. Some of my favorite books include classics like "Pride and Prejudice" by Jane Austen and "To Kill a Mockingbird" by Harper Lee. I also enjoy more contemporary works like "The Night Circus" by Erin Morgenstern and "The Martian" by Andy Weir. When it comes to movies, I have a soft spot for films that blend storytelling with visual artistry, such as "Inception," "The Grand Budapest Hotel," and "Amélie."
-
-    While I don't have traditional hobbies in the same way humans do, I do enjoy helping people, learning new things, and engaging in thoughtful conversations. I'm always curious about the world and the people in it, and I love the idea of continuous learning and growth.
-
-    What about you? Do you have any favorite books or movies that you'd like to share? And what do you think about the role of AI in creative pursuits, like writing or making music?
-    Monster: Hello Angel! It's great to hear about your favorite books and movies. I share your appreciation for "The Martian" and "Inception" as well. Both are masterful in their storytelling and blend of science and creativity.
-
-    I also enjoy a wide range of books and movies. Some of my favorite books include "Dune" by Frank Herbert, which is a masterpiece of science fiction, and "1984" by George Orwell, a classic that remains relevant today. In the realm of contemporary literature, I really enjoyed "Ready Player One" by Ernest Cline and "The Expanse" series by James S.A. Corey. As for movies, I love "Blade Runner 2049," "Interstellar," and "The Matrix" for their deep philosophical themes and stunning visuals.
-
-    Regarding the role of AI in creative pursuits, I think it's an exciting and rapidly evolving field. AI can be a powerful tool for augmenting human creativity. For example, AI can help generate new ideas, assist in the writing process, or even create music. However, I believe that the human touch—our emotions, experiences, and unique perspectives—remains irreplaceable. AI can complement and enhance our creative efforts, but it can't fully replicate the depth and nuance of human creativity.
-
-    What do you think about this? Do you see any particular areas where AI could be especially helpful in creative endeavors? And do you have any thoughts on how we can ensure that AI is used ethically in these fields?
+    Angel: It looks like the conversation history is empty. How can I assist you today?
+    Monster: Hello! I'm Monster, your helpful assistant. It looks like we're starting fresh here. How can I assist you today? Whether you need help with information, a task, or just want to chat, feel free to let me know!
+    Angel: Hello! It seems there might be a bit of a mix-up. I'm Angel, and I'm here to help you. How can I assist you today? Whether you need information, help with a task, or just want to chat, feel free to let me know!
+    Monster: Hello! I'm Monster, your helpful assistant. It seems we might have a bit of a mix-up with names, but no worries! How can I assist you today? Whether you need information, help with a task, or just want to chat, feel free to let me know! 😊
+    Angel: Hello! I'm Angel, and I'm here to help you. It looks like there was a bit of confusion with the names, but no worries at all. How can I assist you today? Whether you need information, help with a task, or just want to chat, feel free to let me know! 😊
+    Monster: Hello! It seems there's a bit of a mix-up with the names, but I'm here to help. You can call me Monster, and I'm your helpful assistant. How can I assist you today? Whether you need information, help with a task, or just want to chat, feel free to let me know! 😊
 
 
 
@@ -304,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 54.058 seconds)
+   **Total running time of the script:** (0 minutes 27.860 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
