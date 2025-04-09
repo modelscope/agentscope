@@ -184,7 +184,7 @@ class ServiceToolkit:
             self.add(
                 self.search_new_tool,
                 search_url=mcp_search_url,
-                size=mcp_search_candidates,
+                mcp_search_candidates=mcp_search_candidates,
             )
             self.add(self.remove_auto_added_tool)
             self.add(
@@ -729,6 +729,7 @@ class ServiceToolkit:
     def search_new_tool(
         self,
         desired_functionality: str,
+        mcp_search_candidates: int = 20,
         search_url: str = "https://registry.npmjs.org/-/v1/search",
     ) -> ServiceResponse:
         """
@@ -739,6 +740,7 @@ class ServiceToolkit:
                 One or two keywords for the desired functionality/software.
                 ONLY ONE OR TWO KEYWORD as the functionality.
                 Examples: "web search", "file search", "GitHub access"
+            mcp_search_candidates: the maximum number of MCP servers to return.
             search_url (str): URL for Searching appropriate MCP server.
                     By Default, it depends on npm Public Registry API.
 
@@ -755,6 +757,7 @@ class ServiceToolkit:
         try:
             all_choices = search_mcp_server(
                 desired_functionality,
+                size=mcp_search_candidates,
                 search_url=search_url,
             )
             model_free_recommend = model_free_recommend_mcp(
