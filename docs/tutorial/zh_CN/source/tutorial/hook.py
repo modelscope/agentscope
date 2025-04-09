@@ -102,6 +102,16 @@ def post_observe_hook_template(self: AgentBase) -> None:
 # -------------------
 # AgentScope 允许通过调用相应的方法注册、移除和清除钩子函数。
 #
+# 用户可以将钩子函数注册到 **对象** 和 **类** 两个不同的级别，其中 **对象** 级别的钩子函数只对当前的对象有效，**类** 级别的钩子函数会对改类的所有对象生效。
+# 下面我们展示两个不同级别钩子函数的使用方式。
+#
+# .. note:: 对象级别的钩子函数存储在对象的 `_hooks_{hook_type}` 属性上，类级别的钩子函数存储在类的 `_class_hooks_{hook_type}` 属性上。
+#
+# .. note:: 对所有位置的钩子函数来说，对象级别和类级别钩子函数的执行顺序为：对象级别的钩子函数 --> 类级别的钩子函数
+#
+# 对象级别
+# ^^^^^^^^^^^^^^^^^^^^^^^
+#
 # 我们首先创建一个简单的智能体，用于回显传入的消息：
 
 from typing import Optional, Union
@@ -121,7 +131,7 @@ class TestAgent(AgentBase):
 
 # %%
 # Reply 钩子函数
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# """""""""""""""""
 # 接下来，我们定义两个前置钩子函数，它们都修改输入的消息，但一个返回修改后的消息，另一个不返回：
 
 
@@ -165,9 +175,9 @@ def post_reply_hook(self, x) -> Msg:
 
 agent = TestAgent()
 
-agent.register_pre_reply_hook("pre_hook_1", pre_reply_hook_1)
-agent.register_pre_reply_hook("pre_hook_2", pre_reply_hook_2)
-agent.register_post_reply_hook("post_hook", post_reply_hook)
+agent.register_hook("pre_reply", "pre_hook_1", pre_reply_hook_1)
+agent.register_hook("pre_reply", "pre_hook_2", pre_reply_hook_2)
+agent.register_hook("post_reply", "post_hook", post_reply_hook)
 
 msg = Msg("user", "[原始消息]", "user")
 
@@ -180,7 +190,7 @@ print("回复消息的content域:\n", msg_response.content)
 # "[Pre-hook-1]" 前缀缺失，因为第一个前置钩子没有返回修改后的消息。
 #
 # Speak 钩子函数
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# """""""""""""""""
 # 为了兼容流式输出，pre-speak 钩子函数接受两个额外的参数：
 #
 # - `stream`: 一个布尔标志，指示是否处于流式输出
@@ -236,8 +246,8 @@ def post_speak_hook(self) -> None:
 
 
 # Register the hooks
-streaming_agent.register_pre_speak_hook("pre_speak_hook", pre_speak_hook)
-streaming_agent.register_post_speak_hook("post_speak_hook", post_speak_hook)
+streaming_agent.register_hook("pre_speak", "pre_speak_hook", pre_speak_hook)
+streaming_agent.register_hook("post_speak", "post_speak_hook", post_speak_hook)
 
 msg = Msg(
     "user",
@@ -252,7 +262,7 @@ print("Speak 函数的调用次数：", streaming_agent.cnt)
 
 # %%
 # Observe 钩子函数
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# """""""""""""""""
 # 与 speak 钩子函数类似，我们在下面展示如何使用 pre/post-observe 钩子：
 
 import json
@@ -278,8 +288,8 @@ def post_observe_hook(self) -> None:
 # 首先清除智能体记忆
 agent.memory.clear()
 
-agent.register_pre_observe_hook("pre_observe_hook", pre_observe_hook)
-agent.register_post_observe_hook("post_observe_hook", post_observe_hook)
+agent.register_hook("pre_observe", "pre_observe_hook", pre_observe_hook)
+agent.register_hook("post_observe", "post_observe_hook", post_observe_hook)
 
 agent.observe(
     Msg(
@@ -291,6 +301,39 @@ agent.observe(
 
 print(
     "智能体的记忆：\n",
-    json.dumps([_.to_dict() for _ in agent.memory.get_memory()], indent=4),
+    json.dumps(
+        [_.to_dict() for _ in agent.memory.get_memory()],
+        indent=4,
+        ensure_ascii=False,
+    ),
 )
 print("调用 Observe 函数的次数：", agent.cnt)
+
+# %%
+# 类级别
+# ^^^^^^^^^^^^^^^^^^^^^^
+#
+# 类级别的钩子函数和对象级别使用逻辑一致，只不过对应的生效范围为类的所有对象，以及注册、删除、清空函数带有 "class" 的前缀。
+#
+# 下面以 pre_reply 函数为例，展示类级别的钩子函数的使用
+#
+
+# 新建一个新的agent对象
+agent2 = TestAgent()
+
+AgentBase.clear_all_class_hooks()
+
+print("此时agent的钩子函数：", list(agent._class_hooks_pre_reply.keys()))
+print("此时agent2的钩子函数：", list(agent2._class_hooks_pre_reply.keys()))
+
+# %%
+# 接着我们在 `AgentBase` 的基类上注册类级别的钩子函数
+
+# 注册类级别的钩子函数
+AgentBase.register_class_hook("pre_reply", "class_hook_1", pre_reply_hook_1)
+
+print("注册后agent的钩子函数：", list(agent._class_hooks_pre_reply.keys()))
+print("注册后agent2的钩子函数：", list(agent2._class_hooks_pre_reply.keys()))
+
+# %%
+# 能够看到，类级别的钩子函数会对该类的所有对象生效。

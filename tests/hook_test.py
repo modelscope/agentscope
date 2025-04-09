@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, protected-access
 """Unittests for agent hooks."""
 import unittest
 from typing import Optional, Union
@@ -35,6 +35,7 @@ class AgentHooksTest(unittest.TestCase):
     def setUp(self) -> None:
         """Set up the test."""
         self.agent = _TestAgent()
+        self.agent2 = _TestAgent()
 
     def test_reply_hook(self) -> None:
         """Test the reply hook."""
@@ -76,42 +77,51 @@ class AgentHooksTest(unittest.TestCase):
         self.assertEqual("0", x.content)
 
         # Test with one pre hook
-        self.agent.register_pre_reply_hook("first_pre_hook", pre_reply_hook)
+        self.agent.register_hook("pre_reply", "first_pre_hook", pre_reply_hook)
         x = self.agent(msg_test)
         self.assertEqual("-1, 0", x.content)
 
         # Test with one pre and one post hook
-        self.agent.register_post_reply_hook("first_post_hook", post_reply_hook)
+        self.agent.register_hook(
+            "post_reply",
+            "first_post_hook",
+            post_reply_hook,
+        )
         x = self.agent(msg_test)
         self.assertEqual("-1, 0, 1", x.content)
 
         # Test with two pre hooks and one post hook
-        self.agent.register_pre_reply_hook("second_pre_hook", pre_reply_hook)
+        self.agent.register_hook(
+            "pre_reply",
+            "second_pre_hook",
+            pre_reply_hook,
+        )
         x = self.agent(msg_test)
         self.assertEqual("-1, -1, 0, 1", x.content)
 
         # Test removing one pre hook
-        self.agent.remove_pre_reply_hook("first_pre_hook")
+        self.agent.remove_hook("pre_reply", "first_pre_hook")
         x = self.agent(msg_test)
         self.assertEqual("-1, 0, 1", x.content)
 
         # Test removing one post hook
-        self.agent.remove_post_reply_hook("first_post_hook")
+        self.agent.remove_hook("post_reply", "first_post_hook")
         x = self.agent(msg_test)
         self.assertEqual("-1, 0", x.content)
 
         # Test clearing all pre hooks
-        self.agent.clear_pre_reply_hooks()
+        self.agent.clear_hooks("pre_reply")
         x = self.agent(msg_test)
         self.assertEqual("0", x.content)
 
         # Test with three pre hooks, change -> not change -> change
-        self.agent.register_pre_reply_hook("first_pre_hook", pre_reply_hook)
-        self.agent.register_pre_reply_hook(
+        self.agent.register_hook("pre_reply", "first_pre_hook", pre_reply_hook)
+        self.agent.register_hook(
+            "pre_reply",
             "second_pre_hook",
             pre_reply_hook_without_change,
         )
-        self.agent.register_pre_reply_hook("third_pre_hook", pre_reply_hook)
+        self.agent.register_hook("pre_reply", "third_pre_hook", pre_reply_hook)
         x = self.agent(msg_test)
         self.assertEqual("-1, -1, 0", x.content)
 
@@ -157,20 +167,28 @@ class AgentHooksTest(unittest.TestCase):
                 self.cnt = 0
             self.cnt += 1
 
-        self.agent.register_pre_speak_hook(
+        self.agent.register_hook(
+            "pre_speak",
             "first_pre_hook",
             pre_speak_hook_change,
         )
-        self.agent.register_pre_speak_hook(
+        self.agent.register_hook(
+            "pre_speak",
             "second_pre_hook",
             pre_speak_hook_change2,
         )
-        self.agent.register_pre_speak_hook(
+        self.agent.register_hook(
+            "pre_speak",
             "third_pre_hook",
             pre_speak_hook_without_change,
         )
-        self.agent.register_post_speak_hook("first_post_hook", post_speak_hook)
-        self.agent.register_post_speak_hook(
+        self.agent.register_hook(
+            "post_speak",
+            "first_post_hook",
+            post_speak_hook,
+        )
+        self.agent.register_hook(
+            "post_speak",
             "second_post_hook",
             post_speak_hook,
         )
@@ -212,15 +230,18 @@ class AgentHooksTest(unittest.TestCase):
         self.agent.observe(msg_test)
         self.assertEqual("0", self.agent.memory.get_memory()[0].content)
 
-        self.agent.register_pre_observe_hook(
+        self.agent.register_hook(
+            "pre_observe",
             "first_pre_hook",
             pre_observe_hook_change,
         )
-        self.agent.register_pre_observe_hook(
+        self.agent.register_hook(
+            "pre_observe",
             "second_pre_hook",
             pre_observe_hook_not_change,
         )
-        self.agent.register_post_observe_hook(
+        self.agent.register_hook(
+            "post_observe",
             "first_post_hook",
             post_observe_hook,
         )
@@ -235,7 +256,237 @@ class AgentHooksTest(unittest.TestCase):
         )
         self.assertEqual(1, cnt_post)
 
+    def test_class_and_object_pre_reply_hook(self) -> None:
+        """Test the class and object hook."""
+
+        def pre_reply_hook_1(self: AgentBase, x: Msg) -> Msg:
+            """Pre-reply hook."""
+            return Msg("assistant", "-1, " + x.content, "assistant")
+
+        def pre_reply_hook_2(self: AgentBase, x: Msg) -> Msg:
+            """Pre-reply hook."""
+            return Msg("assistant", "-2, " + x.content, "assistant")
+
+        AgentBase.register_class_hook(
+            "pre_reply",
+            "first_hook",
+            pre_reply_hook_1,
+        )
+
+        self.assertListEqual(
+            list(self.agent._class_hooks_pre_reply.keys()),
+            ["first_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_pre_reply.keys()),
+            ["first_hook"],
+        )
+        AgentBase.clear_all_class_hooks()
+
+        self.agent.register_hook(
+            "pre_reply",
+            "second_hook",
+            pre_reply_hook_1,
+        )
+        self.assertListEqual(
+            list(self.agent._hooks_pre_reply.keys()),
+            ["second_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_pre_reply.keys()),
+            [],
+        )
+
+        AgentBase.register_class_hook(
+            "pre_reply",
+            "third_hook",
+            pre_reply_hook_2,
+        )
+
+        msg_test = Msg("user", "0", "user")
+
+        res = self.agent(msg_test)
+        self.assertEqual(res.content, "-2, -1, 0")
+
+        res = self.agent2(msg_test)
+        self.assertEqual(res.content, "-2, 0")
+
+    def test_class_and_object_post_reply_hook(self) -> None:
+        """Test the class and object hook."""
+
+        def post_reply_hook_1(self: AgentBase, x: Msg) -> Msg:
+            """Post-reply hook."""
+            return Msg("assistant", x.content + ", 1", "assistant")
+
+        def post_reply_hook_2(self: AgentBase, x: Msg) -> Msg:
+            """Post-reply hook."""
+            return Msg("assistant", x.content + ", 2", "assistant")
+
+        AgentBase.register_class_hook(
+            "post_reply",
+            "first_hook",
+            post_reply_hook_1,
+        )
+
+        self.assertListEqual(
+            list(self.agent._class_hooks_post_reply.keys()),
+            ["first_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_post_reply.keys()),
+            ["first_hook"],
+        )
+        AgentBase.clear_all_class_hooks()
+
+        self.agent.register_hook(
+            "post_reply",
+            "second_hook",
+            post_reply_hook_1,
+        )
+        self.assertListEqual(
+            list(self.agent._hooks_post_reply.keys()),
+            ["second_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_post_reply.keys()),
+            [],
+        )
+
+        AgentBase.register_class_hook(
+            "post_reply",
+            "third_hook",
+            post_reply_hook_2,
+        )
+
+        msg_test = Msg("user", "0", "user")
+
+        res = self.agent(msg_test)
+        self.assertEqual(res.content, "0, 1, 2")
+
+        res = self.agent2(msg_test)
+        self.assertEqual(res.content, "0, 2")
+
+    def test_class_and_object_pre_observe_hook(self) -> None:
+        """Test the class and object hook."""
+
+        def pre_observe_hook_1(self: AgentBase, x: Msg) -> Msg:
+            """Pre-observe hook."""
+            return Msg("assistant", "-1, " + x.content, "assistant")
+
+        def pre_observe_hook_2(self: AgentBase, x: Msg) -> Msg:
+            """Pre-observe hook."""
+            return Msg("assistant", "-2, " + x.content, "assistant")
+
+        AgentBase.register_class_hook(
+            "pre_observe",
+            "first_hook",
+            pre_observe_hook_1,
+        )
+
+        self.assertListEqual(
+            list(self.agent._class_hooks_pre_observe.keys()),
+            ["first_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_pre_observe.keys()),
+            ["first_hook"],
+        )
+        AgentBase.clear_all_class_hooks()
+
+        self.agent.register_hook(
+            "pre_observe",
+            "second_hook",
+            pre_observe_hook_1,
+        )
+        self.assertListEqual(
+            list(self.agent._hooks_pre_observe.keys()),
+            ["second_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_pre_observe.keys()),
+            [],
+        )
+
+        AgentBase.register_class_hook(
+            "pre_observe",
+            "third_hook",
+            pre_observe_hook_2,
+        )
+
+        msg_test = Msg("user", "0", "user")
+
+        self.agent.observe(msg_test)
+        self.assertEqual(
+            "-2, -1, 0",
+            self.agent.memory.get_memory()[0].content,
+        )
+
+        self.agent2.observe(msg_test)
+        self.assertEqual(
+            "-2, 0",
+            self.agent2.memory.get_memory()[0].content,
+        )
+
+    @patch("agentscope.agents._agent.log_msg")
+    def test_class_and_object_pre_speak_hook(
+        self,
+        mock_log_msg: MagicMock,
+    ) -> None:
+        """Test the class and object hook."""
+
+        def pre_speak_hook_change(
+            self: AgentBase,
+            msg: Msg,
+            stream: bool,
+            last: bool,
+        ) -> Msg:
+            """Pre-speak hook."""
+            msg.content = "-1, " + msg.content
+            return msg
+
+        def pre_speak_hook_change2(
+            self: AgentBase,
+            msg: Msg,
+            stream: bool,
+            last: bool,
+        ) -> Msg:
+            """Pre-speak hook."""
+            msg.content = "-2, " + msg.content
+            return msg
+
+        AgentBase.register_class_hook(
+            "pre_speak",
+            "first_hook",
+            pre_speak_hook_change,
+        )
+
+        self.assertListEqual(
+            list(self.agent._class_hooks_pre_speak.keys()),
+            ["first_hook"],
+        )
+        self.assertListEqual(
+            list(self.agent2._class_hooks_pre_speak.keys()),
+            ["first_hook"],
+        )
+
+        self.agent.register_hook(
+            "pre_speak",
+            "first_obj_hook",
+            pre_speak_hook_change2,
+        )
+
+        msg_test = Msg("user", "0", "user")
+
+        self.agent(msg_test)
+        self.assertEqual("-1, -2, 0", mock_log_msg.call_args[0][0].content)
+
+        self.agent2(msg_test)
+        self.assertEqual("-1, 0", mock_log_msg.call_args[0][0].content)
+
     def tearDown(self) -> None:
         """Tear down the test."""
-        self.agent.clear_all_hooks()
+        self.agent.clear_all_obj_hooks()
+        self.agent2.clear_all_obj_hooks()
+
+        AgentBase.clear_all_class_hooks()
         self.agent.memory.clear()

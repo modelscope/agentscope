@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=protected-access, too-many-public-methods
+# pylint: disable=protected-access
 """ Base class for Agent """
 
 from __future__ import annotations
@@ -8,7 +8,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from functools import wraps
 from types import GeneratorType
-from typing import Optional, Generator, Tuple, Callable, Dict
+from typing import Optional, Generator, Tuple, Callable, Dict, Literal
 from typing import Sequence
 from typing import Union
 from typing import Any
@@ -37,9 +37,15 @@ class _HooksMeta(type):
                 self: AgentBase,
                 x: Optional[Union[Msg, list[Msg]]] = None,
             ) -> Union[Union[Msg, list[Msg]], None]:
-                # Pre hooks
+                # Object-level pre-reply hooks
                 current_input = x
                 for _, hook in self._hooks_pre_reply.items():
+                    hook_result = hook(self, deepcopy(current_input))
+                    if hook_result is not None:
+                        current_input = hook_result
+
+                # Class-level pre-reply hooks
+                for _, hook in self._class_hooks_pre_reply.items():
                     hook_result = hook(self, deepcopy(current_input))
                     if hook_result is not None:
                         current_input = hook_result
@@ -47,9 +53,15 @@ class _HooksMeta(type):
                 # Original function
                 reply_result = original_reply(self, current_input)
 
-                # Post hooks
+                # Object-level post-reply hooks
                 current_output = reply_result
                 for _, hook in self._hooks_post_reply.items():
+                    hook_result = hook(self, deepcopy(current_output))
+                    if hook_result is not None:
+                        current_output = hook_result
+
+                # Class-level post-reply hooks
+                for _, hook in self._class_hooks_post_reply.items():
                     hook_result = hook(self, deepcopy(current_output))
                     if hook_result is not None:
                         current_output = hook_result
@@ -66,9 +78,15 @@ class _HooksMeta(type):
                 self: AgentBase,
                 x: Union[Msg, list[Msg]],
             ) -> None:
-                # Pre hooks
+                # Object-level pre hooks
                 current_input = deepcopy(x)
                 for _, hook in self._hooks_pre_observe.items():
+                    hook_result = hook(self, deepcopy(current_input))
+                    if hook_result is not None:
+                        current_input = hook_result
+
+                # Class-level pre hooks
+                for _, hook in self._class_hooks_pre_observe.items():
                     hook_result = hook(self, deepcopy(current_input))
                     if hook_result is not None:
                         current_input = hook_result
@@ -76,9 +94,13 @@ class _HooksMeta(type):
                 # Original function
                 original_observe(self, current_input)
 
-                # Post hooks
+                # Object-level post hooks
                 for _, hook in self._hooks_post_observe.items():
                     hook(self)  # type: ignore[call-arg]
+
+                # Class-level post hooks
+                for _, hook in self._class_hooks_post_observe.items():
+                    hook(self)
 
             attrs["observe"] = wrapped_observe
 
@@ -108,7 +130,7 @@ class AgentBase(metaclass=_AgentMeta):
 
     _version: int = 1
 
-    _hooks_pre_reply: dict[
+    _class_hooks_pre_reply: dict[
         str,
         Callable[
             [
@@ -118,58 +140,64 @@ class AgentBase(metaclass=_AgentMeta):
             Union[Msg, list[Msg], None],
         ],
     ] = OrderedDict()
-    """The hooks function that will be called before the reply function, which
-    takes the `self` object and a deep copied input message(s) as input. If
-    the return of the hook is not `None`, the new output will be passed to the
-    next hook or the original reply function. Otherwise, the original input
-    will be passed instead."""
+    """The class-level hook functions that will be called before the reply
+    function, which takes the `self` object and a deep copied input message(s)
+    as input. If the return of the hook is not `None`, the new output will be
+    passed to the next hook or the original reply function. Otherwise,
+    the original input will be passed instead."""
 
-    _hooks_post_reply: dict[
+    _class_hooks_post_reply: dict[
         str,
         Callable[[AgentBase, Msg], Union[Msg, None]],
     ] = OrderedDict()
-    """The hooks function that will be called after the reply function, which
-    takes the `self` object and a deep copied output message as input. If the
-    hook returns a message, the new message will be passed to the next hook or
-    the original reply function. Otherwise, the original output will be passed
-    instead."""
+    """The class-level hook functions that will be called after the reply
+    function, which takes the `self` object and a deep copied output message
+    as input. If the hook returns a message, the new message will be passed
+    to the next hook or the original reply function. Otherwise, the original
+    output will be passed instead."""
 
-    _hooks_pre_speak: dict[
+    _class_hooks_pre_speak: dict[
         str,
         Callable[
             [AgentBase, Msg, bool, bool],
             Union[Msg, None],
         ],
     ] = OrderedDict()
-    """The hooks function that will be called before printing, which
-    takes the `self` object, a deep copied printing message, a streaming flag,
-    and a last flag as input. In streaming mode, the deep copied message will
-    be a chunk of the original message, the streaming flat will be `True`, and
-    the last flag will be `False` at the end of the streaming. If the hook
-    returns a message, the new message will be passed to the next hook or the
-    original speak function. Otherwise, the original input message will be
-    passed instead."""
+    """The class-level hook functions that will be called before printing,
+    which takes the `self` object, a deep copied printing message, a streaming
+    flag, and a last flag as input. In streaming mode, the deep copied message
+    will be a chunk of the original message, the streaming flat will be
+    `True`, and the last flag will be `False` at the end of the streaming.
+    If the hook returns a message, the new message will be passed to the next
+    hook or the original speak function. Otherwise, the original input
+    message will be passed instead."""
 
-    _hooks_post_speak: dict[str, Callable[[AgentBase], None]] = OrderedDict()
-    """The hooks function that will be called after the speak function, which
-    takes the `self` object as input."""
+    _class_hooks_post_speak: dict[
+        str,
+        Callable[[AgentBase], None],
+    ] = OrderedDict()
+    """The class-level hook functions that will be called after the speak
+    function, which takes the `self` object as input."""
 
-    _hooks_pre_observe: dict[
+    _class_hooks_pre_observe: dict[
         str,
         Callable[
             [AgentBase, Union[Msg, list[Msg]]],
             Union[Union[Msg, list[Msg]], None],
         ],
     ] = OrderedDict()
-    """The hooks function that will be called before the observe function,
-    which takes the `self` object and a deep copied input message(s) as input.
-    If the hook returns a new message, the new message will be passed to the
-    next hook or the original observe function. Otherwise, the original input
-    will be passed instead."""
+    """The class-level hook functions that will be called before the observe
+    function, which takes the `self` object and a deep copied input message(s)
+    as input. If the hook returns a new message, the new message will be
+    passed to the next hook or the original observe function. Otherwise,
+    the original input will be passed instead."""
 
-    _hooks_post_observe: dict[str, Callable[[AgentBase], None]] = OrderedDict()
-    """The hooks function that will be called after the observe function,
-    which takes the `self` object as input."""
+    _class_hooks_post_observe: dict[
+        str,
+        Callable[[AgentBase], None],
+    ] = OrderedDict()
+    """The class-level hook functions that will be called after the observe
+    function, which takes the `self` object as input."""
 
     def __init__(
         self,
@@ -242,6 +270,16 @@ class AgentBase(metaclass=_AgentMeta):
                 f"Convert {self.__class__.__name__}[{self.name}] into"
                 " a distributed agent.",
             )
+
+        # Initialize the object-level hooks
+        self._hooks_pre_speak = OrderedDict()
+        self._hooks_post_speak = OrderedDict()
+
+        self._hooks_pre_reply = OrderedDict()
+        self._hooks_post_reply = OrderedDict()
+
+        self._hooks_pre_observe = OrderedDict()
+        self._hooks_post_observe = OrderedDict()
 
     @classmethod
     def generate_agent_id(cls) -> str:
@@ -318,11 +356,19 @@ class AgentBase(metaclass=_AgentMeta):
             last: bool,
         ) -> Msg:
             """Call the hooks in the speak function."""
+            # Object-level pre-speak hooks
             current_input = deepcopy(msg)
             for _, hook in self._hooks_pre_speak.items():
                 hook_result = hook(self, deepcopy(current_input), stream, last)
                 if hook_result is not None:
                     current_input = hook_result
+
+            # Class-level pre-speak hooks
+            for _, hook in self._class_hooks_pre_speak.items():
+                hook_result = hook(self, deepcopy(current_input), stream, last)
+                if hook_result is not None:
+                    current_input = hook_result
+
             return current_input
 
         # Streaming mode
@@ -340,8 +386,12 @@ class AgentBase(metaclass=_AgentMeta):
                 )
                 log_stream_msg(new_input, last=last)
 
-            # Call the post speak hooks
+            # Call the object-level post speak hooks
             for _, hook in self._hooks_post_speak.items():
+                hook(self)
+
+            # Call the class-level post speak hooks
+            for _, hook in self._class_hooks_post_speak.items():
                 hook(self)
 
             return
@@ -385,8 +435,12 @@ class AgentBase(metaclass=_AgentMeta):
 
         log_msg(msg_hook)
 
-        # Call the post speak hooks
+        # Call the object-level post speak hooks
         for _, hook in self._hooks_post_speak.items():
+            hook(self)
+
+        # Call the class-level post speak hooks
+        for _, hook in self._class_hooks_post_speak.items():
             hook(self)
 
     def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:
@@ -469,301 +523,242 @@ class AgentBase(metaclass=_AgentMeta):
         """Set the unique id of this agent."""
         self._oid = agent_id
 
-    def _register_hook(
+    def register_hook(
         self,
-        hooks_attr_name: str,
+        hook_type: Literal[
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ],
         hook_name: str,
         hook: Callable,
     ) -> None:
         """The universal function to register a hook to the agent.
 
         Args:
-            hooks_attr_name (`str`):
-                The name of the hooks attribute.
+            hook_type (`Literal["pre_reply", "post_reply", "pre_speak",
+             "post_speak", "pre_observe", "post_observe"]`):
+                The type of the hook, which should be one of "pre_reply",
+                "post_reply", "pre_speak", "post_speak", "pre_observe",
+                and "post_observe".
             hook_name (`str`):
                 The name of the hook. If the name is already registered, the
                 hook will be overwritten.
             hook (`Callable`):
                 The hook function.
         """
-        assert hooks_attr_name.startswith("_hooks_") and hasattr(
-            self,
-            hooks_attr_name,
-        ), f"Invalid hooks attribute name: {hooks_attr_name}"
+        assert hook_type in [
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ], f"Invalid hook type: {hook_type}"
 
-        hooks = getattr(self, hooks_attr_name)
+        hooks = getattr(self, "_hooks_" + hook_type)
         hooks[hook_name] = hook
 
-    def _remove_hook(self, hooks_attr_name: str, hook_name: str) -> None:
-        """The universal function to remove a hook from the agent.
+    def remove_hook(
+        self,
+        hook_type: Literal[
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ],
+        hook_name: str,
+    ) -> None:
+        """The universal function to remove a hook from the agent object.
 
         Args:
-            hooks_attr_name (`str`):
-                The name of the hooks attribute.
+            hook_type (`Literal["pre_reply", "post_reply", "pre_speak",
+             "post_speak", "pre_observe", "post_observe"]`):
+                The type of the hook, which should be one of "pre_reply",
+                "post_reply", "pre_speak", "post_speak", "pre_observe",
+                and "post_observe".
             hook_name (`str`):
                 The name of the hook to be removed.
         """
-        assert hooks_attr_name.startswith("_hooks_") and hasattr(
-            self,
-            hooks_attr_name,
-        ), f"Invalid hooks attribute name: {hooks_attr_name}"
+        assert hook_type in [
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ], f"Invalid hook type: {hook_type}"
 
-        hooks = getattr(self, hooks_attr_name)
+        hooks = getattr(self, "_hooks_" + hook_type)
         if hook_name in hooks:
             hooks.pop(hook_name)
         else:
             raise ValueError(
-                f"Hook [{hook_name}] not found in {hooks_attr_name}.",
+                f"Hook [{hook_name}] not found in {hook_type}.",
             )
 
-    def _clear_hooks(self, hooks_attr_name: str) -> None:
-        """Clear the specified hooks from the agent.
+    def clear_hooks(
+        self,
+        hook_type: Literal[
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ],
+    ) -> None:
+        """Clear the specified hooks from the agent object.
 
         Args:
-            hooks_attr_name (`str`):
-                The name of the hooks attribute.
+            hook_type (`Literal["pre_reply", "post_reply", "pre_speak",
+             "post_speak", "pre_observe", "post_observe"]`):
+                The type of the hook, which should be one of "pre_reply",
+                "post_reply", "pre_speak", "post_speak", "pre_observe",
+                and "post_observe".
         """
-        assert hooks_attr_name.startswith("_hooks_") and hasattr(
-            self,
-            hooks_attr_name,
-        ), f"Invalid hooks attribute name: {hooks_attr_name}"
+        assert hook_type in [
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ], f"Invalid hook type: {hook_type}"
 
-        hooks = getattr(self, hooks_attr_name)
+        hooks = getattr(self, "_hooks_" + hook_type)
         hooks.clear()
 
-    def register_pre_reply_hook(
-        self,
+    def clear_all_obj_hooks(self) -> None:
+        """Clear all hooks from the agent object"""
+        self.clear_hooks("pre_reply")
+        self.clear_hooks("post_reply")
+        self.clear_hooks("pre_observe")
+        self.clear_hooks("post_observe")
+        self.clear_hooks("pre_speak")
+        self.clear_hooks("post_speak")
+
+    @classmethod
+    def register_class_hook(
+        cls,
+        hook_type: Literal[
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ],
         hook_name: str,
-        hook: Callable[
-            [AgentBase, Optional[Union[Msg, list[Msg]]]],
-            Union[Union[Msg, list[Msg]], None],
+        hook: Callable,
+    ) -> None:
+        """The universal function to register a hook to the agent class, which
+        will take effect for all instances of the class.
+
+        Args:
+            hook_type (`str`):
+                The type of the hook, which should be one of "pre_reply",
+                "post_reply", "pre_speak", "post_speak", "pre_observe",
+                and "post_observe".
+            hook_name (`str`):
+                The name of the hook. If the name is already registered, the
+                hook will be overwritten.
+            hook (`Callable`):
+                The hook function.
+        """
+        assert hook_type in [
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ], f"Invalid hook type: {hook_type}"
+
+        hooks = getattr(cls, "_class_hooks_" + hook_type)
+        hooks[hook_name] = hook
+
+    @classmethod
+    def remove_class_hook(
+        cls,
+        hook_type: Literal[
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ],
+        hook_name: str,
+    ) -> None:
+        """The universal function to remove a hook from the agent class.
+
+        Args:
+            hook_type (`Literal["pre_reply", "post_reply", "pre_speak",
+             "post_speak", "pre_observe", "post_observe"]`):
+                The type of the hook, which should be one of "pre_reply",
+                "post_reply", "pre_speak", "post_speak", "pre_observe",
+                and "post_observe".
+            hook_name (`str`):
+                The name of the hook to be removed.
+        """
+        assert hook_type in [
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ], f"Invalid hook type: {hook_type}"
+
+        hooks = getattr(cls, "_class_hooks_" + hook_type)
+        if hook_name in hooks:
+            hooks.pop(hook_name)
+
+    @classmethod
+    def clear_class_hooks(
+        cls,
+        hook_type: Literal[
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
         ],
     ) -> None:
-        """Register a pre-reply hook to the agent, which will be called
-        before calling the reply function. If the hook returns messages(s),
-        the original message(s) will be replaced as the input of the reply
-        function.
-
-        Arg:
-            hook_name (`str`):
-                The name of the hook. If the name is already registered, the
-                hook will be overwritten.
-            hook (`Callable[[AgentBase, Optional[Union[Msg, list[Msg]]]],
-                Union[Union[Msg, list[Msg]], None]`):
-                The hook function which takes the `self` object and the input
-                message(s) as input. If the hook returns message(s), the
-                original message(s) will be replaced as the input of the reply
-                function.
-        """
-        self._register_hook("_hooks_pre_reply", hook_name, hook)
-
-    def remove_pre_reply_hook(self, hook_name: str) -> None:
-        """Remove the pre reply hook from the agent.
+        """Clear the specified hooks from the agent class.
 
         Args:
-            hook_name (`str`):
-                The name of the hook to be removed.
+            hook_type (`Literal["pre_reply", "post_reply", "pre_speak",
+             "post_speak", "pre_observe", "post_observe"]`):
+                The name of the hooks attribute, which should be one of
+                "pre_reply", "post_reply", "pre_speak", "post_speak",
+                "pre_observe", and "post_observe".
         """
-        self._remove_hook("_hooks_pre_reply", hook_name)
+        assert hook_type in [
+            "pre_reply",
+            "post_reply",
+            "pre_speak",
+            "post_speak",
+            "pre_observe",
+            "post_observe",
+        ], f"Invalid hook type: {hook_type}"
 
-    def clear_pre_reply_hooks(self) -> None:
-        """Clear all pre reply hooks from the agent."""
-        self._clear_hooks("_hooks_pre_reply")
+        hooks = getattr(cls, "_class_hooks_" + hook_type)
+        hooks.clear()
 
-    def register_post_reply_hook(
-        self,
-        hook_name: str,
-        hook: Callable[
-            [AgentBase, Msg],
-            Union[Msg, None],
-        ],
-    ) -> None:
-        """Register a post-reply hook to the agent, which will be called
-        after calling the reply function. If the hook returns a message, the
-        original message will be replaced as the output of the reply function.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook. If the name is already registered, the
-                hook will be overwritten.
-            hook (`Callable[[AgentBase, Msg], Union[Msg, None]]`):
-                The hook function which takes the `self` object and the output
-                message as input. If the hook returns a message, the original
-                message will be replaced as the output of the reply function.
-        """
-        self._register_hook("_hooks_post_reply", hook_name, hook)
-
-    def remove_post_reply_hook(
-        self,
-        hook_name: str,
-    ) -> None:
-        """Remove the post reply hook from the agent.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook to be removed.
-        """
-        self._remove_hook("_hooks_post_reply", hook_name)
-
-    def clear_post_reply_hooks(self) -> None:
-        """Clear all post reply hooks from the agent."""
-        self._clear_hooks("_hooks_post_reply")
-
-    def register_pre_speak_hook(
-        self,
-        hook_name: str,
-        hook: Callable[
-            [AgentBase, Msg, bool, bool],
-            Union[Msg, None],
-        ],
-    ) -> None:
-        """Register a pre-speak hook to the agent, which will be called
-        during the speak function. If the hook returns a message, the original
-        message will be replaced as the input of the speak function.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook. If the name is already registered, the
-                hook will be overwritten.
-            hook (`Callable[[AgentBase, Msg, bool, bool], Union[Msg, None]]`):
-                The hook function which takes the `self` object, the input
-                message, a streaming flag, and a last flag as input. Within the
-                speak function, the streaming message will be split into
-                multiple sub messages with the same id, and the hook will be
-                called for each sub message. If the hook returns a message, the
-                original message will be replaced as the input of the speak
-                function.
-        """
-        self._register_hook("_hooks_pre_speak", hook_name, hook)
-
-    def remove_pre_speak_hook(self, hook_name: str) -> None:
-        """Remove the pre speak hook from the agent.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook to be removed.
-        """
-        self._remove_hook("_hooks_pre_speak", hook_name)
-
-    def clear_pre_speak_hooks(self) -> None:
-        """Clear all pre speak hooks from the agent."""
-        self._clear_hooks("_hooks_pre_speak")
-
-    def register_post_speak_hook(
-        self,
-        hook_name: str,
-        hook: Callable[[AgentBase], None],
-    ) -> None:
-        """Register a post-speak hook to the agent, which will be called
-        after calling the speak function.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook. If the name is already registered, the
-                hook will be overwritten.
-            hook (`Callable[[AgentBase], None]`):
-                The hook function which takes the `self` object as input.
-        """
-        self._register_hook("_hooks_post_speak", hook_name, hook)
-
-    def remove_post_speak_hook(self, hook_name: str) -> None:
-        """Remove the post speak hook from the agent.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook to be removed.
-        """
-        self._remove_hook("_hooks_post_speak", hook_name)
-
-    def clear_post_speak_hooks(self) -> None:
-        """Clear all post speak hooks from the agent."""
-        self._clear_hooks("_hooks_post_speak")
-
-    def register_pre_observe_hook(
-        self,
-        hook_name: str,
-        hook: Callable[
-            [AgentBase, Union[Msg, list[Msg]]],
-            Union[Union[Msg, list[Msg]], None],
-        ],
-    ) -> None:
-        """Register a pre-observe hook to the agent, which will be called
-        before calling the observe function. If the hook returns message(s),
-        the original message(s) will be replaced as the input of the observe
-        function.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook. If the name is already registered, the
-                hook will be overwritten.
-            hook (`Callable[[AgentBase, Union[Msg, list[Msg]]],
-                Union[Union[Msg, list[Msg]], None]`):
-                The hook function which takes the `self` object and the input
-                message(s) as input. If the hook returns message(s), the
-                original message(s) will be replaced as the input of the
-                observe function.
-        """
-        self._register_hook(
-            "_hooks_pre_observe",
-            hook_name,
-            hook,
-        )
-
-    def remove_pre_observe_hook(
-        self,
-        hook_name: str,
-    ) -> None:
-        """Remove the pre observe hook from the agent.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook to be removed.
-        """
-        self._remove_hook("_hooks_pre_observe", hook_name)
-
-    def clear_pre_observe_hooks(self) -> None:
-        """Clear all pre observe hooks from the agent."""
-        self._clear_hooks("_hooks_pre_observe")
-
-    def register_post_observe_hook(
-        self,
-        hook_name: str,
-        hook: Callable[[AgentBase], None],
-    ) -> None:
-        """Register a post-observe hook to the agent, which will be called
-        after calling the observe function.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook. If the name is already registered, the
-                hook will be overwritten.
-            hook (`Callable[[AgentBase], None]`):
-                The hook function which takes the `self` object as input.
-        """
-        self._register_hook(
-            "_hooks_post_observe",
-            hook_name,
-            hook,
-        )
-
-    def remove_post_observe_hook(self, hook_name: str) -> None:
-        """Remove the post observe hook from the agent.
-
-        Args:
-            hook_name (`str`):
-                The name of the hook to be removed.
-        """
-        self._remove_hook("_hooks_post_observe", hook_name)
-
-    def clear_post_observe_hooks(self) -> None:
-        """Clear all post observe hooks from the agent."""
-        self._clear_hooks("_hooks_post_observe")
-
-    def clear_all_hooks(self) -> None:
-        """Clear all hooks from the agent."""
-        self.clear_pre_reply_hooks()
-        self.clear_post_reply_hooks()
-        self.clear_pre_speak_hooks()
-        self.clear_post_speak_hooks()
-        self.clear_pre_observe_hooks()
-        self.clear_post_observe_hooks()
+    @classmethod
+    def clear_all_class_hooks(cls) -> None:
+        """Clear all hooks from the agent class"""
+        cls.clear_class_hooks("pre_reply")
+        cls.clear_class_hooks("post_reply")
+        cls.clear_class_hooks("pre_observe")
+        cls.clear_class_hooks("post_observe")
+        cls.clear_class_hooks("pre_speak")
+        cls.clear_class_hooks("post_speak")
