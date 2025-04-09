@@ -109,28 +109,17 @@
 <li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">agentscope.agents</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.AgentBase"><code class="docutils literal notranslate"><span class="pre">AgentBase</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_all_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_all_hooks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_all_class_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_all_class_hooks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_all_obj_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_all_obj_hooks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_audience()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_post_observe_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_post_observe_hooks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_post_reply_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_post_reply_hooks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_post_speak_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_post_speak_hooks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_pre_observe_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_pre_observe_hooks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_pre_reply_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_pre_reply_hooks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_pre_speak_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_pre_speak_hooks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_class_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_class_hooks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.clear_hooks"><code class="docutils literal notranslate"><span class="pre">AgentBase.clear_hooks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.generate_agent_id"><code class="docutils literal notranslate"><span class="pre">AgentBase.generate_agent_id()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.observe"><code class="docutils literal notranslate"><span class="pre">AgentBase.observe()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_post_observe_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_post_observe_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_post_reply_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_post_reply_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_post_speak_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_post_speak_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_pre_observe_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_pre_observe_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_pre_reply_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_pre_reply_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_pre_speak_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_pre_speak_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_post_observe_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_post_observe_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_post_reply_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_post_reply_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_post_speak_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_post_speak_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_pre_observe_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_pre_observe_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_pre_reply_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_pre_reply_hook()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_pre_speak_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_pre_speak_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_class_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_class_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.register_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.register_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_class_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_class_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.remove_hook"><code class="docutils literal notranslate"><span class="pre">AgentBase.remove_hook()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.reply"><code class="docutils literal notranslate"><span class="pre">AgentBase.reply()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.reset_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.reset_audience()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.AgentBase.rm_audience"><code class="docutils literal notranslate"><span class="pre">AgentBase.rm_audience()</span></code></a></li>
@@ -219,9 +208,15 @@
 <p>All agents should inherit from this class and implement the <cite>reply</cite>
 function.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_all_hooks">
-<span class="sig-name descname"><span class="pre">clear_all_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_all_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_all_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all hooks from the agent.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_all_class_hooks">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear_all_class_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_all_class_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_all_class_hooks" title="Link to this definition"></a></dt>
+<dd><p>Clear all hooks from the agent class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_all_obj_hooks">
+<span class="sig-name descname"><span class="pre">clear_all_obj_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_all_obj_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_all_obj_hooks" title="Link to this definition"></a></dt>
+<dd><p>Clear all hooks from the agent object</p>
 </dd></dl>
 
 <dl class="py method">
@@ -231,39 +226,87 @@ function.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_post_observe_hooks">
-<span class="sig-name descname"><span class="pre">clear_post_observe_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_post_observe_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_post_observe_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all post observe hooks from the agent.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_class_hooks">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear_class_hooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_observe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_observe'</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_class_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_class_hooks" title="Link to this definition"></a></dt>
+<dd><p>Clear the specified hooks from the agent class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;pre_reply&quot;</strong> (<em>hook_type</em>) – <dl class="simple">
+<dt>”post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The name of the hooks attribute, which should be one of
+“pre_reply”, “post_reply”, “pre_speak”, “post_speak”,
+“pre_observe”, and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;post_reply&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The name of the hooks attribute, which should be one of
+“pre_reply”, “post_reply”, “pre_speak”, “post_speak”,
+“pre_observe”, and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;pre_speak&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The name of the hooks attribute, which should be one of
+“pre_reply”, “post_reply”, “pre_speak”, “post_speak”,
+“pre_observe”, and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param :</dt><dd><dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The name of the hooks attribute, which should be one of
+“pre_reply”, “post_reply”, “pre_speak”, “post_speak”,
+“pre_observe”, and “post_observe”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_post_reply_hooks">
-<span class="sig-name descname"><span class="pre">clear_post_reply_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_post_reply_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_post_reply_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all post reply hooks from the agent.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_post_speak_hooks">
-<span class="sig-name descname"><span class="pre">clear_post_speak_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_post_speak_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_post_speak_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all post speak hooks from the agent.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_pre_observe_hooks">
-<span class="sig-name descname"><span class="pre">clear_pre_observe_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_pre_observe_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_pre_observe_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all pre observe hooks from the agent.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_pre_reply_hooks">
-<span class="sig-name descname"><span class="pre">clear_pre_reply_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_pre_reply_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_pre_reply_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all pre reply hooks from the agent.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_pre_speak_hooks">
-<span class="sig-name descname"><span class="pre">clear_pre_speak_hooks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_pre_speak_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_pre_speak_hooks" title="Link to this definition"></a></dt>
-<dd><p>Clear all pre speak hooks from the agent.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.clear_hooks">
+<span class="sig-name descname"><span class="pre">clear_hooks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_observe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_observe'</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.clear_hooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.clear_hooks" title="Link to this definition"></a></dt>
+<dd><p>Clear the specified hooks from the agent object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;pre_reply&quot;</strong> (<em>hook_type</em>) – <dl class="simple">
+<dt>”post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;post_reply&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;pre_speak&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param :</dt><dd><dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -284,146 +327,115 @@ function.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_post_observe_hook">
-<span class="sig-name descname"><span class="pre">register_post_observe_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_post_observe_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_post_observe_hook" title="Link to this definition"></a></dt>
-<dd><p>Register a post-observe hook to the agent, which will be called
-after calling the observe function.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_class_hook">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_class_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_observe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_observe'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_class_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_class_hook" title="Link to this definition"></a></dt>
+<dd><p>The universal function to register a hook to the agent class, which
+will take effect for all instances of the class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>hook_type</strong> (<cite>str</cite>) – The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p></li>
 <li><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook. If the name is already registered, the
 hook will be overwritten.</p></li>
-<li><p><strong>hook</strong> (<cite>Callable[[AgentBase], None]</cite>) – The hook function which takes the <cite>self</cite> object as input.</p></li>
+<li><p><strong>hook</strong> (<cite>Callable</cite>) – The hook function.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_post_reply_hook">
-<span class="sig-name descname"><span class="pre">register_post_reply_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_post_reply_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_post_reply_hook" title="Link to this definition"></a></dt>
-<dd><p>Register a post-reply hook to the agent, which will be called
-after calling the reply function. If the hook returns a message, the
-original message will be replaced as the output of the reply function.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_hook">
+<span class="sig-name descname"><span class="pre">register_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_observe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_observe'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_hook" title="Link to this definition"></a></dt>
+<dd><p>The universal function to register a hook to the agent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook. If the name is already registered, the
-hook will be overwritten.</p></li>
-<li><p><strong>hook</strong> (<cite>Callable[[AgentBase, Msg], Union[Msg, None]]</cite>) – The hook function which takes the <cite>self</cite> object and the output
-message as input. If the hook returns a message, the original
-message will be replaced as the output of the reply function.</p></li>
-</ul>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;pre_reply&quot;</strong> (<em>hook_type</em>) – <dl class="simple">
+<dt>”post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_post_speak_hook">
-<span class="sig-name descname"><span class="pre">register_post_speak_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_post_speak_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_post_speak_hook" title="Link to this definition"></a></dt>
-<dd><p>Register a post-speak hook to the agent, which will be called
-after calling the speak function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook. If the name is already registered, the
-hook will be overwritten.</p></li>
-<li><p><strong>hook</strong> (<cite>Callable[[AgentBase], None]</cite>) – The hook function which takes the <cite>self</cite> object as input.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_pre_observe_hook">
-<span class="sig-name descname"><span class="pre">register_pre_observe_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_pre_observe_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_pre_observe_hook" title="Link to this definition"></a></dt>
-<dd><p>Register a pre-observe hook to the agent, which will be called
-before calling the observe function. If the hook returns message(s),
-the original message(s) will be replaced as the input of the observe
-function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook. If the name is already registered, the
-hook will be overwritten.</p></li>
-<li><p><strong>(</strong><strong>`Callable</strong><strong>[</strong><strong>[</strong><strong>AgentBase</strong> (<em>hook</em>) – <p>Union[Union[Msg, list[Msg]], None]`):
-The hook function which takes the <cite>self</cite> object and the input
-message(s) as input. If the hook returns message(s), the
-original message(s) will be replaced as the input of the
-observe function.</p>
 </p></li>
-<li><p><strong>Union</strong><strong>[</strong><strong>Msg</strong> – Union[Union[Msg, list[Msg]], None]`):
-The hook function which takes the <cite>self</cite> object and the input
-message(s) as input. If the hook returns message(s), the
-original message(s) will be replaced as the input of the
-observe function.</p></li>
-<li><p><strong>list</strong><strong>[</strong><strong>Msg</strong><strong>]</strong><strong>]</strong><strong>]</strong> – Union[Union[Msg, list[Msg]], None]`):
-The hook function which takes the <cite>self</cite> object and the input
-message(s) as input. If the hook returns message(s), the
-original message(s) will be replaced as the input of the
-observe function.</p></li>
+<li><p><strong>&quot;post_reply&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;pre_speak&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="simple">
-<dt>:param<span class="classifier">Union[Union[Msg, list[Msg]], None]`):</span></dt><dd><p>The hook function which takes the <cite>self</cite> object and the input
-message(s) as input. If the hook returns message(s), the
-original message(s) will be replaced as the input of the
-observe function.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_pre_reply_hook">
-<span class="sig-name descname"><span class="pre">register_pre_reply_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_pre_reply_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_pre_reply_hook" title="Link to this definition"></a></dt>
-<dd><p>Register a pre-reply hook to the agent, which will be called
-before calling the reply function. If the hook returns messages(s),
-the original message(s) will be replaced as the input of the reply
-function.</p>
-<dl class="simple">
-<dt>Arg:</dt><dd><dl class="simple">
-<dt>hook_name (<cite>str</cite>):</dt><dd><p>The name of the hook. If the name is already registered, the
-hook will be overwritten.</p>
-</dd>
-<dt>hook (<a href="#id3"><span class="problematic" id="id4">`</span></a>Callable[[AgentBase, Optional[Union[Msg, list[Msg]]]],</dt><dd><p>Union[Union[Msg, list[Msg]], None]`):
-The hook function which takes the <cite>self</cite> object and the input
-message(s) as input. If the hook returns message(s), the
-original message(s) will be replaced as the input of the reply
-function.</p>
+<dt>:param :</dt><dd><dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
 </dd>
 </dl>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.register_pre_speak_hook">
-<span class="sig-name descname"><span class="pre">register_pre_speak_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><span class="pre">AgentBase</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.register_pre_speak_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.register_pre_speak_hook" title="Link to this definition"></a></dt>
-<dd><p>Register a pre-speak hook to the agent, which will be called
-during the speak function. If the hook returns a message, the original
-message will be replaced as the input of the speak function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook. If the name is already registered, the
 hook will be overwritten.</p></li>
-<li><p><strong>hook</strong> (<cite>Callable[[AgentBase, Msg, bool, bool], Union[Msg, None]]</cite>) – The hook function which takes the <cite>self</cite> object, the input
-message, a streaming flag, and a last flag as input. Within the
-speak function, the streaming message will be split into
-multiple sub messages with the same id, and the hook will be
-called for each sub message. If the hook returns a message, the
-original message will be replaced as the input of the speak
-function.</p></li>
+<li><p><strong>hook</strong> (<cite>Callable</cite>) – The hook function.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_post_observe_hook">
-<span class="sig-name descname"><span class="pre">remove_post_observe_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_post_observe_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_post_observe_hook" title="Link to this definition"></a></dt>
-<dd><p>Remove the post observe hook from the agent.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_class_hook">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_class_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_observe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_observe'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_class_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_class_hook" title="Link to this definition"></a></dt>
+<dd><p>The universal function to remove a hook from the agent class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;pre_reply&quot;</strong> (<em>hook_type</em>) – <dl class="simple">
+<dt>”post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;post_reply&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;pre_speak&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param :</dt><dd><dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>
@@ -432,53 +444,45 @@ function.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_post_reply_hook">
-<span class="sig-name descname"><span class="pre">remove_post_reply_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_post_reply_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_post_reply_hook" title="Link to this definition"></a></dt>
-<dd><p>Remove the post reply hook from the agent.</p>
+<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_hook">
+<span class="sig-name descname"><span class="pre">remove_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_reply'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_speak'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pre_observe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post_observe'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_hook" title="Link to this definition"></a></dt>
+<dd><p>The universal function to remove a hook from the agent object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;pre_reply&quot;</strong> (<em>hook_type</em>) – <dl class="simple">
+<dt>”post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_post_speak_hook">
-<span class="sig-name descname"><span class="pre">remove_post_speak_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_post_speak_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_post_speak_hook" title="Link to this definition"></a></dt>
-<dd><p>Remove the post speak hook from the agent.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>
+</p></li>
+<li><p><strong>&quot;post_reply&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_pre_observe_hook">
-<span class="sig-name descname"><span class="pre">remove_pre_observe_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_pre_observe_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_pre_observe_hook" title="Link to this definition"></a></dt>
-<dd><p>Remove the pre observe hook from the agent.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>
+</p></li>
+<li><p><strong>&quot;pre_speak&quot;</strong> – <dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_pre_reply_hook">
-<span class="sig-name descname"><span class="pre">remove_pre_reply_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_pre_reply_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_pre_reply_hook" title="Link to this definition"></a></dt>
-<dd><p>Remove the pre reply hook from the agent.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>
+</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.AgentBase.remove_pre_speak_hook">
-<span class="sig-name descname"><span class="pre">remove_pre_speak_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_agent.html#AgentBase.remove_pre_speak_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.AgentBase.remove_pre_speak_hook" title="Link to this definition"></a></dt>
-<dd><p>Remove the pre speak hook from the agent.</p>
+<dl class="simple">
+<dt>:param :</dt><dd><dl class="simple">
+<dt>“post_speak”, “pre_observe”, “post_observe”]`):</dt><dd><p>The type of the hook, which should be one of “pre_reply”,
+“post_reply”, “pre_speak”, “post_speak”, “pre_observe”,
+and “post_observe”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>

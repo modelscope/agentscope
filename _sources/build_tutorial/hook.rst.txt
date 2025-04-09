@@ -25,7 +25,7 @@ Hooks
 Hooks are extension points in AgentScope that allow developers to customize agent behaviors at specific execution points. They provide a flexible way to modify or extend the agent's functionality without changing its core implementation.
 
 Core Functions
--------------
+--------------------
 AgentScope implements hooks around three core agent functions:
 
 - `reply`: Generates response messages based on the agent's current state
@@ -33,7 +33,7 @@ AgentScope implements hooks around three core agent functions:
 - `observe`: Records incoming messages
 
 Available Hooks
--------------
+----------------------
 Each core function has corresponding pre- and post-execution hooks:
 
 - `pre_reply_hook` / `post_reply_hook`
@@ -127,16 +127,29 @@ customize them as needed.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-108
+.. GENERATED FROM PYTHON SOURCE LINES 102-121
 
 Example Usage
 -------------------
 AgentScope allows to register, remove and clear hooks by calling the
 corresponding methods.
 
+You can register hooks at both the **object** and **class** levels. Hooks at the
+**object** level are only effective for the current object, while hooks at the
+**class** level are effective for all objects of that class.
+
+.. note:: Object-level hooks are stored in the `_hooks_{hook_type}` attribute of the object, while class-level hooks are stored in the `_class_hooks_{hook_type}` attribute of the class.
+
+.. note:: For all hooks, the execution order is: object-level hooks --> class-level hooks
+
+Next we show how to use these hooks in AgentScope.
+
+Object-Level Hooks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 We first create a simple agent that echoes the incoming message:
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-124
+.. GENERATED FROM PYTHON SOURCE LINES 121-137
 
 .. code-block:: Python
 
@@ -163,14 +176,14 @@ We first create a simple agent that echoes the incoming message:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-129
+.. GENERATED FROM PYTHON SOURCE LINES 138-142
 
 Reply Hooks
-^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
 Next, we define two pre-hooks, which both modify the input message(s), but
 one return the modified message(s) and the other does not:
 
-.. GENERATED FROM PYTHON SOURCE LINES 129-156
+.. GENERATED FROM PYTHON SOURCE LINES 142-169
 
 .. code-block:: Python
 
@@ -208,11 +221,11 @@ one return the modified message(s) and the other does not:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 157-158
+.. GENERATED FROM PYTHON SOURCE LINES 170-171
 
 Then we create a post-hook that appends a suffix to the message content:
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-166
+.. GENERATED FROM PYTHON SOURCE LINES 171-179
 
 .. code-block:: Python
 
@@ -231,20 +244,20 @@ Then we create a post-hook that appends a suffix to the message content:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-168
+.. GENERATED FROM PYTHON SOURCE LINES 180-181
 
 Finally, we register the hooks and test the agent:
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-181
+.. GENERATED FROM PYTHON SOURCE LINES 181-194
 
 .. code-block:: Python
 
 
     agent = TestAgent()
 
-    agent.register_pre_reply_hook("pre_hook_1", pre_reply_hook_1)
-    agent.register_pre_reply_hook("pre_hook_2", pre_reply_hook_2)
-    agent.register_post_reply_hook("post_hook", post_reply_hook)
+    agent.register_hook("pre_reply", "pre_hook_1", pre_reply_hook_1)
+    agent.register_hook("pre_reply", "pre_hook_2", pre_reply_hook_2)
+    agent.register_hook("post_reply", "post_hook", post_reply_hook)
 
     msg = Msg("user", "[Original message]", "user")
 
@@ -267,14 +280,14 @@ Finally, we register the hooks and test the agent:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 182-198
+.. GENERATED FROM PYTHON SOURCE LINES 195-211
 
 We can see that the response has one "[Pre-hook-2]" prefix and one
 "[Post-hook]" suffix. The "[Pre-hook-1]" prefix is missing because the
 first pre-hook does not return the modified message(s).
 
 Speak Hooks
-^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
 To be compatible with the streaming output, the pre-speak hook takes two
 additional arguments:
 
@@ -286,7 +299,7 @@ additional arguments:
 
 We show how to use the pre/post-speak hooks below:
 
-.. GENERATED FROM PYTHON SOURCE LINES 198-259
+.. GENERATED FROM PYTHON SOURCE LINES 211-272
 
 .. code-block:: Python
 
@@ -337,8 +350,8 @@ We show how to use the pre/post-speak hooks below:
 
 
     # Register the hooks
-    streaming_agent.register_pre_speak_hook("pre_speak_hook", pre_speak_hook)
-    streaming_agent.register_post_speak_hook("post_speak_hook", post_speak_hook)
+    streaming_agent.register_hook("pre_speak", "pre_speak_hook", pre_speak_hook)
+    streaming_agent.register_hook("post_speak", "post_speak_hook", post_speak_hook)
 
     msg = Msg(
         "user",
@@ -359,31 +372,31 @@ We show how to use the pre/post-speak hooks below:
 
  .. code-block:: none
 
-    id:  c02828826a124e9a9675a8da17c75b13 content:  1 stream:  True last:  False
-    TestAgent: 1id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3 stream:  True last:  False
-    , 2, 3id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5 stream:  True last:  False
-    , 4, 5id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7 stream:  True last:  False
-    , 6, 7id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9 stream:  True last:  False
-    , 8, 9id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,  stream:  True last:  False
-    , 10, id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 stream:  True last:  False
-    11, 12id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,  stream:  True last:  False
-    , 13, id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
-    14, 15id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
-    id:  c02828826a124e9a9675a8da17c75b13 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  True
+    id:  33ae5fef8f854567a513a724bf548c48 content:  1 stream:  True last:  False
+    TestAgent: 1id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3 stream:  True last:  False
+    , 2, 3id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5 stream:  True last:  False
+    , 4, 5id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7 stream:  True last:  False
+    , 6, 7id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9 stream:  True last:  False
+    , 8, 9id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,  stream:  True last:  False
+    , 10, id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 stream:  True last:  False
+    11, 12id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,  stream:  True last:  False
+    , 13, id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
+    14, 15id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
+    id:  33ae5fef8f854567a513a724bf548c48 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  True
 
     The cnt of calling the speak function: 1
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 260-264
+.. GENERATED FROM PYTHON SOURCE LINES 273-277
 
 Observe Hooks
-^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
 Similar as the speak hooks, we show how to use the pre/post-observe hooks
 below:
 
-.. GENERATED FROM PYTHON SOURCE LINES 264-304
+.. GENERATED FROM PYTHON SOURCE LINES 277-318
 
 .. code-block:: Python
 
@@ -411,8 +424,8 @@ below:
     # Clear the memory first
     agent.memory.clear()
 
-    agent.register_pre_observe_hook("pre_observe_hook", pre_observe_hook)
-    agent.register_post_observe_hook("post_observe_hook", post_observe_hook)
+    agent.register_hook("pre_observe", "pre_observe_hook", pre_observe_hook)
+    agent.register_hook("post_observe", "post_observe_hook", post_observe_hook)
 
     agent.observe(
         Msg(
@@ -431,6 +444,7 @@ below:
 
 
 
+
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
@@ -440,12 +454,12 @@ below:
         {
             "__module__": "agentscope.message.msg",
             "__name__": "Msg",
-            "id": "967aa4ae6795468cb9759868e611376c",
+            "id": "1dc9974b7ddd4586a3d4284c53cf9ef2",
             "name": "user",
             "role": "user",
             "content": "Observe: The sun is shining.",
             "metadata": null,
-            "timestamp": "2025-04-09 06:35:16"
+            "timestamp": "2025-04-09 10:35:04"
         }
     ]
     The cnt of calling the observe function: 1
@@ -453,10 +467,84 @@ below:
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 319-329
+
+Class-Level Hooks
+^^^^^^^^^^^^^^^^^^^^^^
+
+The class-level hooks are similar to the object-level hooks, but they are
+registered at the class level and are effective for all objects of that
+class.
+
+The register, remove and clear methods for class-level hooks are prefixed
+by "class"
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 329-338
+
+.. code-block:: Python
+
+
+    # Create a new agent object
+    agent2 = TestAgent()
+
+    AgentBase.clear_all_class_hooks()
+
+    print("hooks of agent:", list(agent._class_hooks_pre_reply.keys()))
+    print("hooks of agent2:", list(agent2._class_hooks_pre_reply.keys()))
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    hooks of agent: []
+    hooks of agent2: []
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 339-340
+
+Next, we register a class-level pre-reply hook and test it:
+
+.. GENERATED FROM PYTHON SOURCE LINES 340-347
+
+.. code-block:: Python
+
+
+    # Register a class-level pre-reply hook
+    AgentBase.register_class_hook("pre_reply", "class_hook_1", pre_reply_hook_1)
+
+    print("hooks of agent:", list(agent._class_hooks_pre_reply.keys()))
+    print("hooks of agent2:", list(agent2._class_hooks_pre_reply.keys()))
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    hooks of agent: ['class_hook_1']
+    hooks of agent2: ['class_hook_1']
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 348-350
+
+We can see that the class-level hook is effective for all objects of
+that class.
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.463 seconds)
+   **Total running time of the script:** (0 minutes 3.245 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_hook.py:
