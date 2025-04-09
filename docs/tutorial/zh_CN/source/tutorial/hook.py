@@ -102,12 +102,12 @@ def post_observe_hook_template(self: AgentBase) -> None:
 # -------------------
 # AgentScope 允许通过调用相应的方法注册、移除和清除钩子函数。
 #
-# 用户可以将hooks注册到**对象**和**类**两个不同的级别，其中**对象**级别的钩子函数只对当前的对象有效，**类**级别的钩子函数会对改类的所有对象生效。
+# 用户可以将钩子函数注册到 **对象** 和 **类** 两个不同的级别，其中 **对象** 级别的钩子函数只对当前的对象有效，**类** 级别的钩子函数会对改类的所有对象生效。
 # 下面我们展示两个不同级别钩子函数的使用方式。
 #
-# ..note:: 对象级别的钩子函数存储在对象的 `_hooks_{hook_name}` 属性上，类级别的钩子函数存储在类的 `_class_hooks_{hook_name}` 属性上。
+# .. note:: 对象级别的钩子函数存储在对象的 `_hooks_{hook_type}` 属性上，类级别的钩子函数存储在类的 `_class_hooks_{hook_type}` 属性上。
 #
-# ..note:: 对所有位置的钩子函数来说，对象级别和类级别钩子函数的执行顺序为：对象级别的钩子函数 --> 类级别的钩子函数
+# .. note:: 对所有位置的钩子函数来说，对象级别和类级别钩子函数的执行顺序为：对象级别的钩子函数 --> 类级别的钩子函数
 #
 # 对象级别
 # ^^^^^^^^^^^^^^^^^^^^^^^
@@ -246,8 +246,8 @@ def post_speak_hook(self) -> None:
 
 
 # Register the hooks
-streaming_agent.register_pre_speak_hook("pre_speak_hook", pre_speak_hook)
-streaming_agent.register_post_speak_hook("post_speak_hook", post_speak_hook)
+streaming_agent.register_hook("pre_speak", "pre_speak_hook", pre_speak_hook)
+streaming_agent.register_hook("post_speak", "post_speak_hook", post_speak_hook)
 
 msg = Msg(
     "user",
@@ -288,8 +288,8 @@ def post_observe_hook(self) -> None:
 # 首先清除智能体记忆
 agent.memory.clear()
 
-agent.register_pre_observe_hook("pre_observe_hook", pre_observe_hook)
-agent.register_post_observe_hook("post_observe_hook", post_observe_hook)
+agent.register_hook("pre_observe", "pre_observe_hook", pre_observe_hook)
+agent.register_hook("post_observe", "post_observe_hook", post_observe_hook)
 
 agent.observe(
     Msg(
@@ -301,7 +301,11 @@ agent.observe(
 
 print(
     "智能体的记忆：\n",
-    json.dumps([_.to_dict() for _ in agent.memory.get_memory()], indent=4),
+    json.dumps(
+        [_.to_dict() for _ in agent.memory.get_memory()],
+        indent=4,
+        ensure_ascii=False,
+    ),
 )
 print("调用 Observe 函数的次数：", agent.cnt)
 
@@ -317,11 +321,10 @@ print("调用 Observe 函数的次数：", agent.cnt)
 # 新建一个新的agent对象
 agent2 = TestAgent()
 
-agent.clear_class_hooks("pre_reply")
-agent.clear_class_hooks("pre_reply")
+AgentBase.clear_all_class_hooks()
 
-print("此时agent的钩子函数：", list(agent._hooks_pre_reply.keys()))
-print("此时agent2的钩子函数：", list(agent2._hooks_pre_reply.keys()))
+print("此时agent的钩子函数：", list(agent._class_hooks_pre_reply.keys()))
+print("此时agent2的钩子函数：", list(agent2._class_hooks_pre_reply.keys()))
 
 # %%
 # 接着我们在 `AgentBase` 的基类上注册类级别的钩子函数

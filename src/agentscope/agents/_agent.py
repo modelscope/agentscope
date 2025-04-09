@@ -440,7 +440,7 @@ class AgentBase(metaclass=_AgentMeta):
             hook(self)
 
         # Call the class-level post speak hooks
-        for _, hook in self._hooks_post_speak.items():
+        for _, hook in self._class_hooks_post_speak.items():
             hook(self)
 
     def observe(self, x: Union[Msg, Sequence[Msg]]) -> None:

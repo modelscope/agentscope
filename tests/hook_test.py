@@ -281,7 +281,7 @@ class AgentHooksTest(unittest.TestCase):
             list(self.agent2._class_hooks_pre_reply.keys()),
             ["first_hook"],
         )
-        self.agent.clear_all_hooks()
+        AgentBase.clear_all_class_hooks()
 
         self.agent.register_hook(
             "pre_reply",
@@ -336,7 +336,7 @@ class AgentHooksTest(unittest.TestCase):
             list(self.agent2._class_hooks_post_reply.keys()),
             ["first_hook"],
         )
-        self.agent.clear_all_hooks()
+        AgentBase.clear_all_class_hooks()
 
         self.agent.register_hook(
             "post_reply",
@@ -391,7 +391,7 @@ class AgentHooksTest(unittest.TestCase):
             list(self.agent2._class_hooks_pre_observe.keys()),
             ["first_hook"],
         )
-        self.agent.clear_all_hooks()
+        AgentBase.clear_all_class_hooks()
 
         self.agent.register_hook(
             "pre_observe",
@@ -485,5 +485,8 @@ class AgentHooksTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down the test."""
-        self.agent.clear_all_hooks()
+        self.agent.clear_all_obj_hooks()
+        self.agent2.clear_all_obj_hooks()
+
+        AgentBase.clear_all_class_hooks()
         self.agent.memory.clear()

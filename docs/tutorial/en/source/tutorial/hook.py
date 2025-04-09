@@ -108,9 +108,9 @@ def post_observe_hook_template(self: AgentBase) -> None:
 # **object** level are only effective for the current object, while hooks at the
 # **class** level are effective for all objects of that class.
 #
-# ..note:: Object-level hooks are stored in the `_hooks_{hook_name}` attribute of the object, while class-level hooks are stored in the `_class_hooks_{hook_name}` attribute of the class.
+# .. note:: Object-level hooks are stored in the `_hooks_{hook_type}` attribute of the object, while class-level hooks are stored in the `_class_hooks_{hook_type}` attribute of the class.
 #
-# ..note:: For all hooks, the execution order is: object-level hooks --> class-level hooks
+# .. note:: For all hooks, the execution order is: object-level hooks --> class-level hooks
 #
 # Next we show how to use these hooks in AgentScope.
 #
@@ -136,7 +136,7 @@ class TestAgent(AgentBase):
 
 # %%
 # Reply Hooks
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# """""""""""""""""""""""""
 # Next, we define two pre-hooks, which both modify the input message(s), but
 # one return the modified message(s) and the other does not:
 
@@ -181,9 +181,9 @@ def post_reply_hook(self, x) -> Msg:
 
 agent = TestAgent()
 
-agent.register_pre_reply_hook("pre_hook_1", pre_reply_hook_1)
-agent.register_pre_reply_hook("pre_hook_2", pre_reply_hook_2)
-agent.register_post_reply_hook("post_hook", post_reply_hook)
+agent.register_hook("pre_reply", "pre_hook_1", pre_reply_hook_1)
+agent.register_hook("pre_reply", "pre_hook_2", pre_reply_hook_2)
+agent.register_hook("post_reply", "post_hook", post_reply_hook)
 
 msg = Msg("user", "[Original message]", "user")
 
@@ -197,7 +197,7 @@ print("The content of the response message:\n", msg_response.content)
 # first pre-hook does not return the modified message(s).
 #
 # Speak Hooks
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# """""""""""""""""""""""""
 # To be compatible with the streaming output, the pre-speak hook takes two
 # additional arguments:
 #
@@ -255,8 +255,8 @@ def post_speak_hook(self) -> None:
 
 
 # Register the hooks
-streaming_agent.register_pre_speak_hook("pre_speak_hook", pre_speak_hook)
-streaming_agent.register_post_speak_hook("post_speak_hook", post_speak_hook)
+streaming_agent.register_hook("pre_speak", "pre_speak_hook", pre_speak_hook)
+streaming_agent.register_hook("post_speak", "post_speak_hook", post_speak_hook)
 
 msg = Msg(
     "user",
@@ -271,7 +271,7 @@ print("The cnt of calling the speak function:", streaming_agent.cnt)
 
 # %%
 # Observe Hooks
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# """""""""""""""""""""""""
 # Similar as the speak hooks, we show how to use the pre/post-observe hooks
 # below:
 
@@ -298,8 +298,8 @@ def post_observe_hook(self) -> None:
 # Clear the memory first
 agent.memory.clear()
 
-agent.register_pre_observe_hook("pre_observe_hook", pre_observe_hook)
-agent.register_post_observe_hook("post_observe_hook", post_observe_hook)
+agent.register_hook("pre_observe", "pre_observe_hook", pre_observe_hook)
+agent.register_hook("post_observe", "post_observe_hook", post_observe_hook)
 
 agent.observe(
     Msg(
@@ -330,11 +330,10 @@ print("The cnt of calling the observe function:", post_observe_hook.cnt)
 # Create a new agent object
 agent2 = TestAgent()
 
-agent.clear_all_hooks()
-agent.clear_all_hooks()
+AgentBase.clear_all_class_hooks()
 
-print("hooks of agent:", list(agent._hooks_pre_reply.keys()))
-print("hooks of agent2:", list(agent2._hooks_pre_reply.keys()))
+print("hooks of agent:", list(agent._class_hooks_pre_reply.keys()))
+print("hooks of agent2:", list(agent2._class_hooks_pre_reply.keys()))
 
 # %%
 # Next, we register a class-level pre-reply hook and test it:
