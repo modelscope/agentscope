@@ -205,15 +205,12 @@ class ModelWrapperBase(ABC):
         self,
         arguments: dict,
         response: Any,
-    ) -> str:
+    ) -> None:
         """Save model invocation."""
         model_class = self.__class__.__name__
         timestamp = _get_timestamp("%Y%m%d-%H%M%S")
 
-        invocation_id = f"{model_class}_{timestamp}"
-
         invocation_record = {
-            "id": invocation_id,
             "model_class": model_class,
             "timestamp": timestamp,
             "arguments": arguments,
@@ -221,8 +218,6 @@ class ModelWrapperBase(ABC):
         }
 
         FileManager.get_instance().save_api_invocation(
-            f"model_{invocation_id}",
+            f"model_{model_class}_{timestamp}",
             invocation_record,
         )
-
-        return invocation_id
