@@ -44,7 +44,7 @@ LLMを活用したマルチエージェントアプリケーションをより�
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScopeは現在、ツールAPIをサポートしています。詳しくは[チュートリアル](https://doc.agentscope.io/build_tutorial/tool.html)をご参照ください。
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[このチュートリアル](https://doc.agentscope.io/build_tutorial/mcp.html)を参考にして使い方を学ぶことができます。
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[このチュートリアル](https://doc.agentscope.io/build_tutorial/MCP.html)を参考にして使い方を学ぶことができます。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** 私たちの[多情報源RAGアプリケーション](applications/multisource_rag_app/README.md)（DingTalkのQ&Aグループで使用されているチャットボット）がオープンソースになりました！
 
