@@ -253,7 +253,8 @@ class MCPSessionHandler:
 
         try:
             result = await self.session.call_tool(tool_name, kwargs)
-            content, is_error = result.content, result.isError
+            # TODO: consider support image data and embedding resources
+            content, is_error = ([x.dict() for x in result.content], result.isError)
 
             if is_error:
                 return ServiceResponse(
