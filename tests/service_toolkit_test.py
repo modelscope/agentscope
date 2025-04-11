@@ -349,7 +349,7 @@ The following tool functions are available in the format of
             ),
             tools_api_mode=True,
         )
-        self.assertEqual(res.content[0]["output"][0].text, "Hi")
+        self.assertEqual(res.content[0]["output"][0]["text"], "Hi")
 
     def test_mcp_tool_main_thread(self) -> None:
         """Test the mcp tool in the main process."""
