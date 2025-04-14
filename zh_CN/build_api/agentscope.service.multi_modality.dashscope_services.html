@@ -1,0 +1,326 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>agentscope.service.multi_modality.dashscope_services module &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="agentscope.service.multi_modality.openai_services module" href="agentscope.service.multi_modality.openai_services.html" />
+    <link rel="prev" title="agentscope.service.multi_modality package" href="agentscope.service.multi_modality.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_tutorial/examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="agentscope.service.html">agentscope.service package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="agentscope.service.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.browser.html">agentscope.service.browser package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.execute_code.html">agentscope.service.execute_code package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.file.html">agentscope.service.file package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="agentscope.service.multi_modality.html">agentscope.service.multi_modality package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="agentscope.service.multi_modality.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="agentscope.service.multi_modality.html#module-agentscope.service.multi_modality">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.retrieval.html">agentscope.service.retrieval package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.sql_query.html">agentscope.service.sql_query package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.text_processing.html">agentscope.service.text_processing package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="agentscope.service.web.html">agentscope.service.web package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agentscope.service.html#module-agentscope.service">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="agentscope.html">agentscope package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.html">agentscope.service package</a></li>
+          <li class="breadcrumb-item"><a href="agentscope.service.multi_modality.html">agentscope.service.multi_modality package</a></li>
+      <li class="breadcrumb-item active">agentscope.service.multi_modality.dashscope_services module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_api/agentscope.service.multi_modality.dashscope_services.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-agentscope.service.multi_modality.dashscope_services">
+<span id="agentscope-service-multi-modality-dashscope-services-module"></span><h1>agentscope.service.multi_modality.dashscope_services module<a class="headerlink" href="#module-agentscope.service.multi_modality.dashscope_services" title="Link to this heading"></a></h1>
+<p>Use DashScope API to generate images,
+convert text to audio, and convert images to text.
+Please refer to the official documentation for more details:
+<a class="reference external" href="https://dashscope.aliyun.com/">https://dashscope.aliyun.com/</a></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.multi_modality.dashscope_services.dashscope_image_to_text">
+<span class="sig-name descname"><span class="pre">dashscope_image_to_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Describe</span> <span class="pre">the</span> <span class="pre">image'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'qwen-vl-plus'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="../_modules/agentscope/service/multi_modality/dashscope_services.html#dashscope_image_to_text"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.multi_modality.dashscope_services.dashscope_image_to_text" title="Link to this definition"></a></dt>
+<dd><p>Generate text based on the given images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_urls</strong> (<cite>Union[str, Sequence[str]]</cite>) -- The url of single or multiple images.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) -- The api key for the dashscope api.</p></li>
+<li><p><strong>prompt</strong> (<cite>str</cite>, defaults to 'Describe the image') -- The text prompt.</p></li>
+<li><p><strong>model</strong> (<cite>str</cite>, defaults to 'qwen-vl-plus') -- The model to use in DashScope MultiModal API.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`.
+If <cite>status</cite> is ServiceExecStatus.SUCCESS, the <cite>content</cite> is the
+generated text.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_url</span> <span class="o">=</span> <span class="s2">&quot;image.jpg&quot;</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Describe the image&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">image_to_text</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="n">prompt</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {'status': 'SUCCESS', 'content': 'A beautiful sunset in the mountains'}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.multi_modality.dashscope_services.dashscope_text_to_audio">
+<span class="sig-name descname"><span class="pre">dashscope_text_to_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sambert-zhichu-v1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">48000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="../_modules/agentscope/service/multi_modality/dashscope_services.html#dashscope_text_to_audio"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.multi_modality.dashscope_services.dashscope_text_to_audio" title="Link to this definition"></a></dt>
+<dd><p>Convert the given text to audio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<cite>str</cite>) -- The text to be converted into audio.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) -- The api key for the dashscope API.</p></li>
+<li><p><strong>save_dir</strong> (<cite>str</cite>) -- The directory to save the generated audio.</p></li>
+<li><p><strong>model</strong> (<cite>str</cite>, defaults to 'sambert-zhichu-v1') -- The model to use. Full model list can be found in
+<a class="reference external" href="https://help.aliyun.com/zh/dashscope/model-list">https://help.aliyun.com/zh/dashscope/model-list</a></p></li>
+<li><p><strong>sample_rate</strong> (<cite>int</cite>, defaults to 48000) -- Sample rate of the audio.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`. If
+<cite>status</cite> is ServiceExecStatus.SUCCESS, the <cite>content</cite> contains
+a dictionary with key &quot;audio_path&quot; and value is the path to
+the generated audio.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;How is the weather today?&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text_to_audio</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="n">gives</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>&gt; {'status': 'SUCCESS', 'content': {&quot;audio_path&quot;: &quot;AUDIO_PATH&quot;}}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="agentscope.service.multi_modality.dashscope_services.dashscope_text_to_image">
+<span class="sig-name descname"><span class="pre">dashscope_text_to_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'1024*1024'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'720*1280'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'1280*720'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'1024*1024'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'wanx-v1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.service.service_response.html#agentscope.service.service_response.ServiceResponse" title="agentscope.service.service_response.ServiceResponse"><span class="pre">ServiceResponse</span></a></span></span><a class="reference internal" href="../_modules/agentscope/service/multi_modality/dashscope_services.html#dashscope_text_to_image"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#agentscope.service.multi_modality.dashscope_services.dashscope_text_to_image" title="Link to this definition"></a></dt>
+<dd><p>Generate image(s) based on the given prompt, and return image url(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<cite>str</cite>) -- The text prompt to generate image.</p></li>
+<li><p><strong>api_key</strong> (<cite>str</cite>) -- The api key for the dashscope api.</p></li>
+<li><p><strong>n</strong> (<cite>int</cite>, defaults to <cite>1</cite>) -- The number of images to generate.</p></li>
+<li><p><strong>(</strong><strong>`Literal</strong><strong>[</strong><strong>&quot;1024*1024&quot;</strong> (<em>size</em>) -- <dl class="simple">
+<dt><cite>&quot;1024*1024&quot;</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;720*1280&quot;</strong> -- <dl class="simple">
+<dt><cite>&quot;1024*1024&quot;</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>&quot;1280*720&quot;</strong><strong>]</strong><strong>`</strong> -- <dl class="simple">
+<dt><cite>&quot;1024*1024&quot;</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>to</strong> (<em>defaults</em>) -- <dl class="simple">
+<dt><cite>&quot;1024*1024&quot;</cite>):</dt><dd><p>Size of the image.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>model</strong> (<cite>str</cite>, defaults to '&quot;wanx-v1&quot;') -- The model to use.</p></li>
+<li><p><strong>save_dir</strong> (<cite>Optional[str]</cite>, defaults to 'None') -- The directory to save the generated images. If not specified,
+will return the web urls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two variables: <cite>status</cite> and`content`. If
+<cite>status</cite> is ServiceExecStatus.SUCCESS, the <cite>content</cite> is a dict
+with key 'fig_paths&quot; and value is a list of the paths to the
+generated images.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>ServiceResponse</cite></p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;A beautiful sunset in the mountains&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dashscope_text_to_image</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{api_key}</span><span class="s2">&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>&gt; {
+&gt;     'status': 'SUCCESS',
+&gt;     'content': {'image_urls': ['IMAGE_URL1', 'IMAGE_URL2']}
+&gt; }</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="agentscope.service.multi_modality.html" class="btn btn-neutral float-left" title="agentscope.service.multi_modality package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="agentscope.service.multi_modality.openai_services.html" class="btn btn-neutral float-right" title="agentscope.service.multi_modality.openai_services module" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
