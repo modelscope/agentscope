@@ -411,7 +411,11 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span><span class="n">tool_name</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">content</span><span class="p">,</span> <span class="n">is_error</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">isError</span>
+            <span class="c1"># TODO: consider support image data and embedding resources</span>
+            <span class="n">content</span><span class="p">,</span> <span class="n">is_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">],</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">isError</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">is_error</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>

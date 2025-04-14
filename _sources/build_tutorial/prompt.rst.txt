@@ -797,7 +797,7 @@ Anthropic vision models.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.656 seconds)
+   **Total running time of the script:** (0 minutes 1.295 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_prompt.py:
