@@ -15,7 +15,15 @@ import string
 import sys
 import tempfile
 import threading
-from typing import Any, Generator, Optional, Union, Tuple, Literal, List
+from typing import (
+    Any,
+    Generator,
+    Optional,
+    Union,
+    Tuple,
+    Literal,
+    List,
+)
 from urllib.parse import urlparse
 
 import psutil
