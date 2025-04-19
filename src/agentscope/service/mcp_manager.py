@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This module manages MCP (ModelContextProtocal) sessions and tool execution
+This module manages MCP (ModelContextProtocol) sessions and tool execution
 within an asynchronous context. It includes functionality to create, manage,
 and close sessions, as well as execute various tools provided by an MCP server.
 """
