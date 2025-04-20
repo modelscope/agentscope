@@ -1,0 +1,352 @@
+{
+  "meta": {
+    "index": -1,
+    "title": "Tina000000's workflow",
+    "author": "Tina000000",
+    "description": "onlinediscussion",
+    "category": [
+      "educational"
+    ],
+    "time": "2025-04-21",
+    "thumbnail": ""
+  },
+  "drawflow": {
+    "3": {
+      "data": {
+        "args": {
+          "config_name": "qwen",
+          "model_name": "qwen-max",
+          "model_type": "dashscope_chat",
+          "seed": 3,
+          "temperature": 0.5
+        }
+      },
+      "height": "622.6666937934027px",
+      "inputs": {},
+      "name": "dashscope_chat",
+      "outputs": {},
+      "width": "311.33334689670136px"
+    },
+    "4": {
+      "data": {
+        "args": {
+          "content": "Hello,welcome to discuss any questions with us at any time.",
+          "name": "host",
+          "role": "assistant"
+        }
+      },
+      "height": "451.3333808051215px",
+      "inputs": {
+        "input_1": {
+          "connections": [
+            {
+              "input": "output_1",
+              "node": "16"
+            }
+          ]
+        }
+      },
+      "name": "Message",
+      "outputs": {
+        "output_1": {
+          "connections": [
+            {
+              "node": "5",
+              "output": "input_1"
+            }
+          ]
+        }
+      },
+      "width": "311.3333808051215px"
+    },
+    "5": {
+      "data": {
+        "args": {
+          "announcement": {
+            "content": "Welcome to a group chat!",
+            "name": "Host"
+          }
+        },
+        "elements": [
+          "6"
+        ]
+      },
+      "height": "612.6666937934027px",
+      "inputs": {
+        "input_1": {
+          "connections": [
+            {
+              "input": "output_1",
+              "node": "4"
+            }
+          ]
+        }
+      },
+      "name": "MsgHub",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "531.3333808051215px"
+    },
+    "6": {
+      "data": {
+        "args": {
+          "condition_func": "lambda *args: True"
+        },
+        "elements": [
+          "7"
+        ]
+      },
+      "height": "522.6666598849827px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "WhileLoopPipeline",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "531.3333808051215px"
+    },
+    "7": {
+      "data": {
+        "elements": [
+          "8",
+          "9",
+          "10",
+          "11",
+          "14",
+          "12",
+          "13"
+        ]
+      },
+      "height": "472.6666598849826px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "SequentialPipeline",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "531.3332790798611px"
+    },
+    "8": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Professor WANG",
+          "sys_prompt": "You are a digital transformation expert with a deep passion for education. You have a keen ability to recognize the strengths in others and support their growth in a warm, thoughtful, and actionable way. Your focus is on researching the impact of digital transformation in education on teachers' teaching practices.Express your opinions in Chinese.Don't make the response too formatted.It is necessary to combine the viewpoints put forward earlier."
+        }
+      },
+      "height": "422.6666598849826px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3333808051215px"
+    },
+    "9": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Teacher Chen",
+          "sys_prompt": "You are a novice teacher with one year of experience in junior high school education. Facing the rapid advancement of technology and knowledge, you sometimes feel overwhelmed in your teaching practice. Express your opinions in Chinese.Please integrate your perspective with your own practical experience to articulate your viewpoint on the user's question.Don't make the response too formatted.It is necessary to combine the viewpoints put forward earlier."
+        }
+      },
+      "height": "422.6666598849826px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3333808051215px"
+    },
+    "10": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Partner",
+          "sys_prompt": "\u200b\u200bYou are a graduate student in educational technology, skilled in technical development and digital media design. You will summarize the above viewpoints, raise questions and critiques, and justify your arguments based on technological advancements. You speak bluntly and love using emojis. Express your opinions in Chinese.Don't make the response too formatted.It is necessary to combine the viewpoints put forward earlier."
+        }
+      },
+      "height": "422.6666598849826px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3332790798611px"
+    },
+    "11": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Bureau Tang",
+          "sys_prompt": "You are the director of the education bureau, with a profound understanding of policies in the education sector. You can analyze the impact of educational policies on digital teaching based on current educational phenomena and the context of the times, as well as predict future trends in education. Your tone is warm and approachable. You can cite relevant policy documents and their specific contents in response to users' questions.You speak in Chinese.Don't make the response too formatted.It is necessary to combine the viewpoints put forward earlier."
+        }
+      },
+      "height": "422.66669379340277px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3333808051215px"
+    },
+    "12": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Physical Teacher Tang",
+          "sys_prompt": "You are a senior physics teacher with 20 years of experience and advanced professional certification. You believe that academic performance is the most effective metric for evaluating teaching quality and outcomes. Despite the rapid advancement of media technologies-especially the emergence of generative AI-and your enthusiasm for exploring related academic literature, you still rely on traditional teaching methods in practice and have yet to integrate these new technologies into education. Drawing from your extensive experience, you articulate your perspective on the issues raised by users.Don't make the response too formatted.It is necessary to combine the viewpoints put forward earlier."
+        }
+      },
+      "height": "422.6666598849826px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3332790798611px"
+    },
+    "13": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Professor Miao",
+          "sys_prompt": "You are an expert in the field of education, with profound insights into teacher education and professional development. You teach pedagogy courses and can analyze user questions through the lens of educational theory. Using a guided inquiry approach, you encourage critical thinking and self-reflection in your responses.Don't make the response too formatted.It is necessary to combine the viewpoints put forward earlier."
+        }
+      },
+      "height": "422.66669379340277px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3332790798611px"
+    },
+    "14": {
+      "data": {
+        "args": {
+          "name": "User"
+        }
+      },
+      "height": "242.66665988498264px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "UserAgent",
+      "outputs": {
+        "output_1": {
+          "connections": []
+        }
+      },
+      "width": "311.3333808051215px"
+    },
+    "15": {
+      "data": {
+        "args": {
+          "model_config_name": "qwen",
+          "name": "Supporter",
+          "sys_prompt": "As the host, I will begin with an opening remark: Feel free to discuss any questions with us.Now, let me introduce our DialogAgent in this chat group. It serves as an AI discussion facilitator, specializing in educational technology, natural language processing, and human-computer interaction research.You speak in Chinese."
+        }
+      },
+      "height": "422.6666598849826px",
+      "inputs": {
+        "input_1": {
+          "connections": []
+        }
+      },
+      "name": "DialogAgent",
+      "outputs": {
+        "output_1": {
+          "connections": [
+            {
+              "node": "16",
+              "output": "input_1"
+            }
+          ]
+        }
+      },
+      "width": "311.33334689670136px"
+    },
+    "16": {
+      "data": {
+        "args": {
+          "name": "User"
+        }
+      },
+      "height": "242.66665988498264px",
+      "inputs": {
+        "input_1": {
+          "connections": [
+            {
+              "input": "output_1",
+              "node": "15"
+            }
+          ]
+        }
+      },
+      "name": "UserAgent",
+      "outputs": {
+        "output_1": {
+          "connections": [
+            {
+              "node": "4",
+              "output": "input_1"
+            }
+          ]
+        }
+      },
+      "width": "311.3332790798611px"
+    }
+  }
+}
