@@ -187,7 +187,7 @@ dialog agent `alice`.
 
     User input: 
     Bob: Do you know me?
-    Alice: Hello Bob! I don't have any specific information about you other than what you've shared in this conversation. I'm here to help with any questions or tasks you might have. Is there something in particular you'd like to chat about or get help with?
+    Alice: Hello Bob! I don't have any specific information about you beyond what you've shared in this conversation. I'm here to help, though! Is there anything in particular you'd like to chat about or any questions you have?
 
 
 
@@ -244,10 +244,10 @@ We first initialize a `DictDialogAgent` object, and switch between different out
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the reason for going out and whether one is prepared with proper gear like an umbrella or raincoat. It's also important to consider safety, such as slippery conditions and visibility.", "speak": "It can be nice to go out in the rain, especially if you're dressed appropriately and it's safe to do so. However, it really depends on why you need to go out. Do you have an umbrella or a raincoat?", "decision": false}
+    {"thought": "Going out in the rain can be refreshing and fun, but it depends on whether Bob has the right gear to stay dry and warm, and if there are any risks like thunderstorms or flooding.", "speak": "It can be nice to go out in the rain, especially if you have an umbrella and a good raincoat. Just make sure to check for any weather warnings first!", "decision": "true"}
     ```
-    The metadata field: False
-    The type of metadata field: <class 'bool'>
+    The metadata field: true
+    The type of metadata field: <class 'str'>
 
 
 
@@ -286,7 +286,7 @@ Then, we ask the agent to pick a number from 1 to 10.
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a random number between 1 and 10. I'll choose 7, as it's often considered a lucky number.", "speak": "Sure, I'll pick a number. How about 7?", "number": "7"}
+    {"thought": "I need to pick a random number between 1 and 10 as requested by Bob.", "speak": "Sure, I'll pick a number. How about 7?", "number": "7"}
     ```
     The content of the response message: Sure, I'll pick a number. How about 7?
     The metadata of the response message: 7
@@ -338,9 +338,9 @@ while the `speak` field should be displayed to the user, and the `decision` fiel
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a random number between 20 and 30. I'll choose 25, as it's right in the middle of the range.", "speak": "Sure, I'll pick a number. How about 25?", "number": "25"}
+    {"thought": "I need to pick a random number between 20 and 30 as requested by Bob.", "speak": "Alright, I'll choose a number. Let's go with 25.", "number": "25"}
     ```
-    The content field: Sure, I'll pick a number. How about 25?
+    The content field: Alright, I'll choose a number. Let's go with 25.
     The type of content field: <class 'str'>
 
     The metadata field: 25
@@ -425,7 +425,7 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>I need to use the execute_python_code function to perform the multiplication of the two numbers provided by Bob.</thought>
+    David: <thought>I need to use the execute_python_code function to perform the multiplication of these two numbers.</thought>
     <function>execute_python_code</function>
     <code>151513434*54353453453</code>
     system: 1. Execute function execute_python_code
@@ -439,13 +439,13 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>The multiplication has been performed and the result is obtained. Now, I will provide the result to Bob.</thought>
+    David: <thought>The multiplication has been calculated, and now I need to provide the result to Bob.</thought>
     <function>finish</function>
-    <response>The result of 151513434 * 54353453453 is 8216707924260865802.</response>
+    <response>The result of 151513434 multiplied by 54353453453 is 821763907695963202.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The result of 151513434 * 54353453453 is 8216707924260865802."}
-       [RESULT]: The result of 151513434 * 54353453453 is 8216707924260865802.
+           {"response": "The result of 151513434 multiplied by 54353453453 is 821763907695963202."}
+       [RESULT]: The result of 151513434 multiplied by 54353453453 is 821763907695963202.
 
 
 
@@ -461,7 +461,7 @@ Refer to the RAG Section for more details.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 31.624 seconds)
+   **Total running time of the script:** (0 minutes 30.829 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_builtin_agent.py:
