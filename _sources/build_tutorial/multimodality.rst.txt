@@ -85,7 +85,7 @@ As usual, we initialize AgentScope with the above configuration, and create a ne
 
  .. code-block:: none
 
-    2025-04-22 03:33:07 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+    2025-04-22 03:46:33 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 
 
 
@@ -168,7 +168,7 @@ After that, we can send the message to the vision agent and get the response.
 
  .. code-block:: none
 
-    2025-04-22 03:33:07 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
+    2025-04-22 03:46:33 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
     Monday: The image is a bar chart titled "The Apples Each Person Has in 2023." It shows the number of apples that three individuals, Alice, Bob, and Charlie, have. The y-axis represents the number of apples, ranging from 0 to 4, while the x-axis lists the names of the individuals.
 
     - Alice has 2 apples.
@@ -181,7 +181,7 @@ After that, we can send the message to the vision agent and get the response.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 19.838 seconds)
+   **Total running time of the script:** (0 minutes 6.185 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_multimodality.py:

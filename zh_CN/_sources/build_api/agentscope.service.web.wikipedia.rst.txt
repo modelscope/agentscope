@@ -1,7 +1,0 @@
-agentscope.service.web.wikipedia module
-=======================================
-
-.. automodule:: agentscope.service.web.wikipedia
-   :members:
-   :undoc-members:
-   :show-inheritance:
