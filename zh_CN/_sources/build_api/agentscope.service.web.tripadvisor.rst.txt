@@ -1,0 +1,7 @@
+agentscope.service.web.tripadvisor module
+=========================================
+
+.. automodule:: agentscope.service.web.tripadvisor
+   :members:
+   :undoc-members:
+   :show-inheritance:
