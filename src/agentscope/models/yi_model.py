@@ -10,6 +10,7 @@ from typing import (
 
 import requests
 
+from ._model_usage import ChatUsage
 from ._model_utils import (
     _verify_text_content_in_openai_message_response,
     _verify_text_content_in_openai_delta_response,
@@ -285,18 +286,24 @@ class YiChatWrapper(ModelWrapperBase):
             response (`dict`):
                 The response from model API
         """
+        usage = response.get("usage", None)
+
+        if usage:
+            formatted_usage = ChatUsage(
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+            )
+        else:
+            formatted_usage = None
+
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
-        usage = response.get("usage", None)
-        if usage is not None:
-            prompt_tokens = usage.get("prompt_tokens", 0)
-            completion_tokens = usage.get("completion_tokens", 0)
-
+        if formatted_usage:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
-                prompt_tokens=prompt_tokens,
-                completion_tokens=completion_tokens,
+                **formatted_usage.usage.model_dump(),
             )

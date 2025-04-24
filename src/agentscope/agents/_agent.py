@@ -14,6 +14,8 @@ from typing import Union
 from typing import Any
 import json
 import uuid
+
+import shortuuid
 from loguru import logger
 
 from ..rpc.rpc_config import DistConf
@@ -281,6 +283,9 @@ class AgentBase(metaclass=_AgentMeta):
         self._hooks_pre_observe = OrderedDict()
         self._hooks_post_observe = OrderedDict()
 
+        # Used to identify one reply from agent
+        self._reply_id = None
+
     @classmethod
     def generate_agent_id(cls) -> str:
         """Generate the agent_id of this agent instance"""
@@ -312,7 +317,12 @@ class AgentBase(metaclass=_AgentMeta):
     def __call__(self, *args: Any, **kwargs: Any) -> Msg:
         """Calling the reply function, and broadcast the generated
         response to all audiences if needed."""
+
+        self._reply_id = shortuuid.uuid()
+
         res = self.reply(*args, **kwargs)
+
+        self._reply_id = None
 
         # broadcast to audiences if needed
         if self._audience is not None:

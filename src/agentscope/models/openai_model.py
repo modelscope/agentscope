@@ -12,6 +12,7 @@ from typing import (
 
 from loguru import logger
 
+from ._model_usage import ChatUsage
 from ._model_utils import (
     _verify_text_content_in_openai_delta_response,
     _verify_text_content_in_openai_message_response,
@@ -335,9 +336,20 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             response (`dict`):
                 The response from model API
         """
+        usage = response.get("usage", None)
+
+        if usage and "prompt_tokens" in usage and "completion_tokens" in usage:
+            formatted_usage = ChatUsage(
+                prompt_tokens=usage.get("prompt_tokens"),
+                completion_tokens=usage.get("completion_tokens"),
+            )
+        else:
+            formatted_usage = None
+
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
         usage = response.get("usage", None)

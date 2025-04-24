@@ -160,10 +160,6 @@ def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
 
     print(_formatted_str(msg, colored=True))
 
-    # Push msg to studio if it is active
-    if _studio_client.active:
-        _studio_client.push_message(msg)
-
     # Print to gradio if it is active
     if hasattr(thread_local_data, "uid") and not disable_gradio:
         log_gradio(msg, thread_local_data.uid)

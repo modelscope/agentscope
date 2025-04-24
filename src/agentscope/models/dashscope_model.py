@@ -7,6 +7,7 @@ from typing import Any, Union, List, Optional, Generator
 
 from loguru import logger
 
+from ._model_usage import ChatUsage
 from ..formatters import DashScopeFormatter
 from ..manager import FileManager
 from ..message import Msg, ToolUseBlock
@@ -332,20 +333,22 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
             response (`GenerationResponse`):
                 The response object returned by the DashScope chat API.
         """
-        input_tokens = response.usage.get("input_tokens", 0)
-        output_tokens = response.usage.get("output_tokens", 0)
+        formatted_usage = ChatUsage(
+            prompt_tokens=response.usage.get("input_tokens", 0),
+            completion_tokens=response.usage.get("output_tokens", 0),
+        )
 
         # Update the token record accordingly
         self.monitor.update_text_and_embedding_tokens(
             model_name=self.model_name,
-            prompt_tokens=input_tokens,
-            completion_tokens=output_tokens,
+            **formatted_usage.usage.model_dump(),
         )
 
         # Save the model invocation after the stream is exhausted
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
     def format(
@@ -821,6 +824,15 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
             raise RuntimeError(error_msg)
 
         # step3: record the model api invocation if needed
+        input_tokens = response.usage.get("input_tokens", 0)
+        image_tokens = response.usage.get("image_tokens", 0)
+        output_tokens = response.usage.get("output_tokens", 0)
+
+        formatted_usage = ChatUsage(
+            prompt_tokens=input_tokens + image_tokens,
+            completion_tokens=output_tokens,
+        )
+
         self._save_model_invocation(
             arguments={
                 "model": self.model_name,
@@ -828,17 +840,14 @@ class DashScopeMultiModalWrapper(DashScopeWrapperBase):
                 **kwargs,
             },
             response=response,
+            usage=formatted_usage,
         )
 
         # step4: update monitor accordingly
-        input_tokens = response.usage.get("input_tokens", 0)
-        image_tokens = response.usage.get("image_tokens", 0)
-        output_tokens = response.usage.get("output_tokens", 0)
         # TODO: update the tokens
         self.monitor.update_text_and_embedding_tokens(
             model_name=self.model_name,
-            prompt_tokens=input_tokens,
-            completion_tokens=output_tokens + image_tokens,
+            **formatted_usage.usage.model_dump(),
         )
 
         # step5: return response

@@ -2,6 +2,7 @@
 """The Anthropic model wrapper for AgentScope."""
 from typing import Optional, Union, Generator, Any
 
+from ._model_usage import ChatUsage
 from ..formatters import AnthropicFormatter
 from ..message import Msg, ToolUseBlock
 from .model import ModelWrapperBase, ModelResponse
@@ -260,17 +261,26 @@ class AnthropicChatWrapper(ModelWrapperBase):
         kwargs: dict,
         response: dict,
     ) -> None:
+        usage = response.get("usage", None)
+
+        if usage is None:
+            formatted_usage = None
+        else:
+            formatted_usage = ChatUsage(
+                prompt_tokens=usage.get("input_tokens", 0),
+                completion_tokens=usage.get("output_tokens", 0),
+            )
+
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
-        usage = response.get("usage", None)
-        if usage is not None:
+        if formatted_usage:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
-                prompt_tokens=usage.get("input_tokens", 0),
-                completion_tokens=usage.get("output_tokens", 0),
+                **formatted_usage.usage.model_dump(),
             )
 
     def format_tools_json_schemas(

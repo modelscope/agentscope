@@ -7,6 +7,7 @@ from typing import Sequence, Union, Any, List, Optional, Generator
 
 from loguru import logger
 
+from ._model_usage import ChatUsage
 from ..formatters import GeminiFormatter
 from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
@@ -218,26 +219,31 @@ class GeminiChatWrapper(GeminiWrapperBase):
         response: Any,
     ) -> None:
         """Save the model invocation and update the monitor accordingly."""
+        # Update monitor accordingly
+        if hasattr(response, "usage_metadata"):
+            prompt_tokens = response.usage_metadata.prompt_token_count
+            completion_tokens = response.usage_metadata.candidates_token_count
+        else:
+            prompt_tokens = self.model.count_tokens(contents).total_tokens
+            completion_tokens = self.model.count_tokens(
+                response.text,
+            ).total_tokens
+
+        formatted_usage = ChatUsage(
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+        )
+
         # Record the api invocation if needed
         self._save_model_invocation(
             arguments=kwargs,
             response=str(response),
+            usage=formatted_usage,
         )
-
-        # Update monitor accordingly
-        if hasattr(response, "usage_metadata"):
-            token_prompt = response.usage_metadata.prompt_token_count
-            token_response = response.usage_metadata.candidates_token_count
-        else:
-            token_prompt = self.model.count_tokens(contents).total_tokens
-            token_response = self.model.count_tokens(
-                response.text,
-            ).total_tokens
 
         self.monitor.update_text_and_embedding_tokens(
             model_name=self.model_name,
-            prompt_tokens=token_prompt,
-            completion_tokens=token_response,
+            **formatted_usage.usage.model_dump(),
         )
 
     def _extract_text_content_from_response(

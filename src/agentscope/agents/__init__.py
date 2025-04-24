@@ -8,6 +8,12 @@ from ._react_agent import ReActAgent
 from ._react_agent_v2 import ReActAgentV2
 from ._rag_agent import LlamaIndexAgent
 
+from ._user_input import (
+    UserInputBase,
+    StudioUserInput,
+    TerminalUserInput,
+)
+
 
 __all__ = [
     "AgentBase",
@@ -17,4 +23,7 @@ __all__ = [
     "ReActAgent",
     "ReActAgentV2",
     "LlamaIndexAgent",
+    "UserInputBase",
+    "StudioUserInput",
+    "TerminalUserInput",
 ]

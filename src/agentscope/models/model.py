@@ -5,11 +5,13 @@ from __future__ import annotations
 import inspect
 import time
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from functools import wraps
 from typing import Any, Callable, Union, List, Optional
 
 from loguru import logger
 
+from ._model_usage import ChatUsage
 from .response import ModelResponse
 from ..exception import ResponseParsingError
 
@@ -100,6 +102,24 @@ class ModelWrapperBase(ABC):
 
     model_name: str
     """The name of the model, which is used in model api calling."""
+
+    _class_hooks_save_model_invocation: dict[
+        str,
+        Callable[
+            [
+                ModelWrapperBase,  # self object
+                str,  # model invocation id
+                str,  # timestamp
+                dict,  # arguments
+                Union[dict, str],  # response
+                dict,  # usage
+            ],
+            None,
+        ],
+    ] = OrderedDict()
+    """The class hooks in saving model invocations, which takes the model
+    wrapper object, model invocation id, timestamp, arguments, response,
+     and usage as input"""
 
     def __init__(
         self,  # pylint: disable=W0613
@@ -204,20 +224,95 @@ class ModelWrapperBase(ABC):
     def _save_model_invocation(
         self,
         arguments: dict,
-        response: Any,
+        response: Union[dict, str],
+        usage: Optional[ChatUsage] = None,
     ) -> None:
         """Save model invocation."""
         model_class = self.__class__.__name__
         timestamp = _get_timestamp("%Y%m%d-%H%M%S")
+
+        usage_dict = usage.model_dump() if usage else {}
 
         invocation_record = {
             "model_class": model_class,
             "timestamp": timestamp,
             "arguments": arguments,
             "response": response,
+            "usage": usage_dict,
         }
 
+        invocation_id = f"model_{model_class}_{timestamp}"
+
         FileManager.get_instance().save_api_invocation(
-            f"model_{model_class}_{timestamp}",
+            invocation_id,
             invocation_record,
         )
+
+        # hooks
+        for (
+            hook
+        ) in ModelWrapperBase._class_hooks_save_model_invocation.values():
+            hook(
+                self,
+                invocation_id,
+                timestamp,
+                arguments,
+                response,
+                usage_dict,
+            )
+
+    @classmethod
+    def register_save_model_invocation_hook(
+        cls,
+        hook_name: str,
+        hook: Callable[
+            [
+                ModelWrapperBase,  # self object
+                str,  # model invocation id
+                str,  # timestamp
+                dict,  # arguments
+                dict,  # response
+                dict,  # usage
+            ],
+            None,
+        ],
+    ) -> None:
+        """Register save model invocation hook.
+
+        Args:
+            hook_name (`str`):
+                The name of the hook.
+            hook (`Callable[[dict, dict], None]`):
+                The hook function, which should take
+        """
+        if hook_name in cls._class_hooks_save_model_invocation:
+            logger.warning(
+                f"Hook [{hook_name}] already exists. "
+                f"Overwriting the existing hook.",
+            )
+
+        cls._class_hooks_save_model_invocation[hook_name] = hook
+
+    @classmethod
+    def remove_save_model_invocation_hook(
+        cls,
+        hook_name: str,
+    ) -> None:
+        """Remove model invocation saving hook by its name.
+
+        Args:
+            hook_name (`str`):
+                The name of the hook to be removed.
+        """
+        if hook_name in cls._class_hooks_save_model_invocation:
+            cls._class_hooks_save_model_invocation.pop(hook_name)
+        else:
+            logger.warning(
+                f"Hook [{hook_name}] doesn't exist. "
+                f"Cannot remove the non-existing hook.",
+            )
+
+    @classmethod
+    def clear_save_model_invocation_hook(cls) -> None:
+        """Clear all the hooks in saving model invocations."""
+        cls._class_hooks_save_model_invocation.clear()
