@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=C0301
 """ Unit test for service toolkit. """
 import asyncio
 import json
@@ -109,17 +110,12 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "execute_python_code",
-                "description": """Execute a piece of python code.
-
-This function can run Python code provided in string format. It has the
-option to execute the code within a Docker container to provide an
-additional layer of security, especially important when running
-untrusted code.
-
-WARNING: If `use_docker` is set to `False`, the `code` will be run
-directly in the host system's environment. This poses a potential
-security risk if the code is untrusted. Only disable Docker if you are
-confident in the safety of the code being executed.""",
+                "description": (
+                    "Execute the given python code in a temp file and capture "
+                    "the return code, standard output and error. Note you "
+                    "must `print` the output to get the result, and the "
+                    "tmp file will be removed right after the execution."
+                ),
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -424,17 +420,7 @@ The following tool functions are available in the format of
 
 1. bing_search: Search question in Bing Search API and return the searching results
 	question (string): The search query string.
-2. execute_python_code: Execute a piece of python code.
-
-This function can run Python code provided in string format. It has the
-option to execute the code within a Docker container to provide an
-additional layer of security, especially important when running
-untrusted code.
-
-WARNING: If `use_docker` is set to `False`, the `code` will be run
-directly in the host system's environment. This poses a potential
-security risk if the code is untrusted. Only disable Docker if you are
-confident in the safety of the code being executed.
+2. execute_python_code: Execute the given python code in a temp file and capture the return code, standard output and error. Note you must `print` the output to get the result, and the tmp file will be removed right after the execution.
 	code (string): The Python code to be executed.
 """,  # noqa
         )

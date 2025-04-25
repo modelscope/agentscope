@@ -69,14 +69,15 @@ def execute_shell_command(
         )
 
     except subprocess.TimeoutExpired as e:
+        stdout = e.stdout.decode("utf-8") if e.stdout else ""
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
             content=(
                 "<returncode>-1</returncode>\n"
-                f"<stdout>{e.stdout.decode('utf-8')}</stdout>\n"
+                f"<stdout>{stdout}</stdout>\n"
                 "<stderr>Error: Command execution timeout after "
                 f"{timeout} seconds. Consider increasing the timeout "
-                f"value or adjusting your code.<stderr>"
+                f"value or adjusting your command<stderr>"
             ),
         )
 
