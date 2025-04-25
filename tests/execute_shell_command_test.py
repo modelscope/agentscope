@@ -38,30 +38,58 @@ class ExecuteShellCommandTest(unittest.TestCase):
             command=self.arg0,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Success."
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout></stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg1,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Success."
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout></stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg2,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Helloworld"
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout>Helloworld
+</stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg3,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Success."
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout></stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg3,
         )
-        assert result.status == ServiceExecStatus.ERROR
+        assert result.status == ServiceExecStatus.SUCCESS
+        assert (
+            result.content
+            == """<returncode>1</returncode>
+<stdout></stdout>
+<stderr>rm: tmp_a.txt: No such file or directory
+</stderr>"""
+        )
 
 
 if __name__ == "__main__":

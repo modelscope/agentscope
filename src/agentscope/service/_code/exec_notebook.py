@@ -30,7 +30,7 @@ class NoteBookExecutor:
 
         ```ipython
         from agentscope.service.service_toolkit import *
-        from agentscope.service.execute_code.exec_notebook import *
+        from agentscope.service._code.exec_notebook import *
         nbe = NoteBookExecutor()
         code = "print('helloworld')"
         # calling directly

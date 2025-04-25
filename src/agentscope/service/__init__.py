@@ -2,9 +2,9 @@
 """ Import all service-related modules in the package."""
 from loguru import logger
 
-from .execute_code.exec_python import execute_python_code
-from .execute_code.exec_shell import execute_shell_command
-from .execute_code.exec_notebook import NoteBookExecutor
+from ._code.exec_python import execute_python_code
+from ._code.exec_shell import execute_shell_command
+from ._code.exec_notebook import NoteBookExecutor
 from .file.common import (
     create_file,
     delete_file,
