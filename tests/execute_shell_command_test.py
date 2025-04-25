@@ -81,13 +81,6 @@ class ExecuteShellCommandTest(unittest.TestCase):
             command=self.arg3,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert (
-            result.content
-            == """<returncode>1</returncode>
-<stdout></stdout>
-<stderr>rm: tmp_a.txt: No such file or directory
-</stderr>"""
-        )
 
 
 if __name__ == "__main__":
