@@ -30,7 +30,7 @@ class ExecuteShellCommandTest(unittest.TestCase):
             os.remove("tmp_a.txt")
 
     def test(self) -> None:
-        """test command, skip on windows"""
+        """test command"""
 
         result = execute_shell_command(
             command=self.arg0,

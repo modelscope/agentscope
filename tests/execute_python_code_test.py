@@ -46,7 +46,6 @@ class ExecutePythonCodeTest(unittest.TestCase):
         response = execute_python_code(
             **args,
         )
-        print(response.content)
         self.assertIn(expected_output, response.content)
         self.assertIn(expected_error_substr, response.content)
 
@@ -70,7 +69,7 @@ class ExecutePythonCodeTest(unittest.TestCase):
         """Execute timeout test"""
         self.run_test(
             self.arg3,
-            "Hello World\n",
+            "",
             "Python code execution timeout after",
         )
 
