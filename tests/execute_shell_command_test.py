@@ -2,7 +2,6 @@
 """ Python code execution test."""
 import os
 import unittest
-import platform
 
 from agentscope.service import execute_shell_command
 from agentscope.service import ServiceExecStatus
@@ -32,8 +31,7 @@ class ExecuteShellCommandTest(unittest.TestCase):
 
     def test(self) -> None:
         """test command, skip on windows"""
-        if platform.system() == "Windows":
-            return
+
         result = execute_shell_command(
             command=self.arg0,
         )

@@ -71,7 +71,7 @@ class ExecutePythonCodeTest(unittest.TestCase):
         self.run_test(
             self.arg3,
             "Hello World\n",
-            "Command execution timeout after",
+            "Python code execution timeout after",
         )
 
     def test_no_input_code(self) -> None:
