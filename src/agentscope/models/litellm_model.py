@@ -280,7 +280,7 @@ class LiteLLMChatWrapper(LiteLLMWrapperBase):
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
-            usage=usage,
+            usage=formatted_usage,
         )
 
         # step5: update monitor accordingly
