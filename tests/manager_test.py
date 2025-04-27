@@ -59,7 +59,6 @@ class ManagerTest(TestCase):
                     },
                 },
                 "logger": {"level": "DEBUG"},
-                "studio": {"active": False, "studio_url": None},
                 "monitor": {
                     "use_monitor": False,
                     "path_db": None,
@@ -90,7 +89,6 @@ class ManagerTest(TestCase):
                 },
                 "model": {"model_configs": {}},
                 "logger": {"level": "INFO"},
-                "studio": {"active": False, "studio_url": None},
                 "monitor": {"path_db": None, "use_monitor": False},
             },
         )
