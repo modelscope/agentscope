@@ -23,7 +23,6 @@ from ..utils.common import (
     _get_timestamp,
 )
 from ..constants import _RUNTIME_ID_FORMAT, _RUNTIME_TIMESTAMP_FORMAT
-from ..studio._client import _studio_client
 
 
 class ASManager:
@@ -275,7 +274,6 @@ class ASManager:
         serialized_data["logger"] = {
             "level": self.logger_level,
         }
-        serialized_data["studio"] = _studio_client.state_dict()
         serialized_data["monitor"] = self.monitor.state_dict()
 
         return deepcopy(serialized_data)
@@ -291,7 +289,6 @@ class ASManager:
         self.logger_level = data["logger"]["level"]
         setup_logger(self.file.run_dir, self.logger_level)
         self.model.load_dict(data["model"])
-        _studio_client.load_dict(data["studio"])
         self.monitor.load_dict(data["monitor"])
 
     def flush(self) -> None:
@@ -307,6 +304,5 @@ class ASManager:
         self.model.flush()
         self.monitor.flush()
         logger.remove()
-        _studio_client.flush()
 
         self.logger_level = "INFO"
