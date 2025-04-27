@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 import tempfile
-from typing import Optional, Any
+from typing import Any
 
 import shortuuid
 
@@ -15,7 +15,7 @@ from ..service_status import ServiceExecStatus
 
 def execute_python_code(
     code: str,
-    timeout: Optional[float] = 300,
+    timeout: float = 300,
     **kwargs: Any,
 ) -> ServiceResponse:
     """Execute the given python code in a temp file and capture the return code, standard output and error. Note you must `print` the output to get the result, and the tmp file will be removed right after the execution.
@@ -23,7 +23,7 @@ def execute_python_code(
     Args:
         code (`str`):
             The Python code to be executed.
-        timeout (`Optional[float]`, defaults to `300`):
+        timeout (`float`, defaults to `300`):
             The maximum time (in seconds) allowed for the code to run.
 
     Returns:
