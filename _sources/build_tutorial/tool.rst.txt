@@ -144,11 +144,15 @@ method as follows, the reserved parameters will be left to the agent to fill.
     ...
     ```
 
-    1. execute_shell_command: Executes a given shell command.
+    1. execute_shell_command: Execute given command and return the return code, standard output and
+
+    error within <returncode></returncode>, <stdout></stdout> and
+    <stderr></stderr> tags.
             command (string): The shell command to execute.
+            timeout (number): The maximum time (in seconds) allowed for the command to run.
     2. bing_search: Search question in Bing Search API and return the searching results
-            question (string): The search query string.
             num_results (number): The number of search results to return.
+            question (string): The search query string.
 
 
 
@@ -202,13 +206,18 @@ The JSON Schema description of the tool functions:
         "type": "function",
         "function": {
           "name": "execute_shell_command",
-          "description": "Executes a given shell command.",
+          "description": "Execute given command and return the return code, standard output and\n\nerror within <returncode></returncode>, <stdout></stdout> and\n<stderr></stderr> tags.",
           "parameters": {
             "type": "object",
             "properties": {
               "command": {
                 "type": "string",
                 "description": "The shell command to execute."
+              },
+              "timeout": {
+                "type": "number",
+                "description": "The maximum time (in seconds) allowed for the command to run.",
+                "default": 300
               }
             },
             "required": [
@@ -225,14 +234,14 @@ The JSON Schema description of the tool functions:
           "parameters": {
             "type": "object",
             "properties": {
-              "question": {
-                "type": "string",
-                "description": "The search query string."
-              },
               "num_results": {
                 "type": "number",
                 "description": "The number of search results to return.",
                 "default": 10
+              },
+              "question": {
+                "type": "string",
+                "description": "The search query string."
               }
             },
             "required": [
@@ -335,13 +344,17 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>I need to calculate the product of 1615114134 and 4343434343, I can use a shell command to perform this calculation.</thought>
+    Friday: <thought>I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using a shell command.</thought>
     <function>execute_shell_command</function>
     <command>expr 1615114134 \* 4343434343</command>
+    <timeout>60</timeout>
     system: 1. Execute function execute_shell_command
        [ARGUMENTS]:
-           {"command": "expr 1615114134 \\* 4343434343"}
-       [RESULT]: 7015142197480303962
+           {"command": "expr 1615114134 \\* 4343434343", "timeout": 60}
+       [RESULT]: <returncode>0</returncode>
+    <stdout>7015142197480303962
+    </stdout>
+    <stderr></stderr>
 
     system: Respond with specific tags as outlined below:
     <thought>{what you thought}</thought>
@@ -349,13 +362,13 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The calculation has been performed successfully and the result is 7015142197480303962. I can now inform the user of the result.</thought>
+    Friday: <thought>The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I will now inform the user of this result.</thought>
     <function>finish</function>
-    <response>The product of 1615114134 and 4343434343 is 7015142197480303962.</response>
+    <response>The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The product of 1615114134 and 4343434343 is 7015142197480303962."}
-       [RESULT]: The product of 1615114134 and 4343434343 is 7015142197480303962.
+           {"response": "The result of multiplying 1615114134 by 4343434343 is 7015142197480303962."}
+       [RESULT]: The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.
 
 
 
@@ -478,7 +491,7 @@ Step 5 -> 6 -> 7 in the figure, getting the model response:
     tool_calls: [
         {
             "type": "tool_use",
-            "id": "call_23dfb33403fa41aea17414",
+            "id": "call_4a8cab61d0c74653a2bc95",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami"
@@ -523,7 +536,7 @@ Step 8, creating a new message with the tool calls:
     assistant: [
         {
             "type": "tool_use",
-            "id": "call_23dfb33403fa41aea17414",
+            "id": "call_4a8cab61d0c74653a2bc95",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami"
@@ -588,7 +601,7 @@ again!
             "content": null,
             "tool_calls": [
                 {
-                    "id": "call_23dfb33403fa41aea17414",
+                    "id": "call_4a8cab61d0c74653a2bc95",
                     "type": "function",
                     "function": {
                         "name": "execute_shell_command",
@@ -599,8 +612,8 @@ again!
         },
         {
             "role": "tool",
-            "tool_call_id": "call_23dfb33403fa41aea17414",
-            "content": "runner",
+            "tool_call_id": "call_4a8cab61d0c74653a2bc95",
+            "content": "<returncode>0</returncode>\n<stdout>runner\n</stdout>\n<stderr></stderr>",
             "name": "execute_shell_command"
         }
     ]
@@ -691,7 +704,7 @@ automatically and registered to the `ServiceToolkit`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.847 seconds)
+   **Total running time of the script:** (0 minutes 12.485 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

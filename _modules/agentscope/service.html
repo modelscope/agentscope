@@ -143,9 +143,9 @@
 <span class="sd">&quot;&quot;&quot; Import all service-related modules in the package.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.execute_code.exec_python</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute_python_code</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.execute_code.exec_shell</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute_shell_command</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.execute_code.exec_notebook</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoteBookExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._code.exec_python</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute_python_code</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._code.exec_shell</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute_shell_command</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._code.exec_notebook</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoteBookExecutor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.file.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">create_file</span><span class="p">,</span>
     <span class="n">delete_file</span><span class="p">,</span>

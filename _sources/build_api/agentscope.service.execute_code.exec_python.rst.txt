@@ -1,6 +1,0 @@
-agentscope.service.execute_code.exec_python
-===========================================
-.. automodule:: agentscope.service.execute_code.exec_python
-   :members:
-   :undoc-members:
-   :show-inheritance:
