@@ -1,0 +1,238 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/index.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Workstation ------------------"><img alt="" src="../_images/sphx_glr_low_code_thumb.png" />
+<p><a class="reference internal" href="low_code.html#sphx-glr-build-tutorial-low-code-py"><span class="std std-ref">低代码开发</span></a></p>
+  <div class="sphx-glr-thumbnail-title">低代码开发</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 支持包括 Gradio 和 AgentScope Studio 在内的可视化，以提高用户体验。"><img alt="" src="../_images/sphx_glr_visual_thumb.png" />
+<p><a class="reference internal" href="visual.html#sphx-glr-build-tutorial-visual-py"><span class="std std-ref">可视化</span></a></p>
+  <div class="sphx-glr-thumbnail-title">可视化</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="本节重定向到 conversation_with_web_browser_agent/README.md。"><img alt="" src="../_images/sphx_glr_web_browser_thumb.png" />
+<p><a class="reference internal" href="web_browser.html#sphx-glr-build-tutorial-web-browser-py"><span class="std std-ref">浏览器控制</span></a></p>
+  <div class="sphx-glr-thumbnail-title">浏览器控制</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="本节介绍 AgentScope 分布式的使用方法。AgentScope 原生提供了基于 gRPC 的分布式模式， 在这种模式下，一个应用程序中的多个智能体可以部署到不同的进程或者甚至不同的机器上，从而充分利用计算资源，提高效率。"><img alt="" src="../_images/sphx_glr_distribution_thumb.png" />
+<p><a class="reference internal" href="distribution.html#sphx-glr-build-tutorial-distribution-py"><span class="std std-ref">分布式</span></a></p>
+  <div class="sphx-glr-thumbnail-title">分布式</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="配置类 ------------------------"><img alt="" src="../_images/sphx_glr_examples_thumb.png" />
+<p><a class="reference internal" href="examples.html#sphx-glr-build-tutorial-examples-py"><span class="std std-ref">样例</span></a></p>
+  <div class="sphx-glr-thumbnail-title">样例</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 需要 Python 3.9 或更高版本。你可以从源码或 pypi 安装。"><img alt="" src="../_images/sphx_glr_quickstart_thumb.png" />
+<p><a class="reference internal" href="quickstart.html#sphx-glr-build-tutorial-quickstart-py"><span class="std std-ref">快速入门</span></a></p>
+  <div class="sphx-glr-thumbnail-title">快速入门</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 支持在终端和 AgentScope Studio 中以打字机效果显示流式输出。"><img alt="" src="../_images/sphx_glr_streaming_thumb.png" />
+<p><a class="reference internal" href="streaming.html#sphx-glr-build-tutorial-streaming-py"><span class="std std-ref">流式输出</span></a></p>
+  <div class="sphx-glr-thumbnail-title">流式输出</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="在本节中，我们将展示如何在 AgentScope 中构建多模态应用程序。"><img alt="" src="../_images/sphx_glr_multimodality_thumb.png" />
+<p><a class="reference internal" href="multimodality.html#sphx-glr-build-tutorial-multimodality-py"><span class="std std-ref">多模态</span></a></p>
+  <div class="sphx-glr-thumbnail-title">多模态</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 实现了一个用于优化智能体系统提示的模块。"><img alt="" src="../_images/sphx_glr_prompt_optimization_thumb.png" />
+<p><a class="reference internal" href="prompt_optimization.html#sphx-glr-build-tutorial-prompt-optimization-py"><span class="std std-ref">系统提示优化</span></a></p>
+  <div class="sphx-glr-thumbnail-title">系统提示优化</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="消息是一种用于智能体间信息交换的数据结构。"><img alt="" src="../_images/sphx_glr_message_thumb.png" />
+<p><a class="reference internal" href="message.html#sphx-glr-build-tutorial-message-py"><span class="std std-ref">消息</span></a></p>
+  <div class="sphx-glr-thumbnail-title">消息</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 的主入口是 agentscope.init，在这里您可以配置应用程序。"><img alt="" src="../_images/sphx_glr_monitor_thumb.png" />
+<p><a class="reference internal" href="monitor.html#sphx-glr-build-tutorial-monitor-py"><span class="std std-ref">配置和监控</span></a></p>
+  <div class="sphx-glr-thumbnail-title">配置和监控</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="在本教程中，我们将简要介绍什么是 MCP，并展示如何在 AgentScope 中使用 MCP。此外，我们将演示如何将现有的 AgentScope 多智能体应用配置为 MCP 服务器。最后，为了帮助高级开发者更深入地理解，我们将讨论 MCP 是如何与 AgentScope 集成的。"><img alt="" src="../_images/sphx_glr_MCP_thumb.png" />
+<p><a class="reference internal" href="MCP.html#sphx-glr-build-tutorial-mcp-py"><span class="std std-ref">MCP</span></a></p>
+  <div class="sphx-glr-thumbnail-title">MCP</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 中，不同智能体之间通过“显式的消息交换”来构建对话。"><img alt="" src="../_images/sphx_glr_conversation_thumb.png" />
+<p><a class="reference internal" href="conversation.html#sphx-glr-build-tutorial-conversation-py"><span class="std std-ref">构建对话</span></a></p>
+  <div class="sphx-glr-thumbnail-title">构建对话</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Agentscope 内置了对检索增强生成（RAG）的支持。AgentScope 中与 RAG 相关的两个关键模块是：Knowledge 和 KnowledgeBank。"><img alt="" src="../_images/sphx_glr_rag_thumb.png" />
+<p><a class="reference internal" href="rag.html#sphx-glr-build-tutorial-rag-py"><span class="std std-ref">检索增强生成（RAG）</span></a></p>
+  <div class="sphx-glr-thumbnail-title">检索增强生成（RAG）</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 中，可以通过继承基类`agentscope.agents.AgentBase`来构建智能体"><img alt="" src="../_images/sphx_glr_agent_thumb.png" />
+<p><a class="reference internal" href="agent.html#sphx-glr-build-tutorial-agent-py"><span class="std std-ref">构建智能体</span></a></p>
+  <div class="sphx-glr-thumbnail-title">构建智能体</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="背景介绍 --------------------"><img alt="" src="../_images/sphx_glr_tool_thumb.png" />
+<p><a class="reference internal" href="tool.html#sphx-glr-build-tutorial-tool-py"><span class="std std-ref">工具</span></a></p>
+  <div class="sphx-glr-thumbnail-title">工具</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 内置若干智能体类，以支持不同使用场景，同时展示如何使用 AgentScope 构建智能体。"><img alt="" src="../_images/sphx_glr_builtin_agent_thumb.png" />
+<p><a class="reference internal" href="builtin_agent.html#sphx-glr-build-tutorial-builtin-agent-py"><span class="std std-ref">内置智能体</span></a></p>
+  <div class="sphx-glr-thumbnail-title">内置智能体</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="AgentScope 已集成了许多不同模态的模型 API 。"><img alt="" src="../_images/sphx_glr_model_thumb.png" />
+<p><a class="reference internal" href="model.html#sphx-glr-build-tutorial-model-py"><span class="std std-ref">模型 API</span></a></p>
+  <div class="sphx-glr-thumbnail-title">模型 API</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="在本教程中，我们将构建一个简单的智能体，使用 agentscope.parsers 模块以 JSON 字典格式输出结构化数据。"><img alt="" src="../_images/sphx_glr_structured_output_thumb.png" />
+<p><a class="reference internal" href="structured_output.html#sphx-glr-build-tutorial-structured-output-py"><span class="std std-ref">结构化输出</span></a></p>
+  <div class="sphx-glr-thumbnail-title">结构化输出</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="智能体应用中，重要的一点是构建符合模型 API 要求的输入（prompt）。AgentScope 中，我们为开 发者提供了一些列的内置策略，以支持不同的模型 API 和场景（chat 和 multi-agent）。"><img alt="" src="../_images/sphx_glr_prompt_thumb.png" />
+<p><a class="reference internal" href="prompt.html#sphx-glr-build-tutorial-prompt-py"><span class="std std-ref">Prompt 格式化</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Prompt 格式化</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="核心函数 ------------- AgentScope 围绕三个核心智能体函数实现了钩子函数："><img alt="" src="../_images/sphx_glr_hook_thumb.png" />
+<p><a class="reference internal" href="hook.html#sphx-glr-build-tutorial-hook-py"><span class="std std-ref">钩子函数</span></a></p>
+  <div class="sphx-glr-thumbnail-title">钩子函数（Hooks）允许开发人员在特定执行点自定义智能体行为。它们提供了一种灵活的方式来修改或扩展智能体的功能，而无需更改其核心实现。</div>
+</div></div><div class="toctree-wrapper compound">
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
