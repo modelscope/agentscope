@@ -20,6 +20,7 @@ URL = "https://github.com/modelscope/agentscope"
 # released requires
 minimal_requires = [
     "json5",
+    "jsonschema",
     "networkx",
     "black",
     "docstring_parser",
