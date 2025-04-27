@@ -80,6 +80,7 @@ extra_dev_requires = [
     "sphinxcontrib-mermaid",
     "sphinx-gallery",
     "sphinx-autobuild",
+    "matplotlib",
     # extra
     "transformers",
 ]

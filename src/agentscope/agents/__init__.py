@@ -12,6 +12,7 @@ from ._user_input import (
     UserInputBase,
     StudioUserInput,
     TerminalUserInput,
+    UserInputData,
 )
 
 
@@ -24,6 +25,7 @@ __all__ = [
     "ReActAgentV2",
     "LlamaIndexAgent",
     "UserInputBase",
+    "UserInputData",
     "StudioUserInput",
     "TerminalUserInput",
 ]

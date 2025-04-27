@@ -1,25 +1,86 @@
 # -*- coding: utf-8 -*-
-# ---
-# jupyter:
-#   jupytext:
-#     text_representation:
-#       extension: .py
-#       format_name: sphinx
-#       format_version: '1.1'
-#       jupytext_version: 1.16.4
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-# ---
-
 """
 .. _visual-interface:
 
 可视化
 =========================
 
-AgentScope 支持包括 Gradio 和 AgentScope Studio 在内的可视化，以提高用户体验。
+AgentScope 支持基于 AgentScope Studio 和 Gradio 的网页可视化，同时支持用户对接自定义或第三方的可视化平台。
+
+
+AgentScope Studio
+~~~~~~~~~~~~~~~~~~~~~~
+
+AgentScope Studio 是基于 React(vite) 和 NodeJS 开发的 WebUI 工具，用于应用的可视化，和监控应用运行，监控 API 调用以及 Token 使用情况。
+
+.. image:: https://img.alicdn.com/imgextra/i1/O1CN01wrmPHM1GFBWSvufAt_!!6000000000592-0-tps-3104-1782.jpg
+   :class: bordered-image
+
+.. note:: 目前 AgentScope Studio 处于快速开发中，包括 UI，功能和性能等方面都在不断迭代中，欢迎任何反馈、贡献或建议!
+
+安装
+------------------
+
+首先需要安装 npm
+
+.. code-block:: bash
+
+    # MacOS
+    brew install node
+
+    # Ubuntu
+    sudo apt update
+    sudo apt install nodejs npm
+
+    # Windows 请访问 https://nodejs.org/ 进行安装
+
+
+通过以下命令进行安装
+
+.. code-block:: bash
+
+    npm install -g @agentscope/studio
+
+启动
+---------------------
+
+在命令台通过如下命令启动
+
+.. code-block:: bash
+
+    as_studio
+
+使用
+---------------------
+
+启动 AgentScope 的 Python 程序时，通过 `agentscope.init` 函数中的 `studio_url` 字段连接 AgentScope Studio。
+
+.. code-block:: python
+
+    import agentscope
+
+    agentscope.init(
+        # ...
+        studio_url="https://localhost:3000"  # 替换成你本地的 AgentScope Studio 地址
+    )
+
+    # ...
+
+.. note:: 一旦连接，Python 程序中所有智能体对象调用 `speak` 函数打印出的输出都将转发
+ 到 AgentScope Studio，同时程序中的 `UserAgent` 的输入操作也将从终端转移到 AgentScope
+ Studio 的 Dashboard 面板中。
+
+.. image:: https://img.alicdn.com/imgextra/i1/O1CN01bFa0I61VHfuckdckm_!!6000000002628-0-tps-3104-1782.jpg
+   :class: bordered-image
+   :caption: Dashboard 页面
+
+Studio 中的 Dashboard 页面将按照 `agentscope.init` 函数中传入的 `project` 参数对程序
+进行分组，点击后即可查看该项目分组内所有历史运行情况。
+
+需要用户进行输入时，对话界面的输入按键会进行提示，不需要输入时，输入按钮会处于禁用状态。
+
+.. image:: https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif
+   :class: bordered-image
 
 Gradio
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -76,127 +137,113 @@ Gradio
 最后，您可以访问 Gradio UI，如下所示:
 
 .. image:: https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg
-   :align: center
    :class: bordered-image
 
-------------------------------
+自定义可视化
+~~~~~~~~~~~~~~~~~~~~~~
 
-AgentScope Studio
-~~~~~~~~~~~~~~~~~~
+自定义可视化主要分为两个组成部分
 
-AgentScope Studio 是一个开源的 Web UI 工具包，用于构建和监控多智能体应用程序。它提供以下功能:
+1. 消息显示：将智能体中 `speak` 函数打印的输出转发到需要显示的地方
+2. 用户输入：将 `UserAgent` 中的**输入操作**转移到目标平台，这样用户可以从目标平台进行输入
 
-* **仪表板**: 一个用于监控正在运行的应用程序，查看、管理运行历史的界面。
+上述两个操作分别是通过 AgentScope 中的钩子函数 `pre_speak_hook`，以及 `UserAgent` 中
+的 `override_input_method` 完成（AgentScope 中的 Studio 和 Gradio 也是
+通过同样的方法实现）。
 
-* **工作站**: 一个拖拽式构建应用的低代码开发界面。
-
-* **服务器管理器**: 一个用于管理大规模分布式应用的界面。
-
-* **画廊**: 工作站中应用程序示例。(即将推出!)
-
-.. _studio:
-
-启动 AgentScope Studio
-----------------------------
-
-要启动 Studio,首先确保您已安装最新版本的 AgentScope。然后运行以下 Python 代码:
-
-.. code-block:: python
-
-    import agentscope
-    agentscope.studio.init()
-
-或者可以在终端中运行以下命令:
-
-.. code-block :: python
-
-    as_studio
-
-之后，可以访问 http://127.0.0.1:5000 上的 AgentScope Studio，将显示以下页面：
-
-.. image:: https://img.alicdn.com/imgextra/i3/O1CN01Xic0GQ1ZkJ4M0iD8F_!!6000000003232-0-tps-3452-1610.jpg
-   :align: center
-   :class: bordered-image
-
-当然，也可以更改主机和端口，并通过提供以下参数链接到你的应用程序运行历史记录:
-
-.. code-block:: python
-
-    import agentscope
-
-    agentscope.studio.init(
-        host="127.0.0.1",          # AgentScope Studio的IP地址
-        port=5000,                 # AgentScope Studio的端口号
-        run_dirs = [               # 应用运行历史的文件目录
-            "xxx/xxx/runs",
-            "xxx/xxx/runs"
-        ]
-    )
-
-
-仪表板
------------------
-
-仪表板是一个 Web 界面，用于监控您正在运行的应用程序并查看运行历史记录。
-
-
-注意
+消息显示
 ^^^^^^^^^^^^^^^^^^^^^
 
-目前，仪表板存在以下限制，我们正在努力改进。欢迎任何反馈、贡献或建议!
-
-* 运行的应用程序和 AgentScope Studio 必须运行在同一台机器上，以保证"URL/路径一致性"。如果您想在其他机器上访问 AgentScope，您可以尝试通过在远程机器上运行以下命令来转发端口：
-
-.. code-block :: bash
-
-    # 假设 AgentScope 运行在{as_host}:{as_port}，远程机器的端口是{remote_machine_port}
-    ssh -L {remote_machine_port}:{as_host}:{as_port} [{user_name}@]{as_host}
-
-* 对于分布式应用程序，支持单机多进程模式，但尚不支持多机多进程模式。
-
-注册应用程序
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-在启动 AgentScope Studio 后，可以通过在 `agentscope.init()` 中指定 `studio_url` 来注册正在运行的应用程序:
-
-.. code-block:: python
-
-    import agentscope
-
-    agentscope.init(
-        # ...
-        project="xxx",
-        name="xxx",
-        studio_url="http://127.0.0.1:5000"    # AgentScope Studio的URL
-    )
-
-注册后，可以在仪表板中查看正在运行的应用程序。为了区分不同的应用程序，可以指定应用程序的项目和名称。
-
-.. image:: https://img.alicdn.com/imgextra/i2/O1CN01zcUmuJ1I3OUXy1Q35_!!6000000000837-0-tps-3426-1718.jpg
-   :align: center
-   :class: bordered-image
-
-单击状态为 `waiting` 的程序，即可进入执行界面。例如，下图显示了一个对话界面。
-
-.. image:: https://img.alicdn.com/imgextra/i3/O1CN01sA3VUc1h7OLKVLfr3_!!6000000004230-0-tps-3448-1736.jpg
-   :align: center
-   :class: bordered-image
-
-
-.. note:: 一旦注册了正在运行的应用程序,`agentscope.agents.UserAgent` 类中的输入操作将转移到 AgentScope Studio 的仪表板。
-
-导入运行历史记录
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-在 AgentScope 中，运行历史记录默认保存在 `./runs` 目录中。如果您想在仪表板中查看这些运行历史记录，可以在 `agentscope.studio.init()` 中指定 `run_dirs` :
-
-
-.. code-block:: python
-
-    import agentscope
-
-    agentscope.studio.init(
-        run_dirs = ["xxx/runs"]
-    )
-
+首先构建钩子函数
 """
+from pydantic import BaseModel
+
+from agentscope.agents import AgentBase
+from agentscope.message import Msg, TextBlock, ImageBlock
+from typing import Union, Any, Optional
+
+
+def pre_speak_hook(
+    self: AgentBase,
+    msg: Msg,
+    stream: bool,
+    last: bool,
+) -> Union[Msg, None]:
+    """"""
+    # 将给输入消息转发到需要显示的地方，例如通过 requests.post 推送消息
+    # ...
+    return None
+
+
+# %%
+# 然后注册该钩子函数，注意这里你可以控制钩子函数的作用范围，可以是基类级别的，也可以是对象级别的转发
+
+# 类级别的注册，所有 AgentBase 及 子类的对象都会注册该钩子函数
+AgentBase.register_class_hook(
+    "pre_speak",
+    "customized_pre_speak_hook",
+    pre_speak_hook,
+)
+
+# %%
+# 当然也可以针对某一个智能体对象进行注册
+#
+# .. code-block:: python
+#
+#     agent = DialogAgent(
+#         # ...
+#     )
+#     agent.register_hook(
+#         "pre_speak",
+#         "customized_pre_speak_hook",
+#         pre_speak_hook
+#     )
+#
+# .. tip:: 更多关于钩子函数的内容，请阅读:ref:`hook`章节
+#
+# 用户输入
+# ^^^^^^^^^^^^^^^^^^^^^
+# 转移用户输入，需要实现一个 `UserInputBase` 的子类，并实现其中的 `__call__` 函数，该函数
+# 会在调用 `UserAgent` 的 `reply` 函数时被触发，用于通知目标可视化平台现在需要哪个用户进行
+# 输入，并且在拿到输入后返回一个 `UserInputData` 对象
+#
+# .. tip:: 可以参考 `agentscope.agents.TerminalUserInput` 和
+#  `agentscope.agents.StudioUserInput` 两个内置模块的代码实现
+
+from agentscope.agents import UserInputBase, UserInputData
+
+
+class CustomizedUserInput(UserInputBase):
+    def __call__(
+        self,
+        agent_id: str,
+        agent_name: str,
+        *args: Any,
+        structured_schema: Optional[BaseModel] = None,
+        **kwargs: dict,
+    ) -> UserInputData:
+        """通知目标平台需要进行用户输入，并且获取用户输入"""
+        # ...
+        return UserInputData(
+            blocks_input=[
+                # 替换为实际输入，可以是文本或是多模态的输入
+                TextBlock(type="text", text="你好！"),
+                ImageBlock(type="image", url="http://xxx.png"),
+            ],
+            structured_input=None,
+        )
+
+
+# %%
+# 然后在 `UserAgent` 中注册该输入方法，注意，该注册会覆盖掉原有默认的
+# `TerminalUserInput` 类的对象
+#
+# .. code-block:: python
+#
+#     UserAgent.override_class_input_method(
+#         input_method=CustomizedUserInput()
+#     )
+#
+# .. tip:: `UserAgent` 同样支持对象和类级别的注册，分别对应 `override_input_method`
+#  和 `override_class_input_method` 方法，它们会在对象（self）和类（cls）两个不同级别
+#  进行注册。
