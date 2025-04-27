@@ -96,7 +96,9 @@ extra_rag_requires = [
 
 # API requires
 extra_gemini_requires = ["google-generativeai>=0.4.0"]
-extra_litellm_requires = ["litellm"]
+# TODO: The latest version has bug in importing, waiting for fix in this issue
+#  https://github.com/BerriAI/litellm/issues/10349
+extra_litellm_requires = ["litellm==1.65"]
 extra_zhipuai_requires = ["zhipuai"]
 extra_ollama_requires = ["ollama>=0.1.7"]
 extra_anthropic_requires = ["anthropic"]
