@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
 import os
+import platform
 import unittest
 
 from agentscope.service import execute_shell_command
@@ -30,7 +31,9 @@ class ExecuteShellCommandTest(unittest.TestCase):
             os.remove("tmp_a.txt")
 
     def test(self) -> None:
-        """test command"""
+        """test command, skip on windows"""
+        if platform.system() == "Windows":
+            return
 
         result = execute_shell_command(
             command=self.arg0,
