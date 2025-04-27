@@ -40,6 +40,8 @@ LLMを活用したマルチエージェントアプリケーションをより�
 ----
 
 ## ニュース
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-04-27]** 新しいAgentScope Studioが公開されました。詳細については[こちら](https://doc.agentscope.io/build_tutorial/visual.html)をご参照ください。
+
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope はフック関数をサポートしています。詳細は[チュートリアル](https://doc.agentscope.io/build_tutorial/hook.html)を参照してください。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScopeは現在、ツールAPIをサポートしています。詳しくは[チュートリアル](https://doc.agentscope.io/build_tutorial/tool.html)をご参照ください。
@@ -54,9 +56,9 @@ LLMを活用したマルチエージェントアプリケーションをより�
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-07]**🎉 AgentScope が SWE-bench(Verified) で 63.4%の解決率を達成しました！私たちのソリューションについての詳細は近日公開予定です。
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-01-04]** AgentScopeが現在Anthropic APIをサポートしています。
+- **[2025-01-04]** AgentScopeが現在Anthropic APIをサポートしています。
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-12-12]** AgentScopeの[ロードマップ](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)を更新しました。
+- **[2024-12-12]** AgentScopeの[ロードマップ](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)を更新しました。
 
 - **[2024-09-06]** AgentScopeバージョン0.1.0がリリースされました。
 

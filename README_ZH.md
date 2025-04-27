@@ -40,9 +40,11 @@
 ----
 
 ## 新闻
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope 已支持钩子函数，详细使用请参考 [tutorial](https://doc.agentscope.io/build_tutorial/hook.html)
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-04-27]** 重构后的 AgentScope Studio 已上线，详细使用参考 [教程-可视化](https://doc.agentscope.io/build_tutorial/visual.html)
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScope 已支持 OpenAI，Anthropic, DashScope API 的工具 API 调用，请参考 [教程](https://doc.agentscope.io/build_tutorial/tool.html).
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope 已支持钩子函数，详细使用请参考 [教程-钩子函数](https://doc.agentscope.io/build_tutorial/hook.html)
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScope 已支持 OpenAI，Anthropic, DashScope API 的工具 API 调用，请参考 [教程-工具](https://doc.agentscope.io/build_tutorial/tool.html).
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscope现已支持[MCP Server](https://github.com/modelcontextprotocol/servers)！您可以通过[此教程](https://doc.agentscope.io/build_tutorial/MCP.html)学习如何使用。
 
@@ -54,9 +56,9 @@
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-07]** 🎉 AgentScope 在 [SWE-Bench（Verified）](https://www.swebench.com/)榜单中取得 **63.4%** 的成绩！关于解决方案的更多细节即将发布
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-01-04]** AgentScope 已支持 Anthropic API
+- **[2025-01-04]** AgentScope 已支持 Anthropic API
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-12-12]** [AgentScope 开发路线图](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) 已更新
+- **[2024-12-12]** [AgentScope 开发路线图](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) 已更新
 
 - **[2024-09-06]** AgentScope v0.1.0 版本已上线
 
