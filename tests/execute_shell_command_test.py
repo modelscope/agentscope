@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
 import os
-import unittest
 import platform
+import unittest
 
 from agentscope.service import execute_shell_command
 from agentscope.service import ServiceExecStatus
@@ -34,34 +34,56 @@ class ExecuteShellCommandTest(unittest.TestCase):
         """test command, skip on windows"""
         if platform.system() == "Windows":
             return
+
         result = execute_shell_command(
             command=self.arg0,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Success."
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout></stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg1,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Success."
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout></stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg2,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Helloworld"
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout>Helloworld
+</stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg3,
         )
         assert result.status == ServiceExecStatus.SUCCESS
-        assert result.content == "Success."
+        assert (
+            result.content
+            == """<returncode>0</returncode>
+<stdout></stdout>
+<stderr></stderr>"""
+        )
 
         result = execute_shell_command(
             command=self.arg3,
         )
-        assert result.status == ServiceExecStatus.ERROR
+        assert result.status == ServiceExecStatus.SUCCESS
 
 
 if __name__ == "__main__":

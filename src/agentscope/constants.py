@@ -40,9 +40,6 @@ _DEFAULT_MAX_RETRIES = 3
 _DEFAULT_MESSAGES_KEY = "messages"
 _DEFAULT_RETRY_INTERVAL = 1
 _DEFAULT_API_BUDGET = None
-# for execute python
-_DEFAULT_PYPI_MIRROR = "http://mirrors.aliyun.com/pypi/simple/"
-_DEFAULT_TRUSTED_HOST = "mirrors.aliyun.com"
 # for monitor
 _DEFAULT_TABLE_NAME_FOR_CHAT_AND_EMBEDDING = "chat_and_embedding_model_monitor"
 _DEFAULT_TABLE_NAME_FOR_IMAGE = "image_model_monitor"
