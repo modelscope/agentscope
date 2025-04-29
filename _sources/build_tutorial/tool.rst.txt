@@ -148,8 +148,8 @@ method as follows, the reserved parameters will be left to the agent to fill.
 
     error within <returncode></returncode>, <stdout></stdout> and
     <stderr></stderr> tags.
-            command (string): The shell command to execute.
             timeout (number): The maximum time (in seconds) allowed for the command to run.
+            command (string): The shell command to execute.
     2. bing_search: Search question in Bing Search API and return the searching results
             num_results (number): The number of search results to return.
             question (string): The search query string.
@@ -210,14 +210,14 @@ The JSON Schema description of the tool functions:
           "parameters": {
             "type": "object",
             "properties": {
-              "command": {
-                "type": "string",
-                "description": "The shell command to execute."
-              },
               "timeout": {
                 "type": "number",
                 "description": "The maximum time (in seconds) allowed for the command to run.",
                 "default": 300
+              },
+              "command": {
+                "type": "string",
+                "description": "The shell command to execute."
               }
             },
             "required": [
@@ -344,13 +344,13 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>I need to calculate the multiplication of the two numbers provided by the user. I can use the execute_shell_command function to perform this calculation using a shell command.</thought>
+    Friday: <thought>I need to use the execute_shell_command function to perform the multiplication operation using the command line.</thought>
     <function>execute_shell_command</function>
-    <command>expr 1615114134 \* 4343434343</command>
     <timeout>60</timeout>
+    <command>echo $((1615114134*4343434343))</command>
     system: 1. Execute function execute_shell_command
        [ARGUMENTS]:
-           {"command": "expr 1615114134 \\* 4343434343", "timeout": 60}
+           {"timeout": 60, "command": "echo $((1615114134*4343434343))"}
        [RESULT]: <returncode>0</returncode>
     <stdout>7015142197480303962
     </stdout>
@@ -362,13 +362,13 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I will now inform the user of this result.</thought>
+    Friday: <thought>The multiplication operation was successful, and the result is 7015142197480303962. I can now provide the answer to the user.</thought>
     <function>finish</function>
-    <response>The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.</response>
+    <response>The result of 1615114134 * 4343434343 is 7015142197480303962.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The result of multiplying 1615114134 by 4343434343 is 7015142197480303962."}
-       [RESULT]: The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.
+           {"response": "The result of 1615114134 * 4343434343 is 7015142197480303962."}
+       [RESULT]: The result of 1615114134 * 4343434343 is 7015142197480303962.
 
 
 
@@ -491,7 +491,7 @@ Step 5 -> 6 -> 7 in the figure, getting the model response:
     tool_calls: [
         {
             "type": "tool_use",
-            "id": "call_4a8cab61d0c74653a2bc95",
+            "id": "call_9c0de18a026c4bd29976ba",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami"
@@ -536,7 +536,7 @@ Step 8, creating a new message with the tool calls:
     assistant: [
         {
             "type": "tool_use",
-            "id": "call_4a8cab61d0c74653a2bc95",
+            "id": "call_9c0de18a026c4bd29976ba",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami"
@@ -601,7 +601,7 @@ again!
             "content": null,
             "tool_calls": [
                 {
-                    "id": "call_4a8cab61d0c74653a2bc95",
+                    "id": "call_9c0de18a026c4bd29976ba",
                     "type": "function",
                     "function": {
                         "name": "execute_shell_command",
@@ -612,7 +612,7 @@ again!
         },
         {
             "role": "tool",
-            "tool_call_id": "call_4a8cab61d0c74653a2bc95",
+            "tool_call_id": "call_9c0de18a026c4bd29976ba",
             "content": "<returncode>0</returncode>\n<stdout>runner\n</stdout>\n<stderr></stderr>",
             "name": "execute_shell_command"
         }
@@ -704,7 +704,7 @@ automatically and registered to the `ServiceToolkit`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 12.485 seconds)
+   **Total running time of the script:** (0 minutes 11.722 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

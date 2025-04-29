@@ -316,8 +316,8 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="s2">&quot;response&quot;</span><span class="p">]),</span>
                     <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
-                    <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_response</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">msg_response</span>
 

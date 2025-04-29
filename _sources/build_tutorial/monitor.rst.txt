@@ -93,16 +93,16 @@ The `state_dict` method can be used to export the configuration of the running a
       "project": "Project Alpha",
       "name": "Test-1",
       "disable_saving": false,
-      "run_id": "run_20250427-075656_Test-1",
-      "pid": 1974,
-      "timestamp": "2025-04-27 07:56:56",
+      "run_id": "run_20250429-093648_Test-1",
+      "pid": 1963,
+      "timestamp": "2025-04-29 09:36:48",
       "agentscope_version": "0.1.4",
       "file": {
         "save_log": true,
         "save_code": false,
         "save_api_invoke": false,
         "base_dir": null,
-        "run_dir": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250427-075656_Test-1",
+        "run_dir": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250429-093648_Test-1",
         "cache_dir": "~/.cache"
       },
       "model": {
@@ -133,7 +133,7 @@ The `state_dict` method can be used to export the configuration of the running a
       },
       "monitor": {
         "use_monitor": true,
-        "path_db": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250427-075656_Test-1/agentscope.db"
+        "path_db": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250429-093648_Test-1/agentscope.db"
       }
     }
 
@@ -212,7 +212,7 @@ Monitoring Token Usage
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.859 seconds)
+   **Total running time of the script:** (0 minutes 5.175 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_monitor.py:
