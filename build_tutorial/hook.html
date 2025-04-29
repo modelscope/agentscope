@@ -443,22 +443,17 @@ whether two messages are from the same streaming output or not.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The cnt of calling the speak function:&quot;</span><span class="p">,</span> <span class="n">streaming_agent</span><span class="o">.</span><span class="n">cnt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  7789f161c1ee443fb2eac36276709a79 content:  1 stream:  True last:  False
-TestAgent: 1id:  7789f161c1ee443fb2eac36276709a79 content:  1, stream:  True last:  False
-,id:  7789f161c1ee443fb2eac36276709a79 content:  1,  stream:  True last:  False
- id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3 stream:  True last:  False
-2, 3id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, stream:  True last:  False
-, 4,id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5,  stream:  True last:  False
- 5, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7 stream:  True last:  False
-6, 7id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, stream:  True last:  False
-, 8,id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9,  stream:  True last:  False
- 9, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,  stream:  True last:  False
-10, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,  stream:  True last:  False
-11, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,  stream:  True last:  False
-12, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,  stream:  True last:  False
-13, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,  stream:  True last:  False
-14, id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
-15id:  7789f161c1ee443fb2eac36276709a79 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  True
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  eaf61e00d41141e1866d13eb07392a36 content:  1 stream:  True last:  False
+TestAgent: 1id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3 stream:  True last:  False
+, 2, 3id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5 stream:  True last:  False
+, 4, 5id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7 stream:  True last:  False
+, 6, 7id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9 stream:  True last:  False
+, 8, 9id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,  stream:  True last:  False
+, 10, id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 stream:  True last:  False
+11, 12id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,  stream:  True last:  False
+, 13, id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
+14, 15id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
+id:  eaf61e00d41141e1866d13eb07392a36 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  True
 
 The cnt of calling the speak function: 1
 </pre></div>
@@ -514,12 +509,12 @@ below:</p>
     {
         &quot;__module__&quot;: &quot;agentscope.message.msg&quot;,
         &quot;__name__&quot;: &quot;Msg&quot;,
-        &quot;id&quot;: &quot;97f1b7d794ef42b5b3875d41b0cc4226&quot;,
+        &quot;id&quot;: &quot;f7ae9f7f53df426c89b2cb07a174f924&quot;,
         &quot;name&quot;: &quot;user&quot;,
         &quot;role&quot;: &quot;user&quot;,
         &quot;content&quot;: &quot;Observe: The sun is shining.&quot;,
         &quot;metadata&quot;: null,
-        &quot;timestamp&quot;: &quot;2025-04-29 09:40:05&quot;
+        &quot;timestamp&quot;: &quot;2025-04-29 09:49:52&quot;
     }
 ]
 The cnt of calling the observe function: 1
@@ -561,7 +556,7 @@ hooks of agent2: [&#39;class_hook_1&#39;]
 </div>
 <p>We can see that the class-level hook is effective for all objects of
 that class.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.326 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.970 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-hook-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/337fd1a07176f94b2e940816bb0fd546/hook.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">hook.ipynb</span></code></a></p>

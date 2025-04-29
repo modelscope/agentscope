@@ -209,7 +209,7 @@ management, including adding, deleting and getting memory.
 
  .. code-block:: none
 
-    The current memory: [Msg(id='6ee0b0a7cd894a238a0b5c26f5bf499d', name='system', role='system', content="You're a helpful assistant named Jarvis.", metadata=None, timestamp='2025-04-29 09:39:16'), Msg(id='1a2f08bba9614571b19b302dd0b222ca', name='Stank', role='user', content='Hi!', metadata=None, timestamp='2025-04-29 09:39:16'), Msg(id='a55ab4d9b343485d9ab702943c25bbc5', name='Jarvis', role='assistant', content='How can I help you?', metadata=None, timestamp='2025-04-29 09:39:16')]
+    The current memory: [Msg(id='1d2f8b5975784c9eacad52e2b898be2d', name='system', role='system', content="You're a helpful assistant named Jarvis.", metadata=None, timestamp='2025-04-29 09:49:08'), Msg(id='0c635800edec4988888c830d01f095c5', name='Stank', role='user', content='Hi!', metadata=None, timestamp='2025-04-29 09:49:08'), Msg(id='57287f357c864a98a1ddb44d2234716c', name='Jarvis', role='assistant', content='How can I help you?', metadata=None, timestamp='2025-04-29 09:49:08')]
     The current size: 3
 
 
@@ -265,7 +265,7 @@ Delete the first message within the memory.
 
  .. code-block:: none
 
-    The memory after deletion: [Msg(id='1a2f08bba9614571b19b302dd0b222ca', name='Stank', role='user', content='Hi!', metadata=None, timestamp='2025-04-29 09:39:16'), Msg(id='a55ab4d9b343485d9ab702943c25bbc5', name='Jarvis', role='assistant', content='How can I help you?', metadata=None, timestamp='2025-04-29 09:39:16')]
+    The memory after deletion: [Msg(id='0c635800edec4988888c830d01f095c5', name='Stank', role='user', content='Hi!', metadata=None, timestamp='2025-04-29 09:49:08'), Msg(id='57287f357c864a98a1ddb44d2234716c', name='Jarvis', role='assistant', content='How can I help you?', metadata=None, timestamp='2025-04-29 09:49:08')]
     The size after deletion: 2
 
 
@@ -340,7 +340,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.457 seconds)
+   **Total running time of the script:** (0 minutes 1.284 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_agent.py:
