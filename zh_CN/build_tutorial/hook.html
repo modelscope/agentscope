@@ -1,0 +1,596 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>钩子函数 &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="分布式" href="distribution.html" />
+    <link rel="prev" title="检索增强生成（RAG）" href="rag.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">钩子函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">核心函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">可用钩子函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">钩子函数模版</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">使用样例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">对象级别</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#reply">Reply 钩子函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#speak">Speak 钩子函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#observe">Observe 钩子函数</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">类级别</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">钩子函数</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/hook.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">备注</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-hook-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="hook">
+<span id="sphx-glr-build-tutorial-hook-py"></span><span id="id1"></span><h1>钩子函数<a class="headerlink" href="#hook" title="Link to this heading"></a></h1>
+<p>钩子函数（Hooks）允许开发人员在特定执行点自定义智能体行为。它们提供了一种灵活的方式来修改或扩展智能体的功能，而无需更改其核心实现。</p>
+<section id="id2">
+<h2>核心函数<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>AgentScope 围绕三个核心智能体函数实现了钩子函数：</p>
+<ul class="simple">
+<li><p><cite>reply</cite>：根据智能体的当前状态生成响应消息</p></li>
+<li><p><cite>speak</cite>：在终端显示和记录消息</p></li>
+<li><p><cite>observe</cite>：记录传入的消息</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>可用钩子函数<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>每个核心函数都有对应的前后执行钩子：</p>
+<ul class="simple">
+<li><p><cite>pre_reply_hook</cite> / <cite>post_reply_hook</cite></p></li>
+<li><p><cite>pre_speak_hook</cite> / <cite>post_speak_hook</cite></p></li>
+<li><p><cite>pre_observe_hook</cite> / <cite>post_observe_hook</cite></p></li>
+</ul>
+<p>例如，您可以使用 <cite>pre_speak_hook</cite> 将消息重定向到不同的输出，如 Web 界面或外部应用程序。</p>
+<p>当使用钩子函数时，请记住以下重要规则：</p>
+<ol class="arabic simple">
+<li><p><strong>钩子函数签名</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>第一个参数必须是 <cite>AgentBase</cite> 对象，即 <cite>self</cite></p></li>
+<li><p>后续参数是原始函数参数的副本</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p><strong>执行顺序</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>钩子按注册顺序执行</p></li>
+<li><p>多个钩子函数可以链接在一起</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p><strong>返回值处理</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>对于前置钩子：非 None 返回值会传递给下一个钩子或目标函数</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>当钩子返回 None 时，下一个钩子将使用前面钩子的最近非 None 返回值</p></li>
+<li><p>如果所有前面的钩子返回 None，则下一个钩子将接收原始参数的副本</p></li>
+<li><p>最终的非 None 返回值（或者如果所有钩子返回 None，则原始参数）将传递给目标函数</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>对于后置钩子： 只有 <cite>post-reply</cite> 钩子拥有返回值，工作方式与前置钩子相同</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p><strong>重要提示</strong>：永远不要在钩子函数中调用目标函数（reply/speak/observe）以避免无限循环</p></li>
+</ol>
+</section>
+<section id="id4">
+<h2>钩子函数模版<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p>我们在下面为每个钩子函数提供了模板，以显示其参数签名。开发者可以将这些模板复制粘贴到您的代码中，
+并根据需要进行自定义。</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_reply_hook_template</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;reply 函数前置钩子函数模版&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">post_reply_hook_template</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;reply 函数后置钩子函数模版&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook_template</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+    <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;speak 函数前置钩子函数模版&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">post_speak_hook_template</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;speak 函数后置钩子函数模版&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_observe_hook_template</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;observe 函数前置钩子函数模版&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">post_observe_hook_template</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;observe 函数后置钩子函数模版&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>使用样例<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>AgentScope 允许通过调用相应的方法注册、移除和清除钩子函数。</p>
+<p>用户可以将钩子函数注册到 <strong>对象</strong> 和 <strong>类</strong> 两个不同的级别，其中 <strong>对象</strong> 级别的钩子函数只对当前的对象有效，<strong>类</strong> 级别的钩子函数会对改类的所有对象生效。
+下面我们展示两个不同级别钩子函数的使用方式。</p>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>对象级别的钩子函数存储在对象的 <cite>_hooks_{hook_type}</cite> 属性上，类级别的钩子函数存储在类的 <cite>_class_hooks_{hook_type}</cite> 属性上。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>对所有位置的钩子函数来说，对象级别和类级别钩子函数的执行顺序为：对象级别的钩子函数 --&gt; 类级别的钩子函数</p>
+</div>
+<section id="id6">
+<h3>对象级别<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>我们首先创建一个简单的智能体，用于回显传入的消息：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestAgent</span><span class="p">(</span><span class="n">AgentBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;TestAgent&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<section id="reply">
+<h4>Reply 钩子函数<a class="headerlink" href="#reply" title="Link to this heading"></a></h4>
+<p>接下来，我们定义两个前置钩子函数，它们都修改输入的消息，但一个返回修改后的消息，另一个不返回：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">pre_reply_hook_1</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;第一个前置回复钩子，修改消息内容，但是不进行返回。&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-1] &quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-1] &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_reply_hook_2</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;第二个前置回复钩子，用于更改消息内容。&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-2] &quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-2] &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>然后，我们创建一个后置钩子，用于将后缀附加到消息内容：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">post_reply_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;后置回复钩子，用于将后缀附加到消息内容。&quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; [Post-hook]&quot;</span>
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>最后，我们注册钩子并测试智能体：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">TestAgent</span><span class="p">()</span>
+
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;pre_reply&quot;</span><span class="p">,</span> <span class="s2">&quot;pre_hook_1&quot;</span><span class="p">,</span> <span class="n">pre_reply_hook_1</span><span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;pre_reply&quot;</span><span class="p">,</span> <span class="s2">&quot;pre_hook_2&quot;</span><span class="p">,</span> <span class="n">pre_reply_hook_2</span><span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;post_reply&quot;</span><span class="p">,</span> <span class="s2">&quot;post_hook&quot;</span><span class="p">,</span> <span class="n">post_reply_hook</span><span class="p">)</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;[原始消息]&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+<span class="n">msg_response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;回复消息的content域:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>user: [Pre-hook-2] [原始消息]
+回复消息的content域:
+ [Pre-hook-2] [原始消息] [Post-hook]
+</pre></div>
+</div>
+<p>可以看到，响应消息有一个 &quot;[Pre-hook-2]&quot; 前缀和一个 &quot;[Post-hook]&quot; 后缀。
+&quot;[Pre-hook-1]&quot; 前缀缺失，因为第一个前置钩子没有返回修改后的消息。</p>
+</section>
+<section id="speak">
+<h4>Speak 钩子函数<a class="headerlink" href="#speak" title="Link to this heading"></a></h4>
+<p>为了兼容流式输出，pre-speak 钩子函数接受两个额外的参数：</p>
+<ul class="simple">
+<li><p><cite>stream</cite>: 一个布尔标志，指示是否处于流式输出</p></li>
+<li><p><cite>last</cite>: 一个布尔标志，指示当前输入消息是否是流中的最后一个 Chunk</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">小技巧</p>
+<p>当处理流式输出时，可以使用消息 id 来确定两个消息是否来自同一个流式输出。</p>
+</div>
+<p>我们在下面展示如何使用 pre/post-speak 钩子：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;streaming_config&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">streaming_agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;TestAgent&quot;</span><span class="p">,</span>
+    <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;streaming_config&quot;</span><span class="p">,</span>
+    <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You&#39;re a helpful assistant.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># 创建一个 pre-speak 钩子，用于显示消息内容</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;speak 函数前置钩子函数&quot;&quot;&quot;</span>
+    <span class="c1"># 你可以在这里更改或重定向消息</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;id: &quot;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="s2">&quot;content: &quot;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+        <span class="s2">&quot;stream: &quot;</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">,</span>
+        <span class="s2">&quot;last: &quot;</span><span class="p">,</span>
+        <span class="n">last</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">post_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;speak 函数后置钩子函数&quot;&quot;&quot;</span>
+    <span class="c1"># 在这里计算调用 speak 函数的次数</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;cnt&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="c1"># Register the hooks</span>
+<span class="n">streaming_agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span> <span class="s2">&quot;pre_speak_hook&quot;</span><span class="p">,</span> <span class="n">pre_speak_hook</span><span class="p">)</span>
+<span class="n">streaming_agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;post_speak&quot;</span><span class="p">,</span> <span class="s2">&quot;post_speak_hook&quot;</span><span class="p">,</span> <span class="n">post_speak_hook</span><span class="p">)</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;现在，从 1 到 15，步长为 1，用逗号分隔每个数字。&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msg_response</span> <span class="o">=</span> <span class="n">streaming_agent</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Speak 函数的调用次数：&quot;</span><span class="p">,</span> <span class="n">streaming_agent</span><span class="o">.</span><span class="n">cnt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1 stream:  True last:  False
+TestAgent: 1id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4 stream:  True last:  False
+,2,3,4id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4,5,6,7 stream:  True last:  False
+,5,6,7id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4,5,6,7,8,9,1 stream:  True last:  False
+,8,9,1id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4,5,6,7,8,9,10,11,1 stream:  True last:  False
+0,11,1id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4,5,6,7,8,9,10,11,12,13,1 stream:  True last:  False
+2,13,1id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 stream:  True last:  False
+4,15id:  11aa7aeaae5e47e688f8ca1ae1d60e08 content:  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 stream:  True last:  True
+
+Speak 函数的调用次数： 1
+</pre></div>
+</div>
+</section>
+<section id="observe">
+<h4>Observe 钩子函数<a class="headerlink" href="#observe" title="Link to this heading"></a></h4>
+<p>与 speak 钩子函数类似，我们在下面展示如何使用 pre/post-observe 钩子：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_observe_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;显示消息内容的前置观察钩子。&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;观察: &quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;观察: &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">post_observe_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;显示消息内容的后置观察钩子。&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;cnt&quot;</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;cnt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+<span class="c1"># 首先清除智能体记忆</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;pre_observe&quot;</span><span class="p">,</span> <span class="s2">&quot;pre_observe_hook&quot;</span><span class="p">,</span> <span class="n">pre_observe_hook</span><span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;post_observe&quot;</span><span class="p">,</span> <span class="s2">&quot;post_observe_hook&quot;</span><span class="p">,</span> <span class="n">post_observe_hook</span><span class="p">)</span>
+
+<span class="n">agent</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span>
+    <span class="n">Msg</span><span class="p">(</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;太阳升起来了。&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;智能体的记忆：</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">agent</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">get_memory</span><span class="p">()],</span>
+        <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;调用 Observe 函数的次数：&quot;</span><span class="p">,</span> <span class="n">agent</span><span class="o">.</span><span class="n">cnt</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>智能体的记忆：
+ [
+    {
+        &quot;__module__&quot;: &quot;agentscope.message.msg&quot;,
+        &quot;__name__&quot;: &quot;Msg&quot;,
+        &quot;id&quot;: &quot;235919e1b1584612b042bdee8b1be339&quot;,
+        &quot;name&quot;: &quot;user&quot;,
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;观察: 太阳升起来了。&quot;,
+        &quot;metadata&quot;: null,
+        &quot;timestamp&quot;: &quot;2025-04-29 09:45:07&quot;
+    }
+]
+调用 Observe 函数的次数： 1
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h3>类级别<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>类级别的钩子函数和对象级别使用逻辑一致，只不过对应的生效范围为类的所有对象，以及注册、删除、清空函数带有 &quot;class&quot; 的前缀。</p>
+<p>下面以 pre_reply 函数为例，展示类级别的钩子函数的使用</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 新建一个新的agent对象</span>
+<span class="n">agent2</span> <span class="o">=</span> <span class="n">TestAgent</span><span class="p">()</span>
+
+<span class="n">AgentBase</span><span class="o">.</span><span class="n">clear_all_class_hooks</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;此时agent的钩子函数：&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">_class_hooks_pre_reply</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;此时agent2的钩子函数：&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agent2</span><span class="o">.</span><span class="n">_class_hooks_pre_reply</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>此时agent的钩子函数： []
+此时agent2的钩子函数： []
+</pre></div>
+</div>
+<p>接着我们在 <cite>AgentBase</cite> 的基类上注册类级别的钩子函数</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 注册类级别的钩子函数</span>
+<span class="n">AgentBase</span><span class="o">.</span><span class="n">register_class_hook</span><span class="p">(</span><span class="s2">&quot;pre_reply&quot;</span><span class="p">,</span> <span class="s2">&quot;class_hook_1&quot;</span><span class="p">,</span> <span class="n">pre_reply_hook_1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;注册后agent的钩子函数：&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">_class_hooks_pre_reply</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;注册后agent2的钩子函数：&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">agent2</span><span class="o">.</span><span class="n">_class_hooks_pre_reply</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>注册后agent的钩子函数： [&#39;class_hook_1&#39;]
+注册后agent2的钩子函数： [&#39;class_hook_1&#39;]
+</pre></div>
+</div>
+<p>能够看到，类级别的钩子函数会对该类的所有对象生效。</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.208 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-hook-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/337fd1a07176f94b2e940816bb0fd546/hook.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">hook.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/854b7895fa9287caa8a3ea8ad2378236/hook.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">hook.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/15083c593cfdd458aa492e1a2f2417f3/hook.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">hook.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="rag.html" class="btn btn-neutral float-left" title="检索增强生成（RAG）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="distribution.html" class="btn btn-neutral float-right" title="分布式" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
