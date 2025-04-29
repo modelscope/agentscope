@@ -1,0 +1,7 @@
+agentscope.service.multi\_modality.dashscope\_services module
+=============================================================
+
+.. automodule:: agentscope.service.multi_modality.dashscope_services
+   :members:
+   :undoc-members:
+   :show-inheritance:

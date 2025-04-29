@@ -1,0 +1,24 @@
+agentscope.service.web package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.service.web.arxiv
+   agentscope.service.web.dblp
+   agentscope.service.web.download
+   agentscope.service.web.search
+   agentscope.service.web.tripadvisor
+   agentscope.service.web.web_digest
+   agentscope.service.web.wikipedia
+
+Module contents
+---------------
+
+.. automodule:: agentscope.service.web
+   :members:
+   :undoc-members:
+   :show-inheritance:
