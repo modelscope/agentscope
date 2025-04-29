@@ -170,8 +170,8 @@ class ReActAgentV2(AgentBase):
                     self.name,
                     str(tool_call["input"]["response"]),
                     "assistant",
-                    echo=True,
                 )
+                self.speak(msg_response)
 
         return msg_response
 
