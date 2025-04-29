@@ -98,7 +98,7 @@ class DashScopeFormatter(FormatterBase):
                         {
                             "role": "tool",
                             "tool_call_id": block.get("id"),
-                            "content": block.get("output"),
+                            "content": str(block.get("output")),
                             "name": block.get("name"),
                         },
                     )
