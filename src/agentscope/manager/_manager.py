@@ -37,6 +37,7 @@ class ASManager:
         "run_id",
         "pid",
         "timestamp",
+        "studio_url",
     ]
 
     def __new__(cls, *args: Any, **kwargs: Any) -> "ASManager":
@@ -68,6 +69,8 @@ class ASManager:
         self.file = FileManager()
         self.model = ModelManager()
         self.monitor = MonitorManager()
+
+        self.studio_url = None
 
         # TODO: unified with logger and studio
         self.logger_level: LOG_LEVEL = "INFO"
@@ -149,6 +152,7 @@ class ASManager:
         # Init studio client, which will push messages to web ui and fetch user
         # inputs from web ui
         if studio_url is not None:
+            self.studio_url = studio_url
             # Register the run
             response = requests.post(
                 url=f"{studio_url}/trpc/registerRun",
@@ -164,102 +168,7 @@ class ASManager:
             )
             response.raise_for_status()
 
-            # The hook function to push messages to studio
-            def studio_pre_speak_hook(
-                _obj: AgentBase,
-                msg: Msg,
-                _stream: bool,
-                _last: bool,
-            ) -> None:
-                """Hook function for pre_speak."""
-                message_data = msg.to_dict()
-                message_data.pop("__module__")
-                message_data.pop("__name__")
-
-                if hasattr(_obj, "_reply_id"):
-                    reply_id = getattr(_obj, "_reply_id")
-                else:
-                    reply_id = shortuuid.uuid()
-
-                n_retry = 0
-                while True:
-                    try:
-                        res = requests.post(
-                            f"{studio_url}/trpc/pushMessage",
-                            json={
-                                "runId": self.run_id,
-                                "replyId": reply_id,
-                                "name": reply_id,
-                                "role": "assistant",
-                                "msg": message_data,
-                            },
-                        )
-                        res.raise_for_status()
-                        break
-                    except Exception as e:
-                        if n_retry < 3:
-                            n_retry += 1
-                            continue
-
-                        raise e from None
-
-            # Register the hook function to push messages to studio
-            AgentBase.register_class_hook(
-                "pre_speak",
-                "studio_pre_speak_hook",
-                studio_pre_speak_hook,
-            )
-
-            # Exchange the input method to the studio input method, so that
-            # the user can input data from the web ui
-            UserAgent.override_class_input_method(
-                StudioUserInput(
-                    studio_url=studio_url,
-                    run_id=self.run_id,
-                    max_retries=3,
-                ),
-            )
-
-            # Register the hook function to push model invocation to studio
-            def studio_save_model_invocation_hook(
-                obj: ModelWrapperBase,
-                model_invocation_id: str,
-                timestamp: str,
-                arguments: dict,
-                response: dict,
-                usage: Optional[dict] = None,
-            ) -> None:
-                """The hook that pushes the model invocation to studio."""
-                n_retry = 0
-                while True:
-                    try:
-                        res = requests.post(
-                            url=f"{studio_url}/trpc/pushModelInvocation",
-                            json={
-                                "id": model_invocation_id,
-                                "runId": self.run_id,
-                                "timestamp": timestamp,
-                                "modelName": obj.model_name,
-                                "modelType": obj.model_type,
-                                "configName": obj.config_name,
-                                "arguments": arguments,
-                                "response": response,
-                                "usage": usage,
-                            },
-                        )
-                        res.raise_for_status()
-                        break
-                    except Exception as e:
-                        if n_retry < 3:
-                            n_retry += 1
-                            continue
-
-                        raise e from None
-
-            ModelWrapperBase.register_save_model_invocation_hook(
-                "studio_save_model_invocation_hook",
-                studio_save_model_invocation_hook,
-            )
+            self._register_studio_hooks(studio_url)
 
     def state_dict(self) -> dict:
         """Serialize the runtime information."""
@@ -290,6 +199,110 @@ class ASManager:
         setup_logger(self.file.run_dir, self.logger_level)
         self.model.load_dict(data["model"])
         self.monitor.load_dict(data["monitor"])
+
+        if data.get("studio_url") is not None:
+            # Register studio related hook
+            self._register_studio_hooks(str(data.get("studio_url")))
+
+    def _register_studio_hooks(self, studio_url: str) -> None:
+        """Register studio related hooks within AgentScope."""
+
+        # register agent hook
+        def studio_pre_speak_hook(
+            _obj: AgentBase,
+            msg: Msg,
+            _stream: bool,
+            _last: bool,
+        ) -> None:
+            """Hook function for pre_speak."""
+            message_data = msg.to_dict()
+            message_data.pop("__module__")
+            message_data.pop("__name__")
+
+            if hasattr(_obj, "_reply_id"):
+                reply_id = getattr(_obj, "_reply_id")
+            else:
+                reply_id = shortuuid.uuid()
+
+            n_retry = 0
+            while True:
+                try:
+                    res = requests.post(
+                        f"{studio_url}/trpc/pushMessage",
+                        json={
+                            "runId": self.run_id,
+                            "replyId": reply_id,
+                            "name": reply_id,
+                            "role": "assistant",
+                            "msg": message_data,
+                        },
+                    )
+                    res.raise_for_status()
+                    break
+                except Exception as e:
+                    if n_retry < 3:
+                        n_retry += 1
+                        continue
+
+                    raise e from None
+
+        # Register the hook function to push messages to studio
+        AgentBase.register_class_hook(
+            "pre_speak",
+            "studio_pre_speak_hook",
+            studio_pre_speak_hook,
+        )
+
+        # Exchange the input method to the studio input method, so that
+        # the user can input data from the web ui
+        UserAgent.override_class_input_method(
+            StudioUserInput(
+                studio_url=studio_url,
+                run_id=self.run_id,
+                max_retries=3,
+            ),
+        )
+
+        # Register the hook function to push model invocation to studio
+        def studio_save_model_invocation_hook(
+            obj: ModelWrapperBase,
+            model_invocation_id: str,
+            timestamp: str,
+            arguments: dict,
+            response: dict,
+            usage: Optional[dict] = None,
+        ) -> None:
+            """The hook that pushes the model invocation to studio."""
+            n_retry = 0
+            while True:
+                try:
+                    res = requests.post(
+                        url=f"{studio_url}/trpc/pushModelInvocation",
+                        json={
+                            "id": model_invocation_id,
+                            "runId": self.run_id,
+                            "timestamp": timestamp,
+                            "modelName": obj.model_name,
+                            "modelType": obj.model_type,
+                            "configName": obj.config_name,
+                            "arguments": arguments,
+                            "response": response,
+                            "usage": usage,
+                        },
+                    )
+                    res.raise_for_status()
+                    break
+                except Exception as e:
+                    if n_retry < 3:
+                        n_retry += 1
+                        continue
+
+                    raise e from None
+
+        ModelWrapperBase.register_save_model_invocation_hook(
+            "studio_save_model_invocation_hook",
+            studio_save_model_invocation_hook,
+        )
 
     def flush(self) -> None:
         """Flush the runtime information."""

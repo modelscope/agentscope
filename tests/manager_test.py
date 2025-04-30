@@ -41,6 +41,7 @@ class ManagerTest(TestCase):
                 "run_id": manager.run_id,
                 "pid": manager.pid,
                 "timestamp": manager.timestamp,
+                "studio_url": None,
                 "file": {
                     "save_log": False,
                     "save_code": False,
@@ -79,6 +80,7 @@ class ManagerTest(TestCase):
                 "run_id": "",
                 "pid": -1,
                 "timestamp": "",
+                "studio_url": None,
                 "file": {
                     "save_log": False,
                     "save_code": False,
