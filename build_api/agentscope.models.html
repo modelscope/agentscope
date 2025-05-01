@@ -113,6 +113,19 @@
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.AnthropicChatWrapper.model_type"><code class="docutils literal notranslate"><span class="pre">AnthropicChatWrapper.model_type</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ChatUsage"><code class="docutils literal notranslate"><span class="pre">ChatUsage</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ChatUsage.Usage"><code class="docutils literal notranslate"><span class="pre">ChatUsage.Usage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.models.ChatUsage.Usage.completion_tokens"><code class="docutils literal notranslate"><span class="pre">ChatUsage.Usage.completion_tokens</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.models.ChatUsage.Usage.model_config"><code class="docutils literal notranslate"><span class="pre">ChatUsage.Usage.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.models.ChatUsage.Usage.prompt_tokens"><code class="docutils literal notranslate"><span class="pre">ChatUsage.Usage.prompt_tokens</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agentscope.models.ChatUsage.Usage.total_tokens"><code class="docutils literal notranslate"><span class="pre">ChatUsage.Usage.total_tokens</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ChatUsage.model_config"><code class="docutils literal notranslate"><span class="pre">ChatUsage.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ChatUsage.type"><code class="docutils literal notranslate"><span class="pre">ChatUsage.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ChatUsage.usage"><code class="docutils literal notranslate"><span class="pre">ChatUsage.usage</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper.format"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.DashScopeChatWrapper.format_tools_json_schemas"><code class="docutils literal notranslate"><span class="pre">DashScopeChatWrapper.format_tools_json_schemas()</span></code></a></li>
@@ -154,8 +167,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.models.ModelWrapperBase"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.clear_save_model_invocation_hook"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.clear_save_model_invocation_hook()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.format"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.format_tools_json_schemas"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.format_tools_json_schemas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.register_save_model_invocation_hook"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.register_save_model_invocation_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.remove_save_model_invocation_hook"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.remove_save_model_invocation_hook()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.config_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.config_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.model_name"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_name</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.models.ModelWrapperBase.model_type"><code class="docutils literal notranslate"><span class="pre">ModelWrapperBase.model_type</span></code></a></li>
@@ -340,6 +356,57 @@ which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
 <dd><p>The type of the model wrapper, which is to identify the model wrapper
 class in model configuration.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ChatUsage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completion_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/models/_model_usage.html#ChatUsage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ChatUsage" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>The base model for chat model usage</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.Usage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Usage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completion_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_tokens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/models/_model_usage.html#ChatUsage.Usage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ChatUsage.Usage" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>The usage class for chat model usage</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.Usage.completion_tokens">
+<span class="sig-name descname"><span class="pre">completion_tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#agentscope.models.ChatUsage.Usage.completion_tokens" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.Usage.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.models.ChatUsage.Usage.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.Usage.prompt_tokens">
+<span class="sig-name descname"><span class="pre">prompt_tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#agentscope.models.ChatUsage.Usage.prompt_tokens" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.Usage.total_tokens">
+<span class="sig-name descname"><span class="pre">total_tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#agentscope.models.ChatUsage.Usage.total_tokens" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.models.ChatUsage.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'chat'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#agentscope.models.ChatUsage.type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.models.ChatUsage.usage">
+<span class="sig-name descname"><span class="pre">usage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#agentscope.models.ChatUsage.Usage" title="agentscope.models._model_usage.ChatUsage.Usage"><span class="pre">Usage</span></a></em><a class="headerlink" href="#agentscope.models.ChatUsage.usage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1026,6 +1093,12 @@ field will be updated accordingly.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>The base class for model wrapper.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.clear_save_model_invocation_hook">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear_save_model_invocation_hook</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.clear_save_model_invocation_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.clear_save_model_invocation_hook" title="Link to this definition"></a></dt>
+<dd><p>Clear all the hooks in saving model invocations.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.format">
 <span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_agent_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.format" title="Link to this definition"></a></dt>
 <dd><p>Format the input messages into the format that the model
@@ -1083,6 +1156,31 @@ which can be accessed by <cite>service_toolkit.json_schemas</cite>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list[dict]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.register_save_model_invocation_hook">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_save_model_invocation_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.models.model.html#agentscope.models.model.ModelWrapperBase" title="agentscope.models.model.ModelWrapperBase"><span class="pre">ModelWrapperBase</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.register_save_model_invocation_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.register_save_model_invocation_hook" title="Link to this definition"></a></dt>
+<dd><p>Register save model invocation hook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook.</p></li>
+<li><p><strong>hook</strong> (<cite>Callable[[dict, dict], None]</cite>) – The hook function, which should take</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.models.ModelWrapperBase.remove_save_model_invocation_hook">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_save_model_invocation_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/models/model.html#ModelWrapperBase.remove_save_model_invocation_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.models.ModelWrapperBase.remove_save_model_invocation_hook" title="Link to this definition"></a></dt>
+<dd><p>Remove model invocation saving hook by its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hook_name</strong> (<cite>str</cite>) – The name of the hook to be removed.</p>
 </dd>
 </dl>
 </dd></dl>

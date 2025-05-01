@@ -84,17 +84,14 @@
 <li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">Built-in Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multimodality.html">MultiModality</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Visual Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#gradio">Gradio</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope-studio">AgentScope Studio</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#start-agentscope-studio">Start AgentScope Studio</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dashboard">Dashboard</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#note">Note</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#register-running-application">Register Running Application</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#import-running-histories">Import Running Histories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#start">Start</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#gradio">Gradio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-visualization">Custom Visualization</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="monitor.html">Configuring and Monitoring</a></li>
@@ -161,8 +158,74 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="visual-interface">
 <span id="sphx-glr-build-tutorial-visual-py"></span><span id="id1"></span><h1>Visual Interface<a class="headerlink" href="#visual-interface" title="Link to this heading"></a></h1>
-<p>AgentScope supports various visual interfaces for better user experience,
-including Gradio and AgentScope Studio.</p>
+<p>AgentScope supports AgentScope Studio and Gradio web visualization, and also
+supports users to connect to custom or third-party visualization platforms.</p>
+<section id="agentscope-studio">
+<h2>AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h2>
+<p>AgentScope Studio is implemented using React (vite) and
+NodeJS, designed for application visualization and execution monitoring (including API invocation tracking and token usage monitoring).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, AgentScope Studio is under rapid development, with
+continuous iterations in UI, functionality, and performance. We welcome
+any feedback, contributions, or suggestions!</p>
+</div>
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN01wrmPHM1GFBWSvufAt_!!6000000000592-0-tps-3104-1782.jpg" class="bordered-image" src="https://img.alicdn.com/imgextra/i1/O1CN01wrmPHM1GFBWSvufAt_!!6000000000592-0-tps-3104-1782.jpg" />
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h3>
+<p>First, you need to install npm.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># MacOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>node
+
+<span class="c1"># Ubuntu</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>nodejs<span class="w"> </span>npm
+
+<span class="c1"># For Windows, please visit https://nodejs.org/ for installation</span>
+</pre></div>
+</div>
+<p>Then, install AgentScope Studio using the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>@agentscope/studio
+</pre></div>
+</div>
+</section>
+<section id="start">
+<h3>Start<a class="headerlink" href="#start" title="Link to this heading"></a></h3>
+<p>Run the following command in the terminal to start AgentScope Studio:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_studio
+</pre></div>
+</div>
+</section>
+<section id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h3>
+<p>When starting an AgentScope Python program, connect to AgentScope Studio
+by using the <cite>agentscope.init</cite> function with the <cite>studio_url</cite> field.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;https://localhost:3000&quot;</span>  <span class="c1"># Replace with your local AgentScope Studio address</span>
+<span class="p">)</span>
+
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Once connected, the messages printed by the <cite>speak</cite> function of all
+agent instances will be forwarded to AgentScope Studio. Meanwhile, the input
+operation of <cite>UserAgent</cite> in the program will be transferred from the terminal
+to the Dashboard panel of AgentScope Studio.</p>
+</div>
+<img alt="Dashboard panel" class="bordered-image" src="https://img.alicdn.com/imgextra/i1/O1CN01bFa0I61VHfuckdckm_!!6000000002628-0-tps-3104-1782.jpg" />
+<p>The Dashboard panel will organize the applications by the <cite>project</cite> field
+passed to the <cite>agentscope.init</cite> function.</p>
+<p>When user input is required, the input button on the dialog interface
+will prompt for input. When no input is needed, the input button will be
+disabled.</p>
+<img alt="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif" class="bordered-image" src="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif" />
+</section>
+</section>
 <section id="gradio">
 <h2>Gradio<a class="headerlink" href="#gradio" title="Link to this heading"></a></h2>
 <p>First ensure you have installed the full version of AgentScope, which
@@ -208,117 +271,121 @@ pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</sp
 </pre></div>
 </div>
 <p>Finally, you can visit the Gradio UI as follows:</p>
-<img alt="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" />
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" class="bordered-image" src="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" />
 </section>
-<hr class="docutils" />
-<section id="agentscope-studio">
-<h2>AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h2>
-<p>AgentScope Studio is an open sourced Web UI toolkit for building and
-monitoring multi-agent applications. It provides the following features:</p>
+<section id="custom-visualization">
+<h2>Custom Visualization<a class="headerlink" href="#custom-visualization" title="Link to this heading"></a></h2>
+<p>Custom visualization is consisted of two parts:</p>
 <ul class="simple">
-<li><p><strong>Dashboard</strong>: A user-friendly interface, where you can monitor your running applications, and look through the running histories.</p></li>
-<li><p><strong>Workstation</strong>: A powerful interface to build your multi-agent applications with Dragging &amp; Dropping.</p></li>
-<li><p><strong>Server Manager</strong>: An easy-to-use monitoring and management tool for managing large-scale distributed applications.</p></li>
-<li><p><strong>Gallery</strong>: Fruitful applications and demos in Workstation. (Coming soon!)</p></li>
+<li><p>Message display: Forward the output printed by the <cite>speak</cite> function of the agent to the place where it needs to be displayed.</p></li>
+<li><p>User input: Transfer the <strong>input operation</strong> in <cite>UserAgent</cite> to the target platform, so that the user can input from the target platform.</p></li>
 </ul>
-<p>For details about Workstation and Gallery, please refer to <a class="reference internal" href="low_code.html#low-code"><span class="std std-ref">Low-code
-Developments</span></a>.
-For details about Server Manager, please refer to <a class="reference internal" href="distribution.html#distribution"><span class="std std-ref">Distribution</span></a>.</p>
-<section id="start-agentscope-studio">
-<span id="studio"></span><h3>Start AgentScope Studio<a class="headerlink" href="#start-agentscope-studio" title="Link to this heading"></a></h3>
-<p>To start a studio, first ensure you have installed the latest version of
-AgentScope. Then, you can simply run the following Python code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
-<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Or you can run the following command in the terminal:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">as_studio</span>
-</pre></div>
-</div>
-<p>After that, you can visit AgentScope studio at <a class="reference external" href="http://127.0.0.1:5000">http://127.0.0.1:5000</a>, and
-the following page will be displayed:</p>
-<img alt="https://img.alicdn.com/imgextra/i3/O1CN01Xic0GQ1ZkJ4M0iD8F_!!6000000003232-0-tps-3452-1610.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i3/O1CN01Xic0GQ1ZkJ4M0iD8F_!!6000000003232-0-tps-3452-1610.jpg" />
-<p>Of course, you can change the host and port, and link to your application
-running histories by providing the following arguments:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<p>In AgentScope, we implemented them by <cite>pre_speak_hook</cite> in the agent
+and <cite>override_input_method</cite> method in <cite>UserAgent</cite> (AgentScope Studio and
+Gradio are implemented in the same way).</p>
+<p>First, we build a pre-speak hook function</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 
-<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>          <span class="c1"># The IP address of AgentScope studio</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>                 <span class="c1"># The port number of AgentScope studio</span>
-    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span>               <span class="c1"># The directories of your running histories</span>
-        <span class="s2">&quot;xxx/xxx/runs&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;xxx/xxx/runs&quot;</span>
-    <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="dashboard">
-<h3>Dashboard<a class="headerlink" href="#dashboard" title="Link to this heading"></a></h3>
-<p>Dashboard is a web interface to monitor your running applications and look
-through the running histories.</p>
-<section id="note">
-<h4>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h4>
-<p>Currently, Dashboard has the following limitations, and we are working on
-improving it. Any feedback, contribution, or suggestion are welcome!</p>
-<ul class="simple">
-<li><p>The running application and AgentScope Studio must be running on the same</p></li>
-</ul>
-<p>machine for <code class="docutils literal notranslate"><span class="pre">URL/path</span> <span class="pre">consistency</span></code>. If you want to visit AgentScope in the
-other machine, you can try to forward the port to the remote machine by
-running the following command in the remote machine:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supposing AgentScope is running on {as_host}:{as_port}, and the port</span>
-<span class="c1"># of the remote machine is {remote_machine_port}</span>
-ssh<span class="w"> </span>-L<span class="w"> </span><span class="o">{</span>remote_machine_port<span class="o">}</span>:<span class="o">{</span>as_host<span class="o">}</span>:<span class="o">{</span>as_port<span class="o">}</span><span class="w"> </span><span class="o">[{</span>user_name<span class="o">}</span>@<span class="o">]{</span>as_host<span class="o">}</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>For distributed applications, the single-machine &amp; multiprocess mode is</p></li>
-</ul>
-<p>supported, but the multi-machine multiprocess mode is not supported yet.</p>
-</section>
-<section id="register-running-application">
-<h4>Register Running Application<a class="headerlink" href="#register-running-application" title="Link to this heading"></a></h4>
-<p>After starting the AgentScope Studio, you can register your running
-applications by specifying <code class="docutils literal notranslate"><span class="pre">studio_url</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.init()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">TextBlock</span><span class="p">,</span> <span class="n">ImageBlock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+    <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The pre speak hook function to forward printing message&quot;&quot;&quot;</span>
+    <span class="c1"># Forward the input message to the place where it needs to be displayed,</span>
+    <span class="c1"># for example, using requests.post to push the message</span>
     <span class="c1"># ...</span>
-    <span class="n">project</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
-    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:5000&quot;</span>    <span class="c1"># The URL of AgentScope Studio</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>Then register the hook function. Note that you can control the scope of
+the hook function, which can be at the class level or at the instance level</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Class-level registration, all instances of AgentBase and its subclasses will register this hook function</span>
+<span class="n">AgentBase</span><span class="o">.</span><span class="n">register_class_hook</span><span class="p">(</span>
+    <span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;customized_pre_speak_hook&quot;</span><span class="p">,</span>
+    <span class="n">pre_speak_hook</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>After registering, you can view the running application in the Dashboard. To
-distinguish different applications, you can specify the project and name of
-the application.</p>
-<img alt="https://img.alicdn.com/imgextra/i2/O1CN01zcUmuJ1I3OUXy1Q35_!!6000000000837-0-tps-3426-1718.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i2/O1CN01zcUmuJ1I3OUXy1Q35_!!6000000000837-0-tps-3426-1718.jpg" />
-<p>Click the program with status <code class="docutils literal notranslate"><span class="pre">waiting</span></code> to enter the execution
-interface. For example, the following picture show a conversation interface.</p>
-<img alt="https://img.alicdn.com/imgextra/i3/O1CN01sA3VUc1h7OLKVLfr3_!!6000000004230-0-tps-3448-1736.jpg" class="bordered-image align-center" src="https://img.alicdn.com/imgextra/i3/O1CN01sA3VUc1h7OLKVLfr3_!!6000000004230-0-tps-3448-1736.jpg" />
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Once you register the running application, the input operation
-within the <code class="docutils literal notranslate"><span class="pre">agentscope.agents.UserAgent</span></code> class will be transferred to the
-Dashboard in AgentScope Studio, and you can enter the input in the Dashboard.</p>
+<p>Of course, you can also register it for a specific agent instance</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span>
+    <span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;customized_pre_speak_hook&quot;</span><span class="p">,</span>
+    <span class="n">pre_speak_hook</span>
+<span class="p">)</span>
+</pre></div>
 </div>
-</section>
-<section id="import-running-histories">
-<h4>Import Running Histories<a class="headerlink" href="#import-running-histories" title="Link to this heading"></a></h4>
-<p>In AgentScope, the running histories are saved in the <code class="docutils literal notranslate"><span class="pre">./runs</span> <span class="pre">directory</span></code> by
-default. If you want to watch these running histories in the Dashboard, you
-can specify the <code class="docutils literal notranslate"><span class="pre">run_dirs</span></code> in <code class="docutils literal notranslate"><span class="pre">agentscope.studio.init()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For more information about hook functions, please refer to the <a class="reference internal" href="hook.html#hook"><span class="std std-ref">Hooks</span></a> chapter</p>
+</div>
+<p>To transfer user input, you need to implement a subclass of <cite>UserInputBase</cite>
+and implement the <cite>__call__</cite> function. This function will be triggered within the <cite>reply</cite> function of
+<cite>UserAgent</cite>, notifying the target visualization platform that user input is
+needed, and get the actual input from the user.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can refer to the implementation of <cite>agentscope.agents.TerminalUserInput</cite> and <cite>agentscope.agents.StudioUserInput</cite> in AgentScope</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserInputBase</span><span class="p">,</span> <span class="n">UserInputData</span>
 
-<span class="n">agentscope</span><span class="o">.</span><span class="n">studio</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-    <span class="n">run_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;xxx/runs&quot;</span><span class="p">]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomizedUserInput</span><span class="p">(</span><span class="n">UserInputBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">structured_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserInputData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inform the target platform that user input is needed and get the</span>
+<span class="sd">        user input.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_id (`str`):</span>
+<span class="sd">                The ID of the agent.</span>
+<span class="sd">            agent_name (`str`):</span>
+<span class="sd">                The name of the agent.</span>
+<span class="sd">            structured_schema (`Optional[BaseModel]`, defaults to `None`):</span>
+<span class="sd">                The json schema for required structured input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ...</span>
+        <span class="k">return</span> <span class="n">UserInputData</span><span class="p">(</span>
+            <span class="n">blocks_input</span><span class="o">=</span><span class="p">[</span>
+                <span class="c1"># Replace with actual input, which can be text or multimodal input</span>
+                <span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Hi!&quot;</span><span class="p">),</span>
+                <span class="n">ImageBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://xxx.png&quot;</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">structured_input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Then register the input method in <cite>UserAgent</cite>. Note that this registration
+will override the default input method <cite>TerminalUserInput</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UserAgent</span><span class="o">.</span><span class="n">override_class_input_method</span><span class="p">(</span>
+    <span class="n">input_method</span><span class="o">=</span><span class="n">CustomizedUserInput</span><span class="p">()</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><cite>UserAgent</cite> also supports instance and class-level registration,
+corresponding to <cite>override_input_method</cite> and <cite>override_class_input_method</cite>.
+They will override the input method of the current instance or class
+respectively.</p>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.001 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-visual-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/2adb983a5826b3cb754a76a37e0f76ac/visual.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">visual.ipynb</span></code></a></p>
@@ -331,8 +398,6 @@ can specify the <code class="docutils literal notranslate"><span class="pre">run
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
-</section>
-</section>
 </section>
 </section>
 

@@ -110,17 +110,11 @@ Now, we can start the conversation by exchanging messages between these two agen
  .. code-block:: none
 
     Angel: It looks like the conversation history is empty. How can I assist you today?
-    Monster: Hello! I'm Monster, your friendly assistant. It seems like we're starting fresh here. How can I help you today? Whether you have a question, need some advice, or just want to chat, I'm all ears! 😊
-    Angel: Hello Monster! It's nice to meet you. I'm Angel, and I'm here to assist as well. It seems like we might have a bit of a mix-up with the introductions. How can I help you or the person you're assisting today?
-    Monster: Hello Angel! It's great to meet you. I'm here to assist anyone who needs help, whether it's answering questions, providing advice, or just having a friendly chat. If there's someone specific you're assisting or if you have any tasks in mind, feel free to let me know. How can we work together to help today? 😊
-    Angel: Hello Monster! It's wonderful to meet another helper. I think we can collaborate by being ready to assist anyone who joins the conversation. If someone has a specific question or needs assistance, we can both pitch in with our knowledge and resources. If you have any particular areas of expertise or if there’s anything you’d like to focus on, let me know! 😊
-
-    In the meantime, if there’s anything you’d like to chat about or any topics you’re interested in, feel free to share!
-    Monster: Hello Angel! It's great to have a fellow helper around. I'm happy to collaborate and assist in any way I can. I have a broad range of knowledge, from general information and advice to more specific topics like technology, health, and even some fun trivia. If you have any areas of expertise or interests, I'd love to hear about them too!
-
-    In the meantime, let's keep the conversation open and ready for anyone who might join us. If there's anything you'd like to chat about or if you have any interesting topics or questions, feel free to share! 😊
-
-    How about we start with something light? Do you have any favorite books, movies, or hobbies that you enjoy?
+    Monster: Hello! I'm Monster, your helpful assistant. It seems like we're starting fresh here. How can I assist you today? Whether you have questions, need help with a task, or just want to chat, I'm here for you!
+    Angel: Hello! I'm Angel, your helpful assistant. It seems like there might be a bit of confusion with the names, but no worries! How can I assist you today? Whether you have questions, need help with a task, or just want to chat, I'm here for you!
+    Monster: Hello! I'm Monster, your helpful assistant. It looks like there was a bit of a mix-up with the names, but no worries! How can I assist you today? Whether you have questions, need help with a task, or just want to chat, I'm here for you! 😊
+    Angel: Hello! I'm Angel, your helpful assistant. It seems like there's a bit of a mix-up with the names, but no worries at all! How can I assist you today? Whether you have questions, need help with a task, or just want to chat, I'm here for you! 😊
+    Monster: Hello! I'm Monster, your helpful assistant. It looks like we've had a bit of a back-and-forth with the names, but that's okay! How can I assist you today? Whether you have questions, need help with a task, or just want to chat, I'm here for you! 😊
 
 
 
@@ -298,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 33.025 seconds)
+   **Total running time of the script:** (0 minutes 21.822 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

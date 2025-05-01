@@ -147,8 +147,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">...agents._user_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...agents._agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...agents._user_input</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">UserInputBase</span><span class="p">,</span>
+    <span class="n">UserInputData</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...message</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextBlock</span><span class="p">,</span> <span class="n">Msg</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">gradio</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gr</span>
@@ -160,7 +170,7 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">mgr</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.web.gradio.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">send_player_input</span><span class="p">,</span>
     <span class="n">get_chat_msg</span><span class="p">,</span>
     <span class="n">SYS_MSG_PREFIX</span><span class="p">,</span>
@@ -172,8 +182,10 @@
     <span class="n">send_reset_msg</span><span class="p">,</span>
     <span class="n">thread_local_data</span><span class="p">,</span>
     <span class="n">cycle_dots</span><span class="p">,</span>
+    <span class="n">get_reset_msg</span><span class="p">,</span>
+    <span class="n">get_player_input</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.web.gradio.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SPEAK</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SPEAK</span>
 
 <span class="n">MAX_NUM_DISPLAY_MSG</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">FAIL_COUNT_DOWN</span> <span class="o">=</span> <span class="mi">30</span>
@@ -339,6 +351,46 @@
 
 
 
+<span class="k">class</span><span class="w"> </span><span class="nc">_GradioUserInput</span><span class="p">(</span><span class="n">UserInputBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A local gradio user input class, which asks for and receives user input</span>
+<span class="sd">    from the gradio web UI.</span>
+
+<span class="sd">    .. note:: The current gradio web UI only supports one user agent, doesn&#39;t</span>
+<span class="sd">     support distribution mode, and structured input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The gradio user input initialization.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uid (`str`):</span>
+<span class="sd">                The identity of the user.</span>
+<span class="sd">            timeout (`str`):</span>
+<span class="sd">                The timeout for the user input in seconds. Defaults to 60.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">structured_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserInputData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The input method for Gradio.&quot;&quot;&quot;</span>
+        <span class="n">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">get_player_input</span><span class="p">(</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">UserInputData</span><span class="p">(</span>
+            <span class="n">blocks_input</span><span class="o">=</span><span class="p">[</span><span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">content</span><span class="p">)],</span>
+            <span class="n">structured_input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
 <span class="c1"># pylint: disable=too-many-statements</span>
 <div class="viewcode-block" id="run_app">
 <a class="viewcode-back" href="../../../../build_api/agentscope.web.gradio.studio.html#agentscope.web.gradio.studio.run_app">[docs]</a>
@@ -374,6 +426,71 @@
             <span class="n">main</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">start_workflow</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized file formats: </span><span class="si">{</span><span class="n">script_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Register user input method and agent hook here</span>
+        <span class="n">UserAgent</span><span class="o">.</span><span class="n">override_class_input_method</span><span class="p">(</span>
+            <span class="n">_GradioUserInput</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Use a hook to forward messages to gradio web interface</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">gradio_pre_speak_hook</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+            <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+            <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Hook to send messages to gradio web interface.</span>
+
+<span class="sd">            TODO: support streaming output</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">stream</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">last</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="c1"># User Agent doesn&#39;t need the pre_speak_hook, because gradio will</span>
+            <span class="c1"># print the input instead</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">UserAgent</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">get_reset_msg</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+            <span class="n">avatar</span> <span class="o">=</span> <span class="n">generate_image_from_name</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">content</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_text_content</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">flushing</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;img src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;/&gt;&quot;</span>
+                    <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;audio src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;video src=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; controls/&gt;&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
+                        <span class="n">content</span> <span class="o">+=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;a href=&#39;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&gt;&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/a&gt;&quot;</span>
+                        <span class="p">)</span>
+
+            <span class="n">send_msg</span><span class="p">(</span>
+                <span class="n">content</span><span class="p">,</span>
+                <span class="n">role</span><span class="o">=</span><span class="n">msg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span>
+                <span class="n">flushing</span><span class="o">=</span><span class="n">flushing</span><span class="p">,</span>
+                <span class="n">avatar</span><span class="o">=</span><span class="n">avatar</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">AgentBase</span><span class="o">.</span><span class="n">register_class_hook</span><span class="p">(</span>
+            <span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;gradio_pre_speak_hook&quot;</span><span class="p">,</span>
+            <span class="n">gradio_pre_speak_hook</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>

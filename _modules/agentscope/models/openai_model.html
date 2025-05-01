@@ -153,6 +153,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">._model_usage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatUsage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_verify_text_content_in_openai_delta_response</span><span class="p">,</span>
     <span class="n">_verify_text_content_in_openai_message_response</span><span class="p">,</span>
@@ -481,9 +482,20 @@
 <span class="sd">            response (`dict`):</span>
 <span class="sd">                The response from model API</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">usage</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;usage&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">usage</span> <span class="ow">and</span> <span class="s2">&quot;prompt_tokens&quot;</span> <span class="ow">in</span> <span class="n">usage</span> <span class="ow">and</span> <span class="s2">&quot;completion_tokens&quot;</span> <span class="ow">in</span> <span class="n">usage</span><span class="p">:</span>
+            <span class="n">formatted_usage</span> <span class="o">=</span> <span class="n">ChatUsage</span><span class="p">(</span>
+                <span class="n">prompt_tokens</span><span class="o">=</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_tokens&quot;</span><span class="p">),</span>
+                <span class="n">completion_tokens</span><span class="o">=</span><span class="n">usage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;completion_tokens&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">formatted_usage</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_model_invocation</span><span class="p">(</span>
             <span class="n">arguments</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+            <span class="n">usage</span><span class="o">=</span><span class="n">formatted_usage</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">usage</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;usage&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>

@@ -280,17 +280,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">retry_strategy</span> <span class="o">=</span> <span class="n">RetryBase</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">retry_strategy</span><span class="p">)</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">..studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
-            <span class="n">server</span> <span class="o">=</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">alloc_server</span><span class="p">()</span>
-            <span class="k">if</span> <span class="s2">&quot;host&quot;</span> <span class="ow">in</span> <span class="n">server</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">RpcClient</span><span class="p">(</span>
-                    <span class="n">host</span><span class="o">=</span><span class="n">server</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
-                    <span class="n">port</span><span class="o">=</span><span class="n">server</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">server</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">server</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">]</span>
         <span class="n">launch_server</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">launch_server</span><span class="p">:</span>
@@ -299,8 +288,6 @@
             <span class="c1"># check studio first</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
             <span class="n">studio_url</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
-                <span class="n">studio_url</span> <span class="o">=</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">studio_url</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">server_launcher</span> <span class="o">=</span> <span class="n">RpcAgentServerLauncher</span><span class="p">(</span>
                 <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
                 <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>

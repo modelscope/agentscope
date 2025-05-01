@@ -156,10 +156,20 @@
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.ReActAgentV2.to_dist"><code class="docutils literal notranslate"><span class="pre">ReActAgentV2.to_dist()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.StudioUserInput"><code class="docutils literal notranslate"><span class="pre">StudioUserInput</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.TerminalUserInput"><code class="docutils literal notranslate"><span class="pre">TerminalUserInput</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.UserAgent"><code class="docutils literal notranslate"><span class="pre">UserAgent</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserAgent.override_class_input_method"><code class="docutils literal notranslate"><span class="pre">UserAgent.override_class_input_method()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserAgent.override_input_method"><code class="docutils literal notranslate"><span class="pre">UserAgent.override_input_method()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserAgent.reply"><code class="docutils literal notranslate"><span class="pre">UserAgent.reply()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserAgent.speak"><code class="docutils literal notranslate"><span class="pre">UserAgent.speak()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserAgent.to_dist"><code class="docutils literal notranslate"><span class="pre">UserAgent.to_dist()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.UserInputBase"><code class="docutils literal notranslate"><span class="pre">UserInputBase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope.agents.UserInputData"><code class="docutils literal notranslate"><span class="pre">UserInputData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserInputData.blocks_input"><code class="docutils literal notranslate"><span class="pre">UserInputData.blocks_input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserInputData.model_config"><code class="docutils literal notranslate"><span class="pre">UserInputData.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#agentscope.agents.UserInputData.structured_input"><code class="docutils literal notranslate"><span class="pre">UserInputData.structured_input</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -952,28 +962,78 @@ functionality</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.StudioUserInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StudioUserInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">studio_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnect_attempts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnection_delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconnection_delay_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/agents/_user_input.html#StudioUserInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.StudioUserInput" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.agents.UserInputBase" title="agentscope.agents._user_input.UserInputBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserInputBase</span></code></a></p>
+<p>The agentscope studio user input.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.TerminalUserInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TerminalUserInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'User</span> <span class="pre">Input:</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/agents/_user_input.html#TerminalUserInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.TerminalUserInput" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#agentscope.agents.UserInputBase" title="agentscope.agents._user_input.UserInputBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserInputBase</span></code></a></p>
+<p>The terminal user input.</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="agentscope.agents.UserAgent">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UserAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/agents/_user_agent.html#UserAgent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserAgent" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#agentscope.agents.AgentBase" title="agentscope.agents._agent.AgentBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentBase</span></code></a></p>
 <p>User agent class</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.UserAgent.override_class_input_method">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">override_class_input_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.agents.UserInputBase" title="agentscope.agents._user_input.UserInputBase"><span class="pre">UserInputBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_user_agent.html#UserAgent.override_class_input_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserAgent.override_class_input_method" title="Link to this definition"></a></dt>
+<dd><p>Override the input method of the current UserAgent instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_method</strong> (<cite>UserInputBase</cite>) – The callable input method, which should be an object of a
+class that inherits from <cite>UserInputBase</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.agents.UserAgent.override_input_method">
+<span class="sig-name descname"><span class="pre">override_input_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#agentscope.agents.UserInputBase" title="agentscope.agents._user_input.UserInputBase"><span class="pre">UserInputBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_user_agent.html#UserAgent.override_input_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserAgent.override_input_method" title="Link to this definition"></a></dt>
+<dd><p>Override the input method of the current UserAgent instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_method</strong> (<cite>UserInputBase</cite>) – The callable input method, which should be an object of a
+class that inherits from <cite>UserInputBase</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="agentscope.agents.UserAgent.reply">
-<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></span><a class="reference internal" href="../_modules/agentscope/agents/_user_agent.html#UserAgent.reply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserAgent.reply" title="Link to this definition"></a></dt>
-<dd><p>Processes the input provided by the user and stores it in memory,
-potentially formatting it with additional provided details.</p>
-<p>The method prompts the user for input, then optionally prompts for
-additional specifics based on the provided format keys. All
-information is encapsulated in a message object, which is then
-added to the object’s memory.</p>
+<span class="sig-name descname"><span class="pre">reply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structured_output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">BaseModel</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></span><a class="reference internal" href="../_modules/agentscope/agents/_user_agent.html#UserAgent.reply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserAgent.reply" title="Link to this definition"></a></dt>
+<dd><p>Receive input message(s) and generate a reply message from the user.
+The input source can be set by calling <cite>override_input_method</cite> and
+<cite>override_class_input_method</cite> methods.</p>
+<p>For example, if you want to receive user input from your own source,
+you can create a class that inherits from <cite>UserInputBase</cite> and
+override the input method of the <cite>UserAgent</cite> class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<cite>Optional[Union[Msg, Sequence[Msg]]]</cite>, defaults to <cite>None</cite>) – The input message(s) to the agent, which also can be omitted if
+<li><p><strong>x</strong> (<cite>Optional[Union[Msg, list[Msg]]]</cite>, defaults to <cite>None</cite>) – The input message(s) to the agent, which also can be omitted if
 the agent doesn’t need any input.</p></li>
-<li><p><strong>required_keys</strong> (<cite>Optional[Union[list[str], str]]</cite>, defaults to <cite>None</cite>) – Strings that requires user to input, which will be used as
-the key of the returned dict. Defaults to None.</p></li>
-<li><p><strong>timeout</strong> (<cite>Optional[int]</cite>, defaults to <cite>None</cite>) – Raise <cite>TimeoutError</cite> if user exceed input time, set to None
-for no limit.</p></li>
+<li><p><strong>(</strong><strong>Optional</strong><strong>[</strong><strong>Type</strong><strong>[</strong><strong>BaseModel</strong><strong>]</strong><strong>]</strong> (<em>structured_output</em>) – <dl class="simple">
+<dt>to <cite>None</cite>):</dt><dd><p>A child class of <cite>pydantic.BaseModel</cite> that defines the
+structured output format. If provided, the user will be
+prompted to fill in the required fields. The output will be
+placed in the <cite>metadata</cite> field of the output message.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>defaults</strong> – <dl class="simple">
+<dt>to <cite>None</cite>):</dt><dd><p>A child class of <cite>pydantic.BaseModel</cite> that defines the
+structured output format. If provided, the user will be
+prompted to fill in the required fields. The output will be
+placed in the <cite>metadata</cite> field of the output message.</p>
+</dd>
+</dl>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -981,20 +1041,6 @@ for no limit.</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>Msg</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="agentscope.agents.UserAgent.speak">
-<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.msg.html#agentscope.message.msg.Msg" title="agentscope.message.msg.Msg"><span class="pre">Msg</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/agents/_user_agent.html#UserAgent.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserAgent.speak" title="Link to this definition"></a></dt>
-<dd><p>Speak out the message generated by the agent. If a string is given,
-a Msg object will be created with the string as the content.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>content</strong> (<cite>Union[str, Msg]</cite>) – The content of the message to be spoken out. If a string is
-given, a Msg object will be created with the agent’s name, role
-as “user”, and the given string as the content.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1030,6 +1076,38 @@ functionality</p>
 <dd class="field-odd"><p><cite>RpcObject</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.UserInputBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UserInputBase</span></span><a class="reference internal" href="../_modules/agentscope/agents/_user_input.html#UserInputBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserInputBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>The base class for user input.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="agentscope.agents.UserInputData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UserInputData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolResultBlock" title="agentscope.message.block.ToolResultBlock"><span class="pre">ToolResultBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.TextBlock" title="agentscope.message.block.TextBlock"><span class="pre">TextBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ImageBlock" title="agentscope.message.block.ImageBlock"><span class="pre">ImageBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.AudioBlock" title="agentscope.message.block.AudioBlock"><span class="pre">AudioBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.VideoBlock" title="agentscope.message.block.VideoBlock"><span class="pre">VideoBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.FileBlock" title="agentscope.message.block.FileBlock"><span class="pre">FileBlock</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structured_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/agentscope/agents/_user_input.html#UserInputData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.agents.UserInputData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>The user input data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.agents.UserInputData.blocks_input">
+<span class="sig-name descname"><span class="pre">blocks_input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolUseBlock" title="agentscope.message.block.ToolUseBlock"><span class="pre">ToolUseBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ToolResultBlock" title="agentscope.message.block.ToolResultBlock"><span class="pre">ToolResultBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.TextBlock" title="agentscope.message.block.TextBlock"><span class="pre">TextBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.ImageBlock" title="agentscope.message.block.ImageBlock"><span class="pre">ImageBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.AudioBlock" title="agentscope.message.block.AudioBlock"><span class="pre">AudioBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.VideoBlock" title="agentscope.message.block.VideoBlock"><span class="pre">VideoBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="agentscope.message.block.html#agentscope.message.block.FileBlock" title="agentscope.message.block.FileBlock"><span class="pre">FileBlock</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.agents.UserInputData.blocks_input" title="Link to this definition"></a></dt>
+<dd><p>The text input from the user.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.agents.UserInputData.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#agentscope.agents.UserInputData.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="agentscope.agents.UserInputData.structured_input">
+<span class="sig-name descname"><span class="pre">structured_input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#agentscope.agents.UserInputData.structured_input" title="Link to this definition"></a></dt>
+<dd><p>The structured input from the user.</p>
 </dd></dl>
 
 </dd></dl>

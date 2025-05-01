@@ -146,11 +146,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">._model_usage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatUsage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseParsingError</span>
 
@@ -243,6 +245,24 @@
 
     <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The name of the model, which is used in model api calling.&quot;&quot;&quot;</span>
+
+    <span class="n">_class_hooks_save_model_invocation</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">ModelWrapperBase</span><span class="p">,</span>  <span class="c1"># self object</span>
+                <span class="nb">str</span><span class="p">,</span>  <span class="c1"># model invocation id</span>
+                <span class="nb">str</span><span class="p">,</span>  <span class="c1"># timestamp</span>
+                <span class="nb">dict</span><span class="p">,</span>  <span class="c1"># arguments</span>
+                <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>  <span class="c1"># response</span>
+                <span class="nb">dict</span><span class="p">,</span>  <span class="c1"># usage</span>
+            <span class="p">],</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class hooks in saving model invocations, which takes the model</span>
+<span class="sd">    wrapper object, model invocation id, timestamp, arguments, response,</span>
+<span class="sd">     and usage as input&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=W0613</span>
@@ -353,23 +373,107 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_save_model_invocation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">response</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">usage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ChatUsage</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save model invocation.&quot;&quot;&quot;</span>
         <span class="n">model_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">_get_timestamp</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+
+        <span class="n">usage_dict</span> <span class="o">=</span> <span class="n">usage</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="k">if</span> <span class="n">usage</span> <span class="k">else</span> <span class="p">{}</span>
 
         <span class="n">invocation_record</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;model_class&quot;</span><span class="p">:</span> <span class="n">model_class</span><span class="p">,</span>
             <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
             <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="n">arguments</span><span class="p">,</span>
             <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+            <span class="s2">&quot;usage&quot;</span><span class="p">:</span> <span class="n">usage_dict</span><span class="p">,</span>
         <span class="p">}</span>
 
+        <span class="n">invocation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="n">model_class</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&quot;</span>
+
         <span class="n">FileManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">save_api_invocation</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="n">model_class</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">invocation_id</span><span class="p">,</span>
             <span class="n">invocation_record</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+        <span class="c1"># hooks</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">hook</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">_class_hooks_save_model_invocation</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">hook</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">invocation_id</span><span class="p">,</span>
+                <span class="n">timestamp</span><span class="p">,</span>
+                <span class="n">arguments</span><span class="p">,</span>
+                <span class="n">response</span><span class="p">,</span>
+                <span class="n">usage_dict</span><span class="p">,</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="ModelWrapperBase.register_save_model_invocation_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.model.html#agentscope.models.ModelWrapperBase.register_save_model_invocation_hook">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_save_model_invocation_hook</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">ModelWrapperBase</span><span class="p">,</span>  <span class="c1"># self object</span>
+                <span class="nb">str</span><span class="p">,</span>  <span class="c1"># model invocation id</span>
+                <span class="nb">str</span><span class="p">,</span>  <span class="c1"># timestamp</span>
+                <span class="nb">dict</span><span class="p">,</span>  <span class="c1"># arguments</span>
+                <span class="nb">dict</span><span class="p">,</span>  <span class="c1"># response</span>
+                <span class="nb">dict</span><span class="p">,</span>  <span class="c1"># usage</span>
+            <span class="p">],</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register save model invocation hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook.</span>
+<span class="sd">            hook (`Callable[[dict, dict], None]`):</span>
+<span class="sd">                The hook function, which should take</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hook_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_class_hooks_save_model_invocation</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Hook [</span><span class="si">{</span><span class="n">hook_name</span><span class="si">}</span><span class="s2">] already exists. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Overwriting the existing hook.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_class_hooks_save_model_invocation</span><span class="p">[</span><span class="n">hook_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span></div>
+
+
+<div class="viewcode-block" id="ModelWrapperBase.remove_save_model_invocation_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.model.html#agentscope.models.ModelWrapperBase.remove_save_model_invocation_hook">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_save_model_invocation_hook</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">hook_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove model invocation saving hook by its name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hook_name (`str`):</span>
+<span class="sd">                The name of the hook to be removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hook_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_class_hooks_save_model_invocation</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_class_hooks_save_model_invocation</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">hook_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Hook [</span><span class="si">{</span><span class="n">hook_name</span><span class="si">}</span><span class="s2">] doesn&#39;t exist. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot remove the non-existing hook.&quot;</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelWrapperBase.clear_save_model_invocation_hook">
+<a class="viewcode-back" href="../../../build_api/agentscope.models.model.html#agentscope.models.ModelWrapperBase.clear_save_model_invocation_hook">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_save_model_invocation_hook</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all the hooks in saving model invocations.&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_class_hooks_save_model_invocation</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
 
 </pre></div>
 

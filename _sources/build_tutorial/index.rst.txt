@@ -11,7 +11,7 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Workstation ------------------">
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial introduces how to build multi-agent application with drag-and-drop interface in AgentScope Workstation.">
 
 .. only:: html
 
@@ -23,23 +23,6 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Low-code Development</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports various visual interfaces for better user experience, including Gradio and AgentScope Studio.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_visual_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_visual.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Visual Interface</div>
     </div>
 
 
@@ -215,6 +198,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports AgentScope Studio and Gradio web visualization, and also supports users to connect to custom or third-party visualization platforms.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_visual_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_visual.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Visual Interface</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Agentscope has built-in supports for the retrieval augmentation generation (RAG). There are two key modules related to RAG in AgentScope: Knowledge and KnowledgeBank.">
 
 .. only:: html
@@ -377,7 +377,6 @@
    :hidden:
 
    /build_tutorial/low_code
-   /build_tutorial/visual
    /build_tutorial/web_browser
    /build_tutorial/distribution
    /build_tutorial/examples
@@ -388,6 +387,7 @@
    /build_tutorial/message
    /build_tutorial/MCP
    /build_tutorial/monitor
+   /build_tutorial/visual
    /build_tutorial/rag
    /build_tutorial/conversation
    /build_tutorial/agent

@@ -93,16 +93,17 @@ The `state_dict` method can be used to export the configuration of the running a
       "project": "Project Alpha",
       "name": "Test-1",
       "disable_saving": false,
-      "run_id": "run_20250429-094655_Test-1",
-      "pid": 1970,
-      "timestamp": "2025-04-29 09:46:55",
+      "run_id": "run_20250501-093031_Test-1",
+      "pid": 1968,
+      "timestamp": "2025-05-01 09:30:31",
+      "studio_url": null,
       "agentscope_version": "0.1.5dev",
       "file": {
         "save_log": true,
         "save_code": false,
         "save_api_invoke": false,
         "base_dir": null,
-        "run_dir": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250429-094655_Test-1",
+        "run_dir": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250501-093031_Test-1",
         "cache_dir": "~/.cache"
       },
       "model": {
@@ -127,13 +128,9 @@ The `state_dict` method can be used to export the configuration of the running a
       "logger": {
         "level": "INFO"
       },
-      "studio": {
-        "active": false,
-        "studio_url": null
-      },
       "monitor": {
         "use_monitor": true,
-        "path_db": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250429-094655_Test-1/agentscope.db"
+        "path_db": "/home/runner/work/agentscope/agentscope/docs/tutorial/en/source/tutorial/runs/run_20250501-093031_Test-1/agentscope.db"
       }
     }
 
@@ -199,8 +196,8 @@ Monitoring Token Usage
           "model_name": "qwen-plus",
           "times": 1,
           "prompt_tokens": 12,
-          "completion_tokens": 99,
-          "total_tokens": 111
+          "completion_tokens": 91,
+          "total_tokens": 103
         }
       ],
       "image": []
@@ -212,7 +209,7 @@ Monitoring Token Usage
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 17.683 seconds)
+   **Total running time of the script:** (0 minutes 5.875 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_monitor.py:

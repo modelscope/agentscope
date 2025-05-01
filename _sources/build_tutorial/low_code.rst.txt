@@ -22,6 +22,9 @@
 
 Low-code Development
 ===========================
+
+.. important:: The new AgentScope low-code development platform is coming soon. Starting from version 0.1.5, the existing workstation code will be removed from the main repository, and the following features will be unavailable.
+
 This tutorial introduces how to build multi-agent application with
 drag-and-drop interface in AgentScope Workstation.
 

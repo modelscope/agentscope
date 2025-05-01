@@ -140,25 +140,30 @@
              
   <h1>Source code for agentscope.manager._manager</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># pylint: disable=too-many-statements</span>
 <span class="sd">&quot;&quot;&quot;A manager for AgentScope.&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shortuuid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._monitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">MonitorManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span><span class="p">,</span> <span class="n">UserAgent</span><span class="p">,</span> <span class="n">StudioUserInput</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOG_LEVEL</span><span class="p">,</span> <span class="n">setup_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapperBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">_generate_random_code</span><span class="p">,</span>
     <span class="n">_get_process_creation_time</span><span class="p">,</span>
     <span class="n">_get_timestamp</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RUNTIME_ID_FORMAT</span><span class="p">,</span> <span class="n">_RUNTIME_TIMESTAMP_FORMAT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
 
 
 <div class="viewcode-block" id="ASManager">
@@ -175,6 +180,7 @@
         <span class="s2">&quot;run_id&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pid&quot;</span><span class="p">,</span>
         <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;studio_url&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ASManager&quot;</span><span class="p">:</span>
@@ -209,6 +215,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">FileManager</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelManager</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">=</span> <span class="n">MonitorManager</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># TODO: unified with logger and studio</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger_level</span><span class="p">:</span> <span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
@@ -292,15 +300,23 @@
         <span class="c1"># Init studio client, which will push messages to web ui and fetch user</span>
         <span class="c1"># inputs from web ui</span>
         <span class="k">if</span> <span class="n">studio_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_studio_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">)</span>
-            <span class="c1"># Register in AgentScope Studio</span>
-            <span class="n">_studio_client</span><span class="o">.</span><span class="n">register_running_instance</span><span class="p">(</span>
-                <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">timestamp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
-                <span class="n">run_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span>
-                <span class="n">pid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span>
-            <span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span>
+            <span class="c1"># Register the run</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">studio_url</span><span class="si">}</span><span class="s2">/trpc/registerRun&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
+                    <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+                    <span class="s2">&quot;run_dir&quot;</span><span class="p">:</span> <span class="n">run_dir</span><span class="p">,</span>
+                    <span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;running&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_studio_hooks</span><span class="p">(</span><span class="n">studio_url</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ASManager.state_dict">
@@ -318,7 +334,6 @@
         <span class="n">serialized_data</span><span class="p">[</span><span class="s2">&quot;logger&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger_level</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">serialized_data</span><span class="p">[</span><span class="s2">&quot;studio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_studio_client</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
         <span class="n">serialized_data</span><span class="p">[</span><span class="s2">&quot;monitor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">serialized_data</span><span class="p">)</span></div>
@@ -337,9 +352,112 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger_level</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;logger&quot;</span><span class="p">][</span><span class="s2">&quot;level&quot;</span><span class="p">]</span>
         <span class="n">setup_logger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">run_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger_level</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">])</span>
-        <span class="n">_studio_client</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;studio&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;monitor&quot;</span><span class="p">])</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;monitor&quot;</span><span class="p">])</span>
 
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;studio_url&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Register studio related hook</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_register_studio_hooks</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;studio_url&quot;</span><span class="p">)))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_studio_hooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register studio related hooks within AgentScope.&quot;&quot;&quot;</span>
+
+        <span class="c1"># register agent hook</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">studio_pre_speak_hook</span><span class="p">(</span>
+            <span class="n">_obj</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+            <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+            <span class="n">_stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="n">_last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Hook function for pre_speak.&quot;&quot;&quot;</span>
+            <span class="n">message_data</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="n">message_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;__module__&quot;</span><span class="p">)</span>
+            <span class="n">message_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;__name__&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_obj</span><span class="p">,</span> <span class="s2">&quot;_reply_id&quot;</span><span class="p">):</span>
+                <span class="n">reply_id</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_obj</span><span class="p">,</span> <span class="s2">&quot;_reply_id&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reply_id</span> <span class="o">=</span> <span class="n">shortuuid</span><span class="o">.</span><span class="n">uuid</span><span class="p">()</span>
+
+            <span class="n">n_retry</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">studio_url</span><span class="si">}</span><span class="s2">/trpc/pushMessage&quot;</span><span class="p">,</span>
+                        <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s2">&quot;runId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
+                            <span class="s2">&quot;replyId&quot;</span><span class="p">:</span> <span class="n">reply_id</span><span class="p">,</span>
+                            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">reply_id</span><span class="p">,</span>
+                            <span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">message_data</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+                    <span class="k">break</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">n_retry</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">n_retry</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+
+                    <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="c1"># Register the hook function to push messages to studio</span>
+        <span class="n">AgentBase</span><span class="o">.</span><span class="n">register_class_hook</span><span class="p">(</span>
+            <span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;studio_pre_speak_hook&quot;</span><span class="p">,</span>
+            <span class="n">studio_pre_speak_hook</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Exchange the input method to the studio input method, so that</span>
+        <span class="c1"># the user can input data from the web ui</span>
+        <span class="n">UserAgent</span><span class="o">.</span><span class="n">override_class_input_method</span><span class="p">(</span>
+            <span class="n">StudioUserInput</span><span class="p">(</span>
+                <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
+                <span class="n">run_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
+                <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Register the hook function to push model invocation to studio</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">studio_save_model_invocation_hook</span><span class="p">(</span>
+            <span class="n">obj</span><span class="p">:</span> <span class="n">ModelWrapperBase</span><span class="p">,</span>
+            <span class="n">model_invocation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+            <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+            <span class="n">usage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;The hook that pushes the model invocation to studio.&quot;&quot;&quot;</span>
+            <span class="n">n_retry</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                        <span class="n">url</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">studio_url</span><span class="si">}</span><span class="s2">/trpc/pushModelInvocation&quot;</span><span class="p">,</span>
+                        <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">model_invocation_id</span><span class="p">,</span>
+                            <span class="s2">&quot;runId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
+                            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
+                            <span class="s2">&quot;modelName&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+                            <span class="s2">&quot;modelType&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
+                            <span class="s2">&quot;configName&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">config_name</span><span class="p">,</span>
+                            <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="n">arguments</span><span class="p">,</span>
+                            <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+                            <span class="s2">&quot;usage&quot;</span><span class="p">:</span> <span class="n">usage</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">)</span>
+                    <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+                    <span class="k">break</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">n_retry</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">n_retry</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+
+                    <span class="k">raise</span> <span class="n">e</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="n">ModelWrapperBase</span><span class="o">.</span><span class="n">register_save_model_invocation_hook</span><span class="p">(</span>
+            <span class="s2">&quot;studio_save_model_invocation_hook&quot;</span><span class="p">,</span>
+            <span class="n">studio_save_model_invocation_hook</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="ASManager.flush">
 <a class="viewcode-back" href="../../../build_api/agentscope.manager.html#agentscope.manager.ASManager.flush">[docs]</a>
@@ -356,7 +474,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
-        <span class="n">_studio_client</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger_level</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span></div>
 </div>

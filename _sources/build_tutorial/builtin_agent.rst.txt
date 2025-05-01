@@ -140,7 +140,7 @@ configurations.
 
  .. code-block:: none
 
-    Alice: Hello, Bob! My name is Alice. It's nice to meet you. How can I assist you today?
+    Alice: Hello! My name is Alice. It's nice to meet you, Bob. How can I assist you today?
 
 
 
@@ -185,9 +185,8 @@ dialog agent `alice`.
 
  .. code-block:: none
 
-    User input: 
-    Bob: Do you know me?
-    Alice: Hello, Bob! I don't have any specific information about you other than what you've shared in our conversation. I'm here to help with any questions or tasks you might have. Is there something in particular you'd like to talk about or get help with?
+    User Input: Bob: Do you know me?
+    Alice: I don't actually know you personally, Bob. I'm an AI assistant, and I just used the name "Bob" because that's what you signed your message with. I don't have any specific information about you unless you choose to share it. Is there anything in particular you'd like to chat about or any questions you have?
 
 
 
@@ -244,10 +243,10 @@ We first initialize a `DictDialogAgent` object, and switch between different out
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Going out in the rain can be refreshing, but it also depends on whether Bob has the right gear and if there's a specific reason to go out. I should ask for more context.", "speak": "It could be nice, depending on what you're planning to do! Do you have an umbrella or a raincoat? And is there something specific you need to do outside?", "decision": false}
+    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the person's health, the weather conditions, and if they have appropriate gear.", "speak": "It can be nice to go out in the rain, especially if you enjoy it and have the right clothes. However, consider if it's safe and if you're feeling up for it.", "decision": "true"}
     ```
-    The metadata field: False
-    The type of metadata field: <class 'bool'>
+    The metadata field: true
+    The type of metadata field: <class 'str'>
 
 
 
@@ -286,7 +285,7 @@ Then, we ask the agent to pick a number from 1 to 10.
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Bob seems to have changed the topic. Picking a number is a simple task, and I can choose any number between 1 and 10. I'll pick 7 as it's often considered a lucky number.", "speak": "Sure, I'll pick a number. How about 7?", "number": "7"}
+    {"thought": "I need to pick a random number between 1 and 10 as requested by Bob.", "speak": "Sure, I'll pick a number. How about 7?", "number": "7"}
     ```
     The content of the response message: Sure, I'll pick a number. How about 7?
     The metadata of the response message: 7
@@ -338,12 +337,12 @@ while the `speak` field should be displayed to the user, and the `decision` fiel
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Bob is asking for another number, this time in a different range. I should pick a number that's within the specified range of 20 to 30. I'll choose 25 as it's right in the middle and often considered a balanced choice.", "speak": "I'll go with 25 this time. How about you, do you have a favorite number in this range?", "number": "25"}
+    {"thought": "I need to pick a random number between 20 and 30 as requested by Bob.", "speak": "Sure, I'll pick a number. How about 24?", "number": "24"}
     ```
-    The content field: I'll go with 25 this time. How about you, do you have a favorite number in this range?
+    The content field: Sure, I'll pick a number. How about 24?
     The type of content field: <class 'str'>
 
-    The metadata field: 25
+    The metadata field: 24
     The type of metadata field: <class 'str'>
 
 
@@ -425,7 +424,7 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>I need to use the execute_python_code function to perform the multiplication of the two numbers and print the result.</thought>
+    David: <thought>I need to use the execute_python_code function to perform the multiplication of the two numbers given by Bob.</thought>
     <function>execute_python_code</function>
     <code>print(151513434*54353453453)</code>
     system: 1. Execute function execute_python_code
@@ -442,13 +441,13 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>The multiplication of the two numbers 151513434 and 54353453453 has been calculated successfully, and the result is 8235278382423187602. I can now inform Bob about this.</thought>
+    David: <thought>The multiplication of 151513434 and 54353453453 is 8235278382423187602. I will now inform Bob of the result.</thought>
     <function>finish</function>
-    <response>The result of multiplying 151513434 by 54353453453 is 8235278382423187602.</response>
+    <response>The result of 151513434*54353453453 is 8235278382423187602.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The result of multiplying 151513434 by 54353453453 is 8235278382423187602."}
-       [RESULT]: The result of multiplying 151513434 by 54353453453 is 8235278382423187602.
+           {"response": "The result of 151513434*54353453453 is 8235278382423187602."}
+       [RESULT]: The result of 151513434*54353453453 is 8235278382423187602.
 
 
 
@@ -464,7 +463,7 @@ Refer to the RAG Section for more details.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 26.862 seconds)
+   **Total running time of the script:** (0 minutes 19.942 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_builtin_agent.py:

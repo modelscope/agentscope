@@ -172,7 +172,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcObject</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcMeta</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_agent_pb2</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">agent_pb2</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.studio._client</span><span class="w"> </span><span class="kn">import</span> <span class="n">_studio_client</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">StudioRegisterError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncResult</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.rpc.rpc_agent_pb2_grpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcAgentServicer</span>
@@ -254,17 +253,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server_id</span> <span class="o">=</span> <span class="n">server_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">studio_url</span> <span class="o">=</span> <span class="n">studio_url</span>
-        <span class="k">if</span> <span class="n">studio_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASManager</span>
-
-            <span class="n">_register_server_to_studio</span><span class="p">(</span>
-                <span class="n">studio_url</span><span class="o">=</span><span class="n">studio_url</span><span class="p">,</span>
-                <span class="n">server_id</span><span class="o">=</span><span class="n">server_id</span><span class="p">,</span>
-                <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
-                <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">run_id</span> <span class="o">=</span> <span class="n">ASManager</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">run_id</span>
-            <span class="n">_studio_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">studio_url</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">result_pool</span> <span class="o">=</span> <span class="n">get_pool</span><span class="p">(</span>
             <span class="n">pool_type</span><span class="o">=</span><span class="n">pool_type</span><span class="p">,</span>

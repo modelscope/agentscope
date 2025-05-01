@@ -23,8 +23,88 @@
 Visual Interface
 =========================
 
-AgentScope supports various visual interfaces for better user experience,
-including Gradio and AgentScope Studio.
+AgentScope supports AgentScope Studio and Gradio web visualization, and also
+supports users to connect to custom or third-party visualization platforms.
+
+AgentScope Studio
+~~~~~~~~~~~~~~~~~~~~~
+
+AgentScope Studio is implemented using React (vite) and
+NodeJS, designed for application visualization and execution monitoring (including API invocation tracking and token usage monitoring).
+
+.. note:: Currently, AgentScope Studio is under rapid development, with
+ continuous iterations in UI, functionality, and performance. We welcome
+ any feedback, contributions, or suggestions!
+
+.. image:: https://img.alicdn.com/imgextra/i1/O1CN01wrmPHM1GFBWSvufAt_!!6000000000592-0-tps-3104-1782.jpg
+   :class: bordered-image
+
+Installation
+------------------
+
+First, you need to install npm.
+
+.. code-block:: bash
+
+    # MacOS
+    brew install node
+
+    # Ubuntu
+    sudo apt update
+    sudo apt install nodejs npm
+
+    # For Windows, please visit https://nodejs.org/ for installation
+
+Then, install AgentScope Studio using the following command:
+
+.. code-block:: bash
+
+    npm install -g @agentscope/studio
+
+Start
+---------------------
+
+Run the following command in the terminal to start AgentScope Studio:
+
+.. code-block:: bash
+
+    as_studio
+
+Usage
+---------------------
+
+When starting an AgentScope Python program, connect to AgentScope Studio
+by using the `agentscope.init` function with the `studio_url` field.
+
+.. code-block:: python
+
+    import agentscope
+
+    agentscope.init(
+        # ...
+        studio_url="https://localhost:3000"  # Replace with your local AgentScope Studio address
+    )
+
+    # ...
+
+.. note:: Once connected, the messages printed by the `speak` function of all
+ agent instances will be forwarded to AgentScope Studio. Meanwhile, the input
+ operation of `UserAgent` in the program will be transferred from the terminal
+ to the Dashboard panel of AgentScope Studio.
+
+.. image:: https://img.alicdn.com/imgextra/i1/O1CN01bFa0I61VHfuckdckm_!!6000000002628-0-tps-3104-1782.jpg
+   :class: bordered-image
+   :alt: Dashboard panel
+
+The Dashboard panel will organize the applications by the `project` field
+passed to the `agentscope.init` function.
+
+When user input is required, the input button on the dialog interface
+will prompt for input. When no input is needed, the input button will be
+disabled.
+
+.. image:: https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif
+   :class: bordered-image
 
 Gradio
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -82,158 +162,172 @@ Then execute the following command in the terminal to start the Gradio UI:
 Finally, you can visit the Gradio UI as follows:
 
 .. image:: https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg
-   :align: center
    :class: bordered-image
 
-------------------------------
+Custom Visualization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-AgentScope Studio
-~~~~~~~~~~~~~~~~~~
+Custom visualization is consisted of two parts:
 
-AgentScope Studio is an open sourced Web UI toolkit for building and
-monitoring multi-agent applications. It provides the following features:
+- Message display: Forward the output printed by the `speak` function of the agent to the place where it needs to be displayed.
+- User input: Transfer the **input operation** in `UserAgent` to the target platform, so that the user can input from the target platform.
 
-* **Dashboard**: A user-friendly interface, where you can monitor your running applications, and look through the running histories.
+In AgentScope, we implemented them by `pre_speak_hook` in the agent
+and `override_input_method` method in `UserAgent` (AgentScope Studio and
+Gradio are implemented in the same way).
 
-* **Workstation**: A powerful interface to build your multi-agent applications with Dragging & Dropping.
+Message Display
+^^^^^^^^^^^^^^^^^^^^
 
-* **Server Manager**: An easy-to-use monitoring and management tool for managing large-scale distributed applications.
+First, we build a pre-speak hook function
 
-* **Gallery**: Fruitful applications and demos in Workstation. (Coming soon!)
+.. GENERATED FROM PYTHON SOURCE LINES 166-186
 
-For details about Workstation and Gallery, please refer to :ref:`Low-code
-Developments <low-code>`.
-For details about Server Manager, please refer to :ref:`Distribution
-<distribution>`.
+.. code-block:: Python
 
+    from pydantic import BaseModel
 
-.. _studio:
-
-Start AgentScope Studio
-----------------------------
-
-To start a studio, first ensure you have installed the latest version of
-AgentScope. Then, you can simply run the following Python code:
-
-.. code-block:: python
-
-    import agentscope
-    agentscope.studio.init()
-
-Or you can run the following command in the terminal:
-
-.. code-block :: python
-
-    as_studio
-
-After that, you can visit AgentScope studio at http://127.0.0.1:5000, and
-the following page will be displayed:
-
-.. image:: https://img.alicdn.com/imgextra/i3/O1CN01Xic0GQ1ZkJ4M0iD8F_!!6000000003232-0-tps-3452-1610.jpg
-   :align: center
-   :class: bordered-image
-
-Of course, you can change the host and port, and link to your application
-running histories by providing the following arguments:
-
-.. code-block:: python
-
-    import agentscope
-
-    agentscope.studio.init(
-        host="127.0.0.1",          # The IP address of AgentScope studio
-        port=5000,                 # The port number of AgentScope studio
-        run_dirs = [               # The directories of your running histories
-            "xxx/xxx/runs",
-            "xxx/xxx/runs"
-        ]
-    )
+    from agentscope.agents import AgentBase
+    from agentscope.message import Msg, TextBlock, ImageBlock
+    from typing import Union, Any, Optional
 
 
-Dashboard
------------------
-
-Dashboard is a web interface to monitor your running applications and look
-through the running histories.
-
-
-Note
-^^^^^^^^^^^^^^^^^^^^^
-
-Currently, Dashboard has the following limitations, and we are working on
-improving it. Any feedback, contribution, or suggestion are welcome!
-
-* The running application and AgentScope Studio must be running on the same
-machine for ``URL/path consistency``. If you want to visit AgentScope in the
-other machine, you can try to forward the port to the remote machine by
-running the following command in the remote machine:
-
-.. code-block :: bash
-
-    # Supposing AgentScope is running on {as_host}:{as_port}, and the port
-    # of the remote machine is {remote_machine_port}
-    ssh -L {remote_machine_port}:{as_host}:{as_port} [{user_name}@]{as_host}
-
-* For distributed applications, the single-machine & multiprocess mode is
-supported, but the multi-machine multiprocess mode is not supported yet.
-
-Register Running Application
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-After starting the AgentScope Studio, you can register your running
-applications by specifying ``studio_url`` in ``agentscope.init()``:
-
-.. code-block:: python
-
-    import agentscope
-
-    agentscope.init(
+    def pre_speak_hook(
+        self: AgentBase,
+        msg: Msg,
+        stream: bool,
+        last: bool,
+    ) -> Union[Msg, None]:
+        """The pre speak hook function to forward printing message"""
+        # Forward the input message to the place where it needs to be displayed,
+        # for example, using requests.post to push the message
         # ...
-        project="xxx",
-        name="xxx",
-        studio_url="http://127.0.0.1:5000"    # The URL of AgentScope Studio
+        return None
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 187-189
+
+Then register the hook function. Note that you can control the scope of
+the hook function, which can be at the class level or at the instance level
+
+.. GENERATED FROM PYTHON SOURCE LINES 189-197
+
+.. code-block:: Python
+
+
+    # Class-level registration, all instances of AgentBase and its subclasses will register this hook function
+    AgentBase.register_class_hook(
+        "pre_speak",
+        "customized_pre_speak_hook",
+        pre_speak_hook,
     )
 
-After registering, you can view the running application in the Dashboard. To
-distinguish different applications, you can specify the project and name of
-the application.
-
-.. image:: https://img.alicdn.com/imgextra/i2/O1CN01zcUmuJ1I3OUXy1Q35_!!6000000000837-0-tps-3426-1718.jpg
-   :align: center
-   :class: bordered-image
-
-Click the program with status ``waiting`` to enter the execution
-interface. For example, the following picture show a conversation interface.
-
-.. image:: https://img.alicdn.com/imgextra/i3/O1CN01sA3VUc1h7OLKVLfr3_!!6000000004230-0-tps-3448-1736.jpg
-   :align: center
-   :class: bordered-image
 
 
-.. note:: Once you register the running application, the input operation
- within the ``agentscope.agents.UserAgent`` class will be transferred to the
- Dashboard in AgentScope Studio, and you can enter the input in the Dashboard.
 
-Import Running Histories
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In AgentScope, the running histories are saved in the ``./runs directory`` by
-default. If you want to watch these running histories in the Dashboard, you
-can specify the ``run_dirs`` in ``agentscope.studio.init()``:
 
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 198-221
+
+Of course, you can also register it for a specific agent instance
 
 .. code-block:: python
 
-    import agentscope
-
-    agentscope.studio.init(
-        run_dirs = ["xxx/runs"]
+    agent = DialogAgent(
+        # ...
     )
+    agent.register_hook(
+        "pre_speak",
+        "customized_pre_speak_hook",
+        pre_speak_hook
+    )
+
+.. tip:: For more information about hook functions, please refer to the :ref:`hook` chapter
+
+User Input
+^^^^^^^^^^^^^^^^^^^^
+To transfer user input, you need to implement a subclass of `UserInputBase`
+and implement the `__call__` function. This function will be triggered within the `reply` function of
+`UserAgent`, notifying the target visualization platform that user input is
+needed, and get the actual input from the user.
+
+.. tip:: You can refer to the implementation of `agentscope.agents.TerminalUserInput` and `agentscope.agents.StudioUserInput` in AgentScope
+
+.. GENERATED FROM PYTHON SOURCE LINES 221-256
+
+.. code-block:: Python
+
+
+    from agentscope.agents import UserInputBase, UserInputData
+
+
+    class CustomizedUserInput(UserInputBase):
+        def __call__(
+            self,
+            agent_id: str,
+            agent_name: str,
+            *args: Any,
+            structured_schema: Optional[BaseModel] = None,
+            **kwargs: dict,
+        ) -> UserInputData:
+            """Inform the target platform that user input is needed and get the
+            user input.
+
+            Args:
+                agent_id (`str`):
+                    The ID of the agent.
+                agent_name (`str`):
+                    The name of the agent.
+                structured_schema (`Optional[BaseModel]`, defaults to `None`):
+                    The json schema for required structured input.
+            """
+            # ...
+            return UserInputData(
+                blocks_input=[
+                    # Replace with actual input, which can be text or multimodal input
+                    TextBlock(type="text", text="Hi!"),
+                    ImageBlock(type="image", url="http://xxx.png"),
+                ],
+                structured_input=None,
+            )
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 257-270
+
+Then register the input method in `UserAgent`. Note that this registration
+will override the default input method `TerminalUserInput`.
+
+.. code-block:: python
+
+    UserAgent.override_class_input_method(
+        input_method=CustomizedUserInput()
+    )
+
+.. tip:: `UserAgent` also supports instance and class-level registration,
+ corresponding to `override_input_method` and `override_class_input_method`.
+ They will override the input method of the current instance or class
+ respectively.
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.000 seconds)
+   **Total running time of the script:** (0 minutes 0.001 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_visual.py:

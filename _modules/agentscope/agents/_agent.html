@@ -155,6 +155,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">shortuuid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..rpc.rpc_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistConf</span>
@@ -424,6 +426,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_pre_observe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_post_observe</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
+        <span class="c1"># Used to identify one reply from agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reply_id</span> <span class="o">=</span> <span class="kc">None</span>
+
 <div class="viewcode-block" id="AgentBase.generate_agent_id">
 <a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.AgentBase.generate_agent_id">[docs]</a>
     <span class="nd">@classmethod</span>
@@ -461,7 +466,12 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calling the reply function, and broadcast the generated</span>
 <span class="sd">        response to all audiences if needed.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reply_id</span> <span class="o">=</span> <span class="n">shortuuid</span><span class="o">.</span><span class="n">uuid</span><span class="p">()</span>
+
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reply</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reply_id</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># broadcast to audiences if needed</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_audience</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
