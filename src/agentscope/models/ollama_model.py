@@ -3,6 +3,7 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union, Generator
 
+from ._model_usage import ChatUsage
 from ..formatters import CommonFormatter
 from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
@@ -247,18 +248,23 @@ class OllamaChatWrapper(OllamaWrapperBase):
             response (`dict`):
                 The response object returned by the DashScope chat API.
         """
-        prompt_eval_count = response.get("prompt_eval_count", 0)
-        eval_count = response.get("eval_count", 0)
+        if "prompt_eval_count" in response and "eval_count" in response:
+            formatted_usage = ChatUsage(
+                prompt_tokens=response.get("prompt_eval_count", 0),
+                completion_tokens=response.get("eval_count", 0),
+            )
+        else:
+            formatted_usage = None
 
-        self.monitor.update_text_and_embedding_tokens(
-            model_name=self.model_name,
-            prompt_tokens=prompt_eval_count,
-            completion_tokens=eval_count,
-        )
+        if formatted_usage:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+            )
 
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
     def format(
@@ -487,6 +493,14 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         )
 
         # step3: record the api invocation if needed
+        if "prompt_eval_count" in response and "eval_count" in response:
+            formatted_usage = ChatUsage(
+                prompt_tokens=response.get("prompt_eval_count", 0),
+                completion_tokens=response.get("eval_count", 0),
+            )
+        else:
+            formatted_usage = None
+
         self._save_model_invocation(
             arguments={
                 "model": self.model_name,
@@ -496,14 +510,16 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
                 **kwargs,
             },
             response=response,
+            usage=formatted_usage,
         )
 
         # step4: monitor the response
-        self.monitor.update_text_and_embedding_tokens(
-            model_name=self.model_name,
-            prompt_tokens=response.get("prompt_eval_count", 0),
-            completion_tokens=response.get("eval_count", 0),
-        )
+        if formatted_usage:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=response.get("prompt_eval_count", 0),
+                completion_tokens=response.get("eval_count", 0),
+            )
 
         # step5: return response
         return ModelResponse(

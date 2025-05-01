@@ -3,23 +3,17 @@
 import json
 import os
 import sys
-from typing import Optional, Literal, Any
+from typing import Optional, Literal
 
 from loguru import logger
 
 
 from .message import Msg
 from .serialize import serialize
-from .studio._client import _studio_client
 from .utils.common import (
     _map_string_to_color_mark,
 )
-from .web.gradio.utils import (
-    generate_image_from_name,
-    send_msg,
-    get_reset_msg,
-    thread_local_data,
-)
+
 
 LOG_LEVEL = Literal[
     "TRACE",
@@ -117,14 +111,6 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
 
         print(print_str, end="")
 
-    # Push msg to studio if it is active
-    if _studio_client.active:
-        _studio_client.push_message(msg)
-
-    # Print to gradio if it is active
-    if last and hasattr(thread_local_data, "uid"):
-        log_gradio(msg, thread_local_data.uid)
-
     if last:
         # Save msg into chat file
         _save_msg(msg)
@@ -151,7 +137,7 @@ def _save_msg(msg: Msg) -> None:
         )
 
 
-def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
+def log_msg(msg: Msg) -> None:
     """Print the message and save it into files. Note the message should be a
     Msg object."""
 
@@ -160,58 +146,8 @@ def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
 
     print(_formatted_str(msg, colored=True))
 
-    # Push msg to studio if it is active
-    if _studio_client.active:
-        _studio_client.push_message(msg)
-
-    # Print to gradio if it is active
-    if hasattr(thread_local_data, "uid") and not disable_gradio:
-        log_gradio(msg, thread_local_data.uid)
-
     # Save msg into chat file
     _save_msg(msg)
-
-
-def log_gradio(msg: Msg, uid: str, **kwargs: Any) -> None:
-    """Send chat message to studio.
-
-    Args:
-        msg (`Msg`):
-            The message to be logged.
-        uid (`str`):
-            The local value 'uid' of the thread.
-    """
-    if uid:
-        get_reset_msg(uid=uid)
-        avatar = kwargs.get("avatar", None) or generate_image_from_name(
-            msg.name,
-        )
-
-        content = msg.get_text_content() or ""
-        flushing = True
-        for block in msg.content:
-            if block.get("type") == "image":
-                content += f"\n<img src='{block.get('url')}'/>"
-            elif block.get("type") == "audio":
-                content += (
-                    f"\n<audio src='{block.get('url')}' controls/></audio>"
-                )
-            elif block.get("type") == "video":
-                content += (
-                    f"\n<video src='{block.get('url')}' controls/></video>"
-                )
-            elif block.get("type") == "file":
-                content += (
-                    f"\n<a href='{block.get('url')}'>{block.get('url')}</a>"
-                )
-
-        send_msg(
-            content,
-            role=msg.name,
-            uid=uid,
-            flushing=flushing,
-            avatar=avatar,
-        )
 
 
 def _level_format(record: dict) -> str:

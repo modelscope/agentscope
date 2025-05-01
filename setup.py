@@ -19,6 +19,8 @@ URL = "https://github.com/modelscope/agentscope"
 
 # released requires
 minimal_requires = [
+    "json5",
+    "jsonschema",
     "networkx",
     "black",
     "docstring_parser",
@@ -80,6 +82,7 @@ extra_dev_requires = [
     "sphinxcontrib-mermaid",
     "sphinx-gallery",
     "sphinx-autobuild",
+    "matplotlib",
     # extra
     "transformers",
 ]
@@ -142,7 +145,6 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
     package_data={
-        "agentscope.studio": ["static/**/*", "templates/**/*"],
         "agentscope.prompt": ["_prompt_examples.json"],
         "agentscope.service.browser": ["markpage.js"],
     },
@@ -176,7 +178,6 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.studio:as_studio",
             "as_gradio=agentscope.web.gradio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
             "as_server=agentscope.server.launcher:as_server",

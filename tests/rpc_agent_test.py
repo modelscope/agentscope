@@ -8,7 +8,7 @@ import os
 import time
 import shutil
 from typing import Optional, Union, Sequence, Callable
-from unittest.mock import MagicMock, PropertyMock, patch
+from unittest.mock import MagicMock
 
 from loguru import logger
 import cloudpickle as pickle
@@ -18,7 +18,7 @@ import agentscope
 from agentscope.agents import AgentBase, DialogAgent
 from agentscope.manager import MonitorManager, ASManager
 from agentscope.server import RpcAgentServerLauncher
-from agentscope.rpc import AsyncResult, RpcObject, DistConf
+from agentscope.rpc import AsyncResult, DistConf
 from agentscope.message import Msg
 from agentscope.msghub import msghub
 from agentscope.pipelines import sequential_pipeline
@@ -762,85 +762,6 @@ class BasicRpcAgentTest(unittest.TestCase):
         # client.stop()
         # time.sleep(1)
         # self.assertFalse(client.is_alive())
-        launcher.shutdown()
-
-    @patch("agentscope.studio._client.StudioClient.alloc_server")
-    @patch(
-        "agentscope.studio._client.StudioClient.active",
-        new_callable=PropertyMock,
-    )
-    def test_server_auto_alloc(
-        self,
-        mock_active: PropertyMock,
-        mock_alloc: MagicMock,
-    ) -> None:
-        """Test the auto allocation of server"""
-        mock_active.return_value = True
-        host = "localhost"
-        launcher = RpcAgentServerLauncher(
-            # choose port automatically
-            host=host,
-            local_mode=False,
-            custom_agent_classes=[DemoRpcAgentWithMemory],
-            agent_dir=os.path.abspath(
-                os.path.join(
-                    os.path.abspath(os.path.dirname(__file__)),
-                    "custom",
-                ),
-            ),
-        )
-        launcher.launch()
-        port = launcher.port
-        mock_alloc.return_value = {"host": host, "port": port}
-
-        # test auto allocation
-        a1 = DemoRpcAgentWithMemory(name="Auto1", to_dist=True)
-        a2 = DemoRpcAgentWithMemory(name="Auto2").to_dist()
-        a1._check_created()  # pylint: disable=W0212
-        a2._check_created()  # pylint: disable=W0212
-        self.assertEqual(a1.host, host)
-        self.assertEqual(a1.port, port)
-        self.assertEqual(a2.host, host)
-        self.assertEqual(a2.port, port)
-        client = RpcClient(host=host, port=port)
-        al = client.get_agent_list()
-        self.assertEqual(len(al), 2)
-
-        # test not alive server
-        mock_alloc.return_value = {"host": "not_exist", "port": 1234}
-        a3 = DemoRpcAgentWithMemory(name="Auto3", to_dist=True)
-        self.assertEqual(a3.host, "localhost")
-        nclient = RpcClient(host=a3.host, port=a3.port)
-        a3._check_created()  # pylint: disable=W0212
-        nal = nclient.get_agent_list()
-        self.assertEqual(len(nal), 1)
-
-        # test agent dir loading
-        custom_agent_id = "custom_test"
-        self.assertTrue(
-            client.create_agent(
-                agent_configs={
-                    "args": (),
-                    "kwargs": {"name": "custom"},
-                    "class_name": "CustomAgent",
-                    "type": "agent",
-                },
-                agent_id=custom_agent_id,
-            ),
-        )
-        ra = RpcObject(
-            cls=AgentBase,
-            host=launcher.host,
-            port=launcher.port,
-            oid=custom_agent_id,
-            connect_existing=True,
-        )
-        resp = ra(Msg(name="sys", role="user", content="Hello"))
-        self.assertEqual(resp.name, "custom")
-        self.assertEqual(resp.content, "Hello world")
-        al = client.get_agent_list()
-        self.assertEqual(len(al), 3)
-
         launcher.shutdown()
 
     def test_custom_agent_func(self) -> None:

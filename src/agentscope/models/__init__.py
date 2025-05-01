@@ -39,6 +39,8 @@ from .yi_model import (
     YiChatWrapper,
 )
 from .anthropic_model import AnthropicChatWrapper
+from ._model_usage import ChatUsage
+
 
 _BUILD_IN_MODEL_WRAPPERS = [
     "PostAPIChatWrapper",
@@ -64,6 +66,7 @@ _BUILD_IN_MODEL_WRAPPERS = [
 __all__ = [
     "ModelWrapperBase",
     "ModelResponse",
+    "ChatUsage",
     "PostAPIModelWrapperBase",
     "PostAPIChatWrapper",
     "OpenAIWrapperBase",

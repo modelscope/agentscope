@@ -134,17 +134,6 @@ class RpcObject(ABC):
         else:
             self.retry_strategy = RetryBase.load_dict(retry_strategy)
 
-        from ..studio._client import _studio_client
-
-        if self.port is None and _studio_client.active:
-            server = _studio_client.alloc_server()
-            if "host" in server:
-                if RpcClient(
-                    host=server["host"],
-                    port=server["port"],
-                ).is_alive():
-                    self.host = server["host"]
-                    self.port = server["port"]
         launch_server = self.port is None
         self.server_launcher = None
         if launch_server:
@@ -153,8 +142,6 @@ class RpcObject(ABC):
             # check studio first
             self.host = "localhost"
             studio_url = None
-            if _studio_client.active:
-                studio_url = _studio_client.studio_url
             self.server_launcher = RpcAgentServerLauncher(
                 host=self.host,
                 port=self.port,

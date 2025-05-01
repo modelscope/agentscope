@@ -5,6 +5,7 @@ from typing import Union, Any, List, Optional, Generator
 
 from loguru import logger
 
+from ._model_usage import ChatUsage
 from ._model_utils import _verify_text_content_in_openai_delta_response
 from .model import ModelWrapperBase, ModelResponse
 from ..formatters import CommonFormatter
@@ -270,19 +271,25 @@ class ZhipuAIChatWrapper(ZhipuAIWrapperBase):
             response (`dict`):
                 The response from model API
         """
+        usage = response.get("usage", None)
+        if usage:
+            formatted_usage = ChatUsage(
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+            )
+        else:
+            formatted_usage = None
 
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
-        usage = response.get("usage", None)
-        if usage is not None:
+        if formatted_usage:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
-                prompt_tokens=usage.get("prompt_tokens", 0),
-                completion_tokens=usage.get("completion_tokens", 0),
-                total_tokens=usage.get("total_tokens", 0),
+                **formatted_usage.usage.model_dump(),
             )
 
     def format(

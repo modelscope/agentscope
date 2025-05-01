@@ -4,6 +4,9 @@
 
 低代码开发
 ===========================
+
+.. important:: 新的 AgentScope 低代码开发平台即将上线，从 v0.1.5 版本开始，现有的 workstation 代码会从主库中剥离，以下功能将处于不可用状态。
+
 本教程介绍如何在AgentScope Workstation中通过拖拽界面构建多智能体应用程序。
 
 Workstation
