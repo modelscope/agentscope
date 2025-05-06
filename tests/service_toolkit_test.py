@@ -45,15 +45,28 @@ class ServiceToolkitTest(unittest.TestCase):
                     "type": "object",
                     "properties": {
                         "num_results": {
-                            "type": "number",
+                            "type": "integer",
                             "description": (
-                                "The number of search " "results to return."
+                                "The number of search results to return."
                             ),
                             "default": 10,
                         },
                         "question": {
                             "type": "string",
                             "description": "The search query string.",
+                        },
+                        "kwargs": {
+                            "additionalProperties": True,
+                            "default": {},
+                            "description": (
+                                "Additional keyword arguments to be included "
+                                "in the search query.\n"
+                                "For more details, please refer to\n"
+                                "https://learn.microsoft.com/en-us/bing/"
+                                "search-apis/bing-web-search/reference/"
+                                "query-parameters"
+                            ),
+                            "type": "object",
                         },
                     },
                     "required": [
@@ -77,6 +90,19 @@ class ServiceToolkitTest(unittest.TestCase):
                         "question": {
                             "type": "string",
                             "description": "The search query string.",
+                        },
+                        "kwargs": {
+                            "additionalProperties": True,
+                            "default": {},
+                            "description": (
+                                "Additional keyword arguments to be included "
+                                "in the search query.\n"
+                                "For more details, please refer to\n"
+                                "https://learn.microsoft.com/en-us/bing/"
+                                "search-apis/bing-web-search/reference/"
+                                "query-parameters"
+                            ),
+                            "type": "object",
                         },
                     },
                     "required": ["question"],
