@@ -122,14 +122,15 @@ parser1 = MarkdownJsonDictParser(
         "speak": "what you speak",
         "decision": "your final decision, true/false",
     },
+    keys_to_metadata="decision",
     required_keys=["thought", "speak", "decision"],
 )
 
 charles.set_parser(parser1)
 msg1 = charles(Msg("Bob", "Is it a good idea to go out in the rain?", "user"))
 
-print(f"The content field: {msg1.content}")
-print(f"The type of content field: {type(msg1.content)}")
+print(f"The metadata field: {msg1.metadata}")
+print(f"The type of metadata field: {type(msg1.metadata)}")
 
 # %%
 # Then, we ask the agent to pick a number from 1 to 10.
@@ -140,12 +141,15 @@ parser2 = MarkdownJsonDictParser(
         "speak": "what you speak",
         "number": "the number you choose",
     },
+    keys_to_metadata="number",
+    keys_to_content="speak",
 )
 
 charles.set_parser(parser2)
 msg2 = charles(Msg("Bob", "Pick a number from 1 to 10.", "user"))
 
 print(f"The content of the response message: {msg2.content}")
+print(f"The metadata of the response message: {msg2.metadata}")
 
 # %%
 # The next question is how to post-process the structured output.

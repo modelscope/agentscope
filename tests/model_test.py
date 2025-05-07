@@ -41,7 +41,7 @@ class TestModelWrapperSimple(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, Sequence[Msg], None],
     ) -> Union[List[dict], str]:
         """Format the input for the model"""
         print(*args)

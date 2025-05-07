@@ -103,6 +103,7 @@ class RecordApiInvocation(unittest.TestCase):
                             },
                         ],
                     },
+                    "usage": {},
                 },
             )
 

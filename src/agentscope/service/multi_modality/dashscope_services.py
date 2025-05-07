@@ -39,7 +39,7 @@ def dashscope_text_to_image(
         n (`int`, defaults to `1`):
             The number of images to generate.
         size (`Literal["1024*1024", "720*1280", "1280*720"]`, defaults to
-        `"1024*1024"`):
+         `"1024*1024"`):
             Size of the image.
         model (`str`, defaults to '"wanx-v1"'):
             The model to use.
@@ -48,11 +48,11 @@ def dashscope_text_to_image(
             will return the web urls.
 
     Returns:
-        ServiceResponse:
-        A dictionary with two variables: `status` and`content`.
-        If `status` is ServiceExecStatus.SUCCESS,
-        the `content` is a dict with key 'fig_paths" and
-        value is a list of the paths to the generated images.
+        `ServiceResponse`:
+            A dictionary with two variables: `status` and`content`. If
+            `status` is ServiceExecStatus.SUCCESS, the `content` is a dict
+            with key 'fig_paths" and value is a list of the paths to the
+            generated images.
 
     Example:
 

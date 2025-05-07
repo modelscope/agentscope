@@ -12,7 +12,7 @@ LLMを活用したマルチエージェントアプリケーションをより�
 
 [![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
 [![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/pypi-v0.1.1-blue?logo=pypi)](https://pypi.org/project/agentscope/)
+[![](https://img.shields.io/badge/pypi-v0.1.3-blue?logo=pypi)](https://pypi.org/project/agentscope/)
 [![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
 [![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
 [![](https://img.shields.io/badge/Docs-Roadmap-blue?logo=markdown)](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
@@ -40,7 +40,13 @@ LLMを活用したマルチエージェントアプリケーションをより�
 ----
 
 ## ニュース
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[このチュートリアル](https://doc.agentscope.io/build_tutorial/mcp.html)を参考にして使い方を学ぶことができます。
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-04-27]** 新しいAgentScope Studioが公開されました。詳細については[こちら](https://doc.agentscope.io/build_tutorial/visual.html)をご参照ください。
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope はフック関数をサポートしています。詳細は[チュートリアル](https://doc.agentscope.io/build_tutorial/hook.html)を参照してください。
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-19]** AgentScopeは現在、ツールAPIをサポートしています。詳しくは[チュートリアル](https://doc.agentscope.io/build_tutorial/tool.html)をご参照ください。
+
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-20]** Agentscopeは[MCP Server](https://github.com/modelcontextprotocol/servers)をサポートしました！[このチュートリアル](https://doc.agentscope.io/build_tutorial/MCP.html)を参考にして使い方を学ぶことができます。
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-05]** 私たちの[多情報源RAGアプリケーション](applications/multisource_rag_app/README.md)（DingTalkのQ&Aグループで使用されているチャットボット）がオープンソースになりました！
 
@@ -50,9 +56,9 @@ LLMを活用したマルチエージェントアプリケーションをより�
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-02-07]**🎉 AgentScope が SWE-bench(Verified) で 63.4%の解決率を達成しました！私たちのソリューションについての詳細は近日公開予定です。
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-01-04]** AgentScopeが現在Anthropic APIをサポートしています。
+- **[2025-01-04]** AgentScopeが現在Anthropic APIをサポートしています。
 
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2024-12-12]** AgentScopeの[ロードマップ](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)を更新しました。
+- **[2024-12-12]** AgentScopeの[ロードマップ](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)を更新しました。
 
 - **[2024-09-06]** AgentScopeバージョン0.1.0がリリースされました。
 

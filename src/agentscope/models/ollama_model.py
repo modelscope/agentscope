@@ -3,9 +3,10 @@
 from abc import ABC
 from typing import Sequence, Any, Optional, List, Union, Generator
 
+from ._model_usage import ChatUsage
+from ..formatters import CommonFormatter
 from ..message import Msg
 from ..models import ModelWrapperBase, ModelResponse
-from ..utils.common import _convert_to_str
 
 
 class OllamaWrapperBase(ModelWrapperBase, ABC):
@@ -247,23 +248,29 @@ class OllamaChatWrapper(OllamaWrapperBase):
             response (`dict`):
                 The response object returned by the DashScope chat API.
         """
-        prompt_eval_count = response.get("prompt_eval_count", 0)
-        eval_count = response.get("eval_count", 0)
+        if "prompt_eval_count" in response and "eval_count" in response:
+            formatted_usage = ChatUsage(
+                prompt_tokens=response.get("prompt_eval_count", 0),
+                completion_tokens=response.get("eval_count", 0),
+            )
+        else:
+            formatted_usage = None
 
-        self.monitor.update_text_and_embedding_tokens(
-            model_name=self.model_name,
-            prompt_tokens=prompt_eval_count,
-            completion_tokens=eval_count,
-        )
+        if formatted_usage:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+            )
 
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg], None],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """Format the messages for ollama Chat API.
 
@@ -307,75 +314,22 @@ class OllamaChatWrapper(OllamaWrapperBase):
 
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg], None]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
+                should be a `Msg` object, or a list of `Msg` objects. The
+                `None` input will be ignored.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
                 The formatted messages.
         """
-
-        # Parse all information into a list of messages
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        # record dialog history as a list of strings
-        system_prompt = None
-        history_content_template = []
-        dialogue = []
-        # TODO: here we default the url links to images
-        images = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                system_prompt = _convert_to_str(unit.content)
-            else:
-                # Merge all messages into a conversation history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-            if unit.url is not None:
-                images.append(unit.url)
-
-        if len(dialogue) != 0:
-            dialogue_history = "\n".join(dialogue)
-
-            history_content_template.extend(
-                ["## Conversation History", dialogue_history],
-            )
-
-        history_content = "\n".join(history_content_template)
-
-        # The conversation history message
-        history_message = {
-            "role": "user",
-            "content": history_content,
-        }
-
-        if len(images) != 0:
-            history_message["images"] = images
-
-        if system_prompt is None:
-            return [history_message]
-
-        return [
-            {"role": "system", "content": system_prompt},
-            history_message,
-        ]
+        if multi_agent_mode:
+            return CommonFormatter.format_multi_agent(*args)
+        return CommonFormatter.format_chat(*args)
 
 
 class OllamaEmbeddingWrapper(OllamaWrapperBase):
@@ -466,16 +420,6 @@ class OllamaEmbeddingWrapper(OllamaWrapperBase):
             raw=response,
         )
 
-    def format(
-        self,
-        *args: Union[Msg, Sequence[Msg]],
-    ) -> Union[List[dict], str]:
-        raise RuntimeError(
-            f"Model Wrapper [{type(self).__name__}] doesn't "
-            f"need to format the input. Please try to use the "
-            f"model wrapper directly.",
-        )
-
 
 class OllamaGenerationWrapper(OllamaWrapperBase):
     """The model wrapper for Ollama generation API.
@@ -549,6 +493,14 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
         )
 
         # step3: record the api invocation if needed
+        if "prompt_eval_count" in response and "eval_count" in response:
+            formatted_usage = ChatUsage(
+                prompt_tokens=response.get("prompt_eval_count", 0),
+                completion_tokens=response.get("eval_count", 0),
+            )
+        else:
+            formatted_usage = None
+
         self._save_model_invocation(
             arguments={
                 "model": self.model_name,
@@ -558,73 +510,19 @@ class OllamaGenerationWrapper(OllamaWrapperBase):
                 **kwargs,
             },
             response=response,
+            usage=formatted_usage,
         )
 
         # step4: monitor the response
-        self.monitor.update_text_and_embedding_tokens(
-            model_name=self.model_name,
-            prompt_tokens=response.get("prompt_eval_count", 0),
-            completion_tokens=response.get("eval_count", 0),
-        )
+        if formatted_usage:
+            self.monitor.update_text_and_embedding_tokens(
+                model_name=self.model_name,
+                prompt_tokens=response.get("prompt_eval_count", 0),
+                completion_tokens=response.get("eval_count", 0),
+            )
 
         # step5: return response
         return ModelResponse(
             text=response["response"],
             raw=response,
-        )
-
-    def format(self, *args: Union[Msg, Sequence[Msg]]) -> str:
-        """Forward the input to the model.
-
-        Args:
-            args (`Union[Msg, Sequence[Msg]]`):
-                The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
-
-        Returns:
-            `str`:
-                The formatted string prompt.
-        """
-        input_msgs = []
-        for _ in args:
-            if _ is None:
-                continue
-            if isinstance(_, Msg):
-                input_msgs.append(_)
-            elif isinstance(_, list) and all(isinstance(__, Msg) for __ in _):
-                input_msgs.extend(_)
-            else:
-                raise TypeError(
-                    f"The input should be a Msg object or a list "
-                    f"of Msg objects, got {type(_)}.",
-                )
-
-        sys_prompt = None
-        dialogue = []
-        for i, unit in enumerate(input_msgs):
-            if i == 0 and unit.role == "system":
-                # system prompt
-                sys_prompt = _convert_to_str(unit.content)
-            else:
-                # Merge all messages into a conversation history prompt
-                dialogue.append(
-                    f"{unit.name}: {_convert_to_str(unit.content)}",
-                )
-
-        dialogue_history = "\n".join(dialogue)
-
-        if sys_prompt is None:
-            prompt_template = "## Conversation History\n{dialogue_history}"
-        else:
-            prompt_template = (
-                "{system_prompt}\n"
-                "\n"
-                "## Conversation History\n"
-                "{dialogue_history}"
-            )
-
-        return prompt_template.format(
-            system_prompt=sys_prompt,
-            dialogue_history=dialogue_history,
         )

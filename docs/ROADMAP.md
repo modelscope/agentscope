@@ -24,11 +24,11 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 
  - ✅ Add Support for Anthropic API.
 
- - ✅ Support tools calling in user-assistant conversations.
-   - OpenAI API
-   - DashScope API
-   - Anthropic API
-   - Gemini APi
+ - 🚧 Support tools calling in user-assistant conversations.
+   - ✅ OpenAI API
+   - ✅ DashScope API
+   - ✅ Anthropic API
+   - 📝 Gemini APi
 
  - 📝 Support tools calling in multi-agent conversations.
    - OpenAI API
@@ -58,8 +58,8 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 4. RAG
 
  - 🚧 Provide a set of query rewrite strategies for retrieval.
- - 📝 Support online search engine (Google/Bing search) based RAG.
- - 📝 Support multi-RAG agent routing efficiently.
+ - ✅ Support online search engine (Google/Bing search) based RAG.
+ - 🚧 Support multi-RAG agent routing efficiently.
 
 5. AgentBase
 

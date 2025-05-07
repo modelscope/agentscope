@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ iPython code execution test."""
 import unittest
-from agentscope.service.execute_code.exec_notebook import NoteBookExecutor
+from agentscope.service._code.exec_notebook import NoteBookExecutor
 from agentscope.service.service_status import ServiceExecStatus
 
 
