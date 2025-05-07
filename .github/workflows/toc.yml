@@ -11,4 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: technote-space/toc-generator@v4
         with:
+          TOC_TITLE: "## Table of Contents"
+          CREATE_PR: false
+          TARGET_PATHS: "README.md"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
