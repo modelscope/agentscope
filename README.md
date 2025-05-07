@@ -1,31 +1,73 @@
 [**中文主页**](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**日本語のホームページ**](https://github.com/modelscope/agentscope/blob/main/README_JA.md) | [**Tutorial**](https://doc.agentscope.io/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
 
-# Agent-oriented programming for building LLM applications
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 30px; font-weight: 600;">
+    <img src="https://img.alicdn.com/imgextra/i4/O1CN018grexU1j0BPQ4BqLz_!!6000000004485-55-tps-743-743.svg" width="100" height="100" style="margin: 30px">
+    AgentScope: Agent-oriented programming for building LLM applications
+</div>
 
-<h5 align="left">
-<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="600" alt="agentscope-logo">
-</h5>
+<p align="center">
+    <a href="https://arxiv.org/abs/2402.14034">
+        <img
+            src="https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C"
+            alt="arxiv"
+        />
+    </a>
+    <a href="https://pypi.org/project/agentscope/">
+        <img
+            src="https://img.shields.io/badge/python-3.9+-blue"
+            alt="pypi"
+        />
+    </a>
+    <a href="https://pypi.org/project/agentscope/">
+        <img
+            src="https://img.shields.io/badge/pypi-v0.1.5-blue?logo=pypi"
+            alt="pypi"
+        />
+    </a>
+    <a href="https://doc.agentscope.io/">
+        <img
+            src="https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown"
+            alt="docs"
+        />
+    </a>
+    <a href="https://agentscope.io/">
+        <img
+            src="https://img.shields.io/badge/Drag_and_drop_UI-WorkStation-blue?logo=html5&logoColor=green&color=dark-green"
+            alt="workstation"
+        />
+    </a>
+    <a href="./LICENSE">
+        <img
+            src="https://img.shields.io/badge/license-Apache--2.0-black"
+            alt="license"
+        />
+    </a>
+</p>
 
-[![](https://img.shields.io/badge/cs.MA-2402.14034-B31C1C?logo=arxiv&logoColor=B31C1C)](https://arxiv.org/abs/2402.14034)
-[![](https://img.shields.io/badge/python-3.9+-blue)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/pypi-v0.1.3-blue?logo=pypi)](https://pypi.org/project/agentscope/)
-[![](https://img.shields.io/badge/Docs-English%7C%E4%B8%AD%E6%96%87-blue?logo=markdown)](https://modelscope.github.io/agentscope/#welcome-to-agentscope-tutorial-hub)
-[![](https://img.shields.io/badge/Docs-API_Reference-blue?logo=markdown)](https://modelscope.github.io/agentscope/)
-[![](https://img.shields.io/badge/Docs-Roadmap-blue?logo=markdown)](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
-
-[![](https://img.shields.io/badge/Drag_and_drop_UI-WorkStation-blue?logo=html5&logoColor=green&color=dark-green)](https://agentscope.io/)
-[![](https://img.shields.io/badge/license-Apache--2.0-black)](./LICENSE)
-[![](https://img.shields.io/badge/Contribute-Welcome-green)](https://modelscope.github.io/agentscope/tutorial/contribute.html)
-
+<p align="center">
 <img src="https://trendshift.io/api/badge/repositories/10079" alt="modelscope%2Fagentscope | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>
+</p>
 
-- Welcome to join our community on
+## ✨ Why AgentScope?
 
-| [Discord](https://discord.gg/eYMpfnkG8h)                                                                                         | DingTalk                                                                                                                          |
-|----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| <img src="https://gw.alicdn.com/imgextra/i1/O1CN01hhD1mu1Dd3BWVUvxN_!!6000000000238-2-tps-400-400.png" width="100" height="100"> | <img src="https://img.alicdn.com/imgextra/i1/O1CN01LxzZha1thpIN2cc2E_!!6000000005934-2-tps-497-477.png" width="100" height="100"> |
+* **Transparent**: All are visible and controllable for developers, from [agent building](https://doc.agentscope.io/build_tutorial/agent.html) to [workflow orchestration](https://doc.agentscope.io/build_tutorial/conversation.html), from [prompt construction](https://doc.agentscope.io/build_tutorial/prompt.html) to [prompt optimization](https://doc.agentscope.io/build_tutorial/prompt_optimization.html),
+ from [API calling](https://doc.agentscope.io/build_tutorial/model.html) to [response parsing](https://doc.agentscope.io/build_tutorial/structured_output.html).
 
-## News
+* **Explicit Programming**: What you see is what you get, no implicit magic, no deep encapsulation. The workflow is explicitly constructed through [message passing](https://doc.agentscope.io/build_tutorial/message.html), providing developers with full control and visibility over the execution flow.
+
+* **Modular**: All components are independent, use them or not, it's your choice.
+
+* **Model-agnostic**: Develop once to [adapt to all models](https://doc.agentscope.io/build_tutorial/prompt.html).
+
+* **Multi-agent oriented Programming**: Pythonic programming for [building multi-agent applications](https://doc.agentscope.io/build_tutorial/conversation.html#more-than-two-agents). Simple for beginners, powerful for experts.
+
+* **Distribution**: Centralized programming for distributed multi-agent applications with [automatic parallelization](https://doc.agentscope.io/build_tutorial/distribution.html).
+
+* **Graphical Programming**: Provide [visual tracing](https://doc.agentscope.io/build_tutorial/visual.html) for multi-agent applications, as well as [low-code development](https://doc.agentscope.io/build_tutorial/low_code.html).
+
+
+
+## 📢 News
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-04-27]** A new AgentScope Studio is online now. Refer [here](https://doc.agentscope.io/build_tutorial/visual.html) for more details.
 
 - <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2025-03-21]** AgentScope supports hooks functions now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/hook.html) for more details.
@@ -44,35 +86,22 @@
 
 - **[2025-01-04]** AgentScope supports Anthropic API now.
 
-- [**Older News**](https://github.com/modelscope/agentscope/blob/main/docs/news_en.md)
+👉👉 [**Older News**](https://github.com/modelscope/agentscope/blob/main/docs/news_en.md)
 
-## Why AgentScope?
+## Table of Contents
 
-* **Transparent**: All are visible and controllable for developers, from [agent building](https://doc.agentscope.io/build_tutorial/agent.html) to [workflow orchestration](https://doc.agentscope.io/build_tutorial/conversation.html), from [prompt construction](https://doc.agentscope.io/build_tutorial/prompt.html) to [prompt optimization](https://doc.agentscope.io/build_tutorial/prompt_optimization.html),
- from [API calling](https://doc.agentscope.io/build_tutorial/model.html) to [response parsing](https://doc.agentscope.io/build_tutorial/structured_output.html).
+---
 
-* **Explicit Programming**: What you see is what you get, no implicit magic, no deep encapsulation. The workflow is explicitly constructed through [message passing](https://doc.agentscope.io/build_tutorial/message.html), providing developers with full control and visibility over the execution flow.
-
-* **Modular**: All components are independent, use them or not, it's your choice.
-
-* **Model-agnostic**: Develop once to [adapt to all models](https://doc.agentscope.io/build_tutorial/prompt.html).
-
-* **Multi-agent oriented Programming**: Pythonic programming for [building multi-agent applications](https://doc.agentscope.io/build_tutorial/conversation.html#more-than-two-agents). Simple for beginners, powerful for experts.
-
-* **Distribution**: Centralized programming for distributed multi-agent applications with [automatic parallelization](https://doc.agentscope.io/build_tutorial/distribution.html).
-
-* **Graphical Programming**: Provide [visual tracing](https://doc.agentscope.io/build_tutorial/visual.html) for multi-agent applications, as well as [low-code development](https://doc.agentscope.io/build_tutorial/low_code.html).
+[TOC]
 
 
-## Quickstart
+## 🚀 Quickstart
 
 ### Installation
 
-AgentScope requires **Python 3.9** or higher.
+> AgentScope requires **Python 3.9** or higher.
 
 #### From source
-
-- Install AgentScope in editable mode:
 
 ```bash
 # Pull the source code from GitHub
@@ -83,17 +112,15 @@ cd agentscope
 pip install -e .
 ```
 
-#### Using pip
-
-- Install AgentScope from pip:
+#### From PyPi
 
 ```bash
 pip install agentscope
 ```
 
-### Hello World
+## 👋 Hello AgentScope
 
-Create a multi-agent conversation with AgentScope:
+Creating a basic multi-agent conversation with AgentScope:
 
 ```python
 from agentscope.agents import DialogAgent, UserAgent
@@ -103,10 +130,9 @@ import agentscope
 agentscope.init(
     model_configs=[
         {
-            "config_name": "my_openai_config",
-            "model_type": "openai_chat",
-            "model_name": "gpt-4o",
-            "api_key": "xxx",
+            "config_name": "my_config",
+            "model_type": "dashscope_chat",
+            "model_name": "qwen-max",
         }
     ]
 )
@@ -114,9 +140,9 @@ agentscope.init(
 # Create a dialog agent and a user agent
 dialog_agent = DialogAgent(
    name="assistant",
-   model_config_name="my_openai_config"
+   model_config_name="my_config"
 )
-user_agent = UserAgent()
+user_agent = UserAgent(name="user")
 
 # Build the workflow/conversation explicitly
 x = None
@@ -126,6 +152,195 @@ while True:
     if x.content == "exit":
         break
 ```
+
+## 🧑‍🤝‍🧑 Multi-agent Conversation
+
+```python
+
+```
+
+## 💡 Reasoning Agent with Tools
+
+Creating a reasoning agent with built-in tools and **MCP servers**!
+
+```python
+from agentscope.agents import ReActAgentV2, UserAgent
+from agentscope.service import ServiceToolkit, execute_python_code
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "model_config": "my_config",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+    }
+)
+
+# Add tools
+toolkit = ServiceToolkit()
+toolkit.add(execute_python_code)
+
+# Connect to MCP server
+toolkit.add_mcp_servers(
+    {
+        "mcpServers": {
+            "puppeteer": {
+                "url": "http://127.0.0.1:8000/sse",
+            },
+        },
+    }
+)
+
+# Create a reasoning-acting agent
+agent = ReActAgentV2(
+    name="Friday",
+    model_config_name="my_config",
+    service_toolkit=toolkit,
+    max_iters=20
+)
+user_agent = UserAgent(name="user")
+
+# Build the workflow/conversation explicitly
+x = None
+while True:
+    x = agent(x)
+    x = user_agent(x)
+    if x.content == "exit":
+        break
+```
+
+## 🔠 Structured Output
+
+Specifying structured output easily!
+
+```python
+from agentscope.agents import ReActAgentV2
+from agentscope.service import ServiceToolkit
+from agentscope.message import Msg
+from pydantic import BaseModel, Field
+from typing import Literal
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "model_config": "my_config",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+    }
+)
+
+# Create a reasoning-acting agent
+agent = ReActAgentV2(
+    name="Friday",
+    model_config_name="my_config",
+    service_toolkit=ServiceToolkit(),
+    max_iters=20
+)
+
+class CvModel(BaseModel):
+    name: str = Field(max_length=50, description="The name")
+    description: str = Field(max_length=200, description="The brief description")
+    aget: int = Field(gt=0, le=120, description="The age of the person")
+
+class ChoiceModel(BaseModel):
+    choice: Literal["apple", "banana"]
+
+# Specify structured output using `structured_model`
+res_msg = agent(
+    Msg("user", "Introduce Einstein", "user"),
+    structured_model=CvModel
+)
+print(res_msg.metadata)
+
+# Switch to different structured model
+res_msg = agent(
+    Msg("user", "Choice a fruit", "user"),
+    structured_model=ChoiceModel
+)
+print(res_msg.metadata)
+```
+
+## ⚡️ Distribution and Parallelization
+
+Using a magic function `to_dist` to run the agent in distributed mode!
+
+```python
+from agentscope.agents import DialogAgent
+from agentscope.message import Msg
+import agentscope
+
+# Load model configs
+agentscope.init(
+    model_configs=[
+        {
+            "config_name": "my_config",
+            "model_type": "dashscope_chat",
+            "model_name": "qwen-max",
+        }
+    ]
+)
+
+# Using `to_dist()` to run the agent in distributed mode
+agent1 = DialogAgent(
+   name="Saturday",
+   model_config_name="my_config"
+).to_dist()
+
+agent2 = DialogAgent(
+   name="Sunday",
+   model_config_name="my_config"
+).to_dist()
+
+# The two agent will run in parallel
+agent1(Msg("user", "", "user"))
+agent2(Msg("user", "", "user"))
+```
+
+## 👀 Visualization
+
+AgentScope supports **Gradio** and **AgentScope Studio** for visualization. Third-party visualization tools are also supported.
+
+<p align="center">
+    <img
+        src="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif"
+        alt="AgentScope Studio"
+        width="45%"
+    />
+    <img
+        src="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif"
+        alt="AgentScope Studio"
+        width="45%"
+    />
+</p>
+
+Connect to **Third-party visualization** is also supported!
+
+```python
+from agentscope.agents import AgentBase
+from agentscope.message import Msg
+import requests
+
+
+def forward_message_hook(self, msg: Msg, stream: bool, last: bool) -> None:
+    """Forward the displayed message to third-party visualization tools."""
+    # Taking RESTFul API as an example
+    requests.post(
+        "https://xxx.com",
+        json={
+            "msg": msg.to_dict(),
+            "stream": stream,
+            "last": last
+        }
+    )
+
+# Register as a class-level hook, that all instances will use this hook
+AgentBase.register_class_hook(
+    hook_type='pre_speak',
+    hook_name='forward_to_third_party',
+    hook=forward_message_hook
+)
+```
+
 
 ## License
 
