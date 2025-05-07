@@ -12,7 +12,7 @@
 
 .. image:: https://img.alicdn.com/imgextra/i4/O1CN01TLx5qg1tcmx3cKCNN_!!6000000005923-55-tps-661-391.svg
    :width: 100%
-   :alt: 两种不同的结构化输出方式
+   :alt: 两种不同结构化输出方式
 
 两种方式的优缺点如下：
 
