@@ -151,6 +151,7 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
         messages: list,
         stream: Optional[bool] = None,
         tools: list[dict] = None,
+        tool_choice: Optional[str] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the
@@ -172,6 +173,8 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                 overwrite the stream flag in the constructor.
             tools (`list[dict]`, default `None`):
                 The tools JSON schemas that the model can use.
+            tool_choice (`Optional[str]`, default `None`):
+                The function name that force the model to use.
             **kwargs (`Any`):
                 The keyword arguments to DashScope chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please
@@ -233,6 +236,14 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
 
         if tools:
             kwargs["tools"] = tools
+
+        if tool_choice:
+            kwargs["tool_choice"] = {
+                "type": "function",
+                "function": {
+                    "name": tool_choice,
+                },
+            }
 
         # Switch to the incremental_output mode
         if stream:
@@ -308,10 +319,11 @@ class DashScopeChatWrapper(DashScopeWrapperBase):
                         ),
                     )
 
-            if response_message["content"] == "":
-                text = None
-            else:
-                text = response_message["content"]
+            text = (
+                None
+                if response_message["content"] == ""
+                else response_message["content"]
+            )
 
             return ModelResponse(
                 text=text,

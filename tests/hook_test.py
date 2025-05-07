@@ -2,7 +2,7 @@
 # pylint: disable=unused-argument, protected-access
 """Unittests for agent hooks."""
 import unittest
-from typing import Optional, Union
+from typing import Optional, Union, Tuple, Any, Dict
 from unittest.mock import patch, MagicMock
 
 from agentscope.agents import AgentBase
@@ -42,27 +42,39 @@ class AgentHooksTest(unittest.TestCase):
 
         def pre_reply_hook(
             self: AgentBase,
-            x: Optional[Union[Msg, list[Msg]]] = None,
-        ) -> Union[None, Msg]:
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+        ) -> Union[Tuple[Tuple[Msg, ...], Dict[str, Any]], None]:
             """Pre-reply hook."""
-            if isinstance(x, Msg):
-                return Msg(
-                    "assistant",
-                    "-1, " + x.content,
-                    "assistant",
+            if isinstance(args[0], Msg):
+                return (
+                    (
+                        Msg(
+                            "assistant",
+                            "-1, " + x.content,
+                            "assistant",
+                        ),
+                    ),
+                    kwargs,
                 )
             return None
 
         def pre_reply_hook_without_change(
             self: AgentBase,
-            x: Optional[Union[Msg, list[Msg]]] = None,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
         ) -> None:
             """Pre-reply hook without returning, so that the message is not
             changed."""
-            if isinstance(x, Msg):
-                x.content = "-2, " + x.content
+            if isinstance(args[0], Msg):
+                args[0].content = "-2, " + x.content
 
-        def post_reply_hook(self: AgentBase, x: Msg) -> Msg:
+        def post_reply_hook(
+            self: AgentBase,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+            x: Msg,
+        ) -> Msg:
             """Post-reply hook."""
             return Msg(
                 "assistant",

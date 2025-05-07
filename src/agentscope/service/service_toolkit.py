@@ -115,13 +115,28 @@ class ServiceToolkit:
         """Initialize the service toolkit with a list of service functions."""
         self.service_funcs = {}
 
+    def remove(self, func_name: str) -> None:
+        """Remove a service function from the current toolkit.
+
+        Args:
+            func_name (`str`):
+                The name of the service function to be removed.
+        """
+        if func_name in self.service_funcs:
+            del self.service_funcs[func_name]
+        else:
+            logger.warning(
+                f"Service function `{func_name}` does not exist, "
+                f"skip removing it.",
+            )
+
     def add(
         self,
         service_func: Callable[..., Any],
         func_description: Optional[str] = None,
         include_long_description: bool = True,
-        include_var_positional: bool = True,
-        include_var_keyword: bool = True,
+        include_var_positional: bool = False,
+        include_var_keyword: bool = False,
         **kwargs: Any,
     ) -> None:
         """Add a service function to the toolkit, which will be processed into
@@ -140,7 +155,7 @@ class ServiceToolkit:
             include_var_positional (`bool`, defaults to `False`):
                 Whether to include the variable positional arguments (`*args`)
                 in the function schema.
-            include_var_keyword (`bool`, defaults to `True`):
+            include_var_keyword (`bool`, defaults to `False`):
                 Whether to include the variable keyword arguments (`**kwargs`)
                 in the function schema.
             **kwargs (`Any`):
@@ -599,8 +614,8 @@ class ServiceToolkit:
         service_func: Callable[..., Any],
         func_description: Optional[str] = None,
         include_long_description: bool = True,
-        include_var_positional: bool = True,
-        include_var_keyword: bool = True,
+        include_var_positional: bool = False,
+        include_var_keyword: bool = False,
         **kwargs: Any,
     ) -> Tuple[Callable[..., Any], dict]:
         """Convert a service function into a tool function that agent can
@@ -620,7 +635,7 @@ class ServiceToolkit:
             include_var_positional (`bool`, defaults to `False`):
                 Whether to include the variable positional arguments (`*args`)
                 in the function schema.
-            include_var_keyword (`bool`, defaults to `True`):
+            include_var_keyword (`bool`, defaults to `False`):
                 Whether to include the variable keyword arguments (`**kwargs`)
                 in the function schema.
             **kwargs (`Any`):
