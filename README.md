@@ -92,7 +92,8 @@
 
 ---
 
-[TOC]
+<!-- START doctoc -->
+<!-- END doctoc -->
 
 
 ## 🚀 Quickstart
