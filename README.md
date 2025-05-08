@@ -88,10 +88,6 @@
 
 👉👉 [**Older News**](https://github.com/modelscope/agentscope/blob/main/docs/news_en.md)
 
-## Table of Contents
-
----
-
 <!-- START doctoc -->
 <!-- END doctoc -->
 
