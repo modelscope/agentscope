@@ -14,13 +14,13 @@
     </a>
     <a href="https://pypi.org/project/agentscope/">
         <img
-            src="https://img.shields.io/badge/python-3.9+-blue"
+            src="https://img.shields.io/badge/python-3.9+-blue?logo=python"
             alt="pypi"
         />
     </a>
     <a href="https://pypi.org/project/agentscope/">
         <img
-            src="https://img.shields.io/badge/pypi-v0.1.5-blue?logo=pypi"
+            src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpypi.org%2Fpypi%2Fagentscope%2Fjson&query=%24.info.version&prefix=v&logo=pypi&label=version"
             alt="pypi"
         />
     </a>
@@ -50,40 +50,24 @@
 
 ## ✨ Why AgentScope?
 
-* **Transparent**: All are visible and controllable for developers, from [agent building](https://doc.agentscope.io/build_tutorial/agent.html) to [workflow orchestration](https://doc.agentscope.io/build_tutorial/conversation.html), from [prompt construction](https://doc.agentscope.io/build_tutorial/prompt.html) to [prompt optimization](https://doc.agentscope.io/build_tutorial/prompt_optimization.html),
- from [API calling](https://doc.agentscope.io/build_tutorial/model.html) to [response parsing](https://doc.agentscope.io/build_tutorial/structured_output.html).
+Easy for beginners, powerful for experts.
 
-* **Explicit Programming**: What you see is what you get, no implicit magic, no deep encapsulation. The workflow is explicitly constructed through [message passing](https://doc.agentscope.io/build_tutorial/message.html), providing developers with full control and visibility over the execution flow.
-
-* **Modular**: All components are independent, use them or not, it's your choice.
-
-* **Model-agnostic**: Develop once to [adapt to all models](https://doc.agentscope.io/build_tutorial/prompt.html).
-
-* **Multi-agent oriented Programming**: Pythonic programming for [building multi-agent applications](https://doc.agentscope.io/build_tutorial/conversation.html#more-than-two-agents). Simple for beginners, powerful for experts.
-
-* **Distribution**: Centralized programming for distributed multi-agent applications with [automatic parallelization](https://doc.agentscope.io/build_tutorial/distribution.html).
-
-* **Graphical Programming**: Provide [visual tracing](https://doc.agentscope.io/build_tutorial/visual.html) for multi-agent applications, as well as [low-code development](https://doc.agentscope.io/build_tutorial/low_code.html).
-
-
+- **Transparent to Developers**: Transparent is our **FIRST principle**. Prompt engineering, API invocation, agent building, workflow orchestration, all are visible and controllable for developers. No deep encapsulation or implicit magic.
+- **Model Agnostic**: Programming once, run with all models. More than **17+** LLM API providers are supported.
+- **LEGO-style Agent Building**: All components are **modular** and **independent**. Use them or not, your choice.
+- **Multi-Agent Oriented**: Designed for **multi-agent**, **explicit** message passing and workflow orchestration, NO deep encapsulation.
+- **Native Distribution/Parallelization**: Centralized programming for distributed application, and **automatic parallelization**.
+- **Developer-friendly**: Low-code development, visual tracing & monitoring. From developing to deployment, all in one place.
 
 ## 📢 News
-- **[2025-04-27]** A new AgentScope Studio is online now. Refer [here](https://doc.agentscope.io/build_tutorial/visual.html) for more details.
-
+- **[2025-04-27]** A new 💻 AgentScope Studio is online now. Refer [here](https://doc.agentscope.io/build_tutorial/visual.html) for more details.
 - **[2025-03-21]** AgentScope supports hooks functions now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/hook.html) for more details.
-
-- **[2025-03-19]** AgentScope supports tools API now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/tool.html).
-
+- **[2025-03-19]** AgentScope supports 🔧 tools API now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/tool.html).
 - **[2025-03-20]** Agentscope now supports [MCP Server](https://github.com/modelcontextprotocol/servers)! You can learn how to use it by following this [tutorial](https://doc.agentscope.io/build_tutorial/MCP.html).
-
-- **[2025-03-05]** Our [multi-source RAG Application](applications/multisource_rag_app/README.md) (the chatbot used in our Q&A DingTalk group) is open-source now!
-
-- **[2025-02-24]** [Chinese version tutorial](https://doc.agentscope.io/zh_CN) is online now!
-
-- **[2025-02-13]** We have released the [technical report](https://doc.agentscope.io/tutorial/swe.html) of our solution in [SWE-Bench(Verified)](https://www.swebench.com/)!
-
-- **[2025-02-07]** 🎉 AgentScope has achieved a **63.4% resolve rate** in [SWE-Bench(Verified)](https://www.swebench.com/). More details about our solution are coming soon!
-
+- **[2025-03-05]** Our [multi-source RAG Application](applications/multisource_rag_app/README.md) (the chatbot 🎓 used in our Q&A DingTalk group) is open-source now!
+- **[2025-02-24]** [🇨🇳 Chinese version tutorial](https://doc.agentscope.io/zh_CN) is online now!
+- **[2025-02-13]** We have released the [📁 technical report](https://doc.agentscope.io/tutorial/swe.html) of our solution in [SWE-Bench(Verified)](https://www.swebench.com/)!
+- **[2025-02-07]** 🎉🎉 AgentScope has achieved a **63.4% resolve rate** in [SWE-Bench(Verified)](https://www.swebench.com/).
 - **[2025-01-04]** AgentScope supports Anthropic API now.
 
 👉👉 [**Older News**](https://github.com/modelscope/agentscope/blob/main/docs/news_en.md)
@@ -94,11 +78,11 @@
 
 ## 🚀 Quickstart
 
-### Installation
+### 💻 Installation
 
 > AgentScope requires **Python 3.9** or higher.
 
-#### From source
+#### 🛠️ From source
 
 ```bash
 # Pull the source code from GitHub
@@ -109,15 +93,19 @@ cd agentscope
 pip install -e .
 ```
 
-#### From PyPi
+#### 📦 From PyPi
 
 ```bash
 pip install agentscope
 ```
 
-## 👋 Hello AgentScope
+## 📝 Example
 
-Creating a basic multi-agent conversation with AgentScope:
+### 👋 Hello AgentScope
+<img src="https://img.shields.io/badge/✨ Feature-Explicit-green" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Model--Agnostic-orange" alt="feature"/>
+
+Creating a basic conversation **explicitly** between **a user** and **an assistant** with AgentScope:
 
 ```python
 from agentscope.agents import DialogAgent, UserAgent
@@ -136,8 +124,9 @@ agentscope.init(
 
 # Create a dialog agent and a user agent
 dialog_agent = DialogAgent(
-   name="assistant",
-   model_config_name="my_config"
+    name="Friday",
+    model_config_name="my_config",
+    sys_prompt="You're a helpful assistant named Friday"
 )
 user_agent = UserAgent(name="user")
 
@@ -150,13 +139,62 @@ while True:
         break
 ```
 
-## 🧑‍🤝‍🧑 Multi-agent Conversation
+### 🧑‍🤝‍🧑 Multi-agent Conversation
+
+AgentScope is born for **multi-agent** applications.
+
+<img src="https://img.shields.io/badge/✨ Feature-Explicit-green" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Multi--Agent-purple" alt="feature"/>
 
 ```python
+from agentscope.agents import DialogAgent
+from agentscope.message import Msg
+from agentscope.pipelines import sequential_pipeline
+from agentscope import msghub
+import agentscope
 
+# Load model configs
+agentscope.init(
+    model_configs=[
+        {
+            "config_name": "my_config",
+            "model_type": "dashscope_chat",
+            "model_name": "qwen-max",
+        }
+    ]
+)
+
+# Create three agents
+friday = DialogAgent(
+    name="Friday",
+    model_config_name="my_config",
+    sys_prompt="You're a helpful assistant named Friday"
+)
+
+saturday = DialogAgent(
+    name="Saturday",
+    model_config_name="my_config",
+    sys_prompt="You're a helpful assistant named Saturday"
+)
+
+sunday = DialogAgent(
+    name="Sunday",
+    model_config_name="my_config",
+    sys_prompt="You're a helpful assistant named Sunday"
+)
+
+# Create a chatroom by msghub, where agents' messages are broadcast to all participants
+with msghub(
+    participants=[friday, saturday, sunday],
+    announcement=Msg("user", "Hi, let's talk about the weekend!", "user"),  # A greeting message
+) as hub:
+    # Speak in sequence
+    sequential_pipeline([friday, saturday, sunday], x=None)
 ```
 
-## 💡 Reasoning Agent with Tools
+### 💡 Reasoning Agent with Tools
+
+<img src="https://img.shields.io/badge/✨ Feature-Transparent-cyan" alt="feature"/>
 
 Creating a reasoning agent with built-in tools and **MCP servers**!
 
@@ -206,7 +244,9 @@ while True:
         break
 ```
 
-## 🔠 Structured Output
+### 🔠 Structured Output
+
+<img src="https://img.shields.io/badge/✨ Feature-Easy--to--Use-green" alt="feature"/>
 
 Specifying structured output easily!
 
@@ -257,7 +297,66 @@ res_msg = agent(
 print(res_msg.metadata)
 ```
 
-## ⚡️ Distribution and Parallelization
+### ✏️ Workflow Orchestration
+
+[Routing](https://www.anthropic.com/engineering/building-effective-agents), [parallelization](https://www.anthropic.com/engineering/building-effective-agents), [orchestrator-workers](https://www.anthropic.com/engineering/building-effective-agents), or [evaluator-optimizer](https://www.anthropic.com/engineering/building-effective-agents).
+Build your own workflow with AgentScope easily!
+
+```python
+from agentscope.agents import ReActAgentV2
+from agentscope.service import ServiceToolkit
+from agentscope.message import Msg
+from pydantic import BaseModel, Field
+from typing import Literal, Union
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "model_config": "my_config",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+    }
+)
+
+# Workflow: Routing
+routing_agent = ReActAgentV2(
+    name="Routing",
+    model_config_name="my_config",
+    sys_prompt="You're a routing agent. Your target is to route the user query to the right follow-up task",
+    service_toolkit=ServiceToolkit()
+)
+
+# Use structured output to specify the routing task
+class RoutingChoice(BaseModel):
+    your_choice: Literal[
+        'Content Generation',
+        'Programming',
+        'Information Retrieval',
+        None
+    ] = Field(description="Choice the right follow-up task, and choice `None` if the task is too simple or no suitable task")
+    task_description: Union[str, None] = Field(description="The task description", default=None)
+
+res_msg = routing_agent(
+    Msg("user", "Help me to write a poem", "user"),
+    structured_model=RoutingChoice
+)
+
+# Execute the follow-up task
+if res_msg.metadata["your_choice"] == "Content Generation":
+    ...
+elif res_msg.metadata["your_choice"] == "Programming":
+    ...
+elif res_msg.metadata["your_choice"] == "Information Retrieval":
+    ...
+else:
+    ...
+```
+
+### ⚡️ Distribution and Parallelization
+
+<img src="https://img.shields.io/badge/✨ Feature-Easy--to--Use-green" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Distribution-darkblue" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Efficiency-brown" alt="feature"/>
 
 Using a magic function `to_dist` to run the agent in distributed mode!
 
@@ -293,7 +392,10 @@ agent1(Msg("user", "", "user"))
 agent2(Msg("user", "", "user"))
 ```
 
-## 👀 Visualization
+### 👀 Visualization
+
+<img src="https://img.shields.io/badge/✨ Feature-Visualization-8A2BE2" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Customization-6495ED" alt="feature"/>
 
 AgentScope supports **Gradio** and **AgentScope Studio** for visualization. Third-party visualization tools are also supported.
 
