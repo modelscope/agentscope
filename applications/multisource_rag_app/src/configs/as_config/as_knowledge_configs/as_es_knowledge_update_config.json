@@ -21,7 +21,7 @@
             "module": "llama_index.core",
             "class": "SimpleDirectoryReader",
             "init_args": {
-              "input_dir": "~/agentscope_clean/docs/text/build_tutorial",
+              "input_dir": "~/agentscope_clean/text_material/text/build_tutorial",
               "required_exts": [
                 ".txt"
               ]
@@ -94,7 +94,7 @@
             "module": "llama_index.core",
             "class": "SimpleDirectoryReader",
             "init_args": {
-              "input_dir": "~/agentscope_clean/docs/text/build_api/",
+              "input_dir": "~/agentscope_clean/text_material/text/build_api",
               "required_exts": [
                 ".txt"
               ]

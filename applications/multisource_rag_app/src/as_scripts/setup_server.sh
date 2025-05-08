@@ -4,6 +4,9 @@ export MODEL_CONFIG_PATH=./configs/model_config.json
 export AGENT_CONFIG_PATH=./configs/as_config/as_agent_configs/agent_config_dict.json
 export KNOWLEDGE_CONFIG_PATH=./configs/as_config/as_knowledge_configs/knowledge_config.json
 
+export PATH_TO_AGENTSCOPE_REPO=~/agentscope_clean
+export TEXT_DIR=~/agentscope_clean/text_material
+
 export RAG_AGENT_NAMES='tutorial_agent,api_agent,example_agent'
 export RAG_RETURN_RAW=True
 # export DASHSCOPE_API_KEY=xxx
