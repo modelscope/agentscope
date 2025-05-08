@@ -1,6 +1,16 @@
 
 # News
 
+- **[2024-12-12]** We have updated the [roadmap of AgentScope](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md).
+
+- **[2024-09-06]** AgentScope version 0.1.0 is released now.
+
+- **[2024-09-03]** AgentScope supports **Web Browser Control** now! Refer to our [example](https://github.com/modelscope/agentscope/tree/main/examples/conversation_with_web_browser_agent) for more details.
+
+<h5 align="left">
+<video src="https://github.com/user-attachments/assets/6d03caab-6193-4ac6-8b1c-36f152ec02ec" width="45%" alt="web browser control" controls></video>
+</h5>
+
 - **[2024-07-18]** AgentScope supports streaming mode now! Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/streaming.html) and example [conversation in stream mode](https://github.com/modelscope/agentscope/tree/main/examples/conversation_in_stream_mode) for more details.
 
 <h5 align="left">

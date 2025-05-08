@@ -115,7 +115,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
             self.max_length = get_openai_max_length(self.model_name)
         except Exception as e:
             logger.warning(
-                f"fail to get max_length for {self.model_name}: " f"{e}",
+                f"Fail to get max_length for {self.model_name}: " f"{e}",
             )
             self.max_length = None
 
