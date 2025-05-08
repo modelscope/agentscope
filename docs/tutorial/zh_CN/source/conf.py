@@ -76,4 +76,24 @@ def skip_member(app, what, name, obj, skip, options):
 
 
 def setup(app):
+    ######
+    # The following block is to avoid pure text build error
+    from sphinx.writers.text import TextTranslator
+    from docutils.nodes import Node
+
+    # 1) Create a no-op "visit" method
+    def visit_imgsgnode(self, node: Node):
+        # Here you can decide what text you want to generate, if any
+        # For now, do nothing (no output)
+        pass
+
+    # 2) Create a matching "depart" method
+    def depart_imgsgnode(self, node: Node):
+        pass
+
+    # 3) Assign these to the TextTranslator so that Sphinx doesn't error
+    TextTranslator.visit_imgsgnode = visit_imgsgnode
+    TextTranslator.depart_imgsgnode = depart_imgsgnode
+    ######
+
     app.connect("autodoc-skip-member", skip_member)
