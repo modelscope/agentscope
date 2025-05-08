@@ -73,8 +73,27 @@ Easy for beginners, powerful for experts.
 
 👉👉 [**Older News**](https://github.com/modelscope/agentscope/blob/main/docs/news_en.md)
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## 📑 Table of Contents
+
+- [🚀 Quickstart](#-quickstart)
+  - [💻 Installation](#-installation)
+    - [🛠️ From source](#-from-source)
+    - [📦 From PyPi](#-from-pypi)
+- [📝 Example](#-example)
+  - [👋 Hello AgentScope](#-hello-agentscope)
+  - [🧑‍🤝‍🧑 Multi-agent Conversation](#-multi-agent-conversation)
+  - [💡 Reasoning with Tools](#-reasoning-with-tools)
+  - [🔠 Structured Output](#-structured-output)
+  - [✏️ Workflow Orchestration](#-workflow-orchestration)
+  - [⚡️ Distribution and Parallelization](#%EF%B8%8F-distribution-and-parallelization)
+  - [👀 Visualization](#-visualization)
+- [⚖️ License](#-license)
+- [📚 Publications](#-publications)
+- [Contributors ✨](#contributors-)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 ## 🚀 Quickstart
