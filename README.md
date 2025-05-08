@@ -3,7 +3,7 @@
 <p align="center">
     <img align="center" src="https://img.alicdn.com/imgextra/i3/O1CN01ywJShe1PU90G8ZYtM_!!6000000001843-55-tps-743-743.svg" width="110" height="110" style="margin: 30px">
 </p>
-<h2 align="center">AgentScope: Agent-oriented programming for building LLM applications</h2>
+<h2 align="center">AgentScope: Agent-Oriented Programming for Building LLM Applications</h2>
 
 <p align="center">
     <a href="https://arxiv.org/abs/2402.14034">
@@ -57,6 +57,7 @@ Easy for beginners, powerful for experts.
 - **LEGO-style Agent Building**: All components are **modular** and **independent**. Use them or not, your choice.
 - **Multi-Agent Oriented**: Designed for **multi-agent**, **explicit** message passing and workflow orchestration, NO deep encapsulation.
 - **Native Distribution/Parallelization**: Centralized programming for distributed application, and **automatic parallelization**.
+- **Highly Customizable**: Tools, prompt, agent, workflow, third-party libs & visualization, customization is encouraged everywhere.
 - **Developer-friendly**: Low-code development, visual tracing & monitoring. From developing to deployment, all in one place.
 
 ## 📢 News
@@ -64,7 +65,7 @@ Easy for beginners, powerful for experts.
 - **[2025-03-21]** AgentScope supports hooks functions now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/hook.html) for more details.
 - **[2025-03-19]** AgentScope supports 🔧 tools API now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/tool.html).
 - **[2025-03-20]** Agentscope now supports [MCP Server](https://github.com/modelcontextprotocol/servers)! You can learn how to use it by following this [tutorial](https://doc.agentscope.io/build_tutorial/MCP.html).
-- **[2025-03-05]** Our [multi-source RAG Application](applications/multisource_rag_app/README.md) (the chatbot 🎓 used in our Q&A DingTalk group) is open-source now!
+- **[2025-03-05]** Our [🎓 AgentScope Copilot](applications/multisource_rag_app/README.md), a multi-source RAG application is open-source now!
 - **[2025-02-24]** [🇨🇳 Chinese version tutorial](https://doc.agentscope.io/zh_CN) is online now!
 - **[2025-02-13]** We have released the [📁 technical report](https://doc.agentscope.io/tutorial/swe.html) of our solution in [SWE-Bench(Verified)](https://www.swebench.com/)!
 - **[2025-02-07]** 🎉🎉 AgentScope has achieved a **63.4% resolve rate** in [SWE-Bench(Verified)](https://www.swebench.com/).
@@ -102,8 +103,9 @@ pip install agentscope
 ## 📝 Example
 
 ### 👋 Hello AgentScope
-<img src="https://img.shields.io/badge/✨ Feature-Explicit-green" alt="feature"/>
-<img src="https://img.shields.io/badge/✨ Feature-Model--Agnostic-orange" alt="feature"/>
+
+![](https://img.shields.io/badge/✨_Feature-Transparent-green)
+![](https://img.shields.io/badge/✨_Feature-Model--Agnostic-b)
 
 Creating a basic conversation **explicitly** between **a user** and **an assistant** with AgentScope:
 
@@ -143,7 +145,8 @@ while True:
 
 AgentScope is born for **multi-agent** applications.
 
-<img src="https://img.shields.io/badge/✨ Feature-Explicit-green" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Multi--Agent-purple" alt="feature"/>
+![](https://img.shields.io/badge/✨_Feature-Transparent-green)
+![](https://img.shields.io/badge/✨_Feature-Multi--Agent-purple)
 
 ```python
 from agentscope.agents import DialogAgent
@@ -193,7 +196,7 @@ with msghub(
 
 ### 💡 Reasoning Agent with Tools
 
-<img src="https://img.shields.io/badge/✨ Feature-Transparent-cyan" alt="feature"/>
+![](https://img.shields.io/badge/✨_Feature-Transparent-green)
 
 Creating a reasoning agent with built-in tools and **MCP servers**!
 
@@ -245,7 +248,7 @@ while True:
 
 ### 🔠 Structured Output
 
-<img src="https://img.shields.io/badge/✨ Feature-Easy--to--Use-green" alt="feature"/>
+![](https://img.shields.io/badge/✨_Feature-Easy--to--use-yellow)
 
 Specifying structured output easily!
 
@@ -297,6 +300,8 @@ print(res_msg.metadata)
 ```
 
 ### ✏️ Workflow Orchestration
+
+![](https://img.shields.io/badge/✨_Feature-Transparent-green)
 
 [Routing](https://www.anthropic.com/engineering/building-effective-agents), [parallelization](https://www.anthropic.com/engineering/building-effective-agents), [orchestrator-workers](https://www.anthropic.com/engineering/building-effective-agents), or [evaluator-optimizer](https://www.anthropic.com/engineering/building-effective-agents).
 Build your own workflow with AgentScope easily!
@@ -353,7 +358,9 @@ else:
 
 ### ⚡️ Distribution and Parallelization
 
-<img src="https://img.shields.io/badge/✨ Feature-Easy--to--Use-green" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Distribution-darkblue" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Efficiency-brown" alt="feature"/>
+![](https://img.shields.io/badge/✨_Feature-Transparent-green)
+![](https://img.shields.io/badge/✨_Feature-Distribution-darkblue)
+![](https://img.shields.io/badge/✨_Feature-Efficiency-green)
 
 Using a magic function `to_dist` to run the agent in distributed mode!
 
@@ -391,7 +398,8 @@ agent2(Msg("user", "", "user"))
 
 ### 👀 Visualization
 
-<img src="https://img.shields.io/badge/✨ Feature-Visualization-8A2BE2" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Customization-6495ED" alt="feature"/>
+![](https://img.shields.io/badge/✨_Feature-Visualization-8A2BE2)
+![](https://img.shields.io/badge/✨_Feature-Customization-6495ED)
 
 AgentScope supports **Gradio** and **AgentScope Studio** for visualization. Third-party visualization tools are also supported.
 
