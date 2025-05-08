@@ -143,8 +143,7 @@ while True:
 
 AgentScope is born for **multi-agent** applications.
 
-<img src="https://img.shields.io/badge/✨ Feature-Explicit-green" alt="feature"/>
-<img src="https://img.shields.io/badge/✨ Feature-Multi--Agent-purple" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Explicit-green" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Multi--Agent-purple" alt="feature"/>
 
 ```python
 from agentscope.agents import DialogAgent
@@ -354,9 +353,7 @@ else:
 
 ### ⚡️ Distribution and Parallelization
 
-<img src="https://img.shields.io/badge/✨ Feature-Easy--to--Use-green" alt="feature"/>
-<img src="https://img.shields.io/badge/✨ Feature-Distribution-darkblue" alt="feature"/>
-<img src="https://img.shields.io/badge/✨ Feature-Efficiency-brown" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Easy--to--Use-green" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Distribution-darkblue" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Efficiency-brown" alt="feature"/>
 
 Using a magic function `to_dist` to run the agent in distributed mode!
 
@@ -394,8 +391,7 @@ agent2(Msg("user", "", "user"))
 
 ### 👀 Visualization
 
-<img src="https://img.shields.io/badge/✨ Feature-Visualization-8A2BE2" alt="feature"/>
-<img src="https://img.shields.io/badge/✨ Feature-Customization-6495ED" alt="feature"/>
+<img src="https://img.shields.io/badge/✨ Feature-Visualization-8A2BE2" alt="feature"/><img src="https://img.shields.io/badge/✨ Feature-Customization-6495ED" alt="feature"/>
 
 AgentScope supports **Gradio** and **AgentScope Studio** for visualization. Third-party visualization tools are also supported.
 
