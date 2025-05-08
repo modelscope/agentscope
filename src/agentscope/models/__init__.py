@@ -15,6 +15,7 @@ from .openai_model import (
 )
 from .dashscope_model import (
     DashScopeChatWrapper,
+    DashScopeApplicationWrapper,
     DashScopeImageSynthesisWrapper,
     DashScopeTextEmbeddingWrapper,
     DashScopeMultiModalWrapper,
@@ -48,6 +49,7 @@ _BUILD_IN_MODEL_WRAPPERS = [
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
     "DashScopeChatWrapper",
+    "DashScopeApplicationWrapper",
     "DashScopeImageSynthesisWrapper",
     "DashScopeTextEmbeddingWrapper",
     "DashScopeMultiModalWrapper",
@@ -74,6 +76,7 @@ __all__ = [
     "OpenAIDALLEWrapper",
     "OpenAIEmbeddingWrapper",
     "DashScopeChatWrapper",
+    "DashScopeApplicationWrapper",
     "DashScopeImageSynthesisWrapper",
     "DashScopeTextEmbeddingWrapper",
     "DashScopeMultiModalWrapper",
