@@ -194,7 +194,7 @@ with msghub(
     sequential_pipeline([friday, saturday, sunday], x=None)
 ```
 
-### 💡 Reasoning Agent with Tools
+### 💡 Reasoning with Tools
 
 ![](https://img.shields.io/badge/✨_Feature-Transparent-green)
 
@@ -362,7 +362,7 @@ else:
 ![](https://img.shields.io/badge/✨_Feature-Distribution-darkblue)
 ![](https://img.shields.io/badge/✨_Feature-Efficiency-green)
 
-Using a magic function `to_dist` to run the agent in distributed mode!
+Using `to_dist` function to run the agent in distributed mode!
 
 ```python
 from agentscope.agents import DialogAgent
@@ -392,8 +392,8 @@ agent2 = DialogAgent(
 ).to_dist()
 
 # The two agent will run in parallel
-agent1(Msg("user", "", "user"))
-agent2(Msg("user", "", "user"))
+agent1(Msg("user", "Execute task1 ...", "user"))
+agent2(Msg("user", "Execute task2 ...", "user"))
 ```
 
 ### 👀 Visualization
@@ -401,22 +401,27 @@ agent2(Msg("user", "", "user"))
 ![](https://img.shields.io/badge/✨_Feature-Visualization-8A2BE2)
 ![](https://img.shields.io/badge/✨_Feature-Customization-6495ED)
 
-AgentScope supports **Gradio** and **AgentScope Studio** for visualization. Third-party visualization tools are also supported.
+AgentScope provides a local visualization tool, **AgentScope Studio**, and support **Gradio** included third-party visualization tools.
 
-<p align="center">
-    <img
+<div align="center">
+       <img
         src="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif"
         alt="AgentScope Studio"
-        width="45%"
+        width="100%"
     />
-    <img
-        src="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif"
+   <div align="center">AgentScope Studio, a local visualization tool</div>
+</div>
+<br/>
+<div align="center">
+   <img
+        src="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg"
         alt="AgentScope Studio"
-        width="45%"
+        width="100%"
     />
-</p>
+   <div align="center">Gradio based visualization</div>
+</div>
 
-Connect to **Third-party visualization** is also supported!
+Connect to third-party visualization by hooks:
 
 ```python
 from agentscope.agents import AgentBase
@@ -445,11 +450,11 @@ AgentBase.register_class_hook(
 ```
 
 
-## License
+## ⚖️ License
 
 AgentScope is released under Apache License 2.0.
 
-## Publications
+## 📚 Publications
 
 If you find our work helpful for your research or application, please cite our papers.
 
