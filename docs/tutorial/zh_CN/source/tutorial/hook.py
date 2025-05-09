@@ -6,15 +6,13 @@
 
 钩子函数（Hooks）允许开发人员在特定执行点自定义智能体行为。它们提供了一种灵活的方式来修改或扩展智能体的功能，而无需更改其核心实现。
 
-核心函数
--------------
 AgentScope 围绕三个核心智能体函数实现了钩子函数：
 
 - `reply`：根据智能体的当前状态生成响应消息
 - `speak`：在终端显示和记录消息
 - `observe`：记录传入的消息
 
-可用钩子函数
+类别
 -------------
 每个核心函数都有对应的前后执行钩子：
 
@@ -24,33 +22,30 @@ AgentScope 围绕三个核心智能体函数实现了钩子函数：
 
 例如，您可以使用 `pre_speak_hook` 将消息重定向到不同的输出，如 Web 界面或外部应用程序。
 
-当使用钩子函数时，请记住以下重要规则：
+.. important:: 当使用钩子函数时，请记住以下重要规则：
 
-1. **钩子函数签名**
- - 第一个参数必须是 `AgentBase` 对象，即 `self`
- - 后续参数是原始函数参数的副本
+ 1. **钩子函数签名**
+  - 第一个参数必须是 `AgentBase` 对象，即 `self`
+  - 后续参数是原始函数参数的副本
+ 2. **执行顺序**
+  - 钩子按注册顺序执行
+  - 多个钩子函数可以链接在一起
+ 3. **返回值处理**
+  - 对于前置钩子：非 None 返回值会传递给下一个钩子或目标函数
+   - 当钩子返回 None 时，下一个钩子将使用前面钩子的最近非 None 返回值
+   - 如果所有前面的钩子返回 None，则下一个钩子将接收原始参数的副本
+   - 最终的非 None 返回值（或者如果所有钩子返回 None，则原始参数）将传递给目标函数
+  - 对于后置钩子： 只有 `post-reply` 钩子可以拥有返回值，工作方式与前置钩子相同
+ 4. **重要提示**：避免在钩子函数中调用目标函数（reply/speak/observe），以避免循环调用
 
-2. **执行顺序**
- - 钩子按注册顺序执行
- - 多个钩子函数可以链接在一起
-
-3. **返回值处理**
- - 对于前置钩子：非 None 返回值会传递给下一个钩子或目标函数
-  - 当钩子返回 None 时，下一个钩子将使用前面钩子的最近非 None 返回值
-  - 如果所有前面的钩子返回 None，则下一个钩子将接收原始参数的副本
-  - 最终的非 None 返回值（或者如果所有钩子返回 None，则原始参数）将传递给目标函数
- - 对于后置钩子： 只有 `post-reply` 钩子拥有返回值，工作方式与前置钩子相同
-
-4. **重要提示**：永远不要在钩子函数中调用目标函数（reply/speak/observe）以避免无限循环
-
-钩子函数模版
+函数签名
 -----------------------
 
 我们在下面为每个钩子函数提供了模板，以显示其参数签名。开发者可以将这些模板复制粘贴到您的代码中，
 并根据需要进行自定义。
 """
 
-from typing import Union, Optional
+from typing import Union, Tuple, Dict, Any
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -58,23 +53,29 @@ from agentscope.message import Msg
 
 def pre_reply_hook_template(
     self: AgentBase,
-    x: Optional[Union[Msg, list[Msg]]] = None,
-) -> Union[None, Msg, list[Msg]]:
-    """reply 函数前置钩子函数模版"""
+    args: Tuple[Any, ...],  # 位置参数 (positional arguments)
+    kwargs: Dict[str, Any],  # 关键词参数 (keyword arguments)
+) -> Union[None, Tuple[Tuple[Any, ...], Dict[str, Any]]]:  # 修改后的位置和关键词参数
+    """Pre-reply hook template."""
     pass
 
 
-def post_reply_hook_template(self: AgentBase, x: Msg) -> Msg:
-    """reply 函数后置钩子函数模版"""
+def post_reply_hook_template(
+    self: AgentBase,
+    args: Tuple[Any, ...],  # 位置参数 (positional arguments)
+    kwargs: Dict[str, Any],  # 关键词参数 (keyword arguments)
+    output: Msg,  # 输出消息
+) -> Union[None, Msg]:  # 修改后的输出消息
+    """Post-reply hook template."""
     pass
 
 
 def pre_speak_hook_template(
     self: AgentBase,
-    x: Msg,
-    stream: bool,
-    last: bool,
-) -> Union[Msg, None]:
+    x: Msg,  # 需要显示的消息
+    stream: bool,  # 是否处于流式输出状态
+    last: bool,  # 当前消息是否是流中的最后一个 Chunk
+) -> Union[Msg, None]:  # 修改后的消息
     """speak 函数前置钩子函数模版"""
     pass
 
@@ -87,7 +88,7 @@ def post_speak_hook_template(self: AgentBase) -> None:
 def pre_observe_hook_template(
     self: AgentBase,
     x: Union[Msg, list[Msg]],
-) -> Union[Msg, list[Msg]]:
+) -> Union[None, Union[Msg, list[Msg]]]:  # 修改后的输入消息
     """observe 函数前置钩子函数模版"""
     pass
 
@@ -98,7 +99,7 @@ def post_observe_hook_template(self: AgentBase) -> None:
 
 
 # %%
-# 使用样例
+# 样例
 # -------------------
 # AgentScope 允许通过调用相应的方法注册、移除和清除钩子函数。
 #
@@ -125,7 +126,6 @@ class TestAgent(AgentBase):
         super().__init__(name="TestAgent")
 
     def reply(self, x: Optional[Union[Msg, list[Msg]]] = None) -> Msg:
-        self.speak(x)
         return x
 
 
@@ -137,37 +137,40 @@ class TestAgent(AgentBase):
 
 def pre_reply_hook_1(
     self,
-    x=None,
-) -> Union[None, Msg, list[Msg]]:
+    args: Tuple[Any, ...],
+    kwargs: Dict[str, Any],
+) -> Union[None, Tuple[Tuple[Any, ...], Dict[str, Any]]]:
     """第一个前置回复钩子，修改消息内容，但是不进行返回。"""
-    if isinstance(x, Msg):
-        x.content = "[Pre-hook-1] " + x.content
-    elif isinstance(x, list):
-        for msg in x:
+    if isinstance(args[0], Msg):
+        args[0].content = "[Pre-hook-1] " + args[0].content
+    elif isinstance(args[0], list):
+        for msg in args[0]:
             msg.content = "[Pre-hook-1] " + msg.content
+    return None
 
 
 def pre_reply_hook_2(
     self,
-    x=None,
-) -> Union[None, Msg, list[Msg]]:
+    args: Tuple[Any, ...],
+    kwargs: Dict[str, Any],
+) -> Union[None, Tuple[Tuple[Any, ...], Dict[str, Any]]]:
     """第二个前置回复钩子，用于更改消息内容。"""
-    if isinstance(x, Msg):
-        x.content = "[Pre-hook-2] " + x.content
-    elif isinstance(x, list):
-        for msg in x:
+    if isinstance(args[0], Msg):
+        args[0].content = "[Pre-hook-2] " + args[0].content
+    elif isinstance(args[0], list):
+        for msg in args[0]:
             msg.content = "[Pre-hook-2] " + msg.content
-    return x
+    return args, kwargs  # 返回修改后的参数
 
 
 # %%
 # 然后，我们创建一个后置钩子，用于将后缀附加到消息内容：
 
 
-def post_reply_hook(self, x) -> Msg:
+def post_reply_hook(self, args, kwargs, output) -> Msg:
     """后置回复钩子，用于将后缀附加到消息内容。"""
-    x.content += " [Post-hook]"
-    return x
+    output.content += " [Post-hook]"
+    return output
 
 
 # %%
@@ -183,11 +186,11 @@ msg = Msg("user", "[原始消息]", "user")
 
 msg_response = agent(msg)
 
-print("回复消息的content域:\n", msg_response.content)
+print("回复消息的 content 域:\n", msg_response.content)
 
 # %%
 # 可以看到，响应消息有一个 "[Pre-hook-2]" 前缀和一个 "[Post-hook]" 后缀。
-# "[Pre-hook-1]" 前缀缺失，因为第一个前置钩子没有返回修改后的消息。
+# 添加 "[Pre-hook-1]" 前缀失败，因为第一个前置钩子没有返回值
 #
 # Speak 钩子函数
 # """""""""""""""""
@@ -222,19 +225,22 @@ streaming_agent = DialogAgent(
 
 
 # 创建一个 pre-speak 钩子，用于显示消息内容
-def pre_speak_hook(self, x: Msg, stream: bool, last: bool) -> None:
+def pre_speak_hook(self, x: Msg, stream: bool, last: bool) -> Msg:
     """speak 函数前置钩子函数"""
     # 你可以在这里更改或重定向消息
     print(
         "id: ",
         x.id,
-        "content: ",
-        x.content,
         "stream: ",
         stream,
         "last: ",
         last,
+        "content: ",
+        x.content,
     )
+    # 防止打印消息错乱
+    x.content = ""
+    return x
 
 
 def post_speak_hook(self) -> None:
@@ -248,6 +254,9 @@ def post_speak_hook(self) -> None:
 # Register the hooks
 streaming_agent.register_hook("pre_speak", "pre_speak_hook", pre_speak_hook)
 streaming_agent.register_hook("post_speak", "post_speak_hook", post_speak_hook)
+
+# %%
+# 现在我们来测试一下 `speak` 的钩子函数
 
 msg = Msg(
     "user",

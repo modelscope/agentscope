@@ -6,13 +6,11 @@ Hooks
 
 Hooks are extension points in AgentScope that allow developers to customize agent behaviors at specific execution points. They provide a flexible way to modify or extend the agent's functionality without changing its core implementation.
 
-Core Functions
---------------------
 AgentScope implements hooks around three core agent functions:
 
 - `reply`: Generates response messages based on the agent's current state
 - `speak`: Displays and records messages to the terminal
-- `observe`: Records incoming messages
+- `observe`: Records incoming messages from environment or other agents
 
 Available Hooks
 ----------------------
@@ -24,34 +22,29 @@ Each core function has corresponding pre- and post-execution hooks:
 
 For example, you can use `pre_speak_hook` to redirect messages to different outputs like web interfaces or external applications.
 
-When working with hooks, keep these important rules in mind:
+.. important:: When working with hooks, keep these important rules in mind:
 
-1. **Hook Function Signature**
- - First argument must be the `AgentBase` object
- - Subsequent arguments are copies of the original function arguments
+ 1. **Hook Function Signature**
+  - First argument must be the `AgentBase` object (i.e., `self`)
+  - Subsequent arguments are copies of the original function arguments
+ 2. **Execution Order**
+  - Hooks are executed in registration order
+  - Multiple hooks can be chained together
+ 3. **Return Value Handling**
+  - For pre-hooks: Non-None return values are passed to the next hook or target function
+   - When a hook returns None, the next hook will use the most recent non-None return value from previous hooks
+   - If all previous hooks return None, the next hook receives a copy of the original arguments
+   - The final non-None return value (or original arguments if all hooks return None) is passed to the target function
+  - For post-hooks: Only the `post-reply` hook has a return value, which works the same way as pre-hooks.
+ 4. **Important**: Never call the target function (reply/speak/observe) within a hook to avoid infinite loops
 
-2. **Execution Order**
- - Hooks are executed in registration order
- - Multiple hooks can be chained together
-
-3. **Return Value Handling**
- - For pre-hooks: Non-None return values are passed to the next hook or target function
-  - When a hook returns None, the next hook will use the most recent non-None return value from previous hooks
-  - If all previous hooks return None, the next hook receives a copy of the original arguments
-  - The final non-None return value (or original arguments if all hooks return None) is passed to the target function
- - For post-hooks: Only the `post-reply` hook has a return value, which works the same way as pre-hooks.
-
-4. **Important**: Never call the target function (reply/speak/observe) within a hook to avoid infinite loops
-
-Hooks Template
+Hooks Signatures
 -----------------------
 
-We provide templates for each hook function below to show their argument
-signatures. You can copy and paste these templates into your code and
-customize them as needed.
+The signatures of the hook functions are as follows:
 """
 
-from typing import Union, Optional
+from typing import Union, Tuple, Any, Dict
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
@@ -59,23 +52,35 @@ from agentscope.message import Msg
 
 def pre_reply_hook_template(
     self: AgentBase,
-    x: Optional[Union[Msg, list[Msg]]] = None,
-) -> Union[None, Msg, list[Msg]]:
+    args: Tuple[Any, ...],  # The positional arguments
+    kwargs: Dict[str, Any],  # The keyword arguments
+) -> Union[
+    None,
+    Tuple[
+        Tuple[Any, ...],
+        Dict[str, Any],
+    ],  # The modified positional and keyword arguments
+]:
     """Pre-reply hook template."""
     pass
 
 
-def post_reply_hook_template(self: AgentBase, x: Msg) -> Msg:
+def post_reply_hook_template(
+    self: AgentBase,
+    args: Tuple[Any, ...],  # The positional arguments
+    kwargs: Dict[str, Any],  # The keyword arguments
+    output: Msg,  # The output message
+) -> Union[None, Msg]:  # The modified output message
     """Post-reply hook template."""
     pass
 
 
 def pre_speak_hook_template(
     self: AgentBase,
-    x: Msg,
-    stream: bool,
-    last: bool,
-) -> Union[Msg, None]:
+    x: Msg,  # The message to be displayed
+    stream: bool,  # Stream mode or not
+    last: bool,  # If it's the last chunk message in stream mode
+) -> Union[Msg, None]:  # The modified displayed message
     """Pre-speak hook template."""
     pass
 
@@ -88,7 +93,7 @@ def post_speak_hook_template(self: AgentBase) -> None:
 def pre_observe_hook_template(
     self: AgentBase,
     x: Union[Msg, list[Msg]],
-) -> Union[Msg, list[Msg]]:
+) -> Union[None, Union[Msg, list[Msg]]]:  # The modified input message(s)
     """Pre-observe hook template."""
     pass
 
@@ -99,7 +104,7 @@ def post_observe_hook_template(self: AgentBase) -> None:
 
 
 # %%
-# Example Usage
+# Examples
 # -------------------
 # AgentScope allows to register, remove and clear hooks by calling the
 # corresponding methods.
@@ -130,7 +135,6 @@ class TestAgent(AgentBase):
         super().__init__(name="TestAgent")
 
     def reply(self, x: Optional[Union[Msg, list[Msg]]] = None) -> Msg:
-        self.speak(x)
         return x
 
 
@@ -143,37 +147,40 @@ class TestAgent(AgentBase):
 
 def pre_reply_hook_1(
     self,
-    x=None,
-) -> Union[None, Msg, list[Msg]]:
+    args: Tuple[Any, ...],
+    kwargs: Dict[str, Any],
+) -> Union[None, Tuple[Tuple[Any, ...], Dict[str, Any]]]:
     """The first pre-reply hook that changes the message content."""
-    if isinstance(x, Msg):
-        x.content = "[Pre-hook-1] " + x.content
-    elif isinstance(x, list):
-        for msg in x:
+    if isinstance(args[0], Msg):
+        args[0].content = "[Pre-hook-1] " + args[0].content
+    elif isinstance(args[0], list):
+        for msg in args[0]:
             msg.content = "[Pre-hook-1] " + msg.content
+    return None
 
 
 def pre_reply_hook_2(
     self,
-    x=None,
-) -> Union[None, Msg, list[Msg]]:
+    args: Tuple[Any, ...],
+    kwargs: Dict[str, Any],
+) -> Union[None, Tuple[Tuple[Any, ...], Dict[str, Any]]]:
     """The second pre-reply hook that changes the message content."""
-    if isinstance(x, Msg):
-        x.content = "[Pre-hook-2] " + x.content
-    elif isinstance(x, list):
-        for msg in x:
+    if isinstance(args[0], Msg):
+        args[0].content = "[Pre-hook-2] " + args[0].content
+    elif isinstance(args[0], list):
+        for msg in args[0]:
             msg.content = "[Pre-hook-2] " + msg.content
-    return x
+    return args, kwargs  # Return the modified input
 
 
 # %%
 # Then we create a post-hook that appends a suffix to the message content:
 
 
-def post_reply_hook(self, x) -> Msg:
+def post_reply_hook(self, args, kwargs, output) -> Msg:
     """The post-reply hook that appends a suffix to the message content."""
-    x.content += " [Post-hook]"
-    return x
+    output.content += " [Post-hook]"
+    return output
 
 
 # %%
@@ -231,19 +238,22 @@ streaming_agent = DialogAgent(
 
 
 # Create a pre-speak hook that displays the message content
-def pre_speak_hook(self, x: Msg, stream: bool, last: bool) -> None:
+def pre_speak_hook(self, x: Msg, stream: bool, last: bool) -> Msg:
     """The pre-speak hook that display the message content."""
     # You can change or redirect the message here
     print(
         "id: ",
         x.id,
-        "content: ",
-        x.content,
         "stream: ",
         stream,
         "last: ",
         last,
+        "content: ",
+        x.content,
     )
+    # Avoid printing message disorder
+    x.content = ""
+    return x
 
 
 def post_speak_hook(self) -> None:
@@ -257,6 +267,9 @@ def post_speak_hook(self) -> None:
 # Register the hooks
 streaming_agent.register_hook("pre_speak", "pre_speak_hook", pre_speak_hook)
 streaming_agent.register_hook("post_speak", "post_speak_hook", post_speak_hook)
+
+# %%
+# Now let's test the `speak` hooks:
 
 msg = Msg(
     "user",

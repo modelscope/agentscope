@@ -17,7 +17,7 @@ class AsyncDashScopeChatWrapper(DashScopeChatWrapper):
 
     model_type: str = "async_dashscope_chat"
 
-    def __call__(
+    def __call__(  # pylint: disable=W0222
         self,
         messages: list,
         stream: Optional[bool] = False,
