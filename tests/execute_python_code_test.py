@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Python code execution test."""
 import unittest
-import sys
 
 from agentscope.service import execute_python_code
 
@@ -45,19 +44,10 @@ class ExecutePythonCodeTest(unittest.TestCase):
     ) -> None:
         """A helper function to avoid code repetition"""
         response = execute_python_code(
-            use_docker=False,
             **args,
         )
         self.assertIn(expected_output, response.content)
         self.assertIn(expected_error_substr, response.content)
-
-        # Uncomment it when test in local
-        # response = execute_python_code(
-        #     use_docker=True,
-        #     **args,
-        # )
-        # self.assertIn(expected_output, response.content)
-        # self.assertIn(expected_error_substr, response.content)
 
     def test_basic_expression(self) -> None:
         """Execute basic expression test."""
@@ -76,10 +66,12 @@ class ExecutePythonCodeTest(unittest.TestCase):
         self.run_test(self.arg2, "4.0\n", "")
 
     def test_timeout(self) -> None:
-        """Execute timeout test (NOT available in WinOS.)"""
-        if sys.platform == "win32":
-            return
-        self.run_test(self.arg3, "Hello World\n", "timed out\n")
+        """Execute timeout test"""
+        self.run_test(
+            self.arg3,
+            "",
+            "Python code execution timeout after",
+        )
 
     def test_no_input_code(self) -> None:
         """Execute no input code test."""

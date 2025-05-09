@@ -41,6 +41,7 @@ class ManagerTest(TestCase):
                 "run_id": manager.run_id,
                 "pid": manager.pid,
                 "timestamp": manager.timestamp,
+                "studio_url": None,
                 "file": {
                     "save_log": False,
                     "save_code": False,
@@ -59,7 +60,6 @@ class ManagerTest(TestCase):
                     },
                 },
                 "logger": {"level": "DEBUG"},
-                "studio": {"active": False, "studio_url": None},
                 "monitor": {
                     "use_monitor": False,
                     "path_db": None,
@@ -80,6 +80,7 @@ class ManagerTest(TestCase):
                 "run_id": "",
                 "pid": -1,
                 "timestamp": "",
+                "studio_url": None,
                 "file": {
                     "save_log": False,
                     "save_code": False,
@@ -90,7 +91,6 @@ class ManagerTest(TestCase):
                 },
                 "model": {"model_configs": {}},
                 "logger": {"level": "INFO"},
-                "studio": {"active": False, "studio_url": None},
                 "monitor": {"path_db": None, "use_monitor": False},
             },
         )

@@ -19,6 +19,8 @@ URL = "https://github.com/modelscope/agentscope"
 
 # released requires
 minimal_requires = [
+    "json5",
+    "jsonschema",
     "networkx",
     "black",
     "docstring_parser",
@@ -35,10 +37,12 @@ minimal_requires = [
     "flask_sqlalchemy",
     "flake8",
     "psutil",
+    "shortuuid",
     "scipy",
     # Leaving openai and dashscope here as default supports
     "openai>=1.3.0",
     "dashscope>=1.19.0",
+    "nest_asyncio",
 ]
 
 extra_service_requires = [
@@ -53,6 +57,7 @@ extra_service_requires = [
     "nbformat",
     "playwright",
     "markdownify",
+    "mcp; python_version>='3.10'",
 ]
 
 extra_distribute_requires = [
@@ -77,6 +82,7 @@ extra_dev_requires = [
     "sphinxcontrib-mermaid",
     "sphinx-gallery",
     "sphinx-autobuild",
+    "matplotlib",
     # extra
     "transformers",
 ]
@@ -88,11 +94,14 @@ extra_gradio_requires = [
 
 extra_rag_requires = [
     "llama-index==0.10.30",
+    "llama-index-retrievers-bm25==0.2.0",
 ]
 
 # API requires
 extra_gemini_requires = ["google-generativeai>=0.4.0"]
-extra_litellm_requires = ["litellm"]
+# TODO: The latest version has bug in importing, waiting for fix in this issue
+#  https://github.com/BerriAI/litellm/issues/10349
+extra_litellm_requires = ["litellm==1.65"]
 extra_zhipuai_requires = ["zhipuai"]
 extra_ollama_requires = ["ollama>=0.1.7"]
 extra_anthropic_requires = ["anthropic"]
@@ -136,7 +145,6 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
     package_data={
-        "agentscope.studio": ["static/**/*", "templates/**/*"],
         "agentscope.prompt": ["_prompt_examples.json"],
         "agentscope.service.browser": ["markpage.js"],
     },
@@ -170,7 +178,6 @@ setuptools.setup(
     python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "as_studio=agentscope.studio:as_studio",
             "as_gradio=agentscope.web.gradio.studio:run_app",
             "as_workflow=agentscope.web.workstation.workflow:main",
             "as_server=agentscope.server.launcher:as_server",

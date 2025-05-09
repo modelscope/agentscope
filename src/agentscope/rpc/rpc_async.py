@@ -9,12 +9,12 @@ try:
 except ImportError as import_error:
     from agentscope.utils.common import ImportErrorReporter
 
-    pickle = ImportErrorReporter(import_error, "distribtue")
+    pickle = ImportErrorReporter(import_error, "distribute")
 
 from ..message import Msg
 from .rpc_client import RpcClient
 from ..utils.common import _is_web_url
-from .retry_strategy import RetryBase, _DEAFULT_RETRY_STRATEGY
+from .retry_strategy import RetryBase, _DEFAULT_RETRY_STRATEGY
 
 
 class AsyncResult:
@@ -26,7 +26,7 @@ class AsyncResult:
         port: int,
         task_id: int = None,
         stub: Future = None,
-        retry: RetryBase = _DEAFULT_RETRY_STRATEGY,
+        retry: RetryBase = _DEFAULT_RETRY_STRATEGY,
     ) -> None:
         self._host = host
         self._port = port
@@ -83,15 +83,13 @@ class AsyncResult:
     def _check_and_download_files(self) -> None:
         """Check whether the urls are accessible. If not, download them
         from rpc server."""
-        if isinstance(self._data, Msg) and self._data.url:
-            checked_urls = []
-            if isinstance(self._data.url, str):
-                self._data.url = self._download(self._data.url)
-            else:
-                checked_urls = []
-                for url in self._data.url:
-                    checked_urls.append(self._download(url))
-                self._data.url = checked_urls
+        if isinstance(self._data, Msg):
+            if isinstance(self._data.content, list):
+                for i, block in enumerate(self._data.content):
+                    if block["type"] in ["image", "audio", "video", "file"]:
+                        self._data.content[i]["url"] = self._download(
+                            block["url"],
+                        )
 
     def result(self) -> Any:
         """Get the result."""

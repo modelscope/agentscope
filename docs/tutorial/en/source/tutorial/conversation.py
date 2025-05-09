@@ -93,7 +93,7 @@ greeting = Msg(
 
 with msghub(
     participants=[alice, bob, charlie],
-    announcement=greeting,  # The announcement message will be boardcasted to all participants at the beginning.
+    announcement=greeting,  # The announcement message will be broadcasted to all participants at the beginning.
 ) as hub:
     # The first round of the conversation
     alice()

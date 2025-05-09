@@ -8,7 +8,10 @@ import threading
 import time
 from loguru import logger
 
-from agentscope.agents import AgentBase
+from agentscope.agents import (
+    UserAgent,
+    AgentBase,
+)
 from agentscope.message import Msg
 from agentscope.exception import (
     EnvListenerError,
@@ -22,8 +25,6 @@ from agentscope.environment import (
 )
 from agentscope.models import ModelResponse
 from agentscope.manager import ModelManager
-from agentscope.studio._client import _studio_client
-from agentscope.web.gradio.utils import user_input
 
 
 CHATROOM_TEMPLATE = """
@@ -240,7 +241,7 @@ class ChatRoom(BasicEnv):
         """Get the announcement of the chatroom."""
         return deepcopy(self.announcement)
 
-    # Syntaic sugar, not an event function
+    # Syntactic sugar, not an event function
     def listen_to(
         self,
         target_names: List[str],
@@ -351,7 +352,7 @@ class Notifier(EventListener):
                 )
 
 
-class ChatRoomAgent(AgentBase):
+class ChatRoomAgent(UserAgent):
     """
     An agent in a chatroom.
     """
@@ -363,11 +364,12 @@ class ChatRoomAgent(AgentBase):
         model_config_name: str,
         **kwargs: Any,
     ) -> None:
-        super().__init__(
-            name=name,
-            sys_prompt=sys_prompt,
-            model_config_name=model_config_name,
+        self.name = name
+        self.sys_prompt = sys_prompt.format(name=name)
+        self.model = ModelManager.get_instance().get_model_by_config_name(
+            model_config_name,
         )
+
         if self.sys_prompt:
             prompt = format_messages(
                 [
@@ -396,7 +398,7 @@ class ChatRoomAgent(AgentBase):
             self.introduction = ""
         logger.info(f"introduction: {self.introduction}")
         self.room_history_length = 0
-        self.room_slient_count = 0
+        self.room_silent_count = 0
         self.room = None
         self.mentioned_messages = []
         self.mentioned_messages_lock = threading.Lock()
@@ -476,9 +478,9 @@ class ChatRoomAgent(AgentBase):
         room_history_length = self.room.get_history_length(self.name)
         if room_history_length != self.room_history_length:
             self.room_history_length = room_history_length
-            self.room_slient_count = 0
+            self.room_silent_count = 0
         else:
-            self.room_slient_count += 1
+            self.room_silent_count += 1
         room_info = self.room.describe(self.name)
         reply_hint = ""
         mentioned, mentioned_hint = self._generate_mentioned_prompt()
@@ -487,7 +489,7 @@ class ChatRoomAgent(AgentBase):
         else:
             # decide whether to speak
             if self.room_history_length <= 3 or (
-                self.room_slient_count <= 2 and self._want_to_speak(room_info)
+                self.room_silent_count <= 2 and self._want_to_speak(room_info)
             ):
                 reply_hint = (
                     f"Please generate a response based on the"
@@ -538,30 +540,21 @@ class ChatRoomAgentWithAssistant(ChatRoomAgent):
         self.room_history_length = 0
 
     def reply(self, x: Msg = None) -> Msg:
-        if _studio_client.active:
-            logger.info(
-                f"Waiting for input from:\n\n"
-                f"    * {_studio_client.get_run_detail_page_url()}\n",
-            )
-            raw_input = _studio_client.get_user_input(
-                agent_id=self.agent_id,
-                name=self.name,
-                require_url=False,
-                required_keys=None,
-                timeout=self.timeout,
-            )
+        input_data = self._input_method(
+            agent_id=self.agent_id,
+            agent_name=self.name,
+            structured_schema=None,
+        )
 
-            logger.info("Python: receive ", raw_input)
-            if raw_input is None:
-                content = None
-            else:
-                content = raw_input["content"]
+        if (
+            input_data.blocks_input
+            and len(input_data.blocks_input) == 1
+            and input_data.blocks_input[0].get("type") == "text"
+        ):
+            # Turn blocks_input into a string if only one text block exists
+            content = input_data.blocks_input[0].get("text")
         else:
-            time.sleep(0.5)
-            try:
-                content = user_input(timeout=self.timeout)
-            except TimeoutError:
-                content = None
+            content = input_data.blocks_input
 
         if content is not None:  # user input
             response = content

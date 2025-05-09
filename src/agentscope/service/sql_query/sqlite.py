@@ -71,6 +71,6 @@ def query_sqlite(
     except Exception as e:
         return ServiceResponse(
             status=ServiceExecStatus.ERROR,
-            # TDOO: more specific error message
+            # TODO: more specific error message
             content=str(e),
         )

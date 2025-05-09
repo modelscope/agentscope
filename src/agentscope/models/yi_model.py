@@ -4,18 +4,19 @@ import json
 from typing import (
     List,
     Union,
-    Sequence,
     Optional,
     Generator,
 )
 
 import requests
 
+from ._model_usage import ChatUsage
 from ._model_utils import (
     _verify_text_content_in_openai_message_response,
     _verify_text_content_in_openai_delta_response,
 )
 from .model import ModelWrapperBase, ModelResponse
+from ..formatters import CommonFormatter
 from ..message import Msg
 
 
@@ -207,7 +208,8 @@ class YiChatWrapper(ModelWrapperBase):
 
     def format(
         self,
-        *args: Union[Msg, Sequence[Msg]],
+        *args: Union[Msg, list[Msg], None],
+        multi_agent_mode: bool = True,
     ) -> List[dict]:
         """Format the messages into the required format of Yi Chat API.
 
@@ -246,10 +248,14 @@ class YiChatWrapper(ModelWrapperBase):
             ]
 
         Args:
-            args (`Union[Msg, Sequence[Msg]]`):
+            args (`Union[Msg, list[Msg], None]`):
                 The input arguments to be formatted, where each argument
-                should be a `Msg` object, or a list of `Msg` objects.
-                In distribution, placeholder is also allowed.
+                should be a `Msg` object, or a list of `Msg` objects. The
+                `None` input will be ignored.
+            multi_agent_mode (`bool`, defaults to `True`):
+                Formatting the messages in multi-agent mode or not. If false,
+                the messages will be formatted in chat mode, where only a user
+                and an assistant roles are involved.
 
         Returns:
             `List[dict]`:
@@ -263,7 +269,9 @@ class YiChatWrapper(ModelWrapperBase):
                 "please format the messages manually.",
             )
 
-        return ModelWrapperBase.format_for_common_chat_models(*args)
+        if multi_agent_mode:
+            return CommonFormatter.format_multi_agent(*args)
+        return CommonFormatter.format_chat(*args)
 
     def _save_model_invocation_and_update_monitor(
         self,
@@ -278,18 +286,24 @@ class YiChatWrapper(ModelWrapperBase):
             response (`dict`):
                 The response from model API
         """
+        usage = response.get("usage", None)
+
+        if usage:
+            formatted_usage = ChatUsage(
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+            )
+        else:
+            formatted_usage = None
+
         self._save_model_invocation(
             arguments=kwargs,
             response=response,
+            usage=formatted_usage,
         )
 
-        usage = response.get("usage", None)
-        if usage is not None:
-            prompt_tokens = usage.get("prompt_tokens", 0)
-            completion_tokens = usage.get("completion_tokens", 0)
-
+        if formatted_usage:
             self.monitor.update_text_and_embedding_tokens(
                 model_name=self.model_name,
-                prompt_tokens=prompt_tokens,
-                completion_tokens=completion_tokens,
+                **formatted_usage.usage.model_dump(),
             )

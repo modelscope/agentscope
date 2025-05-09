@@ -38,7 +38,7 @@ sphinx_gallery_conf = {
     "example_extensions": [".py"],
 }
 
-templates_path = ["_templates"]
+templates_path = ["../../_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 languages = ["en", "zh_CN"]
@@ -48,10 +48,14 @@ language = "en"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ["_static"]
+html_static_path = ["../../_static"]
 
 html_css_files = [
     "css/gallery.css",
+]
+
+html_js_files = [
+    "language_switch.js",
 ]
 
 source_suffix = [".md", ".rst"]
@@ -65,11 +69,7 @@ python_display_short_literal_types = True
 
 
 def skip_member(app, what, name, obj, skip, options):
-    if name in [
-        "Operator",
-        "ServiceFactory",
-        "",
-    ]:
+    if name in []:
         return True
 
     return skip

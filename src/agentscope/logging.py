@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 """Logging utilities."""
+import json
 import os
 import sys
-from typing import Optional, Literal, Any
+from typing import Optional, Literal
 
 from loguru import logger
 
 
 from .message import Msg
 from .serialize import serialize
-from .studio._client import _studio_client
-from .utils.common import _guess_type_by_extension
-from .web.gradio.utils import (
-    generate_image_from_name,
-    send_msg,
-    get_reset_msg,
-    thread_local_data,
+from .utils.common import (
+    _map_string_to_color_mark,
 )
+
 
 LOG_LEVEL = Literal[
     "TRACE",
@@ -41,6 +38,50 @@ _DEFAULT_LOG_FORMAT = (
 _PREFIX_DICT = {}
 
 
+def _formatted_str(msg: Msg, colored: bool = False) -> str:
+    """Return the formatted string of the message. If the message has an
+    url, the url will be appended to the content.
+
+    Args:
+        msg (`Msg`):
+            The message object to be formatted.
+        colored (`bool`, defaults to `False`):
+            Whether to color the name of the message
+
+    Returns:
+        `str`: The formatted string of the message.
+    """
+    if colored:
+        m1, m2 = _map_string_to_color_mark(msg.name)
+        name = f"{m1}{msg.name}{m2}"
+    else:
+        name = msg.name
+
+    colored_strs = []
+
+    for block in msg.get_content_blocks():
+        if block["type"] == "text":
+            colored_strs.append(f"{name}: {block.get('text')}")
+        elif block["type"] in ["audio", "image", "video", "file"]:
+            colored_strs.append(f"{name}: {block.get('url')}")
+        elif block["type"] == "tool_result":
+            colored_strs.append(
+                f"{name}: Execute function {block['name']}:\n"
+                f"{block['output']}",
+            )
+
+    # Tool use block
+    tool_calls = msg.get_content_blocks("tool_use")
+    if tool_calls:
+        tool_calls_str = json.dumps(tool_calls, indent=4, ensure_ascii=False)
+        if colored_strs:
+            colored_strs.append(tool_calls_str)
+        else:
+            colored_strs.append(f"{name}: {tool_calls_str}")
+
+    return "\n".join(colored_strs)
+
+
 def log_stream_msg(msg: Msg, last: bool = True) -> None:
     """Print the message in different streams, including terminal, studio, and
     gradio if it is active.
@@ -55,7 +96,7 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
     global _PREFIX_DICT
 
     # Print msg to terminal
-    formatted_str = msg.formatted_str(colored=True)
+    formatted_str = _formatted_str(msg, colored=True)
 
     print_str = formatted_str[_PREFIX_DICT.get(msg.id, 0) :]
 
@@ -69,14 +110,6 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
         _PREFIX_DICT[msg.id] = len(formatted_str)
 
         print(print_str, end="")
-
-    # Push msg to studio if it is active
-    if _studio_client.active:
-        _studio_client.push_message(msg)
-
-    # Print to gradio if it is active
-    if last and hasattr(thread_local_data, "uid"):
-        log_gradio(msg, thread_local_data.uid)
 
     if last:
         # Save msg into chat file
@@ -95,7 +128,7 @@ def _save_msg(msg: Msg) -> None:
         # Not initialize yet
         logger.log(
             LEVEL_SAVE_LOG,
-            msg.formatted_str(colored=False),
+            _formatted_str(msg, colored=False),
         )
 
         logger.log(
@@ -104,69 +137,17 @@ def _save_msg(msg: Msg) -> None:
         )
 
 
-def log_msg(msg: Msg, disable_gradio: bool = False) -> None:
+def log_msg(msg: Msg) -> None:
     """Print the message and save it into files. Note the message should be a
     Msg object."""
 
     if not isinstance(msg, Msg):
         raise TypeError(f"Get type {type(msg)}, expect Msg object.")
 
-    print(msg.formatted_str(colored=True))
-
-    # Push msg to studio if it is active
-    if _studio_client.active:
-        _studio_client.push_message(msg)
-
-    # Print to gradio if it is active
-    if hasattr(thread_local_data, "uid") and not disable_gradio:
-        log_gradio(msg, thread_local_data.uid)
+    print(_formatted_str(msg, colored=True))
 
     # Save msg into chat file
     _save_msg(msg)
-
-
-def log_gradio(msg: Msg, uid: str, **kwargs: Any) -> None:
-    """Send chat message to studio.
-
-    Args:
-        msg (`Msg`):
-            The message to be logged.
-        uid (`str`):
-            The local value 'uid' of the thread.
-    """
-    if uid:
-        get_reset_msg(uid=uid)
-        avatar = kwargs.get("avatar", None) or generate_image_from_name(
-            msg.name,
-        )
-
-        content = msg.content
-        flushing = True
-        if msg.url is not None:
-            flushing = False
-            if isinstance(msg.url, str):
-                urls = [msg.url]
-            else:
-                urls = msg.url
-
-            for url in urls:
-                typ = _guess_type_by_extension(url)
-                if typ == "image":
-                    content += f"\n<img src='{url}'/>"
-                elif typ == "audio":
-                    content += f"\n<audio src='{url}' controls/></audio>"
-                elif typ == "video":
-                    content += f"\n<video src='{url}' controls/></video>"
-                else:
-                    content += f"\n<a href='{url}'>{url}</a>"
-
-        send_msg(
-            content,
-            role=msg.name,
-            uid=uid,
-            flushing=flushing,
-            avatar=avatar,
-        )
 
 
 def _level_format(record: dict) -> str:

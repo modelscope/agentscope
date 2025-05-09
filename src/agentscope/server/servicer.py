@@ -31,7 +31,6 @@ except ImportError as import_error:
 from agentscope.rpc.rpc_object import RpcObject
 from agentscope.rpc.rpc_meta import RpcMeta
 import agentscope.rpc.rpc_agent_pb2 as agent_pb2
-from agentscope.studio._client import _studio_client
 from agentscope.exception import StudioRegisterError
 from agentscope.rpc import AsyncResult
 from agentscope.rpc.rpc_agent_pb2_grpc import RpcAgentServicer
@@ -111,17 +110,6 @@ class AgentServerServicer(RpcAgentServicer):
         self.port = port
         self.server_id = server_id
         self.studio_url = studio_url
-        if studio_url is not None:
-            from agentscope.manager import ASManager
-
-            _register_server_to_studio(
-                studio_url=studio_url,
-                server_id=server_id,
-                host=host,
-                port=port,
-            )
-            run_id = ASManager.get_instance().run_id
-            _studio_client.initialize(run_id, studio_url)
 
         self.result_pool = get_pool(
             pool_type=pool_type,

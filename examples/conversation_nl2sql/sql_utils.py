@@ -112,8 +112,8 @@ class SQLPrompt:
         self.template_info = "/* Given the following database schema: */\n{}"
         self.template_question = "/* Answer the following: {} */"
         self.template_agent_prompt = (
-            "You are a helpful agent that preform"
-            "SQL querys base on natural language instructions."
+            "You are a helpful agent that perform"
+            "SQL queries base on natural language instructions."
             "Please describe the database schema provided"
             "in a simple and understandable manner. "
         )

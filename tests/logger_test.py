@@ -65,25 +65,33 @@ class LoggerTest(unittest.TestCase):
             encoding="utf-8",
         ) as file:
             lines = file.readlines()
-
+        print(lines)
         for line, ground_truth in zip(
             lines,
             [
-                '{"__module__": "agentscope.message.msg", "__name__": '
-                '"Msg", "role": "assistant", "url": null, "metadata": null, '
-                '"timestamp": 1, "id": 1, "content": "def", "name": "abc"}\n',
-                '{"__module__": "agentscope.message.msg", "__name__": '
-                '"Msg", "role": "assistant", "url": "https://xxx.png", '
-                '"metadata": null, "timestamp": 2, "id": 2, "content": "def", '
-                '"name": "abc"}\n',
-                '{"__module__": "agentscope.message.msg", "__name__": "Msg", '
-                '"role": "assistant", "url": ["https://yyy.png", '
-                '"https://xxx.png"], "metadata": null, "timestamp": 3, '
-                '"id": 3, "content": "def", "name": "abc"}\n',
-                '{"__module__": "agentscope.message.msg", "__name__": "Msg", '
-                '"role": "system", "url": null, "metadata": null, '
-                '"timestamp": 4, "id": 4, "content": "<red>abc</div", '
-                '"name": "Bob"}\n',
+                '{"__module__": "agentscope.message.msg", '
+                '"__name__": "Msg", "id": 1, "name": "abc", '
+                '"role": "assistant", '
+                '"content": "def", '
+                '"metadata": null, "timestamp": 1}\n',
+                '{"__module__": "agentscope.message.msg", '
+                '"__name__": "Msg", "id": 2, "name": "abc", '
+                '"role": "assistant", '
+                '"content": [{"type": "text", "text": "def"}, '
+                '{"type": "image", "url": "https://xxx.png"}], '
+                '"metadata": null, "timestamp": 2}\n',
+                '{"__module__": "agentscope.message.msg", '
+                '"__name__": "Msg", "id": 3, "name": "abc", '
+                '"role": "assistant", '
+                '"content": [{"type": "text", "text": "def"}, '
+                '{"type": "image", "url": "https://yyy.png"}, '
+                '{"type": "image", "url": "https://xxx.png"}], '
+                '"metadata": null, "timestamp": 3}\n',
+                '{"__module__": "agentscope.message.msg", '
+                '"__name__": "Msg", "id": 4, "name": "Bob", '
+                '"role": "system", '
+                '"content": "<red>abc</div", "metadata": null, '
+                '"timestamp": 4}\n',
             ],
         ):
             self.assertDictEqual(json.loads(line), json.loads(ground_truth))

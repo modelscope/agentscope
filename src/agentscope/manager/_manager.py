@@ -1,23 +1,28 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-statements
 """A manager for AgentScope."""
 import os
-from typing import Union, Any
+from typing import Union, Any, Optional
 from copy import deepcopy
 
+import requests
+import shortuuid
 from loguru import logger
 
 from ._monitor import MonitorManager
 from ._file import FileManager
 from ._model import ModelManager
+from ..agents import AgentBase, UserAgent, StudioUserInput
 from ..logging import LOG_LEVEL, setup_logger
 from .._version import __version__
+from ..message import Msg
+from ..models import ModelWrapperBase
 from ..utils.common import (
     _generate_random_code,
     _get_process_creation_time,
     _get_timestamp,
 )
 from ..constants import _RUNTIME_ID_FORMAT, _RUNTIME_TIMESTAMP_FORMAT
-from ..studio._client import _studio_client
 
 
 class ASManager:
@@ -32,6 +37,7 @@ class ASManager:
         "run_id",
         "pid",
         "timestamp",
+        "studio_url",
     ]
 
     def __new__(cls, *args: Any, **kwargs: Any) -> "ASManager":
@@ -63,6 +69,8 @@ class ASManager:
         self.file = FileManager()
         self.model = ModelManager()
         self.monitor = MonitorManager()
+
+        self.studio_url = None
 
         # TODO: unified with logger and studio
         self.logger_level: LOG_LEVEL = "INFO"
@@ -144,15 +152,23 @@ class ASManager:
         # Init studio client, which will push messages to web ui and fetch user
         # inputs from web ui
         if studio_url is not None:
-            _studio_client.initialize(self.run_id, studio_url)
-            # Register in AgentScope Studio
-            _studio_client.register_running_instance(
-                project=self.project,
-                name=self.name,
-                timestamp=self.timestamp,
-                run_dir=self.file.run_dir,
-                pid=self.pid,
+            self.studio_url = studio_url
+            # Register the run
+            response = requests.post(
+                url=f"{studio_url}/trpc/registerRun",
+                json={
+                    "id": self.run_id,
+                    "project": self.project,
+                    "name": self.name,
+                    "timestamp": self.timestamp,
+                    "run_dir": run_dir,
+                    "pid": self.pid,
+                    "status": "running",
+                },
             )
+            response.raise_for_status()
+
+            self._register_studio_hooks(studio_url)
 
     def state_dict(self) -> dict:
         """Serialize the runtime information."""
@@ -167,7 +183,6 @@ class ASManager:
         serialized_data["logger"] = {
             "level": self.logger_level,
         }
-        serialized_data["studio"] = _studio_client.state_dict()
         serialized_data["monitor"] = self.monitor.state_dict()
 
         return deepcopy(serialized_data)
@@ -183,8 +198,111 @@ class ASManager:
         self.logger_level = data["logger"]["level"]
         setup_logger(self.file.run_dir, self.logger_level)
         self.model.load_dict(data["model"])
-        _studio_client.load_dict(data["studio"])
         self.monitor.load_dict(data["monitor"])
+
+        if data.get("studio_url") is not None:
+            # Register studio related hook
+            self._register_studio_hooks(str(data.get("studio_url")))
+
+    def _register_studio_hooks(self, studio_url: str) -> None:
+        """Register studio related hooks within AgentScope."""
+
+        # register agent hook
+        def studio_pre_speak_hook(
+            _obj: AgentBase,
+            msg: Msg,
+            _stream: bool,
+            _last: bool,
+        ) -> None:
+            """Hook function for pre_speak."""
+            message_data = msg.to_dict()
+            message_data.pop("__module__")
+            message_data.pop("__name__")
+
+            if hasattr(_obj, "_reply_id"):
+                reply_id = getattr(_obj, "_reply_id")
+            else:
+                reply_id = shortuuid.uuid()
+
+            n_retry = 0
+            while True:
+                try:
+                    res = requests.post(
+                        f"{studio_url}/trpc/pushMessage",
+                        json={
+                            "runId": self.run_id,
+                            "replyId": reply_id,
+                            "name": reply_id,
+                            "role": "assistant",
+                            "msg": message_data,
+                        },
+                    )
+                    res.raise_for_status()
+                    break
+                except Exception as e:
+                    if n_retry < 3:
+                        n_retry += 1
+                        continue
+
+                    raise e from None
+
+        # Register the hook function to push messages to studio
+        AgentBase.register_class_hook(
+            "pre_speak",
+            "studio_pre_speak_hook",
+            studio_pre_speak_hook,
+        )
+
+        # Exchange the input method to the studio input method, so that
+        # the user can input data from the web ui
+        UserAgent.override_class_input_method(
+            StudioUserInput(
+                studio_url=studio_url,
+                run_id=self.run_id,
+                max_retries=3,
+            ),
+        )
+
+        # Register the hook function to push model invocation to studio
+        def studio_save_model_invocation_hook(
+            obj: ModelWrapperBase,
+            model_invocation_id: str,
+            timestamp: str,
+            arguments: dict,
+            response: dict,
+            usage: Optional[dict] = None,
+        ) -> None:
+            """The hook that pushes the model invocation to studio."""
+            n_retry = 0
+            while True:
+                try:
+                    res = requests.post(
+                        url=f"{studio_url}/trpc/pushModelInvocation",
+                        json={
+                            "id": model_invocation_id,
+                            "runId": self.run_id,
+                            "timestamp": timestamp,
+                            "modelName": obj.model_name,
+                            "modelType": obj.model_type,
+                            "configName": obj.config_name,
+                            "arguments": arguments,
+                            "response": response,
+                            "usage": usage,
+                        },
+                    )
+                    res.raise_for_status()
+                    break
+                except Exception as e:
+                    if n_retry < 3:
+                        n_retry += 1
+                        continue
+
+                    raise e from None
+
+        ModelWrapperBase.register_save_model_invocation_hook(
+            "studio_save_model_invocation_hook",
+            studio_save_model_invocation_hook,
+        )
 
     def flush(self) -> None:
         """Flush the runtime information."""
@@ -199,6 +317,5 @@ class ASManager:
         self.model.flush()
         self.monitor.flush()
         logger.remove()
-        _studio_client.flush()
 
         self.logger_level = "INFO"

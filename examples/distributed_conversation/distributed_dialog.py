@@ -5,8 +5,7 @@ import argparse
 from loguru import logger
 
 import agentscope
-from agentscope.agents.user_agent import UserAgent
-from agentscope.agents.dialog_agent import DialogAgent
+from agentscope.agents import UserAgent, DialogAgent
 from agentscope.server import RpcAgentServerLauncher
 
 
@@ -71,7 +70,7 @@ def run_main_process(assistant_host: str, assistant_port: int) -> None:
     msg = user_agent()
     while not msg.content.endswith("exit"):
         msg = assistant_agent(msg)
-        logger.chat(msg)
+        logger.chat(msg.result())
         msg = user_agent(msg)
 
 

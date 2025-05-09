@@ -6,8 +6,18 @@ import sys
 import threading
 import time
 from collections import defaultdict
-from typing import Optional, Callable
+from typing import Optional, Callable, Any, Union
 import traceback
+
+from pydantic import BaseModel
+
+from ...agents._user_agent import UserAgent
+from ...agents._agent import AgentBase
+from ...agents._user_input import (
+    UserInputBase,
+    UserInputData,
+)
+from ...message import TextBlock, Msg
 
 try:
     import gradio as gr
@@ -19,7 +29,7 @@ try:
 except ImportError:
     mgr = None
 
-from agentscope.web.gradio.utils import (
+from .utils import (
     send_player_input,
     get_chat_msg,
     SYS_MSG_PREFIX,
@@ -31,8 +41,10 @@ from agentscope.web.gradio.utils import (
     send_reset_msg,
     thread_local_data,
     cycle_dots,
+    get_reset_msg,
+    get_player_input,
 )
-from agentscope.web.gradio.constants import _SPEAK
+from .constants import _SPEAK
 
 MAX_NUM_DISPLAY_MSG = 20
 FAIL_COUNT_DOWN = 30
@@ -174,6 +186,46 @@ def import_function_from_path(
     return function
 
 
+class _GradioUserInput(UserInputBase):
+    """A local gradio user input class, which asks for and receives user input
+    from the gradio web UI.
+
+    .. note:: The current gradio web UI only supports one user agent, doesn't
+     support distribution mode, and structured input.
+    """
+
+    def __init__(self, uid: str, timeout: int = 60) -> None:
+        """The gradio user input initialization.
+
+        Args:
+            uid (`str`):
+                The identity of the user.
+            timeout (`str`):
+                The timeout for the user input in seconds. Defaults to 60.
+        """
+        self.uid = uid
+        self.timeout = timeout
+
+    def __call__(
+        self,
+        agent_id: str,
+        agent_name: str,
+        *args: Any,
+        structured_schema: Optional[BaseModel] = None,
+        **kwargs: Any,
+    ) -> UserInputData:
+        """The input method for Gradio."""
+        get_reset_msg(uid=self.uid)
+        content = get_player_input(
+            timeout=self.timeout,
+            uid=self.uid,
+        )
+        return UserInputData(
+            blocks_input=[TextBlock(type="text", text=content)],
+            structured_input=None,
+        )
+
+
 # pylint: disable=too-many-statements
 def run_app() -> None:
     """Entry point for the web UI application."""
@@ -207,6 +259,71 @@ def run_app() -> None:
             main = lambda: start_workflow(config)
         else:
             raise ValueError(f"Unrecognized file formats: {script_path}")
+
+        # Register user input method and agent hook here
+        UserAgent.override_class_input_method(
+            _GradioUserInput(uid=uid),
+        )
+
+        # Use a hook to forward messages to gradio web interface
+        def gradio_pre_speak_hook(
+            self: AgentBase,
+            msg: Msg,
+            stream: bool,
+            last: bool,
+        ) -> Union[Msg, None]:
+            """Hook to send messages to gradio web interface.
+
+            TODO: support streaming output
+            """
+            if stream and not last:
+                return None
+
+            # User Agent doesn't need the pre_speak_hook, because gradio will
+            # print the input instead
+            if isinstance(self, UserAgent):
+                return None
+
+            get_reset_msg(uid=uid)
+            avatar = generate_image_from_name(
+                msg.name,
+            )
+
+            content = msg.get_text_content() or ""
+            flushing = True
+            if isinstance(msg.content, list):
+                for block in msg.content:
+                    if block.get("type") == "image":
+                        content += f"\n<img src='{block.get('url')}'/>"
+                    elif block.get("type") == "audio":
+                        content += (
+                            f"\n<audio src='{block.get('url')}' controls/>"
+                        )
+                    elif block.get("type") == "video":
+                        content += (
+                            f"\n<video src='{block.get('url')}' controls/>"
+                        )
+                    elif block.get("type") == "file":
+                        content += (
+                            f"\n<a href='{block.get('url')}'>"
+                            f"{block.get('url')}</a>"
+                        )
+
+            send_msg(
+                content,
+                role=msg.name,
+                uid=uid,
+                flushing=flushing,
+                avatar=avatar,
+            )
+
+            return None
+
+        AgentBase.register_class_hook(
+            "pre_speak",
+            "gradio_pre_speak_hook",
+            gradio_pre_speak_hook,
+        )
 
         while True:
             try:
