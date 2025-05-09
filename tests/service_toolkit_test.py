@@ -88,13 +88,11 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "func",
-                "description": "",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "c": {"default": "test"},
                         "d": {
-                            "type": "typing.Literal",
                             "enum": [1, "abc", "d"],
                             "default": 1,
                         },
@@ -146,7 +144,6 @@ we use the embedding model to embed the query.""",
                     "type": "object",
                     "properties": {
                         "query": {
-                            "type": "Any",
                             "description": "A message to be retrieved.",
                         },
                     },

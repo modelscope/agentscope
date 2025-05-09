@@ -779,7 +779,7 @@ class ServiceToolkit:
             },
         }
 
-        if extracted_func_description:
+        if extracted_func_description not in [None, ""]:
             func_schema["function"]["description"] = extracted_func_description
 
         return tool_func, func_schema
