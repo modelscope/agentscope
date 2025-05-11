@@ -224,8 +224,8 @@ The following tool functions are available in the format of
 
 error within &lt;returncode&gt;&lt;/returncode&gt;, &lt;stdout&gt;&lt;/stdout&gt; and
 &lt;stderr&gt;&lt;/stderr&gt; tags.
-        timeout (number): The maximum time (in seconds) allowed for the command to run.
         command (string): The shell command to execute.
+        timeout (number): The maximum time (in seconds) allowed for the command to run.
 2. bing_search: Search question in Bing Search API and return the searching results
         num_results (number): The number of search results to return.
         question (string): The search query string.
@@ -251,14 +251,14 @@ error within &lt;returncode&gt;&lt;/returncode&gt;, &lt;stdout&gt;&lt;/stdout&gt
       &quot;parameters&quot;: {
         &quot;type&quot;: &quot;object&quot;,
         &quot;properties&quot;: {
+          &quot;command&quot;: {
+            &quot;type&quot;: &quot;string&quot;,
+            &quot;description&quot;: &quot;The shell command to execute.&quot;
+          },
           &quot;timeout&quot;: {
             &quot;type&quot;: &quot;number&quot;,
             &quot;description&quot;: &quot;The maximum time (in seconds) allowed for the command to run.&quot;,
             &quot;default&quot;: 300
-          },
-          &quot;command&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;description&quot;: &quot;The shell command to execute.&quot;
           }
         },
         &quot;required&quot;: [
@@ -355,13 +355,13 @@ tools API, please refer to <span class="xref std std-ref">tools-api</span>.</p>
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;I need to calculate the multiplication of 1615114134 and 4343434343. I can use a shell command for this calculation.&lt;/thought&gt;
+Friday: &lt;thought&gt;I need to calculate the multiplication of the two numbers provided by the user. I can use a shell command to perform this calculation.&lt;/thought&gt;
 &lt;function&gt;execute_shell_command&lt;/function&gt;
+&lt;command&gt;expr 1615114134 \* 4343434343&lt;/command&gt;
 &lt;timeout&gt;60&lt;/timeout&gt;
-&lt;command&gt;echo $((1615114134*4343434343))&lt;/command&gt;
 system: 1. Execute function execute_shell_command
    [ARGUMENTS]:
-       {&quot;timeout&quot;: 60, &quot;command&quot;: &quot;echo $((1615114134*4343434343))&quot;}
+       {&quot;command&quot;: &quot;expr 1615114134 \\* 4343434343&quot;, &quot;timeout&quot;: 60}
    [RESULT]: &lt;returncode&gt;0&lt;/returncode&gt;
 &lt;stdout&gt;7015142197480303962
 &lt;/stdout&gt;
@@ -373,7 +373,7 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I can now provide the result to the user.&lt;/thought&gt;
+Friday: &lt;thought&gt;The multiplication of 1615114134 and 4343434343 is 7015142197480303962. I will now inform the user of the result.&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
 &lt;response&gt;The result of multiplying 1615114134 by 4343434343 is 7015142197480303962.&lt;/response&gt;
 system: 1. Execute function finish
@@ -456,10 +456,11 @@ the related functionality is under development.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>tool_calls: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_0d61b514e65241f6ad3510&quot;,
+        &quot;id&quot;: &quot;call_0ea97c5537534dae8d934d&quot;,
         &quot;name&quot;: &quot;execute_shell_command&quot;,
         &quot;input&quot;: {
-            &quot;command&quot;: &quot;whoami&quot;
+            &quot;command&quot;: &quot;whoami&quot;,
+            &quot;timeout&quot;: 300
         }
     }
 ]
@@ -484,10 +485,11 @@ the related functionality is under development.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>assistant: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_0d61b514e65241f6ad3510&quot;,
+        &quot;id&quot;: &quot;call_0ea97c5537534dae8d934d&quot;,
         &quot;name&quot;: &quot;execute_shell_command&quot;,
         &quot;input&quot;: {
-            &quot;command&quot;: &quot;whoami&quot;
+            &quot;command&quot;: &quot;whoami&quot;,
+            &quot;timeout&quot;: 300
         }
     }
 ]
@@ -517,18 +519,18 @@ again!</p>
         &quot;content&quot;: null,
         &quot;tool_calls&quot;: [
             {
-                &quot;id&quot;: &quot;call_0d61b514e65241f6ad3510&quot;,
+                &quot;id&quot;: &quot;call_0ea97c5537534dae8d934d&quot;,
                 &quot;type&quot;: &quot;function&quot;,
                 &quot;function&quot;: {
                     &quot;name&quot;: &quot;execute_shell_command&quot;,
-                    &quot;arguments&quot;: &quot;{\&quot;command\&quot;: \&quot;whoami\&quot;}&quot;
+                    &quot;arguments&quot;: &quot;{\&quot;command\&quot;: \&quot;whoami\&quot;, \&quot;timeout\&quot;: 300}&quot;
                 }
             }
         ]
     },
     {
         &quot;role&quot;: &quot;tool&quot;,
-        &quot;tool_call_id&quot;: &quot;call_0d61b514e65241f6ad3510&quot;,
+        &quot;tool_call_id&quot;: &quot;call_0ea97c5537534dae8d934d&quot;,
         &quot;content&quot;: &quot;&lt;returncode&gt;0&lt;/returncode&gt;\n&lt;stdout&gt;runner\n&lt;/stdout&gt;\n&lt;stderr&gt;&lt;/stderr&gt;&quot;,
         &quot;name&quot;: &quot;execute_shell_command&quot;
     }
@@ -585,7 +587,7 @@ automatically and registered to the <cite>ServiceToolkit</cite>.</p>
     <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 12.013 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 14.440 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-tool-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/9682e4a38fd7e8b6971e1afe68e967ff/tool.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tool.ipynb</span></code></a></p>
