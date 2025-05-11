@@ -140,7 +140,7 @@ configurations.
 
  .. code-block:: none
 
-    Alice: Hello! My name is Alice. It's nice to meet you, Bob. How can I assist you today?
+    Alice: Hello, Bob! My name is Alice. It's nice to meet you. How can I assist you today?
 
 
 
@@ -186,7 +186,7 @@ dialog agent `alice`.
  .. code-block:: none
 
     User Input: Bob: Do you know me?
-    Alice: I don't actually know you personally, Bob. I'm an AI assistant, and I just used the name "Bob" because that's what you signed your message with. I don't have any specific information about you unless you choose to share it. Is there anything in particular you'd like to chat about or any questions you have?
+    Alice: Hello Bob! I don't have any specific information about you beyond what you've shared in our conversation. I'm here to help with any questions or tasks you might have. Is there anything in particular you'd like to chat about or get help with?
 
 
 
@@ -243,7 +243,7 @@ We first initialize a `DictDialogAgent` object, and switch between different out
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the person's health, the weather conditions, and if they have appropriate gear.", "speak": "It can be nice to go out in the rain, especially if you enjoy it and have the right clothes. However, consider if it's safe and if you're feeling up for it.", "decision": "true"}
+    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the person's health, the temperature, and if they have the right gear to stay dry and warm.", "speak": "It can be nice to go out in the rain, especially if you're dressed properly. Do you have a raincoat and an umbrella? Also, consider if it's just a light drizzle or a heavy downpour and how you feel about getting wet.", "decision": "true"}
     ```
     The metadata field: true
     The type of metadata field: <class 'str'>
@@ -337,9 +337,9 @@ while the `speak` field should be displayed to the user, and the `decision` fiel
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a random number between 20 and 30 as requested by Bob.", "speak": "Sure, I'll pick a number. How about 24?", "number": "24"}
+    {"thought": "I need to pick a random number between 20 and 30 as requested by Bob.", "speak": "Alright, I'll choose a number. Let's go with 24.", "number": "24"}
     ```
-    The content field: Sure, I'll pick a number. How about 24?
+    The content field: Alright, I'll choose a number. Let's go with 24.
     The type of content field: <class 'str'>
 
     The metadata field: 24
@@ -441,13 +441,13 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>The multiplication of 151513434 and 54353453453 is 8235278382423187602. I will now inform Bob of the result.</thought>
+    David: <thought>The multiplication was successful and the result is 8235278382423187602. I will now inform Bob of this result.</thought>
     <function>finish</function>
-    <response>The result of 151513434*54353453453 is 8235278382423187602.</response>
+    <response>The result of multiplying 151513434 by 54353453453 is 8235278382423187602.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The result of 151513434*54353453453 is 8235278382423187602."}
-       [RESULT]: The result of 151513434*54353453453 is 8235278382423187602.
+           {"response": "The result of multiplying 151513434 by 54353453453 is 8235278382423187602."}
+       [RESULT]: The result of multiplying 151513434 by 54353453453 is 8235278382423187602.
 
 
 
@@ -463,7 +463,7 @@ Refer to the RAG Section for more details.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 19.942 seconds)
+   **Total running time of the script:** (0 minutes 23.418 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_builtin_agent.py:
