@@ -269,7 +269,8 @@ class AgentHooksTest(unittest.TestCase):
             kwargs: Dict[str, Any],
         ) -> Union[Tuple[Tuple[Msg, ...], Dict[str, Any]], None]:
             """Pre-reply hook."""
-            return Msg("assistant", "-1, " + args[0].content, "assistant")
+            args[0].content = "-1, " + args[0].content
+            return args, kwargs
 
         def pre_reply_hook_2(
             self: AgentBase,
@@ -277,7 +278,8 @@ class AgentHooksTest(unittest.TestCase):
             kwargs: Dict[str, Any],
         ) -> Union[Tuple[Tuple[Msg, ...], Dict[str, Any]], None]:
             """Pre-reply hook."""
-            return Msg("assistant", "-2, " + args[0].content, "assistant")
+            args[0].content = "-2, " + args[0].content
+            return args, kwargs
 
         AgentBase.register_class_hook(
             "pre_reply",
