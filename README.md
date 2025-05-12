@@ -1,8 +1,5 @@
 [**中文主页**](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**日本語のホームページ**](https://github.com/modelscope/agentscope/blob/main/README_JA.md) | [**Tutorial**](https://doc.agentscope.io/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
 
-<p align="center">
-    <img align="center" src="https://img.alicdn.com/imgextra/i3/O1CN01ywJShe1PU90G8ZYtM_!!6000000001843-55-tps-743-743.svg" width="110" height="110" style="margin: 30px">
-</p>
 <h2 align="center">AgentScope: Agent-Oriented Programming for Building LLM Applications</h2>
 
 <p align="center">
@@ -153,16 +150,14 @@ user_agent = UserAgent(name="user")
 
 # Build the workflow/conversation explicitly
 x = None
-while True:
+while x is None or x.content != "exit":
     x = dialog_agent(x)
     x = user_agent(x)
-    if x.content == "exit":
-        break
 ```
 
-### 🧑‍🤝‍🧑 Multi-agent Conversation
+### 🧑‍🤝‍🧑 Multi-Agent Conversation
 
-AgentScope is born for **multi-agent** applications.
+AgentScope is designed for **multi-agent** applications, offering flexible control over information flow and communication between agents.
 
 ![](https://img.shields.io/badge/✨_Feature-Transparent-green)
 ![](https://img.shields.io/badge/✨_Feature-Multi--Agent-purple)
@@ -207,13 +202,13 @@ sunday = DialogAgent(
 # Create a chatroom by msghub, where agents' messages are broadcast to all participants
 with msghub(
     participants=[friday, saturday, sunday],
-    announcement=Msg("user", "Hi, let's talk about the weekend!", "user"),  # A greeting message
+    announcement=Msg("user", "Counting from 1 and report one number each time without other things", "user"),  # A greeting message
 ) as hub:
     # Speak in sequence
     sequential_pipeline([friday, saturday, sunday], x=None)
 ```
 
-### 💡 Reasoning with Tools
+### 💡 Reasoning with Tools & MCP
 
 ![](https://img.shields.io/badge/✨_Feature-Transparent-green)
 
@@ -226,7 +221,7 @@ import agentscope
 
 agentscope.init(
     model_configs={
-        "model_config": "my_config",
+        "config_name": "my_config",
         "model_type": "dashscope_chat",
         "model_name": "qwen-max",
     }
@@ -236,14 +231,14 @@ agentscope.init(
 toolkit = ServiceToolkit()
 toolkit.add(execute_python_code)
 
-# Connect to MCP server
+# Connect to Gaode MCP server
 toolkit.add_mcp_servers(
     {
         "mcpServers": {
-            "puppeteer": {
-                "url": "http://127.0.0.1:8000/sse",
-            },
-        },
+            "amap-amap-sse": {
+            "url": "https://mcp.amap.com/sse?key={YOUR_GAODE_API_KEY}"
+            }
+        }
     }
 )
 
@@ -252,17 +247,15 @@ agent = ReActAgentV2(
     name="Friday",
     model_config_name="my_config",
     service_toolkit=toolkit,
-    max_iters=20
+    sys_prompt="You're a helpful assistant named Friday."
 )
 user_agent = UserAgent(name="user")
 
 # Build the workflow/conversation explicitly
 x = None
-while True:
+while x is None or x.content != "exit":
     x = agent(x)
     x = user_agent(x)
-    if x.content == "exit":
-        break
 ```
 
 ### 🔠 Structured Output
@@ -281,7 +274,7 @@ import agentscope
 
 agentscope.init(
     model_configs={
-        "model_config": "my_config",
+        "config_name": "my_config",
         "model_type": "dashscope_chat",
         "model_name": "qwen-max",
     }
@@ -335,7 +328,7 @@ import agentscope
 
 agentscope.init(
     model_configs={
-        "model_config": "my_config",
+        "config_name": "my_config",
         "model_type": "dashscope_chat",
         "model_name": "qwen-max",
     }
@@ -415,12 +408,35 @@ agent1(Msg("user", "Execute task1 ...", "user"))
 agent2(Msg("user", "Execute task2 ...", "user"))
 ```
 
-### 👀 Visualization
+### 👀 Tracing & Monitoring
 
 ![](https://img.shields.io/badge/✨_Feature-Visualization-8A2BE2)
 ![](https://img.shields.io/badge/✨_Feature-Customization-6495ED)
 
-AgentScope provides a local visualization tool, **AgentScope Studio**, and support **Gradio** included third-party visualization tools.
+AgentScope provides a local visualization and monitoring tool, **AgentScope Studio**.
+
+```bash
+# Install AgentScope Studio
+npm install -g @agentscope/studio
+# Run AgentScope Studio
+as_studio
+```
+
+```python
+import agentscope
+
+# Connect application to AgentScope Studio
+agentscope.init(
+  model_configs = {
+    "config_name": "my_config",
+    "model_type": "dashscope_chat",
+    "model_name": "qwen_max",
+  },
+  studio_url="http://localhost:3000", # The URL of AgentScope Studio
+)
+
+# ...
+```
 
 <div align="center">
        <img
@@ -430,43 +446,6 @@ AgentScope provides a local visualization tool, **AgentScope Studio**, and suppo
     />
    <div align="center">AgentScope Studio, a local visualization tool</div>
 </div>
-<br/>
-<div align="center">
-   <img
-        src="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg"
-        alt="AgentScope Studio"
-        width="100%"
-    />
-   <div align="center">Gradio based visualization</div>
-</div>
-
-Connect to third-party visualization by hooks:
-
-```python
-from agentscope.agents import AgentBase
-from agentscope.message import Msg
-import requests
-
-
-def forward_message_hook(self, msg: Msg, stream: bool, last: bool) -> None:
-    """Forward the displayed message to third-party visualization tools."""
-    # Taking RESTFul API as an example
-    requests.post(
-        "https://xxx.com",
-        json={
-            "msg": msg.to_dict(),
-            "stream": stream,
-            "last": last
-        }
-    )
-
-# Register as a class-level hook, that all instances will use this hook
-AgentBase.register_class_hook(
-    hook_type='pre_speak',
-    hook_name='forward_to_third_party',
-    hook=forward_message_hook
-)
-```
 
 
 ## ⚖️ License
@@ -477,37 +456,37 @@ AgentScope is released under Apache License 2.0.
 
 If you find our work helpful for your research or application, please cite our papers.
 
-1. [AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)
+[AgentScope: A Flexible yet Robust Multi-Agent Platform](https://arxiv.org/abs/2402.14034)
 
-    ```
-    @article{agentscope,
-        author  = {Dawei Gao and
-                   Zitao Li and
-                   Xuchen Pan and
-                   Weirui Kuang and
-                   Zhijian Ma and
-                   Bingchen Qian and
-                   Fei Wei and
-                   Wenhao Zhang and
-                   Yuexiang Xie and
-                   Daoyuan Chen and
-                   Liuyi Yao and
-                   Hongyi Peng and
-                   Ze Yu Zhang and
-                   Lin Zhu and
-                   Chen Cheng and
-                   Hongzhu Shi and
-                   Yaliang Li and
-                   Bolin Ding and
-                   Jingren Zhou}
-        title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
-        journal = {CoRR},
-        volume  = {abs/2402.14034},
-        year    = {2024},
-    }
-    ```
+```
+@article{agentscope,
+    author  = {Dawei Gao and
+               Zitao Li and
+               Xuchen Pan and
+               Weirui Kuang and
+               Zhijian Ma and
+               Bingchen Qian and
+               Fei Wei and
+               Wenhao Zhang and
+               Yuexiang Xie and
+               Daoyuan Chen and
+               Liuyi Yao and
+               Hongyi Peng and
+               Ze Yu Zhang and
+               Lin Zhu and
+               Chen Cheng and
+               Hongzhu Shi and
+               Yaliang Li and
+               Bolin Ding and
+               Jingren Zhou}
+    title   = {AgentScope: A Flexible yet Robust Multi-Agent Platform},
+    journal = {CoRR},
+    volume  = {abs/2402.14034},
+    year    = {2024},
+}
+```
 
-## Contributors ✨
+## ✨Contributors
 
 All thanks to our contributors:
 
