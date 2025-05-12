@@ -32,6 +32,7 @@ minimal_requires = [
     "inputimeout",
     "numpy",
     "flask_sqlalchemy",
+    "socketio",
     "flake8",
     "psutil",
     "shortuuid",
