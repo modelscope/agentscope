@@ -72,23 +72,6 @@ Easy for beginners, powerful for experts.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## 📑 Table of Contents
-
-- [🚀 Quickstart](#-quickstart)
-  - [💻 Installation](#-installation)
-    - [🛠️ From source](#-from-source)
-    - [📦 From PyPi](#-from-pypi)
-- [📝 Example](#-example)
-  - [👋 Hello AgentScope](#-hello-agentscope)
-  - [🧑‍🤝‍🧑 Multi-agent Conversation](#-multi-agent-conversation)
-  - [💡 Reasoning with Tools](#-reasoning-with-tools)
-  - [🔠 Structured Output](#-structured-output)
-  - [✏️ Workflow Orchestration](#-workflow-orchestration)
-  - [⚡️ Distribution and Parallelization](#%EF%B8%8F-distribution-and-parallelization)
-  - [👀 Visualization](#-visualization)
-- [⚖️ License](#-license)
-- [📚 Publications](#-publications)
-- [Contributors ✨](#contributors-)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -262,7 +245,7 @@ while x is None or x.content != "exit":
 
 ![](https://img.shields.io/badge/✨_Feature-Easy--to--use-yellow)
 
-Specifying structured output easily!
+Specifying structured output with a Pydantic base model.
 
 ```python
 from agentscope.agents import ReActAgentV2
@@ -316,7 +299,7 @@ print(res_msg.metadata)
 ![](https://img.shields.io/badge/✨_Feature-Transparent-green)
 
 [Routing](https://www.anthropic.com/engineering/building-effective-agents), [parallelization](https://www.anthropic.com/engineering/building-effective-agents), [orchestrator-workers](https://www.anthropic.com/engineering/building-effective-agents), or [evaluator-optimizer](https://www.anthropic.com/engineering/building-effective-agents).
-Build your own workflow with AgentScope easily!
+Build your own workflow with AgentScope easily! Taking routing as an example:
 
 ```python
 from agentscope.agents import ReActAgentV2
