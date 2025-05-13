@@ -178,34 +178,73 @@
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">original_reply</span><span class="p">)</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_reply</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
-                <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]:</span>
                 <span class="c1"># Object-level pre-reply hooks</span>
-                <span class="n">current_input</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="n">current_args</span><span class="p">,</span> <span class="n">current_kwargs</span> <span class="o">=</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_pre_reply</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_input</span><span class="p">))</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_args</span><span class="p">),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_kwargs</span><span class="p">),</span>
+                    <span class="p">)</span>
                     <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">current_input</span> <span class="o">=</span> <span class="n">hook_result</span>
+                        <span class="k">assert</span> <span class="p">(</span>
+                            <span class="nb">isinstance</span><span class="p">(</span><span class="n">hook_result</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+                            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hook_result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+                        <span class="p">),</span> <span class="p">(</span>
+                            <span class="s2">&quot;Pre-reply hook must return a (args, kwargs) &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;tuple or None, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">hook_result</span><span class="p">)</span><span class="si">}</span><span class="s2"> from &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;hook </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">current_args</span><span class="p">,</span> <span class="n">current_kwargs</span> <span class="o">=</span> <span class="n">hook_result</span>
 
                 <span class="c1"># Class-level pre-reply hooks</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_hooks_pre_reply</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_input</span><span class="p">))</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_args</span><span class="p">),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_kwargs</span><span class="p">),</span>
+                    <span class="p">)</span>
                     <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">current_input</span> <span class="o">=</span> <span class="n">hook_result</span>
+                        <span class="k">assert</span> <span class="p">(</span>
+                            <span class="nb">isinstance</span><span class="p">(</span><span class="n">hook_result</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+                            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hook_result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+                        <span class="p">),</span> <span class="p">(</span>
+                            <span class="s2">&quot;Pre-reply hook must return a (args, kwargs) &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;tuple or None, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">hook_result</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;from hook </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">current_args</span><span class="p">,</span> <span class="n">current_kwargs</span> <span class="o">=</span> <span class="n">hook_result</span>
 
                 <span class="c1"># Original function</span>
-                <span class="n">reply_result</span> <span class="o">=</span> <span class="n">original_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_input</span><span class="p">)</span>
+                <span class="n">reply_result</span> <span class="o">=</span> <span class="n">original_reply</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="o">*</span><span class="n">current_args</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">current_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="c1"># Object-level post-reply hooks</span>
                 <span class="n">current_output</span> <span class="o">=</span> <span class="n">reply_result</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hooks_post_reply</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_output</span><span class="p">))</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_args</span><span class="p">),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_kwargs</span><span class="p">),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_output</span><span class="p">),</span>
+                    <span class="p">)</span>
                     <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">current_output</span> <span class="o">=</span> <span class="n">hook_result</span>
 
                 <span class="c1"># Class-level post-reply hooks</span>
                 <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_hooks_post_reply</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_output</span><span class="p">))</span>
+                    <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_args</span><span class="p">),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_kwargs</span><span class="p">),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">current_output</span><span class="p">),</span>
+                    <span class="p">)</span>
                     <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">current_output</span> <span class="o">=</span> <span class="n">hook_result</span>
 
@@ -279,24 +318,35 @@
         <span class="nb">str</span><span class="p">,</span>
         <span class="n">Callable</span><span class="p">[</span>
             <span class="p">[</span>
-                <span class="n">AgentBase</span><span class="p">,</span>
-                <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+                <span class="n">AgentBase</span><span class="p">,</span>  <span class="c1"># self</span>
+                <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>  <span class="c1"># args</span>
+                <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>  <span class="c1"># kwargs</span>
             <span class="p">],</span>
-            <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The class-level hook functions that will be called before the reply</span>
-<span class="sd">    function, which takes the `self` object and a deep copied input message(s)</span>
-<span class="sd">    as input. If the return of the hook is not `None`, the new output will be</span>
+<span class="sd">    function, which takes the `self` object and deep copied</span>
+<span class="sd">    positional and keyword arguments as input (args and kwargs). If the</span>
+<span class="sd">    return of the hook is not `None`, the new output will be</span>
 <span class="sd">    passed to the next hook or the original reply function. Otherwise,</span>
 <span class="sd">    the original input will be passed instead.&quot;&quot;&quot;</span>
 
     <span class="n">_class_hooks_post_reply</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
         <span class="nb">str</span><span class="p">,</span>
-        <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">,</span> <span class="n">Msg</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
+        <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">AgentBase</span><span class="p">,</span>  <span class="c1"># self</span>
+                <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>  <span class="c1"># args</span>
+                <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>  <span class="c1"># kwargs</span>
+                <span class="n">Msg</span><span class="p">,</span>  <span class="c1"># output</span>
+            <span class="p">],</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="p">],</span>
     <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The class-level hook functions that will be called after the reply</span>
-<span class="sd">    function, which takes the `self` object and a deep copied output message</span>
+<span class="sd">    function, which takes the `self` object and deep copied</span>
+<span class="sd">    positional and keyword arguments (args and kwargs), and the output message</span>
 <span class="sd">    as input. If the hook returns a message, the new message will be passed</span>
 <span class="sd">    to the next hook or the original reply function. Otherwise, the original</span>
 <span class="sd">    output will be passed instead.&quot;&quot;&quot;</span>
@@ -319,7 +369,10 @@
 
     <span class="n">_class_hooks_post_speak</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
         <span class="nb">str</span><span class="p">,</span>
-        <span class="n">Callable</span><span class="p">[[</span><span class="n">AgentBase</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">Callable</span><span class="p">[</span>
+            <span class="p">[</span><span class="n">AgentBase</span><span class="p">],</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">],</span>
     <span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The class-level hook functions that will be called after the speak</span>
 <span class="sd">    function, which takes the `self` object as input.&quot;&quot;&quot;</span>

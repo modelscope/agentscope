@@ -80,12 +80,16 @@
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model APIs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt Formatting</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Structured Output</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#defining-the-parser">Defining the Parser</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parsing-the-output">Parsing the Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#more-complex-content">More Complex Content</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#auto-post-processing">Auto Post-Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tool-api">Tool API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text-parsing">Text Parsing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#defining-the-parser">Defining the Parser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parsing-the-output">Parsing the Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#more-complex-content">More Complex Content</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#auto-post-processing">Auto Post-Processing</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -158,14 +162,286 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="structured-output">
 <span id="sphx-glr-build-tutorial-structured-output-py"></span><span id="id1"></span><h1>Structured Output<a class="headerlink" href="#structured-output" title="Link to this heading"></a></h1>
-<p>In this tutorial, we will be building a simple agent that outputs structured
-data in JSON dictionary format using the <cite>agentscope.parsers</cite> module.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<p>AgentScope supports two structured output methods, as shown in the following
+figure:</p>
+<ul class="simple">
+<li><p>Tool API: Construct a function with input parameters as the fields of the required structured data, and then ask the LLM to call the function to obtain the structured data.</p></li>
+<li><p>Text Parsing: Call the LLM API to obtain plain text data, and then parse the structured data from the plain text locally.</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://img.alicdn.com/imgextra/i4/O1CN01TLx5qg1tcmx3cKCNN_!!6000000005923-55-tps-661-391.svg"><img alt="两种不同的结构化输出方式" src="https://img.alicdn.com/imgextra/i4/O1CN01TLx5qg1tcmx3cKCNN_!!6000000005923-55-tps-661-391.svg" style="width: 100%;" />
+</a>
+<p>The advantages and disadvantages of the two methods are as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Advantages</p></th>
+<th class="head"><p>Disadvantages</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Tool API</p></td>
+<td><ol class="arabic simple">
+<li><p>The model <strong>autonomously</strong> decides when to call the function/generate structured output, which can be well combined with the ReAct algorithm.</p></li>
+<li><p>Data parsing occurs at the LLM API provider, making local development easier.</p></li>
+<li><p>Supports complex constraints based on JSON Schema.</p></li>
+</ol>
+</td>
+<td><p>Requires an LLM API that supports tool invocation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Text Parsing</p></td>
+<td><ol class="arabic simple">
+<li><p>Simple and easy to use.</p></li>
+<li><p>Can adjust the format and parsing method based on model capabilities and required structured data.</p></li>
+</ol>
+</td>
+<td><ol class="arabic simple">
+<li><p>Relies on model capabilities, which may never produce structured data that meets the requirements.</p></li>
+<li><p>The model <strong>passively</strong> generates structured data, and the developer decides when to prompt the LLM to generate structured data.</p></li>
+</ol>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Next we will introduce how AgentScope supports these two different parsing methods.</p>
+<section id="tool-api">
+<h2>Tool API<a class="headerlink" href="#tool-api" title="Link to this heading"></a></h2>
+<p>The Tool API method combines tool invocation and structured output. For example, if we need the fields <cite>“thought”</cite>, <cite>“choice”</cite>, and <cite>“number”</cite>, we can construct a function as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_response</span><span class="p">(</span>
+    <span class="n">thought</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;apple&quot;</span><span class="p">,</span> <span class="s2">&quot;banana&quot;</span><span class="p">],</span>
+    <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">pass</span>
 </pre></div>
 </div>
+<p>The function signature serves as a constraint, and when the model correctly
+invokes the function, we can obtain the corresponding structured data.</p>
+<p>Considering that some complex constraints cannot be expressed using Python’s
+type annotations, AgentScope supports defining complex constraints using
+Pydantic’s <cite>BaseModel</cite>
+Taking the following two models as an example:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Model1</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name&quot;</span><span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The brief description&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The age&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Model2</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">choice</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;apple&quot;</span><span class="p">,</span> <span class="s2">&quot;banana&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Your choice&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>ReActAgentV2</cite> class in AgentScope will combine the JSON Schema of the
+<cite>BaseModel</cite> subclass with the schema of a function named <cite>generate_response</cite>.
+This will generate a new schema that can be used to constrain the model’s
+output when calling the function.</p>
+<p>For example, the following code demonstrates how to use <cite>ReActAgentV2</cite> to
+combine the ReAct algorithm with structured output.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReActAgentV2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my_config&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">toolkit</span> <span class="o">=</span> <span class="n">ServiceToolkit</span><span class="p">()</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">ReActAgentV2</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Friday&quot;</span><span class="p">,</span>
+    <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my_config&quot;</span><span class="p">,</span>
+    <span class="n">service_toolkit</span><span class="o">=</span><span class="n">toolkit</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msg1</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Introduce Einstein&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<span class="n">res_msg</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span> <span class="n">structured_model</span><span class="o">=</span><span class="n">Model1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The structured output: &quot;</span><span class="p">,</span> <span class="n">res_msg</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
+    {
+        &quot;type&quot;: &quot;tool_use&quot;,
+        &quot;id&quot;: &quot;call_05109a3fa30740a6a06001&quot;,
+        &quot;name&quot;: &quot;generate_response&quot;,
+        &quot;input&quot;: {
+            &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed &#39;the world&#39;s most famous equation&#39;, has been replicated in popular culture countless times.&quot;,
+            &quot;name&quot;: &quot;Albert Einstein&quot;,
+            &quot;description&quot;: &quot;Theoretical Physicist&quot;,
+            &quot;age&quot;: 76
+        }
+    }
+]
+system: Execute function generate_response:
+Success
+Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed &#39;the world&#39;s most famous equation&#39;, has been replicated in popular culture countless times.
+The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;description&#39;: &#39;Theoretical Physicist&#39;, &#39;age&#39;: 76}
+</pre></div>
+</div>
+<p>With different <cite>structured_model</cite>, we can achieve different structured output</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">msg2</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;Pick a fruit&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">)</span>
+<span class="n">res_msg</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg2</span><span class="p">,</span> <span class="n">structured_model</span><span class="o">=</span><span class="n">Model2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The structured output: &quot;</span><span class="p">,</span> <span class="n">res_msg</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
+    {
+        &quot;type&quot;: &quot;tool_use&quot;,
+        &quot;id&quot;: &quot;call_51dd40ce530e4f939d5246&quot;,
+        &quot;name&quot;: &quot;generate_response&quot;,
+        &quot;input&quot;: {
+            &quot;response&quot;: &quot;I choose apple.&quot;,
+            &quot;choice&quot;: &quot;apple&quot;
+        }
+    }
+]
+system: Execute function generate_response:
+Success
+Friday: I choose apple.
+The structured output:  {&#39;choice&#39;: &#39;apple&#39;}
+</pre></div>
+</div>
+<p>To observe how <cite>ReActAgentV2</cite> dynamically constructs the schema of the
+function, we remove a hook function that cleans up the structured output,
+allowing us to print the processed function schema.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clear the memory</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="c1"># Remove the hook function that cleans up the structured output</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">remove_hook</span><span class="p">(</span><span class="s2">&quot;post_reply&quot;</span><span class="p">,</span> <span class="s2">&quot;as_clear_structured_output&quot;</span><span class="p">)</span>
+
+<span class="c1"># Observe the current schema of the target function</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+        <span class="n">toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">[</span><span class="n">agent</span><span class="o">.</span><span class="n">_finish_function</span><span class="p">],</span>
+        <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{
+    &quot;type&quot;: &quot;function&quot;,
+    &quot;function&quot;: {
+        &quot;name&quot;: &quot;generate_response&quot;,
+        &quot;parameters&quot;: {
+            &quot;properties&quot;: {
+                &quot;response&quot;: {
+                    &quot;description&quot;: &quot;The response to the user.&quot;,
+                    &quot;type&quot;: &quot;string&quot;
+                }
+            },
+            &quot;required&quot;: [
+                &quot;response&quot;
+            ],
+            &quot;type&quot;: &quot;object&quot;
+        },
+        &quot;description&quot;: &quot;Generate a response. You must call this function to interact with\n\nothers (e.g., users).&quot;
+    }
+}
+</pre></div>
+</div>
+<p>Now we call the agent once and observe the changes in the schema of the target function</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">res_msg</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg1</span><span class="p">,</span> <span class="n">structured_model</span><span class="o">=</span><span class="n">Model1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+        <span class="n">toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">[</span><span class="n">agent</span><span class="o">.</span><span class="n">_finish_function</span><span class="p">],</span>
+        <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
+    {
+        &quot;type&quot;: &quot;tool_use&quot;,
+        &quot;id&quot;: &quot;call_205888cde2b7400d9678a5&quot;,
+        &quot;name&quot;: &quot;generate_response&quot;,
+        &quot;input&quot;: {
+            &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had a profound impact on the philosophy of science.&quot;,
+            &quot;name&quot;: &quot;Einstein&quot;,
+            &quot;description&quot;: &quot;A brief introduction to Albert Einstein and his contributions to physics.&quot;,
+            &quot;age&quot;: 0
+        }
+    }
+]
+system: Execute function generate_response:
+Success
+Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had a profound impact on the philosophy of science.
+{
+    &quot;type&quot;: &quot;function&quot;,
+    &quot;function&quot;: {
+        &quot;name&quot;: &quot;generate_response&quot;,
+        &quot;parameters&quot;: {
+            &quot;properties&quot;: {
+                &quot;response&quot;: {
+                    &quot;description&quot;: &quot;The response to the user.&quot;,
+                    &quot;type&quot;: &quot;string&quot;
+                },
+                &quot;name&quot;: {
+                    &quot;description&quot;: &quot;The name&quot;,
+                    &quot;maxLength&quot;: 20,
+                    &quot;minLength&quot;: 0,
+                    &quot;title&quot;: &quot;Name&quot;,
+                    &quot;type&quot;: &quot;string&quot;
+                },
+                &quot;description&quot;: {
+                    &quot;description&quot;: &quot;The brief description&quot;,
+                    &quot;maxLength&quot;: 200,
+                    &quot;minLength&quot;: 0,
+                    &quot;title&quot;: &quot;Description&quot;,
+                    &quot;type&quot;: &quot;string&quot;
+                },
+                &quot;age&quot;: {
+                    &quot;description&quot;: &quot;The age&quot;,
+                    &quot;maximum&quot;: 100,
+                    &quot;minimum&quot;: 0,
+                    &quot;title&quot;: &quot;Age&quot;,
+                    &quot;type&quot;: &quot;integer&quot;
+                }
+            },
+            &quot;required&quot;: [
+                &quot;response&quot;,
+                &quot;name&quot;,
+                &quot;description&quot;,
+                &quot;age&quot;
+            ],
+            &quot;type&quot;: &quot;object&quot;
+        },
+        &quot;description&quot;: &quot;Generate a response. You must call this function to interact with\n\nothers (e.g., users).&quot;
+    }
+}
+</pre></div>
+</div>
+<p>We can see that the schema of the <cite>generate_response</cite> function has been combined with the schema of the <cite>Model1</cite> class.
+Therefore, when the model calls this function, it will generate the corresponding structured data.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>More implementation details can be found in the <cite>ReActAgentV2</cite> <a class="reference external" href="https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/_react_agent_v2.py">source code</a></p>
+</div>
+</section>
+<section id="text-parsing">
+<h2>Text Parsing<a class="headerlink" href="#text-parsing" title="Link to this heading"></a></h2>
+<p>AgentScope’s <cite>parsers</cite> module provides various parser classes that developers can choose from based on the required structured data.</p>
+<p>Here’s an example of using <cite>MarkdownJsonDictParser</cite> to parse structured data from Markdown-formatted text.</p>
 <section id="defining-the-parser">
-<h2>Defining the Parser<a class="headerlink" href="#defining-the-parser" title="Link to this heading"></a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
+<h3>Defining the Parser<a class="headerlink" href="#defining-the-parser" title="Link to this heading"></a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownJsonDictParser</span>
 
 
 <span class="n">parser</span> <span class="o">=</span> <span class="n">MarkdownJsonDictParser</span><span class="p">(</span>
@@ -188,7 +464,7 @@ generate the desired output.</p>
 </div>
 </section>
 <section id="parsing-the-output">
-<h2>Parsing the Output<a class="headerlink" href="#parsing-the-output" title="Link to this heading"></a></h2>
+<h3>Parsing the Output<a class="headerlink" href="#parsing-the-output" title="Link to this heading"></a></h3>
 <p>When receiving output from LLM, use <cite>parse</cite> method to extract the
 structured data.
 It takes an object of <cite>agentscope.models.ModelResponse</cite> as input, parses
@@ -218,7 +494,7 @@ parsed field after parsing: {&#39;thought&#39;: &#39;I should greet the user&#39
 </div>
 </section>
 <section id="error-handling">
-<h2>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h2>
+<h3>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading"></a></h3>
 <p>If the LLM output does not match the expected format, the parser will raise
 an error with a detailed message.
 So developers can present the error message to LLM to guide it to correct
@@ -242,14 +518,13 @@ the output.</p>
 </div>
 </section>
 <section id="advanced-usage">
-<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h2>
+<h3>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading"></a></h3>
 <section id="more-complex-content">
-<h3>More Complex Content<a class="headerlink" href="#more-complex-content" title="Link to this heading"></a></h3>
+<h4>More Complex Content<a class="headerlink" href="#more-complex-content" title="Link to this heading"></a></h4>
 <p>Asking LLM to directly generate a JSON dictionary can be challenging,
 especially when the JSON content is complex (e.g. code snippets, nested
 structures).
-In this case, you can use more advanced parsers to guide LLM to generate
-the desired output.
+You can utilize advanced parsers to structure the LLM output.
 Here is an example of a more complex parser that handle code snippets.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexTaggedContentParser</span>
 
@@ -259,7 +534,7 @@ Here is an example of a more complex parser that handle code snippets.</p>
 <span class="s2">&lt;number&gt;A random number here&lt;/number&gt;</span>
 <span class="s2">&lt;code&gt;your python code here&lt;/code&gt;</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
-    <span class="n">try_parse_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Try to parse the each value as a JSON object</span>
+    <span class="n">try_parse_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Try to parse each value as a JSON object</span>
     <span class="n">required_keys</span><span class="o">=</span><span class="p">[</span>
         <span class="s2">&quot;thought&quot;</span><span class="p">,</span>
         <span class="s2">&quot;number&quot;</span><span class="p">,</span>
@@ -312,7 +587,7 @@ The type of the number:  &lt;class &#39;int&#39;&gt;
 </div>
 </section>
 <section id="auto-post-processing">
-<h3>Auto Post-Processing<a class="headerlink" href="#auto-post-processing" title="Link to this heading"></a></h3>
+<h4>Auto Post-Processing<a class="headerlink" href="#auto-post-processing" title="Link to this heading"></a></h4>
 <p>Within the parsed dictionary, different keys may require different
 post-processing steps.
 For example, in a werewolf game, the LLM is playing the role of a seer, and
@@ -376,7 +651,7 @@ parsed dictionary by the following core steps in the <cite>reply</cite> method.<
 <ol class="arabic simple">
 <li><p>Put the format instruction in prompt to guide LLM to generate the desired output</p></li>
 <li><p>Parse the LLM response</p></li>
-<li><p>Post-process the parsed dictionary by using the <cite>to_memory</cite>, <cite>to_content</cite>, and <cite>to_metadata</cite> methods</p></li>
+<li><p>Post-process the parsed dictionary using relevant methods</p></li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -437,7 +712,7 @@ parsed dictionary by the following core steps in the <cite>reply</cite> method.<
         <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.004 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 15.219 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-structured-output-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d9e2bb7a0effd4e32a08e552ade3979e/structured_output.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">structured_output.ipynb</span></code></a></p>
@@ -450,6 +725,7 @@ parsed dictionary by the following core steps in the <cite>reply</cite> method.<
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
 </section>
 </section>
 </section>

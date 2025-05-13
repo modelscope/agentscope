@@ -142,11 +142,18 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The ReAct Agent V2, which use the tools API of the LLM service providers</span>
 <span class="sd">rather than assembling the prompt manually.&quot;&quot;&quot;</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ValidationError</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">ToolUseBlock</span><span class="p">,</span> <span class="n">TextBlock</span><span class="p">,</span> <span class="n">ContentBlock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OpenAIChatWrapper</span><span class="p">,</span>
+    <span class="n">DashScopeChatWrapper</span><span class="p">,</span>
+    <span class="n">AnthropicChatWrapper</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..service</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceToolkit</span><span class="p">,</span> <span class="n">ServiceResponse</span><span class="p">,</span> <span class="n">ServiceExecStatus</span>
 
 
@@ -161,6 +168,9 @@
 <span class="sd">    - DashScope</span>
 <span class="sd">    - OpenAI</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_finish_function</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;generate_response&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The function name used to finish replying and return a response&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -204,36 +214,95 @@
             <span class="n">model_config_name</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span> <span class="o">=</span> <span class="n">service_toolkit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_response</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model_type</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
+            <span class="n">DashScopeChatWrapper</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
+            <span class="n">AnthropicChatWrapper</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
+        <span class="p">],</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The model type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2"> is not supported yet by &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;the ReActAgentV2. Only </span><span class="si">{</span><span class="n">OpenAIChatWrapper</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DashScopeChatWrapper</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2"> and &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AnthropicChatWrapper</span><span class="o">.</span><span class="n">model_type</span><span class="si">}</span><span class="s2"> are supported.&quot;</span>
+        <span class="p">)</span>
 
-        <span class="c1"># Obtain the JSON schemas of the tool functions</span>
-        <span class="c1"># Also, you can parse it in the _reasoning method for dynamic tool</span>
-        <span class="c1"># calls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format_tools_json_schemas</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span> <span class="o">=</span> <span class="n">service_toolkit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_response</span><span class="p">,</span>
+            <span class="n">include_var_keyword</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span> <span class="o">=</span> <span class="n">max_iters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exit_reply_without_tool_calls</span> <span class="o">=</span> <span class="n">exit_reply_without_tool_calls</span>
 
+        <span class="c1"># Used to store the structured output in the current reply</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_output</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Clear the structured output after each reply</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span>
+            <span class="s2">&quot;post_reply&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;as_clear_structured_output&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clear_structured_output_hook</span><span class="p">,</span>
+        <span class="p">)</span>
+
 <div class="viewcode-block" id="ReActAgentV2.reply">
 <a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2.reply">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The reply method of the agent.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">structured_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The reply method of the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (`Optional[Union[Msg, list[Msg]]]`):</span>
+<span class="sd">                The input message(s) to the agent.</span>
+<span class="sd">            structured_model (`Optional[Type[BaseModel]]`,</span>
+<span class="sd">             defaults to `None`):</span>
+<span class="sd">                A Pydantic model class that defines the structured output. If</span>
+<span class="sd">                provided, the schema of the structured output will be merged</span>
+<span class="sd">                with the `generate_response` function, and the argument</span>
+<span class="sd">                `exit_reply_without_tool_calls` will be invalid. The agent</span>
+<span class="sd">                must call the `generate_response` function to end the reply</span>
+<span class="sd">                with a structured output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `Msg`:</span>
+<span class="sd">                The response message from the agent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Merge the schema of the structured output with the finish function</span>
+        <span class="k">if</span> <span class="n">structured_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_structured_output_schema</span><span class="p">(</span>
+                <span class="n">structured_model</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
+        <span class="n">force_call_finish_func</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">):</span>
             <span class="c1"># Reasoning to generate tool calls</span>
-            <span class="c1"># Note the msg_reasoning is already added to the memory</span>
-            <span class="n">tool_calls</span><span class="p">,</span> <span class="n">msg_reasoning</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning</span><span class="p">()</span>
+            <span class="n">tool_calls</span><span class="p">,</span> <span class="n">msg_reasoning</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reasoning</span><span class="p">(</span><span class="n">force_call_finish_func</span><span class="p">)</span>
 
+            <span class="c1"># Exit when 1) no tool calls generated, and</span>
+            <span class="c1"># 2) exit_reply_without_tool_calls is True</span>
+            <span class="c1"># 3) structured output is not required</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">tool_calls</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit_reply_without_tool_calls</span>
+                <span class="ow">and</span> <span class="n">structured_model</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_reasoning</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">msg_reasoning</span>
+
+            <span class="c1"># If exit_reply_without_tool_calls is False, or structured output</span>
+            <span class="c1"># is required, we drop the last reasoning message and</span>
+            <span class="c1"># force the LLM to call the finish function</span>
             <span class="k">if</span> <span class="n">tool_calls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exit_reply_without_tool_calls</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">msg_reasoning</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">continue</span>
+                <span class="n">force_call_finish_func</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">continue</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_reasoning</span><span class="p">)</span>
 
             <span class="c1"># Acting based on the tool calls</span>
             <span class="n">msg_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_acting</span><span class="p">(</span><span class="n">tool_calls</span><span class="p">)</span>
@@ -244,8 +313,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summarizing</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_reasoning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ToolUseBlock</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">Msg</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reasoning</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">force_call_finish_func</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ToolUseBlock</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">Msg</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The reasoning process of the agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            force_call_finish_func (`bool`, defaults to `False`):</span>
+<span class="sd">                Force to call the finish function, which is set to `True` when</span>
+<span class="sd">                the last reasoning message fails to generate tool calls and</span>
+<span class="sd">                `exit_reply_without_tool_calls` is `False`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            `Tuple[Union[list[ToolUseBlock], None], Msg]`:</span>
@@ -262,7 +340,16 @@
             <span class="n">multi_agent_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">raw_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">)</span>
+        <span class="n">raw_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+            <span class="n">prompt</span><span class="p">,</span>
+            <span class="n">tools</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">format_tools_json_schemas</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">tool_choice</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span>
+            <span class="k">if</span> <span class="n">force_call_finish_func</span>
+            <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span>
                 <span class="n">raw_response</span><span class="o">.</span><span class="n">stream</span> <span class="ow">or</span> <span class="n">raw_response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
@@ -281,8 +368,6 @@
             <span class="n">content</span><span class="p">,</span>
             <span class="n">role</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_reasoning</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">raw_response</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">,</span> <span class="n">msg_reasoning</span>
 
@@ -303,19 +388,31 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">msg_response</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">tool_call</span> <span class="ow">in</span> <span class="n">tool_calls</span><span class="p">:</span>
+            <span class="c1"># Execute the function</span>
             <span class="n">msg_execution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">parse_and_call_func</span><span class="p">(</span>
                 <span class="n">tool_call</span><span class="p">,</span>
                 <span class="n">tools_api_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
+
+            <span class="c1"># Print and remember the execution result</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_execution</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_execution</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;generate_response&quot;</span><span class="p">:</span>
+            <span class="c1"># When calling finish function, return a message if no structured</span>
+            <span class="c1"># output is required or have met the structured output</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="c1"># This message won&#39;t be record in the memory for duplicate</span>
+                <span class="c1"># meaning with the tool result block</span>
                 <span class="n">msg_response</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">tool_call</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">][</span><span class="s2">&quot;response&quot;</span><span class="p">]),</span>
                     <span class="s2">&quot;assistant&quot;</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_output</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_response</span><span class="p">)</span>
 
@@ -345,9 +442,10 @@
 
 <div class="viewcode-block" id="ReActAgentV2.generate_response">
 <a class="viewcode-back" href="../../../build_api/agentscope.agents.html#agentscope.agents.ReActAgentV2.generate_response">[docs]</a>
-    <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_response</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
         <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a response. You must call this function to interact with</span>
 <span class="sd">        others (e.g., users).</span>
@@ -356,12 +454,88 @@
 <span class="sd">            response (`str`):</span>
 <span class="sd">                The response to the user.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_output</span> <span class="o">=</span> <span class="n">kwargs</span>
+            <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
+                    <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                    <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Validation error: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">errors</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ServiceResponse</span><span class="p">(</span>
             <span class="n">status</span><span class="o">=</span><span class="n">ServiceExecStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
             <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Success&quot;</span><span class="p">,</span>
         <span class="p">)</span></div>
-</div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_structured_output_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">structured_output</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge the structured output into the schema of the finish function</span>
+<span class="sd">        as additional parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            structured_output (`Type[BaseModel]`):</span>
+<span class="sd">                A Pydantic model class that defines the structured output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            `dict`:</span>
+<span class="sd">                The merged function schema with the structured output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">structured_output</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;structured_output must be a Pydantic model, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">structured_output</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span> <span class="o">=</span> <span class="n">structured_output</span>
+
+        <span class="n">output_schema</span> <span class="o">=</span> <span class="n">structured_output</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">()</span>
+
+        <span class="c1"># Update the schema of the finish function by inserting the</span>
+        <span class="c1"># structured output schema</span>
+        <span class="n">finish_function_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">key</span>
+                <span class="ow">in</span> <span class="n">finish_function_schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span>
+                    <span class="s2">&quot;properties&quot;</span>
+                <span class="p">]</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; in structured output already exists in &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;the finish function &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                    <span class="s2">&quot;Try to use another key name.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">finish_function_schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span>
+                <span class="n">key</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]:</span>
+                <span class="n">finish_function_schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span>
+                    <span class="s2">&quot;required&quot;</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clear_structured_output_hook</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=unused-argument</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the structured output.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_output</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_response</span><span class="p">,</span>
+            <span class="n">include_var_keyword</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

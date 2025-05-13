@@ -334,7 +334,7 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial, we will be building a simple agent that outputs structured data in JSON dictionary format using the agentscope.parsers module.">
+    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope supports two structured output methods, as shown in the following figure:">
 
 .. only:: html
 
@@ -351,7 +351,7 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Core Functions -------------------- AgentScope implements hooks around three core agent functions:">
+    <div class="sphx-glr-thumbcontainer" tooltip="AgentScope implements hooks around three core agent functions:">
 
 .. only:: html
 

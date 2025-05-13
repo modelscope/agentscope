@@ -23,14 +23,59 @@
 Structured Output
 ==========================
 
-In this tutorial, we will be building a simple agent that outputs structured
-data in JSON dictionary format using the `agentscope.parsers` module.
+AgentScope supports two structured output methods, as shown in the following
+figure:
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-13
+- Tool API: Construct a function with input parameters as the fields of the required structured data, and then ask the LLM to call the function to obtain the structured data.
+- Text Parsing: Call the LLM API to obtain plain text data, and then parse the structured data from the plain text locally.
+
+.. image:: https://img.alicdn.com/imgextra/i4/O1CN01TLx5qg1tcmx3cKCNN_!!6000000005923-55-tps-661-391.svg
+   :width: 100%
+   :alt: 两种不同的结构化输出方式
+
+The advantages and disadvantages of the two methods are as follows:
+
+.. list-table::
+    :header-rows: 1
+
+    * - Method
+      - Advantages
+      - Disadvantages
+    * - Tool API
+      - 1. The model **autonomously** decides when to call the function/generate structured output, which can be well combined with the ReAct algorithm.
+        2. Data parsing occurs at the LLM API provider, making local development easier.
+        3. Supports complex constraints based on JSON Schema.
+      - Requires an LLM API that supports tool invocation.
+    * - Text Parsing
+      - 1. Simple and easy to use.
+        2. Can adjust the format and parsing method based on model capabilities and required structured data.
+      - 1. Relies on model capabilities, which may never produce structured data that meets the requirements.
+        2. The model **passively** generates structured data, and the developer decides when to prompt the LLM to generate structured data.
+
+
+Next we will introduce how AgentScope supports these two different parsing methods.
+
+Tool API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Tool API method combines tool invocation and structured output. For example, if we need the fields `"thought"`, `"choice"`, and `"number"`, we can construct a function as follows:
+
+.. GENERATED FROM PYTHON SOURCE LINES 45-59
 
 .. code-block:: Python
 
-    from agentscope.models import ModelResponse
+
+    from typing import Literal
+    from pydantic import BaseModel, Field
+    import json
+
+
+    def generate_response(
+        thought: str,
+        choice: Literal["apple", "banana"],
+        number: int,
+    ) -> None:
+        pass
 
 
 
@@ -39,16 +84,325 @@ data in JSON dictionary format using the `agentscope.parsers` module.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 14-16
+
+.. GENERATED FROM PYTHON SOURCE LINES 60-67
+
+The function signature serves as a constraint, and when the model correctly
+invokes the function, we can obtain the corresponding structured data.
+
+Considering that some complex constraints cannot be expressed using Python's
+type annotations, AgentScope supports defining complex constraints using
+Pydantic's `BaseModel`
+Taking the following two models as an example:
+
+.. GENERATED FROM PYTHON SOURCE LINES 67-83
+
+.. code-block:: Python
+
+
+
+    class Model1(BaseModel):
+        name: str = Field(min_length=0, max_length=20, description="The name")
+        description: str = Field(
+            min_length=0,
+            max_length=200,
+            description="The brief description",
+        )
+        age: int = Field(ge=0, le=100, description="The age")
+
+
+    class Model2(BaseModel):
+        choice: Literal["apple", "banana"] = Field(description="Your choice")
+
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 84-91
+
+The `ReActAgentV2` class in AgentScope will combine the JSON Schema of the
+`BaseModel` subclass with the schema of a function named `generate_response`.
+This will generate a new schema that can be used to constrain the model's
+output when calling the function.
+
+For example, the following code demonstrates how to use `ReActAgentV2` to
+combine the ReAct algorithm with structured output.
+
+.. GENERATED FROM PYTHON SOURCE LINES 92-119
+
+.. code-block:: Python
+
+
+    from agentscope.agents import ReActAgentV2
+    from agentscope.service import ServiceToolkit
+    from agentscope.message import Msg
+    import agentscope
+
+    agentscope.init(
+        model_configs={
+            "config_name": "my_config",
+            "model_type": "dashscope_chat",
+            "model_name": "qwen-max",
+        },
+    )
+
+    toolkit = ServiceToolkit()
+
+    agent = ReActAgentV2(
+        name="Friday",
+        model_config_name="my_config",
+        service_toolkit=toolkit,
+    )
+
+    msg1 = Msg("user", "Introduce Einstein", "user")
+    res_msg = agent(msg1, structured_model=Model1)
+
+    print("The structured output: ", res_msg.metadata)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Friday: [
+        {
+            "type": "tool_use",
+            "id": "call_05109a3fa30740a6a06001",
+            "name": "generate_response",
+            "input": {
+                "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed 'the world's most famous equation', has been replicated in popular culture countless times.",
+                "name": "Albert Einstein",
+                "description": "Theoretical Physicist",
+                "age": 76
+            }
+        }
+    ]
+    system: Execute function generate_response:
+    Success
+    Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed 'the world's most famous equation', has been replicated in popular culture countless times.
+    The structured output:  {'name': 'Albert Einstein', 'description': 'Theoretical Physicist', 'age': 76}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 120-121
+
+With different `structured_model`, we can achieve different structured output
+
+.. GENERATED FROM PYTHON SOURCE LINES 122-128
+
+.. code-block:: Python
+
+
+    msg2 = Msg("user", "Pick a fruit", "user")
+    res_msg = agent(msg2, structured_model=Model2)
+
+    print("The structured output: ", res_msg.metadata)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Friday: [
+        {
+            "type": "tool_use",
+            "id": "call_51dd40ce530e4f939d5246",
+            "name": "generate_response",
+            "input": {
+                "response": "I choose apple.",
+                "choice": "apple"
+            }
+        }
+    ]
+    system: Execute function generate_response:
+    Success
+    Friday: I choose apple.
+    The structured output:  {'choice': 'apple'}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 129-132
+
+To observe how `ReActAgentV2` dynamically constructs the schema of the
+function, we remove a hook function that cleans up the structured output,
+allowing us to print the processed function schema.
+
+.. GENERATED FROM PYTHON SOURCE LINES 132-148
+
+.. code-block:: Python
+
+
+    # Clear the memory
+    agent.memory.clear()
+    # Remove the hook function that cleans up the structured output
+    agent.remove_hook("post_reply", "as_clear_structured_output")
+
+    # Observe the current schema of the target function
+    print(
+        json.dumps(
+            toolkit.json_schemas[agent._finish_function],
+            indent=4,
+            ensure_ascii=False,
+        ),
+    )
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_response",
+            "parameters": {
+                "properties": {
+                    "response": {
+                        "description": "The response to the user.",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "response"
+                ],
+                "type": "object"
+            },
+            "description": "Generate a response. You must call this function to interact with\n\nothers (e.g., users)."
+        }
+    }
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 149-150
+
+Now we call the agent once and observe the changes in the schema of the target function
+
+.. GENERATED FROM PYTHON SOURCE LINES 150-161
+
+.. code-block:: Python
+
+
+    res_msg = agent(msg1, structured_model=Model1)
+
+    print(
+        json.dumps(
+            toolkit.json_schemas[agent._finish_function],
+            indent=4,
+            ensure_ascii=False,
+        ),
+    )
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Friday: [
+        {
+            "type": "tool_use",
+            "id": "call_205888cde2b7400d9678a5",
+            "name": "generate_response",
+            "input": {
+                "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had a profound impact on the philosophy of science.",
+                "name": "Einstein",
+                "description": "A brief introduction to Albert Einstein and his contributions to physics.",
+                "age": 0
+            }
+        }
+    ]
+    system: Execute function generate_response:
+    Success
+    Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had a profound impact on the philosophy of science.
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_response",
+            "parameters": {
+                "properties": {
+                    "response": {
+                        "description": "The response to the user.",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "The name",
+                        "maxLength": 20,
+                        "minLength": 0,
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The brief description",
+                        "maxLength": 200,
+                        "minLength": 0,
+                        "title": "Description",
+                        "type": "string"
+                    },
+                    "age": {
+                        "description": "The age",
+                        "maximum": 100,
+                        "minimum": 0,
+                        "title": "Age",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "response",
+                    "name",
+                    "description",
+                    "age"
+                ],
+                "type": "object"
+            },
+            "description": "Generate a response. You must call this function to interact with\n\nothers (e.g., users)."
+        }
+    }
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 162-176
+
+We can see that the schema of the `generate_response` function has been combined with the schema of the `Model1` class.
+Therefore, when the model calls this function, it will generate the corresponding structured data.
+
+.. tip:: More implementation details can be found in the `ReActAgentV2` `source code <https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/_react_agent_v2.py>`_
+
+Text Parsing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+AgentScope's `parsers` module provides various parser classes that developers can choose from based on the required structured data.
+
+Here's an example of using `MarkdownJsonDictParser` to parse structured data from Markdown-formatted text.
 
 Defining the Parser
 -------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-26
+.. GENERATED FROM PYTHON SOURCE LINES 176-187
 
 .. code-block:: Python
 
 
+    from agentscope.models import ModelResponse
     from agentscope.parsers import MarkdownJsonDictParser
 
 
@@ -65,13 +419,13 @@ Defining the Parser
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-30
+.. GENERATED FROM PYTHON SOURCE LINES 188-191
 
 The parser will generate a format instruction according to your input. You
 can use the `format_instruction` property to in your prompt to guide LLM to
 generate the desired output.
 
-.. GENERATED FROM PYTHON SOURCE LINES 30-33
+.. GENERATED FROM PYTHON SOURCE LINES 191-194
 
 .. code-block:: Python
 
@@ -94,7 +448,7 @@ generate the desired output.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-41
+.. GENERATED FROM PYTHON SOURCE LINES 195-202
 
 Parsing the Output
 -------------------
@@ -104,7 +458,7 @@ It takes an object of `agentscope.models.ModelResponse` as input, parses
 the value of the `text` field, and returns a parsed dictionary in the
 `parsed` field.
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-58
+.. GENERATED FROM PYTHON SOURCE LINES 202-219
 
 .. code-block:: Python
 
@@ -140,7 +494,7 @@ the value of the `text` field, and returns a parsed dictionary in the
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-65
+.. GENERATED FROM PYTHON SOURCE LINES 220-226
 
 Error Handling
 -------------------
@@ -149,7 +503,7 @@ an error with a detailed message.
 So developers can present the error message to LLM to guide it to correct
 the output.
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-79
+.. GENERATED FROM PYTHON SOURCE LINES 226-240
 
 .. code-block:: Python
 
@@ -180,7 +534,7 @@ the output.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-90
+.. GENERATED FROM PYTHON SOURCE LINES 241-250
 
 Advanced Usage
 -------------------
@@ -189,11 +543,10 @@ More Complex Content
 Asking LLM to directly generate a JSON dictionary can be challenging,
 especially when the JSON content is complex (e.g. code snippets, nested
 structures).
-In this case, you can use more advanced parsers to guide LLM to generate
-the desired output.
+You can utilize advanced parsers to structure the LLM output.
 Here is an example of a more complex parser that handle code snippets.
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-109
+.. GENERATED FROM PYTHON SOURCE LINES 250-269
 
 .. code-block:: Python
 
@@ -206,7 +559,7 @@ Here is an example of a more complex parser that handle code snippets.
     <number>A random number here</number>
     <code>your python code here</code>
     """,
-        try_parse_json=True,  # Try to parse the each value as a JSON object
+        try_parse_json=True,  # Try to parse each value as a JSON object
         required_keys=[
             "thought",
             "number",
@@ -233,7 +586,7 @@ Here is an example of a more complex parser that handle code snippets.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 110-115
+.. GENERATED FROM PYTHON SOURCE LINES 270-275
 
 The `RegexTaggedContentParser` uses regular expressions to match the tagged
 content in the text and return the parsed dictionary.
@@ -241,7 +594,7 @@ content in the text and return the parsed dictionary.
 .. note:: The parsed output of `RegexTaggedContentParser` is a dictionary, which means the required keys should be unique.
 You can also change the regular expression pattern by settings the `tagged_content_pattern` parameter when initializing the parser.
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-133
+.. GENERATED FROM PYTHON SOURCE LINES 275-293
 
 .. code-block:: Python
 
@@ -282,7 +635,7 @@ You can also change the regular expression pattern by settings the `tagged_conte
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-163
+.. GENERATED FROM PYTHON SOURCE LINES 294-323
 
 Auto Post-Processing
 ^^^^^^^^^^^^^^^^^^^^
@@ -314,7 +667,7 @@ providing the following parameters when initializing the parser.
 Here is an example of using the `MarkdownJsonDictParser` to automatically
 post-process the parsed dictionary.
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-188
+.. GENERATED FROM PYTHON SOURCE LINES 323-348
 
 .. code-block:: Python
 
@@ -359,18 +712,18 @@ post-process the parsed dictionary.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-197
+.. GENERATED FROM PYTHON SOURCE LINES 349-357
 
 Here we show how to create an agent that can automatically post-process the
 parsed dictionary by the following core steps in the `reply` method.
 
 1. Put the format instruction in prompt to guide LLM to generate the desired output
 2. Parse the LLM response
-3. Post-process the parsed dictionary by using the `to_memory`, `to_content`, and `to_metadata` methods
+3. Post-process the parsed dictionary using relevant methods
 
 .. tip:: By changing different parsers, the agent can adapt to different scenarios and generate structured output in various formats.
 
-.. GENERATED FROM PYTHON SOURCE LINES 197-251
+.. GENERATED FROM PYTHON SOURCE LINES 357-411
 
 .. code-block:: Python
 
@@ -438,7 +791,7 @@ parsed dictionary by the following core steps in the `reply` method.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.004 seconds)
+   **Total running time of the script:** (0 minutes 15.219 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_structured_output.py:

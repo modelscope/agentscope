@@ -188,7 +188,7 @@ may have default values, so it is not necessary to provide all arguments.</p>
 prompt format.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.service.service_toolkit.ServiceToolkit.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.add" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_long_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_var_positional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_var_keyword</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.add" title="Link to this definition"></a></dt>
 <dd><p>Add a service function to the toolkit, which will be processed into
 a tool function that can be called by the model directly, and
 registered in processed_funcs.</p>
@@ -196,7 +196,16 @@ registered in processed_funcs.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>service_func</strong> (<cite>Callable[…, Any]</cite>) – The service function to be called.</p></li>
-<li><p><strong>kwargs</strong> (<cite>Any</cite>) – The arguments to be passed to the service function.</p></li>
+<li><p><strong>func_description</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The function description. If not provided, the description
+will be extracted from the docstring automatically.</p></li>
+<li><p><strong>include_long_description</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – When extracting function description from the docstring, if
+the long description will be included.</p></li>
+<li><p><strong>include_var_positional</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to include the variable positional arguments (<cite>*args</cite>)
+in the function schema.</p></li>
+<li><p><strong>include_var_keyword</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to include the variable keyword arguments (<cite>**kwargs</cite>)
+in the function schema.</p></li>
+<li><p><strong>**kwargs</strong> (<cite>Any</cite>) – The keyword arguments that preset by developers, which will
+not be exposed to the agent</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -209,20 +218,11 @@ a dict in JSON Schema format to describe the function.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The description of the function and arguments are extracted from
-its docstring automatically, which should be well-formatted in
+<p>The description of the function and arguments are extracted
+from its docstring automatically, which should be well-formatted in
 <strong>Google style</strong>. Otherwise, their descriptions in the returned
 dictionary will be empty.</p>
 </div>
-<dl class="simple">
-<dt>Suggestions:</dt><dd><p>1. The name of the service function should be self-explanatory,
-so that the agent can understand the function and use it properly.
-2. The typing of the arguments should be provided when defining
-the function (e.g. <cite>def func(a: int, b: str, c: bool)</cite>), so that
-the agent can specify the arguments properly.
-3. The execution results should be a <cite>ServiceResponse</cite> object.</p>
-</dd>
-</dl>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bing_search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_results</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Search the query in Bing search engine.</span>
@@ -244,22 +244,49 @@ the agent can specify the arguments properly.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.service.service_toolkit.ServiceToolkit.add_mcp_servers">
-<span class="sig-name descname"><span class="pre">add_mcp_servers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.add_mcp_servers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.add_mcp_servers" title="Link to this definition"></a></dt>
-<dd><p>Add mcp servers to the toolkit.</p>
+<span class="sig-name descname"><span class="pre">add_mcp_servers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server_configs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_funcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_funcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.add_mcp_servers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.add_mcp_servers" title="Link to this definition"></a></dt>
+<dd><p>Connect MCP servers according to the given configurations and
+add their tool functions into the toolkit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>server_configs</strong> (<em>Dict</em>) – <p>A dictionary containing the configuration
-for MCP servers. The configuration follows the Model Context
-Protocol specification and can be defined in TypeScript,
-but is available as JSON Schema for wider compatibility.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>server_configs</strong> (<cite>dict</cite>) – A config dictionary that follows the Model Context Protocol
+specification.</p></li>
+<li><p><strong>enable_funcs</strong> (<cite>Optional[list[str]]</cite>, defaults to <cite>None</cite>) – The functions to be added into the toolkit. If <cite>None</cite>, all
+tool functions within the MCP servers will be added.</p></li>
+<li><p><strong>disable_funcs</strong> (<cite>Optional[list[str]]</cite>, defaults to <cite>None</cite>) – The functions that will be filtered out. If <cite>None</cite>, no
+tool functions will be filtered out.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>One example for the <cite>server_configs</cite>:</p>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;{server1_name}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;-y&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;@modelcontextprotocol/xxxx&quot;</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;{server2_name}&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://xxx.xxx.xxx.xxx:xxxx/sse&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
 <dl>
 <dt>Fields:</dt><dd><ul class="simple">
-<li><p>”mcpServers”: A dictionary where each key is the server</p></li>
+<li><p>“mcpServers”: A dictionary where each key is the server</p></li>
 </ul>
 <p>name and the value is its configuration.</p>
 </dd>
 <dt>Field Details:</dt><dd><ul class="simple">
-<li><p>”command”: Specifies the command to execute,</p></li>
+<li><p>“command”: Specifies the command to execute,</p></li>
 </ul>
 <p>which follows the stdio protocol for communication.
 - “args”: A list of arguments to be passed to the command.
@@ -267,39 +294,11 @@ but is available as JSON Schema for wider compatibility.</p>
 Server-Sent Events (SSE) protocol for data transmission.</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<dl>
-<dt>configs = {</dt><dd><dl>
-<dt>“mcpServers”: {</dt><dd><dl>
-<dt>“xxxx”: {</dt><dd><p>“command”: “npx”,
-“args”: [</p>
-<blockquote>
-<div><p>”-y”,
-“&#64;modelcontextprotocol/xxxx”</p>
-</div></blockquote>
-<p>]</p>
-</dd>
-</dl>
-<p>},
-“yyyy”: {</p>
-<blockquote>
-<div><p>”url”: “<a class="reference external" href="http://xxx.xxx.xxx.xxx:xxxx/sse">http://xxx.xxx.xxx.xxx:xxxx/sse</a>”</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="agentscope.service.service_toolkit.ServiceToolkit.get">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.get" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_long_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_var_positional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_var_keyword</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.get" title="Link to this definition"></a></dt>
 <dd><p>Convert a service function into a tool function that agent can
 use, and generate a dictionary in JSON Schema format that can be
 used in OpenAI API directly. While for open-source model, developers
@@ -308,12 +307,21 @@ should handle the conversation from json dictionary to prompt.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>service_func</strong> (<cite>Callable[…, Any]</cite>) – The service function to be called.</p></li>
-<li><p><strong>kwargs</strong> (<cite>Any</cite>) – The arguments to be passed to the service function.</p></li>
+<li><p><strong>func_description</strong> (<cite>Optional[str]</cite>, defaults to <cite>None</cite>) – The function description. If not provided, the description
+will be extracted from the docstring automatically.</p></li>
+<li><p><strong>include_long_description</strong> (<cite>bool</cite>, defaults to <cite>True</cite>) – When extracting function description from the docstring, if
+the long description will be included.</p></li>
+<li><p><strong>include_var_positional</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to include the variable positional arguments (<cite>*args</cite>)
+in the function schema.</p></li>
+<li><p><strong>include_var_keyword</strong> (<cite>bool</cite>, defaults to <cite>False</cite>) – Whether to include the variable keyword arguments (<cite>**kwargs</cite>)
+in the function schema.</p></li>
+<li><p><strong>**kwargs</strong> (<cite>Any</cite>) – The keyword arguments that preset by developers, which will
+not be exposed to the agent</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A tuple of tool function and
-a dict in JSON Schema format to describe the function.</p>
+<dd class="field-even"><p>A tuple of tool function and a dict in JSON Schema format to
+describe the function.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>Tuple(Callable[…, Any], dict)</cite></p>
@@ -321,29 +329,21 @@ a dict in JSON Schema format to describe the function.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The description of the function and arguments are extracted from
-its docstring automatically, which should be well-formatted in
+<p>The description of the function and arguments are extracted
+from its docstring automatically, which should be well-formatted in
 <strong>Google style</strong>. Otherwise, their descriptions in the returned
 dictionary will be empty.</p>
 </div>
-<dl class="simple">
-<dt>Suggestions:</dt><dd><p>1. The name of the service function should be self-explanatory,
-so that the agent can understand the function and use it properly.
-2. The typing of the arguments should be provided when defining
-the function (e.g. <cite>def func(a: int, b: str, c: bool)</cite>), so that
-the agent can specify the arguments properly.</p>
-</dd>
-</dl>
 <p class="rubric">Example</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bing_search</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_results</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;Search the query in Bing search engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        query (str):</span>
+<span class="sd">        query (`str`):</span>
 <span class="sd">            The string query to search.</span>
-<span class="sd">        api_key (str):</span>
+<span class="sd">        api_key (`str`):</span>
 <span class="sd">            The API key for Bing search.</span>
-<span class="sd">        num_results (int):</span>
+<span class="sd">        num_results (`int`):</span>
 <span class="sd">            The number of results to return, default to 10.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">pass</span>
@@ -374,6 +374,17 @@ function calls.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list[ToolResultBlock]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="agentscope.service.service_toolkit.ServiceToolkit.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/agentscope/service/service_toolkit.html#ServiceToolkit.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#agentscope.service.service_toolkit.ServiceToolkit.remove" title="Link to this definition"></a></dt>
+<dd><p>Remove a service function from the current toolkit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func_name</strong> (<cite>str</cite>) – The name of the service function to be removed.</p>
 </dd>
 </dl>
 </dd></dl>

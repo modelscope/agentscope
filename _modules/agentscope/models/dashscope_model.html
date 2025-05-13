@@ -298,6 +298,7 @@
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tool_choice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the</span>
@@ -319,6 +320,8 @@
 <span class="sd">                overwrite the stream flag in the constructor.</span>
 <span class="sd">            tools (`list[dict]`, default `None`):</span>
 <span class="sd">                The tools JSON schemas that the model can use.</span>
+<span class="sd">            tool_choice (`Optional[str]`, default `None`):</span>
+<span class="sd">                The function name that force the model to use.</span>
 <span class="sd">            **kwargs (`Any`):</span>
 <span class="sd">                The keyword arguments to DashScope chat completions API,</span>
 <span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please</span>
@@ -380,6 +383,14 @@
 
         <span class="k">if</span> <span class="n">tools</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tools&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span>
+
+        <span class="k">if</span> <span class="n">tool_choice</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tool_choice&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">tool_choice</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
 
         <span class="c1"># Switch to the incremental_output mode</span>
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
@@ -455,10 +466,11 @@
                         <span class="p">),</span>
                     <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">else</span> <span class="n">response_message</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
                 <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>

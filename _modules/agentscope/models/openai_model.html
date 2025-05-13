@@ -321,6 +321,7 @@
         <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tools</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tool_choice</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a list of messages to construct a payload for the OpenAI</span>
@@ -342,6 +343,8 @@
 <span class="sd">                `stream` argument in the constructor if provided.</span>
 <span class="sd">            tools (`Optional[list[dict]]`, defaults to `None`):</span>
 <span class="sd">                The tool JSON schemas that the model can use.</span>
+<span class="sd">            tool_choice (`Optional[str]`, defaults to `None`):</span>
+<span class="sd">                The function name that force the model to use.</span>
 <span class="sd">            **kwargs (`Any`):</span>
 <span class="sd">                The keyword arguments to OpenAI chat completions API,</span>
 <span class="sd">                e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to</span>
@@ -396,6 +399,14 @@
 
         <span class="k">if</span> <span class="n">tools</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tools&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tools</span>
+
+        <span class="k">if</span> <span class="n">tool_choice</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tool_choice&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">tool_choice</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;stream_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;include_usage&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>

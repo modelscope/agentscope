@@ -5,15 +5,176 @@
 Structured Output
 ==========================
 
-In this tutorial, we will be building a simple agent that outputs structured
-data in JSON dictionary format using the `agentscope.parsers` module.
+AgentScope supports two structured output methods, as shown in the following
+figure:
+
+- Tool API: Construct a function with input parameters as the fields of the required structured data, and then ask the LLM to call the function to obtain the structured data.
+- Text Parsing: Call the LLM API to obtain plain text data, and then parse the structured data from the plain text locally.
+
+.. image:: https://img.alicdn.com/imgextra/i4/O1CN01TLx5qg1tcmx3cKCNN_!!6000000005923-55-tps-661-391.svg
+   :width: 100%
+   :alt: 两种不同的结构化输出方式
+
+The advantages and disadvantages of the two methods are as follows:
+
+.. list-table::
+    :header-rows: 1
+
+    * - Method
+      - Advantages
+      - Disadvantages
+    * - Tool API
+      - 1. The model **autonomously** decides when to call the function/generate structured output, which can be well combined with the ReAct algorithm.
+        2. Data parsing occurs at the LLM API provider, making local development easier.
+        3. Supports complex constraints based on JSON Schema.
+      - Requires an LLM API that supports tool invocation.
+    * - Text Parsing
+      - 1. Simple and easy to use.
+        2. Can adjust the format and parsing method based on model capabilities and required structured data.
+      - 1. Relies on model capabilities, which may never produce structured data that meets the requirements.
+        2. The model **passively** generates structured data, and the developer decides when to prompt the LLM to generate structured data.
+
+
+Next we will introduce how AgentScope supports these two different parsing methods.
+
+Tool API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Tool API method combines tool invocation and structured output. For example, if we need the fields `"thought"`, `"choice"`, and `"number"`, we can construct a function as follows:
 """
-from agentscope.models import ModelResponse
+
+from typing import Literal
+from pydantic import BaseModel, Field
+import json
+
+
+def generate_response(
+    thought: str,
+    choice: Literal["apple", "banana"],
+    number: int,
+) -> None:
+    pass
+
 
 # %%
+# The function signature serves as a constraint, and when the model correctly
+# invokes the function, we can obtain the corresponding structured data.
+#
+# Considering that some complex constraints cannot be expressed using Python's
+# type annotations, AgentScope supports defining complex constraints using
+# Pydantic's `BaseModel`
+# Taking the following two models as an example:
+
+
+class Model1(BaseModel):
+    name: str = Field(min_length=0, max_length=20, description="The name")
+    description: str = Field(
+        min_length=0,
+        max_length=200,
+        description="The brief description",
+    )
+    age: int = Field(ge=0, le=100, description="The age")
+
+
+class Model2(BaseModel):
+    choice: Literal["apple", "banana"] = Field(description="Your choice")
+
+
+# %%
+#
+# The `ReActAgentV2` class in AgentScope will combine the JSON Schema of the
+# `BaseModel` subclass with the schema of a function named `generate_response`.
+# This will generate a new schema that can be used to constrain the model's
+# output when calling the function.
+#
+# For example, the following code demonstrates how to use `ReActAgentV2` to
+# combine the ReAct algorithm with structured output.
+
+from agentscope.agents import ReActAgentV2
+from agentscope.service import ServiceToolkit
+from agentscope.message import Msg
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "config_name": "my_config",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+    },
+)
+
+toolkit = ServiceToolkit()
+
+agent = ReActAgentV2(
+    name="Friday",
+    model_config_name="my_config",
+    service_toolkit=toolkit,
+)
+
+msg1 = Msg("user", "Introduce Einstein", "user")
+res_msg = agent(msg1, structured_model=Model1)
+
+print("The structured output: ", res_msg.metadata)
+
+# %%
+#
+# With different `structured_model`, we can achieve different structured output
+
+msg2 = Msg("user", "Pick a fruit", "user")
+res_msg = agent(msg2, structured_model=Model2)
+
+print("The structured output: ", res_msg.metadata)
+
+# %%
+# To observe how `ReActAgentV2` dynamically constructs the schema of the
+# function, we remove a hook function that cleans up the structured output,
+# allowing us to print the processed function schema.
+
+# Clear the memory
+agent.memory.clear()
+# Remove the hook function that cleans up the structured output
+agent.remove_hook("post_reply", "as_clear_structured_output")
+
+# Observe the current schema of the target function
+print(
+    json.dumps(
+        toolkit.json_schemas[agent._finish_function],
+        indent=4,
+        ensure_ascii=False,
+    ),
+)
+
+
+# %%
+# Now we call the agent once and observe the changes in the schema of the target function
+
+res_msg = agent(msg1, structured_model=Model1)
+
+print(
+    json.dumps(
+        toolkit.json_schemas[agent._finish_function],
+        indent=4,
+        ensure_ascii=False,
+    ),
+)
+
+# %%
+# We can see that the schema of the `generate_response` function has been combined with the schema of the `Model1` class.
+# Therefore, when the model calls this function, it will generate the corresponding structured data.
+#
+# .. tip:: More implementation details can be found in the `ReActAgentV2` `source code <https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/_react_agent_v2.py>`_
+#
+# Text Parsing
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# AgentScope's `parsers` module provides various parser classes that developers can choose from based on the required structured data.
+#
+# Here's an example of using `MarkdownJsonDictParser` to parse structured data from Markdown-formatted text.
+#
 # Defining the Parser
 # -------------------
 
+from agentscope.models import ModelResponse
 from agentscope.parsers import MarkdownJsonDictParser
 
 
@@ -84,8 +245,7 @@ except Exception as e:
 # Asking LLM to directly generate a JSON dictionary can be challenging,
 # especially when the JSON content is complex (e.g. code snippets, nested
 # structures).
-# In this case, you can use more advanced parsers to guide LLM to generate
-# the desired output.
+# You can utilize advanced parsers to structure the LLM output.
 # Here is an example of a more complex parser that handle code snippets.
 
 from agentscope.parsers import RegexTaggedContentParser
@@ -96,7 +256,7 @@ parser = RegexTaggedContentParser(
 <number>A random number here</number>
 <code>your python code here</code>
 """,
-    try_parse_json=True,  # Try to parse the each value as a JSON object
+    try_parse_json=True,  # Try to parse each value as a JSON object
     required_keys=[
         "thought",
         "number",
@@ -191,7 +351,7 @@ print("To message metadata: ", parser.to_metadata(parsed_response.parsed))
 #
 # 1. Put the format instruction in prompt to guide LLM to generate the desired output
 # 2. Parse the LLM response
-# 3. Post-process the parsed dictionary by using the `to_memory`, `to_content`, and `to_metadata` methods
+# 3. Post-process the parsed dictionary using relevant methods
 #
 # .. tip:: By changing different parsers, the agent can adapt to different scenarios and generate structured output in various formats.
 

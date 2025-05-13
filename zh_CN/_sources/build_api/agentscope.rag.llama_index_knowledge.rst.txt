@@ -1,7 +1,0 @@
-agentscope.rag.llama\_index\_knowledge module
-=============================================
-
-.. automodule:: agentscope.rag.llama_index_knowledge
-   :members:
-   :undoc-members:
-   :show-inheritance:

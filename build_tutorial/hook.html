@@ -89,10 +89,9 @@
 <li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rag.html">Retrieval Augmentation Generation (RAG)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Hooks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#core-functions">Core Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#available-hooks">Available Hooks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hooks-template">Hooks Template</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-usage">Example Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hooks-signatures">Hooks Signatures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#object-level-hooks">Object-Level Hooks</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#reply-hooks">Reply Hooks</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#speak-hooks">Speak Hooks</a></li>
@@ -164,15 +163,12 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="hooks">
 <span id="hook"></span><span id="sphx-glr-build-tutorial-hook-py"></span><h1>Hooks<a class="headerlink" href="#hooks" title="Link to this heading"></a></h1>
 <p>Hooks are extension points in AgentScope that allow developers to customize agent behaviors at specific execution points. They provide a flexible way to modify or extend the agent’s functionality without changing its core implementation.</p>
-<section id="core-functions">
-<h2>Core Functions<a class="headerlink" href="#core-functions" title="Link to this heading"></a></h2>
 <p>AgentScope implements hooks around three core agent functions:</p>
 <ul class="simple">
 <li><p><cite>reply</cite>: Generates response messages based on the agent’s current state</p></li>
 <li><p><cite>speak</cite>: Displays and records messages to the terminal</p></li>
-<li><p><cite>observe</cite>: Records incoming messages</p></li>
+<li><p><cite>observe</cite>: Records incoming messages from environment or other agents</p></li>
 </ul>
-</section>
 <section id="available-hooks">
 <h2>Available Hooks<a class="headerlink" href="#available-hooks" title="Link to this heading"></a></h2>
 <p>Each core function has corresponding pre- and post-execution hooks:</p>
@@ -182,13 +178,15 @@ to download the full example code.</p>
 <li><p><cite>pre_observe_hook</cite> / <cite>post_observe_hook</cite></p></li>
 </ul>
 <p>For example, you can use <cite>pre_speak_hook</cite> to redirect messages to different outputs like web interfaces or external applications.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
 <p>When working with hooks, keep these important rules in mind:</p>
 <ol class="arabic simple">
 <li><p><strong>Hook Function Signature</strong></p></li>
 </ol>
 <blockquote>
 <div><ul class="simple">
-<li><p>First argument must be the <cite>AgentBase</cite> object</p></li>
+<li><p>First argument must be the <cite>AgentBase</cite> object (i.e., <cite>self</cite>)</p></li>
 <li><p>Subsequent arguments are copies of the original function arguments</p></li>
 </ul>
 </div></blockquote>
@@ -222,13 +220,12 @@ to download the full example code.</p>
 <ol class="arabic simple" start="4">
 <li><p><strong>Important</strong>: Never call the target function (reply/speak/observe) within a hook to avoid infinite loops</p></li>
 </ol>
+</div>
 </section>
-<section id="hooks-template">
-<h2>Hooks Template<a class="headerlink" href="#hooks-template" title="Link to this heading"></a></h2>
-<p>We provide templates for each hook function below to show their argument
-signatures. You can copy and paste these templates into your code and
-customize them as needed.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<section id="hooks-signatures">
+<h2>Hooks Signatures<a class="headerlink" href="#hooks-signatures" title="Link to this heading"></a></h2>
+<p>The signatures of the hook functions are as follows:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span>
@@ -236,23 +233,35 @@ customize them as needed.</p>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pre_reply_hook_template</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
-    <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>  <span class="c1"># The positional arguments</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>  <span class="c1"># The keyword arguments</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+    <span class="kc">None</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">[</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="p">],</span>  <span class="c1"># The modified positional and keyword arguments</span>
+<span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pre-reply hook template.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">post_reply_hook_template</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">post_reply_hook_template</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>  <span class="c1"># The positional arguments</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>  <span class="c1"># The keyword arguments</span>
+    <span class="n">output</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>  <span class="c1"># The output message</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">]:</span>  <span class="c1"># The modified output message</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Post-reply hook template.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook_template</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
-    <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
-    <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>  <span class="c1"># The message to be displayed</span>
+    <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># Stream mode or not</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># If it&#39;s the last chunk message in stream mode</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>  <span class="c1"># The modified displayed message</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pre-speak hook template.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
@@ -265,7 +274,7 @@ customize them as needed.</p>
 <span class="k">def</span><span class="w"> </span><span class="nf">pre_observe_hook_template</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]:</span>  <span class="c1"># The modified input message(s)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pre-observe hook template.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
@@ -276,8 +285,8 @@ customize them as needed.</p>
 </pre></div>
 </div>
 </section>
-<section id="example-usage">
-<h2>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading"></a></h2>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
 <p>AgentScope allows to register, remove and clear hooks by calling the
 corresponding methods.</p>
 <p>You can register hooks at both the <strong>object</strong> and <strong>class</strong> levels. Hooks at the
@@ -306,7 +315,6 @@ corresponding methods.</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;TestAgent&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span>
 </pre></div>
 </div>
@@ -316,34 +324,37 @@ corresponding methods.</p>
 one return the modified message(s) and the other does not:</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">pre_reply_hook_1</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The first pre-reply hook that changes the message content.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-1] &quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-1] &quot;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-1] &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">return</span> <span class="kc">None</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">pre_reply_hook_2</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Msg</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Msg</span><span class="p">]]:</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The second pre-reply hook that changes the message content.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-2] &quot;</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">content</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Msg</span><span class="p">):</span>
+        <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-2] &quot;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;[Pre-hook-2] &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
-    <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>  <span class="c1"># Return the modified input</span>
 </pre></div>
 </div>
 <p>Then we create a post-hook that appends a suffix to the message content:</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">post_reply_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">post_reply_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The post-reply hook that appends a suffix to the message content.&quot;&quot;&quot;</span>
-    <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; [Post-hook]&quot;</span>
-    <span class="k">return</span> <span class="n">x</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot; [Post-hook]&quot;</span>
+    <span class="k">return</span> <span class="n">output</span>
 </pre></div>
 </div>
 <p>Finally, we register the hooks and test the agent:</p>
@@ -360,8 +371,7 @@ one return the modified message(s) and the other does not:</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The content of the response message:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>user: [Pre-hook-2] [Original message]
-The content of the response message:
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The content of the response message:
  [Pre-hook-2] [Original message] [Post-hook]
 </pre></div>
 </div>
@@ -405,19 +415,22 @@ whether two messages are from the same streaming output or not.</p>
 
 
 <span class="c1"># Create a pre-speak hook that displays the message content</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Msg</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The pre-speak hook that display the message content.&quot;&quot;&quot;</span>
     <span class="c1"># You can change or redirect the message here</span>
     <span class="nb">print</span><span class="p">(</span>
         <span class="s2">&quot;id: &quot;</span><span class="p">,</span>
         <span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-        <span class="s2">&quot;content: &quot;</span><span class="p">,</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
         <span class="s2">&quot;stream: &quot;</span><span class="p">,</span>
         <span class="n">stream</span><span class="p">,</span>
         <span class="s2">&quot;last: &quot;</span><span class="p">,</span>
         <span class="n">last</span><span class="p">,</span>
+        <span class="s2">&quot;content: &quot;</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="c1"># Avoid printing message disorder</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">post_speak_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -431,8 +444,10 @@ whether two messages are from the same streaming output or not.</p>
 <span class="c1"># Register the hooks</span>
 <span class="n">streaming_agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span> <span class="s2">&quot;pre_speak_hook&quot;</span><span class="p">,</span> <span class="n">pre_speak_hook</span><span class="p">)</span>
 <span class="n">streaming_agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="s2">&quot;post_speak&quot;</span><span class="p">,</span> <span class="s2">&quot;post_speak_hook&quot;</span><span class="p">,</span> <span class="n">post_speak_hook</span><span class="p">)</span>
-
-<span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
+</pre></div>
+</div>
+<p>Now let’s test the <cite>speak</cite> hooks:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="n">Msg</span><span class="p">(</span>
     <span class="s2">&quot;user&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Now, count from 1 to 15, step by 1 and separate each number by a comma.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user&quot;</span><span class="p">,</span>
@@ -443,17 +458,17 @@ whether two messages are from the same streaming output or not.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The cnt of calling the speak function:&quot;</span><span class="p">,</span> <span class="n">streaming_agent</span><span class="o">.</span><span class="n">cnt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  c320591b76f04ef1b95c04e1a0921700 content:  1 stream:  True last:  False
-TestAgent: 1id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3 stream:  True last:  False
-, 2, 3id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5 stream:  True last:  False
-, 4, 5id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7 stream:  True last:  False
-, 6, 7id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9 stream:  True last:  False
-, 8, 9id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,  stream:  True last:  False
-, 10, id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 stream:  True last:  False
-11, 12id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,  stream:  True last:  False
-, 13, id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
-14, 15id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  False
-id:  c320591b76f04ef1b95c04e1a0921700 content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 stream:  True last:  True
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1
+TestAgent: id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+id:  1801b45e67a0437eb5df1d61133036bd stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 
 The cnt of calling the speak function: 1
 </pre></div>
@@ -509,12 +524,12 @@ below:</p>
     {
         &quot;__module__&quot;: &quot;agentscope.message.msg&quot;,
         &quot;__name__&quot;: &quot;Msg&quot;,
-        &quot;id&quot;: &quot;5ef9bda81e2d4628ab0edd51c77686b8&quot;,
+        &quot;id&quot;: &quot;906ef1e2ac7a4ac683de09ac1985c5bc&quot;,
         &quot;name&quot;: &quot;user&quot;,
         &quot;role&quot;: &quot;user&quot;,
         &quot;content&quot;: &quot;Observe: The sun is shining.&quot;,
         &quot;metadata&quot;: null,
-        &quot;timestamp&quot;: &quot;2025-05-11 08:56:41&quot;
+        &quot;timestamp&quot;: &quot;2025-05-13 07:25:14&quot;
     }
 ]
 The cnt of calling the observe function: 1
@@ -556,7 +571,7 @@ hooks of agent2: [&#39;class_hook_1&#39;]
 </div>
 <p>We can see that the class-level hook is effective for all objects of
 that class.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.405 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 7.588 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-hook-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/337fd1a07176f94b2e940816bb0fd546/hook.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">hook.ipynb</span></code></a></p>
