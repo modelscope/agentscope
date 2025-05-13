@@ -1,7 +1,10 @@
 name: Generate TOC
 on:
   push:
-    paths: ['README.md']
+    paths:
+      - 'README.md'
+      - 'README_ZH.md'
+      - 'README_JA.md'
     branches-ignore:
       - 'main'
 
@@ -11,9 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - uses: technote-space/toc-generator@v4
         with:
           TOC_TITLE: "## 📑 Table of Contents"
           CREATE_PR: false
-          TARGET_PATHS: "README.md"
+          TARGET_PATHS: "README.md,README_ZH.md,README_JA.md"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOC_TITLE_MAP: |
+            README.md: ## 📑 Table of Contents
+            README_ZH.md: ## 📑 目录
+            README_JA.md: ## 📑 目次
