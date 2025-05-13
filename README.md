@@ -72,6 +72,23 @@ Easy for beginners, powerful for experts.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## 📑 Table of Contents
+
+- [🚀 Quickstart](#-quickstart)
+  - [💻 Installation](#-installation)
+    - [🛠️ From source](#-from-source)
+    - [📦 From PyPi](#-from-pypi)
+- [📝 Example](#-example)
+  - [👋 Hello AgentScope](#-hello-agentscope)
+  - [🧑‍🤝‍🧑 Multi-Agent Conversation](#-multi-agent-conversation)
+  - [💡 Reasoning with Tools & MCP](#-reasoning-with-tools--mcp)
+  - [🔠 Structured Output](#-structured-output)
+  - [✏️ Workflow Orchestration](#-workflow-orchestration)
+  - [⚡️ Distribution and Parallelization](#%EF%B8%8F-distribution-and-parallelization)
+  - [👀 Tracing & Monitoring](#-tracing--monitoring)
+- [⚖️ License](#-license)
+- [📚 Publications](#-publications)
+- [✨ Contributors](#-contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -469,7 +486,7 @@ If you find our work helpful for your research or application, please cite our p
 }
 ```
 
-## ✨Contributors
+## ✨ Contributors
 
 All thanks to our contributors:
 

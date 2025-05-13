@@ -72,6 +72,23 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## 📑 Table of Contents
+
+- [🚀 快速开始](#-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
+  - [💻 安装](#-%E5%AE%89%E8%A3%85)
+    - [🛠️ 从源码安装](#-%E4%BB%8E%E6%BA%90%E7%A0%81%E5%AE%89%E8%A3%85)
+    - [📦 从PyPi安装](#-%E4%BB%8Epypi%E5%AE%89%E8%A3%85)
+- [📝 示例](#-%E7%A4%BA%E4%BE%8B)
+  - [👋 Hello AgentScope](#-hello-agentscope)
+  - [🧑‍🤝‍🧑 多智能体对话](#-%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%AF%B9%E8%AF%9D)
+  - [💡 ReAct 智能体与工具&MCP](#-react-%E6%99%BA%E8%83%BD%E4%BD%93%E4%B8%8E%E5%B7%A5%E5%85%B7mcp)
+  - [🔠 结构化输出](#-%E7%BB%93%E6%9E%84%E5%8C%96%E8%BE%93%E5%87%BA)
+  - [✏️ 工作流编排](#-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%BC%96%E6%8E%92)
+  - [⚡️ 分布式和并行化](#%EF%B8%8F-%E5%88%86%E5%B8%83%E5%BC%8F%E5%92%8C%E5%B9%B6%E8%A1%8C%E5%8C%96)
+  - [👀 追踪和监控](#-%E8%BF%BD%E8%B8%AA%E5%92%8C%E7%9B%91%E6%8E%A7)
+- [⚖️ 许可证](#-%E8%AE%B8%E5%8F%AF%E8%AF%81)
+- [📚 发表](#-%E5%8F%91%E8%A1%A8)
+- [✨ 贡献者](#-%E8%B4%A1%E7%8C%AE%E8%80%85)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -468,7 +485,7 @@ AgentScope根据Apache License 2.0发布。
     }
     ```
 
-## ✨贡献者
+## ✨ 贡献者
 
 感谢我们的贡献者：
 
