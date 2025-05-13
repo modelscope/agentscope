@@ -1,9 +1,5 @@
 [**English Homepage**](https://github.com/modelscope/agentscope/blob/main/README.md) | [**日本語のホームページ**](https://github.com/modelscope/agentscope/blob/main/README_JA.md) | [**教程**](https://doc.agentscope.io/) | [**开发路线图**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
 
-<h1 align="center">
-<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="600" alt="agentscope-logo">
-</h1>
-
 <h2 align="center">AgentScope: Agent-Oriented Programming for Building LLM Applications</h2>
 
 <p align="center">
@@ -489,7 +485,7 @@ AgentScope根据Apache License 2.0发布。
     }
     ```
 
-## ✨贡献者
+## ✨ 贡献者
 
 感谢我们的贡献者：
 

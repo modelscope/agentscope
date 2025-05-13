@@ -1,9 +1,5 @@
 [English Homepage](https://github.com/modelscope/agentscope/blob/main/README.md) | [中文主页](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**Tutorial**](https://doc.agentscope.io/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
 
-<h1 align="center">
-<img src="https://img.alicdn.com/imgextra/i2/O1CN01cdjhVE1wwt5Auv7bY_!!6000000006373-0-tps-1792-1024.jpg" width="600" alt="agentscope-logo">
-</h1>
-
 <h2 align="center">AgentScope: Agent-Oriented Programming for Building LLM Applications</h2>
 
 <p align="center">
