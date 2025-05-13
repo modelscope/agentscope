@@ -88,7 +88,7 @@ Easy for beginners, powerful for experts.
   - [👀 Tracing & Monitoring](#-tracing--monitoring)
 - [⚖️ License](#-license)
 - [📚 Publications](#-publications)
-- [✨Contributors](#contributors)
+- [✨ Contributors](#-contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

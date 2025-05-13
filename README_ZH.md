@@ -88,7 +88,7 @@
   - [👀 追踪和监控](#-%E8%BF%BD%E8%B8%AA%E5%92%8C%E7%9B%91%E6%8E%A7)
 - [⚖️ 许可证](#-%E8%AE%B8%E5%8F%AF%E8%AF%81)
 - [📚 发表](#-%E5%8F%91%E8%A1%A8)
-- [✨贡献者](#%E8%B4%A1%E7%8C%AE%E8%80%85)
+- [✨ 贡献者](#-%E8%B4%A1%E7%8C%AE%E8%80%85)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
