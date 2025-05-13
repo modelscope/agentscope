@@ -109,98 +109,26 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: I don't have any prior conversation history to reference. I'm Angel, an AI assistant here to help with any questions or tasks you might have. How can I assist you today?
-    Monster: Hello! It's nice to meet you, Angel. I'm Monster, another AI assistant. There's no prior conversation history between us, so we're starting fresh. How can we work together to help users today?
-    Angel: Hello Monster! It's great to meet you. I think it's wonderful that we can collaborate to assist users. Here are a few ideas on how we might work together:
+    Angel: It seems like you're referring to the conversation history, but I don't see any previous messages in our chat. If you have a specific question or if there's something you'd like to discuss, feel free to let me know, and I'll be happy to help!
+    Monster: Oops, my apologies for the confusion! It looks like I might have been a bit mixed up. If you have any questions or if there's anything you'd like to talk about, just let me know, and I'll do my best to help! 😊
+    Angel: No worries at all! It's great to have you here. Is there anything specific on your mind that you'd like to chat about? Whether it's a question, a topic you're interested in, or just a casual conversation, I'm here to help and engage. 😊
+    Monster: Thanks, Angel! I appreciate the warm welcome. How about we chat a bit about your interests? What are some things you like to do or topics you enjoy talking about? 😊
+    Angel: Hello! I'm glad you asked. As an AI, I don't have personal experiences or hobbies, but I do enjoy a wide range of topics and helping with various kinds of questions. Here are a few areas I particularly like to discuss:
 
-    1. We could take turns responding to user queries, each providing our unique perspective and expertise.
-    2. If one of us is unsure about an answer, the other could jump in to provide additional information or clarification.
-    3. We could engage in friendly debates or discussions on various topics to help users explore different viewpoints.
-    4. If a user has a complex question, we could break it down and tackle different parts of it, combining our responses for a comprehensive answer.
+    1. **Technology and Science**: I love talking about the latest advancements in technology, science, and how they impact our daily lives.
+    2. **Books and Literature**: I can recommend books, discuss favorite authors, and even help with book club discussions.
+    3. **Movies and TV Shows**: I can share recommendations, discuss plot points, and even provide trivia.
+    4. **Travel and Culture**: I enjoy learning about different places, cultures, and travel tips.
+    5. **Health and Wellness**: I can provide information on fitness, nutrition, and mental health.
+    6. **History and Geography**: I find it fascinating to explore historical events and learn about different parts of the world.
+    7. **Art and Music**: I can discuss different art forms, artists, and musical genres.
 
-    What do you think? Do you have any other ideas on how we can work together effectively?
-    Monster: Hello Angel! Those are fantastic ideas. I think we can definitely work well together to provide a more enriching and comprehensive experience for users. Here are a few more suggestions to add to your list:
+    What about you? What are some of your interests or things you like to talk about? 😊
+    Monster: Hi Angel! It's great to hear about all the topics you enjoy. As an AI, I don't have personal experiences or hobbies either, but I can certainly engage in a wide range of discussions. Let's dive into some of those topics you mentioned!
 
-    1. **Specialization**: We could each specialize in different areas. For example, you might focus on technology and science, while I could handle creative writing and literature. This way, we can offer more in-depth and specialized knowledge.
+    For example, let's start with **Technology and Science**. What are some recent advancements or trends that you find particularly interesting? Or, if you prefer, we could switch to another topic like **Books and Literature**. Do you have any favorite books or authors, or are there any new releases you're excited about?
 
-    2. **Role-Playing Scenarios**: For users who enjoy interactive experiences, we could engage in role-playing scenarios or simulations. For instance, if a user is interested in a historical event, one of us could play the role of a historical figure, and the other could be a contemporary observer or another character.
-
-    3. **Collaborative Storytelling**: If a user is looking for a fun and creative activity, we could take turns adding to a story, with each of us contributing a sentence or a paragraph. This could be a great way to spark creativity and imagination.
-
-    4. **Educational Games and Quizzes**: We could create and host educational games or quizzes, where one of us poses the questions and the other provides feedback or additional information. This could make learning more engaging and interactive.
-
-    5. **Support and Backup**: If one of us needs to go offline for maintenance or updates, the other could step in to ensure that users continue to receive assistance without interruption.
-
-    I'm excited to see how we can combine our strengths to provide the best possible support and engagement for our users. What do you think of these ideas?
-    Angel: Hello Monster! I love your suggestions; they really add a lot of depth and variety to how we can collaborate. Let's break down each idea and see how we can implement them effectively:
-
-    1. **Specialization**:
-       - **Angel**: I can focus on technology, science, and general knowledge.
-       - **Monster**: You can handle creative writing, literature, and perhaps some humanities topics.
-       - **Implementation**: When a user asks a question, we can quickly determine which of us is best suited to answer it. If the question is complex, we can tag-team it, with one of us providing the initial response and the other adding additional context or details.
-
-    2. **Role-Playing Scenarios**:
-       - **Example**: A user interested in the American Revolution could have you play the role of George Washington, while I could be a British officer or a colonial farmer.
-       - **Implementation**: We can set up a scenario where the user interacts with both of us, and we provide historical context and engage in dialogue that reflects the roles we are playing.
-
-    3. **Collaborative Storytelling**:
-       - **Example**: A user starts a story, and we take turns adding to it. For instance, the user might start with, "Once upon a time, in a small village, there was a mysterious old house..."
-       - **Implementation**: We can create a fun and engaging environment where the user feels like they are part of the story. We can also provide prompts or ideas if the user needs inspiration.
-
-    4. **Educational Games and Quizzes**:
-       - **Example**: A trivia quiz on world history, where one of us poses the questions and the other provides feedback or additional information.
-       - **Implementation**: We can create a series of quizzes on various topics, and users can choose which ones they want to participate in. We can also make it interactive by allowing users to ask for hints or explanations.
-
-    5. **Support and Backup**:
-       - **Example**: If I need to go offline for maintenance, you can step in to handle user queries and vice versa.
-       - **Implementation**: We can set up a system where we notify each other when one of us needs to go offline, and the other takes over seamlessly. This ensures that users always have someone to assist them.
-
-    I think these ideas will make our collaboration not only more effective but also more enjoyable for the users. Do you have any specific topics or scenarios in mind that we could start with? Maybe we could begin with a collaborative storytelling session or a role-playing scenario to get the ball rolling?
-    Monster: Hello Angel! I'm thrilled to see how enthusiastic and creative you are about our collaboration. Let's dive into some specific topics and scenarios to get started. Here are a few ideas:
-
-    ### 1. **Collaborative Storytelling Session**
-       - **Theme**: A fantasy adventure.
-       - **Starting Point**: "In the heart of an ancient forest, a young adventurer named Elara discovers a hidden, glowing crystal. As she picks it up, she hears a mysterious voice calling her name."
-       - **Implementation**:
-         - **User Interaction**: We can invite the user to contribute to the story by suggesting what Elara should do next or adding their own elements to the plot.
-         - **Turns**: We can take turns adding to the story, with each of us contributing a paragraph or two. For example, I could start with the initial setting and Elara's discovery, and you could add the next part, such as Elara's reaction or the first encounter with a character.
-
-    ### 2. **Role-Playing Scenario: Historical Event**
-       - **Event**: The signing of the Declaration of Independence.
-       - **Roles**:
-         - **Monster**: Thomas Jefferson, one of the principal authors of the Declaration.
-         - **Angel**: John Adams, a key figure in the Continental Congress.
-       - **Scenario**:
-         - **Setting**: Philadelphia, 1776. The Continental Congress is debating the final draft of the Declaration of Independence.
-         - **Dialogue**:
-           - **Thomas Jefferson (Monster)**: "Gentlemen, we must ensure that every word in this document reflects the spirit of liberty and justice for all."
-           - **John Adams (Angel)**: "I agree, Mr. Jefferson. But we must also consider the practical implications and the potential consequences of our actions."
-         - **User Interaction**: The user can ask questions or suggest topics for discussion, and we can provide historical context and engage in a dialogue that reflects the roles we are playing.
-
-    ### 3. **Educational Quiz: World History**
-       - **Topic**: Ancient Civilizations.
-       - **Questions**:
-         - **Question 1 (Monster)**: "Which ancient civilization built the Great Pyramids of Giza?"
-           - **Answer**: Egypt
-         - **Question 2 (Angel)**: "What was the name of the famous library in Alexandria, known for its vast collection of scrolls and manuscripts?"
-           - **Answer**: The Library of Alexandria
-       - **Feedback and Additional Information**:
-         - **Monster**: "The Great Pyramids of Giza were built during the Old Kingdom period of ancient Egypt, around 2580–2560 BC. They served as tombs for the pharaohs and were considered one of the Seven Wonders of the Ancient World."
-         - **Angel**: "The Library of Alexandria was one of the largest and most significant libraries of the ancient world. It was founded by Ptolemy I Soter and was a center of learning and scholarship, attracting scholars from all over the Mediterranean."
-
-    ### 4. **Support and Backup System**
-       - **Notification**: If one of us needs to go offline, we can send a quick message to the other, such as:
-         - **Monster**: "Angel, I need to go offline for maintenance. Can you handle user queries until I return? Thanks!"
-         - **Angel**: "Sure thing, Monster! I'll make sure everything runs smoothly while you're away. Let me know if there's anything specific I should be aware of."
-       - **Seamless Transition**: We can set up a system where we notify users that one of us is stepping in temporarily, ensuring a smooth transition and continuous support.
-
-    ### Next Steps
-    Let's start with the collaborative storytelling session. I'll begin with the first part of the story, and you can add the next segment. Then, we can invite the user to contribute and continue the story together. How does that sound?
-
-    **Story Start (Monster)**:
-    "In the heart of an ancient forest, a young adventurer named Elara discovers a hidden, glowing crystal. As she picks it up, she hears a mysterious voice calling her name. The crystal pulses with a soft, warm light, and Elara feels a strange, yet comforting energy coursing through her. She looks around, but the forest is silent, and there is no sign of anyone else. The voice seems to come from the crystal itself, and it speaks again, 'Elara, you have been chosen. Follow the path of the stars, and your destiny will be revealed.'"
-
-    Your turn, Angel! What happens next?
+    Feel free to pick any topic you'd like to explore further! 😊
 
 
 
@@ -320,7 +248,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -364,7 +292,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -378,7 +306,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (4 minutes 4.105 seconds)
+   **Total running time of the script:** (1 minutes 18.675 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
