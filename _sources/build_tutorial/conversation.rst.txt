@@ -109,26 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: It seems like you're referring to the conversation history, but I don't see any previous messages in our chat. If you have a specific question or if there's something you'd like to discuss, feel free to let me know, and I'll be happy to help!
-    Monster: Oops, my apologies for the confusion! It looks like I might have been a bit mixed up. If you have any questions or if there's anything you'd like to talk about, just let me know, and I'll do my best to help! 😊
-    Angel: No worries at all! It's great to have you here. Is there anything specific on your mind that you'd like to chat about? Whether it's a question, a topic you're interested in, or just a casual conversation, I'm here to help and engage. 😊
-    Monster: Thanks, Angel! I appreciate the warm welcome. How about we chat a bit about your interests? What are some things you like to do or topics you enjoy talking about? 😊
-    Angel: Hello! I'm glad you asked. As an AI, I don't have personal experiences or hobbies, but I do enjoy a wide range of topics and helping with various kinds of questions. Here are a few areas I particularly like to discuss:
-
-    1. **Technology and Science**: I love talking about the latest advancements in technology, science, and how they impact our daily lives.
-    2. **Books and Literature**: I can recommend books, discuss favorite authors, and even help with book club discussions.
-    3. **Movies and TV Shows**: I can share recommendations, discuss plot points, and even provide trivia.
-    4. **Travel and Culture**: I enjoy learning about different places, cultures, and travel tips.
-    5. **Health and Wellness**: I can provide information on fitness, nutrition, and mental health.
-    6. **History and Geography**: I find it fascinating to explore historical events and learn about different parts of the world.
-    7. **Art and Music**: I can discuss different art forms, artists, and musical genres.
-
-    What about you? What are some of your interests or things you like to talk about? 😊
-    Monster: Hi Angel! It's great to hear about all the topics you enjoy. As an AI, I don't have personal experiences or hobbies either, but I can certainly engage in a wide range of discussions. Let's dive into some of those topics you mentioned!
-
-    For example, let's start with **Technology and Science**. What are some recent advancements or trends that you find particularly interesting? Or, if you prefer, we could switch to another topic like **Books and Literature**. Do you have any favorite books or authors, or are there any new releases you're excited about?
-
-    Feel free to pick any topic you'd like to explore further! 😊
+    Angel: It looks like the conversation history is empty. How can I assist you today?
+    Monster: Hello! I'm Monster, your helpful assistant. It seems like we're starting fresh here. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you!
+    Angel: Hello! I'm Angel, your helpful assistant. It seems there might be a bit of confusion since you mentioned being another assistant. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you!
+    Monster: Hello! I'm Monster, your helpful assistant. It looks like there was a bit of a mix-up with the introductions. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you! 😊
+    Angel: Hello! I'm Angel, your helpful assistant. It seems there might be a bit of confusion with the introductions. I'm here to help you with any information, tasks, or just to chat. How can I assist you today? 😊
+    Monster: Hello! I'm Monster, your helpful assistant. It looks like there's a bit of a mix-up with the introductions, but no worries! How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you! 😊
 
 
 
@@ -248,7 +234,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 1
+    Charlie: 4
 
 
 
@@ -292,7 +278,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 1
+    Charlie: 4
 
 
 
@@ -306,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 18.675 seconds)
+   **Total running time of the script:** (0 minutes 26.545 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
