@@ -232,7 +232,7 @@ LlamaIndexAgent
 <span class="n">response</span> <span class="o">=</span> <span class="n">alice</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: 嗨，Bob！我叫Alice，很高兴认识你。有什么我可以帮你的吗？
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Alice: 嗨，Bob！我叫Alice，很高兴认识你。有什么我可以帮助你的吗？
 </pre></div>
 </div>
 </section>
@@ -258,7 +258,7 @@ LlamaIndexAgent
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>User Input: Bob: 你认识我吗？
-Alice: 你好，Bob！作为你的助手，我之前与你有过对话，但我并不真正“认识”你，因为我不会保存或记住个人的具体信息。我主要是通过我们的对话来提供帮助和支持的。有什么特别的事情需要我帮忙吗？
+Alice: 你好，Bob！作为你的助手，我之前和你打过招呼，但我并没有其他关于你的具体信息。我在这里主要是为了提供帮助和支持，如果你有任何问题或需要什么，请随时告诉我！
 </pre></div>
 </div>
 </section>
@@ -296,7 +296,11 @@ Alice: 你好，Bob！作为你的助手，我之前与你有过对话，但我�
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;下雨天外出可能不太方便，因为天气湿滑，视线不佳，而且可能会被淋湿。但如果有必要或者有特别的活动，比如雨中漫步也是一种独特的体验。&quot;, &quot;speak&quot;: &quot;在下雨天外出可能不是最佳选择，因为天气条件不太好。但如果你有雨具并且不介意的话，也可以尝试享受雨中的独特氛围。&quot;, &quot;decision&quot;: false}
+{
+  &quot;thought&quot;: &quot;下雨天外出可能不太方便，因为天气潮湿，路面湿滑，而且如果没有合适的雨具，可能会被淋湿。但是，如果做好了充分的准备，比如穿着防水衣物和鞋子，那么出去散步或享受雨中的宁静也未尝不可。&quot;,
+  &quot;speak&quot;: &quot;下雨天外出可以是一种特别的体验，但需要考虑到安全因素和个人舒适度。如果你喜欢雨天的感觉，并且有适当的装备来保持干燥，那么这可能是个不错的主意。不过，如果只是为了普通的出行，或许等雨停后再出门会更合适。&quot;,
+  &quot;decision&quot;: false
+}
 ```
 metadata字段: False
 metadata字段的类型: &lt;class &#39;bool&#39;&gt;
@@ -321,9 +325,9 @@ metadata字段的类型: &lt;class &#39;bool&#39;&gt;
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Bob 让我从1到10选择一个数字，这可能只是一个随机的选择游戏。我会随便选一个数字来回应他。&quot;, &quot;speak&quot;: &quot;我选择了数字7。&quot;, &quot;number&quot;: 7}
+{&quot;thought&quot;: &quot;Bob可能是在玩一个猜数字的游戏，或者只是出于好奇。我将随机选择一个1到10之间的数字来回应他。&quot;, &quot;speak&quot;: &quot;好的，我选的数字是7。这是你的幸运数字吗？&quot;, &quot;number&quot;: &quot;7&quot;}
 ```
-响应消息的content字段: 我选择了数字7。
+响应消息的content字段: 好的，我选的数字是7。这是你的幸运数字吗？
 响应消息的metadata字段: 7
 </pre></div>
 </div>
@@ -354,13 +358,13 @@ metadata字段的类型: &lt;class &#39;bool&#39;&gt;
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Charles: ```json
-{&quot;thought&quot;: &quot;Bob 让我从20到30选择一个数字，我会随机挑选一个数字来回应他。&quot;, &quot;speak&quot;: &quot;我选择了数字27。&quot;, &quot;number&quot;: 27}
+{&quot;thought&quot;: &quot;Bob可能是在继续玩猜数字游戏，或者有其他特定的原因需要我选择这个范围内的一个数字。我会随机挑选一个20到30之间的数字来回应他。&quot;, &quot;speak&quot;: &quot;这次我选的是23。希望你喜欢这个数字！&quot;, &quot;number&quot;: &quot;23&quot;}
 ```
-内容字段: 我选择了数字27。
+内容字段: 这次我选的是23。希望你喜欢这个数字！
 内容字段的类型: &lt;class &#39;str&#39;&gt;
 
-元数据字段: 27
-元数据字段的类型: &lt;class &#39;int&#39;&gt;
+元数据字段: 23
+元数据字段的类型: &lt;class &#39;str&#39;&gt;
 </pre></div>
 </div>
 <div class="admonition hint">
@@ -410,7 +414,7 @@ metadata字段的类型: &lt;class &#39;bool&#39;&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;我需要使用execute_python_code函数来计算这个乘法表达式的结果。&lt;/thought&gt;
+David: &lt;thought&gt;我需要计算这个乘法表达式的结果。由于数字非常大，使用Python来执行这个计算会比较准确。我将使用execute_python_code函数来进行计算。&lt;/thought&gt;
 &lt;function&gt;execute_python_code&lt;/function&gt;
 &lt;code&gt;print(151513434*54353453453)&lt;/code&gt;
 system: 1. Execute function execute_python_code
@@ -427,20 +431,20 @@ system: Respond with specific tags as outlined below:
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 &lt;{argument name}&gt;{argument value}&lt;/{argument name}&gt;
 ...
-David: &lt;thought&gt;我已经得到了计算结果，现在可以将结果告诉Bob。&lt;/thought&gt;
+David: &lt;thought&gt;已经得到了计算结果，现在可以将结果告诉Bob。&lt;/thought&gt;
 &lt;function&gt;finish&lt;/function&gt;
-&lt;response&gt;151513434*54353453453的结果是8235278382423187602。&lt;/response&gt;
+&lt;response&gt;计算结果是 8235278382423187602。&lt;/response&gt;
 system: 1. Execute function finish
    [ARGUMENTS]:
-       {&quot;response&quot;: &quot;151513434*54353453453的结果是8235278382423187602。&quot;}
-   [RESULT]: 151513434*54353453453的结果是8235278382423187602。
+       {&quot;response&quot;: &quot;计算结果是 8235278382423187602。&quot;}
+   [RESULT]: 计算结果是 8235278382423187602。
 </pre></div>
 </div>
 </section>
 <section id="llamaindexagent">
 <h2>LlamaIndexAgent<a class="headerlink" href="#llamaindexagent" title="Link to this heading"></a></h2>
 <p>有关更多详细信息，请参阅检索增强型生成 (RAG) 章节。</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 31.454 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 31.209 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-builtin-agent-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/46ed2b57b0b63e420edd471093498f41/builtin_agent.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">builtin_agent.ipynb</span></code></a></p>

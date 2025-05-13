@@ -94,9 +94,9 @@ AgentScope 的主入口是 `agentscope.init`，在这里您可以配置应用程
       "project": "\u9879\u76ee Alpha",
       "name": "\u6d4b\u8bd5-1",
       "disable_saving": false,
-      "run_id": "run_20250513-072715_\u6d4b\u8bd5-1",
-      "pid": 2095,
-      "timestamp": "2025-05-13 07:27:15",
+      "run_id": "run_20250513-072818_\u6d4b\u8bd5-1",
+      "pid": 2107,
+      "timestamp": "2025-05-13 07:28:18",
       "studio_url": null,
       "agentscope_version": "0.1.5dev",
       "file": {
@@ -104,7 +104,7 @@ AgentScope 的主入口是 `agentscope.init`，在这里您可以配置应用程
         "save_code": false,
         "save_api_invoke": false,
         "base_dir": null,
-        "run_dir": "/home/runner/work/agentscope/agentscope/docs/tutorial/zh_CN/source/tutorial/runs/run_20250513-072715_\u6d4b\u8bd5-1",
+        "run_dir": "/home/runner/work/agentscope/agentscope/docs/tutorial/zh_CN/source/tutorial/runs/run_20250513-072818_\u6d4b\u8bd5-1",
         "cache_dir": "~/.cache"
       },
       "model": {
@@ -131,7 +131,7 @@ AgentScope 的主入口是 `agentscope.init`，在这里您可以配置应用程
       },
       "monitor": {
         "use_monitor": true,
-        "path_db": "/home/runner/work/agentscope/agentscope/docs/tutorial/zh_CN/source/tutorial/runs/run_20250513-072715_\u6d4b\u8bd5-1/agentscope.db"
+        "path_db": "/home/runner/work/agentscope/agentscope/docs/tutorial/zh_CN/source/tutorial/runs/run_20250513-072818_\u6d4b\u8bd5-1/agentscope.db"
       }
     }
 
@@ -212,7 +212,7 @@ AgentScope 提供了 AgentScope Studio，这是一个 Web 可视化界面，用�
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 6.197 seconds)
+   **Total running time of the script:** (0 minutes 6.156 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_monitor.py:

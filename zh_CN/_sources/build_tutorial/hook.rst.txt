@@ -384,14 +384,17 @@ Speak 钩子函数
 
  .. code-block:: none
 
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1
-    TestAgent: id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,1
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,10,11,1
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,10,11,12,13,1
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-    id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  True content:  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1
+    TestAgent: id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 
     Speak 函数的调用次数： 1
 
@@ -466,12 +469,12 @@ Observe 钩子函数
         {
             "__module__": "agentscope.message.msg",
             "__name__": "Msg",
-            "id": "d2fd8ae35e6642579b4c76424ac88c66",
+            "id": "de6ffb8d66774d489c75f3ca77af6bb0",
             "name": "user",
             "role": "user",
             "content": "观察: 太阳升起来了。",
             "metadata": null,
-            "timestamp": "2025-05-13 07:31:12"
+            "timestamp": "2025-05-13 07:31:59"
         }
     ]
     调用 Observe 函数的次数： 1
@@ -552,7 +555,7 @@ Observe 钩子函数
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.576 seconds)
+   **Total running time of the script:** (0 minutes 2.148 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_hook.py:

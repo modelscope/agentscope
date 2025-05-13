@@ -83,7 +83,7 @@
 
  .. code-block:: none
 
-    2025-05-13 07:27:22 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+    2025-05-13 07:28:27 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 
 
 
@@ -168,7 +168,7 @@
 
  .. code-block:: none
 
-    2025-05-13 07:27:23 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
+    2025-05-13 07:28:27 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
     Monday: 这张图片是一个垂直条形图，标题为 "The Apples Each Person Has in 2023"。图表显示了三个人（Alice、Bob 和 Charlie）在 2023 年拥有的苹果数量。
 
     - Alice 拥有 2.0 个苹果。
@@ -183,7 +183,7 @@
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 11.857 seconds)
+   **Total running time of the script:** (0 minutes 9.125 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_multimodality.py:

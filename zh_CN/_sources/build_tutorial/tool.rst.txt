@@ -338,7 +338,7 @@ AgentScope 提供了 `ReActAgent` 智能体类来使用工具，只需要将 `Se
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>用户需要我帮助他计算一个乘法问题。这个问题可以直接通过执行Python代码来解决，而无需使用任何提供的工具函数。</thought>
+    Friday: <thought>用户需要计算一个大数乘法，我将直接使用Python的内置计算能力来得到结果。</thought>
     <function>execute_shell_command</function>
     <command>python -c "print(1615114134*4343434343)"</command>
     <timeout>60</timeout>
@@ -356,13 +356,13 @@ AgentScope 提供了 `ReActAgent` 智能体类来使用工具，只需要将 `Se
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>已经得到了计算结果，现在可以直接告诉用户答案了。</thought>
+    Friday: <thought>已经通过执行Python命令得到了两个大数相乘的结果，现在可以将结果告知用户。</thought>
     <function>finish</function>
-    <response>计算的结果是 7015142197480303962。</response>
+    <response>计算结果显示 1615114134 与 4343434343 相乘的结果是 7015142197480303962。</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "计算的结果是 7015142197480303962。"}
-       [RESULT]: 计算的结果是 7015142197480303962。
+           {"response": "计算结果显示 1615114134 与 4343434343 相乘的结果是 7015142197480303962。"}
+       [RESULT]: 计算结果显示 1615114134 与 4343434343 相乘的结果是 7015142197480303962。
 
 
 
@@ -481,7 +481,7 @@ AgentScope 提供了 `ReActAgent` 智能体类来使用工具，只需要将 `Se
     tool_calls: [
         {
             "type": "tool_use",
-            "id": "call_0a7711a6d3e948b9b3fc43",
+            "id": "call_5d720fca3c4d41be85a03f",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami",
@@ -528,7 +528,7 @@ AgentScope 提供了 `ReActAgent` 智能体类来使用工具，只需要将 `Se
     assistant: [
         {
             "type": "tool_use",
-            "id": "call_0a7711a6d3e948b9b3fc43",
+            "id": "call_5d720fca3c4d41be85a03f",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami",
@@ -592,7 +592,7 @@ AgentScope 提供了 `ReActAgent` 智能体类来使用工具，只需要将 `Se
             "content": null,
             "tool_calls": [
                 {
-                    "id": "call_0a7711a6d3e948b9b3fc43",
+                    "id": "call_5d720fca3c4d41be85a03f",
                     "type": "function",
                     "function": {
                         "name": "execute_shell_command",
@@ -603,7 +603,7 @@ AgentScope 提供了 `ReActAgent` 智能体类来使用工具，只需要将 `Se
         },
         {
             "role": "tool",
-            "tool_call_id": "call_0a7711a6d3e948b9b3fc43",
+            "tool_call_id": "call_5d720fca3c4d41be85a03f",
             "content": "<returncode>0</returncode>\n<stdout>runner\n</stdout>\n<stderr></stderr>",
             "name": "execute_shell_command"
         }
@@ -689,7 +689,7 @@ AgentScope 支持集成 MCP (Model Context Protocol) 服务器，使模型和工
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.987 seconds)
+   **Total running time of the script:** (0 minutes 9.591 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:

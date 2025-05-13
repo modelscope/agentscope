@@ -236,7 +236,7 @@ AgentScope作为MCP客户端，支持一键启动本地的 MCP 服务器并建�
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.033 seconds)
+   **Total running time of the script:** (0 minutes 0.035 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_MCP.py:

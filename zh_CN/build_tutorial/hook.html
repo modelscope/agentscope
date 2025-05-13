@@ -447,14 +447,17 @@ to download the full example code.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Speak 函数的调用次数：&quot;</span><span class="p">,</span> <span class="n">streaming_agent</span><span class="o">.</span><span class="n">cnt</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1
-TestAgent: id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4
-id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7
-id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,1
-id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,10,11,1
-id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,10,11,12,13,1
-id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  False content:  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-id:  5d5e5d83b10c4f1eb6c42e0cdb2b0b83 stream:  True last:  True content:  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1
+TestAgent: id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1,
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3,
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5,
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7,
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9,
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+id:  b3ab0fa920f44519a56bf20848e866a8 stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 
 Speak 函数的调用次数： 1
 </pre></div>
@@ -513,12 +516,12 @@ Speak 函数的调用次数： 1
     {
         &quot;__module__&quot;: &quot;agentscope.message.msg&quot;,
         &quot;__name__&quot;: &quot;Msg&quot;,
-        &quot;id&quot;: &quot;d2fd8ae35e6642579b4c76424ac88c66&quot;,
+        &quot;id&quot;: &quot;de6ffb8d66774d489c75f3ca77af6bb0&quot;,
         &quot;name&quot;: &quot;user&quot;,
         &quot;role&quot;: &quot;user&quot;,
         &quot;content&quot;: &quot;观察: 太阳升起来了。&quot;,
         &quot;metadata&quot;: null,
-        &quot;timestamp&quot;: &quot;2025-05-13 07:31:12&quot;
+        &quot;timestamp&quot;: &quot;2025-05-13 07:31:59&quot;
     }
 ]
 调用 Observe 函数的次数： 1
@@ -556,7 +559,7 @@ Speak 函数的调用次数： 1
 </pre></div>
 </div>
 <p>能够看到，类级别的钩子函数会对该类的所有对象生效。</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.576 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.148 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-hook-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/337fd1a07176f94b2e940816bb0fd546/hook.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">hook.ipynb</span></code></a></p>

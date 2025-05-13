@@ -207,12 +207,12 @@ block 这一概念来表示消息的内容，block 是一个字典，包含了�
     {
         "__module__": "agentscope.message.msg",
         "__name__": "Msg",
-        "id": "b96e2a66629e41fd9eec5758017009af",
+        "id": "cd0da90c79e64144b8cfe6e9aedca88b",
         "name": "Jarvis",
         "role": "assistant",
         "content": "\u55e8\uff01\u6211\u80fd\u4e3a\u60a8\u6548\u52b3\u5417\uff1f",
         "metadata": null,
-        "timestamp": "2025-05-13 07:28:57"
+        "timestamp": "2025-05-13 07:29:44"
     }
 
 
@@ -244,7 +244,7 @@ block 这一概念来表示消息的内容，block 是一个字典，包含了�
 
  .. code-block:: none
 
-    id='b96e2a66629e41fd9eec5758017009af' name='Jarvis' role='assistant' content='嗨！我能为您效劳吗？' metadata=None timestamp='2025-05-13 07:28:57'
+    id='cd0da90c79e64144b8cfe6e9aedca88b' name='Jarvis' role='assistant' content='嗨！我能为您效劳吗？' metadata=None timestamp='2025-05-13 07:29:44'
     消息发送者："Jarvis"
     发送者角色："assistant"
     消息内容："嗨！我能为您效劳吗？"
