@@ -1,0 +1,7 @@
+agentscope.rag.knowledge\_bank module
+=====================================
+
+.. automodule:: agentscope.rag.knowledge_bank
+   :members:
+   :undoc-members:
+   :show-inheritance:
