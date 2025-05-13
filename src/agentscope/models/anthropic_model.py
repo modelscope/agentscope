@@ -85,6 +85,7 @@ class AnthropicChatWrapper(ModelWrapperBase):
         stream: Optional[bool] = None,
         max_tokens: int = 2048,
         tools: list[dict] = None,
+        tool_choice: Optional[str] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Call the Anthropic model.
@@ -153,6 +154,12 @@ class AnthropicChatWrapper(ModelWrapperBase):
 
         if tools:
             kwargs["tools"] = tools
+
+        if tool_choice:
+            kwargs["tool_choice"] = {
+                "type": "tool",
+                "name": tool_choice,
+            }
 
         # Extract the system message
         if messages[0]["role"] == "system":

@@ -37,34 +37,73 @@ class _HooksMeta(type):
             @wraps(original_reply)
             def wrapped_reply(
                 self: AgentBase,
-                x: Optional[Union[Msg, list[Msg]]] = None,
+                *args: Any,
+                **kwargs: Any,
             ) -> Union[Union[Msg, list[Msg]], None]:
                 # Object-level pre-reply hooks
-                current_input = x
+                current_args, current_kwargs = args, kwargs
                 for _, hook in self._hooks_pre_reply.items():
-                    hook_result = hook(self, deepcopy(current_input))
+                    hook_result = hook(
+                        self,
+                        deepcopy(current_args),
+                        deepcopy(current_kwargs),
+                    )
                     if hook_result is not None:
-                        current_input = hook_result
+                        assert (
+                            isinstance(hook_result, (list, tuple))
+                            and len(hook_result) == 2
+                        ), (
+                            "Pre-reply hook must return a (args, kwargs) "
+                            f"tuple or None, got {type(hook_result)} from "
+                            f"hook {_}"
+                        )
+                        current_args, current_kwargs = hook_result
 
                 # Class-level pre-reply hooks
                 for _, hook in self._class_hooks_pre_reply.items():
-                    hook_result = hook(self, deepcopy(current_input))
+                    hook_result = hook(
+                        self,
+                        deepcopy(current_args),
+                        deepcopy(current_kwargs),
+                    )
                     if hook_result is not None:
-                        current_input = hook_result
+                        assert (
+                            isinstance(hook_result, (list, tuple))
+                            and len(hook_result) == 2
+                        ), (
+                            "Pre-reply hook must return a (args, kwargs) "
+                            f"tuple or None, got {type(hook_result)} "
+                            f"from hook {_}"
+                        )
+                        current_args, current_kwargs = hook_result
 
                 # Original function
-                reply_result = original_reply(self, current_input)
+                reply_result = original_reply(
+                    self,
+                    *current_args,
+                    **current_kwargs,
+                )
 
                 # Object-level post-reply hooks
                 current_output = reply_result
                 for _, hook in self._hooks_post_reply.items():
-                    hook_result = hook(self, deepcopy(current_output))
+                    hook_result = hook(
+                        self,
+                        deepcopy(current_args),
+                        deepcopy(current_kwargs),
+                        deepcopy(current_output),
+                    )
                     if hook_result is not None:
                         current_output = hook_result
 
                 # Class-level post-reply hooks
                 for _, hook in self._class_hooks_post_reply.items():
-                    hook_result = hook(self, deepcopy(current_output))
+                    hook_result = hook(
+                        self,
+                        deepcopy(current_args),
+                        deepcopy(current_kwargs),
+                        deepcopy(current_output),
+                    )
                     if hook_result is not None:
                         current_output = hook_result
 
@@ -136,24 +175,35 @@ class AgentBase(metaclass=_AgentMeta):
         str,
         Callable[
             [
-                AgentBase,
-                Union[Msg, list[Msg], None],
+                AgentBase,  # self
+                Tuple[Any, ...],  # args
+                Dict[str, Any],  # kwargs
             ],
-            Union[Msg, list[Msg], None],
+            Union[Tuple[Tuple[Any, ...], Dict[str, Any]], None],
         ],
     ] = OrderedDict()
     """The class-level hook functions that will be called before the reply
-    function, which takes the `self` object and a deep copied input message(s)
-    as input. If the return of the hook is not `None`, the new output will be
+    function, which takes the `self` object and deep copied
+    positional and keyword arguments as input (args and kwargs). If the
+    return of the hook is not `None`, the new output will be
     passed to the next hook or the original reply function. Otherwise,
     the original input will be passed instead."""
 
     _class_hooks_post_reply: dict[
         str,
-        Callable[[AgentBase, Msg], Union[Msg, None]],
+        Callable[
+            [
+                AgentBase,  # self
+                Tuple[Any, ...],  # args
+                Dict[str, Any],  # kwargs
+                Msg,  # output
+            ],
+            Union[Msg, None],
+        ],
     ] = OrderedDict()
     """The class-level hook functions that will be called after the reply
-    function, which takes the `self` object and a deep copied output message
+    function, which takes the `self` object and deep copied
+    positional and keyword arguments (args and kwargs), and the output message
     as input. If the hook returns a message, the new message will be passed
     to the next hook or the original reply function. Otherwise, the original
     output will be passed instead."""
@@ -176,7 +226,10 @@ class AgentBase(metaclass=_AgentMeta):
 
     _class_hooks_post_speak: dict[
         str,
-        Callable[[AgentBase], None],
+        Callable[
+            [AgentBase],
+            None,
+        ],
     ] = OrderedDict()
     """The class-level hook functions that will be called after the speak
     function, which takes the `self` object as input."""

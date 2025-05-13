@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Meta class for all classes that can run on rpc server."""
+""" Metaclass for all classes that can run on rpc server."""
 from abc import ABCMeta
 from typing import Any, Callable
 import uuid

@@ -9,12 +9,12 @@ from typing import (
     Tuple,
     Union,
     Optional,
-    Literal,
-    get_args,
-    get_origin,
     Dict,
 )
+
+from docstring_parser import parse
 from loguru import logger
+from pydantic import Field, create_model, ConfigDict
 
 from ..exception import (
     JsonParsingError,
@@ -31,45 +31,6 @@ from ..message import (
     ToolResultBlock,
     ContentBlock,
 )
-
-try:
-    from docstring_parser import parse
-except ImportError:
-    parse = None
-
-
-def _get_type_str(cls: Any) -> Optional[Union[str, list]]:
-    """Get the type string."""
-    type_str = None
-    if hasattr(cls, "__origin__"):
-        # Typing class
-        if cls.__origin__ is Union:
-            type_str = [_get_type_str(_) for _ in get_args(cls)]
-            clean_type_str = [_ for _ in type_str if _ != "null"]
-            if len(clean_type_str) == 1:
-                type_str = clean_type_str[0]
-        elif cls.__origin__ in [list, tuple]:
-            type_str = "array"
-        else:
-            type_str = str(cls.__origin__)
-    else:
-        # Normal class
-        if cls is str:
-            type_str = "string"
-        elif cls in [float, int, complex]:
-            type_str = "number"
-        elif cls is bool:
-            type_str = "boolean"
-        elif cls in [list, tuple]:
-            type_str = "array"
-        elif cls is None.__class__:
-            type_str = "null"
-        elif cls is Any:
-            type_str = "Any"
-        else:
-            type_str = cls.__name__
-
-    return type_str  # type: ignore[return-value]
 
 
 class ServiceFunction:
@@ -154,7 +115,30 @@ class ServiceToolkit:
         """Initialize the service toolkit with a list of service functions."""
         self.service_funcs = {}
 
-    def add(self, service_func: Callable[..., Any], **kwargs: Any) -> None:
+    def remove(self, func_name: str) -> None:
+        """Remove a service function from the current toolkit.
+
+        Args:
+            func_name (`str`):
+                The name of the service function to be removed.
+        """
+        if func_name in self.service_funcs:
+            del self.service_funcs[func_name]
+        else:
+            logger.warning(
+                f"Service function `{func_name}` does not exist, "
+                f"skip removing it.",
+            )
+
+    def add(
+        self,
+        service_func: Callable[..., Any],
+        func_description: Optional[str] = None,
+        include_long_description: bool = True,
+        include_var_positional: bool = False,
+        include_var_keyword: bool = False,
+        **kwargs: Any,
+    ) -> None:
         """Add a service function to the toolkit, which will be processed into
         a tool function that can be called by the model directly, and
         registered in processed_funcs.
@@ -162,26 +146,37 @@ class ServiceToolkit:
         Args:
             service_func (`Callable[..., Any]`):
                 The service function to be called.
-            kwargs (`Any`):
-                The arguments to be passed to the service function.
+            func_description (`Optional[str]`, defaults to `None`)
+                The function description. If not provided, the description
+                will be extracted from the docstring automatically.
+            include_long_description (`bool`, defaults to `True`):
+                When extracting function description from the docstring, if
+                the long description will be included.
+            include_var_positional (`bool`, defaults to `False`):
+                Whether to include the variable positional arguments (`*args`)
+                in the function schema.
+            include_var_keyword (`bool`, defaults to `False`):
+                Whether to include the variable keyword arguments (`**kwargs`)
+                in the function schema.
+            **kwargs (`Any`):
+                The keyword arguments that preset by developers, which will
+                not be exposed to the agent
 
         Returns:
             `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
             a dict in JSON Schema format to describe the function.
 
-        Note:
-            The description of the function and arguments are extracted from
-            its docstring automatically, which should be well-formatted in
-            **Google style**. Otherwise, their descriptions in the returned
-            dictionary will be empty.
+        .. note:: The description of the function and arguments are extracted
+         from its docstring automatically, which should be well-formatted in
+         **Google style**. Otherwise, their descriptions in the returned
+         dictionary will be empty.
 
-        Suggestions:
-            1. The name of the service function should be self-explanatory,
-            so that the agent can understand the function and use it properly.
-            2. The typing of the arguments should be provided when defining
-            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
-            the agent can specify the arguments properly.
-            3. The execution results should be a `ServiceResponse` object.
+        .. tips::
+         1. The name of the service function should be self-explanatory,
+         so that the agent can understand the function and use it properly.
+         2. The typing of the arguments should be provided when defining
+         the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+         the agent can specify the arguments properly.
 
         Example:
 
@@ -211,6 +206,10 @@ class ServiceToolkit:
 
         processed_func, json_schema = ServiceToolkit.get(
             service_func,
+            func_description=func_description,
+            include_long_description=include_long_description,
+            include_var_positional=include_var_positional,
+            include_var_keyword=include_var_keyword,
             **kwargs,
         )
 
@@ -229,43 +228,78 @@ class ServiceToolkit:
                 json_schema=json_schema,
             )
 
-    def add_mcp_servers(self, server_configs: Dict) -> None:
-        """
-        Add mcp servers to the toolkit.
+    def add_mcp_servers(
+        self,
+        server_configs: dict,
+        enable_funcs: Optional[list[str]] = None,
+        disable_funcs: Optional[list[str]] = None,
+    ) -> None:
+        """Connect MCP servers according to the given configurations and
+        add their tool functions into the toolkit.
 
-        Parameters:
-            server_configs (Dict): A dictionary containing the configuration
-                for MCP servers. The configuration follows the Model Context
-                Protocol specification and can be defined in TypeScript,
-                but is available as JSON Schema for wider compatibility.
+        Args:
+            server_configs (`dict`):
+                A config dictionary that follows the Model Context Protocol
+                specification.
+            enable_funcs (`Optional[list[str]]`, defaults to `None`):
+                The functions to be added into the toolkit. If `None`, all
+                tool functions within the MCP servers will be added.
+            disable_funcs (`Optional[list[str]]`, defaults to `None`)
+                The functions that will be filtered out. If `None`, no
+                tool functions will be filtered out.
 
-                Fields:
-                   - "mcpServers": A dictionary where each key is the server
-                   name and the value is its configuration.
+        Example:
+            One example for the `server_configs`:
 
-                Field Details:
-                   - "command": Specifies the command to execute,
-                   which follows the stdio protocol for communication.
-                   - "args": A list of arguments to be passed to the command.
-                   - "url": Specifies the server's URL, which follows the
-                   Server-Sent Events (SSE) protocol for data transmission.
+                .. code-block:: json
 
-                Example:
-                    configs = {
+                    {
                         "mcpServers": {
-                            "xxxx": {
+                            "{server1_name}": {
                                 "command": "npx",
                                 "args": [
                                     "-y",
                                     "@modelcontextprotocol/xxxx"
                                 ]
                             },
-                            "yyyy": {
+                            "{server2_name}": {
                                 "url": "http://xxx.xxx.xxx.xxx:xxxx/sse"
                             }
                         }
                     }
+
+            Fields:
+               - "mcpServers": A dictionary where each key is the server
+               name and the value is its configuration.
+
+            Field Details:
+               - "command": Specifies the command to execute,
+               which follows the stdio protocol for communication.
+               - "args": A list of arguments to be passed to the command.
+               - "url": Specifies the server's URL, which follows the
+               Server-Sent Events (SSE) protocol for data transmission.
         """
+        # Check arguments for enable_funcs and disabled_funcs
+        if enable_funcs is not None and disable_funcs is not None:
+            assert isinstance(enable_funcs, list) and all(
+                isinstance(_, str) for _ in enable_funcs
+            ), (
+                "Enable functions should be a list of strings, but got "
+                f"{enable_funcs}."
+            )
+
+            assert isinstance(disable_funcs, list) and all(
+                isinstance(_, str) for _ in disable_funcs
+            ), (
+                "Disable functions should be a list of strings, but got "
+                f"{disable_funcs}."
+            )
+            intersection = set(enable_funcs).intersection(set(disable_funcs))
+            assert len(intersection) == 0, (
+                f"The functions in enable_funcs and disable_funcs "
+                f"should not overlap, but got {intersection}."
+            )
+
         new_servers = [
             MCPSessionHandler(name, config)
             for name, config in server_configs["mcpServers"].items()
@@ -273,45 +307,65 @@ class ServiceToolkit:
 
         # register the service function
         for sever in new_servers:
+            added_funcs = []
             for tool in sync_exec(sever.list_tools):
                 name = tool.name
+
+                # Skip the functions that are not in the enable_funcs if
+                # enable_funcs is not None
+                if enable_funcs is not None and name not in enable_funcs:
+                    continue
+
+                # Skip the disabled functions
+                if disable_funcs is not None and name in disable_funcs:
+                    continue
+
+                # Skip the existing functions
                 if name in self.service_funcs:
                     logger.warning(
                         f"Service function `{name}` already exists, "
                         f"skip adding it.",
                     )
-                else:
-                    json_schema = {
-                        "type": "function",
-                        "function": {
-                            "name": tool.name,
-                            "description": tool.description,
-                            "parameters": {
-                                "type": "object",
-                                "properties": tool.inputSchema.get(
-                                    "properties",
-                                    {},
-                                ),
-                                "required": tool.inputSchema.get(
-                                    "required",
-                                    [],
-                                ),
-                            },
+                    continue
+
+                added_funcs.append(name)
+
+                json_schema = {
+                    "type": "function",
+                    "function": {
+                        "name": tool.name,
+                        "description": tool.description,
+                        "parameters": {
+                            "type": "object",
+                            "properties": tool.inputSchema.get(
+                                "properties",
+                                {},
+                            ),
+                            "required": tool.inputSchema.get(
+                                "required",
+                                [],
+                            ),
                         },
-                    }
-                    self.service_funcs[tool.name] = ServiceFunction(
-                        name=tool.name,
-                        original_func=partial(
-                            sync_exec,
-                            sever.execute_tool,
-                        ),
-                        processed_func=partial(
-                            sync_exec,
-                            sever.execute_tool,
-                            tool.name,
-                        ),
-                        json_schema=json_schema,
-                    )
+                    },
+                }
+                self.service_funcs[tool.name] = ServiceFunction(
+                    name=tool.name,
+                    original_func=partial(
+                        sync_exec,
+                        sever.execute_tool,
+                    ),
+                    processed_func=partial(
+                        sync_exec,
+                        sever.execute_tool,
+                        tool.name,
+                    ),
+                    json_schema=json_schema,
+                )
+
+            logger.info(
+                f"Added tool functions from MCP server `{sever.name}`: "
+                f"{', '.join(added_funcs)}.",
+            )
 
     @property
     def json_schemas(self) -> dict:
@@ -527,10 +581,41 @@ class ServiceToolkit:
                 role="system",
             )
 
+    @staticmethod
+    def _remove_title_field(schema: dict) -> None:
+        """Remove the title field from the JSON schema to avoid
+        misleading the LLM."""
+        # The top level title field
+        if "title" in schema:
+            schema.pop("title")
+
+        # properties
+        if "properties" in schema:
+            for prop in schema["properties"].values():
+                if isinstance(prop, dict):
+                    ServiceToolkit._remove_title_field(prop)
+
+        # items
+        if "items" in schema and isinstance(schema["items"], dict):
+            ServiceToolkit._remove_title_field(schema["items"])
+
+        # additionalProperties
+        if "additionalProperties" in schema and isinstance(
+            schema["additionalProperties"],
+            dict,
+        ):
+            ServiceToolkit._remove_title_field(
+                schema["additionalProperties"],
+            )
+
     @classmethod
     def get(
         cls,
         service_func: Callable[..., Any],
+        func_description: Optional[str] = None,
+        include_long_description: bool = True,
+        include_var_positional: bool = False,
+        include_var_keyword: bool = False,
         **kwargs: Any,
     ) -> Tuple[Callable[..., Any], dict]:
         """Convert a service function into a tool function that agent can
@@ -541,25 +626,38 @@ class ServiceToolkit:
         Args:
             service_func (`Callable[..., Any]`):
                 The service function to be called.
-            kwargs (`Any`):
-                The arguments to be passed to the service function.
+            func_description (`Optional[str]`, defaults to `None`)
+                The function description. If not provided, the description
+                will be extracted from the docstring automatically.
+            include_long_description (`bool`, defaults to `True`):
+                When extracting function description from the docstring, if
+                the long description will be included.
+            include_var_positional (`bool`, defaults to `False`):
+                Whether to include the variable positional arguments (`*args`)
+                in the function schema.
+            include_var_keyword (`bool`, defaults to `False`):
+                Whether to include the variable keyword arguments (`**kwargs`)
+                in the function schema.
+            **kwargs (`Any`):
+                The keyword arguments that preset by developers, which will
+                not be exposed to the agent
 
         Returns:
-            `Tuple(Callable[..., Any], dict)`: A tuple of tool function and
-            a dict in JSON Schema format to describe the function.
+            `Tuple(Callable[..., Any], dict)`:
+                A tuple of tool function and a dict in JSON Schema format to
+                describe the function.
 
-        Note:
-            The description of the function and arguments are extracted from
-            its docstring automatically, which should be well-formatted in
-            **Google style**. Otherwise, their descriptions in the returned
-            dictionary will be empty.
+        .. note:: The description of the function and arguments are extracted
+         from its docstring automatically, which should be well-formatted in
+         **Google style**. Otherwise, their descriptions in the returned
+         dictionary will be empty.
 
-        Suggestions:
-            1. The name of the service function should be self-explanatory,
-            so that the agent can understand the function and use it properly.
-            2. The typing of the arguments should be provided when defining
-            the function (e.g. `def func(a: int, b: str, c: bool)`), so that
-            the agent can specify the arguments properly.
+        .. tips::
+         1. The name of the service function should be self-explanatory,
+         so that the agent can understand the function and use it properly.
+         2. The typing of the arguments should be provided when defining
+         the function (e.g. `def func(a: int, b: str, c: bool)`), so that
+         the agent can specify the arguments properly.
 
         Example:
 
@@ -569,108 +667,119 @@ class ServiceToolkit:
                     '''Search the query in Bing search engine.
 
                     Args:
-                        query (str):
+                        query (`str`):
                             The string query to search.
-                        api_key (str):
+                        api_key (`str`):
                             The API key for Bing search.
-                        num_results (int):
+                        num_results (`int`):
                             The number of results to return, default to 10.
                     '''
                     pass
-
 
         """
         # Get the function for agent to use
         tool_func = partial(service_func, **kwargs)
 
-        # Obtain all arguments of the service function
-        argsspec = inspect.getfullargspec(service_func)
-
-        # Construct the mapping from arguments to their typings
-        if parse is None:
-            raise ImportError(
-                "Missing required package `docstring_parser`"
-                "Please install it by "
-                "`pip install docstring_parser`.",
-            )
-
         docstring = parse(service_func.__doc__)
-
-        # Function description
-        short_description = docstring.short_description or ""
-        long_description = docstring.long_description or ""
-        func_description = "\n\n".join([short_description, long_description])
-
-        # The arguments that requires the agent to specify
-        # to support class method, the self args are deprecated
-        args_agent = set(argsspec.args) - set(kwargs.keys()) - {"self", "cls"}
-
-        # Check if the arguments from agent have descriptions in docstring
-        args_description = {
+        params_docstring = {
             _.arg_name: _.description for _ in docstring.params
         }
 
-        # Prepare default values
-        if argsspec.defaults is None:
-            args_defaults = {}
-        else:
-            args_defaults = dict(
-                zip(
-                    reversed(argsspec.args),
-                    reversed(argsspec.defaults),  # type: ignore
-                ),
-            )
+        # Function description
+        if func_description is None:
+            descriptions = []
+            if docstring.short_description is not None:
+                descriptions.append(docstring.short_description)
 
-        args_required = sorted(
-            list(set(args_agent) - set(args_defaults.keys())),
+            if (
+                include_long_description
+                and docstring.long_description is not None
+            ):
+                descriptions.append(docstring.long_description)
+
+            if len(descriptions) > 0:
+                func_description = "\n\n".join(descriptions)
+
+        fields = {}
+        for name, param in inspect.signature(service_func).parameters.items():
+            if name in kwargs or name in ["self", "cls"]:
+                # Skip the given keyword arguments and self/cls
+                continue
+
+            # Handle `**kwargs`
+            if param.kind == inspect.Parameter.VAR_KEYWORD:
+                if not include_var_keyword:
+                    continue
+                fields[name] = (
+                    Dict[str, Any]
+                    if param.annotation == inspect.Parameter.empty
+                    else Dict[str, param.annotation],  # type: ignore
+                    Field(
+                        description=params_docstring.get(
+                            f"**{name}",
+                            params_docstring.get(name, None),
+                        ),
+                        default={}
+                        if param.default is param.empty
+                        else param.default,
+                    ),
+                )
+            elif param.kind == inspect.Parameter.VAR_POSITIONAL:
+                if not include_var_positional:
+                    continue
+                fields[name] = (
+                    list[Any]
+                    if param.annotation == inspect.Parameter.empty
+                    else list[param.annotation],  # type: ignore
+                    Field(
+                        description=params_docstring.get(
+                            f"*{name}",
+                            params_docstring.get(name, None),
+                        ),
+                        default=[]
+                        if param.default is param.empty
+                        else param.default,
+                    ),
+                )
+            else:
+                fields[name] = (
+                    Any
+                    if param.annotation == inspect.Parameter.empty
+                    else param.annotation,
+                    Field(
+                        description=params_docstring.get(name, None),
+                        default=...
+                        if param.default is param.empty
+                        else param.default,
+                    ),
+                )
+
+        base_model = create_model(
+            "_StructuredOutputDynamicClass",
+            __config__=ConfigDict(arbitrary_types_allowed=True),
+            **fields,
+        )
+        json_schema = base_model.model_json_schema()
+
+        # Remove the title from the json schema
+        ServiceToolkit._remove_title_field(json_schema)
+
+        # Overwrite the function description if provided
+        extracted_func_description = (
+            func_description
+            if func_description
+            else json_schema.pop("description", None)
         )
 
-        # Prepare types of the arguments, remove the return type
-        args_types = {
-            k: v for k, v in argsspec.annotations.items() if k != "return"
-        }
-
-        # Prepare argument dictionary
-        properties_field = {}
-        for key in args_agent:
-            arg_property = {}
-            # type
-            if key in args_types:
-                try:
-                    required_type = _get_type_str(args_types[key])
-                    arg_property["type"] = required_type
-                except Exception:
-                    logger.warning(
-                        f"Fail and skip to get the type of the "
-                        f"argument `{key}`.",
-                    )
-
-                # For Literal type, add enum field
-                if get_origin(args_types[key]) is Literal:
-                    arg_property["enum"] = list(args_types[key].__args__)
-
-            # description
-            if key in args_description:
-                arg_property["description"] = args_description[key]
-
-            # default
-            if key in args_defaults and args_defaults[key] is not None:
-                arg_property["default"] = args_defaults[key]
-
-            properties_field[key] = arg_property
-
-        # Construct the JSON Schema for the service function
-        func_dict = {
+        func_schema: dict = {
             "type": "function",
             "function": {
                 "name": service_func.__name__,
-                "description": func_description.strip(),
-                "parameters": {
-                    "type": "object",
-                    "properties": properties_field,
-                    "required": args_required,
-                },
+                "parameters": json_schema,
             },
         }
 
-        return tool_func, func_dict
+        if extracted_func_description not in [None, ""]:
+            func_schema["function"]["description"] = extracted_func_description
+
+        return tool_func, func_schema
