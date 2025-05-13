@@ -1,0 +1,413 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可视化 &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="配置和监控" href="monitor.html" />
+    <link rel="prev" title="多模态" href="multimodality.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="model.html">模型 API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">可视化</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#agentscope-studio">AgentScope Studio</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">安装</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">启动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">使用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#gradio">Gradio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">自定义可视化</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">可视化</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/visual.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">备注</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-visual-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="visual-interface">
+<span id="sphx-glr-build-tutorial-visual-py"></span><span id="id1"></span><h1>可视化<a class="headerlink" href="#visual-interface" title="Link to this heading"></a></h1>
+<p>AgentScope 支持基于 AgentScope Studio 和 Gradio 的网页可视化，同时支持用户对接自定义或第三方的可视化平台。</p>
+<section id="agentscope-studio">
+<h2>AgentScope Studio<a class="headerlink" href="#agentscope-studio" title="Link to this heading"></a></h2>
+<p>AgentScope Studio 是基于 React(vite) 和 NodeJS 开发的 WebUI 工具，用于应用的可视化，和监控应用运行，监控 API 调用以及 Token 使用情况。</p>
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN01wrmPHM1GFBWSvufAt_!!6000000000592-0-tps-3104-1782.jpg" class="bordered-image" src="https://img.alicdn.com/imgextra/i1/O1CN01wrmPHM1GFBWSvufAt_!!6000000000592-0-tps-3104-1782.jpg" />
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>目前 AgentScope Studio 处于快速开发中，包括 UI，功能和性能等方面都在不断迭代中，欢迎任何反馈、贡献或建议!</p>
+</div>
+<section id="id2">
+<h3>安装<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>首先需要安装 npm</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># MacOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>node
+
+<span class="c1"># Ubuntu</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>nodejs<span class="w"> </span>npm
+
+<span class="c1"># Windows 请访问 https://nodejs.org/ 进行安装</span>
+</pre></div>
+</div>
+<p>通过以下命令进行安装</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>@agentscope/studio
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>启动<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>在命令台通过如下命令启动</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_studio
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>使用<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>启动 AgentScope 的 Python 程序时，通过 <cite>agentscope.init</cite> 函数中的 <cite>studio_url</cite> 字段连接 AgentScope Studio。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+<span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+    <span class="n">studio_url</span><span class="o">=</span><span class="s2">&quot;https://localhost:3000&quot;</span>  <span class="c1"># 替换成你本地的 AgentScope Studio 地址</span>
+<span class="p">)</span>
+
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>一旦连接，Python 程序中所有智能体对象调用 <cite>speak</cite> 函数打印出的输出都将转发
+到 AgentScope Studio，同时程序中的 <cite>UserAgent</cite> 的输入操作也将从终端转移到 AgentScope
+Studio 的 Dashboard 面板中。</p>
+</div>
+<p>Studio 中的 Dashboard 页面将按照 <cite>agentscope.init</cite> 函数中传入的 <cite>project</cite> 参数对程序
+进行分组，点击后即可查看该项目分组内所有历史运行情况。</p>
+<p>需要用户进行输入时，对话界面的输入按键会进行提示，不需要输入时，输入按钮会处于禁用状态。</p>
+<img alt="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif" class="bordered-image" src="https://img.alicdn.com/imgextra/i4/O1CN01eCEYvA1ueuOkien7T_!!6000000006063-1-tps-960-600.gif" />
+</section>
+</section>
+<section id="gradio">
+<h2>Gradio<a class="headerlink" href="#gradio" title="Link to this heading"></a></h2>
+<p>首先，请确保已安装完整版本的 AgentScope, 其中包含 Gradio 包。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># From pypi</span>
+pip<span class="w"> </span>install<span class="w"> </span>agentscope<span class="o">[</span>full<span class="o">]</span>
+
+<span class="c1"># From source code</span>
+<span class="nb">cd</span><span class="w"> </span>agentscope
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>full<span class="o">]</span>
+</pre></div>
+</div>
+<p>之后，请确保您的应用程序被封装在一个 <cite>main</cite> 函数中。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">DialogAgent</span><span class="p">,</span> <span class="n">UserAgent</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Your code here</span>
+    <span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">model_configs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span>
+    <span class="p">})</span>
+
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alice,</span>
+        <span class="n">model_config_name</span><span class="o">=</span><span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+        <span class="n">sys_prompt</span><span class="o">=</span><span class="s2">&quot;You&#39;re a helpful assistant named Alice.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">UserAgent</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">user</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span> <span class="o">==</span> <span class="s2">&quot;exit&quot;</span><span class="p">:</span>
+            <span class="k">break</span>
+</pre></div>
+</div>
+<p>然后在终端执行以下命令启动 Gradio UI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>as_gradio<span class="w"> </span><span class="o">{</span>path_to_your_python_code<span class="o">}</span>
+</pre></div>
+</div>
+<p>最后，您可以访问 Gradio UI，如下所示:</p>
+<img alt="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" class="bordered-image" src="https://img.alicdn.com/imgextra/i1/O1CN0181KSfH1oNbfzjUAVT_!!6000000005213-0-tps-3022-1530.jpg" />
+</section>
+<section id="id5">
+<h2>自定义可视化<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>自定义可视化主要分为两个组成部分</p>
+<ol class="arabic simple">
+<li><p>消息显示：将智能体中 <cite>speak</cite> 函数打印的输出转发到需要显示的地方</p></li>
+<li><p>用户输入：将 <cite>UserAgent</cite> 中的**输入操作**转移到目标平台，这样用户可以从目标平台进行输入</p></li>
+</ol>
+<p>上述两个操作分别是通过 AgentScope 中的钩子函数 <cite>pre_speak_hook</cite>，以及 <cite>UserAgent</cite> 中
+的 <cite>override_input_method</cite> 完成（AgentScope 中的 Studio 和 Gradio 也是
+通过同样的方法实现）。</p>
+<p>首先构建钩子函数</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">Msg</span><span class="p">,</span> <span class="n">TextBlock</span><span class="p">,</span> <span class="n">ImageBlock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_speak_hook</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">:</span> <span class="n">AgentBase</span><span class="p">,</span>
+    <span class="n">msg</span><span class="p">:</span> <span class="n">Msg</span><span class="p">,</span>
+    <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Msg</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="c1"># 将给输入消息转发到需要显示的地方，例如通过 requests.post 推送消息</span>
+    <span class="c1"># ...</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>然后注册该钩子函数，注意这里你可以控制钩子函数的作用范围，可以是基类级别的，也可以是对象级别的转发</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 类级别的注册，所有 AgentBase 及 子类的对象都会注册该钩子函数</span>
+<span class="n">AgentBase</span><span class="o">.</span><span class="n">register_class_hook</span><span class="p">(</span>
+    <span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;customized_pre_speak_hook&quot;</span><span class="p">,</span>
+    <span class="n">pre_speak_hook</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>当然也可以针对某一个智能体对象进行注册</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">DialogAgent</span><span class="p">(</span>
+    <span class="c1"># ...</span>
+<span class="p">)</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span>
+    <span class="s2">&quot;pre_speak&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;customized_pre_speak_hook&quot;</span><span class="p">,</span>
+    <span class="n">pre_speak_hook</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">小技巧</p>
+<p>更多关于钩子函数的内容，请阅读:ref:<a href="#id6"><span class="problematic" id="id7">`</span></a>hook`章节</p>
+</div>
+<p>转移用户输入，需要实现一个 <cite>UserInputBase</cite> 的子类，并实现其中的 <cite>__call__</cite> 函数，该函数
+会在调用 <cite>UserAgent</cite> 的 <cite>reply</cite> 函数时被触发，用于通知目标可视化平台现在需要哪个用户进行
+输入，并且在拿到输入后返回一个 <cite>UserInputData</cite> 对象</p>
+<div class="admonition tip">
+<p class="admonition-title">小技巧</p>
+<p>可以参考 <cite>agentscope.agents.TerminalUserInput</cite> 和
+<cite>agentscope.agents.StudioUserInput</cite> 两个内置模块的代码实现</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserInputBase</span><span class="p">,</span> <span class="n">UserInputData</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomizedUserInput</span><span class="p">(</span><span class="n">UserInputBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">structured_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserInputData</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;通知目标平台需要进行用户输入，并且获取用户输入&quot;&quot;&quot;</span>
+        <span class="c1"># ...</span>
+        <span class="k">return</span> <span class="n">UserInputData</span><span class="p">(</span>
+            <span class="n">blocks_input</span><span class="o">=</span><span class="p">[</span>
+                <span class="c1"># 替换为实际输入，可以是文本或是多模态的输入</span>
+                <span class="n">TextBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;你好！&quot;</span><span class="p">),</span>
+                <span class="n">ImageBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://xxx.png&quot;</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">structured_input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>然后在 <cite>UserAgent</cite> 中注册该输入方法，注意，该注册会覆盖掉原有默认的
+<cite>TerminalUserInput</cite> 类的对象</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UserAgent</span><span class="o">.</span><span class="n">override_class_input_method</span><span class="p">(</span>
+    <span class="n">input_method</span><span class="o">=</span><span class="n">CustomizedUserInput</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">小技巧</p>
+<p><cite>UserAgent</cite> 同样支持对象和类级别的注册，分别对应 <cite>override_input_method</cite>
+和 <cite>override_class_input_method</cite> 方法，它们会在对象（self）和类（cls）两个不同级别
+进行注册。</p>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.001 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-visual-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2adb983a5826b3cb754a76a37e0f76ac/visual.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">visual.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e9fc65b6518589f4eb07561d3289ff71/visual.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">visual.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/72e31b6083adcdb0276066e166292c95/visual.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">visual.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="multimodality.html" class="btn btn-neutral float-left" title="多模态" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="monitor.html" class="btn btn-neutral float-right" title="配置和监控" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模型 API &mdash; AgentScope Doc  文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/gallery.css?v=333a68b5" />
+
+  
+    
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7d86a446"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=6d1ec912"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/language_switch.js"></script>
+
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Prompt 格式化" href="prompt.html" />
+    <link rel="prev" title="常见问题解答" href="../tutorial/faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+    
+    
+    <a href="../index.html" 
+       class="icon icon-home" >
+        AgentScope Doc
+    </a>
+
+    <div class="language-switch-container">
+        <button class="language-switch-button" onclick="toChinese()">
+            中文
+        </button>
+        |
+        <button class="language-switch-button" onclick="toEnglish()">
+            EN
+        </button>
+    </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入门</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message.html">消息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent.html">构建智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conversation.html">构建对话</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">FQA</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/faq.html">常见问题解答</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Task Guides</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">模型 API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">使用配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">显式初始化模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#llm-api">集成新的 LLM API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#openai-api">OpenAI 兼容 API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restful-api">RESTful API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">自定义模型类</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html">Prompt 格式化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structured_output.html">结构化输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="streaming.html">流式输出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="builtin_agent.html">内置智能体</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multimodality.html">多模态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visual.html">可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">配置和监控</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tool.html">工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MCP.html">MCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rag.html">检索增强生成（RAG）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook.html">钩子函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">分布式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt_optimization.html">系统提示优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web_browser.html">浏览器控制</a></li>
+<li class="toctree-l1"><a class="reference internal" href="low_code.html">低代码开发</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">样例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Applications</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/swe.html">SWE-Bench</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Docs</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.html">agentscope package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.message.html">agentscope.message package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.models.html">agentscope.models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.agents.html">agentscope.agents package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.memory.html">agentscope.memory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.parsers.html">agentscope.parsers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.rag.html">agentscope.rag package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.service.html">agentscope.service package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.prompt.html">agentscope.prompt package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.tokens.html">agentscope.tokens module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_api/agentscope.exception.html">agentscope.exception module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AgentScope Doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">模型 API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/build_tutorial/model.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">备注</p>
+<p><a class="reference internal" href="#sphx-glr-download-build-tutorial-model-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="api">
+<span id="model-api"></span><span id="sphx-glr-build-tutorial-model-py"></span><h1>模型 API<a class="headerlink" href="#api" title="Link to this heading"></a></h1>
+<p>AgentScope 已集成了许多不同模态的模型 API 。</p>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<ol class="arabic simple">
+<li><p>本列表不包括文本到语音(TTS)和语音到文本(STT)API。您可以参考 <a class="reference internal" href="tool.html#tools"><span class="std std-ref">工具</span></a> 一节。</p></li>
+<li><p>本节仅介绍如何在AgentScope中使用或集成不同的模型API。关于提示要求和提示工程策略的内容将在 <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt 格式化</span></a> 一节中介绍。</p></li>
+</ol>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>对话</p></th>
+<th class="head"><p>文本生成</p></th>
+<th class="head"><p>视觉</p></th>
+<th class="head"><p>Embedding</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>OpenAI</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>DashScope</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p>Gemini</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ollama</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p>Yi</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+</tr>
+<tr class="row-odd"><td><p>LiteLLM</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+</tr>
+<tr class="row-even"><td><p>ZhipuAI</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>Anthropic</p></td>
+<td><p>✓</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+<td><p>✗</p></td>
+</tr>
+</tbody>
+</table>
+<p>在 AgentScope 中使用模型 API 有两种方式。可以根据自己的需求进行选择：</p>
+<ul class="simple">
+<li><p><strong>使用模型配置</strong>：这是构建与模型 API 无关的应用程序的推荐方式。可以通过修改配置来更改模型 API，而无需更改智能体代码。</p></li>
+<li><p><strong>显式初始化模型</strong>：如果只想使用特定的模型 API，显式初始化模型会更加方便和透明。API 文档字符串提供了参数和用法的详细信息。</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">小技巧</p>
+<p>实际上，使用配置和显式初始化模型是等效的。使用模型配置时，AgentScope 只是将配置中的键值对传递给模型的构造函数。</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DashScopeChatWrapper</span><span class="p">,</span>
+    <span class="n">ModelWrapperBase</span><span class="p">,</span>
+    <span class="n">ModelResponse</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">agentscope</span>
+</pre></div>
+</div>
+<section id="id1">
+<h2>使用配置<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>在模型配置中，需要提供以下三个字段：</p>
+<ul class="simple">
+<li><p>config_name：配置的名称。</p></li>
+<li><p>model_type：模型 API 的类型，例如 &quot;dashscope_chat&quot;、&quot;openai_chat&quot; 等。</p></li>
+<li><p>model_name：模型的名称，例如 &quot;qwen-max&quot;、&quot;gpt-4o&quot; 等。</p></li>
+</ul>
+<p>在使用模型 API 之前通过调用 <cite>agentscope.init()</cite> 来加载配置，如下所示：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">agentscope</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">model_configs</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o_temperature-0.5&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;xxx&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-qwen-max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;dashscope_chat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[]
+</pre></div>
+</div>
+<p>对于其它可选参数，可以查看对应模型 API 的构造函数的说明。</p>
+</section>
+<section id="id2">
+<h2>显式初始化模型<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p><cite>agentscope.models</cite> 模块提供了所有的内置模型 API。
+您可以通过调用相应的模型类来显式初始化模型。</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 打印 agentscope.models 下的模块</span>
+<span class="k">for</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">agentscope</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">__all__</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">module_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Wrapper&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>PostAPIChatWrapper
+OpenAIChatWrapper
+OpenAIDALLEWrapper
+OpenAIEmbeddingWrapper
+DashScopeChatWrapper
+DashScopeImageSynthesisWrapper
+DashScopeTextEmbeddingWrapper
+DashScopeMultiModalWrapper
+OllamaChatWrapper
+OllamaEmbeddingWrapper
+OllamaGenerationWrapper
+GeminiChatWrapper
+GeminiEmbeddingWrapper
+ZhipuAIChatWrapper
+ZhipuAIEmbeddingWrapper
+LiteLLMChatWrapper
+YiChatWrapper
+AnthropicChatWrapper
+</pre></div>
+</div>
+<p>以 DashScope Chat API 为例：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DashScopeChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;qwen-max&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">],</span>
+    <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;嗨！&quot;</span><span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><cite>response</cite> 是 <cite>agentscope.models.ModelResponse</cite> 的一个对象，它包含以下字段：</p>
+<ul class="simple">
+<li><p>text：生成的文本</p></li>
+<li><p>embedding：生成的嵌入</p></li>
+<li><p>image_urls：引用生成的图像</p></li>
+<li><p>raw：来自 API 的原始响应</p></li>
+<li><p>parsed：解析后的响应，例如将字符串解析成 JSON 对象</p></li>
+<li><p>stream：用来挂载流式响应的生成器，更多详情请参考 <a class="reference internal" href="streaming.html#streaming"><span class="std std-ref">流式输出</span></a> 一节。</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;文本：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;嵌入：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">embedding</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;图像URL：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">image_urls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;原始响应：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;解析后响应：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;流响应：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">stream</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>文本：你好！有什么可以帮助你的吗？
+嵌入：None
+图像URL：None
+原始响应：{&quot;status_code&quot;: 200, &quot;request_id&quot;: &quot;bd2cf1aa-f4f8-9fe5-9ae8-902d5b2a479c&quot;, &quot;code&quot;: &quot;&quot;, &quot;message&quot;: &quot;&quot;, &quot;output&quot;: {&quot;text&quot;: null, &quot;finish_reason&quot;: null, &quot;choices&quot;: [{&quot;finish_reason&quot;: &quot;stop&quot;, &quot;message&quot;: {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;你好！有什么可以帮助你的吗？&quot;}}]}, &quot;usage&quot;: {&quot;input_tokens&quot;: 10, &quot;output_tokens&quot;: 7, &quot;total_tokens&quot;: 17, &quot;prompt_tokens_details&quot;: {&quot;cached_tokens&quot;: 0}}}
+解析后响应：None
+流响应：None
+</pre></div>
+</div>
+</section>
+<section id="llm-api">
+<span id="integrating-new-api"></span><h2>集成新的 LLM API<a class="headerlink" href="#llm-api" title="Link to this heading"></a></h2>
+<p>将新的 LLM API 集成到 AgentScope 有两种方式。</p>
+<section id="openai-api">
+<h3>OpenAI 兼容 API<a class="headerlink" href="#openai-api" title="Link to this heading"></a></h3>
+<p>如果您的模型与 OpenAI Python API 兼容，建议重用 <cite>OpenAIChatWrapper</cite> 类并提供特定参数。</p>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>需要确保 API 的回复同样兼容 OpenAI Python API。</p>
+</div>
+<p>以 vLLM 为例，
+其 <a class="reference external" href="https://github.com/vllm-project/vllm?tab=readme-ov-file">官方文档</a> 提供了以下使用 OpenAI Python 库的示例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:8000/v1&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;token-abc123&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">completion</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;NousResearch/Meta-Llama-3-8B-Instruct&quot;</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">}</span>
+    <span class="p">],</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">completion</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>将 vLLM 集成到 AgentScope 非常简单，如下：</p>
+<ul class="simple">
+<li><p>将初始化 OpenAI 客户端的参数（除了 <cite>api_key</cite>）放入 <cite>client_args</cite>，</p></li>
+<li><p>将生成完成的参数（除了 <cite>model</cite>）放入 <cite>generate_args</cite>。</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">vllm_model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;openai_chat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;vllm_llama2-7b-chat-hf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;meta-llama/Llama-2-7b-chat-hf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;api_key&quot;</span><span class="p">:</span> <span class="s2">&quot;token-abc123&quot;</span><span class="p">,</span>  <span class="c1"># API 密钥</span>
+    <span class="s2">&quot;client_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;base_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:8000/v1/&quot;</span><span class="p">,</span>  <span class="c1"># 用于指定 API 的基础 URL</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;generate_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="c1"># 生成参数，如 temperature、seed</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>或者，直接用参数初始化 OpenAI Chat API 的模型类：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIChatWrapper</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">OpenAIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;meta-llama/Llama-2-7b-chat-hf&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;token-abc123&quot;</span><span class="p">,</span>
+    <span class="n">client_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;base_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:8000/v1/&quot;</span><span class="p">},</span>
+    <span class="n">generate_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="restful-api">
+<h3>RESTful API<a class="headerlink" href="#restful-api" title="Link to this heading"></a></h3>
+<p>如果您的模型通过 RESTful post API 访问，并且响应格式与 OpenAI API 兼容，可以考虑使用 <cite>PostAPIChatWrapper</cite>。</p>
+<p>以下面的 curl 命令为例，只需将 header、API URL 和 data（除了 <cite>messages</cite>，它将自动传递）提取成模型类的初始化参数即可。</p>
+<p>一个示例 post 请求：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>https://api.openai.com/v1/chat/completions
+-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span>
+-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$OPENAI_API_KEY</span><span class="s2">&quot;</span>
+-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">        &quot;model&quot;: &quot;gpt-4o&quot;,</span>
+<span class="s1">        &quot;messages&quot;: [</span>
+<span class="s1">            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;write a haiku about ai&quot;}</span>
+<span class="s1">        ]</span>
+<span class="s1">    }&#39;</span>
+</pre></div>
+</div>
+<p>相应的模型类初始化如下：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">agentscope.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostAPIChatWrapper</span>
+
+<span class="n">post_api_model</span> <span class="o">=</span> <span class="n">PostAPIChatWrapper</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">api_url</span><span class="o">=</span><span class="s2">&quot;https://api.openai.com/v1/chat/completions&quot;</span><span class="p">,</span>  <span class="c1"># 目标 URL</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>  <span class="c1"># 来自头部</span>
+        <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer $OPENAI_API_KEY&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">json_args</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>  <span class="c1"># 来自数据</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>它的模型配置如下：</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">post_api_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{my_post_model_config_name}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_type&quot;</span><span class="p">:</span> <span class="s2">&quot;post_api_chat&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;api_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://api.openai.com/v1/chat/completions&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;headers&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer </span><span class="si">{YOUR_API_TOKEN}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;json_args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果你的模型 API 返回格式与 OpenAI 不同，可以继承 <cite>PostAPIChatWrapper</cite> 并重写 <cite>_parse_response</cite> 方法。</p>
+<div class="admonition note">
+<p class="admonition-title">备注</p>
+<p>需要在子类中定义一个新的 <cite>model_type</cite> 字段，以区分它与现有的模型类。</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyNewModelWrapper</span><span class="p">(</span><span class="n">PostAPIChatWrapper</span><span class="p">):</span>
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{my_new_model_type}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;解析来自 API 服务器的响应。</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            response (`dict`):</span>
+<span class="sd">                从 API 服务器获取的响应，并通过</span>
+<span class="sd">                `response.json()` 解析为统一的格式。</span>
+
+<span class="sd">        Returns (`ModelResponse`):</span>
+<span class="sd">            解析后的响应。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: 将以下代码替换为您自己的解析逻辑</span>
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">][</span>
+                <span class="s2">&quot;content&quot;</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>自定义模型类<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>如果需要从头开始实现新的模型类，首先需要了解 AgentScope 中的以下概念：</p>
+<ul class="simple">
+<li><p><strong>model_type</strong>：在使用模型配置时，AgentScope 使用 <cite>model_type</cite> 字段来区分不同的模型 API。因此，请确保您的新模型类具有唯一的 <cite>model_type</cite>。</p></li>
+<li><p><strong>__init__</strong>：从模型配置初始化时，AgentScope 会将配置中的所有键值对传递给模型类的 <cite>__init__</cite> 方法。因此，请确保您的 <cite>__init__</cite> 方法可以处理配置中的所有参数。</p></li>
+<li><p><strong>__call__</strong>：模型类的核心方法是 <cite>__call__</cite>，它接收输入消息并返回响应。其返回值应该是 <cite>ModelResponse</cite> 对象。</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyNewModelWrapper</span><span class="p">(</span><span class="n">ModelWrapperBase</span><span class="p">):</span>
+    <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{my_new_model_type}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_name</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+        <span class="c1"># TODO: 在这里初始化您的模型</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelResponse</span><span class="p">:</span>
+        <span class="c1"># TODO: 在这里实现您的模型的核心逻辑</span>
+
+        <span class="k">return</span> <span class="n">ModelResponse</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">小技巧</p>
+<p>可选地，可以在模型中实现一个 <cite>format</cite> 方法，从而将 AgentScope 中的 <cite>Msg</cite> 类 转化为目标模型 API 要求的格式。更多详情请参考 <a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt 格式化</span></a>。</p>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>进一步阅读<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="prompt.html#prompt-engineering"><span class="std std-ref">Prompt 格式化</span></a></p></li>
+<li><p><a class="reference internal" href="streaming.html#streaming"><span class="std std-ref">流式输出</span></a></p></li>
+<li><p><a class="reference internal" href="structured_output.html#structured-output"><span class="std std-ref">结构化输出</span></a></p></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.692 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-model-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/e2a1f6cdcb82f601c32184bb959ee0c3/model.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">model.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b2f646401e45d74eca70da815879e873/model.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">model.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c1abc37519b887cfd2433e1362a0fa92/model.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">model.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="../tutorial/faq.html" class="btn btn-neutral float-left" title="常见问题解答" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="prompt.html" class="btn btn-neutral float-right" title="Prompt 格式化" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2025, Alibaba。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
