@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/modelscope-agentscope-badge.png)](https://mseep.ai/app/modelscope-agentscope)
+
 [**中文主页**](https://github.com/modelscope/agentscope/blob/main/README_ZH.md) | [**日本語のホームページ**](https://github.com/modelscope/agentscope/blob/main/README_JA.md) | [**Tutorial**](https://doc.agentscope.io/) | [**Roadmap**](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md)
 
 <h2 align="center">AgentScope: Agent-Oriented Programming for Building LLM Applications</h2>
