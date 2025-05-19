@@ -11,23 +11,6 @@
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This section is redirected to the conversation_with_web_browser_agent/README.md.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_web_browser_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_web_browser.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Web Browser Control</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="Configuration ------------------------">
 
 .. only:: html
@@ -40,6 +23,23 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Examples</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This section is redirected to the conversation_with_web_browser_agent/README.md.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_web_browser_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_web_browser.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Web Browser Control</div>
     </div>
 
 
@@ -376,8 +376,8 @@
 .. toctree::
    :hidden:
 
-   /build_tutorial/web_browser
    /build_tutorial/examples
+   /build_tutorial/web_browser
    /build_tutorial/distribution
    /build_tutorial/low_code
    /build_tutorial/quickstart

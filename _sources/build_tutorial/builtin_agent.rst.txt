@@ -140,7 +140,7 @@ configurations.
 
  .. code-block:: none
 
-    Alice: Hello! My name is Alice. It's nice to meet you, Bob. How can I assist you today?
+    Alice: Hello, Bob! My name is Alice. It's nice to meet you. How can I assist you today?
 
 
 
@@ -186,7 +186,7 @@ dialog agent `alice`.
  .. code-block:: none
 
     User Input: Bob: Do you know me?
-    Alice: I don't actually know you personally, Bob. I'm an AI assistant, and I just guessed your name based on the conversation. If that's not your name, I apologize for the mix-up! How can I help you today?
+    Alice: Hello Bob! I don't have any specific information about you other than what you've shared in this conversation. I'm here to help with any questions or tasks you might have. Is there anything in particular you'd like to chat about or any assistance you need?
 
 
 
@@ -243,9 +243,9 @@ We first initialize a `DictDialogAgent` object, and switch between different out
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the context such as if Bob has proper rain gear or if there's a specific reason to go out.", "speak": "It can be nice to go out in the rain, especially if you have an umbrella or a raincoat. Do you have a particular reason for going out, or are you just thinking about enjoying the weather?", "decision": "true"}
+    {"thought": "Going out in the rain can be refreshing and fun, but it also depends on the temperature, if one has proper gear, and if there's a specific reason to go out.", "speak": "It could be nice to go out in the rain if you have the right gear and don't mind getting a bit wet. Do you have an umbrella or a raincoat? Also, is it warm enough outside?", "decision": "false"}
     ```
-    The metadata field: true
+    The metadata field: false
     The type of metadata field: <class 'str'>
 
 
@@ -285,9 +285,9 @@ Then, we ask the agent to pick a number from 1 to 10.
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a random number between 1 and 10. Let's go with 7, as it is often considered a lucky number.", "speak": "Sure, I'll pick a number. How about 7?", "number": "7"}
+    {"thought": "I need to pick a number between 1 and 10. I'll choose 7, as it's often considered a lucky number.", "speak": "Sure, I'll pick a number. My choice is 7. Do you have a favorite number?", "number": "7"}
     ```
-    The content of the response message: Sure, I'll pick a number. How about 7?
+    The content of the response message: Sure, I'll pick a number. My choice is 7. Do you have a favorite number?
     The metadata of the response message: 7
 
 
@@ -337,12 +337,12 @@ while the `speak` field should be displayed to the user, and the `decision` fiel
  .. code-block:: none
 
     Charles: ```json
-    {"thought": "I need to pick a random number between 20 and 30. Let's go with 25, as it is right in the middle of the range.", "speak": "Sure, I'll pick a number. How about 25?", "number": "25"}
+    {"thought": "I need to pick a number between 20 and 30. I'll choose 27, as it's in the middle of the range and seems like a balanced choice.", "speak": "Sure, I'll pick a number. My choice is 27. How about you, do you have a favorite number in this range?", "number": "27"}
     ```
-    The content field: Sure, I'll pick a number. How about 25?
+    The content field: Sure, I'll pick a number. My choice is 27. How about you, do you have a favorite number in this range?
     The type of content field: <class 'str'>
 
-    The metadata field: 25
+    The metadata field: 27
     The type of metadata field: <class 'str'>
 
 
@@ -424,12 +424,12 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>To calculate the multiplication of 151513434 and 54353453453, I need to use the execute_python_code function. The Python code will simply be 'print(151513434 * 54353453453)'</thought>
+    David: <thought>To calculate the multiplication of these two large numbers, I can use the execute_python_code function to run a Python code snippet that performs the calculation and prints the result.</thought>
     <function>execute_python_code</function>
-    <code>print(151513434 * 54353453453)</code>
+    <code>print(151513434*54353453453)</code>
     system: 1. Execute function execute_python_code
        [ARGUMENTS]:
-           {"code": "print(151513434 * 54353453453)"}
+           {"code": "print(151513434*54353453453)"}
        [RESULT]: <returncode>0</returncode>
     <stdout>8235278382423187602
     </stdout>
@@ -441,13 +441,13 @@ Then we initialize a `ReActAgent` to solve the given problem.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    David: <thought>The multiplication of 151513434 and 54353453453 has been calculated successfully, the result is 8235278382423187602. Now I can inform Bob about the result.</thought>
+    David: <thought>The multiplication of 151513434 and 54353453453 has been calculated successfully. The result is 8235278382423187602. Now I can inform Bob about the result.</thought>
     <function>finish</function>
-    <response>The result of 151513434 * 54353453453 is 8235278382423187602.</response>
+    <response>The result of multiplying 151513434 by 54353453453 is 8235278382423187602.</response>
     system: 1. Execute function finish
        [ARGUMENTS]:
-           {"response": "The result of 151513434 * 54353453453 is 8235278382423187602."}
-       [RESULT]: The result of 151513434 * 54353453453 is 8235278382423187602.
+           {"response": "The result of multiplying 151513434 by 54353453453 is 8235278382423187602."}
+       [RESULT]: The result of multiplying 151513434 by 54353453453 is 8235278382423187602.
 
 
 
@@ -463,7 +463,7 @@ Refer to the RAG Section for more details.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 35.198 seconds)
+   **Total running time of the script:** (0 minutes 43.170 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_builtin_agent.py:

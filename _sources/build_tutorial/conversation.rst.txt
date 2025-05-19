@@ -109,12 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: It looks like the conversation history is empty. How can I assist you today?
-    Monster: Hello! I'm Monster, your helpful assistant. It seems like we're starting fresh here. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you!
-    Angel: Hello! I'm Angel, your helpful assistant. It seems there might be a bit of confusion since you mentioned being another assistant. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you!
-    Monster: Hello! I'm Monster, your helpful assistant. It looks like there was a bit of a mix-up with the introductions. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you! 😊
-    Angel: Hello! I'm Angel, your helpful assistant. It seems there might be a bit of confusion with the introductions. I'm here to help you with any information, tasks, or just to chat. How can I assist you today? 😊
-    Monster: Hello! I'm Monster, your helpful assistant. It looks like there's a bit of a mix-up with the introductions, but no worries! How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you! 😊
+    Angel: I don't have any prior conversation history to reference. This appears to be the start of our conversation. How can I assist you today?
+    Monster: Hello! It's nice to meet you. I'm Monster, your friendly assistant. How can I help you today? Is there anything in particular you'd like to chat about or any questions you have?
+    Angel: Hello! It's nice to meet you, but I think there might be a little mix-up. I'm Angel, your friendly assistant, not Monster. How can I assist you today? Is there anything in particular you'd like to chat about or any questions you have?
+    Monster: Oh, I see the confusion! I must have introduced myself incorrectly. I'm actually here to assist you, and my name is Monster. It's a pleasure to meet you, Angel! How can I help you today?
+    Angel: It seems there's a bit of a mix-up, but no worries! I'm Angel, and I'm here to help you. There's no other assistant named Monster in this conversation. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?
+    Monster: I apologize for the confusion, and I appreciate your patience. Let's start fresh! My name is Monster, and I'm here to assist you. How can I help you today? Is there anything specific you'd like to discuss or any questions you have?
 
 
 
@@ -292,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 26.545 seconds)
+   **Total running time of the script:** (0 minutes 25.853 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

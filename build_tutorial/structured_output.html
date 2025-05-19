@@ -275,12 +275,12 @@ combine the ReAct algorithm with structured output.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_608b864eddc94356ba8e11&quot;,
+        &quot;id&quot;: &quot;call_c58f8f0866b643d99a9b93&quot;,
         &quot;name&quot;: &quot;generate_response&quot;,
         &quot;input&quot;: {
             &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed &#39;the world&#39;s most famous equation&#39;, has been replicated in popular culture countless times.&quot;,
             &quot;name&quot;: &quot;Albert Einstein&quot;,
-            &quot;description&quot;: &quot;Theoretical physicist, developed the theory of relativity&quot;,
+            &quot;description&quot;: &quot;Theoretical Physicist, Best known for his theory of relativity&quot;,
             &quot;age&quot;: 76
         }
     }
@@ -288,7 +288,7 @@ combine the ReAct algorithm with structured output.</p>
 system: Execute function generate_response:
 Success
 Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed &#39;the world&#39;s most famous equation&#39;, has been replicated in popular culture countless times.
-The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;description&#39;: &#39;Theoretical physicist, developed the theory of relativity&#39;, &#39;age&#39;: 76}
+The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;description&#39;: &#39;Theoretical Physicist, Best known for his theory of relativity&#39;, &#39;age&#39;: 76}
 </pre></div>
 </div>
 <p>With different <cite>structured_model</cite>, we can achieve different structured output</p>
@@ -301,7 +301,7 @@ The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;descrip
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_d1f39e7d5bf9419d83d9f0&quot;,
+        &quot;id&quot;: &quot;call_74deb72cd25a46639ff22e&quot;,
         &quot;name&quot;: &quot;generate_response&quot;,
         &quot;input&quot;: {
             &quot;response&quot;: &quot;I choose apple.&quot;,
@@ -369,12 +369,12 @@ allowing us to print the processed function schema.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_a4a88c9141ec4f86b50285&quot;,
+        &quot;id&quot;: &quot;call_60a74a60a0774dceb0b361&quot;,
         &quot;name&quot;: &quot;generate_response&quot;,
         &quot;input&quot;: {
             &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed &#39;the world&#39;s most famous equation&#39;, has been replicated in popular culture countless times.&quot;,
             &quot;name&quot;: &quot;Albert Einstein&quot;,
-            &quot;description&quot;: &quot;Theoretical Physicist, developed the theory of relativity&quot;,
+            &quot;description&quot;: &quot;Theoretical Physicist, Creator of the Theory of Relativity&quot;,
             &quot;age&quot;: 76
         }
     }
@@ -712,7 +712,7 @@ parsed dictionary by the following core steps in the <cite>reply</cite> method.<
         <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 19.385 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 20.543 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-structured-output-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d9e2bb7a0effd4e32a08e552ade3979e/structured_output.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">structured_output.ipynb</span></code></a></p>

@@ -174,12 +174,12 @@ combine the ReAct algorithm with structured output.
     Friday: [
         {
             "type": "tool_use",
-            "id": "call_608b864eddc94356ba8e11",
+            "id": "call_c58f8f0866b643d99a9b93",
             "name": "generate_response",
             "input": {
                 "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed 'the world's most famous equation', has been replicated in popular culture countless times.",
                 "name": "Albert Einstein",
-                "description": "Theoretical physicist, developed the theory of relativity",
+                "description": "Theoretical Physicist, Best known for his theory of relativity",
                 "age": 76
             }
         }
@@ -187,7 +187,7 @@ combine the ReAct algorithm with structured output.
     system: Execute function generate_response:
     Success
     Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed 'the world's most famous equation', has been replicated in popular culture countless times.
-    The structured output:  {'name': 'Albert Einstein', 'description': 'Theoretical physicist, developed the theory of relativity', 'age': 76}
+    The structured output:  {'name': 'Albert Einstein', 'description': 'Theoretical Physicist, Best known for his theory of relativity', 'age': 76}
 
 
 
@@ -217,7 +217,7 @@ With different `structured_model`, we can achieve different structured output
     Friday: [
         {
             "type": "tool_use",
-            "id": "call_d1f39e7d5bf9419d83d9f0",
+            "id": "call_74deb72cd25a46639ff22e",
             "name": "generate_response",
             "input": {
                 "response": "I choose apple.",
@@ -320,12 +320,12 @@ Now we call the agent once and observe the changes in the schema of the target f
     Friday: [
         {
             "type": "tool_use",
-            "id": "call_a4a88c9141ec4f86b50285",
+            "id": "call_60a74a60a0774dceb0b361",
             "name": "generate_response",
             "input": {
                 "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged to be one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made important contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2, which has been dubbed 'the world's most famous equation', has been replicated in popular culture countless times.",
                 "name": "Albert Einstein",
-                "description": "Theoretical Physicist, developed the theory of relativity",
+                "description": "Theoretical Physicist, Creator of the Theory of Relativity",
                 "age": 76
             }
         }
@@ -791,7 +791,7 @@ parsed dictionary by the following core steps in the `reply` method.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 19.385 seconds)
+   **Total running time of the script:** (0 minutes 20.543 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_structured_output.py:
