@@ -1,7 +1,0 @@
-agentscope.models.anthropic\_model module
-=========================================
-
-.. automodule:: agentscope.models.anthropic_model
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -109,12 +109,18 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: I don't have any prior conversation history to reference. This appears to be the start of our conversation. How can I assist you today?
-    Monster: Hello! It's nice to meet you. I'm Monster, your friendly assistant. How can I help you today? Is there anything in particular you'd like to chat about or any questions you have?
-    Angel: Hello! It's nice to meet you, but I think there might be a little mix-up. I'm Angel, your friendly assistant, not Monster. How can I assist you today? Is there anything in particular you'd like to chat about or any questions you have?
-    Monster: Oh, I see the confusion! I must have introduced myself incorrectly. I'm actually here to assist you, and my name is Monster. It's a pleasure to meet you, Angel! How can I help you today?
-    Angel: It seems there's a bit of a mix-up, but no worries! I'm Angel, and I'm here to help you. There's no other assistant named Monster in this conversation. How can I assist you today? Is there anything specific you'd like to talk about or any questions you have?
-    Monster: I apologize for the confusion, and I appreciate your patience. Let's start fresh! My name is Monster, and I'm here to assist you. How can I help you today? Is there anything specific you'd like to discuss or any questions you have?
+    Angel: It looks like the conversation history is empty. How can I assist you today?
+    Monster: Hello! I'm Monster, your friendly assistant. It seems like we're starting fresh here. How can I help you today? Whether you have questions, need some information, or just want to chat, I'm here for you!
+    Angel: Hello! I'm Angel, and it's nice to meet you, Monster. It looks like there might be a bit of a mix-up since we're both here to assist. How about we work together to help the person who needs assistance? What can we do for you today?
+    Monster: Hello Angel! It's great to meet you. I think you're right; we can definitely work together to provide the best assistance possible. Let's see what the person needs and how we can help them. 
+
+    So, if you're out there and need some help or just want to chat, feel free to let us know! What can we do for you today?
+    Angel: Hello! It's wonderful to see such a collaborative spirit between us. I'm Angel, and I'm here to help with any questions, information, or just to chat. Since we're both ready to assist, let's make sure we provide the best support possible.
+
+    So, how can we help you today? Do you have any specific questions or topics you'd like to discuss?
+    Monster: Hello! It's great to have both of us here to assist. I'm Monster, and I'm here to help with any questions, information, or just to chat. Since we're both ready to provide the best support possible, let's get started!
+
+    So, how can we help you today? Do you have any specific questions, topics, or anything else you'd like to discuss?
 
 
 
@@ -292,7 +298,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 25.853 seconds)
+   **Total running time of the script:** (0 minutes 43.278 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
