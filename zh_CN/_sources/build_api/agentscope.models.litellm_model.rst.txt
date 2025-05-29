@@ -1,0 +1,7 @@
+agentscope.models.litellm\_model module
+=======================================
+
+.. automodule:: agentscope.models.litellm_model
+   :members:
+   :undoc-members:
+   :show-inheritance:

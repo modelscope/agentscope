@@ -1,0 +1,18 @@
+agentscope.strategy package
+===========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   agentscope.strategy.mixture_of_agent
+
+Module contents
+---------------
+
+.. automodule:: agentscope.strategy
+   :members:
+   :undoc-members:
+   :show-inheritance:
