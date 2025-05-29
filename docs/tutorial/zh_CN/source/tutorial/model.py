@@ -96,7 +96,9 @@ agentscope.init(
             "model_type": "openai_chat",
             "model_name": "gpt-4o",
             "api_key": "xxx",
-            "temperature": 0.5,
+            "generate_args": {
+                "temperature": 0.5,
+            },
         },
         {
             "config_name": "my-qwen-max",
