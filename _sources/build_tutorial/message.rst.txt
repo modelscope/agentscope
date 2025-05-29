@@ -212,12 +212,12 @@ Message can be serialized to a string in JSON format.
     {
         "__module__": "agentscope.message.msg",
         "__name__": "Msg",
-        "id": "8fdca2b40b9248889d7d8acfbf7bd6b2",
+        "id": "6b940081b6ba48f4b5e2a5e48930ef1d",
         "name": "Jarvis",
         "role": "assistant",
         "content": "Hi! How can I help you?",
         "metadata": null,
-        "timestamp": "2025-05-27 03:12:59"
+        "timestamp": "2025-05-29 06:56:14"
     }
 
 
@@ -248,7 +248,7 @@ Deserialize a message from a string in JSON format.
 
  .. code-block:: none
 
-    id='8fdca2b40b9248889d7d8acfbf7bd6b2' name='Jarvis' role='assistant' content='Hi! How can I help you?' metadata=None timestamp='2025-05-27 03:12:59'
+    id='6b940081b6ba48f4b5e2a5e48930ef1d' name='Jarvis' role='assistant' content='Hi! How can I help you?' metadata=None timestamp='2025-05-29 06:56:14'
     The sender of the message: "Jarvis"
     The role of the sender: "assistant"
     The content of the message: "Hi! How can I help you?"
