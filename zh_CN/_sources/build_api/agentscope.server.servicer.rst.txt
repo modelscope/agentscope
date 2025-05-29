@@ -1,0 +1,7 @@
+agentscope.server.servicer module
+=================================
+
+.. automodule:: agentscope.server.servicer
+   :members:
+   :undoc-members:
+   :show-inheritance:
