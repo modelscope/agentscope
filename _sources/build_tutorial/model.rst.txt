@@ -118,7 +118,7 @@ In a model configuration, the following three fields are required:
 
 You should load the configurations before using the model APIs by calling `agentscope.init()` as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-110
+.. GENERATED FROM PYTHON SOURCE LINES 90-108
 
 .. code-block:: Python
 
@@ -130,9 +130,7 @@ You should load the configurations before using the model APIs by calling `agent
                 "model_type": "openai_chat",
                 "model_name": "gpt-4o",
                 "api_key": "xxx",
-                "generate_args": {
-                    "temperature": 0.5,
-                },
+                "temperature": 0.5,
             },
             {
                 "config_name": "my-qwen-max",
@@ -155,18 +153,18 @@ You should load the configurations before using the model APIs by calling `agent
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-112
+.. GENERATED FROM PYTHON SOURCE LINES 109-110
 
 For the other parameters, you
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-118
+.. GENERATED FROM PYTHON SOURCE LINES 112-116
 
 Initializing Model Explicitly
 --------------------------------
 The available model APIs are modularized in the `agentscope.models` module.
 You can initialize a model explicitly by calling the corresponding model class.
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-124
+.. GENERATED FROM PYTHON SOURCE LINES 116-122
 
 .. code-block:: Python
 
@@ -206,11 +204,11 @@ You can initialize a model explicitly by calling the corresponding model class.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-126
+.. GENERATED FROM PYTHON SOURCE LINES 123-124
 
 Taking DashScope Chat API as an example:
 
-.. GENERATED FROM PYTHON SOURCE LINES 126-140
+.. GENERATED FROM PYTHON SOURCE LINES 124-138
 
 .. code-block:: Python
 
@@ -235,7 +233,7 @@ Taking DashScope Chat API as an example:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-149
+.. GENERATED FROM PYTHON SOURCE LINES 139-147
 
 The `response` is an object of `agentscope.models.ModelResponse`, which contains the following fields:
 
@@ -246,7 +244,7 @@ The `response` is an object of `agentscope.models.ModelResponse`, which contains
 - parsed: The parsed response, e.g. load the text into a JSON object
 - stream: A generator that yields the response text chunk by chunk, refer to section :ref: `streaming` for more details.
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-157
+.. GENERATED FROM PYTHON SOURCE LINES 147-155
 
 .. code-block:: Python
 
@@ -269,14 +267,14 @@ The `response` is an object of `agentscope.models.ModelResponse`, which contains
     Text: Hello! How can I assist you today?
     Embedding: None
     Image URLs: None
-    Raw: {"status_code": 200, "request_id": "0c4e6398-5f9e-93d5-98e7-01be75a0b021", "code": "", "message": "", "output": {"text": null, "finish_reason": null, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}}]}, "usage": {"input_tokens": 10, "output_tokens": 9, "total_tokens": 19, "prompt_tokens_details": {"cached_tokens": 0}}}
+    Raw: {"status_code": 200, "request_id": "8cb3fb9a-7cc5-973d-a587-3cbcd87de408", "code": "", "message": "", "output": {"text": null, "finish_reason": null, "choices": [{"finish_reason": "stop", "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}}]}, "usage": {"input_tokens": 10, "output_tokens": 9, "total_tokens": 19, "prompt_tokens_details": {"cached_tokens": 0}}}
     Parsed: None
     Stream: None
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-198
+.. GENERATED FROM PYTHON SOURCE LINES 156-196
 
 .. _integrating_new_api:
 
@@ -319,7 +317,7 @@ It's very easy to integrate vLLM into AgentScope as follows:
 - the parameters for generating completions (expect `model`) into `generate_args`.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 198-212
+.. GENERATED FROM PYTHON SOURCE LINES 196-210
 
 .. code-block:: Python
 
@@ -344,11 +342,11 @@ It's very easy to integrate vLLM into AgentScope as follows:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 213-214
+.. GENERATED FROM PYTHON SOURCE LINES 211-212
 
 Or, directly initialize the OpenAI Chat model wrapper with the parameters:
 
-.. GENERATED FROM PYTHON SOURCE LINES 214-225
+.. GENERATED FROM PYTHON SOURCE LINES 212-223
 
 .. code-block:: Python
 
@@ -370,7 +368,7 @@ Or, directly initialize the OpenAI Chat model wrapper with the parameters:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 226-248
+.. GENERATED FROM PYTHON SOURCE LINES 224-246
 
 RESTful APIs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -395,7 +393,7 @@ For an example post request:
 
 The corresponding model wrapper initialization is as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 248-263
+.. GENERATED FROM PYTHON SOURCE LINES 246-261
 
 .. code-block:: Python
 
@@ -421,11 +419,11 @@ The corresponding model wrapper initialization is as follows:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 264-265
+.. GENERATED FROM PYTHON SOURCE LINES 262-263
 
 Its model configuration is as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 265-278
+.. GENERATED FROM PYTHON SOURCE LINES 263-276
 
 .. code-block:: Python
 
@@ -449,7 +447,7 @@ Its model configuration is as follows:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 279-284
+.. GENERATED FROM PYTHON SOURCE LINES 277-282
 
 If your model API response format is different from OpenAI API, you can inherit from `PostAPIChatWrapper` and override the `_parse_response` method to adapt to your API response format.
 
@@ -457,7 +455,7 @@ If your model API response format is different from OpenAI API, you can inherit 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 284-308
+.. GENERATED FROM PYTHON SOURCE LINES 282-306
 
 .. code-block:: Python
 
@@ -492,7 +490,7 @@ If your model API response format is different from OpenAI API, you can inherit 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 309-317
+.. GENERATED FROM PYTHON SOURCE LINES 307-315
 
 From Scratch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -503,7 +501,7 @@ If you decide to implement a new model API from scratch, you need to know the fo
 - **__init__**: When initializing from configuration, AgentScope passes all the key-value pairs in the configuration to the `__init__` method of the model wrapper. So ensure your `__init__` method can handle all the parameters in the configuration.
 - **__call__**: The core method of the model wrapper is `__call__`, which takes the input messages and returns the response. Its return value should be an object of `ModelResponse`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 317-335
+.. GENERATED FROM PYTHON SOURCE LINES 315-333
 
 .. code-block:: Python
 
@@ -532,7 +530,7 @@ If you decide to implement a new model API from scratch, you need to know the fo
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 336-344
+.. GENERATED FROM PYTHON SOURCE LINES 334-342
 
 .. tip:: Optionally, you can implement a format method to format the prompt before sending it to the model API.
  Refer to :ref:`prompt-engineering` for more details.
@@ -546,7 +544,7 @@ Further Reading
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.902 seconds)
+   **Total running time of the script:** (0 minutes 1.376 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_model.py:

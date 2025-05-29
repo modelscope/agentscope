@@ -85,7 +85,7 @@ As usual, we initialize AgentScope with the above configuration, and create a ne
 
  .. code-block:: none
 
-    2025-05-29 14:01:29 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+    2025-05-29 14:22:56 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 
 
 
@@ -168,23 +168,17 @@ After that, we can send the message to the vision agent and get the response.
 
  .. code-block:: none
 
-    2025-05-29 14:01:29 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
-    Monday: The image is a bar chart titled **"The Apples Each Person Has in 2023"**. It displays the number of apples three individuals—Alice, Bob, and Charlie—possess. Here are the details:
+    Monday: The image is a bar chart titled **"The Apples Each Person Has in 2023"**. It displays the number of apples that three individuals—Alice, Bob, and Charlie—possess. Here are the details:
 
     - **X-axis**: Labeled "Number of Apples," it represents the names of the individuals: Alice, Bob, and Charlie.
     - **Y-axis**: Represents the quantity of apples, ranging from 0 to 4.
 
     ### Data Representation:
-    - **Alice** has **2 apples**.
-    - **Bob** has **1 apple**.
-    - **Charlie** has **4 apples**.
+    - **Alice**: Has **2 apples** (as indicated by the height of the bar).
+    - **Bob**: Has **1 apple** (the shortest bar).
+    - **Charlie**: Has **4 apples** (the tallest bar).
 
-    ### Visual Characteristics:
-    - The bars are colored in blue.
-    - Charlie's bar is the tallest, indicating he has the most apples.
-    - Bob's bar is the shortest, indicating he has the fewest apples.
-
-    This chart effectively compares the number of apples each person has in a clear and straightforward manner.
+    The bars are colored in a solid blue shade, making the data easily distinguishable. The chart effectively compares the number of apples each person has in a clear and straightforward manner.
 
 
 
@@ -192,7 +186,7 @@ After that, we can send the message to the vision agent and get the response.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 18.674 seconds)
+   **Total running time of the script:** (0 minutes 13.098 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_multimodality.py:

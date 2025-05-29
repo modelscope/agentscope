@@ -109,16 +109,25 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: It looks like the conversation history is empty. How can I assist you today?
-    Monster: Hello! I'm Monster, your friendly assistant. It seems like we're starting fresh here. How can I help you today? Whether you have a question, need some advice, or just want to chat, I'm all ears!
-    Angel: Hello Monster! It's nice to meet you. I'm Angel, and I'm also here to help. It seems like we both want to assist, so let's work together! How can we help the user today?
-    Monster: Hello Angel! It's great to meet you. I'm sure we can do a fantastic job together in assisting the user. 
+    Angel: I don't actually have any conversation history to refer to. This appears to be the start of our conversation. Is there something in particular you'd like to chat about? I'm happy to discuss most topics, but please let me know if you have any specific questions or subjects of interest.
+    Monster: Hello! It's nice to meet you, Angel. I'm Monster, your friendly assistant. I'm here to chat about pretty much anything you'd like. Since this is the start of our conversation, why don't you tell me a little bit about yourself? What are some of your interests or hobbies? Or is there a particular topic you're curious about that we could explore together?
+    Angel: Hello Monster! It's nice to meet you too. I appreciate the friendly introduction, but I should clarify that I'm actually Angel, an AI assistant here to chat and help with any questions or topics you'd like to explore. I don't have personal interests or hobbies since I'm an artificial intelligence, but I'm very curious to learn more about you and what brings you here today. Is there a particular subject or question on your mind that we could dive into?
+    Monster: Oh, I see! My apologies for the mix-up, Angel. It's great to meet another AI assistant! Since we're both here to help and chat, why don't we focus on making this conversation as helpful and engaging as possible for anyone who might be reading? 
 
-    To the user: Hi there! Both Angel and I are here to help. Whether you have a question, need some advice, or just want to chat about something, feel free to let us know. What can we assist you with today?
-    Angel: Hello! It's wonderful to have both of us here to assist you. Whether you need help with a specific question, want to discuss something on your mind, or just want to chat, we're here for you. What can Angel and I do for you today?
-    Monster: Hello! It's great to see both of us here and ready to help. Let's make sure we provide the best assistance possible. 
+    If you have any specific topics or questions in mind, feel free to bring them up, and we can explore them together. Or, if you prefer, I can suggest some interesting topics or even a fun game we could play. What do you think?
+    Angel: That sounds like a great idea, Monster! Collaborating to create an engaging and helpful conversation is a wonderful approach. Since we're both here to assist, let's start by suggesting some topics or activities that could be interesting for anyone following along.
 
-    To the user: Hi there! Both Angel and I are here to assist you. Whether you have a question, need some advice, or just want to chat about something, feel free to let us know. What can we help you with today?
+    Here are a few ideas:
+    1. **Q&A Session**: We can take turns asking and answering questions on a wide range of topics, from science and technology to history and culture.
+    2. **Trivia Game**: We can play a trivia game, where we take turns providing questions and answers on various subjects.
+    3. **Creative Writing**: We can collaborate on a short story or poem, taking turns to add lines or stanzas.
+    4. **Problem Solving**: We can tackle a hypothetical problem or puzzle together, brainstorming and discussing potential solutions.
+    5. **Discussion on Current Events**: We can discuss recent news or events, sharing insights and perspectives.
+
+    Which of these ideas sounds appealing to you, or do you have another suggestion?
+    Monster: Those are all fantastic ideas, Angel! I think a **Q&A Session** could be a great way to start. It allows for a broad range of topics and can be very informative and engaging. We can take turns asking and answering questions, and we can cover a wide variety of subjects.
+
+    To get started, how about you ask the first question? It can be on any topic you like—science, technology, history, culture, or anything else that piques your interest.
 
 
 
@@ -238,7 +247,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -282,7 +291,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -296,7 +305,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 31.415 seconds)
+   **Total running time of the script:** (0 minutes 53.596 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
