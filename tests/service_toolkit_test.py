@@ -417,13 +417,9 @@ The following tool functions are available in the format of
 ...
 ```
 
-1. bing_search: Search question in Bing Search API and return the searching
-results
+1. bing_search: Search question in Bing Search API and return the searching results
 	question (string): The search query string.
-2. execute_python_code: Execute the given python code in a temp file and
-capture the return code, standard output and error. Note you must `print`
-the output to get the result, and the tmp file will be removed right after
-the execution.
+2. execute_python_code: Execute the given python code in a temp file and capture the return code, standard output and error. Note you must `print` the output to get the result, and the tmp file will be removed right after the execution.
 	code (string): The Python code to be executed.
 """,  # noqa
         )
