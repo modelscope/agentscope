@@ -100,7 +100,7 @@ class ServiceFunction:
 
             merged_schema["function"]["parameters"]["properties"][key] = value
 
-            if key in extended_schema["required"]:
+            if key in extended_schema.get("required", []):
                 merged_schema["function"]["parameters"]["required"].append(key)
         return merged_schema
 
