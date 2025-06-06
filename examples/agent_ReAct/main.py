@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """An example of a conversation with a ReAct agent."""
-import sys
-import io
 
 from agentscope.agents import UserAgent
 from agentscope.agents import ReActAgent
@@ -10,8 +8,7 @@ from agentscope.service import (
     read_text_file,
     write_text_file,
     ServiceToolkit,
-    ServiceResponse,
-    ServiceExecStatus,
+    execute_python_code,
 )
 import agentscope
 
@@ -25,41 +22,6 @@ YOUR_MODEL_CONFIGURATION = {
     # ...
 }
 
-
-# Prepare a new tool function
-def execute_python_code(code: str) -> ServiceResponse:  # pylint: disable=C0301
-    """
-    Execute Python code and capture the output. Note you must `print` the output to get the result.
-    Args:
-        code (`str`):
-            The Python code to be executed.
-    """  # noqa
-
-    # Create a StringIO object to capture the output
-    old_stdout = sys.stdout
-    new_stdout = io.StringIO()
-    sys.stdout = new_stdout
-
-    try:
-        # Using `exec` to execute code
-        namespace = {}
-        exec(code, namespace)
-    except Exception as e:
-        # If an exception occurs, capture the exception information
-        output = str(e)
-        status = ServiceExecStatus.ERROR
-    else:
-        # If the execution is successful, capture the output
-        output = new_stdout.getvalue()
-        status = ServiceExecStatus.SUCCESS
-    finally:
-        # Recover the standard output
-        sys.stdout = old_stdout
-
-    # Wrap the output and status into a ServiceResponse object
-    return ServiceResponse(status, output)
-
-
 # Prepare the tools for the agent
 service_toolkit = ServiceToolkit()
 
@@ -71,7 +33,6 @@ service_toolkit.add(write_text_file)
 agentscope.init(
     model_configs=YOUR_MODEL_CONFIGURATION,
     project="Conversation with ReActAgent",
-    save_api_invoke=True,
 )
 
 # Create agents

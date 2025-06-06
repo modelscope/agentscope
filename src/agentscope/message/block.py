@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=too-many-ancestors
 """The content blocks of messages"""
-from typing import Literal, Union
-from typing_extensions import TypedDict, Required, Optional
+from typing import Literal, Union, Optional
+from typing_extensions import TypedDict, Required
 
 
 class ToolUseBlock(TypedDict, total=False):

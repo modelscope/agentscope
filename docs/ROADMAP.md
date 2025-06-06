@@ -14,11 +14,13 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 
 ## Task
 
+> ✅: DONE, 📝: TODO, 🚧: In Progress, ❌: Abandoned
+
 1. Documentation
 
  - ✅ Re-write the tutorial.
  - 📝 Correct the typographical errors in API documents.
- - 🚧 Refine the README.md.
+ - ✅ Refine the README.md.
 
 2. Tools Calling
 
@@ -49,11 +51,12 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
 
 3. AgentScope Studio
 
- - 🚧 Refactor the AgentScope Workstation with React.
- - 📝 Refactor the AgentScope Dashboard with React.
-   - Support websocket re-connection.
-   - Support displaying token usage.
-   - Support displaying real-time memory of agents.
+ - ✅ Refactor the AgentScope Workstation with React.
+ - ✅ Refactor the AgentScope Dashboard with React.
+   - ✅ Support websocket re-connection.
+   - ✅ Support displaying token usage.
+   - ❌ ~~Support displaying real-time memory of agents.~~
+ - 🚧 A Copilot-like application in AgentScope Studio.
 
 4. RAG
 
@@ -67,3 +70,10 @@ Offering **agent-oriented programming (AOP)** as a new programming model to orga
  - 📝 Provide a new base class `Serializable` to
    - support automatic serialization/deserialization of agents.
    - support state registration
+
+6. Async
+
+ - Support asynchronous execution of the following components:
+   - model API calls
+   - tools calling
+   - agent execution
