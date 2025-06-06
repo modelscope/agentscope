@@ -34,7 +34,7 @@
 
 - **[2024-04-06]** **AgentScope** v0.0.3がリリースされました。
 
-- **[2024-04-06]** 新しい例[五目並べ](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)、[ReActエージェントとの会話](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_react_agent)、[RAGエージェントとの会話](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents)、および[分散並列最適化](https://github.com/modelscope/agentscope/blob/main/examples/distributed_parallel_optimization)が利用可能になりました。
+- **[2024-04-06]** 新しい例[五目並べ](https://github.com/modelscope/agentscope/blob/main/examples/game_gomoku)、[ReActエージェントとの会話](https://github.com/modelscope/agentscope/blob/main/examples/agent_ReAct)、[RAGエージェントとの会話](https://github.com/modelscope/agentscope/blob/main/examples/conversation_with_RAG_agents)、および[分散並列最適化](https://github.com/modelscope/agentscope/blob/main/examples/distributed_parallel_optimization)が利用可能になりました。
 
 - **[2024-03-19]** **AgentScope** v0.0.2がリリースされました。この新しいバージョンでは、AgentScopeはollama（ローカルCPU推論エンジン）、DashScopeおよびGoogle Gemini APIをサポートしています。
 
