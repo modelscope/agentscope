@@ -104,6 +104,20 @@ class ServiceFunction:
                 merged_schema["function"]["parameters"]["required"].append(key)
         return merged_schema
 
+    # json_schema的赋值
+    @json_schema.setter
+    def json_schema(self, value: dict) -> None:
+        """Set the JSON schema of this tool function."""
+        self._json_schema = value
+
+        if self.extended_model is not None:
+            logger.warning(
+                f"The extended model of `{self.name}` is not None, when "
+                "accessing the json_schema property, it will be merged with "
+                "the extended model's schema. Please ensure that the "
+                "json_schema property is as expected.",
+            )
+
 
 class ServiceToolkit:
     """A toolkit class that maintains a list of tool functions, extracts JSON
