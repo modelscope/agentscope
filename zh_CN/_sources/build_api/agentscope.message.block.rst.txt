@@ -1,7 +1,0 @@
-agentscope.message.block module
-===============================
-
-.. automodule:: agentscope.message.block
-   :members:
-   :undoc-members:
-   :show-inheritance:

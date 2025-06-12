@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**04:23.934** total execution time for 21 files **from build_tutorial**:
+**04:05.667** total execution time for 21 files **from build_tutorial**:
 
 .. container::
 
@@ -33,49 +33,49 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_build_tutorial_prompt_optimization.py` (``prompt_optimization.py``)
-     - 01:15.583
+     - 01:06.155
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_conversation.py` (``conversation.py``)
-     - 00:44.272
-     - 0.0
-   * - :ref:`sphx_glr_build_tutorial_builtin_agent.py` (``builtin_agent.py``)
-     - 00:37.463
+     - 00:47.910
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_rag.py` (``rag.py``)
-     - 00:28.023
+     - 00:34.127
+     - 0.0
+   * - :ref:`sphx_glr_build_tutorial_builtin_agent.py` (``builtin_agent.py``)
+     - 00:31.787
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_structured_output.py` (``structured_output.py``)
-     - 00:23.578
+     - 00:20.358
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_tool.py` (``tool.py``)
-     - 00:18.677
+     - 00:14.057
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_multimodality.py` (``multimodality.py``)
-     - 00:16.979
+     - 00:10.626
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_monitor.py` (``monitor.py``)
-     - 00:05.690
+     - 00:06.487
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_hook.py` (``hook.py``)
-     - 00:04.555
+     - 00:04.018
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_streaming.py` (``streaming.py``)
-     - 00:02.662
+     - 00:02.686
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_quickstart.py` (``quickstart.py``)
-     - 00:02.276
+     - 00:02.545
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_model.py` (``model.py``)
-     - 00:01.573
+     - 00:01.964
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_prompt.py` (``prompt.py``)
-     - 00:01.477
+     - 00:01.619
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_agent.py` (``agent.py``)
-     - 00:01.091
+     - 00:01.294
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_MCP.py` (``MCP.py``)
-     - 00:00.029
+     - 00:00.031
      - 0.0
    * - :ref:`sphx_glr_build_tutorial_message.py` (``message.py``)
      - 00:00.002

@@ -28,6 +28,23 @@
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial introduces how to build multi-agent application with drag-and-drop interface in AgentScope Workstation.">
+
+.. only:: html
+
+  .. image:: /build_tutorial/images/thumb/sphx_glr_low_code_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_build_tutorial_low_code.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Low-code Development</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This section is redirected to the conversation_with_web_browser_agent/README.md.">
 
 .. only:: html
@@ -57,23 +74,6 @@
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Distribution</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This tutorial introduces how to build multi-agent application with drag-and-drop interface in AgentScope Workstation.">
-
-.. only:: html
-
-  .. image:: /build_tutorial/images/thumb/sphx_glr_low_code_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_build_tutorial_low_code.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Low-code Development</div>
     </div>
 
 
@@ -377,9 +377,9 @@
    :hidden:
 
    /build_tutorial/examples
+   /build_tutorial/low_code
    /build_tutorial/web_browser
    /build_tutorial/distribution
-   /build_tutorial/low_code
    /build_tutorial/quickstart
    /build_tutorial/streaming
    /build_tutorial/multimodality
