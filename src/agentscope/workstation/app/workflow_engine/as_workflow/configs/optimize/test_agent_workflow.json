@@ -1,0 +1,77 @@
+{
+  "header": {
+    "request_id": "test_compile_bailian_workflow",
+    "attributes": {
+      "X-DashScope-EUID": "compile_bailian_workflow"
+    }
+  },
+  "payload": {
+    "input": {
+      "messages": []
+    },
+    "parameters": {
+      "custom": {
+        "scene": "optimize",
+        "params": {
+          "stream": false
+        },
+        "dsl_config": {
+          "app": {
+            "mode": "workflow",
+            "name": "test_agent_workflow"
+          },
+          "workflow": {
+            "graph": {
+              "nodes": [
+                {
+                  "id": "Start_bYxoRU",
+                  "type": "Start",
+                  "name": "开始",
+                  "x": -196.72778561354028,
+                  "y": 258.9340620592384,
+                  "config": {
+                    "outputParams": [
+                      {
+                        "key": "city",
+                        "type": "String",
+                        "desc": "城市"
+                      },
+                      {
+                        "key": "date",
+                        "type": "String",
+                        "desc": "日期"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "End_DrQn7F",
+                  "type": "End",
+                  "name": "结束",
+                  "x": 945,
+                  "y": 135,
+                  "config": {
+                    "node_param": {
+                      "outputType": "text",
+                      "textTemplate": "${Start_bYxoRU.city}"
+                    }
+                  }
+                }
+              ],
+              "edges": [
+                {
+                  "id": "xy-edge__Start_bYxoRUStart_bYxoRU-End_DrQn7FEnd_DrQn7F",
+                  "source": "Start_bYxoRU",
+                  "sourceHandle": "Start_bYxoRU",
+                  "targetHandle": "End_DrQn7F",
+                  "target": "End_DrQn7F"
+                }
+              ],
+              "global_config": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

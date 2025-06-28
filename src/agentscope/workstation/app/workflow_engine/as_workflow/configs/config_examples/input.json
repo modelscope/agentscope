@@ -1,0 +1,127 @@
+{
+   "name":"",
+   "type":"workflow",
+   "config":{
+      "nodes":[
+         {
+            "id":"Start_LkND",
+            "name":"开始",
+            "config":{
+               "input_params":[
+
+               ],
+               "output_params":[
+                  {
+                     "key":"aaa",
+                     "type":"String",
+                     "desc":""
+                  }
+               ],
+               "node_param":{
+
+               }
+            },
+            "position":{
+               "x":-90.66666666666666,
+               "y":16
+            },
+            "width":320,
+            "type":"Start"
+         },
+         {
+            "id":"End_TCrn",
+            "name":"结束",
+            "config":{
+               "input_params":[
+
+               ],
+               "output_params":[
+
+               ],
+               "node_param":{
+                  "output_type":"text",
+                  "text_template":"${Start_LkND.aaa}\n${Input_hqzK.flow_input}",
+                  "json_params":[
+                     {
+                        "key":"output",
+                        "value_from":"refer",
+                        "type":"String"
+                     }
+                  ],
+                  "stream_switch":false
+               }
+            },
+            "position":{
+               "x":600.6666666666666,
+               "y":-174.66666666666666
+            },
+            "width":320,
+            "type":"End"
+         },
+         {
+            "id":"Input_hqzK",
+            "name":"流程输入1",
+            "config":{
+               "input_params": [
+                  {
+                     "key": "flow_input",
+                     "value": "111"
+                  },
+                  {
+                     "key": "flow_input2",
+                     "value": "222"
+                  }
+               ],
+               "output_params":[
+                  {
+                     "key":"flow_input",
+                     "type":"String",
+                     "desc":""
+                  },
+                  {
+                     "key":"flow_input2",
+                     "type":"String",
+                     "desc":""
+                  }
+               ],
+               "node_param":{
+
+               }
+            },
+            "position":{
+               "x":252.33333333333331,
+               "y":-163
+            },
+            "width":320,
+            "type":"Input"
+         }
+      ],
+      "edges":[
+         {
+            "id":"Start_LkND-Start_LkND-Input_hqzK-Input_hqzK",
+            "source":"Start_LkND",
+            "target":"Input_hqzK",
+            "source_handle":"Start_LkND",
+            "target_handle":"Input_hqzK"
+         },
+         {
+            "id":"Input_hqzK-Input_hqzK-End_TCrn-End_TCrn",
+            "source":"Input_hqzK",
+            "target":"End_TCrn",
+            "source_handle":"Input_hqzK",
+            "target_handle":"End_TCrn"
+         }
+      ],
+      "global_config":{
+         "history_config":{
+            "history_max_round":5,
+            "history_switch":false
+         },
+         "variable_config":{
+            "conversation_params":[
+
+            ]
+         }
+      }
+   }
+}
