@@ -19,6 +19,7 @@ try:
     import mcp
     from mcp.client.sse import sse_client
     from mcp.client.stdio import stdio_client
+    from mcp.client.streamable_http import streamablehttp_client
 
 except ImportError:
     mcp = None
@@ -161,9 +162,15 @@ class MCPSessionHandler:
                     stdio_client(server_params),
                 )
             else:
-                streams = await self._exit_stack.enter_async_context(
-                    sse_client(url=self.config["url"]),
-                )
+                if self.config.get("type") in ["streamable_http", "streamableHttp"]:
+                    streams = await self._exit_stack.enter_async_context(
+                        streamablehttp_client(url=self.config["url"]),
+                    )
+                    streams = (streams[0], streams[1])
+                else:
+                    streams = await self._exit_stack.enter_async_context(
+                        sse_client(url=self.config["url"]),
+                    )
             session = await self._exit_stack.enter_async_context(
                 mcp.ClientSession(*streams),
             )
