@@ -100,11 +100,17 @@ class MCPSessionHandler:
             } or
             {
                 "url": "http://xxx.xxx.xxx.xxx:xxxx/sse"
+            } or
+            {
+                "type": "streamable_http",
+                "url": "http://xxx.xxx.xxx.xxx:xxxx/mcp/"
             }
 
             - "command": (Optional) A string indicating the command to be
                 executed, following the stdio protocol for communication.
             - "args": (Optional) A list of arguments for the command.
+            - "type": (Optional) A string indicating the type of the MCP
+                server, which can be "sse" or "streamable_http".
             - "url": (Optional) A string representing the server's endpoint,
                 which follows the Server-Sent Events (SSE) protocol for data
                 transmission.
