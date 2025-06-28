@@ -24,7 +24,7 @@ agentscope.init(
         # {
         #     "config_name": "my_config",
         #     "client_args": {
-        #         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",  #
+        #         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",  # specify the base URL of the API
         #     },
         #     "api_key": os.environ.get("DASHSCOPE_API_KEY"),
         #     "model_type": "openai_chat",
