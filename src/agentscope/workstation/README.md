@@ -24,7 +24,15 @@ Open the `.env`  file for editing:
 - Mandatory: Fill in the DASHSCOPE_API_KEY to enable knowledge base functionality.
 - Optional: Modify Redis and MySQL connection parameters as needed.
 
-### 2. Start Services
+### 2. Generate RSA key paris
+
+Run the following codes to generate RSA keys
+
+``````
+bash generate_rsa_keys.sh
+``````
+
+### 3. Start Services
 
 ```
 # Enter the docker directory
@@ -42,7 +50,7 @@ This will start the following services:
 - Celery (background task processing)
 - API (backend service)
 
-### 3. Initialize Database
+### 4. Initialize Database
 
 The MySQL database needs to be initialized for first-time use:
 
@@ -59,7 +67,7 @@ This script will create:
 - Model configurations
 - API key settings
 
-### 4. Access the System
+### 5. Access the System
 
 After initialization, open your browser and visit:
 
