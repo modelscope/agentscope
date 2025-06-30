@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+
+"""This module contains the server setup for FastMCP applications."""
+
 from contextlib import asynccontextmanager, AsyncExitStack
 import uvicorn
 from mcp.server.fastmcp import FastMCP
 from starlette.applications import Starlette
 from starlette.routing import Mount
 
-
+# Define the addition tool
 mcp_add = FastMCP("Add")
 
 
@@ -15,7 +18,8 @@ def add(a: int, b: int) -> int:
     return a + b
 
 
-mcp_multiply = FastMCP("Miltiply")
+# Define the multiplication tool
+mcp_multiply = FastMCP("Multiply")
 
 
 @mcp_multiply.tool()
@@ -25,6 +29,8 @@ def multiply(a: int, b: int) -> int:
 
 
 def combine_lifespans(*lifespans):
+    """Combine multiple lifespans into one asynchronous context manager."""
+
     @asynccontextmanager
     async def combined_lifespan(app):
         async with AsyncExitStack() as stack:
@@ -36,6 +42,7 @@ def combine_lifespans(*lifespans):
     return combined_lifespan
 
 
+# Create the main application
 main_app = Starlette(
     routes=[
         Mount("/sse_app/", app=mcp_add.sse_app()),

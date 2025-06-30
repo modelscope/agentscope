@@ -17,25 +17,27 @@ agentscope.init(
             "config_name": "my_config",
             "model_type": "dashscope_chat",
             "model_name": "qwen-plus",
-            # When using ReActAgentV2, streaming (i.e., setting "stream": True) is not supported.
+            # When using ReActAgentV2, streaming (i.e., setting "stream": True)
+            # is not supported.
             # "stream": False,
         },
-        # Or you can use an OpenAI-compatible API, but note that non-OpenAI models
-        # need to be added to OpenAIFormatter later.
-        # {
-        #     "config_name": "my_config",
-        #     "client_args": {
-        #         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",  # specify the base URL of the API
-        #     },
-        #     "api_key": os.environ.get("DASHSCOPE_API_KEY"),
-        #     "model_type": "openai_chat",
-        #     "model_name": model_name,
-        # }
+        # Or you can use an OpenAI-compatible API, but note that non-OpenAI
+        # models need to be added to OpenAIFormatter later.
+        {
+            "config_name": "my_config2",
+            "client_args": {
+                # specify the base URL of the API
+                "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+            },
+            "api_key": os.environ.get("DASHSCOPE_API_KEY"),
+            "model_type": "openai_chat",
+            "model_name": model_name,
+        },
     ],
 )
-# If you choose to use the OpenAI-compatible API and if the model is not an OpenAI model,
-# make sure to append the model name to OpenAIFormatter.
-# OpenAIFormatter.supported_model_regexes.append(model_name)
+# If you choose to use the OpenAI-compatible API and if the model is not an
+# OpenAI model, make sure to append the model name to OpenAIFormatter.
+OpenAIFormatter.supported_model_regexes.append(model_name)
 
 # Add MCP servers
 toolkit = ServiceToolkit()
@@ -58,6 +60,7 @@ agent = ReActAgentV2(
     name="Friday",
     max_iters=3,
     model_config_name="my_config",
+    # model_config_name="my_config2",
     service_toolkit=toolkit,
     sys_prompt="You're a helpful assistant named Friday.",
 )
@@ -67,8 +70,9 @@ if __name__ == "__main__":
     res_msg = agent(
         Msg(
             "user",
-            "Calculate 2345 multiplied by 3456, then add 4567 to the result, what is the final outcome?",
+            "Calculate 2345 multiplied by 3456, then add 4567 to the result,"
+            " what is the final outcome?",
             "user",
-        )
+        ),
     )
     print(f"The final answer is: \n\t{res_msg.content}")
