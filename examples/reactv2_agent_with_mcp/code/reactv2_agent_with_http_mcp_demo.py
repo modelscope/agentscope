@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from agentscope.agents import ReActAgentV2
 import agentscope
@@ -30,7 +31,7 @@ agentscope.init(
         #     "model_type": "openai_chat",
         #     "model_name": model_name,
         # }
-    ]
+    ],
 )
 # If you choose to use the OpenAI-compatible API and if the model is not an OpenAI model,
 # make sure to append the model name to OpenAIFormatter.
@@ -43,14 +44,14 @@ toolkit.add_mcp_servers(
         "mcpServers": {
             "add-tool": {
                 "type": "sse",
-                "url": "http://127.0.0.1:8001/sse_app/sse"
+                "url": "http://127.0.0.1:8001/sse_app/sse",
             },
             "multiply-tool": {
                 "type": "streamable_http",
-                "url": "http://127.0.0.1:8001/streamable_http_app/mcp/"
-            }
-        }
-    }
+                "url": "http://127.0.0.1:8001/streamable_http_app/mcp/",
+            },
+        },
+    },
 )
 
 agent = ReActAgentV2(
@@ -63,5 +64,11 @@ agent = ReActAgentV2(
 
 if __name__ == "__main__":
     # start the mcp servers before running this script
-    res_msg = agent(Msg("user", "Calculate 2345 multiplied by 3456, then add 4567 to the result, what is the final outcome?", "user"))
+    res_msg = agent(
+        Msg(
+            "user",
+            "Calculate 2345 multiplied by 3456, then add 4567 to the result, what is the final outcome?",
+            "user",
+        )
+    )
     print(f"The final answer is: \n\t{res_msg.content}")

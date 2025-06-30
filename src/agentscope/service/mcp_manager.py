@@ -168,7 +168,10 @@ class MCPSessionHandler:
                     stdio_client(server_params),
                 )
             else:
-                if self.config.get("type") in ["streamable_http", "streamableHttp"]:
+                if self.config.get("type") in [
+                    "streamable_http",
+                    "streamableHttp",
+                ]:
                     streams = await self._exit_stack.enter_async_context(
                         streamablehttp_client(url=self.config["url"]),
                     )
