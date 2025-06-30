@@ -28,8 +28,8 @@ def combine_lifespans(*lifespans):
     @asynccontextmanager
     async def combined_lifespan(app):
         async with AsyncExitStack() as stack:
-            for l in lifespans:
-                ctx = l(app)
+            for lifespan in lifespans:
+                ctx = lifespan(app)
                 await stack.enter_async_context(ctx)
             yield
 
