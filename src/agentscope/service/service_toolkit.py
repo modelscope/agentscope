@@ -193,7 +193,7 @@ class ServiceToolkit:
         Args:
             func_name (`str`):
                 The name of the service function to be added.
-            model (`Union[Type[BaseModel], None]`):
+            model (`Type[BaseModel]`):
                 The extra schema model to be added to the service function's
                 JSON schema.
         """
