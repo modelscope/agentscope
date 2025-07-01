@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+""" AgentScope ReAct Agent V2 Example with MCP Servers. """
+
 import os
 from agentscope.agents import ReActAgentV2
 import agentscope
