@@ -104,9 +104,13 @@ class logger:
             )
         if arg:
             if kwargs:
+                context = json.dumps(
+                    kwargs,
+                    ensure_ascii=False,
+                    default=to_dict,
+                )
                 return loguru_logger.error(
-                    f"{arg[0]}, "
-                    f"{json.dumps(kwargs,ensure_ascii=False,default=to_dict)}",
+                    f"{arg[0]}, {context}",
                 )
             else:
                 return loguru_logger.error(f"{arg[0]}")
