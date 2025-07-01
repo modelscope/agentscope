@@ -13,6 +13,8 @@ from agentscope.message import Msg
 # Model name
 model_name = "qwen-plus"
 
+custom_api_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
 # Load model configs
 agentscope.init(
     model_configs=[
@@ -30,7 +32,7 @@ agentscope.init(
             "config_name": "my_config2",
             "client_args": {
                 # specify the base URL of the API
-                "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                "base_url": custom_api_url,
             },
             "api_key": os.environ.get("DASHSCOPE_API_KEY"),
             "model_type": "openai_chat",
