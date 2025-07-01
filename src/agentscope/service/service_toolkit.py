@@ -110,6 +110,12 @@ class ServiceFunction:
         """Set the JSON schema of this tool function."""
         self._json_schema = value
 
+        if value.get("type") != "function" or "function" not in value:
+            raise ValueError(
+                f"The JSON schema should be a function schema with type field "
+                f"'function', but got {value.get('type')} instead.",
+            )
+
         if self.extended_model is not None:
             logger.warning(
                 f"The extended model of `{self.name}` is not None, when "
@@ -189,7 +195,7 @@ class ServiceToolkit:
                 The name of the service function to be added.
             model (`Union[Type[BaseModel], None]`):
                 The extra schema model to be added to the service function's
-                JSON schema. If `None`, the ex
+                JSON schema.
         """
         if func_name not in self.service_funcs:
             raise FunctionNotFoundError(
