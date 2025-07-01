@@ -273,7 +273,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Merge the schema of the structured output with the finish function</span>
         <span class="k">if</span> <span class="n">structured_model</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_structured_output_schema</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">extend_function_schema</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span><span class="p">,</span>
                 <span class="n">structured_model</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -470,59 +471,6 @@
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_structured_output_schema</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">structured_output</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge the structured output into the schema of the finish function</span>
-<span class="sd">        as additional parameters.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            structured_output (`Type[BaseModel]`):</span>
-<span class="sd">                A Pydantic model class that defines the structured output.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `dict`:</span>
-<span class="sd">                The merged function schema with the structured output.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">structured_output</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;structured_output must be a Pydantic model, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">structured_output</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span> <span class="o">=</span> <span class="n">structured_output</span>
-
-        <span class="n">output_schema</span> <span class="o">=</span> <span class="n">structured_output</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">()</span>
-
-        <span class="c1"># Update the schema of the finish function by inserting the</span>
-        <span class="c1"># structured output schema</span>
-        <span class="n">finish_function_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">json_schemas</span><span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span>
-        <span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">key</span>
-                <span class="ow">in</span> <span class="n">finish_function_schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span>
-                    <span class="s2">&quot;properties&quot;</span>
-                <span class="p">]</span>
-            <span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; in structured output already exists in &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;the finish function &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
-                    <span class="s2">&quot;Try to use another key name.&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">finish_function_schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span>
-                <span class="n">key</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">output_schema</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]:</span>
-                <span class="n">finish_function_schema</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">][</span><span class="s2">&quot;parameters&quot;</span><span class="p">][</span>
-                    <span class="s2">&quot;required&quot;</span>
-                <span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_clear_structured_output_hook</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="p">,</span>  <span class="c1"># pylint: disable=unused-argument</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
@@ -531,11 +479,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the structured output.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_output</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_structured_model</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generate_response</span><span class="p">,</span>
-            <span class="n">include_var_keyword</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="c1"># Remove the structured output schema from the finish function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_toolkit</span><span class="o">.</span><span class="n">restore_function_schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_finish_function</span><span class="p">)</span></div>
 
 </pre></div>
 

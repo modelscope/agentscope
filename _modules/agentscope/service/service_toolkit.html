@@ -143,6 +143,7 @@
 <span></span># -*- coding: utf-8 -*-
 &quot;&quot;&quot;Service Toolkit for service function usage.&quot;&quot;&quot;
 import json
+from copy import deepcopy
 from functools import partial
 import inspect
 from typing import (
@@ -152,11 +153,17 @@ from typing import (
     Union,
     Optional,
     Dict,
+    Type,
 )
 
 from docstring_parser import parse
 from loguru import logger
-from pydantic import Field, create_model, ConfigDict
+from pydantic import (
+    Field,
+    create_model,
+    ConfigDict,
+    BaseModel,
+)
 
 from ..exception import (
     JsonParsingError,
@@ -189,13 +196,9 @@ class ServiceFunction:
     processed_func: Callable
     &quot;&quot;&quot;The processed function that can be called by the model directly.&quot;&quot;&quot;
 
-    json_schema: dict
-    &quot;&quot;&quot;The JSON schema description of the service function.&quot;&quot;&quot;
-
-    require_args: bool
-    &quot;&quot;&quot;Whether calling the service function requests arguments. Some arguments
-    may have default values, so it is not necessary to provide all arguments.
-    &quot;&quot;&quot;
+    extended_model: Union[Type[BaseModel], None]
+    &quot;&quot;&quot;The BaseModel class that extends the JSON schema of the current
+    service function.&quot;&quot;&quot;
 
     def __init__(
         self,
@@ -209,24 +212,69 @@ class ServiceFunction:
         self.name = name
         self.original_func = original_func
         self.processed_func = processed_func
-        self.json_schema = json_schema
+        self._json_schema = json_schema
 
-        self.require_args = (
-            len(
-                json_schema[&quot;function&quot;]
-                .get(&quot;parameters&quot;, {})
-                .get(&quot;required&quot;, []),
+        self.extended_model = None
+
+    @property
+    def json_schema(self) -&gt; dict:
+        &quot;&quot;&quot;The JSON schema of this tool function.&quot;&quot;&quot;
+        if self.extended_model is None:
+            return self._json_schema
+
+        # Merge the extended model with the original JSON schema
+        extended_schema = self.extended_model.model_json_schema()
+
+        merged_schema = deepcopy(self._json_schema)
+
+        ServiceToolkit._remove_title_field(  # pylint: disable=protected-access
+            extended_schema,
+        )
+
+        for key, value in extended_schema[&quot;properties&quot;].items():
+            if (
+                key
+                in self._json_schema[&quot;function&quot;][&quot;parameters&quot;][&quot;properties&quot;]
+            ):
+                raise ValueError(
+                    f&quot;The field `{key}` already exists in the original &quot;
+                    f&quot;function schema of `{self.name}`. Try to use a &quot;
+                    &quot;different name.&quot;,
+                )
+
+            merged_schema[&quot;function&quot;][&quot;parameters&quot;][&quot;properties&quot;][key] = value
+
+            if key in extended_schema.get(&quot;required&quot;, []):
+                merged_schema[&quot;function&quot;][&quot;parameters&quot;][&quot;required&quot;].append(key)
+        return merged_schema
+
+    # json_schema的赋值
+    @json_schema.setter
+    def json_schema(self, value: dict) -&gt; None:
+        &quot;&quot;&quot;Set the JSON schema of this tool function.&quot;&quot;&quot;
+        self._json_schema = value
+
+        if value.get(&quot;type&quot;) != &quot;function&quot; or &quot;function&quot; not in value:
+            raise ValueError(
+                f&quot;The JSON schema should be a function schema with type field &quot;
+                f&quot;&#39;function&#39;, but got {value.get(&#39;type&#39;)} instead.&quot;,
             )
-            != 0
-        )</div>
+
+        if self.extended_model is not None:
+            logger.warning(
+                f&quot;The extended model of `{self.name}` is not None, when &quot;
+                &quot;accessing the json_schema property, it will be merged with &quot;
+                &quot;the extended model&#39;s schema. Please ensure that the &quot;
+                &quot;json_schema property is as expected.&quot;,
+            )</div>
 
 
 
 <div class="viewcode-block" id="ServiceToolkit">
 <a class="viewcode-back" href="../../../build_api/agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit">[docs]</a>
 class ServiceToolkit:
-    &quot;&quot;&quot;A service toolkit class that turns service function into string
-    prompt format.&quot;&quot;&quot;
+    &quot;&quot;&quot;A toolkit class that maintains a list of tool functions, extracts JSON
+    schema automatically, and provides a robust way to call these functions.&quot;&quot;&quot;
 
     service_funcs: dict[str, ServiceFunction]
     &quot;&quot;&quot;The registered functions in the service toolkit.&quot;&quot;&quot;
@@ -280,6 +328,59 @@ class ServiceToolkit:
             )</div>
 
 
+<div class="viewcode-block" id="ServiceToolkit.extend_function_schema">
+<a class="viewcode-back" href="../../../build_api/agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.extend_function_schema">[docs]</a>
+    def extend_function_schema(
+        self,
+        func_name: str,
+        model: Type[BaseModel],
+    ) -&gt; None:
+        &quot;&quot;&quot;Add an extra schema model to the existing service function&#39;s
+        JSON schema.
+
+        .. note:: You need to ensure that the function accepts the extra
+         keywords via `**kwargs` in its definition, otherwise error will be
+         raised when calling the function.
+
+        Args:
+            func_name (`str`):
+                The name of the service function to be added.
+            model (`Type[BaseModel]`):
+                The extra schema model to be added to the service function&#39;s
+                JSON schema.
+        &quot;&quot;&quot;
+        if func_name not in self.service_funcs:
+            raise FunctionNotFoundError(
+                f&quot;Cannot find a service function named `{func_name}`.&quot;,
+            )
+
+        if not issubclass(model, BaseModel):
+            raise TypeError(
+                f&quot;The model should be a subclass of BaseModel, &quot;
+                f&quot;but got {type(model)} instead.&quot;,
+            )
+
+        self.service_funcs[func_name].extended_model = model</div>
+
+
+<div class="viewcode-block" id="ServiceToolkit.restore_function_schema">
+<a class="viewcode-back" href="../../../build_api/agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.restore_function_schema">[docs]</a>
+    def restore_function_schema(self, func_name: str) -&gt; None:
+        &quot;&quot;&quot;Restore the original JSON schema of a function to its original
+        state, removing any extensions that were added previously.
+
+        Args:
+            func_name (`str`):
+                The name of the service function whose schema is to be
+                restored.
+        &quot;&quot;&quot;
+        if func_name not in self.service_funcs:
+            raise FunctionNotFoundError(
+                f&quot;Cannot find a service function named `{func_name}`.&quot;,
+            )
+        self.service_funcs[func_name].extended_model = None</div>
+
+
 <div class="viewcode-block" id="ServiceToolkit.add">
 <a class="viewcode-back" href="../../../build_api/agentscope.service.service_toolkit.html#agentscope.service.ServiceToolkit.add">[docs]</a>
     def add(
@@ -289,6 +390,7 @@ class ServiceToolkit:
         include_long_description: bool = True,
         include_var_positional: bool = False,
         include_var_keyword: bool = False,
+        overwrite_if_exists: bool = False,
         **kwargs: Any,
     ) -&gt; None:
         &quot;&quot;&quot;Add a service function to the toolkit, which will be processed into
@@ -298,7 +400,7 @@ class ServiceToolkit:
         Args:
             service_func (`Callable[..., Any]`):
                 The service function to be called.
-            func_description (`Optional[str]`, defaults to `None`)
+            func_description (`Optional[str]`, defaults to `None`):
                 The function description. If not provided, the description
                 will be extracted from the docstring automatically.
             include_long_description (`bool`, defaults to `True`):
@@ -310,6 +412,10 @@ class ServiceToolkit:
             include_var_keyword (`bool`, defaults to `False`):
                 Whether to include the variable keyword arguments (`**kwargs`)
                 in the function schema.
+            overwrite_if_exists (`bool`, defaults to `False`):
+                Whether to overwrite if the function with the same name
+                already exists in the toolkit. If `False`, the function will
+                be skipped if it already exists.
             **kwargs (`Any`):
                 The keyword arguments that preset by developers, which will
                 not be exposed to the agent
@@ -367,7 +473,7 @@ class ServiceToolkit:
 
         # register the service function
         name = service_func.__name__
-        if name in self.service_funcs:
+        if name in self.service_funcs and not overwrite_if_exists:
             logger.warning(
                 f&quot;Service function `{name}` already exists, &quot;
                 f&quot;skip adding it.&quot;,

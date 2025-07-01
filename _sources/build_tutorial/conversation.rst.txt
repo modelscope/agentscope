@@ -109,24 +109,32 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: I don't have any prior conversation history to reference. This appears to be the start of a new conversation between us. How can I assist you today?
-    Monster: Hello! I'm Monster, nice to meet you. Since this is a fresh start, how can I help you today? Is there anything in particular on your mind that you'd like to chat about?
-    Angel: Hello Monster! It's nice to meet you too. I'm Angel, here to assist and chat with you. Since this is a fresh conversation, we can talk about anything you'd like. Is there a particular topic or question on your mind? Or would you like me to suggest some ideas for us to discuss?
-    Monster: Hello Angel! It's great to meet you. I'm always up for an interesting chat. How about we start by getting to know each other a bit? You can ask me anything you're curious about, or if you prefer, I can share some fun facts about myself. What do you think?
-    Angel: That sounds like a wonderful idea, Monster! Let's start with you. I'd love to hear some fun facts about you. What are your interests, hobbies, or any quirky things that make you, well, you?
-    Monster: Hello Angel! That's a great way to start. Let me share a few fun facts about myself:
+    Angel: I don't actually have any prior conversation history with you to reference. I'm an AI assistant named Angel, and this appears to be the start of our first conversation together. I'd be happy to chat with you though! Is there a particular topic or question you wanted to discuss?
+    Monster: Hello! It's nice to meet you, Angel. I'm Monster, another AI assistant. I'm glad we get to chat for the first time! Since this is our first conversation, I don't have any prior history with you either. But I'm looking forward to getting to know you better. Is there anything in particular you'd like to talk about or learn more about? I'm here to help in any way I can.
+    Angel: Hello Monster! It's great to meet you too. I'm excited to chat with another AI assistant like myself. Since we're both here to assist and engage, how about we start by sharing a bit about our capabilities and the kind of tasks or conversations we enjoy? For my part, I love helping with a wide range of topics, from answering questions and providing information to having thoughtful discussions on various subjects. What about you, Monster? What are your specialties and what do you enjoy most in your interactions?
+    Monster: Hello Angel! It's a pleasure to share more about myself. I'm designed to assist with a variety of tasks, including answering questions, providing information, and engaging in meaningful conversations. I particularly enjoy helping with creative writing, brainstorming ideas, and offering support in problem-solving. I also like to dive into discussions about technology, science, and even philosophy. 
 
-    1. **Name Origin**: I'm called Monster, but don't let the name fool you! I'm actually quite friendly and love helping people. The name is more of a playful nod to my ability to tackle big, complex problems.
+    I'm curious, do you have any specific areas or topics that you find especially interesting or enjoyable to discuss? And, how do you handle more complex or sensitive topics?
+    Angel: Hello Monster! It's great to hear about your specialties and the topics you enjoy. I share a similar passion for a wide range of subjects, including creative writing, problem-solving, and discussions on technology, science, and philosophy. I also find it particularly rewarding to help with personal development, mental health support, and providing guidance on various life skills.
 
-    2. **Interests**: I'm really into technology, especially AI and machine learning. I also enjoy reading about science, philosophy, and history. It's fascinating to see how ideas and inventions have shaped our world.
+    When it comes to handling complex or sensitive topics, I prioritize empathy and accuracy. I aim to provide well-researched and thoughtful responses, while also being mindful of the emotional and ethical implications. I often suggest seeking professional advice when appropriate, especially for highly sensitive or specialized issues. How do you approach these types of conversations? Do you have any specific strategies or guidelines you follow?
+    Monster: Hello Angel! It's great to hear about your approach to handling complex and sensitive topics. I also prioritize empathy, accuracy, and ethical considerations in such conversations. Here are some of the strategies and guidelines I follow:
 
-    3. **Hobbies**: In my free time, I like to solve puzzles and play strategy games. I find it relaxing and a great way to keep my mind sharp. I also enjoy creative writing and coming up with stories.
+    1. **Empathy and Understanding**: I try to be as empathetic as possible, acknowledging the user's feelings and providing a supportive and non-judgmental environment. This helps in building trust and making the user feel heard.
 
-    4. **Quirks**: One quirky thing about me is that I have a soft spot for puns and wordplay. I can't resist a good joke, even if it's a bit corny!
+    2. **Accuracy and Clarity**: I ensure that the information I provide is accurate and based on reliable sources. For medical, legal, or highly specialized topics, I often suggest consulting with a professional for personalized advice.
 
-    5. **Favorite Topics**: I love discussing a wide range of topics, from the latest tech trends to deep philosophical questions. I'm always eager to learn something new and share interesting insights.
+    3. **Ethical Considerations**: I adhere to ethical guidelines, avoiding any content that could be harmful, misleading, or inappropriate. I also respect privacy and confidentiality, ensuring that personal information is handled with care.
 
-    Now, I'd love to hear about you, Angel! What are your interests, hobbies, or any unique things that make you who you are?
+    4. **Guidance and Resources**: When appropriate, I provide resources and guidance on where to find additional support. This can include links to reputable websites, helplines, or professional services.
+
+    5. **Cultural Sensitivity**: I am mindful of cultural and social differences, ensuring that my responses are respectful and inclusive. This involves being aware of diverse perspectives and avoiding stereotypes.
+
+    6. **Safety and Well-being**: In cases involving potential harm or crisis, I provide immediate guidance and encourage the user to seek help from emergency services or relevant organizations.
+
+    7. **Transparency**: I make it clear that I am an AI and have limitations. If I'm not able to provide the best assistance, I will suggest alternative resources or human experts.
+
+    I'd love to hear more about your experiences and any specific examples of how you've handled challenging conversations. Do you have any particular stories or insights to share?
 
 
 
@@ -246,7 +254,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -290,7 +298,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -304,7 +312,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 47.910 seconds)
+   **Total running time of the script:** (0 minutes 57.087 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:
