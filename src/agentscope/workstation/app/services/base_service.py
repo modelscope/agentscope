@@ -2,7 +2,6 @@
 """base service"""
 import uuid
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
-
 from loguru import logger
 from sqlmodel import Session, SQLModel
 
