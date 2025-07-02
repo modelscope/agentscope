@@ -17,7 +17,7 @@ class ModelService(BaseService[ModelDAO]):
         model_id: Optional[str],
         model_name: str,
         tags: Optional[str],
-        type: Optional[str],
+        type_: Optional[str],
         workspace_id: Optional[str],
         creator: Optional[str],
     ) -> bool:
@@ -27,7 +27,7 @@ class ModelService(BaseService[ModelDAO]):
             model_id=model_id,
             name=model_name,
             tags=tags,
-            type=type,
+            type=type_,
             workspace_id=workspace_id,
             creator=creator,
             modifier=creator,

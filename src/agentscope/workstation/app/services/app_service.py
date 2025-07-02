@@ -496,7 +496,7 @@ class AppService:
 
     def get_application_published(
         self,
-        type: int = None,  # pylint: disable=refined-builtin
+        type: int = None,  # pylint: disable=W0622
         app_name: str = None,
         codes: List[str] = None,
         workspace_id: str = None,

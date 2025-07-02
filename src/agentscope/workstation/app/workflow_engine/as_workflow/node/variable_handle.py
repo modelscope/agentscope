@@ -19,8 +19,8 @@ class VariableHandleNode(Node):
         """execute"""
         start_time = int(time.time() * 1000)
         node_param = self.sys_args.get("node_param")
-        type = node_param.get("type")
-        if type == "template":
+        type_ = node_param.get("type")
+        if type_ == "template":
             node_exec_time = str(int(time.time() * 1000) - start_time) + "ms"
             yield [
                 WorkflowVariable(
@@ -36,7 +36,7 @@ class VariableHandleNode(Node):
                     node_exec_time=node_exec_time,
                 ),
             ]
-        elif type == "json":
+        elif type_ == "json":
             json_params = node_param.get("json_params", [])
             node_exec_time = str(int(time.time() * 1000) - start_time) + "ms"
             output_var = []
@@ -60,7 +60,7 @@ class VariableHandleNode(Node):
                     ),
                 )
             yield output_var
-        elif type == "group":
+        elif type_ == "group":
             group_strategy = self.params.get("group_strategy", "firstNotNull")
             assert group_strategy in [
                 "firstNotNull",

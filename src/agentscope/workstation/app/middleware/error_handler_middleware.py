@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """exception handler"""
 from fastapi.responses import JSONResponse
-from app.exceptions.base import BaseException
+from app.exceptions.base import BaseException  # pylint: disable=W0622
 
 
 async def base_exception_handler(

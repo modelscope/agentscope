@@ -4,7 +4,7 @@
 from typing import Optional, Union
 
 
-class BaseException(Exception):
+class BaseException(Exception):  # pylint: disable=W0622
     """The base exception"""
 
     code: Optional[int] = None

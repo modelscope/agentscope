@@ -245,7 +245,7 @@ async def add_model(
             model_id=request.model_id,
             model_name=request.model_name,
             tags=request.tags,
-            type=request.type,
+            type_=request.type,
             workspace_id=workspace_id,
             creator=(
                 current_account.account_id

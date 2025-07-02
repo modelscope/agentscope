@@ -197,8 +197,8 @@ class Node(WorkflowBaseNode):
 
         # WARNING: input type may be always String when value_from is `input`
         if value_type == "String":
-            if isinstance(value, str):
-                return value
+            # if isinstance(value, str):
+            #     return value
             return f'"{str(value)}"'
         elif value_type == "Number":
             return str(value)

@@ -140,7 +140,7 @@ class AccountService(BaseService[AccountDao]):
 
     def update_last_login_info(
         self,
-        id: int,
+        id_: int,
     ) -> Optional[Account]:
         """Update last login info."""
-        return self.dao.update_last_login_info(id=id)
+        return self.dao.update_last_login_info(id_=id_)

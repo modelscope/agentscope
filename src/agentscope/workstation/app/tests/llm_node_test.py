@@ -136,8 +136,8 @@ class TestLLMNode(unittest.TestCase):
             results.append(next(result_generator))
 
         # Now simulate the model invocation being reported
-        if hook_callback:
-            hook_callback(
+        if hook_callback and callable(hook_callback):
+            hook_callback(  # pylint: disable=not-callable
                 model_wrapper=MagicMock(),
                 model_invocation_id="test_id",
                 timestamp="2023-01-01T12:00:00",

@@ -24,7 +24,10 @@ class BaseService(Generic[DAOType]):
         self.dao = self._dao_cls(session=session)
         self.session = session
 
-    def get(self, id: Union[str, int, uuid.UUID]) -> Optional[ModelType]:
+    def get(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> Optional[ModelType]:
         """Get"""
         try:
             return self.dao.get(id)
@@ -57,7 +60,7 @@ class BaseService(Generic[DAOType]):
 
     def update(
         self,
-        id: Union[str, int, uuid.UUID],
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
         obj_in: Dict[str, Any],
         change_update_time: Optional[bool] = True,
     ) -> ModelType:  # type: ignore
@@ -179,7 +182,10 @@ class BaseService(Generic[DAOType]):
             )
             raise
 
-    def delete(self, id: Union[str, int, uuid.UUID]) -> bool:
+    def delete(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> bool:
         """Delete"""
         try:
             self._validate_delete(id)
@@ -210,16 +216,22 @@ class BaseService(Generic[DAOType]):
 
     def _validate_update(
         self,
-        id: Union[str, int, uuid.UUID],
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
         update_data: Dict[str, Any],
     ) -> None:
         """Validate update"""
         # pass
 
-    def _validate_delete(self, id: Union[str, int, uuid.UUID]) -> None:
+    def _validate_delete(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> None:
         """Validate delete"""
         # pass
 
-    def _validate_exists(self, id: Union[str, int, uuid.UUID]) -> None:
+    def _validate_exists(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> None:
         """Validate exists"""
         # pass

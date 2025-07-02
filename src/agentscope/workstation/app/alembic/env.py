@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """alembic env"""
 from logging.config import fileConfig
-from app.models.user import SQLModel  # noqa
-from app.core.config import settings  # noqa
+from sqlmodel import SQLModel
+from app.core.config import settings
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool

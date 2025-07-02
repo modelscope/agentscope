@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 """Main entry point for the application."""
 from typing import Any
-from starlette.exceptions import HTTPException
-
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles  # New: Introduction of StaticFiles
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.types import Scope
-
 from app.api.router import api_router
 from app.core.config import settings
 from app.db.init_db import init_db
-from app.exceptions.base import BaseException
+from app.exceptions.base import BaseException  # pylint: disable=W0622
 from app.middleware.error_handler_middleware import base_exception_handler
 from app.middleware.request_context_middleware import RequestContextMiddleware
 from app.utils.json_utils import json_dumps
@@ -29,6 +27,7 @@ class CustomJSONResponse(JSONResponse):
     """Custom JSON response class"""
 
     def render(self, content: Any) -> bytes:
+        """render"""
         return json_dumps(content).encode("utf-8")
 
 
@@ -36,6 +35,7 @@ class SpaStaticFiles(StaticFiles):
     """Custom static files class"""
 
     async def get_response(self, path: str, scope: Scope) -> Any:
+        """Get response"""
         try:
             return await super().get_response(path, scope)
         except HTTPException as exc:
@@ -82,7 +82,6 @@ def create_app() -> FastAPI:
 
 
 if __name__ == "__main__":
-    """Main function"""
     import uvicorn
 
     app_instance = create_app()

@@ -2,6 +2,7 @@
 """The knowledge base related services"""
 import uuid
 from typing import List, Optional, Union
+import json
 
 from loguru import logger
 from sqlmodel import Session
@@ -9,7 +10,7 @@ from sqlmodel import Session
 from app.core.model import get_llama_index_embedding_model
 from app.dao.knowledge_base_dao import KnowledgeBaseDao
 from app.exceptions.service import (
-    KnowledgeBaseAccessDeniedException,
+    # KnowledgeBaseAccessDeniedException,
     KnowledgeBaseNotFoundException,
     DocumentNotFoundException,
 )
@@ -20,9 +21,16 @@ from app.models.knowledge_base import (
     Chunk,
 )
 from app.models.provider import ProviderBase
-
 from app.schemas.common import PaginationParams
 from app.schemas.knowledge_base import KnowledgeBaseInfo
+
+from app.services.base_service import BaseService
+from app.services.chunk_service import ChunkService
+from app.services.provider_service import ProviderService
+from app.services.document_service import DocumentService
+from app.services.knowledge_base_permission_service import (
+    KnowledgeBasePermissionService,
+)
 from app.utils.text_splitter import (
     preprocess_chunks_and_child_chunks,
     text_split,
@@ -36,17 +44,10 @@ from app.utils.weaviate_utils import (
     weaviate_delete_chunk,
     weaviate_add_chunk,
 )
-from app.services.base_service import BaseService
-from app.services.chunk_service import ChunkService
-from app.services.provider_service import ProviderService
-from app.services.document_service import DocumentService
-from app.services.knowledge_base_permission_service import (
-    KnowledgeBasePermissionService,
-)
 from app.utils.extractor import extract_content
 from app.utils.crypto import decrypt_with_rsa
 
-import json
+# pylint: disable=too-many-public-methods
 
 
 class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
@@ -81,7 +82,7 @@ class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
             f"Check permission with knowledge_base_id : "
             f"{knowledge_base_id}, account_id: {account_id}",
         )
-        return
+        # return
         # TODO: Add detailed permission checking
         # if not self.dao.check_permission(
         #     account_id=account_id,

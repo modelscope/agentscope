@@ -56,7 +56,7 @@ def base_query_params(
     current: int = Query(1, ge=1),
     size: int = Query(10, ge=1, le=100),
     status: Optional[str] = Query(None),
-    type: Optional[str] = Query(None),
+    type_: Optional[str] = Query(None),
 ) -> BaseQuery:
     """Preprocess query parameters"""
     return BaseQuery(
@@ -65,7 +65,7 @@ def base_query_params(
             "current": current,
             "size": size,
             "status": int(status) if status and status.strip() else None,
-            "type": type,
+            "type": type_,
         },
     )
 
@@ -76,7 +76,7 @@ def app_query_params(
     size: int = Query(10, ge=1, le=100),
     status: Optional[str] = Query(None),  # Receive raw string
     app_id: Optional[str] = Query(None),
-    type: Optional[str] = Query(None),
+    type_: Optional[str] = Query(None),
 ) -> AppQuery:
     """Preprocess query parameters"""
     return AppQuery(
@@ -86,7 +86,7 @@ def app_query_params(
             "size": size,
             "status": int(status) if status and status.strip() else None,
             "app_id": app_id,
-            "type": type,
+            "type": type_,
         },
     )
 

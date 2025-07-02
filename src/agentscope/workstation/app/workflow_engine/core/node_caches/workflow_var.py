@@ -85,7 +85,7 @@ class WorkflowVariable(dict):
         source: Optional[str] = None,
         targets: Optional[List[str]] = None,
         data_type: Union[str, DataType] = DataType.STRING,
-        input: Optional[Any] = None,
+        input: Optional[Any] = None,  # pylint: disable=redefined-builtin
         output: Optional[Any] = None,
         output_type: Optional[str] = "text",
         node_type: Optional[str] = None,

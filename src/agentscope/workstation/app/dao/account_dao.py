@@ -13,10 +13,10 @@ class AccountDao(BaseDAO[Account]):
 
     def update_last_login_info(
         self,
-        id: int,
+        id_: int,
     ) -> Optional[Account]:
         """Update the last login info of the account."""
-        account = self.get(id)
+        account = self.get(id_)
         account.gmt_last_login = get_current_time()
         self.session.commit()
         return account

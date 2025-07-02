@@ -7,7 +7,7 @@ import re
 import time
 import json
 
-from typing import Any, List, Generator
+from typing import Any, List, Generator, Dict, Callable
 
 from app.workflow_engine.core.node_caches.node_cache_handler import NodeCache
 from app.workflow_engine.core.node_caches.workflow_var import WorkflowVariable
@@ -223,20 +223,29 @@ def workflow_pipeline(
                 status = "success" if all_success else "executing"
 
                 # 1. First, replace all variables from non-LLM nodes
-                def replace_non_llm(match: re.Match) -> str:
-                    node_id = match.group(1)
-                    field = match.group(2)
+                def replace_non_llm(current_inter_results: Dict) -> Callable:
+                    """Replace non-LLM variables."""
 
-                    if (
-                        node_id in inter_results
-                        and inter_results[node_id] is not None
-                    ):
-                        return get_node_content(inter_results[node_id], field)
-                    return ""  # Return empty string if node not found
+                    def _replace(match: re.Match) -> str:
+                        """Replace non-LLM variable."""
+                        node_id = match.group(1)
+                        field = match.group(2)
+
+                        if (
+                            node_id in current_inter_results
+                            and current_inter_results[node_id] is not None
+                        ):
+                            return get_node_content(
+                                current_inter_results[node_id],
+                                field,
+                            )
+                        return ""  # Return empty string if node not found
+
+                    return _replace
 
                 # Replace all non-LLM variables
                 text_template = NON_LLM_PATTERN.sub(
-                    replace_non_llm,
+                    replace_non_llm(inter_results),
                     text_template,
                 )
 

@@ -366,7 +366,8 @@ def get_model_instance(
             stream=stream,
         )
 
-    return ModelWrapperBase()
+    else:
+        raise ValueError(f"Unsupported model configuration: {model_config}")
 
 
 def get_module_source_content(module_name: str) -> Optional[str]:

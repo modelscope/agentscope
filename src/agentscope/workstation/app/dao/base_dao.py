@@ -31,7 +31,10 @@ class BaseDAO(Generic[ModelType]):
         self.session = session
         self.model = self._model_class
 
-    def get(self, id: Union[str, int, uuid.UUID]) -> Optional[ModelType]:
+    def get(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> Optional[ModelType]:
         """
         Gets the instance of the model class with the given id.
 
@@ -333,7 +336,7 @@ class BaseDAO(Generic[ModelType]):
 
     def update(
         self,
-        id: Union[str, int, uuid.UUID],
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
         obj_data: Dict[str, Any],
         change_update_time: Optional[bool] = True,
     ) -> ModelType:
@@ -343,6 +346,7 @@ class BaseDAO(Generic[ModelType]):
         Args:
             id (Union[str, int, uuid.UUID]): The id of the instance to update.
             obj_data (Dict[str, Any]): The data to update the instance.
+            change_update_time (Optional[bool]): If change update time
 
         Returns:
             ModelType: The updated instance of the model class.
@@ -380,7 +384,10 @@ class BaseDAO(Generic[ModelType]):
             )
             raise
 
-    def delete(self, id: Union[str, int, uuid.UUID]) -> bool:
+    def delete(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> bool:
         """
         Delete an instance of the model class.
 
@@ -405,7 +412,10 @@ class BaseDAO(Generic[ModelType]):
             )
             raise
 
-    def exists(self, id: Union[str, int, uuid.UUID]) -> bool:
+    def exists(
+        self,
+        id: Union[str, int, uuid.UUID],  # pylint: disable=W0622
+    ) -> bool:
         """
         Check whether an instance of the model class exists.
 
