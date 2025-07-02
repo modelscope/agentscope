@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+"""Model related service"""
+from typing import Optional, List
 from app.dao.model_dao import ModelDAO
 from app.models.model import ModelEntity
 from .base_service import BaseService
-from typing import Optional, List
 
 
 class ModelService(BaseService[ModelDAO]):
+    """Model related services"""
+
     _dao_cls = ModelDAO
 
     def add_model(
@@ -18,6 +21,7 @@ class ModelService(BaseService[ModelDAO]):
         workspace_id: Optional[str],
         creator: Optional[str],
     ) -> bool:
+        """Add model"""
         model_entity = ModelEntity(
             provider=provider,
             model_id=model_id,
@@ -42,6 +46,7 @@ class ModelService(BaseService[ModelDAO]):
         modifier: Optional[str] = None,
         workspace_id: Optional[str] = None,
     ) -> bool:
+        """Update model"""
         model = self.dao.get_by_model_id(
             model_id=model_id,
             provider=provider,
@@ -68,6 +73,7 @@ class ModelService(BaseService[ModelDAO]):
         model_id: str,
         workspace_id: Optional[str] = None,
     ) -> bool:
+        """Delete model"""
         model = self.dao.get_by_model_id(
             model_id=model_id,
             provider=provider,
@@ -83,6 +89,7 @@ class ModelService(BaseService[ModelDAO]):
         provider: str,
         workspace_id: Optional[str] = None,
     ) -> List[ModelEntity]:
+        """List models for a provider"""
         models = self.dao.get_by_provider(
             provider=provider,
             workspace_id=workspace_id,
@@ -95,6 +102,7 @@ class ModelService(BaseService[ModelDAO]):
         model_id: str,
         workspace_id: Optional[str] = None,
     ) -> Optional[ModelEntity]:
+        """Get model by model_id"""
         model = self.dao.get_by_model_id(
             model_id=model_id,
             provider=provider,
@@ -102,7 +110,12 @@ class ModelService(BaseService[ModelDAO]):
         )
         return model
 
-    def get_parameter_rules(self, provider: str, model_id: str) -> List[dict]:
+    def get_parameter_rules(
+        self,
+        provider: str,  # pylint: disable=unused-argument
+        model_id: str,
+    ) -> List[dict]:
+        """Get model parameter rules"""
         # For demonstration, only gpt-4 and gpt-3.5-turbo have rules. Extend
         # as needed.
         rules = {
@@ -158,6 +171,7 @@ class ModelService(BaseService[ModelDAO]):
         model_type: str,
         workspace_id: Optional[str] = None,
     ) -> List[ModelEntity]:
+        """List models by type"""
         models = self.dao.get_by_type(
             model_type=model_type,
             workspace_id=workspace_id,

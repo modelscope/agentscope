@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import uuid
+"""The provider related models"""
 from datetime import datetime
 from typing import Optional
 
@@ -10,6 +10,8 @@ from .field import formatted_datetime_field
 
 
 class ProviderBase(SQLModel, table=True):
+    """The provider base model"""
+
     __tablename__ = "provider"  # type: ignore
 
     id: Optional[int] = Field(

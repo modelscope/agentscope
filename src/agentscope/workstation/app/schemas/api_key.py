@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Api key schemas"""
 from datetime import datetime
 from typing import Optional
 

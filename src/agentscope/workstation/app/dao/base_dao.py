@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Base DAO"""
 import uuid
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
@@ -13,7 +14,6 @@ ModelType = TypeVar("ModelType", bound=SQLModel)
 
 
 class BaseDAO(Generic[ModelType]):
-    _model_class: Type[ModelType]
     """
     Base Data Access Object class, provides basic CRUD operations for
     database models
@@ -24,11 +24,24 @@ class BaseDAO(Generic[ModelType]):
     - Does not handle business logic or validation
     """
 
-    def __init__(self, session: Session):
+    _model_class: Type[ModelType]
+
+    def __init__(self, session: Session) -> None:
+        """Init"""
         self.session = session
         self.model = self._model_class
 
     def get(self, id: Union[str, int, uuid.UUID]) -> Optional[ModelType]:
+        """
+        Gets the instance of the model class with the given id.
+
+        Args:
+            id (Union[str, int, uuid.UUID]): The id of the instance to get.
+
+        Returns:
+            Optional[ModelType]: The instance of the model class with the given
+             id, or None if no such instance exists.
+        """
         try:
             statement = select(self.model).where(self.model.id == id)
             return self.session.exec(statement).first()
@@ -39,6 +52,17 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def count_by_field(self, field_name: str, value: Any) -> int:
+        """
+        Counts the number of instances of the model class with the given
+        field name and value.
+
+        Args:
+            field_name (str): The name of the field to count.
+            value (Any): The value of the field to count.
+
+        Returns:
+            int: The number of instances with the given field name and value.
+        """
         try:
             query = (
                 select(
@@ -55,6 +79,10 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def count_by_fields(self, filters: Dict[str, Any]) -> int:
+        """
+        Counts the number of instances of the model class with the given
+        field name and value.
+        """
         try:
             query = select(func.count()).select_from(self.model)
             for field_name, value in filters.items():
@@ -77,6 +105,18 @@ class BaseDAO(Generic[ModelType]):
         self,
         filters: Dict[str, Any],
     ) -> Optional[ModelType]:
+        """
+        Gets the first instance of the model class with the given field name
+         and value.
+
+        Args:
+            field_name (str): The name of the field to search.
+            value (Any): The value of the field to search.
+
+        Returns:
+            Optional[ModelType]: The first instance of the model class with the
+             given field name and value, or None if no such instance exists.
+        """
         try:
             query = select(self.model)
             for field_name, value in filters.items():
@@ -92,6 +132,18 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def get_all_by_fields(self, filters: Dict[str, Any]) -> List[ModelType]:
+        """
+        Gets all instances of the model class with the given field name and
+         value.
+
+        Args:
+            field_name (str): The name of the field to search.
+            value (Any): The value of the field to search.
+
+        Returns:
+            List[ModelType]: A list of all instances of the model class
+            with the given field name and value.
+        """
         try:
             query = select(self.model)
             for field_name, value in filters.items():
@@ -111,6 +163,18 @@ class BaseDAO(Generic[ModelType]):
         field_name: str,
         value: Any,
     ) -> Optional[ModelType]:
+        """
+        Gets the first instance of the model class with the given field
+        name and value.
+
+        Args:
+            field_name (str): The name of the field to search.
+            value (Any): The value of the field to search.
+
+        Returns:
+            Optional[ModelType]: The first instance of the model class with the
+             given field name and value, or None if no such instance exists.
+        """
         try:
             query = select(self.model).where(
                 getattr(self.model, field_name) == value,
@@ -123,6 +187,18 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def get_all_by_field(self, field_name: str, value: Any) -> List[ModelType]:
+        """
+        Gets all instances of the model class with the given field name and
+         value.
+
+        Args:
+            field_name (str): The name of the field to search.
+            value (Any): The value of the field to search.
+
+        Returns:
+            List[ModelType]: A list of all instances of the model class
+            with the given field name and value.
+        """
         try:
             query = select(self.model).where(
                 getattr(self.model, field_name) == value,
@@ -139,6 +215,18 @@ class BaseDAO(Generic[ModelType]):
         field_name: str,
         value: Any,
     ) -> List[ModelType]:
+        """
+        Deletes all instances of the model class with the given field name
+        and value.
+
+        Args:
+            field_name (str): The name of the field to search.
+            value (Any): The value of the field to search.
+
+        Returns:
+            List[ModelType]: A list of all instances of the model class
+            with the given field name and value.
+        """
         try:
             query = select(self.model).where(
                 getattr(self.model, field_name) == value,
@@ -159,6 +247,18 @@ class BaseDAO(Generic[ModelType]):
         filters: Optional[Dict[str, Any]] = None,
         pagination: Optional[PaginationParams] = None,
     ) -> List[ModelType]:
+        """
+        Paginate through the model class instances.
+
+        Args:
+            filters (Optional[Dict[str, Any]]): A dictionary of filters to
+            apply to the query.
+            pagination (Optional[PaginationParams]): A PaginationParams
+            object containing the pagination parameters.
+
+        Returns:
+            List[ModelType]: A list of model class instances.
+        """
         try:
             query = select(self.model)
             if filters:
@@ -206,6 +306,16 @@ class BaseDAO(Generic[ModelType]):
         self,
         obj_data: Union[AppEntity, AppVersionEntity, Dict[str, Any]],
     ) -> ModelType:
+        """
+        Create a new instance of the model class.
+
+        Args:
+            obj_data (Union[AppEntity, AppVersionEntity, Dict[str, Any]]):
+            The data to create the instance.
+
+        Returns:
+            ModelType: The created instance of the model class.
+        """
         try:
             for method in ["model_dump", "dict", "to_dict"]:
                 if hasattr(obj_data, method):
@@ -227,6 +337,16 @@ class BaseDAO(Generic[ModelType]):
         obj_data: Dict[str, Any],
         change_update_time: Optional[bool] = True,
     ) -> ModelType:
+        """
+        Update an existing instance of the model class.
+
+        Args:
+            id (Union[str, int, uuid.UUID]): The id of the instance to update.
+            obj_data (Dict[str, Any]): The data to update the instance.
+
+        Returns:
+            ModelType: The updated instance of the model class.
+        """
         try:
             db_obj = self.get(id)
             if not db_obj:
@@ -261,6 +381,16 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def delete(self, id: Union[str, int, uuid.UUID]) -> bool:
+        """
+        Delete an instance of the model class.
+
+        Args:
+            id (Union[str, int, uuid.UUID]): The id of the instance to delete.
+
+        Returns:
+            bool: True if the instance was deleted successfully,
+            False otherwise.
+        """
         try:
             db_obj = self.get(id)
             if not db_obj:
@@ -276,13 +406,23 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def exists(self, id: Union[str, int, uuid.UUID]) -> bool:
+        """
+        Check whether an instance of the model class exists.
+
+        Args:
+            id (Union[str, int, uuid.UUID]): The id of the instance to check.
+
+        Returns:
+            bool: True if the instance exists, False otherwise.
+        """
         try:
             statement = select(self.model).where(self.model.id == id)
             result = self.session.exec(statement).first()
             return result is not None
         except Exception as e:
             logger.error(
-                f"Error checking existence of {self.model.__name__} with id {id}: {str(e)}",  # noqa 301
+                f"Error checking existence of {self.model.__name__} with id"
+                f" {id}: {str(e)}",  # noqa 301
             )
             raise
 
@@ -291,6 +431,17 @@ class BaseDAO(Generic[ModelType]):
         *where_conditions: Any,
         order_by: Optional[list] = None,
     ) -> Optional[ModelType]:
+        """
+        Get the first instance of the model class that matches the given
+        conditions.
+
+        Args:
+            *where_conditions (Any): The conditions to match.
+
+        Returns:
+            Optional[ModelType]: The first instance of the model class that
+             matches the given conditions, or None if no match is found.
+        """
         try:
             query = select(self.model)
             if where_conditions:
@@ -301,7 +452,10 @@ class BaseDAO(Generic[ModelType]):
             return self.session.exec(query).first()
         except Exception as e:
             logger.error(
-                f"Error getting {self.model.__name__} by fields {where_conditions}: {str(e)}",  # noqa 501
+                "Error getting %s by fields %s: %s",
+                self.model.__name__,
+                where_conditions,
+                str(e),
             )
             raise
 
@@ -310,6 +464,18 @@ class BaseDAO(Generic[ModelType]):
         *where_conditions: Any,
         order_by: Optional[list] = None,
     ) -> List[ModelType]:
+        """
+        Get all instances of the model class that match the given
+        conditions and order them.
+
+        Args:
+            *where_conditions (Any): The conditions to match.
+            order_by (Optional[list]): The fields to order by.
+
+        Returns:
+            List[ModelType]: A list of all instances of the model class
+            that match the given conditions and order them.
+        """
         try:
             query = select(self.model)
             if where_conditions:
@@ -326,6 +492,17 @@ class BaseDAO(Generic[ModelType]):
             raise
 
     def count_by_where_conditions(self, *where_conditions: Any) -> int:
+        """
+        Count the number of instances of the model class that match the
+        given conditions.
+
+        Args:
+            *where_conditions (Any): The conditions to match.
+
+        Returns:
+            int: The number of instances of the model class that match the
+            given conditions.
+        """
         try:
             query = select(func.count()).select_from(self.model)
             if where_conditions:
@@ -348,6 +525,17 @@ class BaseDAO(Generic[ModelType]):
         order_by: Optional[list] = None,
         pagination: Optional[PaginationParams] = None,
     ) -> List[ModelType]:
+        """
+        Paginate the results of a query based on the provided conditions.
+
+        Args:
+            *where_conditions (Any): The conditions to filter the results.
+            order_by (Optional[list]): The fields to order the results by.
+            pagination (Optional[PaginationParams]): The pagination parameters.
+
+        Returns:
+            List[ModelType]: A list of paginated results.
+        """
         try:
             query = select(self.model)
             if where_conditions:

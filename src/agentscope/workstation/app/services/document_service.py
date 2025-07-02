@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """The knowledge base document related services"""
-import uuid
-
-from .base_service import BaseService
 from app.dao.document_dao import DocumentDao
+from .base_service import BaseService
 
 
 class DocumentService(BaseService[DocumentDao]):

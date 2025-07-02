@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""get redis client"""
 from typing import Generator
 
 import redis
@@ -9,6 +9,7 @@ from app.core.config import settings
 
 
 def get_redis_client() -> Generator[Redis, None, None]:
+    """get redis client"""
     client = redis.Redis(
         host=settings.REDIS_SERVER,
         port=settings.REDIS_PORT,

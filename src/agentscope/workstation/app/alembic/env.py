@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
+"""alembic env"""
 from logging.config import fileConfig
+from app.models.user import SQLModel  # noqa
+from app.core.config import settings  # noqa
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
@@ -19,9 +21,6 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-from app.models.user import SQLModel  # noqa
-from app.core.config import settings  # noqa
-
 target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -31,6 +30,7 @@ target_metadata = SQLModel.metadata
 
 
 def get_url() -> str:
+    """get url"""
     return str(settings.SQLALCHEMY_DATABASE_URI)
 
 

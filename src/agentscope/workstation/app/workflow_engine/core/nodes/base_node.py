@@ -17,7 +17,6 @@ from ..event import (
     FallbackEvent,
     RetryEvent,
 )
-from ..utils.code import CodeBlock
 from ..utils.logger_adapter import LoggerAdapter
 
 

@@ -3,16 +3,13 @@
 import json
 import uuid
 import time
-
+import redis
+from fastapi import APIRouter, Depends
 from app.utils.constant import MAX_WAIT
 from app.utils.misc import get_redis_client
 from app.utils.request_context import request_context_var
-
-import redis
-from fastapi import APIRouter, Depends
 from app.schemas.workflow import (
     TaskRunRequest,
-    InputInfo,
     InitQuery,
     TaskGetRequest,
     ResumeTaskQuery,
@@ -128,8 +125,8 @@ def run_task(
 
 @router.post("/debug/get-task-process")
 def get_task_process(
-    current_account: CurrentAccount,
-    session: SessionDep,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
+    session: SessionDep,  # pylint: disable=unused-argument
     task_get_request: TaskGetRequest,
     redis_client: redis.Redis = Depends(get_redis_client),
 ) -> dict:
@@ -275,10 +272,11 @@ def resume_task(
 
 @router.post("/debug/part-graph/run-task")
 def part_graph_run_task(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     session: SessionDep,
     request: TaskPartGraphRequest,
 ) -> dict:
+    """Run part graph workflow"""
     workflow_service = WorkflowService(session)
 
     # Check if nodes are provided

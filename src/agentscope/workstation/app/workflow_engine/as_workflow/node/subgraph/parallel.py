@@ -17,7 +17,6 @@ from ....core.node_caches.workflow_var import WorkflowVariable, DataType
 from ....core.utils.misc import (
     replace_placeholders,
     extract_single_placeholder_fullmatch,
-    get_value_from_dict,
     remove_placeholders,
 )
 
@@ -65,11 +64,11 @@ class ParallelNode(WorkflowNode):
                     k = extract_single_placeholder_fullmatch(
                         item["left"]["value"],
                     )
-                v = extract_single_placeholder_fullmatch(
-                    item["right"]["value"],
-                )
-                if k:
-                    inter_var_mapping[k] = v
+                    v = extract_single_placeholder_fullmatch(
+                        item["right"]["value"],
+                    )
+                    if k:
+                        inter_var_mapping[k] = v
 
         input_values = [
             json.loads(x["value"])[:batch_size]

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""The api key related services"""
 from datetime import datetime
 from enum import unique, Enum
 from typing import Optional
@@ -11,6 +12,10 @@ from app.models.base import IntEnum
 
 @unique
 class ApiKeyStatus(int, Enum):
+    """
+    Api key status
+    """
+
     DELETED = 0
     NORMAL = 1
 

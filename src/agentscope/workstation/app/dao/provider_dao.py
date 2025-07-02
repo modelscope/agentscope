@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from sqlmodel import select, and_, or_
+"""provider dao"""
 from typing import Optional
+from sqlmodel import select, and_
 from app.dao.base_dao import BaseDAO
 from app.models.provider import ProviderBase
 
 
 class ProviderDAO(BaseDAO[ProviderBase]):
+    """provider dao"""
+
     _model_class = ProviderBase
 
     def get_by_provider(

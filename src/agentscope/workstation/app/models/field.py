@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from sqlmodel import Field
+"""Basic field"""
 from datetime import datetime, timezone
+from sqlmodel import Field
 
 
 def email_field() -> Field:

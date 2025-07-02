@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for api node"""
 import json
 import unittest
 from unittest.mock import patch, MagicMock
@@ -6,6 +7,8 @@ from unittest.mock import patch, MagicMock
 from app.workflow_engine.as_workflow.node.api import APINode, AuthTypeEnum
 from app.workflow_engine.as_workflow.node.common.make_request import BearerAuth
 from app.workflow_engine.core.node_caches.workflow_var import DataType
+
+# pylint: disable=protected-access,unused-argument
 
 
 class TestAPINode(unittest.TestCase):

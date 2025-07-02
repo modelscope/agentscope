@@ -4,22 +4,24 @@ import asyncio
 import json
 from typing import Union, List
 from datetime import datetime, timezone
-from app.utils.mcp_utils import MCPSessionHandler
 from sqlmodel import Session, select, func, update
 
+from app.utils.mcp_utils import MCPSessionHandler
 from app.dao.base_dao import BaseDAO
 from app.models.mcp import MCP
 
 
 class MCPDAO(BaseDAO):
-    _model_class = MCP
     """Data access object layer for MCP."""
+
+    _model_class = MCP
 
     def __init__(self, session: Session):
         self.session = session
         self.model = self._model_class
 
     async def process_mcp(self, mcp: MCP, need_tools: bool) -> dict:
+        """Process MCP."""
         mcp_dict = mcp.model_dump()
         config = json.loads(mcp.deploy_config)
         install_config = json.loads(config["install_config"])
@@ -50,7 +52,7 @@ class MCPDAO(BaseDAO):
 
     def update_mcp_info(
         self,
-        account_id: str,
+        account_id: str,  # pylint: disable=unused-argument
         mcp_id: int,
         **update_data: dict,
     ) -> None:
@@ -87,6 +89,7 @@ class MCPDAO(BaseDAO):
         return results[0]
 
     async def fetch_tools(self, local_configs: dict) -> list[dict]:
+        """Fetch tools"""
         mcp_session_handler = MCPSessionHandler(
             "amap-amap-sse",
             local_configs["mcpServers"]["amap-amap-sse"],
@@ -105,6 +108,7 @@ class MCPDAO(BaseDAO):
         return list_tools
 
     async def get_tools(self, local_configs: dict) -> list[dict]:
+        """Get tools"""
         tools = await self.fetch_tools(local_configs)
         return tools
 
@@ -220,7 +224,7 @@ class MCPDAO(BaseDAO):
             result = await asyncio.gather(*tasks)
             return result[0]
         except Exception as e:
-            raise ValueError(f"Error encountered: {str(e)}")
+            raise ValueError(f"Error encountered: {str(e)}") from e
 
     def list_mcp_servers_num(
         self,

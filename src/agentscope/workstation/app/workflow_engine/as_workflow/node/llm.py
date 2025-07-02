@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-branches, too-many-statements
 """Module for LLM node related functions."""
 import time
 from typing import Dict, Any
@@ -32,8 +33,8 @@ class LLMNode(Node):
             model_wrapper: ModelWrapperBase,
             model_invocation_id: str,
             timestamp: str,
-            arguments: Dict,
-            response: Dict,
+            arguments: Dict,  # pylint: disable=unused-argument
+            response: Dict,  # pylint: disable=unused-argument
             usage: Dict,
         ) -> None:
             self.logger.query_info(
@@ -196,7 +197,7 @@ class LLMNode(Node):
             usages = []
             if strategy == "noop":
                 raise e
-            elif strategy == "defaultValue":
+            if strategy == "defaultValue":
                 response = {
                     item["key"]: self.build_var_str(item)
                     for item in try_catch_config.get("default_values")
@@ -234,7 +235,7 @@ class LLMNode(Node):
                     if source != self.node_id:
                         continue
                     for target, edges in adjacency.items():
-                        for k, data in edges.items():
+                        for _, data in edges.items():
                             source_handle = self.node_id + "_fail"
                             if data.get("source_handle") != source_handle:
                                 continue
@@ -269,7 +270,7 @@ class LLMNode(Node):
             else:
                 raise ValueError(
                     f"Invalid try_catch_config strategy: {strategy}",
-                )
+                ) from e
         finally:
             ModelWrapperBase.remove_save_model_invocation_hook(hook_name)
 

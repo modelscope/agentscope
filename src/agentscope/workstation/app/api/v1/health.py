@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Health"""
 from fastapi import APIRouter
-from fastapi import Response
 
 from app.schemas.response import create_response
 

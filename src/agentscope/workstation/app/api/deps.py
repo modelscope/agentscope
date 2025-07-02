@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
+"""deps"""
 from typing import Annotated, Optional
 
-import jwt
 from fastapi import Depends, Query
 from fastapi.security import HTTPBearer
 from sqlmodel import Session
 
-from app.core.config import settings
 from app.db.init_db import get_session
 from app.exceptions.base import PermissionDeniedException
 from app.models.account import Account
-from app.models.app import AppType
 from app.schemas.app import AppQuery
 from app.schemas.base import BaseQuery
 from app.services.auth_service import AuthService
@@ -19,6 +17,7 @@ http_bearer = HTTPBearer()
 
 
 def get_token(token: Annotated[str, Depends(http_bearer)]) -> str:
+    """get token"""
     return token.credentials
 
 
@@ -27,6 +26,7 @@ TokenDep = Annotated[str, Depends(get_token)]
 
 
 def get_current_account(session: SessionDep, token: TokenDep) -> Account:
+    """get current account"""
     return AuthService(session=session).get_account_by_token(token=token)
 
 
@@ -36,6 +36,7 @@ CurrentAccount = Annotated[Account, Depends(get_current_account)]
 def get_current_active_super_account(
     current_account: CurrentAccount,
 ) -> Account:
+    """get current active super account"""
     if current_account.type == "admin":
         return current_account
     else:
@@ -57,6 +58,7 @@ def base_query_params(
     status: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
 ) -> BaseQuery:
+    """Preprocess query parameters"""
     return BaseQuery(
         **{
             "name": name,
@@ -95,4 +97,5 @@ AppQueryDeps = Annotated[AppQuery, Depends(app_query_params)]
 
 
 def get_workspace_id() -> str:
+    """Get workspace id"""
     return "1"

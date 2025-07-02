@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""crypto"""
 import base64
 import os
 
@@ -9,6 +9,7 @@ from Crypto.PublicKey import RSA
 
 
 def get_public_key() -> RSA.RsaKey:
+    """get public key"""
     public_key_path = os.path.join(
         os.path.dirname(__file__),
         "keys/public.pem",
@@ -19,6 +20,7 @@ def get_public_key() -> RSA.RsaKey:
 
 
 def get_private_key() -> RSA.RsaKey:
+    """get private key"""
     private_key_path = os.path.join(
         os.path.dirname(__file__),
         "keys/private.pem",

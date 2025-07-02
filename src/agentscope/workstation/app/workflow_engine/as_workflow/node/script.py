@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module for code node related functions."""
+# pylint: disable=too-many-branches, too-many-statements,
+# pylint: disable=too-many-nested-blocks
 import re
 import time
 from typing import Dict, Any, Generator
@@ -147,7 +149,7 @@ main();
         if attempts >= max_retries:
             if strategy == "noop":
                 raise ValueError(str(error))
-            elif strategy == "defaultValue":
+            if strategy == "defaultValue":
                 output_var = []
                 output = {
                     item["key"]: self.build_var_str(item)
@@ -179,9 +181,9 @@ main();
                 yield output_var
             elif strategy == "failBranch":
                 source_to_target_map = {}
-                for source, adjacency in kwargs["graph"].adj.items():
-                    for target, edges in adjacency.items():
-                        for k, data in edges.items():
+                for _, adjacency in kwargs["graph"].adj.items():
+                    for _, edges in adjacency.items():
+                        for _, data in edges.items():
                             if data.get("source_handle"):
                                 source_handle = data.get("source_handle")
                                 target_handle = data.get("target_handle")

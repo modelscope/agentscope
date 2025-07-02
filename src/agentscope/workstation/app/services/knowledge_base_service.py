@@ -3,6 +3,7 @@
 import uuid
 from typing import List, Optional, Union
 
+from loguru import logger
 from sqlmodel import Session
 
 from app.core.model import get_llama_index_embedding_model
@@ -53,7 +54,11 @@ class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
 
     _dao_cls = KnowledgeBaseDao
 
-    def __init__(self, session: Session, user_id: uuid.UUID = None):
+    def __init__(
+        self,
+        session: Session,
+        user_id: uuid.UUID = None,  # pylint: disable=unused-argument
+    ) -> None:
         super().__init__(session=session)
         self.document_service = DocumentService(
             session=session,
@@ -72,6 +77,10 @@ class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
         account_id: Optional[str] = None,
     ) -> None:
         """Check if the user has permission to access the knowledge base"""
+        logger.info(
+            f"Check permission with knowledge_base_id : "
+            f"{knowledge_base_id}, account_id: {account_id}",
+        )
         return
         # TODO: Add detailed permission checking
         # if not self.dao.check_permission(
@@ -316,14 +325,14 @@ class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
                 self.chunk_service.delete(chunk_id)
             self.document_service.delete(document_id)
 
-        knowledge_base_permission = (
+        knowledge_base_permissions = (
             self.knowledge_base_permission_service.get_all_by_field(
                 "knowledge_base_id",
                 knowledge_base_id,
             )
         )
 
-        for knowledge_base_permission in knowledge_base_permission:
+        for knowledge_base_permission in knowledge_base_permissions:
             self.knowledge_base_permission_service.delete(
                 knowledge_base_permission.id,
             )
@@ -759,7 +768,7 @@ class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
 
     def get_document_chunks_preview(
         self,
-        account_id: str,
+        account_id: str,  # pylint: disable=unused-argument
         document_id: uuid.UUID,
         process_config: dict,
     ) -> list:
@@ -779,7 +788,7 @@ class KnowledgeBaseService(BaseService[KnowledgeBaseDao]):
 
         document_content = extract_content(document.path, document.extension)
 
-        chunks, child_chunks, keywords_list = text_split(
+        chunks, child_chunks, _ = text_split(
             document_content,
             chunk_type,
             chunk_parameter,

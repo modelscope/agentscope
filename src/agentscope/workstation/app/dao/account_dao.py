@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+"""Account Dao"""
+from typing import Optional
 from app.dao.base_dao import BaseDAO
 from app.models.account import Account
 from app.utils.timestamp import get_current_time
-import uuid
-from typing import Optional
 
 
 class AccountDao(BaseDAO[Account]):
+    """Dao for account."""
+
     _model_class = Account
 
     def update_last_login_info(

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+"""Pagination parameters"""
 from enum import Enum
-from typing import Generic, List, Optional, TypeVar
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -31,10 +32,12 @@ class PaginationParams(BaseModel):
 
     @property
     def skip(self) -> int:
+        """Get skip"""
         return (self.page - 1) * self.page_size
 
     @property
     def limit(self) -> int:
+        """Get limit"""
         return self.page_size
 
     @classmethod
@@ -46,6 +49,7 @@ class PaginationParams(BaseModel):
         order_direction: Optional[str] = None,
         search: Optional[str] = None,
     ) -> Optional["PaginationParams"]:
+        """Create PaginationParams"""
         if all(
             param is None
             for param in [
@@ -77,6 +81,7 @@ class PaginationParams(BaseModel):
         page_size: Optional[int] = 10,
         search: Optional[str] = None,
     ) -> "PaginationParams":
+        """Create PaginationParams from pretrained"""
         return cls(
             page=page,
             page_size=page_size,

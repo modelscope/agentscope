@@ -104,4 +104,4 @@ class VariableHandleNode(Node):
                 )
             yield output_var
         else:
-            raise Exception(f"Unsupported type: {type}")
+            raise ValueError(f"Unsupported type: {type}")

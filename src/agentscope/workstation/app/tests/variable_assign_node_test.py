@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for variable assign node"""
 import unittest
-from unittest.mock import patch, MagicMock
-import time
 
 from app.workflow_engine.as_workflow.node.variable_assign import (
     VariableAssignNode,
 )
 from app.workflow_engine.core.node_caches.workflow_var import (
-    WorkflowVariable,
     DataType,
 )
+
+# pylint: disable=protected-access,unused-argument
 
 
 class TestVariableAssignNode(unittest.TestCase):

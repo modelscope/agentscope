@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+"""exception handler"""
 from fastapi.responses import JSONResponse
-from fastapi import Request
 from app.exceptions.base import BaseException
 
 
 async def base_exception_handler(
-    request: Request,
+    # request: Request,
     exc: BaseException,
 ) -> JSONResponse:
+    """Base exception handler"""
     return JSONResponse(
         status_code=exc.code,
         content={"detail": exc.message},

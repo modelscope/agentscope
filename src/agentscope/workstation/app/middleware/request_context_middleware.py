@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""request context middleware"""
 import time
 from typing import Callable, Any
 from fastapi import Request
@@ -9,7 +10,10 @@ from app.utils.request_context import RequestContext, request_context_var
 
 
 class RequestContextMiddleware(BaseHTTPMiddleware):
+    """Request context middleware"""
+
     async def dispatch(self, request: Request, call_next: Callable) -> Any:
+        """Dispatch middleware"""
         if request.method in ["OPTIONS"]:
             return await call_next(request)
 

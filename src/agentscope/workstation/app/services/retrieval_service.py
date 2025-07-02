@@ -2,7 +2,7 @@
 """The Retrieval related services"""
 import json
 import uuid
-from typing import Optional, Union, Any
+from typing import Optional, Union
 from sqlmodel import Session
 
 import weaviate
@@ -17,15 +17,12 @@ from llama_index.vector_stores.weaviate import WeaviateVectorStore
 
 from app.dao.knowledge_base_dao import KnowledgeBaseDao
 from app.core.model import get_llama_index_embedding_model
-
 from app.core.model import get_llama_index_rerank_model
-
-from .base_service import BaseService
 from app.utils.crypto import decrypt_with_rsa
 from app.models.provider import ProviderBase
 from app.services.provider_service import ProviderService
-
 from app.services.knowledge_base_service import KnowledgeBaseService
+from .base_service import BaseService
 
 
 class RetrievalService(BaseService[KnowledgeBaseDao]):
@@ -33,7 +30,11 @@ class RetrievalService(BaseService[KnowledgeBaseDao]):
 
     _dao_cls = KnowledgeBaseDao
 
-    def __init__(self, session: Session, user_id: uuid.UUID = None):
+    def __init__(
+        self,
+        session: Session,
+        user_id: uuid.UUID = None,  # pylint: disable=unused-argument
+    ):
         super().__init__(session=session)
 
         self.provider_service = ProviderService(session)
@@ -55,7 +56,7 @@ class RetrievalService(BaseService[KnowledgeBaseDao]):
         rerank_model_provider: str = "dashscope",
         weights: Optional[dict] = None,
         top_k: Optional[int] = None,
-        **kwargs: Any,
+        # **kwargs: Any,
     ) -> list:
         """Retrieval"""
 

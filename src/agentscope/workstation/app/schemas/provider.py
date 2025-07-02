@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-
+"""The model related services"""
 from pydantic import BaseModel
 
 
 class ModelCredential(BaseModel):
+    """The model credential"""
+
     endpoint: str
     api_key: str
 

@@ -5,7 +5,6 @@ import uuid
 import datetime
 from typing import Optional
 
-from sqlalchemy import Integer
 from sqlmodel import Field, Relationship, SQLModel, JSON, Column, TEXT
 
 
@@ -278,6 +277,7 @@ class Document(SQLModel, table=True):  # type: ignore
 
     @property
     def doc_metadata(self) -> dict:
+        """get document metadata"""
         return {
             "content_type": self.content_type,
             "size": self.size,

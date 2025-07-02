@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The jwt related services"""
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 import jwt
 from jwt.exceptions import InvalidTokenError
@@ -20,6 +20,7 @@ class JwtService:
         self.jwt_cache = Cache(db=settings.REDIS_DB_JWT)
 
     def encode(self, payload: dict) -> str:
+        """Encode the payload with the secret key and algorithm."""
         return jwt.encode(
             payload=payload,
             key=self.secrret_key,
@@ -27,6 +28,7 @@ class JwtService:
         )
 
     def decode(self, token: str) -> dict:
+        """Decode the token with the secret key and algorithm."""
         try:
             # Added cache validation logic
             signature = token.split(".")[
@@ -52,8 +54,8 @@ class JwtService:
             timeout = expire_time - current
             self.jwt_cache.set(signature, payload, ex=timeout)
             return payload
-        except (InvalidTokenError,):
-            raise InvalidTokenException()
+        except (InvalidTokenError,) as e:
+            raise InvalidTokenException() from e
 
     def get_current_timestamp(self) -> int:
         """Get the current UTC time with a second-level timestamp"""

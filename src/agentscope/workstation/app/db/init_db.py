@@ -8,24 +8,24 @@ from typing import Generator, Any
 import redis
 from redis import Redis
 from sqlmodel import Session, SQLModel
-
-from app.core.config import settings
-from app.models.engine import engine
 from sqlalchemy import event, String, update, MetaData, select
 from sqlalchemy.engine import Connection
 
+from loguru import logger
+
+from app.core.config import settings
+from app.models.engine import engine
 from app.models.account import Account
 
 # from app.models.app import Workspace
 from app.models.provider import ProviderBase
 from app.models.model import ModelEntity
-from loguru import logger
-
 from app.utils.crypto import encrypt_with_rsa
 from app.utils.security import verify_password, get_password_hash
 
 
 def get_session() -> Generator[Session, None, None]:
+    """Get a database session."""
     with Session(engine) as session:
         yield session
 
@@ -36,11 +36,13 @@ def create_db_and_tables() -> None:
 
 
 def init_db() -> None:
+    """Initialize the database."""
+
     @event.listens_for(SQLModel.metadata, "before_create")
     def _set_varchar_length(
         target: MetaData,
-        connection: Connection,
-        **kw: Any,
+        connection: Connection,  # pylint: disable=unused-argument
+        **kw: Any,  # pylint: disable=unused-argument
     ) -> None:
         for table in target.tables.values():
             for column in table.columns:
@@ -439,6 +441,7 @@ def create_initial_models() -> None:
 
 
 async def init_fast_api_limiter_redis() -> Redis:
+    """Initialize FastAPI Limiter Redis"""
     from redis.asyncio import (
         Redis,
     )  # Use the new version of the asynchronous client
@@ -452,6 +455,7 @@ async def init_fast_api_limiter_redis() -> Redis:
 
 
 def init_redis(endpoint: int = 0) -> Redis:
+    """Initialize Redis"""
     redis_client = redis.from_url(
         f"redis://{settings.REDIS_SERVER}:{settings.REDIS_PORT}"
         f"/{endpoint}",

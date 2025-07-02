@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+"""Main entry point for the application."""
+from typing import Any
 from starlette.exceptions import HTTPException
 
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles  # New: Introduction of StaticFiles
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
-from fastapi.responses import JSONResponse
 from starlette.types import Scope
 
 from app.api.router import api_router
@@ -16,19 +18,23 @@ from app.exceptions.base import BaseException
 from app.middleware.error_handler_middleware import base_exception_handler
 from app.middleware.request_context_middleware import RequestContextMiddleware
 from app.utils.json_utils import json_dumps
-from typing import Any
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
+    """Generate a unique id for each route"""
     return f"{route.tags[0]}-{route.name}"
 
 
 class CustomJSONResponse(JSONResponse):
+    """Custom JSON response class"""
+
     def render(self, content: Any) -> bytes:
         return json_dumps(content).encode("utf-8")
 
 
 class SpaStaticFiles(StaticFiles):
+    """Custom static files class"""
+
     async def get_response(self, path: str, scope: Scope) -> Any:
         try:
             return await super().get_response(path, scope)
@@ -39,6 +45,7 @@ class SpaStaticFiles(StaticFiles):
 
 
 def create_app() -> FastAPI:
+    """Create the FastAPI application."""
     application = FastAPI(
         generate_unique_id_function=custom_generate_unique_id,
         title=settings.PROJECT_NAME,
@@ -75,6 +82,7 @@ def create_app() -> FastAPI:
 
 
 if __name__ == "__main__":
+    """Main function"""
     import uvicorn
 
     app_instance = create_app()

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+"""mcp utils"""
 import asyncio
-import logging
 import os
 import shutil
 from contextlib import AsyncExitStack
 from typing import Any
 
+from loguru import logger
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.sse import sse_client
 from mcp.client.stdio import stdio_client
@@ -51,7 +52,7 @@ class MCPSessionHandler:
             await session.initialize()
             self.session = session
         except Exception as e:
-            logging.error(f"Error initializing server {self.name}: {e}")
+            logger.error(f"Error initializing server {self.name}: {e}")
             await self.cleanup()
             raise
 
@@ -105,22 +106,22 @@ class MCPSessionHandler:
         attempt = 0
         while attempt < retries:
             try:
-                logging.info(f"Executing {tool_name}...")
+                logger.info(f"Executing {tool_name}...")
                 result = await self.session.call_tool(tool_name, arguments)
 
                 return result
 
             except Exception as e:
                 attempt += 1
-                logging.warning(
+                logger.warning(
                     f"Error executing tool: {e}. Attempt {attempt} of"
                     f" {retries}.",
                 )
                 if attempt < retries:
-                    logging.info(f"Retrying in {delay} seconds...")
+                    logger.info(f"Retrying in {delay} seconds...")
                     await asyncio.sleep(delay)
                 else:
-                    logging.error("Max retries reached. Failing.")
+                    logger.error("Max retries reached. Failing.")
                     raise
 
     async def cleanup(self) -> None:
@@ -129,12 +130,12 @@ class MCPSessionHandler:
             try:
                 await self._exit_stack.aclose()
             except Exception as e:
-                logging.error(f"Error during cleanup: {e}")
+                logger.error(f"Error during cleanup: {e}")
                 if (
                     "Attempted to exit cancel scope in a different task"
                     in str(e)
                 ):
-                    logging.warning(
+                    logger.warning(
                         "Attempted to exit cancel scope in a different task",
                     )
             finally:

@@ -592,7 +592,7 @@ def update_chunk(
 )
 async def document_indexing(
     current_account: CurrentAccount,
-    session: SessionDep,
+    # session: SessionDep,
     knowledge_base_id: uuid.UUID,
     document_id: uuid.UUID,
     process_config: dict,

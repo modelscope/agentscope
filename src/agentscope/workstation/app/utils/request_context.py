@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from contextvars import ContextVar
-from typing import Optional, Tuple, Any
-from fastapi import Request
+"""request context"""
 import uuid
+from contextvars import ContextVar
+from typing import Optional, Tuple, Any, Dict
+from fastapi import Request
 
-from app.core.cache.cache import Cache
-from app.core.config import settings
 from app.services.jwt_service import JwtService
 from user_agents import parse
-from typing import Dict
 
 
 def parse_user_agent(user_agent_string: str) -> Dict[str, str]:
@@ -55,6 +53,8 @@ def get_request_id_from_header(request: Request) -> str | None:
 def get_authorization_scheme_param(
     authorization_header_value: Optional[str],
 ) -> Tuple[str, str]:
+    """Extract the authorization scheme and parameter from an
+    authorization header."""
     if not authorization_header_value:
         return "", ""
     scheme, _, param = authorization_header_value.partition(" ")
@@ -62,6 +62,7 @@ def get_authorization_scheme_param(
 
 
 def get_token(request: Request) -> Optional[str]:
+    """Get the token from the request."""
     authorization = request.headers.get("Authorization")
     scheme, param = get_authorization_scheme_param(authorization)
     if not authorization or scheme.lower() != "bearer":
@@ -70,6 +71,8 @@ def get_token(request: Request) -> Optional[str]:
 
 
 class RequestContext:
+    """Request context."""
+
     # Define ContextVars
     request_id: str = "no_request_id"
     user_id: str = "no_user_id"

@@ -91,7 +91,7 @@ class WorkflowVariable(dict):
         node_type: Optional[str] = None,
         node_name: Optional[str] = None,
         node_exec_time: Optional[str] = None,
-        batches: list = [],
+        batches: list = None,
         is_batch: bool = False,
         is_multi_branch: bool = False,
         multi_branch_results: Optional[list] = None,
@@ -99,6 +99,8 @@ class WorkflowVariable(dict):
         sub_sorted_nodes: Optional[list] = None,
         try_catch: Optional[dict] = None,
     ) -> None:
+        if batches is None:
+            batches = []
         super().__init__(
             key=name if source is None else f"{source}.{name}",
             content=content if content is not None else "",

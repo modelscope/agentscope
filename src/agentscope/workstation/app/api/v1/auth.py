@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-
-import uuid
+"""Auth"""
 from typing import Dict
 
 from fastapi import APIRouter
 
-from app.api.deps import SessionDep, CurrentAccount
+from app.api.deps import SessionDep
 from app.schemas.auth import (
     LoginRequest,
 )
 from app.schemas.response import create_response
 from app.services.auth_service import AuthService
+from app.api.deps import CurrentAccount
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -78,8 +78,8 @@ async def refresh_access_token(
     "/logout",
 )
 async def logout(
-    current_account: CurrentAccount,
-    session: SessionDep,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
+    session: SessionDep,  # pylint: disable=unused-argument
 ) -> dict:
     """Logout"""
 

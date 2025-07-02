@@ -66,7 +66,7 @@ class InputParam(CommonParam):
     Input Param for InputParams
     """
 
-    pass
+    # pass
 
 
 class OutputParam(CommonParam):
@@ -87,6 +87,8 @@ class NodeCustomConfig(BaseModel):
     node_param: Optional[Dict[str, Any]] = None
 
     class Config:
+        """Config"""
+
         populate_by_name = True
         arbitrary_types_allowed = True
 

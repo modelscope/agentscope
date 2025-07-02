@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 """Module for Retrieval node related functions."""
-import json
-import os
 import time
 import uuid
 from typing import Dict, Any, Generator
+from app.db.init_db import get_session
+from app.services.retrieval_service import RetrievalService
 
 from .node import Node
 from .utils import NodeType
 from ...core.node_caches.workflow_var import WorkflowVariable, DataType
-
-from app.db.init_db import get_session
-from app.services.retrieval_service import RetrievalService
 
 
 class RetrievalNode(Node):

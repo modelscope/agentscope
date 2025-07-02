@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-branches, too-many-statements
 """Module for classifier node related functions."""
 import time
 from typing import Dict, Any, Generator
@@ -31,9 +32,9 @@ class ClassifierNode(Node):
                 condition_dict[-1] = condition
 
         source_to_target_map = {}
-        for source, adjacency in kwargs["graph"].adj.items():
-            for target, edges in adjacency.items():
-                for k, data in edges.items():
+        for _, adjacency in kwargs["graph"].adj.items():
+            for _, edges in adjacency.items():
+                for _, data in edges.items():
                     if data.get("source_handle"):
                         source_handle = data.get("source_handle")
                         target_handle = data.get("target_handle")
@@ -43,7 +44,7 @@ class ClassifierNode(Node):
                                 target_handle,
                             )
 
-        for key, value in condition_dict.items():
+        for _, value in condition_dict.items():
             source_handle = self.node_id + "_" + value["id"]
             if source_handle in source_to_target_map:
                 value["target_id"] = source_to_target_map[source_handle]
@@ -412,7 +413,7 @@ if "thought" not in {result}:
         )
 
         single_decision_prompt_cn = (
-            "✿决策✿：决策结果，即“候选类别”中的序号，必须是其中的一个。请输出序号，" "例如：0，绝不要回答问题，做出选择后即可终止。\n"
+            "✿决策✿：决策结果，即“候选类别”中的序号，必须是其中的一个。请输出序号，例如：0，绝不要回答问题，做出选择后即可终止。\n"
         )
         single_decision_prompt_en = (
             "✿Decision✿: The decision result, i.e., the number in the "

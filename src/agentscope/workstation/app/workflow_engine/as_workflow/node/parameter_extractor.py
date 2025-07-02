@@ -7,7 +7,7 @@ from typing import Any, Generator
 from .node import Node
 from .utils import NodeType
 from ..utils.misc import get_model_instance
-from ...core.node_caches.workflow_var import WorkflowVariable, DataType
+from ...core.node_caches.workflow_var import WorkflowVariable
 
 
 SYS_PROMPT = (
@@ -25,7 +25,7 @@ EXAMPLE_LIST = [
         "input": "I want to travel to Beijing on March 15, 2024",
         "parameters_des": [
             "city:string:the city name:required",
-            "date:string:the date with " "format year-month-day:required",
+            "date:string:the date with format year-month-day:required",
         ],
         "useful_info": "",
         "extracted_parameters": {
@@ -40,7 +40,7 @@ EXAMPLE_LIST = [
         "useful_info": "",
         "parameters_des": [
             "city:string:the city name:required",
-            "date:string:the date formatted with " "year-month-day:required",
+            "date:string:the date formatted with year-month-day:required",
         ],
         "extracted_parameters": {
             "_is_completed": False,
@@ -53,7 +53,7 @@ EXAMPLE_LIST = [
         "useful_info": "",
         "parameters_des": [
             "city:string:the city name:required",
-            "date:string:the date formatted with " "year-month-day:required",
+            "date:string:the date formatted with year-month-day:required",
         ],
         "extracted_parameters": {
             "_is_completed": False,
@@ -67,7 +67,7 @@ EXAMPLE_LIST = [
         "useful_info": "today is 2025-05-01",
         "parameters_des": [
             "city:string:the city name:required",
-            "date:string:the date formatted with " "year-month-day:required",
+            "date:string:the date formatted with year-month-day:required",
         ],
         "extracted_parameters": {
             "_is_completed": True,

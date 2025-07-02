@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """A general dialog agent."""
 from typing import Optional, Union, Sequence, Any
+from loguru import logger
 
 from agentscope.agents import AgentBase
 from agentscope.message import Msg
-from loguru import logger
 
 
 # TODO: merge this with agent.py

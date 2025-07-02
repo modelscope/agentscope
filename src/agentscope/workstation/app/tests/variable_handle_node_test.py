@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for variable handle node"""
 import unittest
 from app.workflow_engine.as_workflow.node.variable_handle import (
     VariableHandleNode,
 )
 from app.workflow_engine.core.node_caches.workflow_var import DataType
+
+# pylint: disable=protected-access,unused-argument
 
 
 class TestVariableHandleNode(unittest.TestCase):

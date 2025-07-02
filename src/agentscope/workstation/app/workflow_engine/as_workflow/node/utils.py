@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module for node utils related functions."""
-from typing import Type, Optional
+from typing import Type
 
 from .node_types import NodeType
 from .node import Node

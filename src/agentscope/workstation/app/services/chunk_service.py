@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The knowledge base chunk related services"""
-from .base_service import BaseService
 from app.dao.chunk_dao import ChunkDao
+from .base_service import BaseService
 
 
 class ChunkService(BaseService[ChunkDao]):

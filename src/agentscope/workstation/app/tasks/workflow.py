@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""Module for workflow node related functions."""
+# pylint: disable=too-many-nested-blocks, too-many-nested-blocks,
+# too-many-branches, too-many-statements
 import json
 import time
 import re
@@ -14,7 +17,6 @@ from app.db.init_db import get_session
 from app.services.workflow_service import WorkflowService
 from app.models.workflow import WorkflowRuntime
 from app.workflow_engine.core.node_caches.node_cache_handler import NodeCache
-from app.workflow_engine.core.status import Status
 from loguru import logger
 
 WORKFLOW_PAYLOAD: dict[str, Any] = {
@@ -43,6 +45,7 @@ def run_workflow_task(
     memory: Optional[list] = None,
     resume_node_id: Optional[Union[str, list]] = None,
 ) -> dict:
+    """run workflow task"""
     # Placeholder for your workflow task logic
     start_time = int(time.time() * 1000)
 
@@ -145,6 +148,7 @@ def run_workflow_task(
 
 
 def transfer_group_node(node_id: str, results: NodeCache) -> list:
+    """transfer group node"""
     try:
         inter_results = results.results
         if not inter_results:
@@ -258,6 +262,7 @@ def transfer_group_node(node_id: str, results: NodeCache) -> list:
 
 
 def transfer_normal_node(node_id: str, results: Any) -> dict:
+    """transfer normal node"""
     output = (results.get("results") or [{}])[-1].get(
         "output",
     )
@@ -323,7 +328,9 @@ def transfer_normal_node(node_id: str, results: Any) -> dict:
     return node_result
 
 
+# pylint: disable=too-many-branches, too-many-statements
 def transfer_package(package: dict, memory: Optional[list] = None) -> dict:
+    """transfer package"""
     message = package["output"]["choices"][0]["messages"][0]
     status = message["status"]
     inter_results = status.get("inter_results")
@@ -484,8 +491,6 @@ def extract_context(error_info: str) -> Optional[dict]:
 
     context_str = re.sub(r': ([^",{}\s][^,}]*)', r': "\1"', context_str)
 
-    import json
-
     try:
         return json.loads(context_str)
     except json.JSONDecodeError:
@@ -501,7 +506,7 @@ def save_workflow_result(
     result: dict,
     account_id: str,
     app_id: str,
-    session_id: Optional[str] = None,
+    session_id: Optional[str] = None,  # pylint: disable=unused-argument
     version: str = "latest",
     task_id: Optional[str] = None,
     inputs: Optional[list] = None,
@@ -566,33 +571,32 @@ def update_workflow_result(
                     f"app_id={app_id}, session_id={session_id}",
                 )
                 break
+            logger.info(
+                f"No matching records found: app_id={app_id}, "
+                f"session_id={session_id}",
+            )
+            if session_id:
+                workflow_runtime = WorkflowRuntime(
+                    app_id=app_id,
+                    result=result,
+                    account_id=account_id,
+                    gmt_create=datetime.now(),
+                    gmt_modified=datetime.now(),
+                    task_id=task_id,
+                )
             else:
-                logger.info(
-                    f"No matching records found: app_id={app_id}, "
-                    f"session_id={session_id}",
+                workflow_runtime = WorkflowRuntime(
+                    app_id=app_id,
+                    result=result,
+                    account_id=account_id,
+                    gmt_create=datetime.now(),
+                    gmt_modified=datetime.now(),
+                    task_id=task_id,
                 )
-                if session_id:
-                    workflow_runtime = WorkflowRuntime(
-                        app_id=app_id,
-                        result=result,
-                        account_id=account_id,
-                        gmt_create=datetime.now(),
-                        gmt_modified=datetime.now(),
-                        task_id=task_id,
-                    )
-                else:
-                    workflow_runtime = WorkflowRuntime(
-                        app_id=app_id,
-                        result=result,
-                        account_id=account_id,
-                        gmt_create=datetime.now(),
-                        gmt_modified=datetime.now(),
-                        task_id=task_id,
-                    )
-                workflow_service.create(
-                    workflow_runtime,
-                )
-                session.commit()
+            workflow_service.create(
+                workflow_runtime,
+            )
+            session.commit()
         except Exception as e:
             logger.error(f"Update failed: {e}")
             session.rollback()

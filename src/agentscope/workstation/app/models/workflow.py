@@ -43,15 +43,21 @@ class WorkflowRuntime(SQLModel, table=True):
 
 
 class CommonParam(SQLModel):
+    """The common param model"""
+
     key: str
     value: str
 
 
 class TaskPartGraphRequest(SQLModel):
+    """The task part graph request model"""
+
     app_id: str = Field(..., alias="app_id")
     nodes: List[dict] = Field(default_factory=list)
     edges: List[dict] = Field(default_factory=list)
     input_params: List = Field(default_factory=list, alias="input_params")
 
     class Config:
+        """Config"""
+
         allow_population_by_field_name = True

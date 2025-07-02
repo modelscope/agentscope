@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Module for API key related functions."""
 import uuid
 from typing import Optional
 
@@ -17,6 +18,10 @@ from app.utils.crypto import encrypt_with_rsa, decrypt_with_rsa, mask_string
 
 
 class ApiKeyService(BaseService[ApiKeyDAO]):
+    """
+    API key related services
+    """
+
     _dao_cls = ApiKeyDAO
 
     def create_api_key(self, current_account: Account, api_key: ApiKey) -> int:
@@ -24,7 +29,7 @@ class ApiKeyService(BaseService[ApiKeyDAO]):
         create a new api key
         """
 
-        ak = "sk-%s" % str(uuid.uuid4()).replace("-", "")
+        ak = f"sk-{str(uuid.uuid4()).replace('-', '')}"
         ak = encrypt_with_rsa(ak)
 
         account_id = str(current_account.id)
@@ -106,6 +111,9 @@ class ApiKeyService(BaseService[ApiKeyDAO]):
         current_account: Account,
         query: BaseQuery,
     ) -> PagingList[ApiKey]:
+        """
+        list api keys
+        """
         conditions = [
             ApiKeyEntity.account_id == str(current_account.id),
             ApiKeyEntity.status != ApiKeyStatus.DELETED,

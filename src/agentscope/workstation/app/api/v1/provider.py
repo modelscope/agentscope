@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Provider related services"""
 import json
 import uuid
 from typing import Optional
@@ -17,6 +18,8 @@ router = APIRouter(prefix="/providers", tags=["provider"])
 
 
 class AddProviderRequest(BaseModel):
+    """Add provider request"""
+
     name: str
     description: Optional[str] = None
     icon: Optional[str] = None
@@ -27,6 +30,8 @@ class AddProviderRequest(BaseModel):
 
 
 class UpdateProviderRequest(BaseModel):
+    """Update provider request"""
+
     name: Optional[str] = None
     description: Optional[str] = None
     icon: Optional[str] = None
@@ -37,6 +42,8 @@ class UpdateProviderRequest(BaseModel):
 
 
 class AddModelRequest(BaseModel):
+    """Add model request"""
+
     model_id: str
     model_name: str
     type: str
@@ -44,6 +51,8 @@ class AddModelRequest(BaseModel):
 
 
 class UpdateModelRequest(BaseModel):
+    """Update model request"""
+
     model_name: Optional[str] = None
     tags: Optional[str] = None
     icon: Optional[str] = None
@@ -51,6 +60,8 @@ class UpdateModelRequest(BaseModel):
 
 
 class CreateModelRequest(BaseModel):
+    """Create model request"""
+
     model_id: Optional[str] = None
     model_name: str
     tags: Optional[str] = None
@@ -58,6 +69,8 @@ class CreateModelRequest(BaseModel):
 
 
 class UpdateModelApiRequest(BaseModel):
+    """Update model api request"""
+
     model_name: Optional[str] = None
     tags: Optional[str] = None
     icon: Optional[str] = None
@@ -89,7 +102,7 @@ async def add_provider(
         )
         return create_success_response(data=provider)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.put("/{provider}")
@@ -120,14 +133,14 @@ async def update_provider(
             data=updated_provider,
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.delete("/{provider}")
 async def delete_provider(
     provider: str,
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
     """Delete provider"""
@@ -140,13 +153,13 @@ async def delete_provider(
             data=True,
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("")
 async def list_providers(
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     name: Optional[str] = None,
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
@@ -163,14 +176,17 @@ async def list_providers(
             data=providers,
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
+# pylint: disable=unused-argument
 @router.get("/protocols")
 async def get_provider_protocols(
     session: SessionDep,
     current_account: CurrentAccount,
-    workspace_id: str = Depends(get_workspace_id),
+    workspace_id: str = Depends(
+        get_workspace_id,
+    ),
 ) -> dict:
     """Obtain a list of provider agreement types"""
     try:
@@ -183,14 +199,14 @@ async def get_provider_protocols(
             data=protocols,
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/{provider}")
 async def get_provider_detail(
     provider: str,
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
     """Get provider details"""
@@ -210,7 +226,7 @@ async def get_provider_detail(
             data=provider_detail,
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/{provider}/models")
@@ -294,7 +310,7 @@ async def delete_model(
     provider: str,
     model_id: str,
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
     """Delete model"""
@@ -322,7 +338,7 @@ async def delete_model(
 async def list_models(
     provider: str,
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
     """List models for a provider"""
@@ -368,7 +384,7 @@ async def get_model_detail(
     provider: str,
     model_id: str,
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
     """Get model detail"""
@@ -412,8 +428,10 @@ async def get_model_parameter_rules(
     provider: str,
     model_id: str,
     session: SessionDep,
-    current_account: CurrentAccount,
-    workspace_id: str = Depends(get_workspace_id),
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
+    workspace_id: str = Depends(
+        get_workspace_id,
+    ),  # pylint: disable=unused-argument
 ) -> dict:
     """Get model parameter rules"""
     try:

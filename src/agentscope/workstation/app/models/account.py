@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""account model"""
 from datetime import datetime
 from typing import Optional
 
@@ -28,6 +29,8 @@ class AccountBase(SQLModel):
 
 # Database model, database table inferred from class name
 class Account(AccountBase, table=True):  # type: ignore
+    """The account model."""
+
     id: Optional[int] = Field(
         default=None,
         sa_column=Column(Integer, primary_key=True, autoincrement=True),

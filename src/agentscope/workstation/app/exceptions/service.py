@@ -9,7 +9,6 @@ from .base import (
     InvalidException,
     ValidationError,
     InternalServerError,
-    NotSetException,
 )
 
 

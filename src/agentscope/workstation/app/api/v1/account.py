@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """The account related API endpoints"""
 import uuid
+from typing import Optional
 
 from fastapi import APIRouter
-from typing import Optional
 from app.schemas.response import create_response
 from app.schemas.common import PaginationParams
 from app.api.deps import (
@@ -48,7 +48,7 @@ def add_account(
 
 @router.get("")
 def list_accounts(
-    current_account: CurrentSuperAccount,
+    current_account: CurrentSuperAccount,  # pylint: disable=unused-argument
     session: SessionDep,
     name: str = "",
     current: Optional[int] = 1,
@@ -111,7 +111,7 @@ def change_password(
 
 @router.get("/{account_id}")
 def get_account(
-    current_account: CurrentSuperAccount,
+    current_account: CurrentSuperAccount,  # pylint: disable=unused-argument
     session: SessionDep,
     account_id: str,
 ) -> dict:
@@ -150,7 +150,7 @@ def update_account(
 
 @router.delete("/{account_id}")
 def delete_account(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     session: SessionDep,
     account_id: uuid.UUID,
 ) -> dict:

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""app"""
+from typing import Dict
 from fastapi import APIRouter
 
 from app.api.deps import SessionDep, AppQueryDeps, CurrentAccount
@@ -7,17 +9,19 @@ from app.exceptions.base import IncorrectParameterException
 from app.schemas.app import App, AppQuery
 from app.schemas.response import create_success_response
 from app.services.app_service import AppService
-from typing import Dict
 
 router = APIRouter(prefix="/apps", tags=["apps"])
 
 
 @router.post("")
 async def create_app(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     session: SessionDep,
     app: App,
 ) -> Dict:
+    """
+    Create an application.
+    """
     # Ensure that the application name is not empty.
     if not app.name or app.name.strip() == "":
         raise IncorrectParameterException(
@@ -42,11 +46,14 @@ async def create_app(
 
 @router.put("/{app_id}")
 async def update_app(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     app_id: str,
     app: App,
     session: SessionDep,
 ) -> Dict:
+    """
+    Update an application.
+    """
     if not app:
         raise IncorrectParameterException(
             extra_info="Missing required parameter: app",
@@ -75,6 +82,9 @@ async def delete_app(
     app_id: str,
     session: SessionDep,
 ) -> Dict:
+    """
+    Delete an application.
+    """
     # Parameter validation.
     if not app_id:
         raise IncorrectParameterException(
@@ -99,10 +109,11 @@ async def delete_app(
 
 @router.get("/{app_id}")
 async def get_app(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     app_id: str,
     session: SessionDep,
 ) -> Dict:
+    """get app"""
     app_service = AppService(session)
 
     app = app_service.get_app(
@@ -119,10 +130,11 @@ async def get_app(
 
 @router.get("")
 async def list_apps(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     query: AppQueryDeps,
     session: SessionDep = None,
 ) -> Dict:
+    """list apps"""
     app_service = AppService(session)
 
     # Call the service layer to get a paginated list.
@@ -142,10 +154,11 @@ async def list_apps(
 
 @router.post("/{app_id}/publish")
 async def publish_app(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     app_id: str,
     session: SessionDep,
 ) -> Dict:
+    """publish app"""
     # Parameter validation.
     if not app_id:
         raise IncorrectParameterException(
@@ -169,10 +182,11 @@ async def publish_app(
 
 @router.get("/{app_id}/versions")
 async def list_app_versions(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     app_id: str,
     session: SessionDep,
 ) -> Dict:
+    """list app versions"""
     # Parameter validation.
     if not app_id:
         raise IncorrectParameterException(
@@ -197,11 +211,12 @@ async def list_app_versions(
 
 @router.get("/{app_id}/version/{version}")
 async def get_app_version(
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     app_id: str,
     version: str,
     session: SessionDep,
 ) -> Dict:
+    """get app version"""
     # Parameter validation.
     if not app_id or not version:
         raise IncorrectParameterException(
@@ -231,6 +246,7 @@ async def copy_app(
     app_id: str,
     session: SessionDep,
 ) -> Dict:
+    """copy app"""
     # Parameter validation.
     if not app_id:
         raise IncorrectParameterException(

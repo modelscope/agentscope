@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for script node"""
 import unittest
 from unittest.mock import patch, MagicMock
 from app.workflow_engine.as_workflow.node.script import ScriptNode
+
+# pylint: disable=protected-access,unused-argument
 
 
 class TestScriptNode(unittest.TestCase):

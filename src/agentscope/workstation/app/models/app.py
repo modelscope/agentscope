@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
+"""The App models"""
 from datetime import datetime
 from enum import Enum, unique
-from typing import Optional, Dict, Any
+from typing import Optional
 
-from pydantic import BaseModel
 from sqlalchemy import (
     Column,
     String,
-    Enum as SQLAlchemyEnum,
     Integer,
-    TypeDecorator,
     TEXT,
 )
 from sqlmodel import SQLModel, Field
@@ -28,18 +26,24 @@ class CommonConstants:
 
 @unique
 class AppComponentType(Enum):
+    """Application component types"""
+
     AGENT = 1
     WORKFLOW = 2
 
 
 @unique
 class AppType(str, Enum):
+    """Application types"""
+
     BASIC = "basic"
     WORKFLOW = "workflow"
 
 
 @unique
 class AppStatus(int, Enum):
+    """Application status"""
+
     DELETED = 0
     DRAFT = 1
     PUBLISHED = 2
@@ -47,6 +51,8 @@ class AppStatus(int, Enum):
 
 
 class AppEntity(SQLModel, table=True):
+    """Application entity"""
+
     __tablename__ = "application"  # type: ignore
 
     id: Optional[int] = Field(
@@ -81,6 +87,8 @@ class AppEntity(SQLModel, table=True):
 
 
 class AppVersionEntity(SQLModel, table=True):
+    """Application version entity"""
+
     __tablename__ = "application_version"  # type: ignore
 
     id: Optional[int] = Field(

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """The MCP related models"""
-import uuid
 from typing import Optional
 
 from sqlalchemy import Text, Column, SmallInteger
-from sqlmodel import SQLModel, Field, JSON, Relationship
-from .field import utc_datetime_field, formatted_datetime_field
+from sqlmodel import SQLModel, Field
+from .field import formatted_datetime_field
 
 
 def name_field() -> Field:
@@ -87,6 +86,8 @@ class UpdateMCPForm(SQLModel):
 
 
 class QueryByCodesForm(SQLModel):
+    """The MCP form used to query MCP by codes"""
+
     server_codes: list[str] = Field(
         default_factory=list,
         min_items=0,

@@ -5,9 +5,6 @@ from collections import defaultdict
 from typing import Sequence, Optional, Pattern
 
 import networkx as nx
-from agentscope.agents import Operator, DialogAgent
-from agentscope.message import Msg
-
 from _prompt import (
     agent_sys_prompt_without_context_en,
     agent_sys_prompt_without_context_zh,
@@ -18,6 +15,8 @@ from _prompt import (
     scheduling_progress_format_zh,
     scheduling_progress_format_en,
 )
+from agentscope.agents import Operator, DialogAgent
+from agentscope.message import Msg
 
 
 # TODO: combine this with scheduling.scheduling_pipeline

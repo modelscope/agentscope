@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """The provider related services"""
 from typing import Optional, List
+import json
 
 from app.dao.provider_dao import ProviderDAO
 from app.exceptions.service import (
@@ -8,16 +9,16 @@ from app.exceptions.service import (
     ProviderNotFoundException,
 )
 from app.models.provider import ProviderBase
+from app.utils.crypto import encrypt_with_rsa
 from .base_service import BaseService
 from ..models.account import Account
-import json
-from app.utils.crypto import encrypt_with_rsa
 from ..schemas.provider import ModelCredential
 
 
 class ProviderService(BaseService[ProviderDAO]):
-    _dao_cls = ProviderDAO
     """Service layer for providers."""
+
+    _dao_cls = ProviderDAO
 
     def delete_provider(self, provider: str, workspace_id: str = None) -> None:
         """
@@ -101,7 +102,6 @@ class ProviderService(BaseService[ProviderDAO]):
         supported_model_types_str = None
         if supported_model_types:
             supported_model_types_str = ",".join(supported_model_types)
-        """analysis credential"""
         model_credential = None
         if credential:
             model_credential = ModelCredential(

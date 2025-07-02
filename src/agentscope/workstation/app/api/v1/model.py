@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Model related services"""
 from fastapi import APIRouter, Depends
 
 from app.api.deps import CurrentAccount, SessionDep, get_workspace_id
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/models", tags=["models"])
 async def model_selector(
     model_type: str,
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     workspace_id: str = Depends(get_workspace_id),
 ) -> dict:
     """Model selector grouped by provider"""

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-branches, too-many-statements
 """Module for API node related functions."""
 import json
 import time
@@ -115,7 +116,7 @@ class APINode(Node):
         except Exception as e:
             if strategy == "noop":
                 raise e
-            elif strategy == "defaultValue":
+            if strategy == "defaultValue":
                 response = {
                     item["key"]: self.build_var_str(item)
                     for item in try_catch_config.get("default_values")
@@ -150,7 +151,7 @@ class APINode(Node):
                     if source != self.node_id:
                         continue
                     for target, edges in adjacency.items():
-                        for k, data in edges.items():
+                        for _, data in edges.items():
                             source_handle = self.node_id + "_fail"
                             if data.get("source_handle") != source_handle:
                                 continue
@@ -181,7 +182,7 @@ class APINode(Node):
             else:
                 raise ValueError(
                     f"Invalid try_catch_config strategy: {strategy}",
-                )
+                ) from e
 
     def _mock_execute(self, **kwargs: Any) -> Generator:
         yield [

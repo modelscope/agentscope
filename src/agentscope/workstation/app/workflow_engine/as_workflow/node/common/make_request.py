@@ -61,6 +61,7 @@ def create_timeout_config(
     )
 
 
+# pylint: disable=too-many-branches
 def make_request(
     url: str,
     method: str = "post",

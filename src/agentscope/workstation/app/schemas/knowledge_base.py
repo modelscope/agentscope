@@ -10,6 +10,8 @@ from pydantic import BaseModel
 
 
 class KnowledgeBaseQuery(BaseModel):
+    """Knowledge base query"""
+
     kb_ids: List[uuid.UUID]
 
 
@@ -147,6 +149,8 @@ class RetrievalForm(SQLModel):
 
 
 class ChunkStatusUpdateRequest(SQLModel):
+    """The request used to update chunk status"""
+
     chunk_ids: list[uuid.UUID]
     enabled: bool
 

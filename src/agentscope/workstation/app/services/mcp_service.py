@@ -2,7 +2,7 @@
 """The MCP related services"""
 import json
 import uuid
-from typing import Literal, Union, Sequence, Dict, Any
+from typing import Union, Sequence, Dict, Any
 
 from sqlmodel import Session
 
@@ -49,6 +49,7 @@ class MCPService(BaseService[MCPDAO]):
         self.account_id = account_id
 
     def transform_config(self, config_str: str) -> dict:
+        """Transform config."""
         from urllib.parse import urlparse
 
         try:
@@ -56,7 +57,7 @@ class MCPService(BaseService[MCPDAO]):
             config_data = json.loads(config_str)
             flag, message = validate_mcp_config(config_data)
             if not flag:
-                raise Exception(message)
+                raise ValueError(f"Invalid MCP configuration: {message}")
             server_key = next(iter(config_data["mcpServers"]))
             url = config_data["mcpServers"][server_key]["url"]
             parsed_url = urlparse(url)
@@ -70,7 +71,7 @@ class MCPService(BaseService[MCPDAO]):
             return new_config
 
         except (json.JSONDecodeError, KeyError) as e:
-            raise ValueError(f"Error processing config: {e}")
+            raise ValueError(f"Error processing config: {e}") from e
 
     def create(self, obj_in: Dict[str, Any]) -> MCP:
         """Create mcp"""

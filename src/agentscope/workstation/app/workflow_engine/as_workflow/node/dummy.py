@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Module for dummy node related functions."""
-import json
 import time
 from typing import Dict, Any, Generator
 
@@ -23,7 +22,7 @@ class StartNode(Node):
         output_var = []
         element = self.glb_custom_args.get("inputs", {})
         node_exec_time = str(int(time.time() * 1000) - start_time) + "ms"
-        for k1, v1 in element.items():
+        for _, v1 in element.items():
             if v1:
                 for k2, v2 in v1.items():
                     output_var.append(

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""App agent runner"""
 import json
 import uuid
 from typing import AsyncGenerator, Any, List, Dict, Optional, Tuple
@@ -43,6 +44,8 @@ from loguru import logger
 
 
 class AppAgentRunner:
+    """App agent runner"""
+
     def __init__(
         self,
         name: str,
@@ -51,7 +54,7 @@ class AppAgentRunner:
         account_id: str,
         workspace_id: str = settings.WORKSPACE_ID,
         model_config_name: str = None,
-    ):
+    ) -> None:
         self.account_id = account_id
         self.app_service = AppService(session)
         self.provider_service = ProviderService(session)
@@ -101,6 +104,7 @@ class AppAgentRunner:
         messages: List[PromptMessage],
         rag_result: List[Dict],
     ) -> List[PromptMessage]:
+        """update rag result to messages"""
         system_prompt = ""
         for knowledge in rag_result:
             system_prompt += knowledge.text + "\n"
@@ -126,6 +130,7 @@ class AppAgentRunner:
 
     @staticmethod
     def generate_id() -> str:
+        """generate a uuid"""
         return str(uuid.uuid4())
 
     async def use_memory(
@@ -179,6 +184,7 @@ class AppAgentRunner:
         mcp_name_set: Optional[set] = None,
         include_usage: bool = True,
     ) -> AgentResponse:
+        """convert completion to response"""
         if include_usage and len(chunk.choices) == 0:
             return AgentResponse(
                 message=AssistantPromptMessage(content=""),
@@ -260,6 +266,7 @@ class AppAgentRunner:
         server_code: str,
         mcp_tools: List[Dict[str, Any]],
     ) -> List[Dict]:
+        """convert mcp tool to tool function"""
         mcp_functions = []
         # convert mcp function to PromptMessageFunction
         for tool in mcp_tools:
@@ -286,6 +293,20 @@ class AppAgentRunner:
         request_id: str = str(uuid.uuid4()),
         **kwargs: Any,
     ) -> AsyncGenerator[AgentResponse, Any]:
+        """
+        Asynchronously processes an agent request and generates responses.
+
+        Args:
+            request (AgentRequest): The agent request containing user
+            messages and additional parameters.
+            request_id (str, optional): A unique identifier for the request.
+             Defaults to a newly generated UUID.
+            **kwargs (Any): Additional keyword arguments for customization.
+
+        Yields:
+            AsyncGenerator[AgentResponse, Any]: An asynchronous generator
+             yielding responses for the request.
+        """
         try:
             tool_functions = []
             mcp_tool_functions = []
@@ -400,9 +421,10 @@ class AppAgentRunner:
 
 if __name__ == "__main__":
     import asyncio
-    from app.db.init_db import get_session
+    from app.db.init_db import get_session  # pylint: disable=ungrouped-imports
 
     async def run_agent() -> Any:
+        """Run agent"""
         (session,) = get_session()
         app_agent_runner = AppAgentRunner(
             name="test",

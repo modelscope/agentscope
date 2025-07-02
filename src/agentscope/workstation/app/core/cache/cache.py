@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-import redis
-import json
-
-from app.core.config import settings
+"""Cache"""
 from typing import Any, Optional
+import json
+import redis
+from app.core.config import settings
 
 from loguru import logger
 
 
 class Cache:
+    """Cache"""
+
     def __init__(
         self,
         host: str = settings.REDIS_SERVER,

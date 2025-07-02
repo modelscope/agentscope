@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-# mypy: disable-error-code=index
+"""Unit tests for ClassifierNode."""
 import unittest
 from unittest.mock import patch, MagicMock
 
 from app.workflow_engine.as_workflow.node.classifier import ClassifierNode
+
+# mypy: disable-error-code=index
+# pylint: disable=protected-access,unused-argument
 
 
 class TestClassifierNode(unittest.TestCase):
@@ -408,7 +411,7 @@ class TestClassifierNode(unittest.TestCase):
         """Test execution with default condition."""
         # Mock dependencies
         mock_build_prompt.return_value = (
-            "Classification prompt for default " "condition"
+            "Classification prompt for default condition"
         )
 
         # Mock parser
@@ -470,7 +473,7 @@ class TestClassifierNode(unittest.TestCase):
     ) -> None:
         """Test execution with plant condition."""  # Mock dependencies
         mock_build_prompt.return_value = (
-            "Classification prompt for plant " "condition"
+            "Classification prompt for plant condition"
         )
         # Mock parser
         mock_parser_instance = MagicMock()

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""api keyy"""
 from fastapi import APIRouter
 
 from app.api.deps import CurrentAccount, SessionDep, BaseQueryDeps
@@ -16,6 +17,7 @@ async def create_api_key(
     session: SessionDep,
     api_key: ApiKey,
 ) -> dict:
+    """Create an API key."""
     if not api_key.description or api_key.description.strip() == "":
         raise IncorrectParameterException(
             extra_info="Missing required parameter: description",
@@ -37,6 +39,7 @@ async def update_api_key(
     session: SessionDep,
     api_key: ApiKey,
 ) -> dict:
+    """Update an API key."""
     if not api_key_id:
         raise IncorrectParameterException(
             extra_info="Missing required parameter: api_key_id",
@@ -63,6 +66,7 @@ async def delete_api_key(
     current_account: CurrentAccount,
     session: SessionDep,
 ) -> dict:
+    """Delete an API key."""
     if not api_key_id:
         raise IncorrectParameterException(
             extra_info="Missing required parameter: api_key_id",
@@ -83,6 +87,7 @@ async def get_api_key(
     current_account: CurrentAccount,
     session: SessionDep,
 ) -> dict:
+    """Get an API key."""
     if not api_key_id:
         raise IncorrectParameterException(
             extra_info="Missing required parameter: api_key_id",
@@ -103,6 +108,7 @@ async def list_api_keys(
     current_account: CurrentAccount,
     session: SessionDep,
 ) -> dict:
+    """List API keys."""
     api_key_service = ApiKeyService(session=session)
     api_keys = api_key_service.list_api_keys(
         current_account=current_account,

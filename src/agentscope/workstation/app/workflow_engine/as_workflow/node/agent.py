@@ -5,11 +5,12 @@ import time
 from typing import Dict, Any, Generator
 
 import dashscope
-from agentscope.message import Msg
 from llama_index.indices.managed.dashscope.retriever import (
     DashScopeCloudRetriever,
 )
 from llama_index.postprocessor.dashscope_rerank import DashScopeRerank
+
+from agentscope.message import Msg
 
 from .node import Node
 from .utils import NodeType

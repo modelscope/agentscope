@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """The API response base model."""
-
-from app.utils.request_context import request_context_var
 from typing import Any, Optional
+from app.utils.request_context import request_context_var
 
 
 def create_response(
@@ -10,6 +9,7 @@ def create_response(
     code: str = "200",
     message: str = "success",
 ) -> dict:
+    """Create a response structure."""
     return {
         "code": code,
         "message": message,
@@ -23,6 +23,7 @@ def create_success_response(
     code: str = "200",
     message: str = "success",
 ) -> dict:
+    """Create a success response structure."""
     return {
         "success": True,
         "code": code,
@@ -39,6 +40,7 @@ def mcp_response(
     request_id: Optional[str] = None,
     success: bool = True,
 ) -> dict:
+    """Create an mcp response structure."""
     request_id = (
         request_id
         if request_id is not None

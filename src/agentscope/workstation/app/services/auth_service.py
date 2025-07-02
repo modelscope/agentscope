@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """The auth related services"""
 import uuid
-from sqlmodel import Session
-from datetime import datetime, timedelta, timezone
 from typing import Optional, Union
+from datetime import datetime, timedelta, timezone
+from sqlmodel import Session
 from app.core.config import settings
 from app.exceptions.service import (
     IncorrectPasswordException,

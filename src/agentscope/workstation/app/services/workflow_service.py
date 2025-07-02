@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """The workflow related services"""
-import json
 import re
-from typing import Sequence, Optional, List, Any
+from typing import Optional, List, Any
+from sqlmodel import Session
 
 from app.services.app_service import AppService
-from .base_service import BaseService
 from app.dao.workflow_dao import WorkflowDao
-from sqlmodel import Session
+from .base_service import BaseService
 
 
 def get_workflow_node_config(
@@ -132,6 +131,7 @@ class WorkflowService(BaseService[WorkflowDao]):
         super().__init__(session)
         self.app_service = AppService(session=session)
 
+    # pylint: disable=unused-argument
     def get_workflow_config(
         self,
         account_id: str,

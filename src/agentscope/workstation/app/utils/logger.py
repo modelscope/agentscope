@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+"""Logger module"""
+from typing import Any
 import sys
 import os
 from loguru import logger
 from app.core.config import settings
 from .request_context import request_context_var
-from typing import Any
 
 
 def ensure_log_directory(log_file: str) -> None:

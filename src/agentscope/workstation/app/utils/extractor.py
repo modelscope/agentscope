@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+"""file extractor"""
 import os
 import mimetypes
-from typing import Union, List
 
 
+# pylint: disable=too-many-return-statements
 def infer_content_type(filename: str) -> str:
     """Infer content type by filename using Python's mimetypes and fallback
     rules.
@@ -39,7 +40,10 @@ def infer_content_type(filename: str) -> str:
         return "application/octet-stream"
 
 
-def extract_content(file_path: str, ext: str) -> str:
+def extract_content(
+    file_path: str,
+    ext: str,  # pylint: disable=unused-argument
+) -> str:
     """Extract content from a file given its path and extension."""
 
     if not os.path.exists(file_path):
@@ -54,11 +58,11 @@ def extract_content(file_path: str, ext: str) -> str:
             reader = PyMuPDFReader()
             documents = reader.load_data(file_path)
             return "\n\n".join([doc.text for doc in documents])
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "PyMuPDF required for PDF extraction. Install with: pip "
                 "install llama_index.readers.file pymupdf",
-            )
+            ) from exc
 
     elif content_type == "text/plain":
         with open(file_path, "r", encoding="utf-8") as file:

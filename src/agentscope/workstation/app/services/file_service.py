@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""The file related services"""
 import uuid
 from pathlib import Path
 
@@ -14,6 +15,8 @@ from .storage_service import StorageService
 
 
 class FileService(BaseService[File]):
+    """The file service"""
+
     _dao_cls = FileDao
 
     def __init__(
@@ -29,6 +32,7 @@ class FileService(BaseService[File]):
         category: str,
         file: UploadFile,
     ) -> File:
+        """Upload a file"""
         filename = Path(file.filename)
         file_content = file.file.read()
         size = len(file_content)
@@ -67,6 +71,7 @@ class FileService(BaseService[File]):
         account_id: str,
         file_id: uuid.UUID,
     ) -> bytes:
+        """Load a file"""
         file = self.get(file_id)
         if file.account_id != account_id:
             raise PermissionError(
@@ -82,6 +87,7 @@ class FileService(BaseService[File]):
         file_id: uuid.UUID,
         target_filename: str,
     ) -> None:
+        """Download a file"""
         file = self.get(file_id)
         if file.account_id != account_id:
             raise PermissionError(
@@ -97,6 +103,7 @@ class FileService(BaseService[File]):
         account_id: str,
         file_id: uuid.UUID,
     ) -> None:
+        """Delete a file"""
         file = self.get(file_id)
         if file.account_id != account_id:
             raise PermissionError(

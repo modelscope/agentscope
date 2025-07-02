@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=too-many-statements
 """Workflow pipeline."""
 import copy
 import os
@@ -53,9 +54,10 @@ def parse_api_request(request_dict: dict, **kwargs: Any) -> dict:
 
 
 def extract_all_node_ids(text: str) -> List:
+    """Extract all node ids from text."""
     pattern = r"\$\{([^.]+)\.([^}]+)\}"
     matches = re.findall(pattern, text)
-    return [(node_id, field) for node_id, field in matches]
+    return matches
 
 
 # Pre-compile regex patterns for better performance
@@ -63,6 +65,8 @@ NON_LLM_PATTERN = re.compile(r"\$\{(?!LLM_)([^.]+)\.([^}]+)\}")
 LLM_PATTERN = re.compile(r"\$\{(LLM_[^.]+)\.output\}")
 
 
+# pylint: disable=too-many-return-statements, too-many-branches,
+# too-many-return-statements
 def get_node_content(node_result: dict, field: str) -> str:
     """Helper function to extract content from node results regardless of
     format"""
@@ -120,6 +124,7 @@ def get_node_content(node_result: dict, field: str) -> str:
     return ""
 
 
+# pylint: disable=too-many-branches, too-many-nested-blocks
 def workflow_pipeline(
     request: dict,
     **kwargs: Any,
@@ -253,7 +258,6 @@ def workflow_pipeline(
                         parts = []
                         last_pos = 0
                         # Use regex to split the template
-                        pattern = r"\$\{(LLM_[^.]+)\.output\}"
                         for match in LLM_PATTERN.finditer(text_template):
                             llm_id = match.group(
                                 1,
@@ -403,11 +407,11 @@ if __name__ == "__main__":
     #             request_payload["payload"]["parameters"]["custom"][
     #                 "dsl_config"
     #             ] = config
-    dsl_config_path = (
-        "app/workflow_engine/as_workflow/configs" "/config_examples/llm.json"
+    example_config_path = (
+        "app/workflow_engine/as_workflow/configs/config_examples/llm.json"
     )
-    if os.path.exists(dsl_config_path):
-        with open(dsl_config_path, "r", encoding="utf-8") as f:
+    if os.path.exists(example_config_path):
+        with open(example_config_path, "r", encoding="utf-8") as f:
             config = json.load(f)
             config["workflow"] = {
                 "graph": config["config"],

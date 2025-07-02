@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Settings"""
 # mypy: disable-error-code=misc
 import secrets
 import os
@@ -18,6 +19,20 @@ from typing_extensions import Self
 
 
 def find_env_file(max_levels: int = 3) -> str:
+    """Find the .env file in the current directory or its parent directories.
+
+    Args:
+        max_levels (int, optional):
+            The maximum number of levels to search up. Defaults to 3.
+
+    Raises:
+        FileNotFoundError:
+            If the .env file is not found within the specified number of
+            levels.
+
+    Returns:
+        str: The path to the .env file.
+    """
     current_path = os.getcwd()
     levels_checked = 0
 
@@ -26,13 +41,13 @@ def find_env_file(max_levels: int = 3) -> str:
             potential_path = os.path.join(current_path, env_file)
             if os.path.isfile(potential_path):
                 return potential_path
-            # Move up one directory level
-            new_path = os.path.dirname(current_path)
-            # If we've reached the root directory, break
-            if new_path == current_path:
-                break
-            current_path = new_path
-            levels_checked += 1
+        # Move up one directory level
+        new_path = os.path.dirname(current_path)
+        # If we've reached the root directory, break
+        if new_path == current_path:
+            break
+        current_path = new_path
+        levels_checked += 1
 
     # If we exit the loop without having found the file
     raise FileNotFoundError(
@@ -41,6 +56,7 @@ def find_env_file(max_levels: int = 3) -> str:
 
 
 def parse_cors(v: Any) -> Union[list[str], str]:
+    """Parse cors"""
     if isinstance(v, str) and not v.startswith("["):
         return [i.strip() for i in v.split(",")]
     elif isinstance(v, list):
@@ -49,6 +65,7 @@ def parse_cors(v: Any) -> Union[list[str], str]:
 
 
 def find_project_root() -> str:
+    """Find the project root directory."""
     current_path = Path(__file__)
     while current_path != current_path.parent:
         if (current_path / "frontend").exists():
@@ -58,6 +75,8 @@ def find_project_root() -> str:
 
 
 class Settings(BaseSettings):
+    """Settings"""
+
     model_config = SettingsConfigDict(
         env_file=find_env_file(),
         env_ignore_empty=True,
@@ -118,6 +137,7 @@ class Settings(BaseSettings):
     @computed_field
     @property  # type: ignore[prop-decorator]
     def all_cors_origins(self) -> list[str]:
+        """All cors origins"""
         return [
             str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS
         ] + [
@@ -137,6 +157,7 @@ class Settings(BaseSettings):
     @computed_field
     @property  # type: ignore[prop-decorator]
     def SQLALCHEMY_DATABASE_URI(self) -> str:
+        """SQLALCHEMY_DATABASE_URI"""
         return (
             f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@"
             f"{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
@@ -154,6 +175,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _set_default_emails_from(self) -> Self:
+        """Set default emails"""
         if not self.EMAILS_FROM_NAME:
             self.EMAILS_FROM_NAME = self.PROJECT_NAME
         return self
@@ -163,6 +185,7 @@ class Settings(BaseSettings):
     @computed_field
     @property  # type: ignore[prop-decorator]
     def emails_enabled(self) -> bool:
+        """Emails enabled"""
         return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
 
     # TODO: update type to EmailStr when sqlmodel supports it
@@ -177,6 +200,7 @@ class Settings(BaseSettings):
         var_name: str,
         value: Optional[str] = None,
     ) -> None:
+        """Check default secret"""
         if value == "changethis":
             message = (
                 f'The value of {var_name} is "changethis", '
@@ -189,6 +213,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
+        """Enforce non default secrets"""
         self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
         self._check_default_secret(
             "FIRST_SUPERUSER_PASSWORD",

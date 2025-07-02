@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Module for App related functions."""
 import json
 import uuid
 from datetime import datetime
@@ -31,12 +32,23 @@ from app.schemas.common import PaginationParams
 
 
 class AppService:
+    """App service class."""
+
     def __init__(self, session: Session):
         self.app_dao = AppDAO(session=session)
         self.app_version_dao = AppVersionDAO(session)
         self.session = session
 
     def create_app(self, app: App, workspace_id: str = None) -> str:
+        """Create an application.
+
+        Args:
+            app: Application information.
+            workspace_id: Workspace ID.
+
+        Returns:
+            Application ID.
+        """
         try:
             app_id = str(uuid.uuid4()).replace("-", "")
 
@@ -86,6 +98,15 @@ class AppService:
             raise CreateAppException() from e
 
     def update_app(self, app: App, workspace_id: str) -> Optional[str]:
+        """Update an application.
+
+        Args:
+            app: Application information.
+            workspace_id: Workspace ID.
+
+        Returns:
+            Application ID.
+        """
         try:
             # Get the existing application entity.
             if not app.app_id:
@@ -168,6 +189,17 @@ class AppService:
         workspace_id: str,
         account_id: str = None,
     ) -> None:
+        """Delete an application.
+
+        Args:
+            app_id: Application ID.
+            workspace_id: Workspace ID.
+            account_id: Account ID.
+
+        Raises:
+            AppNotFoundException: Application not found.
+            DeleteAppException: Delete application failed.
+        """
         try:
             # get application
             app = self.get_app(app_id, workspace_id)
@@ -208,6 +240,15 @@ class AppService:
             raise DeleteAppException(f"Delete app failed: {str(e)}") from e
 
     def get_app(self, app_id: str, workspace_id: str = None) -> Optional[App]:
+        """Get an application.
+
+        Args:
+            app_id: Application ID.
+            workspace_id: Workspace ID.
+
+        Returns:
+            Application entity.
+        """
         try:
             app_request = [
                 AppEntity.app_id == app_id,
@@ -270,6 +311,7 @@ class AppService:
         query: AppQuery,
         workspace_id: str = None,
     ) -> Dict[str, Any]:
+        """List apps"""
         # Construct the basic query.
         query_conditions = [
             AppEntity.workspace_id == workspace_id,
@@ -309,6 +351,7 @@ class AppService:
         }
 
     def publish_app(self, app_id: str, workspace_id: str) -> None:
+        """Publish an application."""
         try:
             # get application
             app = self.get_app(app_id, workspace_id)
@@ -356,6 +399,7 @@ class AppService:
             raise PublishAppException() from e
 
     def list_app_versions(self, query: AppQuery, workspace_id: str) -> dict:
+        """List application versions."""
         # Construct basic query conditions.
         query_conditions = [
             AppVersionEntity.app_id == query.app_id,
@@ -399,6 +443,7 @@ class AppService:
         version_id: str,
         workspace_id: str = None,
     ) -> Optional[Dict]:
+        """Get an application version."""
         # Query the latest version.
         if version_id == "latest":
             query_conditions = [
@@ -451,11 +496,12 @@ class AppService:
 
     def get_application_published(
         self,
-        type: int = None,
+        type: int = None,  # pylint: disable=refined-builtin
         app_name: str = None,
         codes: List[str] = None,
         workspace_id: str = None,
     ) -> List[int]:
+        """Get the published application ID list."""
         # Build query conditions
         query_conditions = [
             AppEntity.workspace_id == workspace_id,
@@ -502,6 +548,7 @@ class AppService:
         codes: List[str] = None,
         ids: List[int] = None,
     ) -> dict:
+        """Get application published and not component list"""
         # Build basic query conditions
         query_conditions = [
             AppEntity.workspace_id == request.workspace_id,
@@ -561,6 +608,7 @@ class AppService:
         }
 
     def copy_app(self, app_id: str, workspace_id: str, account_id: str) -> str:
+        """Copy application"""
         try:
             # Obtain original application information
             source_app = self.get_app(app_id, workspace_id)
@@ -609,6 +657,7 @@ class AppService:
 
 
 def _to_application_version_dto(entity: AppVersionEntity) -> Optional[Dict]:
+    """Convert AppVersionEntity to AppVersionDTO"""
     if not entity:
         return None
 
@@ -619,6 +668,7 @@ def _to_application_version_dto(entity: AppVersionEntity) -> Optional[Dict]:
 
 
 def _to_application_dto(entity: AppEntity) -> Optional[App]:
+    """Convert AppEntity to AppDTO"""
     if not entity:
         return None
 

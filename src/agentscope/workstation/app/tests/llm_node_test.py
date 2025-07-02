@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for llm node"""
 import unittest
 from typing import Callable
 from unittest.mock import patch, MagicMock, PropertyMock
 
 from app.workflow_engine.as_workflow.node.llm import LLMNode
 from app.workflow_engine.core.node_caches.workflow_var import DataType
+
+# pylint: disable=protected-access,unused-argument
 
 
 class TestLLMNode(unittest.TestCase):

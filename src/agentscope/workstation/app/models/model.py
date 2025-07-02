@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""model schema"""
 from datetime import datetime
 from typing import Optional
 
@@ -9,6 +10,8 @@ from app.models.field import formatted_datetime_field
 
 
 class ModelEntity(SQLModel, table=True):
+    """Model entity"""
+
     __tablename__ = "model"  # type: ignore
 
     id: Optional[int] = Field(

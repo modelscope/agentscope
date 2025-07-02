@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from fastapi.encoders import jsonable_encoder
-import json
+"""Extractor module"""
 from typing import Any
+from datetime import datetime
+import json
+from fastapi.encoders import jsonable_encoder
 
 
 def datetime_to_timestamp(obj: Any) -> int:

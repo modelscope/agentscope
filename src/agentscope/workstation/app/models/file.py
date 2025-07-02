@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""File model"""
 import uuid
 
 from sqlmodel import Field, SQLModel
@@ -7,6 +8,8 @@ from .field import formatted_datetime_field
 
 
 class FileBase(SQLModel):
+    """File model base"""
+
     filename: str
     mime_type: str
     content_type: str
@@ -22,4 +25,6 @@ class FileBase(SQLModel):
 
 
 class File(FileBase, table=True):  # type: ignore[call-arg]
+    """File model"""
+
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)

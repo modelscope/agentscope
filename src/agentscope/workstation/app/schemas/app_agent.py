@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""agent related schemas"""
 import uuid
 from typing import Union, Optional, List, Literal, Dict, Any
 
@@ -12,6 +13,8 @@ from openai.types.completion_usage import CompletionUsage
 
 
 class FileSearch(BaseModel):
+    """File search"""
+
     kb_ids: list[uuid.UUID] = []
     enable_search: bool = False
     enable_citation: bool = False
@@ -25,32 +28,48 @@ class FileSearch(BaseModel):
 
 
 class Prologue(BaseModel):
+    """Prologue"""
+
     prologue_text: str = ""
     suggested_questions: List[str] = []
 
 
 class Memory(BaseModel):
+    """Memory"""
+
     dialog_round: int = 3
 
 
 class Tool(BaseModel):
+    """Tool"""
+
     id: str
 
 
 class McpServer(BaseModel):
+    """MCP server"""
+
     id: str
 
 
 class AgentParameters(Parameters):
+    """Agent parameters"""
+
     repetition_penalty: Union[float, None] = None
     tool_params: Optional[dict] = None
     tool_tokens: Optional[dict] = None
 
 
 class AgentConfig(BaseModel):
+    """Agent config"""
+
     model_provider: str = "tongyi"
     model: str = "qwen-plus"
-    instructions: str = "# 知识库 \n请记住以下材料，他们可能对回答问题有帮助。\n${documents}"
+    instructions: str = (
+        "# 知识库 \nPlease remember the following materials, "
+        "as they may be helpful in answering "
+        "questions.\n${documents}"
+    )
     parameters: AgentParameters = AgentParameters()
     file_search: FileSearch = FileSearch()
     memory: Memory = Memory()
@@ -62,6 +81,8 @@ class AgentConfig(BaseModel):
 
 
 class AgentRequest(BaseModel):
+    """Agent request"""
+
     app_id: str
     stream: bool = True
     messages: List[PromptMessage]
@@ -72,11 +93,15 @@ class AgentRequest(BaseModel):
 
 
 class AgentError(BaseModel):
+    """Agent Error"""
+
     code: str
     message: str
 
 
 class AgentResponse(BaseModel):
+    """Agent response"""
+
     request_id: str
     conversation_id: str
     model: str
@@ -87,6 +112,8 @@ class AgentResponse(BaseModel):
 
 
 class RequestContext(BaseModel):
+    """Request context"""
+
     request_id: str
     account_id: str
     user_name: str

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+"""model dao"""
+from typing import List, Optional
 from app.dao.base_dao import BaseDAO
 from app.models.model import ModelEntity
-from typing import List, Optional
 from sqlmodel import select
 
 
 class ModelDAO(BaseDAO[ModelEntity]):
+    """model dao"""
+
     _model_class = ModelEntity
 
     def get_by_model_id(

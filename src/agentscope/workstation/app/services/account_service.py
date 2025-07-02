@@ -19,8 +19,9 @@ from .base_service import BaseService
 
 
 class AccountService(BaseService[AccountDao]):
-    _dao_cls = AccountDao
     """Service layer for accounts."""
+
+    _dao_cls = AccountDao
 
     def delete_account(self, account_id: Union[str, uuid.UUID]) -> None:
         """
@@ -102,6 +103,7 @@ class AccountService(BaseService[AccountDao]):
         return account
 
     def get_account(self, account_id: str) -> Account:
+        """Get an account by account_id."""
         account = self.get_first_by_field("account_id", account_id)
         if not account:
             raise AccountNotFoundException(
@@ -114,8 +116,8 @@ class AccountService(BaseService[AccountDao]):
         name: str,
         pagination: PaginationParams,
     ) -> Tuple[int, List[Account]]:
-        filters = {"status": 1}
-        filters["type"] = "user"
+        """List accounts."""
+        filters = {"status": 1, "type": "user"}
         if name:
             filters["username"] = {"like": f"%{name}%"}
 
@@ -127,11 +129,12 @@ class AccountService(BaseService[AccountDao]):
         return total, accounts
 
     def get_account_by_username(self, username: str) -> Optional[Account]:
-        """Get a account by username."""
+        """Get an account by username."""
         account = self.get_first_by_field("username", username)
         return account
 
     def get_account_by_account_id(self, account_id: str) -> Optional[Account]:
+        """Get an account by account_id."""
         account = self.get_first_by_field("account_id", account_id)
         return account
 
@@ -139,4 +142,5 @@ class AccountService(BaseService[AccountDao]):
         self,
         id: int,
     ) -> Optional[Account]:
+        """Update last login info."""
         return self.dao.update_last_login_info(id=id)

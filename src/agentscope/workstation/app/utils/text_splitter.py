@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """The utilities for the text processing"""
 import re
-from typing import Optional, Literal, Any
+from typing import Optional, Any
 
 import jieba
 import jieba.analyse
@@ -61,6 +61,7 @@ def preprocess_chunks_and_child_chunks(
     return preprocessed_chunks, preprocessed_child_chunks
 
 
+# pylint: disable=too-many-statements
 def text_split(text: str, chunk_type: str, chunk_parameter: dict) -> tuple:
     """Split text according to the given mode and mode parameters."""
 
@@ -97,6 +98,7 @@ def text_split(text: str, chunk_type: str, chunk_parameter: dict) -> tuple:
             chunk_overlap=0,
         )
 
+    # pylint: disable=too-many-branches
     def text_splitter_regex(
         content: str,
         regex: str = r"\n\s*\n|\n#",

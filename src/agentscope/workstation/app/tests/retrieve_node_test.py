@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for retrieve node"""
 import unittest
 from typing import Any, Generator
 from unittest.mock import patch, MagicMock
@@ -9,6 +10,8 @@ from app.workflow_engine.core.node_caches.workflow_var import (
     WorkflowVariable,
     DataType,
 )
+
+# pylint: disable=protected-access,unused-argument
 
 
 class TestRetrievalNode(unittest.TestCase):

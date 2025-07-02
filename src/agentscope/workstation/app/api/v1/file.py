@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""File"""
 import uuid
 
 from fastapi import APIRouter, UploadFile, File
@@ -36,7 +37,7 @@ def upload_file(
 @router.get("/download/{file_id}")
 def load_file(
     session: SessionDep,
-    current_account: CurrentAccount,
+    current_account: CurrentAccount,  # pylint: disable=unused-argument
     file_id: uuid.UUID,
 ) -> FileResponse:
     """Download file"""

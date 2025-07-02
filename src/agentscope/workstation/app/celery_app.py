@@ -30,4 +30,4 @@ logger.info(
 )
 
 # Import task modules to ensure they're registered with Celery
-from app.tasks import workflow
+from app.tasks import workflow  # pylint: disable=ungrouped-imports

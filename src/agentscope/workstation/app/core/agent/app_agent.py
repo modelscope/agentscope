@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
+"""App agent"""
 from typing import Optional, Union, List, Dict, AsyncGenerator, Any, Callable
-
-from agentscope.agents import AgentBase
-from agentscope.message import Msg
-from app.schemas.app_agent import AgentConfig, AgentRequest, AgentParameters
+from loguru import logger
 from agentdev.models.llm import BaseLLM, BASE_URL
 from agentdev.schemas.message_schemas import (
     PromptMessageFunction,
@@ -12,8 +10,10 @@ from agentdev.schemas.message_schemas import (
 from agentdev.models.function_call import function_call_loop
 from agentdev.base.function_tool import tool_function_factory
 from openai.types.chat import ChatCompletionChunk
+from app.schemas.app_agent import AgentConfig, AgentRequest, AgentParameters
+from agentscope.agents import AgentBase
+from agentscope.message import Msg
 
-from loguru import logger
 
 MODEL_PROVIDER_MAP = {
     "tongyi": {
@@ -30,6 +30,9 @@ def mcp_tool_execute_proxy(
     function_tool: PromptMessageTool,
     mcp_method: Callable,
 ) -> Callable:
+    """
+    Create a tool function proxy for MCP.
+    """
     mcp_executor = tool_function_factory(
         function_tool,
         mcp_method,
@@ -65,11 +68,15 @@ class AppAgent(AgentBase):
         self,
         request: AgentRequest,
         parameters: AgentParameters,
-        tool_functions: List[Union[PromptMessageFunction, Dict]] = [],
-        mcp_tool_functions: List[Dict] = [],
+        tool_functions: List[Union[PromptMessageFunction, Dict]] = None,
+        mcp_tool_functions: List[Dict] = None,
         **kwargs: Any,
     ) -> AsyncGenerator[ChatCompletionChunk, Any]:
         """main logic is here"""
+        if mcp_tool_functions is None:
+            mcp_tool_functions = []
+        if tool_functions is None:
+            tool_functions = []
         messages = request.messages
 
         available_components = {}

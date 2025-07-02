@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Chat"""
 import json
 from typing import AsyncGenerator
 
@@ -20,6 +21,7 @@ async def chat_completions(
     request: AgentRequest,
     session: SessionDep,
 ) -> StreamingResponse:
+    """Chat with the app."""
     # validation the input
     if not request.app_id:
         raise IncorrectParameterException(
@@ -61,6 +63,7 @@ async def stream_generator(
     generator: AsyncGenerator,
     response_type: str,
 ) -> AsyncGenerator:
+    """generate stream response"""
     async for output in generator:
         if response_type == "sse":
             if isinstance(output, str):

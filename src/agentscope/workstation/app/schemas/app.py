@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Application schemas"""
 from datetime import datetime
 from typing import Optional, Dict, Any
 
@@ -10,6 +11,8 @@ from app.schemas.base import BaseQuery
 
 # Define Application Pydantic Model
 class App(BaseModel):
+    """App base model"""
+
     id: Optional[int] = None
     workspace_id: Optional[str] = None
     app_id: Optional[str] = None
@@ -30,6 +33,8 @@ class App(BaseModel):
     publishedVersion: Optional[AppVersionEntity] = None
 
     class Config:
+        """Config"""
+
         use_enum_values = (
             True  # Use enumeration values instead of names when serializing
         )
@@ -37,5 +42,7 @@ class App(BaseModel):
 
 
 class AppQuery(BaseQuery):
+    """App query model"""
+
     app_id: Optional[str] = None
     type: Optional[AppType] = None

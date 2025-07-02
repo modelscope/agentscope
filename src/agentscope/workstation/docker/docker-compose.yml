@@ -43,53 +43,53 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
-  celery_worker:
-    image: python:3.10-slim
-    volumes:
-      - ..:/app
-    working_dir: /app
-    command: >
-      bash -c "pip install -r requirements.txt &&
-             celery -A app.celery_app worker --loglevel=info"
-    environment:
-      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
-      - REDIS_SERVER=redis
-      - REDIS_PORT=${REDIS_PORT:-6379}
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_password}
-      - REDIS_USER=${REDIS_USER}
-      - MYSQL_HOST=mysql
-      - MYSQL_PORT=${MYSQL_PORT:-3306}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    depends_on:
-      - redis
-
-  api:
-    volumes:
-      - ..:/app
-    working_dir: /app
-    image: python:3.10-slim
-    ports:
-      - "8000:8000"
-    command: >
-      bash -c "pip install -r requirements.txt &&
-             python -m app.main"
-    environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_PORT=${MYSQL_PORT:-3306}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      # Redis
-      - REDIS_SERVER=redis
-      - REDIS_PORT=${REDIS_PORT:-6379}
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_password}
-      - REDIS_USER=${REDIS_USER}
-    depends_on:
-      - mysql
-      - redis
-      - celery_worker
+#  celery_worker:
+#    image: python:3.10-slim
+#    volumes:
+#      - ..:/app
+#    working_dir: /app
+#    command: >
+#      bash -c "pip install -r requirements.txt &&
+#             celery -A app.celery_app worker --loglevel=info"
+#    environment:
+#      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+#      - REDIS_SERVER=redis
+#      - REDIS_PORT=${REDIS_PORT:-6379}
+#      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_password}
+#      - REDIS_USER=${REDIS_USER}
+#      - MYSQL_HOST=mysql
+#      - MYSQL_PORT=${MYSQL_PORT:-3306}
+#      - MYSQL_DATABASE=${MYSQL_DATABASE}
+#      - MYSQL_USER=${MYSQL_USER}
+#      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+#    depends_on:
+#      - redis
+#
+#  api:
+#    volumes:
+#      - ..:/app
+#    working_dir: /app
+#    image: python:3.10-slim
+#    ports:
+#      - "8000:8000"
+#    command: >
+#      bash -c "pip install -r requirements.txt &&
+#             python -m app.main"
+#    environment:
+#      - MYSQL_HOST=mysql
+#      - MYSQL_PORT=${MYSQL_PORT:-3306}
+#      - MYSQL_DATABASE=${MYSQL_DATABASE}
+#      - MYSQL_USER=${MYSQL_USER}
+#      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+#      # Redis
+#      - REDIS_SERVER=redis
+#      - REDIS_PORT=${REDIS_PORT:-6379}
+#      - REDIS_PASSWORD=${REDIS_PASSWORD:-redis_password}
+#      - REDIS_USER=${REDIS_USER}
+#    depends_on:
+#      - mysql
+#      - redis
+#      - celery_worker
 
 volumes:
   mysql_data:
