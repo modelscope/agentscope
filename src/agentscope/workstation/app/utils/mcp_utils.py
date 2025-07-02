@@ -4,7 +4,7 @@ import asyncio
 import os
 import shutil
 from contextlib import AsyncExitStack
-from typing import Any
+from typing import Any, Optional
 
 from loguru import logger
 from mcp import ClientSession, StdioServerParameters
@@ -18,8 +18,8 @@ class MCPSessionHandler:
     def __init__(self, name: str, config: dict[str, Any]) -> None:
         self.name: str = name
         self.config: dict[str, Any] = config
-        self.stdio_context: Any | None = None
-        self.session: ClientSession | None = None
+        self.stdio_context: Optional[Any] = None
+        self.session: Optional[ClientSession] = None
         self._cleanup_lock: asyncio.Lock = asyncio.Lock()
         self._exit_stack: AsyncExitStack = AsyncExitStack()
 

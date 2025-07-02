@@ -36,7 +36,7 @@ def get_ip_address(request: Request) -> str:
     return request.client.host if request.client else ""
 
 
-def get_request_id_from_header(request: Request) -> str | None:
+def get_request_id_from_header(request: Request) -> Optional[str]:
     """Extract request ID from headers."""
     HEADERS = {
         "X-Request-ID",

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Schema base"""
-from typing import Optional, List, Generic, TypeVar
+from typing import Optional, List, Generic, TypeVar, Union
 
 from pydantic import BaseModel
 
-T = TypeVar("T", bound=BaseModel | dict | list | bool | str | int | float)
+T = TypeVar("T", bound=Union[BaseModel, dict, list, bool, str, int, float])
 
 
 class BaseQuery(BaseModel):

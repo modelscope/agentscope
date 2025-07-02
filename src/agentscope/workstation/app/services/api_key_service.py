@@ -70,7 +70,7 @@ class ApiKeyService(BaseService[ApiKeyDAO]):
         self,
         current_account: Account,
         api_key_id: int,
-    ) -> ApiKey | None:
+    ) -> Optional[ApiKey]:
         """
         get an existing api key
         """
@@ -158,7 +158,10 @@ class ApiKeyService(BaseService[ApiKeyDAO]):
         return self.dao.get_first_by_where_conditions(*conditions)
 
     @staticmethod
-    def _to_api_key(entity: ApiKeyEntity, mask: bool = True) -> ApiKey | None:
+    def _to_api_key(
+        entity: ApiKeyEntity,
+        mask: bool = True,
+    ) -> Optional[ApiKey]:
         if not entity:
             return None
 
