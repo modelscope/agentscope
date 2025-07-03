@@ -161,6 +161,7 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">mcp</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">mcp.client.sse</span><span class="w"> </span><span class="kn">import</span> <span class="n">sse_client</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">mcp.client.stdio</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdio_client</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mcp.client.streamable_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">streamablehttp_client</span>
 
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">mcp</span> <span class="o">=</span> <span class="kc">None</span>
@@ -246,11 +247,17 @@
 <span class="sd">            } or</span>
 <span class="sd">            {</span>
 <span class="sd">                &quot;url&quot;: &quot;http://xxx.xxx.xxx.xxx:xxxx/sse&quot;</span>
+<span class="sd">            } or</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;type&quot;: &quot;streamable_http&quot;,</span>
+<span class="sd">                &quot;url&quot;: &quot;http://xxx.xxx.xxx.xxx:xxxx/mcp/&quot;</span>
 <span class="sd">            }</span>
 
 <span class="sd">            - &quot;command&quot;: (Optional) A string indicating the command to be</span>
 <span class="sd">                executed, following the stdio protocol for communication.</span>
 <span class="sd">            - &quot;args&quot;: (Optional) A list of arguments for the command.</span>
+<span class="sd">            - &quot;type&quot;: (Optional) A string indicating the type of the MCP</span>
+<span class="sd">                server, which can be &quot;sse&quot; or &quot;streamable_http&quot;.</span>
 <span class="sd">            - &quot;url&quot;: (Optional) A string representing the server&#39;s endpoint,</span>
 <span class="sd">                which follows the Server-Sent Events (SSE) protocol for data</span>
 <span class="sd">                transmission.</span>
@@ -310,9 +317,18 @@
                     <span class="n">stdio_client</span><span class="p">(</span><span class="n">server_params</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">streams</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span>
-                    <span class="n">sse_client</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]),</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span>
+                    <span class="s2">&quot;streamable_http&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;streamableHttp&quot;</span><span class="p">,</span>
+                <span class="p">]:</span>
+                    <span class="n">streams</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span>
+                        <span class="n">streamablehttp_client</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]),</span>
+                    <span class="p">)</span>
+                    <span class="n">streams</span> <span class="o">=</span> <span class="p">(</span><span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">streams</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">streams</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span>
+                        <span class="n">sse_client</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]),</span>
+                    <span class="p">)</span>
             <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span>
                 <span class="n">mcp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">(</span><span class="o">*</span><span class="n">streams</span><span class="p">),</span>
             <span class="p">)</span>
