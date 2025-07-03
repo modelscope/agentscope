@@ -362,7 +362,7 @@ Refer to :ref:`builtin-agent` for implementation details of this agent.
     <{argument name}>{argument value}</{argument name}>
     <{argument name}>{argument value}</{argument name}>
     ...
-    Friday: <thought>The calculation has been successfully performed and the result is 7015142197480303962. I can now inform the user of the result.</thought>
+    Friday: <thought>The calculation was successful and the result is 7015142197480303962. I can now inform the user of the result.</thought>
     <function>finish</function>
     <response>The product of 1615114134 and 4343434343 is 7015142197480303962.</response>
     system: 1. Execute function finish
@@ -491,7 +491,7 @@ Step 5 -> 6 -> 7 in the figure, getting the model response:
     tool_calls: [
         {
             "type": "tool_use",
-            "id": "call_bbb1849a7937466690969b",
+            "id": "call_7de3c2ff79f84cf1b752c5",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami",
@@ -537,7 +537,7 @@ Step 8, creating a new message with the tool calls:
     assistant: [
         {
             "type": "tool_use",
-            "id": "call_bbb1849a7937466690969b",
+            "id": "call_7de3c2ff79f84cf1b752c5",
             "name": "execute_shell_command",
             "input": {
                 "command": "whoami",
@@ -603,7 +603,7 @@ again!
             "content": null,
             "tool_calls": [
                 {
-                    "id": "call_bbb1849a7937466690969b",
+                    "id": "call_7de3c2ff79f84cf1b752c5",
                     "type": "function",
                     "function": {
                         "name": "execute_shell_command",
@@ -614,7 +614,7 @@ again!
         },
         {
             "role": "tool",
-            "tool_call_id": "call_bbb1849a7937466690969b",
+            "tool_call_id": "call_7de3c2ff79f84cf1b752c5",
             "content": "<returncode>0</returncode>\n<stdout>runner\n</stdout>\n<stderr></stderr>",
             "name": "execute_shell_command"
         }
@@ -706,7 +706,7 @@ automatically and registered to the `ServiceToolkit`.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 12.942 seconds)
+   **Total running time of the script:** (0 minutes 9.938 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_tool.py:
