@@ -55,7 +55,7 @@ extra_service_requires = [
     "nbformat",
     "playwright",
     "markdownify",
-    "mcp>=1.8.0; python_version>='3.10'",
+    "mcp>=1.8.0,<1.10.0; python_version>='3.10'",
 ]
 
 extra_distribute_requires = [
