@@ -19,6 +19,7 @@ try:
     import mcp
     from mcp.client.sse import sse_client
     from mcp.client.stdio import stdio_client
+    from mcp.client.streamable_http import streamablehttp_client
 
 except ImportError:
     mcp = None
@@ -99,11 +100,17 @@ class MCPSessionHandler:
             } or
             {
                 "url": "http://xxx.xxx.xxx.xxx:xxxx/sse"
+            } or
+            {
+                "type": "streamable_http",
+                "url": "http://xxx.xxx.xxx.xxx:xxxx/mcp/"
             }
 
             - "command": (Optional) A string indicating the command to be
                 executed, following the stdio protocol for communication.
             - "args": (Optional) A list of arguments for the command.
+            - "type": (Optional) A string indicating the type of the MCP
+                server, which can be "sse" or "streamable_http".
             - "url": (Optional) A string representing the server's endpoint,
                 which follows the Server-Sent Events (SSE) protocol for data
                 transmission.
@@ -161,9 +168,18 @@ class MCPSessionHandler:
                     stdio_client(server_params),
                 )
             else:
-                streams = await self._exit_stack.enter_async_context(
-                    sse_client(url=self.config["url"]),
-                )
+                if self.config.get("type") in [
+                    "streamable_http",
+                    "streamableHttp",
+                ]:
+                    streams = await self._exit_stack.enter_async_context(
+                        streamablehttp_client(url=self.config["url"]),
+                    )
+                    streams = (streams[0], streams[1])
+                else:
+                    streams = await self._exit_stack.enter_async_context(
+                        sse_client(url=self.config["url"]),
+                    )
             session = await self._exit_stack.enter_async_context(
                 mcp.ClientSession(*streams),
             )

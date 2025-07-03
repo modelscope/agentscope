@@ -132,6 +132,7 @@ class ReActAgentV2(AgentBase):
                 self._finish_function,
                 structured_model,
             )
+            self._current_structured_model = structured_model
 
         self.memory.add(x)
 
