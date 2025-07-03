@@ -203,15 +203,16 @@ class TemporaryMemory(MemoryBase):
             for unit in load_memories:
                 if not isinstance(unit, Msg):
                     raise TypeError(
-                        f"Expect a list of Msg objects, but got a memory unit of type {type(unit)} "
-                        f"instead."
+                        f"Expect a list of Msg objects, but got a memory unit"
+                        f"of type {type(unit)} instead.",
                     )
         elif isinstance(load_memories, Msg):
             load_memories = [load_memories]
         else:
             raise TypeError(
                 f"The type of memories to be loaded is not supported. "
-                f"Expect str, list[Msg], or Msg, but get {type(load_memories)}.",
+                f"Expect str, list[Msg], or Msg, but get "
+                f"{type(load_memories)}.",
             )
 
         # overwrite the original memories after loading the new ones
