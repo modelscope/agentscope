@@ -34,7 +34,7 @@
 
 - **[2024-04-06]** 我们现在发布了**AgentScope** v0.0.3版本！
 
-- **[2024-04-06]** 新的样例“[五子棋](./examples/game_gomoku)”，“[与ReAct智能体对话](./examples/conversation_with_react_agent)”，“[与RAG智能体对话](./examples/conversation_with_RAG_agents)”，“[分布式并行优化](./examples/distributed_parallel_optimization)”上线了！
+- **[2024-04-06]** 新的样例“[五子棋](./examples/game_gomoku)”，“[与ReAct智能体对话](./examples/agent_ReAct)”，“[与RAG智能体对话](./examples/conversation_with_RAG_agents)”，“[分布式并行优化](./examples/distributed_parallel_optimization)”上线了！
 
 - **[2024-03-19]** 我们现在发布了**AgentScope** v0.0.2版本！在这个新版本中，AgentScope支持了ollama（本地CPU推理引擎），DashScope和Gemini APIs。
 

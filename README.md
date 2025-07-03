@@ -58,6 +58,7 @@ Easy for beginners, powerful for experts.
 - **Developer-friendly**: Low-code development, visual tracing & monitoring. From developing to deployment, all in one place.
 
 ## 📢 News
+- **[2025-07-01]** A new version AgentScope is under development. In this new version, AgentScope will be more powerful and flexible, with a new architecture and more features. Refer to our [Roadmap](https://github.com/modelscope/agentscope/blob/main/docs/ROADMAP.md) for more details!
 - **[2025-04-27]** A new 💻 AgentScope Studio is online now. Refer [here](https://doc.agentscope.io/build_tutorial/visual.html) for more details.
 - **[2025-03-21]** AgentScope supports hooks functions now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/hook.html) for more details.
 - **[2025-03-19]** AgentScope supports 🔧 tools API now. Refer to our [tutorial](https://doc.agentscope.io/build_tutorial/tool.html).
