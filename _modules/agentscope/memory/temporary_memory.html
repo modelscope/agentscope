@@ -342,39 +342,31 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">memories</span><span class="p">):</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_memories</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
-                        <span class="n">load_memories</span><span class="p">,</span>
-                        <span class="nb">list</span><span class="p">,</span>
-                    <span class="p">):</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;The memory loaded by json.loads is &quot;</span>
-                            <span class="s2">&quot;neither a dict nor a list, which may &quot;</span>
-                            <span class="s2">&quot;cause unpredictable errors.&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
-                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Cannot load [</span><span class="si">{</span><span class="n">memories</span><span class="si">}</span><span class="s2">] via &quot;</span> <span class="sa">f</span><span class="s2">&quot;json.loads.&quot;</span><span class="p">,</span>
-                        <span class="n">e</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
-                        <span class="n">e</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
-                    <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">memories</span><span class="p">:</span>
+                    <span class="n">memories</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">load_memories</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot load [</span><span class="si">{</span><span class="n">memories</span><span class="si">}</span><span class="s2">] via &quot;</span> <span class="sa">f</span><span class="s2">&quot;json.loads.&quot;</span><span class="p">,</span>
+                    <span class="n">e</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+                    <span class="n">e</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">load_memories</span> <span class="o">=</span> <span class="n">memories</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_memories</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">load_memories</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Expect a list of Msg objects, but get </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;instead.&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Expect a list of Msg objects, but got a memory unit&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="si">}</span><span class="s2"> instead.&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
-            <span class="n">load_memories</span> <span class="o">=</span> <span class="n">memories</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memories</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
-            <span class="n">load_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">memories</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_memories</span><span class="p">,</span> <span class="n">Msg</span><span class="p">):</span>
+            <span class="n">load_memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">load_memories</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The type of memories to be loaded is not supported. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Expect str, list[Msg], or Msg, but get </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Expect str, list[Msg], or Msg, but get &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">load_memories</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># overwrite the original memories after loading the new ones</span>
