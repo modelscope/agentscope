@@ -183,7 +183,7 @@ Taking “qwen-vl-max” as an example, its model configuration is the same as t
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-07-04 02:55:09 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-07-04 06:28:32 | INFO     | agentscope.manager._model:load_model_configs:138 - Load configs for model wrapper: my-qwen-vl
 </pre></div>
 </div>
 <p>To communicate with the vision agent with pictures, <cite>Msg</cite> class provides an <cite>url</cite> field.
@@ -216,20 +216,20 @@ You can put both local or online image URL(s) in the <cite>url</cite> field.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-07-04 02:55:09 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2025-07-04 06:28:32 | ERROR    | agentscope.message.msg:__init__:112 - The url argument will be deprecated in the future. Consider using the ContentBlock instead to attach files to the message
 Monday: The image is a bar chart titled **&quot;The Apples Each Person Has in 2023&quot;**. It displays the number of apples that three individuals—Alice, Bob, and Charlie—possess. Here are the details:
 
 - **X-axis**: Labeled &quot;Number of Apples,&quot; it represents the names of the individuals (Alice, Bob, and Charlie).
 - **Y-axis**: Represents the quantity of apples, ranging from 0 to 4.
 - **Bars**:
-  - **Alice** has 2 apples.
-  - **Bob** has 1 apple.
-  - **Charlie** has 4 apples.
+  - **Alice** has **2 apples**.
+  - **Bob** has **1 apple**.
+  - **Charlie** has **4 apples**.
 
 The bars are colored in blue, and the chart clearly shows that Charlie has the most apples, followed by Alice, and then Bob.
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 8.967 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.640 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-multimodality-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/169c560b862dc25b25a32ca7165ed413/multimodality.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">multimodality.ipynb</span></code></a></p>
