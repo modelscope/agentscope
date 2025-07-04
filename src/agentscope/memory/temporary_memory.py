@@ -188,39 +188,31 @@ class TemporaryMemory(MemoryBase):
         if isinstance(memories, str):
             if os.path.isfile(memories):
                 with open(memories, "r", encoding="utf-8") as f:
-                    load_memories = deserialize(f.read())
-            else:
-                try:
-                    load_memories = deserialize(memories)
-                    if not isinstance(load_memories, dict) and not isinstance(
-                        load_memories,
-                        list,
-                    ):
-                        logger.warning(
-                            "The memory loaded by json.loads is "
-                            "neither a dict nor a list, which may "
-                            "cause unpredictable errors.",
-                        )
-                except json.JSONDecodeError as e:
-                    raise json.JSONDecodeError(
-                        f"Cannot load [{memories}] via " f"json.loads.",
-                        e.doc,
-                        e.pos,
-                    )
-        elif isinstance(memories, list):
-            for unit in memories:
+                    memories = f.read()
+            try:
+                load_memories = deserialize(memories)
+            except json.JSONDecodeError as e:
+                raise json.JSONDecodeError(
+                    f"Cannot load [{memories}] via " f"json.loads.",
+                    e.doc,
+                    e.pos,
+                )
+        else:
+            load_memories = memories
+        if isinstance(load_memories, list):
+            for unit in load_memories:
                 if not isinstance(unit, Msg):
                     raise TypeError(
-                        f"Expect a list of Msg objects, but get {type(unit)} "
-                        f"instead.",
+                        f"Expect a list of Msg objects, but got a memory unit"
+                        f"of type {type(unit)} instead.",
                     )
-            load_memories = memories
-        elif isinstance(memories, Msg):
-            load_memories = [memories]
+        elif isinstance(load_memories, Msg):
+            load_memories = [load_memories]
         else:
             raise TypeError(
                 f"The type of memories to be loaded is not supported. "
-                f"Expect str, list[Msg], or Msg, but get {type(memories)}.",
+                f"Expect str, list[Msg], or Msg, but get "
+                f"{type(load_memories)}.",
             )
 
         # overwrite the original memories after loading the new ones
