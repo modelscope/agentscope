@@ -275,7 +275,7 @@ while x is None or x.content != "exit":
     x = agent(x)
     x = user_agent(x)
 ```
-より詳細な使用例については、[mcp サンプル](https://github.com/modelscope/agentscope/tree/main/examples/reactv2_agent_with_mcp/code) ディレクトリをご覧ください。
+より詳細な使用例については、[mcp サンプル](examples/reactv2_agent_with_mcp/code) ディレクトリをご覧ください。
 
 
 ### 🔠 構造化出力

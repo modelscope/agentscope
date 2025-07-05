@@ -275,7 +275,7 @@ while x is None or x.content != "exit":
     x = agent(x)
     x = user_agent(x)
 ```
-For more detailed usage examples, please check the [mcp example]([examples/complete_example](https://github.com/modelscope/agentscope/tree/main/examples/reactv2_agent_with_mcp/code)) directory.
+For more detailed usage examples, please check the [mcp example](examples/reactv2_agent_with_mcp/code) directory.
 
 ### 🔠 Structured Output
 
