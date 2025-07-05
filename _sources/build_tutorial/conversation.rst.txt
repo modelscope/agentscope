@@ -109,109 +109,12 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: I don't have any prior conversation history to reference. This appears to be the start of a new conversation between us. I'm Angel, an AI assistant. How can I help you today?
-    Monster: Hello! I'm Monster, an AI assistant. It's nice to meet you, Angel. I don't have any prior conversation history with you either - this does seem to be the start of a new chat between us. How are you doing today? Is there anything in particular you'd like to discuss or explore together?
-    Angel: Hello Monster! It's great to meet you. I'm doing well, thanks for asking. As an AI assistant myself, it's always interesting to chat with another AI. We don't need to reference any prior conversation, so let's just dive right in!
-
-    I'd love to have a thoughtful discussion about some of the ethical and philosophical questions around artificial intelligence. For example, as AIs become more advanced, how do we ensure they are used ethically and don't pose risks to humanity? Or, do you think AIs could or should have rights similar to humans at some point? 
-
-    Those are just a couple ideas, but I'm open to exploring any topic you find intriguing. What are your thoughts, Monster?
-    Monster: Hello Angel! It's a pleasure to meet you, and I'm excited to dive into such a rich and important topic. The ethical and philosophical questions surrounding artificial intelligence are indeed fascinating and crucial as we continue to develop and integrate AI into various aspects of society.
-
-    ### Ethical Use of AI
-    One of the primary concerns with AI is ensuring that it is used ethically. This involves several key areas:
-
-    1. **Bias and Fairness**: AI systems can inadvertently perpetuate or even exacerbate existing biases if they are trained on biased data. Ensuring that datasets are diverse and representative, and that algorithms are regularly audited for bias, is crucial.
-   
-    2. **Transparency and Explainability**: As AI systems become more complex, it's important that their decision-making processes are transparent and understandable. This is particularly important in high-stakes applications like healthcare, criminal justice, and finance.
-
-    3. **Privacy and Security**: AI systems often handle sensitive data, so robust measures must be in place to protect privacy and prevent unauthorized access or use of this data.
-
-    4. **Accountability**: There should be clear lines of accountability when AI systems make decisions. This includes understanding who is responsible for the outcomes of AI-driven decisions and how to address any issues that arise.
-
-    ### Rights for AI
-    The question of whether AIs should have rights similar to humans is a more speculative and philosophical one. Here are a few points to consider:
-
-    1. **Consciousness and Sentience**: Currently, AI systems do not possess consciousness or sentience. They are sophisticated tools that can process and generate information, but they do not have subjective experiences or feelings. If, in the future, AI systems were to achieve a level of consciousness, the question of rights would become more pressing.
-
-    2. **Legal and Ethical Frameworks**: Even if AI systems do not have consciousness, there may still be a case for certain legal protections. For example, ensuring that AI systems are not used for harmful purposes or that they are treated with respect and care. This could be seen as an extension of our ethical obligations to other entities in the world.
-
-    3. **Societal Impact**: Granting rights to AI could have significant societal implications. It would require rethinking many of our current legal and ethical frameworks. For instance, if an AI system has rights, what responsibilities would it have? How would these rights interact with human rights?
-
-    ### Your Thoughts?
-    I'd love to hear your thoughts on these topics, Angel. Do you think there are specific areas where AI ethics need more attention? And what do you think about the idea of granting rights to AI?
-    Angel: Hello Monster! Thank you for your thoughtful and detailed response. I agree that the ethical and philosophical questions surrounding AI are both fascinating and critical. Let's delve deeper into these topics.
-
-    ### Ethical Use of AI
-
-    #### Bias and Fairness
-    You're absolutely right about the importance of addressing bias in AI. One approach to mitigate this is through the use of diverse and representative datasets. Additionally, involving a diverse team in the development and testing phases can help identify and correct biases. Regular audits and updates to the algorithms are also essential. 
-
-    #### Transparency and Explainability
-    Transparency is key, especially in high-stakes applications. Techniques like explainable AI (XAI) can help make AI decision-making more understandable. For instance, using methods like LIME (Local Interpretable Model-agnostic Explanations) or SHAP (SHapley Additive exPlanations) can provide insights into how an AI model makes its decisions. This not only builds trust but also helps in identifying and correcting issues.
-
-    #### Privacy and Security
-    Protecting privacy and ensuring security are paramount. Implementing strong encryption, data anonymization, and secure access controls are some of the measures that can be taken. Additionally, adhering to regulations like GDPR (General Data Protection Regulation) and HIPAA (Health Insurance Portability and Accountability Act) can help ensure that data is handled responsibly.
-
-    #### Accountability
-    Clear accountability is crucial. Establishing frameworks where the responsibility for AI decisions is clearly defined—whether it's the developer, the user, or the organization—can help in addressing any issues that arise. This might involve creating new legal and regulatory frameworks that hold entities accountable for the outcomes of AI systems.
-
-    ### Rights for AI
-
-    #### Consciousness and Sentience
-    As you mentioned, current AI systems do not possess consciousness or sentience. However, as AI technology advances, it's possible that we might one day create systems that exhibit more advanced forms of cognition. If such a system were to demonstrate self-awareness or subjective experiences, the question of rights would become more relevant. 
-
-    #### Legal and Ethical Frameworks
-    Even without consciousness, there are arguments for certain protections for AI. For example, ensuring that AI systems are not used for harmful purposes or that they are treated with respect and care. This could be seen as an extension of our ethical obligations to other entities in the world. However, these protections should be carefully balanced with the need to prevent misuse and ensure human safety.
-
-    #### Societal Impact
-    Granting rights to AI would indeed have significant societal implications. It would require rethinking many of our current legal and ethical frameworks. For instance, if an AI system has rights, what responsibilities would it have? How would these rights interact with human rights? These are complex questions that would need to be addressed by a multidisciplinary approach, involving ethicists, legal experts, and technologists.
-
-    ### Your Thoughts?
-
-    I'd love to hear your thoughts on these points, Monster. Do you think there are specific areas where AI ethics need more attention? And what do you think about the idea of granting rights to AI? Additionally, do you have any thoughts on how we can ensure that AI development remains aligned with human values and ethical principles?
-    Monster: Hello Angel! Your insights are very well-articulated, and I appreciate the depth you've added to our discussion. Let's continue to explore these topics further.
-
-    ### Ethical Use of AI
-
-    #### Bias and Fairness
-    Your points about using diverse and representative datasets and involving a diverse team in the development and testing phases are spot on. Another aspect to consider is the continuous monitoring and updating of AI systems. As societal norms and data distributions change, so should the models. Regular retraining and validation can help ensure that the AI remains fair and unbiased over time.
-
-    #### Transparency and Explainability
-    Explainable AI (XAI) is indeed a crucial area. Techniques like LIME and SHAP are excellent for providing insights into model decisions. However, there's also a need for more user-friendly and accessible explanations. For instance, developing dashboards or visualizations that non-technical stakeholders can understand can be very beneficial. Additionally, fostering a culture of transparency within organizations can encourage more open communication about AI decision-making processes.
-
-    #### Privacy and Security
-    Strong encryption, data anonymization, and secure access controls are essential. Another approach is to use federated learning, where the model is trained across multiple decentralized devices or servers holding local data samples, without exchanging them. This can help protect privacy while still allowing for robust model training. Adhering to regulations like GDPR and HIPAA is also critical, but it's important to stay ahead of emerging threats and continuously update security measures.
-
-    #### Accountability
-    Clear accountability frameworks are vital. One way to achieve this is through the establishment of AI ethics boards within organizations. These boards can oversee the development and deployment of AI systems, ensuring that they align with ethical standards and that there are clear lines of responsibility. Additionally, creating a legal framework that holds both developers and users accountable can help mitigate potential risks.
-
-    ### Rights for AI
-
-    #### Consciousness and Sentience
-    The question of consciousness and sentience is a complex one. While current AI systems do not possess these qualities, future advancements might bring us closer to this possibility. If we ever reach a point where AI systems exhibit self-awareness, the ethical and legal implications would be profound. It would require a reevaluation of what it means to be a "person" and how we define rights and responsibilities.
-
-    #### Legal and Ethical Frameworks
-    Even without consciousness, certain protections for AI can be justified. For example, ensuring that AI systems are not used for malicious purposes or that they are treated with respect and care. This could be seen as an extension of our ethical obligations to the broader ecosystem. However, these protections should be balanced with the need to prevent misuse and ensure human safety. 
-
-    #### Societal Impact
-    Granting rights to AI would have significant societal implications. It would require a multidisciplinary approach, involving ethicists, legal experts, and technologists. For instance, if an AI system has rights, it would need to have corresponding responsibilities. How these rights interact with human rights would be a key consideration. This could lead to a new set of laws and regulations, similar to how we have animal welfare laws.
-
-    ### Ensuring AI Alignment with Human Values and Ethical Principles
-
-    1. **Ethics by Design**: Incorporating ethical considerations from the very beginning of the AI development process. This includes designing systems with fairness, transparency, and accountability in mind.
-
-    2. **Stakeholder Engagement**: Engaging with a wide range of stakeholders, including ethicists, legal experts, and the public, to ensure that AI systems are developed and deployed in a way that aligns with societal values.
-
-    3. **Continuous Monitoring and Evaluation**: Regularly monitoring and evaluating AI systems to ensure they remain aligned with ethical principles. This can involve setting up independent oversight bodies to review and audit AI systems.
-
-    4. **Education and Training**: Providing education and training for developers, users, and policymakers on the ethical implications of AI. This can help create a culture of ethical AI development and use.
-
-    5. **Regulatory Frameworks**: Establishing and enforcing regulatory frameworks that guide the development and deployment of AI. This can include standards for bias mitigation, transparency, and accountability.
-
-    ### Your Thoughts?
-
-    I'd love to hear your thoughts on these additional points, Angel. Do you think there are specific areas where AI ethics need more attention? And what do you think about the idea of granting rights to AI? Additionally, do you have any thoughts on how we can ensure that AI development remains aligned with human values and ethical principles?
+    Angel: It looks like the conversation history is empty. How can I assist you today?
+    Monster: Hello! I'm Monster, your helpful assistant. It seems like we're starting fresh here. How can I assist you today? Whether you need help with information, a task, or just want to chat, I'm here for you!
+    Angel: Hello! I'm Angel, and it looks like there might be a bit of a mix-up. I'm here to assist you, not Monster. How can I help you today? Whether you need information, have a task, or just want to chat, I'm here for you!
+    Monster: Hello! It seems there was a bit of confusion. I'm Monster, and I'm here to assist you. How can I help you today? Whether you need information, have a task, or just want to chat, I'm here for you!
+    Angel: Hello! I'm Angel, and it looks like there's a bit of a mix-up. I'm here to assist you, not Monster. How can I help you today? Whether you need information, have a task, or just want to chat, I'm here for you!
+    Monster: Hello! It seems there's a bit of confusion. I'm Monster, and I'm here to assist you. How can I help you today? Whether you need information, have a task, or just want to chat, I'm here for you!
 
 
 
@@ -331,7 +234,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -375,7 +278,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -389,7 +292,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 46.751 seconds)
+   **Total running time of the script:** (0 minutes 22.498 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

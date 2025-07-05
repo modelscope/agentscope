@@ -1,7 +1,0 @@
-agentscope.service.mcp\_manager module
-======================================
-
-.. automodule:: agentscope.service.mcp_manager
-   :members:
-   :undoc-members:
-   :show-inheritance:
