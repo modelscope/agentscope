@@ -253,7 +253,8 @@ toolkit.add_mcp_servers(
     {
         "mcpServers": {
             "amap-amap-sse": {
-            "url": "https://mcp.amap.com/sse?key={YOUR_GAODE_API_KEY}"
+                "type": "sse",
+                "url": "https://mcp.amap.com/sse?key={YOUR_GAODE_API_KEY}"
             }
         }
     }
@@ -274,6 +275,7 @@ while x is None or x.content != "exit":
     x = agent(x)
     x = user_agent(x)
 ```
+更多详细的使用示例，请查看 [mcp示例](https://github.com/modelscope/agentscope/tree/main/examples/reactv2_agent_with_mcp/code) 目录。
 
 ### 🔠 结构化输出
 
