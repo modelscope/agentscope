@@ -295,6 +295,7 @@
                 <span class="ow">and</span> <span class="n">structured_model</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg_reasoning</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">(</span><span class="n">msg_reasoning</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">msg_reasoning</span>
 
             <span class="c1"># If exit_reply_without_tool_calls is False, or structured output</span>

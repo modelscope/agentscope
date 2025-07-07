@@ -174,20 +174,20 @@ combine the ReAct algorithm with structured output.
     Friday: [
         {
             "type": "tool_use",
-            "id": "call_4c92c808bf67419bbd7d09",
+            "id": "call_a71155624eb94a8c9ec7c1",
             "name": "generate_response",
             "input": {
-                "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential scientists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc², which has been dubbed 'the world's most famous equation', expresses the fact that mass and energy are the same physical entity and can be changed into each other.",
+                "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had far-reaching implications in the field of physics and beyond.",
                 "name": "Albert Einstein",
-                "description": "Theoretical physicist, developed the theory of relativity",
+                "description": "Theoretical Physicist, Developer of the Theory of Relativity",
                 "age": 76
             }
         }
     ]
     system: Execute function generate_response:
     Success
-    Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential scientists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc², which has been dubbed 'the world's most famous equation', expresses the fact that mass and energy are the same physical entity and can be changed into each other.
-    The structured output:  {'name': 'Albert Einstein', 'description': 'Theoretical physicist, developed the theory of relativity', 'age': 76}
+    Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had far-reaching implications in the field of physics and beyond.
+    The structured output:  {'name': 'Albert Einstein', 'description': 'Theoretical Physicist, Developer of the Theory of Relativity', 'age': 76}
 
 
 
@@ -217,7 +217,7 @@ With different `structured_model`, we can achieve different structured output
     Friday: [
         {
             "type": "tool_use",
-            "id": "call_acaa7755473044e096bfd9",
+            "id": "call_e9d53216f32140078fa4a8",
             "name": "generate_response",
             "input": {
                 "response": "I choose an apple.",
@@ -320,10 +320,10 @@ Now we call the agent once and observe the changes in the schema of the target f
     Friday: [
         {
             "type": "tool_use",
-            "id": "call_909e2d9f1d514a3ba5c99e",
+            "id": "call_ac27622cb2e54cd19af6a1",
             "name": "generate_response",
             "input": {
-                "response": "Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2 has been dubbed 'the world's most famous equation'.",
+                "response": "Albert Einstein was a renowned theoretical physicist, best known for developing the theory of relativity. He was awarded the Nobel Prize in Physics in 1921 for his services to theoretical physics and his discovery of the law of the photoelectric effect.",
                 "name": "Albert Einstein",
                 "description": "Theoretical physicist, developed the theory of relativity",
                 "age": 76
@@ -332,7 +332,7 @@ Now we call the agent once and observe the changes in the schema of the target f
     ]
     system: Execute function generate_response:
     Success
-    Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2 has been dubbed 'the world's most famous equation'.
+    Friday: Albert Einstein was a renowned theoretical physicist, best known for developing the theory of relativity. He was awarded the Nobel Prize in Physics in 1921 for his services to theoretical physics and his discovery of the law of the photoelectric effect.
     {
         "type": "function",
         "function": {
@@ -788,7 +788,7 @@ parsed dictionary by the following core steps in the `reply` method.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 13.270 seconds)
+   **Total running time of the script:** (0 minutes 9.674 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_structured_output.py:

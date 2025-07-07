@@ -275,20 +275,20 @@ combine the ReAct algorithm with structured output.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_4c92c808bf67419bbd7d09&quot;,
+        &quot;id&quot;: &quot;call_a71155624eb94a8c9ec7c1&quot;,
         &quot;name&quot;: &quot;generate_response&quot;,
         &quot;input&quot;: {
-            &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential scientists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc², which has been dubbed &#39;the world&#39;s most famous equation&#39;, expresses the fact that mass and energy are the same physical entity and can be changed into each other.&quot;,
+            &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had far-reaching implications in the field of physics and beyond.&quot;,
             &quot;name&quot;: &quot;Albert Einstein&quot;,
-            &quot;description&quot;: &quot;Theoretical physicist, developed the theory of relativity&quot;,
+            &quot;description&quot;: &quot;Theoretical Physicist, Developer of the Theory of Relativity&quot;,
             &quot;age&quot;: 76
         }
     }
 ]
 system: Execute function generate_response:
 Success
-Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential scientists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc², which has been dubbed &#39;the world&#39;s most famous equation&#39;, expresses the fact that mass and energy are the same physical entity and can be changed into each other.
-The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;description&#39;: &#39;Theoretical physicist, developed the theory of relativity&#39;, &#39;age&#39;: 76}
+Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His formula E=mc^2 expresses the equivalence of mass and energy, which has had far-reaching implications in the field of physics and beyond.
+The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;description&#39;: &#39;Theoretical Physicist, Developer of the Theory of Relativity&#39;, &#39;age&#39;: 76}
 </pre></div>
 </div>
 <p>With different <cite>structured_model</cite>, we can achieve different structured output</p>
@@ -301,7 +301,7 @@ The structured output:  {&#39;name&#39;: &#39;Albert Einstein&#39;, &#39;descrip
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_acaa7755473044e096bfd9&quot;,
+        &quot;id&quot;: &quot;call_e9d53216f32140078fa4a8&quot;,
         &quot;name&quot;: &quot;generate_response&quot;,
         &quot;input&quot;: {
             &quot;response&quot;: &quot;I choose an apple.&quot;,
@@ -369,10 +369,10 @@ allowing us to print the processed function schema.</p>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Friday: [
     {
         &quot;type&quot;: &quot;tool_use&quot;,
-        &quot;id&quot;: &quot;call_909e2d9f1d514a3ba5c99e&quot;,
+        &quot;id&quot;: &quot;call_ac27622cb2e54cd19af6a1&quot;,
         &quot;name&quot;: &quot;generate_response&quot;,
         &quot;input&quot;: {
-            &quot;response&quot;: &quot;Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2 has been dubbed &#39;the world&#39;s most famous equation&#39;.&quot;,
+            &quot;response&quot;: &quot;Albert Einstein was a renowned theoretical physicist, best known for developing the theory of relativity. He was awarded the Nobel Prize in Physics in 1921 for his services to theoretical physics and his discovery of the law of the photoelectric effect.&quot;,
             &quot;name&quot;: &quot;Albert Einstein&quot;,
             &quot;description&quot;: &quot;Theoretical physicist, developed the theory of relativity&quot;,
             &quot;age&quot;: 76
@@ -381,7 +381,7 @@ allowing us to print the processed function schema.</p>
 ]
 system: Execute function generate_response:
 Success
-Friday: Albert Einstein was a German-born theoretical physicist, widely acknowledged as one of the greatest and most influential physicists of all time. He is best known for developing the theory of relativity, but he also made significant contributions to the development of the theory of quantum mechanics. His mass–energy equivalence formula E=mc^2 has been dubbed &#39;the world&#39;s most famous equation&#39;.
+Friday: Albert Einstein was a renowned theoretical physicist, best known for developing the theory of relativity. He was awarded the Nobel Prize in Physics in 1921 for his services to theoretical physics and his discovery of the law of the photoelectric effect.
 {
     &quot;type&quot;: &quot;function&quot;,
     &quot;function&quot;: {
@@ -709,7 +709,7 @@ parsed dictionary by the following core steps in the <cite>reply</cite> method.<
         <span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 13.270 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.674 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-build-tutorial-structured-output-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/d9e2bb7a0effd4e32a08e552ade3979e/structured_output.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">structured_output.ipynb</span></code></a></p>
