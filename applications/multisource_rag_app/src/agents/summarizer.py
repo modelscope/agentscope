@@ -275,7 +275,7 @@ class Summarizer(AgentBase):
                 )
                 final_answer = response_text.text
         except GeneratorExit:
-            response.stream.aclose()
+            response.aclose()
         except Exception as e:
             logger.query_error(
                 request_id=request_id,
