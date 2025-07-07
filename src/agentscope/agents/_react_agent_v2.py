@@ -150,6 +150,7 @@ class ReActAgentV2(AgentBase):
                 and structured_model is None
             ):
                 self.memory.add(msg_reasoning)
+                self.speak(msg_reasoning)
                 return msg_reasoning
 
             # If exit_reply_without_tool_calls is False, or structured output
