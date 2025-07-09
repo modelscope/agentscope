@@ -51,7 +51,7 @@ wcwidth==0.2.13
 pycryptodome==3.22.0
 jieba==0.42.1
 
-yaml
+pyyaml
 networkx
 
 pymupdf==1.25.5
