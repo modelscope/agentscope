@@ -39,7 +39,7 @@ bash generate_rsa_keys.sh
 cd docker
 
 # Start all services
-docker-compose up
+docker-compose --env-file ../.env up
 ```
 
 This will start the following services:
