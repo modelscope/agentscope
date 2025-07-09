@@ -1,0 +1,113 @@
+{
+   "name":"",
+   "type":"workflow",
+   "config":{
+      "nodes":[
+         {
+            "id":"Start_LkND",
+            "name":"开始",
+            "config":{
+               "input_params":[
+
+               ],
+               "output_params":[
+                  {
+                     "key":"city",
+                     "type":"String",
+                     "desc":"城市"
+                  },
+                  {
+                     "key":"date",
+                     "type":"String",
+                     "desc":"日期"
+                  }
+               ],
+               "node_param":{
+
+               }
+            },
+            "position":{
+               "x":0,
+               "y":0
+            },
+            "width":320,
+            "type":"Start"
+         },
+         {
+            "id":"End_TCrn",
+            "name":"结束",
+            "config":{
+               "input_params":[
+
+               ],
+               "output_params":[
+
+               ],
+               "node_param":{
+                  "output_type":"text",
+                  "text_template":"",
+                  "json_params":[
+
+                  ],
+                  "stream_switch":false
+               }
+            },
+            "position":{
+               "x":450,
+               "y":0
+            },
+            "width":320,
+            "type":"End"
+         },
+         {
+            "id":"Output_GSjo",
+            "name":"流程输出1",
+            "config":{
+               "input_params":[
+
+               ],
+               "output_params":[
+
+               ],
+               "node_param":{
+                  "output":"qewfasdfsa\n",
+                  "stream_switch":true
+               }
+            },
+            "position":{
+               "x":255,
+               "y":-60
+            },
+            "width":320,
+            "type":"Output"
+         }
+      ],
+      "edges":[
+         {
+            "id":"Start_LkND-Start_LkND-Output_GSjo-Output_GSjo",
+            "source":"Start_LkND",
+            "target":"Output_GSjo",
+            "source_handle":"Start_LkND",
+            "target_handle":"Output_GSjo"
+         },
+         {
+            "id":"Output_GSjo-Output_GSjo-End_TCrn-End_TCrn",
+            "source":"Output_GSjo",
+            "target":"End_TCrn",
+            "source_handle":"Output_GSjo",
+            "target_handle":"End_TCrn"
+         }
+      ],
+      "global_config":{
+         "history_config":{
+            "history_max_round":5,
+            "history_switch":false
+         },
+         "variable_config":{
+            "conversation_params":[
+
+            ]
+         }
+      }
+   }
+}
