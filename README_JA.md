@@ -47,6 +47,12 @@
             alt="license"
         />
     </a>
+    <a href="https://deepwiki.com/modelscope/agentscope">
+        <img
+            src="https://deepwiki.com/badge.svg"
+            alt="Ask DeepWiki"
+        />
+    </a>
 </p>
 
 <p align="center">
