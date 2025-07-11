@@ -35,6 +35,12 @@
             alt="docs"
         />
     </a>
+    <a href="https://deepwiki.com/modelscope/agentscope">
+        <img
+            src="https://deepwiki.com/badge.svg"
+            alt="Ask DeepWiki"
+        />
+    </a>
     <a href="https://agentscope.io/">
         <img
             src="https://img.shields.io/badge/Drag_and_drop_UI-WorkStation-blue?logo=html5&logoColor=green&color=dark-green"
@@ -45,12 +51,6 @@
         <img
             src="https://img.shields.io/badge/license-Apache--2.0-black"
             alt="license"
-        />
-    </a>
-    <a href="https://deepwiki.com/modelscope/agentscope">
-        <img
-            src="https://deepwiki.com/badge.svg"
-            alt="Ask DeepWiki"
         />
     </a>
 </p>
