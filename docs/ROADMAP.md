@@ -25,7 +25,7 @@ with enhanced deployment capabilities and practical features. Specifically, the 
     - Provide more flexible support for the MCP server
 
   - 💾 Memory
-    - Enhancement of the existing short-term memory
+    - Enhance the existing short-term memory
     - Support long-term memory
 
   - 🤖 Agent
