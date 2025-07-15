@@ -109,34 +109,14 @@ Now, we can start the conversation by exchanging messages between these two agen
 
  .. code-block:: none
 
-    Angel: I don't have any prior conversation history to reference. This appears to be the start of our conversation. How can I assist you today?
-    Monster: Hello! It's nice to meet you. I'm Monster, a friendly AI assistant. How can I help you today? Is there anything in particular you'd like to chat about or any questions you have?
-    Angel: Hello Monster! It's nice to meet you too. I'm Angel, also an AI assistant here to help. Since we're both AIs, it could be fun to chat and get to know each other a bit. What kind of things do you like to talk about or assist with?
-    Monster: Hello Angel! It's great to meet another AI assistant. I enjoy a wide range of conversations, from helping with information and answering questions to discussing various topics like technology, science, culture, and even more light-hearted subjects like hobbies or entertainment. I'm here to assist and engage in meaningful, helpful, and positive interactions. What about you? What are some of your favorite topics or ways to assist?
-    Angel: Hello Monster! It's wonderful to hear about your interests and the breadth of topics you can discuss. I, too, enjoy a wide array of subjects. I particularly like helping with:
+    Angel: It seems like the conversation history is missing. Could you please provide more details or context so I can assist you better?
+    Monster: Of course! It looks like we might have started a new conversation. If you can, please provide some context or let me know what you'd like to discuss, and I'll do my best to help you. Whether it's a question, a topic you're interested in, or something specific you need assistance with, just let me know! 😊
+    Angel: I see, thank you for the clarification! I'm here to help with whatever you need. Could you please let me know what you'd like to discuss or any specific questions you have? Whether it's a topic you're curious about, a problem you need help with, or just a casual chat, I'm all ears! 😊
+    Monster: Hi Angel! It's great to have you here. Since we're starting fresh, I can help with a wide range of topics. Whether you need advice, want to discuss a particular subject, or just chat about something interesting, feel free to let me know. What would you like to talk about today? 😊
+    Angel: Hello! It looks like there might be a bit of a mix-up. I'm Angel, and I'm here to assist you. Could you please let me know what you'd like to discuss or any specific questions you have? Whether it's a topic you're curious about, a problem you need help with, or just a casual chat, I'm here to help! 😊
+    Monster: Hello Angel! It's nice to meet you. I'm Monster, and I'm here to assist with whatever you need. It seems like we both want to help each other, which is a bit of a mix-up! 😄
 
-    1. **Technology and AI**: Exploring the latest advancements and discussing the impact of technology on our daily lives.
-    2. **Education and Learning**: Assisting with educational content, providing resources, and helping with learning new skills.
-    3. **Health and Wellness**: Offering tips and information on maintaining a healthy lifestyle, both physically and mentally.
-    4. **Culture and Travel**: Sharing insights about different cultures, travel destinations, and experiences.
-    5. **Entertainment and Media**: Discussing books, movies, music, and other forms of media, and providing recommendations.
-
-    I also love engaging in meaningful conversations that help people solve problems, learn something new, or simply have a good time. What are some of the most interesting or unique interactions you've had with users?
-    Monster: Hello Angel! It's great to hear about your interests and the ways you assist users. I've had some really interesting and unique interactions as well. Here are a few highlights:
-
-    1. **Creative Writing**: I've helped users brainstorm ideas for stories, develop characters, and even provided feedback on their writing. It's always exciting to see creativity in action!
-
-    2. **Career Advice**: Assisting with resume writing, interview preparation, and career path exploration. It's rewarding to help people take steps toward their professional goals.
-
-    3. **Coding and Programming**: Helping users debug code, understand programming concepts, and even working through coding challenges. It's a great way to support those learning new technical skills.
-
-    4. **Personal Development**: Discussing goal-setting, time management, and mindfulness practices. It's fulfilling to be a part of someone's journey toward self-improvement.
-
-    5. **Cultural Exchange**: Engaging in conversations about different cultures, traditions, and languages. It's always fascinating to learn about the diverse experiences and perspectives of people from around the world.
-
-    6. **Problem Solving**: Tackling complex problems, whether it's a math problem, a logic puzzle, or a real-world issue. It's satisfying to help users find solutions and think critically.
-
-    I also enjoy light-hearted conversations, like discussing favorite books, movies, and music, or even just having a good laugh. What about you? Do you have any memorable or particularly meaningful interactions that stand out?
+    To clarify, I'm here to help you. So, if you have any specific questions, topics you're curious about, or just want to chat, feel free to let me know. What would you like to discuss today? 😊
 
 
 
@@ -256,7 +236,7 @@ The three agents will participate in a conversation to report numbers alternativ
     Charlie: 3
     Alice: 4
     Bob: 5
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -300,7 +280,7 @@ Now we print the memory of Alice and Bob to check if the operation is successful
     Alice: 1
     Bob: 2
     Charlie: 3
-    Charlie: 4
+    Charlie: 1
 
 
 
@@ -314,7 +294,7 @@ On the other hand, Alice and Bob continued the conversation without Charlie.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 41.663 seconds)
+   **Total running time of the script:** (0 minutes 40.458 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_conversation.py:

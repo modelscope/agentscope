@@ -397,17 +397,18 @@ Now let's test the `speak` hooks:
 
  .. code-block:: none
 
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1
-    TestAgent: id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-    id:  0e41361c6f2141229d10acec6e269d73 stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1
+    TestAgent: id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 1
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  False content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    id:  00865e19a2e643f082ce4e12f659aa2f stream:  True last:  True content:  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 
     The cnt of calling the speak function: 1
 
@@ -479,12 +480,12 @@ below:
         {
             "__module__": "agentscope.message.msg",
             "__name__": "Msg",
-            "id": "e6c04063d6d44e6fb1d39ca2f43be341",
+            "id": "2bf6cd69799042f5afb30bf9f05da5f0",
             "name": "user",
             "role": "user",
             "content": "Observe: The sun is shining.",
             "metadata": null,
-            "timestamp": "2025-07-07 07:29:18"
+            "timestamp": "2025-07-15 03:12:06"
         }
     ]
     The cnt of calling the observe function: 1
@@ -569,7 +570,7 @@ that class.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.039 seconds)
+   **Total running time of the script:** (0 minutes 3.213 seconds)
 
 
 .. _sphx_glr_download_build_tutorial_hook.py:
