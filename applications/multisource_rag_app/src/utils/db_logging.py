@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Database helper function for recording"""
+import os
 import sqlite3
 
 
 def create_logging_table(db_name: str) -> None:
     """create table in sqlite3"""
+    if not os.path.exists(os.path.dirname(db_name)):
+        os.makedirs(os.path.dirname(db_name))
     db_conn = sqlite3.connect(db_name)
     cursor = db_conn.cursor()
     cursor.execute(
