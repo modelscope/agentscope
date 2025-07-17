@@ -102,7 +102,8 @@ def log_stream_msg(msg: Msg, last: bool = True) -> None:
 
     if last:
         # Remove the prefix from the dictionary
-        del _PREFIX_DICT[msg.id]
+        if msg.id in _PREFIX_DICT:
+            del _PREFIX_DICT[msg.id]
 
         print(print_str)
     else:
