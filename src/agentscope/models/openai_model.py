@@ -315,7 +315,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                     None,
                 )
                 # vllm models return [] instead of None
-                if isinstance(tool_calls, list) and len(tool_calls) == 0:
+                if not tool_calls:
                     tool_calls = None
 
                 if tool_calls is not None:
