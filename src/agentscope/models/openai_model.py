@@ -169,9 +169,9 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         )
 
         self.stream = stream
-        # force the use of openai formatter on other vllm models
-        # apart from the model name saved in `supported_model`
-        self.use_openai_formater = kwargs.get("use_openai_formater", False)
+        # Force the use of the OpenAI formatter for models not in the
+        # default supported list (e.g. vllm-hosted models).
+        self.use_openai_formatter = kwargs.get("use_openai_formatter", False)
 
     def __call__(
         self,
