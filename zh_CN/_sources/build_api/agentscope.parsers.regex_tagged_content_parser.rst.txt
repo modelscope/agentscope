@@ -1,0 +1,7 @@
+agentscope.parsers.regex\_tagged\_content\_parser module
+========================================================
+
+.. automodule:: agentscope.parsers.regex_tagged_content_parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
