@@ -417,7 +417,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         # Chat scenario
         if (
             OpenAIFormatter.is_supported_model(self.model_name)
-            or self.use_openai_formater
+            or self.use_openai_formatter
         ):
             return OpenAIFormatter.format_chat(*args)
 
