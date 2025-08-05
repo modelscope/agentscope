@@ -9,6 +9,8 @@ import unittest
 import threading
 from typing import Literal
 
+from pydantic import BaseModel
+
 import agentscope
 from agentscope.models import ModelResponse
 from agentscope.parsers import MultiTaggedContentParser, TaggedContent
@@ -45,9 +47,9 @@ class ServiceToolkitTest(unittest.TestCase):
                     "type": "object",
                     "properties": {
                         "num_results": {
-                            "type": "number",
+                            "type": "integer",
                             "description": (
-                                "The number of search " "results to return."
+                                "The number of search results to return."
                             ),
                             "default": 10,
                         },
@@ -88,13 +90,11 @@ class ServiceToolkitTest(unittest.TestCase):
             "type": "function",
             "function": {
                 "name": "func",
-                "description": "",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "c": {"default": "test"},
                         "d": {
-                            "type": "typing.Literal",
                             "enum": [1, "abc", "d"],
                             "default": 1,
                         },
@@ -146,7 +146,6 @@ we use the embedding model to embed the query.""",
                     "type": "object",
                     "properties": {
                         "query": {
-                            "type": "Any",
                             "description": "A message to be retrieved.",
                         },
                     },
@@ -481,6 +480,83 @@ The following tool functions are available in the format of
                 "function": {
                     "function name": "bing_search",
                     "args": {"query": "news of today"},
+                },
+            },
+        )
+
+    def test_extend_model_schema(self) -> None:
+        """Test extending model schema in service toolkit."""
+        toolkit = ServiceToolkit()
+
+        def func(a: str, b: int) -> str:
+            """A simple test function."""
+            return f"{a}-{b}"
+
+        toolkit.add(func)
+
+        class ExtendModel(BaseModel):
+            """A test class to extend the function schema."""
+
+            c: str = "test"
+            d: Literal["a", "b", "c"]
+            e: dict[str, int]
+
+        self.assertDictEqual(
+            toolkit.json_schemas["func"],
+            {
+                "type": "function",
+                "function": {
+                    "name": "func",
+                    "parameters": {
+                        "properties": {
+                            "a": {
+                                "type": "string",
+                            },
+                            "b": {
+                                "type": "integer",
+                            },
+                        },
+                        "required": ["a", "b"],
+                        "type": "object",
+                    },
+                    "description": "A simple test function.",
+                },
+            },
+        )
+
+        toolkit.extend_function_schema(func_name="func", model=ExtendModel)
+
+        self.assertDictEqual(
+            toolkit.json_schemas["func"],
+            {
+                "type": "function",
+                "function": {
+                    "name": "func",
+                    "parameters": {
+                        "properties": {
+                            "a": {
+                                "type": "string",
+                            },
+                            "b": {
+                                "type": "integer",
+                            },
+                            "c": {
+                                "default": "test",
+                                "type": "string",
+                            },
+                            "d": {
+                                "enum": ["a", "b", "c"],
+                                "type": "string",
+                            },
+                            "e": {
+                                "additionalProperties": {"type": "integer"},
+                                "type": "object",
+                            },
+                        },
+                        "required": ["a", "b", "d", "e"],
+                        "type": "object",
+                    },
+                    "description": "A simple test function.",
                 },
             },
         )

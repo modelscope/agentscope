@@ -1,63 +1,49 @@
 # Roadmap
 
----
-
 ## Long-term Goals
 
-Offering **agent-oriented programming (AOP)** as a new programming model to organize the design and implementation of next-generation LLM-empowered applications.
+Offering **agent-oriented programming (AOP)** as a new programming paradigm to organize the design and implementation of next-generation LLM-empowered applications.
 
 ## Short-term Goals
 
-1. Refine and improve the documentation for easier understanding.
-2. Support tools API.
-3. Refactor the current AgentScope studio, including Dashboard and Workstation.
-4. Improve the current RAG module.
+### AgentScope V1.0.0 Roadmap
 
-## Task
+We are deeply grateful for the continuous support from the open-source community that has witnessed AgentScope's
+growth. Throughout our journey, we have maintained **developer-centric transparency** as our core principle,
+which will continue to guide our future development.
 
-1. Documentation
+As the AI agent ecosystem rapidly evolves, we recognize the need to adapt AgentScope to meet emerging trends and
+requirements. We are excited to announce the upcoming release of AgentScope v1.0.0, which marks a significant shift
+towards deployment-focused and secondary development direction. This new version will provide comprehensive support for agent developers
+with enhanced deployment capabilities and practical features. Specifically, the update will include:
 
- - 🚧 Re-write the tutorial.
- - 📝 Correct the typographical errors in API documents.
- - 📝 Refine the README.md.
+- ✨New Features
+  - 🛠️ Tool/MCP
+    - Support both sync/async tool functions
+    - Support streaming tool function
+    - Support parallel execution of tool functions
+    - Provide more flexible support for the MCP server
 
-2. Tools Calling
+  - 💾 Memory
+    - Enhance the existing short-term memory
+    - Support long-term memory
 
- - ✅ Add Support for Anthropic API.
+  - 🤖 Agent
+    - Provide powerful ReAct-based out-of-the-box agents
 
- - 🚧 Support tools calling in user-assistant conversations.
-   - ✅ OpenAI API
-   - ✅ DashScope API
-   - ✅ Anthropic API
-   - 📝 Gemini APi
+- 👨‍💻 Development
+  - Provide enhanced AgentScope Studio with visual components for developing, tracing and debugging
+  - Provide a built-in copilot for developing/drafting AgentScope applications
 
- - 📝 Support tools calling in multi-agent conversations.
-   - OpenAI API
-   - DashScope API
-   - Anthropic API
-   - Gemini API
+- 🔍 Evaluation
+  - Provide built-in benchmarking and evaluation toolkit for agents
+  - Support result visualization
 
-> 💡**Note:** The most difficult part of supporting tools calling in multi-agent conversations is most LLM APIs only support
-> `"user"` and `"assistant"` in their role fields, and has special requirements (e.g. user and assistant messages must be alternated).
-> We are working on a solution to be compatible with tools calling in
-> multi-agent conversations. If you have any ideas, please let us know. Discord | Dingtalk | GitHub issue are all welcome 🤗! Thanks in advance!
+- 🏗️ Deployment
+  - Support asynchronous agent execution
+  - Support session/state management
+  - Provide sandbox for tool execution
 
- - 📝 Support tools calling in streaming mode.
-   - OpenAI API
-   - DashScope API
-   - Anthropic API
-   - Gemini API
-
-3. AgentScope Studio
-
- - 🚧 Refactor the AgentScope Workstation with React.
- - 📝 Refactor the AgentScope Dashboard with React.
-   - Support websocket re-connection.
-   - Support displaying token usage.
-   - Support displaying real-time memory of agents.
-
-4. RAG
-
- - 🚧 Provide a set of query rewrite strategies for retrieval.
- - ✅ Support online search engine (Google/Bing search) based RAG.
- - 🚧 Support multi-RAG agent routing efficiently.
+Stay tuned for our detailed release notes and beta version, which will be available soon. Follow our GitHub
+repository and official channels for the latest updates. We look forward to your valuable feedback and continued
+support in shaping the future of AgentScope.

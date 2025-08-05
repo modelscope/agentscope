@@ -43,6 +43,7 @@ from utils.fill_path_utils import (
 )
 from utils.logging import logger
 from utils.db_logging import create_logging_table
+from utils.prepare_data_utils import prepare_docstring_txt
 from routing.emb_routing import cluster_similarity_planning
 from agents.context_manager import ContextManager
 from agents.retrieval_agent import RetrievalAgent
@@ -288,6 +289,10 @@ def initializations() -> None:
             base_dir,
             os.environ.get("MODEL_CONFIG_PATH", "configs/model_config.json"),
         ),
+    )
+    prepare_docstring_txt(
+        repo_path=os.getenv("PATH_TO_AGENTSCOPE_REPO"),
+        text_dir=os.getenv("TEXT_DIR"),
     )
     global knowledge_bank
     knowledge_bank = init_knowledge_bank(

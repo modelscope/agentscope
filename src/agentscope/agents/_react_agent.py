@@ -181,7 +181,7 @@ class ReActAgent(AgentBase):
 
             return ToolUseBlock(
                 type="tool_use",
-                id=uuid,
+                id=uuid(),
                 name=function_name,
                 input=input_,
             )

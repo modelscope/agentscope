@@ -115,7 +115,7 @@ class OpenAIWrapperBase(ModelWrapperBase, ABC):
             self.max_length = get_openai_max_length(self.model_name)
         except Exception as e:
             logger.warning(
-                f"fail to get max_length for {self.model_name}: " f"{e}",
+                f"Fail to get max_length for {self.model_name}: " f"{e}",
             )
             self.max_length = None
 
@@ -175,6 +175,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
         messages: list[dict],
         stream: Optional[bool] = None,
         tools: Optional[list[dict]] = None,
+        tool_choice: Optional[str] = None,
         **kwargs: Any,
     ) -> ModelResponse:
         """Processes a list of messages to construct a payload for the OpenAI
@@ -196,6 +197,8 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
                 `stream` argument in the constructor if provided.
             tools (`Optional[list[dict]]`, defaults to `None`):
                 The tool JSON schemas that the model can use.
+            tool_choice (`Optional[str]`, defaults to `None`):
+                The function name that force the model to use.
             **kwargs (`Any`):
                 The keyword arguments to OpenAI chat completions API,
                 e.g. `temperature`, `max_tokens`, `top_p`, etc. Please refer to
@@ -250,6 +253,14 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
 
         if tools:
             kwargs["tools"] = tools
+
+        if tool_choice:
+            kwargs["tool_choice"] = {
+                "type": "function",
+                "function": {
+                    "name": tool_choice,
+                },
+            }
 
         if stream:
             kwargs["stream_options"] = {"include_usage": True}

@@ -31,10 +31,8 @@ minimal_requires = [
     "requests",
     "inputimeout",
     "numpy",
-    "Flask==3.0.0",
-    "Flask-Cors==4.0.0",
-    "Flask-SocketIO==5.3.6",
     "flask_sqlalchemy",
+    "python-socketio",
     "flake8",
     "psutil",
     "shortuuid",
@@ -57,7 +55,7 @@ extra_service_requires = [
     "nbformat",
     "playwright",
     "markdownify",
-    "mcp; python_version>='3.10'",
+    "mcp>=1.8.0,<1.10.0; python_version>='3.10'",
 ]
 
 extra_distribute_requires = [

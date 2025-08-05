@@ -5,14 +5,181 @@
 结构化输出
 ==========================
 
-在本教程中，我们将构建一个简单的智能体，使用 `agentscope.parsers` 模块以 JSON 字典格式输出结构化数据。
+如下图所示，AgentScope 支持以下两种结构化输出方式：
+
+- 工具 API：构造一个函数，其输入参数是所需要的结构化数据的字段，然后要求大模型调用该函数，从而获得结构化数据
+- 文本解析：调用大模型 API 获得纯文本数据，然后本地从纯文本中解析出结构化数据
+
+.. image:: https://img.alicdn.com/imgextra/i4/O1CN01TLx5qg1tcmx3cKCNN_!!6000000005923-55-tps-661-391.svg
+   :width: 100%
+   :alt: 两种不同结构化输出方式
+
+两种方式的优缺点如下：
+
+.. list-table::
+    :header-rows: 1
+
+    * - 方式
+      - 优点
+      - 缺点
+    * - 工具 API
+      - 1. 模型 **自主** 决定何时调用该函数/产生结构化输出，能够很好与 ReAct 算法结合
+        2. 数据解析发生在大模型 API 提供方，本地开发难度低
+        3. 支持基于 JSON Schema 的复杂约束条件
+      - 需要支持工具调用的大模型 API
+    * - 文本解析
+      - 1. 简单易用
+        2. 可以根据模型能力、所需结构化数据的不同，调整格式和解析方法
+      - 1. 依赖模型能力，可能一直无法产生符合要求的结构化数据
+        2. 模型 **被动** 产生结构化数据，由开发者决定何时提示大模型产生结构化数据
+
+
+下面我们详细介绍 AgentScope 如何支持两种不同的解析方式。
+
+工具 API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+工具 API 方式将工具调用和结构化输出结合在一起，例如我们需要 `"thought"`，`"choice"`，`"number"`
+三个字段，那么我们可以构建如下的函数
 """
-from agentscope.models import ModelResponse
+
+from typing import Literal
+from pydantic import BaseModel, Field
+import json
+
+
+def generate_response(
+    thought: str,
+    choice: Literal["apple", "banana"],
+    number: int,
+) -> None:
+    pass
+
 
 # %%
-# 定义解析器
-# -------------------
+# 这里函数签名起到了提供约束条件的作用，模型在正确调用该函数时，我们就可以获得对应的结构化数据。
+#
+# 在了解基本思路后，进一步考虑到一些复杂的约束条件无法使用 Python 的类型注解来表达，
+# 在 AgentScope 中，我们支持通过 Pydantic 的 `BaseModel` 的子类来定义复杂的约束条件。
+# 例如下面的两个类
 
+
+class Model1(BaseModel):
+    name: str = Field(
+        min_length=0,
+        max_length=20,
+        description="姓名",
+    )
+    description: str = Field(
+        min_length=0,
+        max_length=200,
+        description="简短的介绍",
+    )
+    age: int = Field(
+        ge=0,
+        le=100,
+        description="年龄",
+    )
+
+
+class Model2(BaseModel):
+    choice: Literal["apple", "banana"] = Field(description="你的选择")
+
+
+# %%
+#
+# AgentScope 中的 `ReActAgentV2` 会将 `BaseModel` 子类的 JSON Schema 和一个名
+# 为 `generate_response` 函数的 schema 结合在一起，生成一个新的 schema，在模型调用
+# 该函数的时候，可以利用该函数的 Schema 来约束模型的输出。
+#
+# 例如下面我们展示如何使用 `ReActAgentV2` 实现 ReAct 算法和结构化输出的结合
+
+from agentscope.agents import ReActAgentV2
+from agentscope.service import ServiceToolkit
+from agentscope.message import Msg
+import agentscope
+
+agentscope.init(
+    model_configs={
+        "config_name": "my_config",
+        "model_type": "dashscope_chat",
+        "model_name": "qwen-max",
+    },
+)
+
+toolkit = ServiceToolkit()
+
+agent = ReActAgentV2(
+    name="Friday",
+    model_config_name="my_config",
+    service_toolkit=toolkit,
+)
+
+msg1 = Msg("user", "介绍下爱因斯坦", "user")
+res_msg = agent(msg1, structured_model=Model1)
+
+print("结构化输出的内容: ", res_msg.metadata)
+
+# %%
+# 可以通过切换不同的 `structured_model` 来实现不同的结构化输出
+
+msg2 = Msg("user", "选择一种水果", "user")
+res_msg = agent(msg2, structured_model=Model2)
+
+print("结构化输出的内容: ", res_msg.metadata)
+
+# %%
+# 为了观察 `ReActAgentV2` 中如何动态的构造函数的 schema，这里我们去掉一个清理结构化输出设置的
+# hook 函数，从而能够打印出对应的加工后的函数 schema
+
+# 清空记忆
+agent.memory.clear()
+# 去掉清理结构化输出的 hook 函数
+agent.remove_hook("post_reply", "as_clear_structured_output")
+
+# 观察当前目标函数的 schema
+print(
+    json.dumps(
+        toolkit.json_schemas[agent._finish_function],
+        indent=4,
+        ensure_ascii=False,
+    ),
+)
+
+# %%
+# 现在我们调用一次智能体，然后观察目标函数的 schema 变化情况
+
+res_msg = agent(msg1, structured_model=Model1)
+
+print(
+    json.dumps(
+        toolkit.json_schemas[agent._finish_function],
+        indent=4,
+        ensure_ascii=False,
+    ),
+)
+
+# %%
+# 这里我们可以看出，`generate_response` 函数的 schema 已经与 `Model1` 类的 schema 结合在了一起，
+# 因此，当大模型调用该工具的时候，也就产生了对应的结构化数据。
+#
+# .. tip:: 更多实现细节可以参考 `ReActAgentV2` 的 `源码`_
+#
+# .. _源码: https://github.com/modelscope/agentscope/blob/main/src/agentscope/agents/_react_agent_v2.py
+#
+# 文本解析
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# AgentScope 中的 `parsers` 模块提供了多种不同的解析器类，开发者可以根据所需结构化数据的不同选用合适的解析器。
+#
+# 以 Markdown 格式为例，我们展示如何构建一个简单的智能体，并使用 `MarkdownJsonDictParser` 类从文本中解析出字典类型的结构化数据。
+#
+# 构建解析器
+# -------------------
+#
+# `MarkdownJsonDictParser` 要求输入的文本将结构化数据包裹在 Markdown 的代码快中，以`\`\`\``作为开头和结尾，并从中解析出对应的字典数据。
+
+from agentscope.models import ModelResponse
 from agentscope.parsers import MarkdownJsonDictParser
 
 
@@ -31,7 +198,7 @@ print(parser.format_instruction)
 # 解析输出
 # -------------------
 # 当从 LLM 接收到输出时，使用 `parse` 方法来提取结构化数据。
-# 它接受一个 `agentscope.models.ModelResponse` 对象作为输入，解析 `text` 字段的值，并在 `parsed` 字段中返回解析后的字典。
+# 它接收一个 `agentscope.models.ModelResponse` 对象作为输入，解析 `text` 字段的值，并在 `parsed` 字段中返回解析后的字典。
 
 dummy_response = ModelResponse(
     text="""```json
@@ -47,13 +214,13 @@ print(f"解析前parsed字段: {dummy_response.parsed}")
 parsed_response = parser.parse(dummy_response)
 
 print(f"解析后parsed字段: {parsed_response.parsed}")
-print(type(parsed_response.parsed))
+print(f"parsed字段类型: {type(parsed_response.parsed)}")
 
 # %%
 # 错误处理
 # -------------------
 # 如果LLM的输出与预期格式不匹配，解析器将抛出一个包含详细信息的错误。
-# 因此开发人员可以将错误消息呈现给 LLM，以指导它纠正输出。
+# 开发者可以将错误信息反馈给 LLM，引导其生成正确格式的输出。
 #
 
 error_response = ModelResponse(
@@ -100,8 +267,8 @@ print(parser.format_instruction)
 # %%
 # `RegexTaggedContentParser` 支持使用正则表达式匹配文本中的标记内容并返回解析后的字典。
 #
-# .. note:: `RegexTaggedContentParser`的解析输出是一个字典，这意味着必需键应该是唯一的。
-#  你也可以在初始化解析器时通过设置 `tagged_content_pattern` 参数来更改正则表达式模式。
+# .. note:: `RegexTaggedContentParser` 的解析输出是一个字典，因此 key 必须唯一。
+#  可以通过设置 `tagged_content_pattern` 参数来更改正则表达式模式。
 
 import json
 
@@ -182,7 +349,6 @@ print("存储到消息 metadata 字段: ", parser.to_metadata(parsed_response.pa
 
 from agentscope.models import DashScopeChatWrapper
 from agentscope.agents import AgentBase
-from agentscope.message import Msg
 
 
 class Agent(AgentBase):

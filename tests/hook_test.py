@@ -2,7 +2,7 @@
 # pylint: disable=unused-argument, protected-access
 """Unittests for agent hooks."""
 import unittest
-from typing import Optional, Union
+from typing import Optional, Union, Tuple, Any, Dict
 from unittest.mock import patch, MagicMock
 
 from agentscope.agents import AgentBase
@@ -42,27 +42,31 @@ class AgentHooksTest(unittest.TestCase):
 
         def pre_reply_hook(
             self: AgentBase,
-            x: Optional[Union[Msg, list[Msg]]] = None,
-        ) -> Union[None, Msg]:
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+        ) -> Union[Tuple[Tuple[Msg, ...], Dict[str, Any]], None]:
             """Pre-reply hook."""
-            if isinstance(x, Msg):
-                return Msg(
-                    "assistant",
-                    "-1, " + x.content,
-                    "assistant",
-                )
+            if len(args) > 0 and isinstance(args[0], Msg):
+                args[0].content = "-1, " + args[0].content
+                return args, kwargs
             return None
 
         def pre_reply_hook_without_change(
             self: AgentBase,
-            x: Optional[Union[Msg, list[Msg]]] = None,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
         ) -> None:
             """Pre-reply hook without returning, so that the message is not
             changed."""
-            if isinstance(x, Msg):
-                x.content = "-2, " + x.content
+            if len(args) > 0 and isinstance(args[0], Msg):
+                args[0].content = "-2, " + x.content
 
-        def post_reply_hook(self: AgentBase, x: Msg) -> Msg:
+        def post_reply_hook(
+            self: AgentBase,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+            x: Msg,
+        ) -> Msg:
             """Post-reply hook."""
             return Msg(
                 "assistant",
@@ -259,13 +263,23 @@ class AgentHooksTest(unittest.TestCase):
     def test_class_and_object_pre_reply_hook(self) -> None:
         """Test the class and object hook."""
 
-        def pre_reply_hook_1(self: AgentBase, x: Msg) -> Msg:
+        def pre_reply_hook_1(
+            self: AgentBase,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+        ) -> Union[Tuple[Tuple[Msg, ...], Dict[str, Any]], None]:
             """Pre-reply hook."""
-            return Msg("assistant", "-1, " + x.content, "assistant")
+            args[0].content = "-1, " + args[0].content
+            return args, kwargs
 
-        def pre_reply_hook_2(self: AgentBase, x: Msg) -> Msg:
+        def pre_reply_hook_2(
+            self: AgentBase,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+        ) -> Union[Tuple[Tuple[Msg, ...], Dict[str, Any]], None]:
             """Pre-reply hook."""
-            return Msg("assistant", "-2, " + x.content, "assistant")
+            args[0].content = "-2, " + args[0].content
+            return args, kwargs
 
         AgentBase.register_class_hook(
             "pre_reply",
@@ -314,13 +328,23 @@ class AgentHooksTest(unittest.TestCase):
     def test_class_and_object_post_reply_hook(self) -> None:
         """Test the class and object hook."""
 
-        def post_reply_hook_1(self: AgentBase, x: Msg) -> Msg:
+        def post_reply_hook_1(
+            self: AgentBase,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+            output: Msg,
+        ) -> Union[None, Msg]:
             """Post-reply hook."""
-            return Msg("assistant", x.content + ", 1", "assistant")
+            return Msg("assistant", output.content + ", 1", "assistant")
 
-        def post_reply_hook_2(self: AgentBase, x: Msg) -> Msg:
+        def post_reply_hook_2(
+            self: AgentBase,
+            args: Tuple[Any, ...],
+            kwargs: Dict[str, Any],
+            output: Msg,
+        ) -> Union[None, Msg]:
             """Post-reply hook."""
-            return Msg("assistant", x.content + ", 2", "assistant")
+            return Msg("assistant", output.content + ", 2", "assistant")
 
         AgentBase.register_class_hook(
             "post_reply",

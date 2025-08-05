@@ -1,5 +1,7 @@
 # KIMAs: A Configurable Knowledge Integrated Multi-Agent System
 
+**Notice**: The application is built on AgentScope [v0.1.2](https://github.com/modelscope/agentscope/archive/refs/tags/v0.1.2.zip).
+
 ## Introduction
 KIMAs stands for <ins>k</ins>nowledge <ins>i</ins>ntegrated <ins>m</ins>ulti-<ins>a</ins>gent <ins>s</ins>ystem, with configurable components and the capability of utilizing multi-source knowledge. It features a flexible and configurable system for integrating diverse knowledge sources with 1) context management and query rewrite mechanisms to improve retrieval accuracy and multi-turn conversational coherency, 2) efficient knowledge routing and retrieval, 3) simple but effective filter and reference generation mechanisms, and 4) optimized parallelizable multi-agent pipeline execution.
 
@@ -46,12 +48,14 @@ cd applications/multisource_rag_app
 pip install -r requirements.txt
 ```
 
+ Prepare a "clean" version of AgentScope repo at `~/agentscope_clean`. (If you want to customize the storage location, please also update the environment variable `as_scripts/setup_server.sh` and the `input_dir` fields in the knowledge config you are using.)
+
 Environment variables and API keys:
 * setup the API keys in the terminal or `.sh` files.
-  ````bash
+  ```bash
   export DASHSCOPE_API_KEY='your_dash_key'
   export BING_SEARCH_KEY='your_bing_key' # optional, only required if you have bing knowledge
-  ````
+  ```
 
 
 ## Setup a RAG application service
@@ -102,7 +106,7 @@ Loading data from disk can be very time consuming if the data volume is large. A
 * To use the ElasticSearch, you first need to download the [ElasticSearch](https://www.elastic.co/downloads/elasticsearch).
 
 * If running for the AgentScope QA, check the `input_dir` files in `./configs/as_config/as_knowledge_configs/as_es_knowledge_update_config.json`.
-  * The one of `agentscope_tutorial_rag` should be `{PATH_TO_STORE_TUTORIAL_TXT_FILES}`
+  * The one of `agentscope_tutorial_rag` should be the path to store the tutorial txt files.
   * Others `input_dir` should be consistent with where the AgentScope materials are.
 
 * You need run the following command to prepare the data under the `multisource_rag_app/src`
