@@ -408,7 +408,7 @@ class OpenAIChatWrapper(OpenAIWrapperBase):
             # Format messages according to the model name
             if (
                 OpenAIFormatter.is_supported_model(self.model_name)
-                or self.use_openai_formater
+                or self.use_openai_formatter
             ):
                 return OpenAIFormatter.format_multi_agent(*args)
 
